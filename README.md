@@ -1,14 +1,16 @@
+[查看中文版本](README-ZH.md)
+
 LayOtto is a runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event-driven capabilities to simplify application development.
 
 LayOtto uses the open source [Mosn](https://github.com/mosn/mosn) as the base, in addition to providing distributed capabilities, it also provides serviceMesh's ability to control traffic.
 
-##Features
+## Features
 
 - Hijacking and observation of data traffic
 - The current limiting capability of the service
 - Configuration center read and write monitoring capabilities
 
-##Project Architecture
+## Project Architecture
 
 As shown in the architecture diagram below, LayOtto uses the open source mosn as the base to provide network layer management capabilities while providing distributed capabilities. The business can directly interact with LayOtto through a lightweight SDK without paying attention to the specific back-end infrastructure.
 
@@ -16,19 +18,23 @@ LayOtto provides sdk in various languages. The sdk interacts with LayOtto throug
 
 ![Architecture](img/runtime架构图.png)
 
-##Quickstarts and Samples
+## Quickstarts and Samples
 
+### Get started with LayOtto
 
 - See the code examples [configuration demo with etcd](docs/en/start/configuration/start.md) or [configuration demo with apollo](docs/en/start/configuration/start-apollo.md) that can help you get started with LayOtto.
 
+### Traffic intervention on the 4th layer network
 
-##Contributing to LayOtto
+[Dump TCP Traffic](docs/en/start/network_filter/tcpcopy.md)
+
+## Contributing to LayOtto
 
 See the Development Guide [contributing](CONTRIBUTING.md) to get started with building and developing.
 
-##Community
+## Community
 
-###Contact Us
+### Contact Us
 
 Use [DingTalk](https://www.dingtalk.com/en) to scan the QR code below to join the LayOtto user exchange group.
 
