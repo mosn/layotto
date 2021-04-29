@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	runtimev1pb "gitlab.alipay-inc.com/ant-mesh/runtime/proto/runtime/v1"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/sdk/client"
+	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
+	"github.com/layotto/layotto/sdk/client"
 	"google.golang.org/grpc"
 	"strconv"
 	"sync"

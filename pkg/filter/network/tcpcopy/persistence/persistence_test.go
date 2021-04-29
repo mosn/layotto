@@ -1,7 +1,7 @@
 package persistence
 
 import (
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/strategy"
+	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/strategy"
 	"mosn.io/pkg/log"
 	"testing"
 )

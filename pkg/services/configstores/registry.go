@@ -3,7 +3,7 @@ package configstores
 import (
 	"fmt"
 
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/info"
+	"github.com/layotto/layotto/pkg/info"
 )
 
 type Registry interface {

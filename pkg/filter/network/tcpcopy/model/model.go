@@ -1,7 +1,7 @@
 package model
 
 import (
-	_type "gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/type"
+	_type "github.com/layotto/layotto/pkg/filter/network/tcpcopy/type"
 )
 
 const (

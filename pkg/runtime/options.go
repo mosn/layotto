@@ -1,9 +1,9 @@
 package runtime
 
 import (
-	rgrpc "gitlab.alipay-inc.com/ant-mesh/runtime/pkg/grpc"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/configstores"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/hello"
+	rgrpc "github.com/layotto/layotto/pkg/grpc"
+	"github.com/layotto/layotto/pkg/services/configstores"
+	"github.com/layotto/layotto/pkg/services/hello"
 	"google.golang.org/grpc"
 	"mosn.io/pkg/log"
 )

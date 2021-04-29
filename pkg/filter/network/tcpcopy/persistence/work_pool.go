@@ -1,8 +1,8 @@
 package persistence
 
 import (
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/common"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/model"
+	"github.com/layotto/layotto/pkg/common"
+	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/model"
 	"math/rand"
 	"mosn.io/pkg/utils"
 	"sync"

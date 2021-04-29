@@ -2,7 +2,7 @@ package tcpcopy
 
 import (
 	"encoding/json"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/strategy"
+	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/strategy"
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/pkg/buffer"

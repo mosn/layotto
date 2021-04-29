@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/configstores"
+	"github.com/layotto/layotto/pkg/services/configstores"
 	"go.etcd.io/etcd/embed"
 	"go.etcd.io/etcd/mvcc/mvccpb"
 	"net/url"

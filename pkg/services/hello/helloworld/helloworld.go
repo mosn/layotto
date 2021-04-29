@@ -1,6 +1,6 @@
 package helloworld
 
-import "gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/hello"
+import "github.com/layotto/layotto/pkg/services/hello"
 
 type HelloWorld struct {
 	Say string

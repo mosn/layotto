@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	hello "gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/hello"
+	hello "github.com/layotto/layotto/pkg/services/hello"
 )
 
 // MockHelloService is a mock of HelloService interface.

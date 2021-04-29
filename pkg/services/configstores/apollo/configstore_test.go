@@ -7,7 +7,7 @@ import (
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/zouyx/agollo/v4"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/configstores"
+	"github.com/layotto/layotto/pkg/services/configstores"
 	"io/ioutil"
 	"net/http"
 	"reflect"

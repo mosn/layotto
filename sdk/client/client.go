@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 	"github.com/pkg/errors"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/proto/runtime/v1"
+	"github.com/layotto/layotto/proto/runtime/v1"
 	"google.golang.org/grpc"
 	"log"
 	"net"

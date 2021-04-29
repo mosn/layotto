@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	configstores "gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/configstores"
+	configstores "github.com/layotto/layotto/pkg/services/configstores"
 )
 
 // MockStore is a mock of Store interface.
