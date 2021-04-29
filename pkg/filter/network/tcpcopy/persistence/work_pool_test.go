@@ -11,8 +11,8 @@ import (
 
 func TestNewDefaultWorkPool(t *testing.T) {
 
-	TcpcopyPersistence.SetLogLevel(log.DEBUG)
-	StaticConfPersistence.SetLogLevel(log.DEBUG)
+	GetTcpcopyLogger().SetLogLevel(log.DEBUG)
+	GetStaticConfLogger().SetLogLevel(log.DEBUG)
 
 	workPool := NewDefaultWorkPool(10)
 
