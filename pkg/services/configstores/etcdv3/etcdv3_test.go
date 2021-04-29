@@ -3,9 +3,9 @@ package etcdv3
 import (
 	"context"
 	"fmt"
+	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"github.com/layotto/layotto/pkg/services/configstores"
 	"go.etcd.io/etcd/embed"
 	"go.etcd.io/etcd/mvcc/mvccpb"
 	"net/url"

@@ -3,8 +3,8 @@ package client
 import (
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/stretchr/testify/assert"
 	"github.com/layotto/layotto/proto/runtime/v1"
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	"net"

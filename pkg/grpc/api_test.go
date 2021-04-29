@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
 	"github.com/layotto/layotto/pkg/mock"
 	"github.com/layotto/layotto/pkg/services/hello"
 	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 )
 

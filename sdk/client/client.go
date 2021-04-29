@@ -2,8 +2,8 @@ package client
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"github.com/layotto/layotto/proto/runtime/v1"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"log"
 	"net"

@@ -1,9 +1,9 @@
 package apollo
 
 import (
+	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/stretchr/testify/assert"
 	"github.com/zouyx/agollo/v4/storage"
-	"github.com/layotto/layotto/pkg/services/configstores"
 	"sync"
 	"testing"
 	"time"
