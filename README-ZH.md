@@ -18,15 +18,18 @@ LayOtto提供了各个语言版本的sdk，sdk通过grpc与LayOtto进行交互�
 
 ## 快速开始
 
-###配置中心演示
+### 配置中心演示
 
 [通过LayOtto调用etcd配置中心](docs/zh/start/configuration/start.md) 
 
 [通过LayOtto调用apollo配置中心](docs/zh/start/configuration/start-apollo.md) 
 
 
+### 在4层网络进行流量干预
 
-##如何贡献代码
+[Dump TCP流量](docs/zh/start/network_filter/tcpcopy.md)
+
+## 如何贡献代码
 
 请参阅[贡献者指南](CONTRIBUTING_ZH.md)。
 
