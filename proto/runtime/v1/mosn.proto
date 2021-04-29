@@ -4,7 +4,7 @@ package mosn.proto.runtime.v1;
 
 import "github.com/golang/protobuf/ptypes/empty/empty.proto";
 
-option go_package = "gitlab.alipay-inc.com/ant-mesh/runtime/proto/runtime/v1;runtime";
+option go_package = "github.com/layotto/layotto/proto/runtime/v1;runtime";
 
 service MosnRuntime {
     //SayHello used for test

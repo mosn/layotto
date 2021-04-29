@@ -3,7 +3,7 @@ package helloworld
 import (
 	"testing"
 
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/hello"
+	"github.com/layotto/layotto/pkg/services/hello"
 )
 
 func TestHelloWorld(t *testing.T) {

@@ -10,18 +10,18 @@ type StoreConfig struct {
 
 // GetRequest is the object describing a get configuration request
 type GetRequest struct {
-	AppId           string
-	Group           string
-	Label           string
-	Keys            []string
-	Metadata        map[string]string
+	AppId    string
+	Group    string
+	Label    string
+	Keys     []string
+	Metadata map[string]string
 }
 
 // SetRequest is the object describing a save configuration request
 type SetRequest struct {
 	StoreName string
-	AppId string
-	Items []*ConfigurationItem
+	AppId     string
+	Items     []*ConfigurationItem
 }
 
 // ConfigurationItem represents a configuration item with key, content and other information.
@@ -45,17 +45,16 @@ type DeleteRequest struct {
 
 // SubscribeReq is the object describing a subscription request
 type SubscribeReq struct {
-	AppId string
-	Group string
-	Label string
-	Keys []string
+	AppId    string
+	Group    string
+	Label    string
+	Keys     []string
 	Metadata map[string]string
 }
 
 // SubscribeResp is the object describing a response for subscription
 type SubscribeResp struct {
 	StoreName string
-	AppId string
-	Items []*ConfigurationItem
+	AppId     string
+	Items     []*ConfigurationItem
 }
-

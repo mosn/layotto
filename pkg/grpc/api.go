@@ -8,9 +8,9 @@ import (
 	"strings"
 	"sync"
 
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/configstores"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/hello"
-	runtimev1pb "gitlab.alipay-inc.com/ant-mesh/runtime/proto/runtime/v1"
+	"github.com/layotto/layotto/pkg/services/configstores"
+	"github.com/layotto/layotto/pkg/services/hello"
+	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
 

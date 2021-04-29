@@ -2,7 +2,7 @@ package strategy
 
 import (
 	"encoding/json"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/model"
+	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/model"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/pkg/utils"
 	"sync"

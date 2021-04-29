@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/info"
+	"github.com/layotto/layotto/pkg/info"
 )
 
 func TestNewRegistry(t *testing.T) {

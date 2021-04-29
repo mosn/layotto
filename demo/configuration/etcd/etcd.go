@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/sdk/client"
+	"github.com/layotto/layotto/sdk/client"
 	"time"
 )
 

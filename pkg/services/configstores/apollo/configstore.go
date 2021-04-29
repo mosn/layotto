@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/configstores"
+	"github.com/layotto/layotto/pkg/services/configstores"
 	"io/ioutil"
 	"mosn.io/pkg/log"
 	"net/http"

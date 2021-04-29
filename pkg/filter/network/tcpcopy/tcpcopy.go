@@ -3,9 +3,9 @@ package tcpcopy
 import (
 	"context"
 	"encoding/json"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/model"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/persistence"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/strategy"
+	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/model"
+	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/persistence"
+	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/strategy"
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/pkg/log"
