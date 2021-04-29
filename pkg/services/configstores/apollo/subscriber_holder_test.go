@@ -1,8 +1,8 @@
 package apollo
 
 import (
+	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/stretchr/testify/assert"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/configstores"
 	"testing"
 )
 

@@ -1,8 +1,8 @@
 package tcpcopy
 
 import (
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/strategy"
-	_type "gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/type"
+	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/strategy"
+	_type "github.com/layotto/layotto/pkg/filter/network/tcpcopy/type"
 	"mosn.io/pkg/log"
 	"testing"
 )

@@ -2,7 +2,7 @@ package etcdv3
 
 import (
 	"context"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/configstores"
+	"github.com/layotto/layotto/pkg/services/configstores"
 	"go.etcd.io/etcd/clientv3"
 	"go.etcd.io/etcd/mvcc/mvccpb"
 	"mosn.io/pkg/log"

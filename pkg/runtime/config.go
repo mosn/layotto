@@ -3,8 +3,8 @@ package runtime
 import (
 	"encoding/json"
 
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/configstores"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/hello"
+	"github.com/layotto/layotto/pkg/services/configstores"
+	"github.com/layotto/layotto/pkg/services/hello"
 )
 
 type MosnRuntimeConfig struct {

@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/proto/runtime/v1"
+	"github.com/layotto/layotto/proto/runtime/v1"
 )
 
 type WatchChan <-chan WatchResponse

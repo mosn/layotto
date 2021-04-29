@@ -2,7 +2,7 @@ package persistence
 
 import (
 	"fmt"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/strategy"
+	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/strategy"
 	"mosn.io/pkg/log"
 	"os"
 	"path"

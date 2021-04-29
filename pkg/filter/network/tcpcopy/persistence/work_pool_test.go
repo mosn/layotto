@@ -2,8 +2,8 @@ package persistence
 
 import (
 	"fmt"
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/model"
-	_type "gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/type"
+	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/model"
+	_type "github.com/layotto/layotto/pkg/filter/network/tcpcopy/type"
 	"mosn.io/mosn/pkg/log"
 	"testing"
 	"time"

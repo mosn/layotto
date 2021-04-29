@@ -1,7 +1,7 @@
 package apollo
 
 import (
-	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/services/configstores"
+	"github.com/layotto/layotto/pkg/services/configstores"
 	"sync"
 )
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	runtimev1pb "gitlab.alipay-inc.com/ant-mesh/runtime/proto/runtime/v1"
+	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
 	"google.golang.org/grpc"
 )
 
