@@ -1,0 +1,57 @@
+{
+	"servers":[
+		{
+			"default_log_path":"stdout",
+			"default_log_level": "INFO",
+			"listeners":[
+				{
+					"name":"grpc",
+					"address": "0.0.0.0:34904",
+					"bind_port": true,
+					"filter_chains": [{
+						"filters": [
+							{
+								"type": "grpc",
+								"config": {
+									"server_name":"runtime",
+									"grpc_config": {
+										"hellos": {
+											"helloworld": {
+												"hello": "greeting"
+											}
+										},
+										"config_stores": {
+											"etcd": {
+												"address": ["127.0.0.1:2379"],
+												"timeout": "10"
+											}
+										}
+									}
+								}
+							}
+						]
+					}],
+					"stream_filters": [
+						{
+							"type": "flowControlFilter",
+							"config": {
+								"global_switch": true,
+								"monitor": false,
+								"limit_key_type": "PATH",
+								"rules": [
+									{
+										"resource": "/mosn.proto.runtime.v1.MosnRuntime/SayHello",
+										"limitApp": "",
+										"grade": 1,
+										"threshold": 5,
+										"strategy": 0
+									}
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

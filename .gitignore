@@ -1,0 +1,13 @@
+build/bundles
+*.log*
+.vscode
+.idea
+.test
+.out
+!./.gitignore
+IMAGEBUILD/
+coverage.txt
+.DS_Store
+logs/
+*.swp
+/cover.out
