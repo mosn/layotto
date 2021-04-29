@@ -23,7 +23,7 @@ The dumped binary traffic data will be stored in the ${user's home directory}/lo
 
 ![img.png](../../../../img/tcp_dump.png)
 
-You can use these data in combination with other tools and infrastructure, such as traffic playback, bypass verification, etc.
+You can use these data in combination with other tools and infrastructure to do something cool, such as traffic playback, bypass verification, etc.
 
 ### Configuration description
 
