@@ -1,4 +1,4 @@
-module gitlab.alipay-inc.com/ant-mesh/runtime
+module github.com/layotto/layotto
 
 go 1.14
 
