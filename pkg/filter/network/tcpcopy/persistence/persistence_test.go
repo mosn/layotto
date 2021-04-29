@@ -1,12 +1,27 @@
 package persistence
 
 import (
+	"fmt"
 	"gitlab.alipay-inc.com/ant-mesh/runtime/pkg/filter/network/tcpcopy/strategy"
 	"mosn.io/pkg/log"
+	"os"
+	"path"
 	"testing"
 )
 
+func InitForTest() {
+	getLogPath = getPathForTest
+}
+
+func getPathForTest(fileName string) string {
+	logFolder, _ := os.Getwd()
+	logFolder = fmt.Sprintf(path.Join(logFolder, "logs/mosn"))
+	logPath := logFolder + string(os.PathSeparator) + fileName
+	return logPath
+}
+
 func TestIsPersistence_switch_off(t *testing.T) {
+	InitForTest()
 	log.DefaultLogger.SetLogLevel(log.DEBUG)
 
 	tests := []struct {
@@ -28,6 +43,7 @@ func TestIsPersistence_switch_off(t *testing.T) {
 }
 
 func TestIsPersistence_not_in_sample_duration(t *testing.T) {
+	InitForTest()
 	log.DefaultLogger.SetLogLevel(log.DEBUG)
 
 	strategy.DumpSwitch = true
@@ -42,6 +58,7 @@ func TestIsPersistence_not_in_sample_duration(t *testing.T) {
 }
 
 func TestIsPersistence_cpu_exceed_max_rate(t *testing.T) {
+	InitForTest()
 	log.DefaultLogger.SetLogLevel(log.DEBUG)
 
 	strategy.DumpSwitch = true
@@ -57,7 +74,7 @@ func TestIsPersistence_cpu_exceed_max_rate(t *testing.T) {
 }
 
 func TestIsPersistence_mem_exceed_max_rate(t *testing.T) {
-
+	InitForTest()
 	log.DefaultLogger.SetLogLevel(log.DEBUG)
 
 	strategy.DumpSwitch = true
@@ -73,7 +90,7 @@ func TestIsPersistence_mem_exceed_max_rate(t *testing.T) {
 }
 
 func TestIsPersistence_success(t *testing.T) {
-
+	InitForTest()
 	log.DefaultLogger.SetLogLevel(log.DEBUG)
 
 	strategy.DumpSwitch = true
