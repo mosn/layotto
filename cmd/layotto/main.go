@@ -26,7 +26,6 @@ import (
 	_ "mosn.io/pkg/buffer"
 )
 
-// TODO: 开源以后完善,目前就做一个example
 func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
 }
@@ -97,11 +96,11 @@ func main() {
 
 func newRuntimeApp(startCmd *cli.Command) *cli.App {
 	app := cli.NewApp()
-	app.Name = "runtime"
+	app.Name = "LayOtto"
 	app.Version = "0.1.0"
 	app.Compiled = time.Now()
 	app.Copyright = "(c) " + strconv.Itoa(time.Now().Year()) + " Ant Group"
-	app.Usage = "mosn based runtime"
+	app.Usage = "A fast and efficient cloud native application runtime based on MOSN."
 	app.Flags = cmdStart.Flags
 
 	//commands
