@@ -25,9 +25,13 @@ LayOtto提供了各个语言版本的sdk，sdk通过grpc与LayOtto进行交互�
 [通过LayOtto调用apollo配置中心](docs/zh/start/configuration/start-apollo.md) 
 
 
-### 在4层网络进行流量干预
+### 在四层网络进行流量干预
 
 [Dump TCP流量](docs/zh/start/network_filter/tcpcopy.md)
+
+### 在七层网络进行流量干预
+
+[方法级别限流](docs/zh/start/network_filter/flow_control.md)
 
 ## 如何贡献代码
 

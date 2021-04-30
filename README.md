@@ -28,6 +28,10 @@ See the code examples [configuration demo with etcd](docs/en/start/configuration
 
 [Dump TCP Traffic](docs/en/start/network_filter/tcpcopy.md)
 
+### Flow Control on the 7th layer network
+
+[Method Level Flow Control](docs/en/start/network_filter/flow_control.md)
+
 ## Contributing to LayOtto
 
 See the Development Guide [contributing](CONTRIBUTING.md) to get started with building and developing.
