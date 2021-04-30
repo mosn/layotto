@@ -28,7 +28,7 @@ go build
 ### 启动客户端Demo，调用LayOtto增删改查
 
 ```bash
- cd ${projectpath}/runtime/demo/configuration/apollo
+ cd ${projectpath}/demo/configuration/apollo
  go build -o apolloClientDemo
  ./apolloClientDemo
 ```
@@ -46,6 +46,6 @@ receive subscribe resp store_name:"apollo" app_id:"apollo" items:<key:"heihei" c
 
 ### 下一步
 
-示例客户端Demo中使用了LayOtto提供的golang版本sdk，sdk位于runtime/sdk目录下，用户可以通过对应的sdk直接调用LayOtto提供的服务。
+示例客户端Demo中使用了LayOtto提供的golang版本sdk，sdk位于`sdk`目录下，用户可以通过对应的sdk直接调用LayOtto提供的服务。
 
 除了使用sdk，您也可以用任何您喜欢的语言、通过grpc直接和LayOtto交互

@@ -13,7 +13,9 @@
 运行make指令生成容器镜像
 
 ```bash
-make build-image
+  cd ${projectpath}
+
+  make build-image
 ```
 
 运行结束后本地会生成两个镜像：
@@ -38,7 +40,7 @@ Mac和Windows不支持--net=host, 如果是在linux上可以直接把 -p 34904:3
 ### 启动本地client
 
 ```bash
- cd yourDir/runtime/demo/configuration/etcd
+ cd ${projectpath}/demo/configuration/etcd
  go build -o etcdDemo
  ./etcdDemo
 ```

@@ -1,8 +1,8 @@
-## Dump TCPÁ÷Á¿
+## Dump TCPæµé‡
 
-### ½éÉÜ
+### ä»‹ç»
 
-µ±Äú°´ÕÕquick startÎÄµµ[Í¨¹ýLayOttoµ÷ÓÃapolloÅäÖÃÖÐÐÄ](docs/zh/start/configuration/start-apollo.md)ÔËÐÐdemoÊ±£¬¿ÉÄÜ»á×¢Òâµ½ÅäÖÃÎÄ¼þconfig_apollo.jsonÖÐÓÐÕâÃ´Ò»¶ÎÅäÖÃ£º
+å½“æ‚¨æŒ‰ç…§quick startæ–‡æ¡£[é€šè¿‡LayOttoè°ƒç”¨apolloé…ç½®ä¸­å¿ƒ](docs/zh/start/configuration/start-apollo.md)è¿è¡Œdemoæ—¶ï¼Œå¯èƒ½ä¼šæ³¨æ„åˆ°é…ç½®æ–‡ä»¶config_apollo.jsonä¸­æœ‰è¿™ä¹ˆä¸€æ®µé…ç½®ï¼š
 
 ```json
                 {
@@ -18,17 +18,17 @@
                     }
                   }
 ```
-Õâ¶ÎÅäÖÃµÄº¬ÒåÊÇÆô¶¯Ê±¼ÓÔØtcpcopy²å¼þ£¬½øÐÐtcpÁ÷Á¿dump¡£
+è¿™æ®µé…ç½®çš„å«ä¹‰æ˜¯å¯åŠ¨æ—¶åŠ è½½tcpcopyæ’ä»¶ï¼Œè¿›è¡Œtcpæµé‡dumpã€‚
 
-dumpÏÂÀ´µÄ¶þ½øÖÆÁ÷Á¿Êý¾Ý»á´æ·ÅÔÚ ${user's home directory}/logs/mosn Ä¿Â¼£¬»ò/home/admin/logs/mosn Ä¿Â¼ÏÂ:
+dumpä¸‹æ¥çš„äºŒè¿›åˆ¶æµé‡æ•°æ®ä¼šå­˜æ”¾åœ¨ ${user's home directory}/logs/mosn ç›®å½•ï¼Œæˆ–/home/admin/logs/mosn ç›®å½•ä¸‹:
 
 ![img.png](../../../../img/tcp_dump.png)
 
-Äú¿ÉÒÔ½áºÏÆäËû¹¤¾ßºÍ»ù´¡ÉèÊ©Ê¹ÓÃÕâÐ©Êý¾Ý£¬ÀýÈç½øÐÐÁ÷Á¿»Ø·Å¡¢ÅÔÂ·ÑéÖ¤µÈ¡£
+æ‚¨å¯ä»¥ç»“åˆå…¶ä»–å·¥å…·å’ŒåŸºç¡€è®¾æ–½ä½¿ç”¨è¿™äº›æ•°æ®ï¼Œä¾‹å¦‚è¿›è¡Œæµé‡å›žæ”¾ã€æ—è·¯éªŒè¯ç­‰ã€‚
 
-### ÅäÖÃÏîËµÃ÷
+### é…ç½®é¡¹è¯´æ˜Ž
 
-ÉÏÎÄµÄjsonÖÐ£¬strategyÅäÖÃÏîÖ÷ÒªÓÃÀ´½øÐÐ²ÉÑù²ßÂÔÅäÖÃ£¬¾ßÌåÅäÖÃËµÃ÷ÈçÏÂ£º
+ä¸Šæ–‡çš„jsonä¸­ï¼Œstrategyé…ç½®é¡¹ä¸»è¦ç”¨æ¥è¿›è¡Œé‡‡æ ·ç­–ç•¥é…ç½®ï¼Œå…·ä½“é…ç½®è¯´æ˜Žå¦‚ä¸‹ï¼š
 
 ```go
 type DumpConfig struct {
@@ -40,8 +40,8 @@ type DumpConfig struct {
 }
 ```
 
-### ÊµÏÖÔ­Àí
+### å®žçŽ°åŽŸç†
 
-LayOtto·þÎñÆ÷ÔËÐÐÔÚMOSNÉÏ£¬Ê¹ÓÃMOSNµÄfilterÀ©Õ¹ÄÜÁ¦£¬Òò´ËÉÏÎÄµÄtcpcopyÆäÊµÊÇMOSNµÄÒ»¸önetwork filter²å¼þ¡£
+LayOttoæœåŠ¡å™¨è¿è¡Œåœ¨MOSNä¸Šï¼Œä½¿ç”¨MOSNçš„filteræ‰©å±•èƒ½åŠ›ï¼Œå› æ­¤ä¸Šæ–‡çš„tcpcopyå…¶å®žæ˜¯MOSNçš„ä¸€ä¸ªnetwork filteræ’ä»¶ã€‚
 
-Äú¿ÉÒÔ²Î¿¼ [MOSN Ô´Âë½âÎö - filterÀ©Õ¹»úÖÆ](https://mosn.io/blog/code/mosn-filters/) ÊµÏÖÄú×Ô¼ºµÄ4²ãfilter²å¼þ
+æ‚¨å¯ä»¥å‚è€ƒ [MOSN æºç è§£æž - filteræ‰©å±•æœºåˆ¶](https://mosn.io/blog/code/mosn-filters/) å®žçŽ°æ‚¨è‡ªå·±çš„4å±‚filteræ’ä»¶
