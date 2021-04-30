@@ -1,5 +1,7 @@
 <h2>通过LayOtto调用etcd配置中心</h2>
 
+[English Version](../../../en/start/configuration/start.md)
+
 ## 快速开始
 
 该示例展示了如何通过LayOtto，对etcd配置中心进行增删改查以及watch的过程。请提前在本机上安装[Docker](https://www.docker.com/get-started) 软件。

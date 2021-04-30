@@ -1,3 +1,5 @@
+[English Version](README.md)
+
 LayOtto 是一款使用Golang开发的runtime, 为应用提供了各种分布式能力，比如状态管理，配置管理，事件驱动等能力，以简化应用的开发。
 
 LayOtto 以开源的[Mosn](https://github.com/mosn/mosn) 为底座，在提供分布式能力以外，提供了serviceMesh对于流量的管控能力。
