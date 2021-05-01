@@ -15,12 +15,11 @@ At first, please make sure your layotto PATH is same as below:
 $GOPATH/src/github/layotto/layotto
 ```
 
-then execute CMD below:
+then execute `CMD` below:
 
 ```bash
-  cd $GOPATH/src/github/layotto/layotto
-  
-  make image
+cd $GOPATH/src/github/layotto/layotto  
+make image
 ```
 
 After make success, you can see two images with docker images command：
