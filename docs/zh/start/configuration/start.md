@@ -44,9 +44,9 @@ Mac和Windows不支持--net=host, 如果是在linux上可以直接把 -p 34904:3
 ### 启动本地client
 
 ```bash
- cd yourDir/runtime/demo/configuration/etcd
- go build -o etcdDemo
- ./etcdDemo
+cd layotto/demo/configuration/etcd
+go build
+./etcd
 ```
 
 打印出如下信息则代表启动完成：

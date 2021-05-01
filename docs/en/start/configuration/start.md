@@ -44,9 +44,9 @@ Mac and Windows do not support --net=host, if it is on linux, you can directly r
 ### Start client
 
 ```bash
- cd yourDir/runtime/demo/configuration/etcd
- go build
- ./etcd
+cd layotto/demo/configuration/etcd
+go build
+./etcd
 ```
 
 If the following information is printed out, it means the startup is complete and LayOtto is running now：
