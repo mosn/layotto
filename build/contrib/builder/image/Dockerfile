@@ -8,7 +8,7 @@ COPY ./etc/supervisor/runtime.conf                   /ROOT/etc/supervisord/conf.
 #if you want test any backgroud store, cp it's .conf
 COPY ./etc/supervisor/etcd.conf                   /ROOT/etc/supervisord/conf.d/etcd.conf
 
-COPY ./runtime $CHROOT_RUNTIME_PREFIX/bin/runtime
+COPY ./layotto $CHROOT_RUNTIME_PREFIX/bin/runtime
 
 RUN mkdir -p $RUNTIME_PREFIX/conf \
  && mkdir -p $RUNTIME_PREFIX/logs

@@ -10,12 +10,17 @@
 
 ### 生成镜像
 
-运行make指令生成容器镜像
+首先请确认把layotto项目放在如下目录：
+
+```
+$GOPATH/src/github/layotto/layotto
+```
+
+然后执行如下命令：
 
 ```bash
-  cd ${projectpath}
-
-  make build-image
+cd $GOPATH/src/github/layotto/layotto  
+make image
 ```
 
 运行结束后本地会生成两个镜像：
@@ -23,15 +28,14 @@
 ```bash
 
 xxx@B-P59QMD6R-2102 img % docker images
-REPOSITORY                                TAG                   IMAGE ID       CREATED        SIZE
-runtime                                   0.1.0-94d61d8         8d0040e3e3b0   24 hours ago   439MB
-mosnio/runtime                            0.1.0-94d61d8         8d0040e3e3b0   24 hours ago   439MB
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+layotto/layotto     0.1.0-662eab0       0370527a51a1        10 minutes ago      431MB
 ```
 
 ### 运行LayOtto
 
 ```bash
-docker run -p 34904:34904 mosnio/runtime:0.1.0-94d61d8
+docker run -p 34904:34904 layotto/layotto:0.1.0-662eab0
 ```
 
 Mac和Windows不支持--net=host, 如果是在linux上可以直接把 -p 34904:34904 替换成 --net=host。
@@ -40,9 +44,9 @@ Mac和Windows不支持--net=host, 如果是在linux上可以直接把 -p 34904:3
 ### 启动本地client
 
 ```bash
- cd ${projectpath}/demo/configuration/etcd
- go build -o etcdDemo
- ./etcdDemo
+cd layotto/demo/configuration/etcd
+go build
+./etcd
 ```
 
 打印出如下信息则代表启动完成：
