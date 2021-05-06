@@ -7,7 +7,7 @@
 This example shows how to add, delete, modify, and watch the etcd configuration center through LayOtto. Please install [Docker](https://www.docker.com/get-started) software on this machine in advance.
 [config file](../../../../configs/runtime_config.json) defines etcd in config_stores, and users can change the configuration file to the configuration center they want (currently supports etcd and apollo).
 
-### build docker image
+### Build docker image
 
 At first, please make sure your layotto PATH is same as below:
 

@@ -1,8 +1,8 @@
 [查看中文版本](README-ZH.md)
 
-LayOtto is a runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event-driven capabilities to simplify application development.
+LayOtto is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event-driven capabilities to simplify application development.
 
-LayOtto uses the open source [Mosn](https://github.com/mosn/mosn) as the base, in addition to providing distributed capabilities, it also provides serviceMesh's ability to control traffic.
+LayOtto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, in addition to providing distributed capabilities, it also provides Service Mesh's ability to control traffic.
 
 ## Features
 
@@ -12,11 +12,11 @@ LayOtto uses the open source [Mosn](https://github.com/mosn/mosn) as the base, i
 
 ## Project Architecture
 
-As shown in the architecture diagram below, LayOtto uses the open source mosn as the base to provide network layer management capabilities while providing distributed capabilities. The business can directly interact with LayOtto through a lightweight SDK without paying attention to the specific back-end infrastructure.
+As shown in the architecture diagram below, LayOtto uses the open source MOSN as the base to provide network layer management capabilities while providing distributed capabilities. The business logic can directly interact with LayOtto through a lightweight SDK without paying attention to the specific back-end infrastructure.
 
-LayOtto provides sdk in various languages. The sdk interacts with LayOtto through grpc. Application developers only need to specify their own infrastructure type through the configuration file [configure file](./configs/runtime_config.json) provided by LayOtto. Any coding changes are required, which greatly improves the portability of the program.
+LayOtto provides sdk in various languages. The sdk interacts with LayOtto through grpc. Application developers only need to specify their own infrastructure type through the configuration file [configure file](./configs/runtime_config.json) provided by LayOtto. No coding changes are required, which greatly improves the portability of the program.
 
-![Architecture](img/runtime架构图.png)
+![Architecture](img/runtime-architecture.png)
 
 ## Quickstarts and Samples
 
@@ -42,6 +42,6 @@ See the Development Guide [contributing](CONTRIBUTING.md) to get started with bu
 
 Use [DingTalk](https://www.dingtalk.com/en) to scan the QR code below to join the LayOtto user exchange group.
 
-![群二维码](img/钉钉群二维码.jpg)
+![Ding Talk Group QR Code](img/ding-talk-group-1.jpg)
 
-Or through Dingding search group number 31912621, join the user exchange group.
+Or through Ding Talk search group number 31912621, join the user exchange group.
