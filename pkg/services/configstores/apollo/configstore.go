@@ -306,8 +306,8 @@ func (c *ConfigStore) Subscribe(req *configstores.SubscribeReq, ch chan *configs
 }
 
 func (c *ConfigStore) StopSubscribe() {
-	//	TODO 现在api层只支持单连接、不支持多连接能力
-	//	后续支持多连接的话可以用context控制取消
+	//	TODO  Now the api layer only supports single connection and does not support multi-connection.
+	//	 If it supports multiple connections in the future, we can use a context to cancel specific connections
 	c.listener.reset()
 }
 

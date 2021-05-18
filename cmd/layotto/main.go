@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/layotto/layotto/pkg/integrate/actuator"
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/configstores/apollo"
 	"github.com/layotto/layotto/pkg/services/configstores/etcdv3"
@@ -10,6 +12,11 @@ import (
 	"time"
 
 	_ "github.com/layotto/layotto/pkg/filter/network/tcpcopy"
+	_ "github.com/layotto/layotto/pkg/filter/stream/actuator"
+	health "github.com/layotto/layotto/pkg/filter/stream/actuator/health"
+	_ "github.com/layotto/layotto/pkg/filter/stream/actuator/http"
+	_ "github.com/layotto/layotto/pkg/filter/stream/actuator/info"
+	actuatorInfo "github.com/layotto/layotto/pkg/filter/stream/actuator/info"
 	"github.com/layotto/layotto/pkg/runtime"
 	"github.com/layotto/layotto/pkg/services/hello"
 	"github.com/layotto/layotto/pkg/services/hello/helloworld"
@@ -18,25 +25,35 @@ import (
 	"mosn.io/mosn/pkg/featuregate"
 	_ "mosn.io/mosn/pkg/filter/network/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
+	_ "mosn.io/mosn/pkg/filter/network/proxy"
 	_ "mosn.io/mosn/pkg/filter/stream/flowcontrol"
 	_ "mosn.io/mosn/pkg/metrics/sink"
 	_ "mosn.io/mosn/pkg/metrics/sink/prometheus"
 	"mosn.io/mosn/pkg/mosn"
 	_ "mosn.io/mosn/pkg/network"
+	_ "mosn.io/mosn/pkg/stream/http"
 	_ "mosn.io/pkg/buffer"
 )
 
 func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
+	// Register default actuator implementations
+	actuatorInfo.AddInfoContributor("app", actuator.GetAppContributor())
+	health.AddReadinessIndicator("runtime_startup", actuator.GetRuntimeReadyIndicator())
+	health.AddLivenessIndicator("runtime_startup", actuator.GetRuntimeReadyIndicator())
 }
 
 func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
+	// 1. parse config
 	cfg, err := runtime.ParseRuntimeConfig(data)
 	if err != nil {
+		actuator.GetRuntimeReadyIndicator().SetUnhealth(fmt.Sprintf("parse config error.%v", err))
 		return nil, err
 	}
+	// 2. new instance
 	rt := runtime.NewMosnRuntime(cfg)
-	return rt.Run(
+	// 3. run
+	server, err := rt.Run(
 		runtime.WithGrpcOptions(opts...),
 		runtime.WithHelloFactory(
 			hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),
@@ -46,6 +63,11 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 		),
 	)
+	// 4. check if unhealthy
+	if err != nil {
+		actuator.GetRuntimeReadyIndicator().SetUnhealth(err.Error())
+	}
+	return server, err
 }
 
 var (
@@ -82,6 +104,7 @@ var (
 
 			stm.Run()
 
+			actuator.GetRuntimeReadyIndicator().SetStarted()
 			// wait mosn finished
 			stm.WaitFinish()
 			return nil
@@ -91,7 +114,16 @@ var (
 
 func main() {
 	app := newRuntimeApp(&cmdStart)
+	registerAppInfo(app)
 	_ = app.Run(os.Args)
+}
+
+func registerAppInfo(app *cli.App) {
+	appInfo := actuator.NewAppInfo()
+	appInfo.Name = app.Name
+	appInfo.Version = app.Version
+	appInfo.Compiled = app.Compiled
+	actuator.SetAppInfoSingleton(appInfo)
 }
 
 func newRuntimeApp(startCmd *cli.Command) *cli.App {
