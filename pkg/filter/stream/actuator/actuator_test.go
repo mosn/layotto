@@ -10,7 +10,7 @@ type MockEndpoint struct {
 }
 
 func (m *MockEndpoint) Handle(ctx context.Context, params ParamsScanner) (map[string]interface{}, error) {
-	return nil, err
+	return nil, nil
 }
 
 func TestActuator(t *testing.T) {
