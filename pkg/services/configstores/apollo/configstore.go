@@ -70,6 +70,14 @@ func newHttpClient() httpClient {
 
 //Init SetConfig the configuration store.
 func (c *ConfigStore) Init(config *configstores.StoreConfig) error {
+	err := c.doInit(config)
+	if err != nil {
+		getReadinessIndicator().ReportError(err.Error())
+	}
+	return err
+}
+
+func (c *ConfigStore) doInit(config *configstores.StoreConfig) error {
 	// 1. validate and parse config
 	if config == nil {
 		return ErrNoConfig
