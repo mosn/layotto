@@ -1,10 +1,9 @@
 package http
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/layotto/layotto/pkg/filter/stream/actuator"
+	"github.com/layotto/layotto/pkg/actuator"
 	"github.com/valyala/fasthttp"
 	"mosn.io/api"
 	mosnhttp "mosn.io/mosn/pkg/protocol/http"
@@ -35,6 +34,8 @@ func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap,
 	log.DefaultLogger.Debugf("[actuator] path: %v", path)
 	// 2. validate path
 	resolver := NewPathResolver(path)
+	// http path must be /actuator/{endpoint_name}/{params}
+	// So we can return 404 directly if it does not start with "actuator"
 	if resolver.Next() != "actuator" {
 		//	illegal
 		dis.write404()
@@ -74,12 +75,11 @@ func (dis *DispatchFilter) writeJsonResult(jsonObject map[string]interface{}, co
 		code = HttpSuccessCode
 	}
 	// 0. marshal
-	var str []byte
+	var byteSlice []byte
 	if jsonObject != nil {
-		marshal, err := json.Marshal(jsonObject)
-		if err == nil {
-			str = marshal
-		} else {
+		var err error
+		byteSlice, err = json.Marshal(jsonObject)
+		if err != nil {
 			log.DefaultLogger.Errorf("[actuator][dispatch_filter]error when marshal result:%v", err)
 			code = HttpUnavailableCode
 		}
@@ -92,10 +92,7 @@ func (dis *DispatchFilter) writeJsonResult(jsonObject map[string]interface{}, co
 	rspHeader.Set("Content-Type", "application/json")
 	rspHeader.SetStatusCode(code)
 	// 2. body
-	data := buffer.NewIoBuffer(0)
-	if len(str) > 0 {
-		data.ReadFrom(bytes.NewBuffer(str))
-	}
+	data := buffer.NewIoBufferBytes(byteSlice)
 	// 3. write response
 	dis.handler.SendDirectResponse(rspHeader, data, nil)
 }

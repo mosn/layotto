@@ -33,35 +33,51 @@ func GetRuntimeReadyIndicator() RuntimeReadyIndicator {
 }
 
 type runtimeReadyIndicatorImpl struct {
+	mu sync.RWMutex
+
 	started bool
 	health  bool
 	reason  string
 }
 
-func (s *runtimeReadyIndicatorImpl) SetStarted() {
-	s.started = true
+func (idc *runtimeReadyIndicatorImpl) SetStarted() {
+	idc.mu.Lock()
+	defer idc.mu.Unlock()
+
+	idc.started = true
 }
 
-func (s *runtimeReadyIndicatorImpl) Report() health.Health {
-	if !s.health {
+func (idc *runtimeReadyIndicatorImpl) Report() health.Health {
+	idc.mu.RLock()
+	defer idc.mu.RUnlock()
+
+	if !idc.health {
 		h := health.NewHealth(health.DOWN)
-		h.SetDetail(reasonKey, s.reason)
+		h.SetDetail(reasonKey, idc.reason)
 		return h
 	}
-	if !s.started {
-		h := health.NewHealth(health.DOWN)
+	if !idc.started {
+		h := health.NewHealth(health.INIT)
 		h.SetDetail(reasonKey, reasonValueStarting)
 		return h
 	}
-	return health.NewHealth(health.UP)
+	h := health.NewHealth(health.UP)
+	h.SetDetail(reasonKey, idc.reason)
+	return h
 }
 
-func (c *runtimeReadyIndicatorImpl) SetUnhealth(reason string) {
-	c.health = false
-	c.reason = reason
+func (idc *runtimeReadyIndicatorImpl) SetUnhealth(reason string) {
+	idc.mu.Lock()
+	defer idc.mu.Unlock()
+
+	idc.health = false
+	idc.reason = reason
 }
 
-func (c *runtimeReadyIndicatorImpl) SetHealth(reason string) {
-	c.health = true
-	c.reason = reason
+func (idc *runtimeReadyIndicatorImpl) SetHealth(reason string) {
+	idc.mu.Lock()
+	defer idc.mu.Unlock()
+
+	idc.health = true
+	idc.reason = reason
 }

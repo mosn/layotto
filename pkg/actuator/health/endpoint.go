@@ -3,7 +3,7 @@ package health
 import (
 	"context"
 	"errors"
-	"github.com/layotto/layotto/pkg/filter/stream/actuator"
+	"github.com/layotto/layotto/pkg/actuator"
 )
 
 const (

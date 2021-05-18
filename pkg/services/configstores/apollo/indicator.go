@@ -20,7 +20,10 @@ func init() {
 }
 
 func newHealthIndicator() *healthIndicator {
-	return &healthIndicator{}
+	return &healthIndicator{
+		started: false,
+		isErr:   false,
+	}
 }
 
 func getReadinessIndicator() *healthIndicator {
@@ -30,6 +33,7 @@ func getReadinessIndicator() *healthIndicator {
 type healthIndicator struct {
 	mu sync.Mutex
 
+	started   bool
 	isErr     bool
 	errReason string
 }
@@ -45,19 +49,27 @@ func (idc *healthIndicator) Report() health.Health {
 		h.Details[reasonKey] = idc.errReason
 		return h
 	}
+	if idc.started {
+		return health.NewHealth(health.UP)
+	}
 
-	h = health.NewHealth(health.UP)
-	return h
+	return health.NewHealth(health.INIT)
 }
 
-func (idc *healthIndicator) ReportError(reason string) {
+func (idc *healthIndicator) reportError(reason string) {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 
 	if idc.isErr {
 		return
 	}
-
 	idc.isErr = true
 	idc.errReason = reason
+}
+
+func (idc *healthIndicator) setStarted() {
+	idc.mu.Lock()
+	defer idc.mu.Unlock()
+
+	idc.started = true
 }

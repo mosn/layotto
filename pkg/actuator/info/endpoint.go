@@ -22,8 +22,7 @@ func NewEndpoint() *Endpoint {
 func (e *Endpoint) Handle(ctx context.Context, params actuator.ParamsScanner) (map[string]interface{}, error) {
 	result := make(map[string]interface{})
 	var resultErr error = nil
-	contributors := infoContributors
-	for k, c := range contributors {
+	for k, c := range infoContributors {
 		cinfo, err := c.GetInfo()
 		if err != nil {
 			log.DefaultLogger.Errorf("[actuator][info] Error when GetInfo.Contributor:%v,error:%v", k, err)

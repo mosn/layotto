@@ -14,7 +14,11 @@ func (ca IndicatorAdapter) Report() Health {
 type Status string
 
 var (
-	UP   = Status("UP")
+	// INIT means it is starting
+	INIT = Status("INIT")
+	// UP means it is healthy
+	UP = Status("UP")
+	// DOWN means it is unhealthy
 	DOWN = Status("DOWN")
 )
 

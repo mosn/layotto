@@ -1,5 +1,7 @@
 package actuator
 
+import "mosn.io/pkg/log"
+
 type Actuator struct {
 	endpointRegistry map[string]Endpoint
 }
@@ -16,5 +18,6 @@ func (act *Actuator) GetEndpoint(name string) (endpoint Endpoint, ok bool) {
 }
 
 func (act *Actuator) AddEndpoint(name string, ep Endpoint) {
+	log.DefaultLogger.Warnf("Duplicate Endpoint name:  %v !", name)
 	act.endpointRegistry[name] = ep
 }

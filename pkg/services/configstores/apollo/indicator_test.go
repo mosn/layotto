@@ -18,7 +18,7 @@ func TestGetHealthError(t *testing.T) {
 	assert := testify.New(t)
 
 	hi := newHealthIndicator()
-	hi.ReportError("sub error")
+	hi.reportError("sub error")
 	h := hi.Report()
 	assert.Equal(h.Status, health.DOWN)
 	assert.Equal(h.Details[reasonKey], "sub error")

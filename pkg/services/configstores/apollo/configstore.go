@@ -72,8 +72,9 @@ func newHttpClient() httpClient {
 func (c *ConfigStore) Init(config *configstores.StoreConfig) error {
 	err := c.doInit(config)
 	if err != nil {
-		getReadinessIndicator().ReportError(err.Error())
+		getReadinessIndicator().reportError(err.Error())
 	}
+	getReadinessIndicator().setStarted()
 	return err
 }
 
