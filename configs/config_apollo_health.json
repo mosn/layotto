@@ -3,11 +3,6 @@
     {
       "default_log_path": "stdout",
       "default_log_level": "DEBUG",
-      "routers": [
-        {
-          "router_config_name": "actuator_dont_need_router"
-        }
-      ],
       "listeners": [
         {
           "name": "grpc",
@@ -73,8 +68,7 @@
                   "type": "proxy",
                   "config": {
                     "downstream_protocol": "Http1",
-                    "upstream_protocol": "Http1",
-                    "router_config_name": "actuator_dont_need_router"
+                    "upstream_protocol": "Http1"
                   }
                 }
               ]
