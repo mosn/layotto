@@ -11,6 +11,9 @@ func TestGetHealthInitOrSuccess(t *testing.T) {
 
 	hi := newHealthIndicator()
 	h := hi.Report()
+	assert.Equal(h.Status, health.INIT)
+	hi.setStarted()
+	h = hi.Report()
 	assert.Equal(h.Status, health.UP)
 }
 
