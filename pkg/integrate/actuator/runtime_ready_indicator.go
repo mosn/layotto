@@ -23,8 +23,8 @@ func init() {
 
 type RuntimeReadyIndicator interface {
 	Report() health.Health
-	SetUnhealth(reason string)
-	SetHealth(reason string)
+	SetUnhealthy(reason string)
+	SetHealthy(reason string)
 	SetStarted()
 }
 
@@ -66,7 +66,7 @@ func (idc *runtimeReadyIndicatorImpl) Report() health.Health {
 	return h
 }
 
-func (idc *runtimeReadyIndicatorImpl) SetUnhealth(reason string) {
+func (idc *runtimeReadyIndicatorImpl) SetUnhealthy(reason string) {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 
@@ -74,7 +74,7 @@ func (idc *runtimeReadyIndicatorImpl) SetUnhealth(reason string) {
 	idc.reason = reason
 }
 
-func (idc *runtimeReadyIndicatorImpl) SetHealth(reason string) {
+func (idc *runtimeReadyIndicatorImpl) SetHealthy(reason string) {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 

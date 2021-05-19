@@ -46,7 +46,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	// 1. parse config
 	cfg, err := runtime.ParseRuntimeConfig(data)
 	if err != nil {
-		actuator.GetRuntimeReadyIndicator().SetUnhealth(fmt.Sprintf("parse config error.%v", err))
+		actuator.GetRuntimeReadyIndicator().SetUnhealthy(fmt.Sprintf("parse config error.%v", err))
 		return nil, err
 	}
 	// 2. new instance
@@ -64,7 +64,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	)
 	// 4. check if unhealthy
 	if err != nil {
-		actuator.GetRuntimeReadyIndicator().SetUnhealth(err.Error())
+		actuator.GetRuntimeReadyIndicator().SetUnhealthy(err.Error())
 	}
 	return server, err
 }

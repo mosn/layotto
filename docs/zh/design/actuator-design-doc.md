@@ -253,7 +253,7 @@ info.Endpoint将请求分发给info.Contributor的实现
 
 ![img.png](../../../img/actuator/set_started.png)
 
-- SetUnhealth埋点
+- SetUnhealthy埋点
 
 启动失败:
 
