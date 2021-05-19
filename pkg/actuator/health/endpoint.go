@@ -17,6 +17,7 @@ const (
 var (
 	invalidTypeError = errors.New("health type invalid.")
 	serviceDownError = errors.New("service unavailable.")
+	serviceInitError = errors.New("service is initializing.")
 )
 
 func init() {
@@ -71,6 +72,9 @@ func (e *Endpoint) Handle(ctx context.Context, params actuator.ParamsScanner) (m
 		if data.Status == DOWN {
 			result[status_key] = DOWN
 			resultErr = serviceDownError
+		} else if data.Status == INIT && result[status_key] == UP {
+			result[status_key] = INIT
+			resultErr = serviceInitError
 		}
 	}
 	return result, resultErr
