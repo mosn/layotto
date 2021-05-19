@@ -30,7 +30,7 @@ See the code examples [configuration demo with etcd](docs/en/start/configuration
 
 ### Flow Control on the 7th layer network
 
-[Method Level Flow Control](docs/en/start/network_filter/flow_control.md)
+[Method Level Flow Control](docs/en/start/stream_filter/flow_control.md)
 
 ## Contributing to LayOtto
 

@@ -8,7 +8,6 @@
                 {
                   "type": "tcpcopy",
                   "config": {
-                    "port": "34904",
                     "strategy": {
                       "switch": "ON",
                       "interval": 30,

@@ -7,7 +7,6 @@ When you run the demo according to the quick-start document [Configuration demo 
                 {
                   "type": "tcpcopy",
                   "config": {
-                    "port": "34904",
                     "strategy": {
                       "switch": "ON",
                       "interval": 30,
