@@ -1,7 +1,7 @@
 package actuator
 
 import (
-	"github.com/layotto/layotto/pkg/filter/stream/actuator/health"
+	"github.com/layotto/layotto/pkg/actuator/health"
 	"sync"
 )
 

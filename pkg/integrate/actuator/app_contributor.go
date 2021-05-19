@@ -1,7 +1,7 @@
 package actuator
 
 import (
-	"github.com/layotto/layotto/pkg/filter/stream/actuator/info"
+	"github.com/layotto/layotto/pkg/actuator/info"
 	"sync/atomic"
 	"time"
 )
