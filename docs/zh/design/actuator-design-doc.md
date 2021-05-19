@@ -3,11 +3,11 @@
 
 - 健康检查
 
-通过 mosn 可以统一获取到 runtime 内部所有组件，以及业务应用的健康状态
+通过Actuator接口可以统一获取到LayOtto内部所有组件，以及业务应用的健康状态
 
 - 查看运行时元数据
 
-通过 mosn 可以统一获取到 mosn 自己的元数据信息（例如版本，git信息），以及业务应用的元数据信息（例如通过配置中心订阅的配置项列表，例如应用版本信息）
+通过Actuator接口可以统一获取到LayOtto自己的元数据信息（例如版本，git信息），以及业务应用的元数据信息（例如通过配置中心订阅的配置项列表，例如应用版本信息）
 
 - 支持集成进开源基础设施，包括：
     - 可以集成进k8s健康检查
@@ -15,7 +15,7 @@
     - 如有需要，注册中心可以基于健康检查结果剔除节点
     - 后续可以基于此接口做dashboard项目或者GUI工具,以便排查问题。
     
-- 类似于spring boot actuator的功能，未来有更多的想象空间：Monitoring, Metrics, Auditing, and more.
+- 类似于Spring Boot Actuator的功能，未来有更多的想象空间：Monitoring, Metrics, Auditing, and more.
 
 ## 1.2. 解释
 
@@ -58,13 +58,13 @@ A: 先不搞，有反馈需求再加个钩子
 
 先开放http接口，因为开源基础设施的健康检查功能基本上都支持http（比如k8s,prometheus)，没有支持grpc的。
 
-为了能够复用MOSN的鉴权filter等filter能力，actuator将作为7层的filter跑在MOSN上。
+为了能够复用MOSN的鉴权filter等filter能力，Actuator将作为7层的filter跑在MOSN上。
 
 具体来说，MOSN新增listener,新写个stream_filter,这个filter负责http请求处理、调用Actuator.
 
 Actuator内部抽象出Endpoint概念，新请求到达服务器后，Actuator会委托对应的Endpoint进行处理。Endpoint支持按需扩展、注入进Actuator：
 
-![img.png](../../../img/actuator/actuator.png)
+![img.png](../../../img/actuator/abstract.png)
 
 ## 2.2. Http API设计
 
@@ -181,9 +181,10 @@ GET
 ## 2.4. 内部结构与请求处理流程
 
 ![img.png](../../../img/actuator/actuator_process.png)
+
 解释：
 
-### 2.4.1. 请求到达mosn，通过stream filter进入runtime、调用Actuator
+### 2.4.1. 请求到达mosn，通过stream filter进入LayOtto、调用Actuator
 
 stream filter层的http协议实现类(struct)为DispatchFilter，负责按http路径分发请求、调用Actuator:
 ```go
@@ -268,6 +269,6 @@ init:
 
 ![img_2.png](../../../img/actuator/img_2.png)
 
-其实目前没有需要埋点的地方，因为这里init初始化连接失败的话，runtime的indicator也能报unhealthy
+其实目前没有需要埋点的地方，因为这里init初始化连接失败的话，runtime_startup的indicator也能报unhealthy
 
 
