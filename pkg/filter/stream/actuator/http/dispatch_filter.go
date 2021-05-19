@@ -37,7 +37,7 @@ func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap,
 	// http path must be /actuator/{endpoint_name}/{params}
 	// So we can return 404 directly if it does not start with "actuator"
 	if resolver.Next() != "actuator" {
-		//	illegal
+		// illegal
 		dis.write404()
 		return api.StreamFilterStop
 	}
@@ -50,7 +50,7 @@ func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap,
 	epName := resolver.Next()
 	endpoint, ok := act.GetEndpoint(epName)
 	if !ok {
-		//	illegal
+		// illegal
 		dis.write404()
 		return api.StreamFilterStop
 	}
