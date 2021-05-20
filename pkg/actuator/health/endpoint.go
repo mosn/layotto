@@ -15,9 +15,9 @@ const (
 )
 
 var (
-	invalidTypeError = errors.New("health type invalid.")
-	serviceDownError = errors.New("service unavailable.")
-	serviceInitError = errors.New("service is initializing.")
+	invalidTypeError = errors.New("health type invalid")
+	serviceDownError = errors.New("service unavailable")
+	serviceInitError = errors.New("service is initializing")
 )
 
 func init() {

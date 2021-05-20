@@ -10,29 +10,39 @@ const (
 	reasonValueStarting = "starting"
 )
 
-var singleton *runtimeReadyIndicatorImpl
+var runtimeReady *runtimeIndicatorImpl
+var runtimeLive *runtimeIndicatorImpl
 var once sync.Once
 
 func init() {
-	singleton = &runtimeReadyIndicatorImpl{
+	runtimeReady = &runtimeIndicatorImpl{
+		started: false,
+		health:  true,
+		reason:  "",
+	}
+	runtimeLive = &runtimeIndicatorImpl{
 		started: false,
 		health:  true,
 		reason:  "",
 	}
 }
 
-type RuntimeReadyIndicator interface {
+type RuntimeIndicator interface {
 	Report() health.Health
 	SetUnhealthy(reason string)
 	SetHealthy(reason string)
 	SetStarted()
 }
 
-func GetRuntimeReadyIndicator() RuntimeReadyIndicator {
-	return singleton
+func GetRuntimeReadinessIndicator() RuntimeIndicator {
+	return runtimeReady
 }
 
-type runtimeReadyIndicatorImpl struct {
+func GetRuntimeLivenessIndicator() RuntimeIndicator {
+	return runtimeReady
+}
+
+type runtimeIndicatorImpl struct {
 	mu sync.RWMutex
 
 	started bool
@@ -40,14 +50,14 @@ type runtimeReadyIndicatorImpl struct {
 	reason  string
 }
 
-func (idc *runtimeReadyIndicatorImpl) SetStarted() {
+func (idc *runtimeIndicatorImpl) SetStarted() {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 
 	idc.started = true
 }
 
-func (idc *runtimeReadyIndicatorImpl) Report() health.Health {
+func (idc *runtimeIndicatorImpl) Report() health.Health {
 	idc.mu.RLock()
 	defer idc.mu.RUnlock()
 
@@ -66,7 +76,7 @@ func (idc *runtimeReadyIndicatorImpl) Report() health.Health {
 	return h
 }
 
-func (idc *runtimeReadyIndicatorImpl) SetUnhealthy(reason string) {
+func (idc *runtimeIndicatorImpl) SetUnhealthy(reason string) {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 
@@ -74,7 +84,7 @@ func (idc *runtimeReadyIndicatorImpl) SetUnhealthy(reason string) {
 	idc.reason = reason
 }
 
-func (idc *runtimeReadyIndicatorImpl) SetHealthy(reason string) {
+func (idc *runtimeIndicatorImpl) SetHealthy(reason string) {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 

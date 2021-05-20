@@ -76,7 +76,8 @@ func (m *MosnRuntime) Stop() {
 	if m.srv != nil {
 		m.srv.Stop()
 	}
-	actuator.GetRuntimeReadyIndicator().SetUnhealthy("shutdown")
+	actuator.GetRuntimeReadinessIndicator().SetUnhealthy("shutdown")
+	actuator.GetRuntimeLivenessIndicator().SetUnhealthy("shutdown")
 }
 
 func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {

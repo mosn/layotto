@@ -11,12 +11,14 @@ const (
 
 var (
 	readinessIndicator *healthIndicator
+	livenessIndicator  *healthIndicator
 )
 
 func init() {
 	readinessIndicator = newHealthIndicator()
+	livenessIndicator = newHealthIndicator()
 	health.AddReadinessIndicator("apollo", readinessIndicator)
-	health.AddLivenessIndicator("apollo", readinessIndicator)
+	health.AddLivenessIndicator("apollo", livenessIndicator)
 }
 
 func newHealthIndicator() *healthIndicator {
@@ -28,6 +30,10 @@ func newHealthIndicator() *healthIndicator {
 
 func getReadinessIndicator() *healthIndicator {
 	return readinessIndicator
+}
+
+func getLivenessIndicator() *healthIndicator {
+	return livenessIndicator
 }
 
 type healthIndicator struct {

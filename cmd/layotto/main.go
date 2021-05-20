@@ -38,15 +38,15 @@ func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
 	// Register default actuator implementations
 	actuatorInfo.AddInfoContributor("app", actuator.GetAppContributor())
-	health.AddReadinessIndicator("runtime_startup", actuator.GetRuntimeReadyIndicator())
-	health.AddLivenessIndicator("runtime_startup", actuator.GetRuntimeReadyIndicator())
+	health.AddReadinessIndicator("runtime_startup", actuator.GetRuntimeReadinessIndicator())
+	health.AddLivenessIndicator("runtime_startup", actuator.GetRuntimeLivenessIndicator())
 }
 
 func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
 	// 1. parse config
 	cfg, err := runtime.ParseRuntimeConfig(data)
 	if err != nil {
-		actuator.GetRuntimeReadyIndicator().SetUnhealthy(fmt.Sprintf("parse config error.%v", err))
+		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(fmt.Sprintf("parse config error.%v", err))
 		return nil, err
 	}
 	// 2. new instance
@@ -64,7 +64,8 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	)
 	// 4. check if unhealthy
 	if err != nil {
-		actuator.GetRuntimeReadyIndicator().SetUnhealthy(err.Error())
+		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(err.Error())
+		actuator.GetRuntimeLivenessIndicator().SetUnhealthy(err.Error())
 	}
 	return server, err
 }
@@ -103,7 +104,8 @@ var (
 
 			stm.Run()
 
-			actuator.GetRuntimeReadyIndicator().SetStarted()
+			actuator.GetRuntimeReadinessIndicator().SetStarted()
+			actuator.GetRuntimeLivenessIndicator().SetStarted()
 			// wait mosn finished
 			stm.WaitFinish()
 			return nil

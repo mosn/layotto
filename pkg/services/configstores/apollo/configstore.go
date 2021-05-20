@@ -73,8 +73,10 @@ func (c *ConfigStore) Init(config *configstores.StoreConfig) error {
 	err := c.doInit(config)
 	if err != nil {
 		getReadinessIndicator().reportError(err.Error())
+		getLivenessIndicator().reportError(err.Error())
 	}
 	getReadinessIndicator().setStarted()
+	getLivenessIndicator().setStarted()
 	return err
 }
 
