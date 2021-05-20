@@ -48,10 +48,8 @@ func (idc *healthIndicator) Report() health.Health {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 
-	var h health.Health
-
 	if idc.isErr {
-		h = health.NewHealth(health.DOWN)
+		h := health.NewHealth(health.DOWN)
 		h.Details[reasonKey] = idc.errReason
 		return h
 	}

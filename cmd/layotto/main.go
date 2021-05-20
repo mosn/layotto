@@ -3,20 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/layotto/layotto/pkg/integrate/actuator"
-	"github.com/layotto/layotto/pkg/services/configstores"
-	"github.com/layotto/layotto/pkg/services/configstores/apollo"
-	"github.com/layotto/layotto/pkg/services/configstores/etcdv3"
-	"os"
-	"strconv"
-	"time"
-
 	_ "github.com/layotto/layotto/pkg/actuator"
 	health "github.com/layotto/layotto/pkg/actuator/health"
 	actuatorInfo "github.com/layotto/layotto/pkg/actuator/info"
 	_ "github.com/layotto/layotto/pkg/filter/network/tcpcopy"
 	_ "github.com/layotto/layotto/pkg/filter/stream/actuator/http"
+	"github.com/layotto/layotto/pkg/integrate/actuator"
 	"github.com/layotto/layotto/pkg/runtime"
+	"github.com/layotto/layotto/pkg/services/configstores"
+	"github.com/layotto/layotto/pkg/services/configstores/apollo"
+	"github.com/layotto/layotto/pkg/services/configstores/etcdv3"
 	"github.com/layotto/layotto/pkg/services/hello"
 	"github.com/layotto/layotto/pkg/services/hello/helloworld"
 	"github.com/urfave/cli"
@@ -32,6 +28,9 @@ import (
 	_ "mosn.io/mosn/pkg/network"
 	_ "mosn.io/mosn/pkg/stream/http"
 	_ "mosn.io/pkg/buffer"
+	"os"
+	"strconv"
+	"time"
 )
 
 func init() {
