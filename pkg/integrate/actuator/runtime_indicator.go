@@ -39,7 +39,7 @@ func GetRuntimeReadinessIndicator() RuntimeIndicator {
 }
 
 func GetRuntimeLivenessIndicator() RuntimeIndicator {
-	return runtimeReady
+	return runtimeLive
 }
 
 type runtimeIndicatorImpl struct {
