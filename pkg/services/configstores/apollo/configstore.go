@@ -110,7 +110,11 @@ func (c *ConfigStore) doInit(config *configstores.StoreConfig) error {
 	if !ok || appId == "" {
 		return errConfigMissingField(configKeyAppId)
 	}
+	// open_api_token
 	c.openAPIToken = metadata["open_api_token"]
+	if c.openAPIToken == "" {
+		return errConfigMissingField("open_api_token")
+	}
 	c.openAPIAddress = metadata["open_api_address"]
 	if c.openAPIAddress == "" {
 		return errConfigMissingField("open_api_address")

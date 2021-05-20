@@ -22,10 +22,9 @@ LayOtto提供了各个语言版本的sdk，sdk通过grpc与LayOtto进行交互�
 
 ### 配置中心演示
 
-[通过LayOtto调用etcd配置中心](docs/zh/start/configuration/start.md) 
-
 [通过LayOtto调用apollo配置中心](docs/zh/start/configuration/start-apollo.md) 
 
+[通过LayOtto调用etcd配置中心](docs/zh/start/configuration/start.md)
 
 ### 在四层网络进行流量干预
 
@@ -34,6 +33,10 @@ LayOtto提供了各个语言版本的sdk，sdk通过grpc与LayOtto进行交互�
 ### 在七层网络进行流量干预
 
 [方法级别限流](docs/zh/start/stream_filter/flow_control.md)
+
+### 健康检查、运行时元数据查询
+
+[使用LayOtto Actuator进行健康检查和元数据查询](docs/zh/start/actuator/start.md)
 
 ## 如何贡献代码
 

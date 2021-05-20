@@ -22,7 +22,7 @@ LayOtto provides sdk in various languages. The sdk interacts with LayOtto throug
 
 ### Get started with LayOtto
 
-See the code examples [configuration demo with etcd](docs/en/start/configuration/start.md) or [configuration demo with apollo](docs/en/start/configuration/start-apollo.md) that can help you get started with LayOtto.
+See the quick start guides [configuration demo with apollo](docs/en/start/configuration/start-apollo.md) or [configuration demo with etcd](docs/en/start/configuration/start.md) that can help you get started with LayOtto.
 
 ### Traffic intervention on the 4th layer network
 
