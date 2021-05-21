@@ -54,7 +54,9 @@ curl http://127.0.0.1:34999/actuator/health/liveness
 其中"status": "UP"代表状态健康。此时返回的Http状态码是200。
 
 ### 查询元数据
+
 访问 /actuator/info
+
 ```shell
 curl http://127.0.0.1:34999/actuator/info
 ```

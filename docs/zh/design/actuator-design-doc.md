@@ -4,7 +4,7 @@
 
 - 健康检查
 
-通过Actuator接口可以统一获取到LayOtto内部所有组件，以及业务应用的健康状态
+通过Actuator接口可以统一获取到LayOtto内部所有组件以及业务应用的健康状态
 
 - 查看运行时元数据
 
@@ -42,7 +42,7 @@
 参考[Spring-Boot-Metrics监控之Prometheus-Grafana](https://bigjar.github.io/2018/08/19/Spring-Boot-Metrics监控之Prometheus-Grafana/)
 
 
-**Q: 做不做管控能力，比如“开关 mosn 内部特定组件的流量”**
+**Q: 做不做管控能力，比如“开关 LayOtto 内部特定组件的流量”**
 
 A: 不做，开关部分组件会让app处于partial failure状态，有不确定性。
 但是后续可以考虑添加debug能力，比如mock、抓包改包等
@@ -72,9 +72,16 @@ Actuator内部抽象出Endpoint概念，新请求到达服务器后，Actuator会委托对应的Endpoint
 ### 2.2.1. 路径解释
 
 路径采用restful风格，不同的Endpoint注册进Actuator后，路径是
-/actuator/{endpoint_name}/{params}  
 
-比如/actuator/health/liveness
+```
+/actuator/{endpoint_name}/{params}  
+```
+
+比如
+
+```
+/actuator/health/liveness
+```
 
 其中health标识Endpoint的名称是health，liveness是传给该Endpoint的参数。
 
@@ -83,14 +90,15 @@ Actuator内部抽象出Endpoint概念，新请求到达服务器后，Actuator会委托对应的Endpoint
 
 默认注册的路径有：
 
+```
 /actuator/health/liveness
-
 /actuator/health/readiness
-
 /actuator/info
+```
 
 ### 2.2.2. Health Endpoint
-#### actuator/health/liveness
+#### /actuator/health/liveness
+
 GET
 ```json
 // http://localhost:8080/actuator/health/liveness
@@ -122,7 +130,8 @@ var (
 )
 ```
 
-#### actuator/health/readiness
+#### /actuator/health/readiness
+
 GET
 ```json
 // http://localhost:8080/actuator/health/readiness
@@ -139,7 +148,7 @@ GET
 ```
 ### 2.2.3. Info Endpoint
 
-#### actuator/info
+#### /actuator/info
 
 GET
 ```json
@@ -262,7 +271,7 @@ info.Endpoint将请求分发给info.Contributor的实现
 
 Stop的时候：
 
-![img_1.png](../../../img/actuator/img_1.png)
+![img.png](../../../img/actuator/img_1.png)
 
 ### 3.1.2. apollo组件
 
