@@ -4,11 +4,11 @@
 
 - 健康检查
 
-通过Actuator接口可以统一获取到LayOtto内部所有组件以及业务应用的健康状态
+通过Actuator接口可以统一获取到Layotto内部所有组件以及业务应用的健康状态
 
 - 查看运行时元数据
 
-通过Actuator接口可以统一获取到LayOtto自己的元数据信息（例如版本，git信息），以及业务应用的元数据信息（例如通过配置中心订阅的配置项列表，例如应用版本信息）
+通过Actuator接口可以统一获取到Layotto自己的元数据信息（例如版本，git信息），以及业务应用的元数据信息（例如通过配置中心订阅的配置项列表，例如应用版本信息）
 
 - 支持集成进开源基础设施，包括：
     - 可以集成进k8s健康检查
@@ -42,7 +42,7 @@
 参考[Spring-Boot-Metrics监控之Prometheus-Grafana](https://bigjar.github.io/2018/08/19/Spring-Boot-Metrics监控之Prometheus-Grafana/)
 
 
-**Q: 做不做管控能力，比如“开关 LayOtto 内部特定组件的流量”**
+**Q: 做不做管控能力，比如“开关 Layotto 内部特定组件的流量”**
 
 A: 不做，开关部分组件会让app处于partial failure状态，有不确定性。
 但是后续可以考虑添加debug能力，比如mock、抓包改包等
@@ -158,7 +158,7 @@ GET
 {
     "app" : {
         "version" : "1.0.0",
-        "name" : "LayOtto"
+        "name" : "Layotto"
     }
 }
 ```
@@ -194,7 +194,7 @@ GET
 
 解释：
 
-### 2.4.1. 请求到达mosn，通过stream filter进入LayOtto、调用Actuator
+### 2.4.1. 请求到达mosn，通过stream filter进入Layotto、调用Actuator
 
 stream filter层的http协议实现类(struct)为DispatchFilter，负责按http路径分发请求、调用Actuator:
 ```go

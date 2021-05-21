@@ -1,18 +1,18 @@
-# Use LayOtto Actuator for health check and metadata query
+# Use Layotto Actuator for health check and metadata query
 
-This example shows how to perform health check and metadata query through LayOtto Actuator's Http API
+This example shows how to perform health check and metadata query through Layotto Actuator's Http API
 
-## What is LayOtto Actuator
+## What is Layotto Actuator
 
-In the production environment, the status of the application needs to be monitored, and LayOtto has built-in a monitoring function, which is called Actuator. 
+In the production environment, the status of the application needs to be monitored, and Layotto has built-in a monitoring function, which is called Actuator. 
 
-Using LayOtto Actuator can help you monitor and manage LayOtto and the applications behind LayOtto, such as health checks, query runtime metadata, etc.
+Using Layotto Actuator can help you monitor and manage Layotto and the applications behind Layotto, such as health checks, query runtime metadata, etc.
 
 All these features can be accessed through the HTTP API.
 
 ## Quick start
 
-### Run LayOtto server
+### Run Layotto server
 
 After downloading the project source code, change directory and compile:
 
@@ -69,7 +69,7 @@ return:
 ```json
 {
   "app": {
-    "name": "LayOtto",
+    "name": "Layotto",
     "version": "0.1.0",
     "compiled": "2021-05-20T14:32:40.522057+08:00"
   }
@@ -78,9 +78,9 @@ return:
 
 ### Simulate a configuration error scenario
 
-If a configuration error causes LayOtto unavailable after startup, it can be discovered in time through the health check function.
+If a configuration error causes Layotto unavailable after startup, it can be discovered in time through the health check function.
 
-We can simulate a configuration error scenario by starting LayOtto with an incorrect configuration file:
+We can simulate a configuration error scenario by starting Layotto with an incorrect configuration file:
 
 ```shell
 ./layotto start -c ../../configs/wrong/config_apollo_health.json
@@ -122,13 +122,13 @@ return:
 
 ### Integrated into Kubernetes health check
 
-LayOtto provides two built-in health check API: /actuator/health/readiness and /actuator/health/liveness, corresponding to the two semantics of Readiness and Liveness in the Kubernetes health check feature.
+Layotto provides two built-in health check API: /actuator/health/readiness and /actuator/health/liveness, corresponding to the two semantics of Readiness and Liveness in the Kubernetes health check feature.
 
 Therefore, you can refer to [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) to integrate these two API into the Kubernetes ecosystem.
 
 ### Add health check or metadata query capabilities to your components
 
-If you are implementing your own LayOtto component, you can add health check capabilities to it. You can refer to the implementation of the apollo component (the code is at pkg/services/configstores/apollo/indicator.go), implement the info.Indicator interface, and inject it into the Actuator.
+If you are implementing your own Layotto component, you can add health check capabilities to it. You can refer to the implementation of the apollo component (the code is at pkg/services/configstores/apollo/indicator.go), implement the info.Indicator interface, and inject it into the Actuator.
 
 ### How it works
 

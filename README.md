@@ -1,8 +1,8 @@
 [查看中文版本](README-ZH.md)
 
-LayOtto is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event-driven capabilities to simplify application development.
+Layotto is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event-driven capabilities to simplify application development.
 
-LayOtto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, in addition to providing distributed capabilities, it also provides Service Mesh's ability to control traffic.
+Layotto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, in addition to providing distributed capabilities, it also provides Service Mesh's ability to control traffic.
 
 ## Features
 
@@ -12,17 +12,17 @@ LayOtto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, i
 
 ## Project Architecture
 
-As shown in the architecture diagram below, LayOtto uses the open source MOSN as the base to provide network layer management capabilities while providing distributed capabilities. The business logic can directly interact with LayOtto through a lightweight SDK without paying attention to the specific back-end infrastructure.
+As shown in the architecture diagram below, Layotto uses the open source MOSN as the base to provide network layer management capabilities while providing distributed capabilities. The business logic can directly interact with Layotto through a lightweight SDK without paying attention to the specific back-end infrastructure.
 
-LayOtto provides sdk in various languages. The sdk interacts with LayOtto through grpc. Application developers only need to specify their own infrastructure type through the configuration file [configure file](./configs/runtime_config.json) provided by LayOtto. No coding changes are required, which greatly improves the portability of the program.
+Layotto provides sdk in various languages. The sdk interacts with Layotto through grpc. Application developers only need to specify their own infrastructure type through the configuration file [configure file](./configs/runtime_config.json) provided by Layotto. No coding changes are required, which greatly improves the portability of the program.
 
 ![Architecture](img/runtime-architecture.png)
 
 ## Quickstarts and Samples
 
-### Get started with LayOtto
+### Get started with Layotto
 
-See the quick start guides [configuration demo with apollo](docs/en/start/configuration/start-apollo.md) or [configuration demo with etcd](docs/en/start/configuration/start.md) that can help you get started with LayOtto.
+See the quick start guides [configuration demo with apollo](docs/en/start/configuration/start-apollo.md) or [configuration demo with etcd](docs/en/start/configuration/start.md) that can help you get started with Layotto.
 
 ### Traffic intervention on the 4th layer network
 
@@ -32,7 +32,7 @@ See the quick start guides [configuration demo with apollo](docs/en/start/config
 
 [Method Level Flow Control](docs/en/start/stream_filter/flow_control.md)
 
-## Contributing to LayOtto
+## Contributing to Layotto
 
 See the Development Guide [contributing](CONTRIBUTING.md) to get started with building and developing.
 
@@ -40,7 +40,7 @@ See the Development Guide [contributing](CONTRIBUTING.md) to get started with bu
 
 ### Contact Us
 
-Use [DingTalk](https://www.dingtalk.com/en) to scan the QR code below to join the LayOtto user exchange group.
+Use [DingTalk](https://www.dingtalk.com/en) to scan the QR code below to join the Layotto user exchange group.
 
 ![Ding Talk Group QR Code](img/ding-talk-group-1.jpg)
 

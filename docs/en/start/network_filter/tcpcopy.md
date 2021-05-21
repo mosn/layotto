@@ -40,6 +40,6 @@ type DumpConfig struct {
 
 ### Principle of work
 
-The LayOtto server runs on MOSN and uses MOSN's filter expansion capabilities, so the tcpcopy above is actually a network filter plug-in of MOSN.
+The Layotto server runs on MOSN and uses MOSN's filter expansion capabilities, so the tcpcopy above is actually a network filter plug-in of MOSN.
 
 You can refer to [MOSN source code analysis-filter extension mechanism](https://mosn.io/blog/code/mosn-filters/) to implement your own 4-layer filter plug-in

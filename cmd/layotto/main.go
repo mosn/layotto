@@ -128,7 +128,7 @@ func registerAppInfo(app *cli.App) {
 
 func newRuntimeApp(startCmd *cli.Command) *cli.App {
 	app := cli.NewApp()
-	app.Name = "LayOtto"
+	app.Name = "Layotto"
 	app.Version = "0.1.0"
 	app.Compiled = time.Now()
 	app.Copyright = "(c) " + strconv.Itoa(time.Now().Year()) + " Ant Group"

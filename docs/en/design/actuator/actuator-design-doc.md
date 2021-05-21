@@ -4,11 +4,11 @@
 
 - Health check
 
-Users can check the health status of both LayOtto internal components and the applications behind LayOtto through the Actuator API,
+Users can check the health status of both Layotto internal components and the applications behind Layotto through the Actuator API,
 
 - Query runtime metadata
 
-Through the Actuator API, LayOtto's own metadata information (such as version, git information) and metadata information of business applications can be obtained (such as the list of subscribed topics, such as application version information)
+Through the Actuator API, Layotto's own metadata information (such as version, git information) and metadata information of business applications can be obtained (such as the list of subscribed topics, such as application version information)
 
 - Support integration into open source infrastructure, including:
     - Can be integrated into k8s health check
@@ -35,11 +35,11 @@ Through the Actuator API, LayOtto's own metadata information (such as version, g
 
 Similar to the spring boot community wrote a 'spring boot admin' web page based on the spring boot actuator
 
-2. With these information,we can integrate LayOtto into monitoring system like Prometheus+Grafana
+2. With these information,we can integrate Layotto into monitoring system like Prometheus+Grafana
 
 Similar to Spring Boot Actuator being integrated with Prometheus+Grafana
 
-**Q: Should we add some admin API to control the ability, such as "turn off the ability of specific components inside LayOtto"**
+**Q: Should we add some admin API to control the ability, such as "turn off the ability of specific components inside Layotto"**
 
 A: Don't do it. Switching some components off will leave the app in a partial failure state, which can lead to uncertainty.
 However, we can consider adding debug capabilities in the future, such as mock, packet capture and package modification, etc.
@@ -156,7 +156,7 @@ GET
 {
     "app" : {
         "version" : "1.0.0",
-        "name" : "LayOtto"
+        "name" : "Layotto"
     }
 }
 ```
@@ -191,7 +191,7 @@ explanation£º
 
 ### 2.4.1. When requests arrive
 
-The request arrives at the mosn, enters LayOtto through the stream filter, and calls the Actuator.
+The request arrives at the mosn, enters Layotto through the stream filter, and calls the Actuator.
 
 The http protocol implementation class (struct) of the stream filter layer is DispatchFilter, which is responsible for dispatching requests and calling Actuator according to the http path:
 ```go

@@ -2,15 +2,15 @@
 
 ## Quick start
 
-This example shows how to add, delete, modify, and watch the [apollo configuration center](https://github.com/ctripcorp/apollo) through LayOtto.
+This example shows how to add, delete, modify, and watch the [apollo configuration center](https://github.com/ctripcorp/apollo) through Layotto.
 
-### Deploy apollo and modify LayOtto's config (optional)
+### Deploy apollo and modify Layotto's config (optional)
 
 You can skip this step, you don't need to deploy the apollo server yourself to use this demo. This demo will use the demo environment provided by [apollo official](https://github.com/ctripcorp/apollo): http://106.54.227.205/
 
-If you have deployed apollo yourself, you can modify LayOtto's [config file](../../../../configs/config_apollo.json) to change the apollo server address to your own.
+If you have deployed apollo yourself, you can modify Layotto's [config file](../../../../configs/config_apollo.json) to change the apollo server address to your own.
 
-### Run LayOtto server
+### Run Layotto server
 
 After downloading the project code to the local, switch the code directory and compile:
 
@@ -27,7 +27,7 @@ After success, a new layotto file will be generated in the directory. Let's run 
 
 ### Run the client demo 
 
-The client demo calls LayOtto to add, delete, modify, and query configuration
+The client demo calls Layotto to add, delete, modify, and query configuration
 
 ```bash
  cd ${projectpath}/demo/configuration/apollo
@@ -48,7 +48,7 @@ receive subscribe resp store_name:"apollo" app_id:"apollo" items:<key:"heihei" c
 
 ### Next step
 
-The client demo uses the golang version SDK provided by LayOtto. The SDK is located in the `sdk` directory. Users can directly call the APIs provided by LayOtto through the corresponding SDK.
+The client demo uses the golang version SDK provided by Layotto. The SDK is located in the `sdk` directory. Users can directly call the APIs provided by Layotto through the corresponding SDK.
 
-Besides the SDK,you can also call LayOtto server directly using grpc,which makes it easy for different language to interact with LayOtto.
+Besides the SDK,you can also call Layotto server directly using grpc,which makes it easy for different language to interact with Layotto.
 
