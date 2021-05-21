@@ -2,13 +2,12 @@
 
 ### 介绍
 
-当您按照quick start文档[通过LayOtto调用apollo配置中心](docs/zh/start/configuration/start-apollo.md)运行demo时，可能会注意到配置文件config_apollo.json中有这么一段配置：
+当您按照quick start文档[通过Layotto调用apollo配置中心](docs/zh/start/configuration/start-apollo.md)运行demo时，可能会注意到配置文件config_apollo.json中有这么一段配置：
 
 ```json
                 {
                   "type": "tcpcopy",
                   "config": {
-                    "port": "34904",
                     "strategy": {
                       "switch": "ON",
                       "interval": 30,
@@ -42,6 +41,6 @@ type DumpConfig struct {
 
 ### 实现原理
 
-LayOtto服务器运行在MOSN上，使用MOSN的filter扩展能力，因此上文的tcpcopy其实是MOSN的一个network filter插件。
+Layotto服务器运行在MOSN上，使用MOSN的filter扩展能力，因此上文的tcpcopy其实是MOSN的一个network filter插件。
 
 您可以参考 [MOSN 源码解析 - filter扩展机制](https://mosn.io/blog/code/mosn-filters/) 实现您自己的4层filter插件

@@ -1,10 +1,10 @@
-<h2>通过LayOtto调用etcd配置中心</h2>
+<h2>通过Layotto调用etcd配置中心</h2>
 
 [English Version](../../../en/start/configuration/start.md)
 
 ## 快速开始
 
-该示例展示了如何通过LayOtto，对etcd配置中心进行增删改查以及watch的过程。请提前在本机上安装[Docker](https://www.docker.com/get-started) 软件。
+该示例展示了如何通过Layotto，对etcd配置中心进行增删改查以及watch的过程。请提前在本机上安装[Docker](https://www.docker.com/get-started) 软件。
 [config文件](../../../../configs/runtime_config.json)在config_stores中定义了etcd，用户可以更改配置文件为自己想要的配置中心（目前支持etcd和apollo）。
 
 
@@ -32,7 +32,7 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
 layotto/layotto     0.1.0-662eab0       0370527a51a1        10 minutes ago      431MB
 ```
 
-### 运行LayOtto
+### 运行Layotto
 
 ```bash
 docker run -p 34904:34904 layotto/layotto:0.1.0-662eab0
@@ -62,5 +62,5 @@ receive watch event, &{Key:hello1 Content: Group:default Label:default Tags:map[
 
 ### 拓展
 
-LayOtto 提供了golang版本的sdk，位于runtime/sdk目录下，用户可以通过对应的sdk直接调用LayOtto提供的服务。
+Layotto 提供了golang版本的sdk，位于runtime/sdk目录下，用户可以通过对应的sdk直接调用Layotto提供的服务。
 

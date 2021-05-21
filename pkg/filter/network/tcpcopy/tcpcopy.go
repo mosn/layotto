@@ -3,32 +3,36 @@ package tcpcopy
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/model"
 	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/persistence"
 	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/strategy"
 	"mosn.io/api"
+	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/pkg/log"
+	"net"
+	"strconv"
 )
 
 func init() {
 	api.RegisterNetwork("tcpcopy", CreateTcpcopyFactory)
 }
 
-type tcpcopy struct {
+var (
+	ErrInvalidConfig = errors.New("invalid config for tcpcopy")
+)
+
+type config struct {
 	port string
 }
 
 type tcpcopyFactory struct {
-	tcpcopy *tcpcopy
+	cfg *config
 }
 
 func CreateTcpcopyFactory(cfg map[string]interface{}) (api.NetworkFilterChainFactory, error) {
-	tcpconfig := &tcpcopy{}
-	// Parse port number
-	if portNum, ok := cfg["port"]; ok {
-		tcpconfig.port = portNum.(string)
-	}
+	tcpConfig := &config{}
 	// Parse static config for dump strategy
 	if stg, ok := cfg["strategy"]; ok {
 		data, err := json.Marshal(stg)
@@ -38,10 +42,40 @@ func CreateTcpcopyFactory(cfg map[string]interface{}) (api.NetworkFilterChainFac
 			strategy.UpdateAppDumpConfig(string(data))
 		}
 	}
-
+	// TODO extract some other fields
 	return &tcpcopyFactory{
-		tcpcopy: tcpconfig,
+		cfg: tcpConfig,
 	}, nil
+}
+
+func (f *tcpcopyFactory) Init(param interface{}) error {
+	// 1. get listener config
+	cfg, ok := param.(*v2.Listener)
+	if !ok {
+		return ErrInvalidConfig
+	}
+	addr := cfg.AddrConfig
+	if addr == "" {
+		addr = cfg.Addr.String()
+	}
+	// 2. parse listener port
+	var (
+		netAddr *net.TCPAddr
+		err     error
+	)
+	netAddr, err = net.ResolveTCPAddr("tcp", addr)
+	if err != nil {
+		log.DefaultLogger.Errorf("invalid server address info: %s, error: %v", addr, err)
+		return err
+	}
+	if netAddr.Port == 0 {
+		log.DefaultLogger.Errorf("invalid server address info: %s", addr)
+		return ErrInvalidConfig
+	}
+	// 3. set config
+	f.cfg.port = strconv.Itoa(netAddr.Port)
+	log.DefaultLogger.Debugf("tcpcopy filter initialized success")
+	return nil
 }
 
 func (f *tcpcopyFactory) CreateFilterChain(context context.Context, callbacks api.NetWorkFilterChainFactoryCallbacks) {
@@ -55,7 +89,7 @@ func (f *tcpcopyFactory) OnData(data types.IoBuffer) (res api.FilterStatus) {
 	}
 
 	// Asynchronous sampling
-	config := model.NewDumpUploadDynamicConfig(strategy.DumpSampleUuid, "", f.tcpcopy.port, data.Bytes(), "")
+	config := model.NewDumpUploadDynamicConfig(strategy.DumpSampleUuid, "", f.cfg.port, data.Bytes(), "")
 	persistence.GetDumpWorkPoolInstance().Schedule(config)
 	return api.Continue
 }

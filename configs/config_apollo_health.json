@@ -3,6 +3,11 @@
     {
       "default_log_path": "stdout",
       "default_log_level": "DEBUG",
+      "routers": [
+        {
+          "router_config_name": "actuator_dont_need_router"
+        }
+      ],
       "listeners": [
         {
           "name": "grpc",
@@ -54,6 +59,30 @@
                   }
                 }
               ]
+            }
+          ]
+        },
+        {
+          "name": "actuator",
+          "address": "127.0.0.1:34999",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "proxy",
+                  "config": {
+                    "downstream_protocol": "Http1",
+                    "upstream_protocol": "Http1",
+                    "router_config_name": "actuator_dont_need_router"
+                  }
+                }
+              ]
+            }
+          ],
+          "stream_filters": [
+            {
+              "type": "actuator_filter"
             }
           ]
         }
