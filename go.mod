@@ -13,6 +13,7 @@ require (
 	github.com/zouyx/agollo/v4 v4.0.6
 	go.etcd.io/etcd v3.3.25+incompatible
 	google.golang.org/grpc v1.37.0
+	google.golang.org/protobuf v1.26.0
 	mosn.io/api v0.0.0-20210414070543-8a0686b03540
 	mosn.io/mosn v0.22.1-0.20210425073346-b6880db4669c
 	mosn.io/pkg v0.0.0-20210401090620-f0e0d1a3efce
