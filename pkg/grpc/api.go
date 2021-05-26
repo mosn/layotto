@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/golang/protobuf/ptypes/empty"
 	"strings"
 	"sync"
+
+	empty "google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/hello"

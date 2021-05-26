@@ -2,14 +2,15 @@ package client
 
 import (
 	"context"
-	"github.com/golang/protobuf/ptypes/empty"
+	"net"
+	"os"
+	"testing"
+
 	"github.com/layotto/layotto/proto/runtime/v1"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
-	"net"
-	"os"
-	"testing"
+	empty "google.golang.org/protobuf/types/known/emptypb"
 )
 
 const (
