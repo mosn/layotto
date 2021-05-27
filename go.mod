@@ -21,7 +21,6 @@ require (
 )
 
 replace (
-	github.com/golang/protobuf => github.com/golang/protobuf v1.3.5
 	go.etcd.io/etcd => go.etcd.io/etcd v0.0.0-20210226220824-aa7126864d82
 	google.golang.org/grpc => google.golang.org/grpc v1.28.0
 )

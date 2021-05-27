@@ -4,6 +4,7 @@ import (
 	rgrpc "github.com/layotto/layotto/pkg/grpc"
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/hello"
+	"github.com/layotto/layotto/pkg/services/rpc"
 	"google.golang.org/grpc"
 	"mosn.io/pkg/log"
 )
@@ -12,6 +13,7 @@ import (
 type services struct {
 	hellos       []*hello.HelloFactory
 	configStores []*configstores.StoreFactory
+	rpcs         []*rpc.Factory
 }
 
 type runtimeOptions struct {
@@ -59,5 +61,11 @@ func WithHelloFactory(hellos ...*hello.HelloFactory) Option {
 func WithConfigStoresFactory(configStores ...*configstores.StoreFactory) Option {
 	return func(o *runtimeOptions) {
 		o.services.configStores = append(o.services.configStores, configStores...)
+	}
+}
+
+func WithRpcFactory(rpcs ...*rpc.Factory) Option {
+	return func(o *runtimeOptions) {
+		o.services.rpcs = append(o.services.rpcs, rpcs...)
 	}
 }

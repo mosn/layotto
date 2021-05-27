@@ -3,6 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
+	"time"
+
 	_ "github.com/layotto/layotto/pkg/actuator"
 	health "github.com/layotto/layotto/pkg/actuator/health"
 	actuatorInfo "github.com/layotto/layotto/pkg/actuator/info"
@@ -15,6 +19,8 @@ import (
 	"github.com/layotto/layotto/pkg/services/configstores/etcdv3"
 	"github.com/layotto/layotto/pkg/services/hello"
 	"github.com/layotto/layotto/pkg/services/hello/helloworld"
+	"github.com/layotto/layotto/pkg/services/rpc"
+	mosninvoker "github.com/layotto/layotto/pkg/services/rpc/invoker/mosn"
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 	"mosn.io/mosn/pkg/featuregate"
@@ -28,9 +34,6 @@ import (
 	_ "mosn.io/mosn/pkg/network"
 	_ "mosn.io/mosn/pkg/stream/http"
 	_ "mosn.io/pkg/buffer"
-	"os"
-	"strconv"
-	"time"
 )
 
 func init() {
@@ -59,6 +62,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
+		),
+		runtime.WithRpcFactory(
+			rpc.NewRpcFactory("mosn", mosninvoker.NewMosnInvoker),
 		),
 	)
 	// 4. check if unhealthy
