@@ -3,6 +3,7 @@ package runtime
 import (
 	"github.com/layotto/layotto/pkg/grpc"
 	"github.com/layotto/layotto/pkg/info"
+	"github.com/layotto/layotto/pkg/integrate/actuator"
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/hello"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
@@ -75,6 +76,8 @@ func (m *MosnRuntime) Stop() {
 	if m.srv != nil {
 		m.srv.Stop()
 	}
+	actuator.GetRuntimeReadinessIndicator().SetUnhealthy("shutdown")
+	actuator.GetRuntimeLivenessIndicator().SetUnhealthy("shutdown")
 }
 
 func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {

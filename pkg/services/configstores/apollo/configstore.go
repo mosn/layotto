@@ -70,6 +70,17 @@ func newHttpClient() httpClient {
 
 //Init SetConfig the configuration store.
 func (c *ConfigStore) Init(config *configstores.StoreConfig) error {
+	err := c.doInit(config)
+	if err != nil {
+		getReadinessIndicator().reportError(err.Error())
+		getLivenessIndicator().reportError(err.Error())
+	}
+	getReadinessIndicator().setStarted()
+	getLivenessIndicator().setStarted()
+	return err
+}
+
+func (c *ConfigStore) doInit(config *configstores.StoreConfig) error {
 	// 1. validate and parse config
 	if config == nil {
 		return ErrNoConfig
@@ -99,7 +110,11 @@ func (c *ConfigStore) Init(config *configstores.StoreConfig) error {
 	if !ok || appId == "" {
 		return errConfigMissingField(configKeyAppId)
 	}
+	// open_api_token
 	c.openAPIToken = metadata["open_api_token"]
+	if c.openAPIToken == "" {
+		return errConfigMissingField("open_api_token")
+	}
 	c.openAPIAddress = metadata["open_api_address"]
 	if c.openAPIAddress == "" {
 		return errConfigMissingField("open_api_address")
@@ -306,8 +321,8 @@ func (c *ConfigStore) Subscribe(req *configstores.SubscribeReq, ch chan *configs
 }
 
 func (c *ConfigStore) StopSubscribe() {
-	//	TODO 现在api层只支持单连接、不支持多连接能力
-	//	后续支持多连接的话可以用context控制取消
+	//	TODO  Now the api layer only supports single connection and does not support multi-connection.
+	//	 If it supports multiple connections in the future, we can use a context to cancel specific connections
 	c.listener.reset()
 }
 

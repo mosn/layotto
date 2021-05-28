@@ -10,11 +10,11 @@ const (
 )
 
 type DumpConfig struct {
-	Switch     string  `json:"switch"`       // dump switch
+	Switch     string  `json:"switch"`       // dump switch.'ON' or 'OFF'
 	Interval   int     `json:"interval"`     // dump sampling interval, unit: second
 	Duration   int     `json:"duration"`     // Single sampling duration,unit: second
-	CpuMaxRate float64 `json:"cpu_max_rate"` // cpu max rate
-	MemMaxRate float64 `json:"mem_max_rate"` // mem max rate
+	CpuMaxRate float64 `json:"cpu_max_rate"` // cpu max rate.When cpu rate bigger than this threshold,dump function will be fused
+	MemMaxRate float64 `json:"mem_max_rate"` // mem max rate.When memory rate bigger than this threshold,dump function will be fused
 }
 
 type DumpUploadDynamicConfig struct {

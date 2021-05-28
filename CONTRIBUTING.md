@@ -1,6 +1,6 @@
-# LayOtto contributor guide
+# Layotto contributor guide
 
-LayOtto is released under the Apache 2.0 license, and follows a very standard Github development process, using Github tracker for issues and merging pull requests into master. If you would like to contribute something,  or simply want to hack on the code this document should help you get started.
+Layotto is released under the Apache 2.0 license, and follows a very standard Github development process, using Github tracker for issues and merging pull requests into master. If you would like to contribute something,  or simply want to hack on the code this document should help you get started.
 
 Before we accept a non-trivial patch or pull request we will need you to sign the Contributor License Agreement. Signing the contributor’s agreement does not grant anyone commits rights to the main repository, but it does mean that we can accept your contributions, and you will get an author credit if we do. Active contributors might be asked to join the core team and given the ability to merge pull requests.
 
@@ -25,7 +25,7 @@ None of these is essential for a pull request, but they will all help.
 
 ## Version naming convention
 
-LayOtto's version contains three-digit with the format x.x.x, the first one is for compatibility; the second one is for new features and enhancement; the last one is for a bug fix.
+Layotto's version contains three-digit with the format x.x.x, the first one is for compatibility; the second one is for new features and enhancement; the last one is for a bug fix.
 
 ## PR review policy for maintainers
 

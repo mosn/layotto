@@ -36,15 +36,12 @@
 							"type": "flowControlFilter",
 							"config": {
 								"global_switch": true,
-								"monitor": false,
 								"limit_key_type": "PATH",
 								"rules": [
 									{
 										"resource": "/mosn.proto.runtime.v1.MosnRuntime/SayHello",
-										"limitApp": "",
 										"grade": 1,
-										"threshold": 5,
-										"strategy": 0
+										"threshold": 5
 									}
 								]
 							}

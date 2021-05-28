@@ -10,6 +10,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/urfave/cli v1.20.0
+	github.com/valyala/fasthttp v0.0.0-20200605121233-ac51d598dc54
 	github.com/zouyx/agollo/v4 v4.0.6
 	go.etcd.io/etcd v3.3.25+incompatible
 	google.golang.org/grpc v1.37.0

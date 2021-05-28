@@ -1,17 +1,26 @@
-<h2>通过LayOtto调用etcd配置中心</h2>
+<h2>通过Layotto调用etcd配置中心</h2>
+
+[English Version](../../../en/start/configuration/start.md)
 
 ## 快速开始
 
-该示例展示了如何通过LayOtto，对etcd配置中心进行增删改查以及watch的过程。请提前在本机上安装[Docker](https://www.docker.com/get-started) 软件。
+该示例展示了如何通过Layotto，对etcd配置中心进行增删改查以及watch的过程。请提前在本机上安装[Docker](https://www.docker.com/get-started) 软件。
 [config文件](../../../../configs/runtime_config.json)在config_stores中定义了etcd，用户可以更改配置文件为自己想要的配置中心（目前支持etcd和apollo）。
 
 
-###生成镜像
+### 生成镜像
 
-运行make指令生成容器镜像
+首先请确认把layotto项目放在如下目录：
+
+```
+$GOPATH/src/github/layotto/layotto
+```
+
+然后执行如下命令：
 
 ```bash
-make build-image
+cd $GOPATH/src/github/layotto/layotto  
+make image
 ```
 
 运行结束后本地会生成两个镜像：
@@ -19,26 +28,25 @@ make build-image
 ```bash
 
 xxx@B-P59QMD6R-2102 img % docker images
-REPOSITORY                                TAG                   IMAGE ID       CREATED        SIZE
-runtime                                   0.1.0-94d61d8         8d0040e3e3b0   24 hours ago   439MB
-mosnio/runtime                            0.1.0-94d61d8         8d0040e3e3b0   24 hours ago   439MB
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+layotto/layotto     0.1.0-662eab0       0370527a51a1        10 minutes ago      431MB
 ```
 
-###运行LayOtto
+### 运行Layotto
 
 ```bash
-docker run -p 34904:34904 mosnio/runtime:0.1.0-94d61d8
+docker run -p 34904:34904 layotto/layotto:0.1.0-662eab0
 ```
 
 Mac和Windows不支持--net=host, 如果是在linux上可以直接把 -p 34904:34904 替换成 --net=host。
 
 
-###启动本地client
+### 启动本地client
 
 ```bash
- cd yourDir/runtime/demo/configuration/etcd
- go build -o etcdDemo
- ./etcdDemo
+cd layotto/demo/configuration/etcd
+go build
+./etcd
 ```
 
 打印出如下信息则代表启动完成：
@@ -52,7 +60,7 @@ receive watch event, &{Key:hello1 Content:world1 Group:default Label:default Tag
 receive watch event, &{Key:hello1 Content: Group:default Label:default Tags:map[] Metadata:map[]}
 ```
 
-###拓展
+### 拓展
 
-LayOtto 提供了golang版本的sdk，位于runtime/sdk目录下，用户可以通过对应的sdk直接调用LayOtto提供的服务。
+Layotto 提供了golang版本的sdk，位于runtime/sdk目录下，用户可以通过对应的sdk直接调用Layotto提供的服务。
 

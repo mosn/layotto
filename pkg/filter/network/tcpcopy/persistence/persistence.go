@@ -5,6 +5,7 @@ import (
 	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/model"
 	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/strategy"
 	"os"
+	"sync"
 	"sync/atomic"
 
 	"mosn.io/mosn/pkg/configmanager"
@@ -22,55 +23,87 @@ const (
 	incrementLog = "no_change"
 )
 
-var (
-	TcpcopyPersistence      rlog.ErrorLogger
-	MemPersistence          rlog.ErrorLogger
-	StaticConfPersistence   rlog.ErrorLogger
-	PortraitDataPersistence rlog.ErrorLogger
+type GetLogPath func(fileName string) string
 
+var (
+	getLogPath GetLogPath = common.GetLogPath
+	//Logger
+	tcpcopyPersistence      rlog.ErrorLogger
+	memPersistence          rlog.ErrorLogger
+	staticConfPersistence   rlog.ErrorLogger
+	portraitDataPersistence rlog.ErrorLogger
+	//md5 for diff
 	md5ValueOfMemDump    string
 	md5ValueOfStaticConf string
 
-	memConfDumpFilePath    string
-	staticConfDumpFilePath string
+	memConfDumpFilePath string
+
+	initLoggerOnce sync.Once
 )
 
-func init() {
-	initLogger()
+func getMemConfDumpFilePath() string {
+	InitLogger()
+	return memConfDumpFilePath
 }
 
-func initLogger() {
-	tcpcopyDumpFilePath := common.GetLogPath(tcpcopyDumpFile)
-	memConfDumpFilePath = common.GetLogPath(memConfDumpFile)
-	staticConfDumpFilePath = common.GetLogPath(staticConfDumpFile)
-	portraitDataDumpFilePath := common.GetLogPath(portraitDataDumpFile)
+func GetTcpcopyLogger() rlog.ErrorLogger {
+	InitLogger()
+	return tcpcopyPersistence
+}
 
+func GetMemLogger() rlog.ErrorLogger {
+	InitLogger()
+	return memPersistence
+}
+
+func GetStaticConfLogger() rlog.ErrorLogger {
+	InitLogger()
+	return staticConfPersistence
+}
+
+func GetPortraitDataLogger() rlog.ErrorLogger {
+	InitLogger()
+	return portraitDataPersistence
+}
+
+func InitLogger() {
+	initLoggerOnce.Do(doInitLogger)
+}
+func doInitLogger() {
+	// local variable
+	tcpcopyDumpFilePath := getLogPath(tcpcopyDumpFile)
+	portraitDataDumpFilePath := getLogPath(portraitDataDumpFile)
+	staticConfDumpFilePath := getLogPath(staticConfDumpFile)
+	// write global variable
+	memConfDumpFilePath = getLogPath(memConfDumpFile)
+
+	// init logger using these path variables.
 	tcpcopyLogger, err1 := log.GetOrCreateDefaultErrorLogger(tcpcopyDumpFilePath, log.INFO)
 	if err1 != nil {
 		log.StartLogger.Errorf("%s init tcpcopy logger error, err=&s", model.LogDumpKey, err1.Error())
 	} else {
-		TcpcopyPersistence = tcpcopyLogger
+		tcpcopyPersistence = tcpcopyLogger
 	}
 
 	memDumpLogger, err2 := log.GetOrCreateDefaultErrorLogger(memConfDumpFilePath, log.INFO)
 	if err2 != nil {
 		log.StartLogger.Errorf("%s init mem dump logger error, err=&s", model.LogDumpKey, err2.Error())
 	} else {
-		MemPersistence = memDumpLogger
+		memPersistence = memDumpLogger
 	}
 
 	staticConfLogger, err3 := log.GetOrCreateDefaultErrorLogger(staticConfDumpFilePath, log.INFO)
 	if err3 != nil {
 		log.StartLogger.Errorf("%s init static config logger error, err=&s", model.LogDumpKey, err3.Error())
 	} else {
-		StaticConfPersistence = staticConfLogger
+		staticConfPersistence = staticConfLogger
 	}
 
 	portraitDataLogger, err4 := log.GetOrCreateDefaultErrorLogger(portraitDataDumpFilePath, log.INFO)
 	if err4 != nil {
 		log.StartLogger.Errorf("%s init portrait data logger error, err=&s", model.LogDumpKey, err4.Error())
 	} else {
-		PortraitDataPersistence = portraitDataLogger
+		portraitDataPersistence = portraitDataLogger
 	}
 }
 
@@ -105,14 +138,14 @@ func IsPersistence() bool {
 func persistence(config *model.DumpUploadDynamicConfig) {
 	// 1.Persist binary data
 	if config.Binary_flow_data != nil && config.Port != "" {
-		if TcpcopyPersistence.GetLogLevel() >= log.INFO {
-			TcpcopyPersistence.Infof("[%s][%s]% x", config.Unique_sample_window, config.Port, config.Binary_flow_data)
+		if GetTcpcopyLogger().GetLogLevel() >= log.INFO {
+			GetTcpcopyLogger().Infof("[%s][%s]% x", config.Unique_sample_window, config.Port, config.Binary_flow_data)
 		}
 	}
 	if config.Portrait_data != "" && config.BusinessType != "" {
 		// 2. Persistent user-defined data
-		if PortraitDataPersistence.GetLogLevel() >= log.INFO {
-			PortraitDataPersistence.Infof("[%s][%s][%s]%s", config.Unique_sample_window, config.BusinessType, config.Port, config.Portrait_data)
+		if GetPortraitDataLogger().GetLogLevel() >= log.INFO {
+			GetPortraitDataLogger().Infof("[%s][%s][%s]%s", config.Unique_sample_window, config.BusinessType, config.Port, config.Portrait_data)
 		}
 
 		// 3. Persistent memory configuration data, only make incremental changes
@@ -125,14 +158,16 @@ func persistence(config *model.DumpUploadDynamicConfig) {
 		}
 		// 3.1. dump if the data has been changed
 		tmpMd5ValueOfMemDump := common.CalculateMd5ForBytes(buf)
-		if tmpMd5ValueOfMemDump != md5ValueOfMemDump || (tmpMd5ValueOfMemDump == md5ValueOfMemDump && common.GetFileSize(memConfDumpFilePath) <= 0) {
+		memLogger := GetMemLogger()
+		if tmpMd5ValueOfMemDump != md5ValueOfMemDump ||
+			(tmpMd5ValueOfMemDump == md5ValueOfMemDump && common.GetFileSize(getMemConfDumpFilePath()) <= 0) {
 			md5ValueOfMemDump = tmpMd5ValueOfMemDump
-			if MemPersistence.GetLogLevel() >= log.INFO {
-				MemPersistence.Infof("[%s]%s", config.Unique_sample_window, buf)
+			if memLogger.GetLogLevel() >= log.INFO {
+				memLogger.Infof("[%s]%s", config.Unique_sample_window, buf)
 			}
 		} else {
-			if MemPersistence.GetLogLevel() >= log.INFO {
-				MemPersistence.Infof("[%s]%+v", config.Unique_sample_window, incrementLog)
+			if memLogger.GetLogLevel() >= log.INFO {
+				memLogger.Infof("[%s]%+v", config.Unique_sample_window, incrementLog)
 			}
 		}
 	}
