@@ -41,4 +41,8 @@ image:
 	docker build --rm -t ${REPOSITORY}:${MAJOR_VERSION}-${GIT_VERSION} IMAGEBUILD
 	rm -rf IMAGEBUILD
 
+wasm-integrate:
+	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/wasm
+	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -v $(shell pwd)/test/test.sh:/go/src/${PROJECT_NAME}/test.sh -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} sh ./test.sh
+
 .PHONY: build
