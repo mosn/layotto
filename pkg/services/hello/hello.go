@@ -11,7 +11,9 @@ type HelloConfig struct {
 	HelloString string `json:"hello"`
 }
 
-type HelloRequest struct{}
+type HelloRequest struct{
+	Name string `json:"name"`
+}
 
 type HelloReponse struct {
 	HelloString string `json:"hello"`

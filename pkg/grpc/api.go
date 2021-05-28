@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/golang/protobuf/ptypes/empty"
 	"strings"
 	"sync"
 
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/hello"
 	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
+	empty "google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/pkg/log"
 )
 
@@ -53,7 +53,9 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 		return nil, err
 	}
 	// create hello request based on pb.go struct
-	req := &hello.HelloRequest{}
+	req := &hello.HelloRequest{
+		Name: in.Name,
+	}
 	resp, err := h.Hello(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.say_hello] request hello error: %v", err)

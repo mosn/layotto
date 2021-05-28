@@ -5,6 +5,7 @@ import (
 	"github.com/layotto/layotto/pkg/info"
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/hello"
+	"github.com/layotto/layotto/pkg/wasm"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"mosn.io/pkg/log"
 )
@@ -60,12 +61,13 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		grpcOpts = append(grpcOpts, grpc.WithNewServer(o.srvMaker))
 	}
 	// TODO: support NewAPI extends
+	wasm.Layotto = grpc.NewAPI(
+		m.hellos,
+		m.configStores,
+	)
 	grpcOpts = append(grpcOpts,
 		grpc.WithGrpcOptions(o.options...),
-		grpc.WithAPI(grpc.NewAPI(
-			m.hellos,
-			m.configStores,
-		)),
+		grpc.WithAPI(wasm.Layotto),
 	)
 	m.srv = grpc.NewGrpcServer(grpcOpts...)
 	return m.srv, nil
