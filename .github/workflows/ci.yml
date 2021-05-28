@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: pwd
         run: pwd
-      - name: pwd
+      - name: cat
         run: cat Makefile
       - name: integrate
         run: make wasm-integrate
