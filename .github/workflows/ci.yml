@@ -17,6 +17,8 @@ jobs:
         os:
           - ubuntu-latest
     steps:
+      - name: pwd
+        run: pwd
       - name: integrate
         run: make wasm-integrate
 
