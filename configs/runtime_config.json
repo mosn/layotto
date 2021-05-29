@@ -39,7 +39,7 @@
 								"limit_key_type": "PATH",
 								"rules": [
 									{
-										"resource": "/mosn.proto.runtime.v1.MosnRuntime/SayHello",
+										"resource": "/spec.proto.runtime.v1.Runtime/SayHello",
 										"grade": 1,
 										"threshold": 5
 									}

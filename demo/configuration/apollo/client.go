@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
 	"github.com/layotto/layotto/sdk/client"
+	"github.com/layotto/layotto/spec/proto/runtime/v1"
 	"google.golang.org/grpc"
 	"strconv"
 	"sync"
@@ -43,7 +43,7 @@ func testSubscribeWithGrpc() {
 		panic(err)
 	}
 	defer conn.Close()
-	c := runtimev1pb.NewMosnRuntimeClient(conn)
+	c := runtime.NewRuntimeClient(conn)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -65,8 +65,8 @@ func testSubscribeWithGrpc() {
 	}()
 	// client send subscribe request
 	go func() {
-		cli.Send(&runtimev1pb.SubscribeConfigurationRequest{StoreName: storeName, Group: "application", Label: "prod", AppId: appid, Keys: []string{"haha", "key1"}})
-		cli.Send(&runtimev1pb.SubscribeConfigurationRequest{StoreName: storeName, Group: "application", Label: "prod", AppId: appid, Keys: []string{"heihei"}})
+		cli.Send(&runtime.SubscribeConfigurationRequest{StoreName: storeName, Group: "application", Label: "prod", AppId: appid, Keys: []string{"haha", "key1"}})
+		cli.Send(&runtime.SubscribeConfigurationRequest{StoreName: storeName, Group: "application", Label: "prod", AppId: appid, Keys: []string{"heihei"}})
 	}()
 
 	// loop write in another gorountine
@@ -75,10 +75,10 @@ func testSubscribeWithGrpc() {
 		for {
 			time.Sleep(1 * time.Second)
 			idx++
-			newItmes := make([]*runtimev1pb.ConfigurationItem, 0, 10)
-			newItmes = append(newItmes, &runtimev1pb.ConfigurationItem{Group: "application", Label: "prod", Key: "heihei", Content: "heihei" + strconv.Itoa(idx)})
+			newItmes := make([]*runtime.ConfigurationItem, 0, 10)
+			newItmes = append(newItmes, &runtime.ConfigurationItem{Group: "application", Label: "prod", Key: "heihei", Content: "heihei" + strconv.Itoa(idx)})
 			fmt.Println("write start")
-			c.SaveConfiguration(ctx, &runtimev1pb.SaveConfigurationRequest{StoreName: storeName, AppId: appid, Items: newItmes})
+			c.SaveConfiguration(ctx, &runtime.SaveConfigurationRequest{StoreName: storeName, AppId: appid, Items: newItmes})
 		}
 	}()
 	wg.Wait()

@@ -2,11 +2,11 @@ package client
 
 import (
 	"context"
+	"github.com/layotto/layotto/spec/proto/runtime/v1"
 	"net"
 	"os"
 	"testing"
 
-	"github.com/layotto/layotto/proto/runtime/v1"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
@@ -56,7 +56,7 @@ func TestNewClient(t *testing.T) {
 
 func getTestClient(ctx context.Context) (client Client, closer func()) {
 	s := grpc.NewServer()
-	runtime.RegisterMosnRuntimeServer(s, &testRuntimeServer{kv: make(map[string]string), subscribed: make(map[string]bool)})
+	runtime.RegisterRuntimeServer(s, &testRuntimeServer{kv: make(map[string]string), subscribed: make(map[string]bool)})
 
 	l := bufconn.Listen(testBufSize)
 	go func() {
@@ -84,7 +84,7 @@ func getTestClient(ctx context.Context) (client Client, closer func()) {
 }
 
 type testRuntimeServer struct {
-	runtime.UnimplementedMosnRuntimeServer
+	runtime.UnimplementedRuntimeServer
 	kv         map[string]string
 	subscribed map[string]bool
 }
@@ -111,7 +111,7 @@ func (t *testRuntimeServer) DeleteConfiguration(ctx context.Context, req *runtim
 	}
 	return &empty.Empty{}, nil
 }
-func (t *testRuntimeServer) SubscribeConfiguration(srv runtime.MosnRuntime_SubscribeConfigurationServer) error {
+func (t *testRuntimeServer) SubscribeConfiguration(srv runtime.Runtime_SubscribeConfigurationServer) error {
 	req, err := srv.Recv()
 	if err != nil {
 		return err

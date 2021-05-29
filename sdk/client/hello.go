@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	"github.com/layotto/layotto/proto/runtime/v1"
+	"github.com/layotto/layotto/spec/proto/runtime/v1"
 )
 
 type SayHelloRequest struct {

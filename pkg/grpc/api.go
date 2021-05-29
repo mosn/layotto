@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/layotto/layotto/spec/proto/runtime/v1"
 	"strings"
 	"sync"
 
@@ -11,7 +12,6 @@ import (
 
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/hello"
-	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
 
@@ -20,15 +20,15 @@ var (
 )
 
 type API interface {
-	SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error)
+	SayHello(ctx context.Context, in *runtime.SayHelloRequest) (*runtime.SayHelloResponse, error)
 	// GetConfiguration gets configuration from configuration store.
-	GetConfiguration(context.Context, *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error)
+	GetConfiguration(context.Context, *runtime.GetConfigurationRequest) (*runtime.GetConfigurationResponse, error)
 	// SaveConfiguration saves configuration into configuration store.
-	SaveConfiguration(context.Context, *runtimev1pb.SaveConfigurationRequest) (*empty.Empty, error)
+	SaveConfiguration(context.Context, *runtime.SaveConfigurationRequest) (*empty.Empty, error)
 	// DeleteConfiguration deletes configuration from configuration store.
-	DeleteConfiguration(context.Context, *runtimev1pb.DeleteConfigurationRequest) (*empty.Empty, error)
+	DeleteConfiguration(context.Context, *runtime.DeleteConfigurationRequest) (*empty.Empty, error)
 	// SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
-	SubscribeConfiguration(runtimev1pb.MosnRuntime_SubscribeConfigurationServer) error
+	SubscribeConfiguration(runtime.Runtime_SubscribeConfigurationServer) error
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -47,7 +47,7 @@ func NewAPI(
 	}
 }
 
-func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error) {
+func (a *api) SayHello(ctx context.Context, in *runtime.SayHelloRequest) (*runtime.SayHelloResponse, error) {
 	h, err := a.getHello(in.ServiceName)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.say_hello] get hello error: %v", err)
@@ -61,7 +61,7 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 		return nil, err
 	}
 	// create response base on hello.Response
-	return &runtimev1pb.SayHelloResponse{
+	return &runtime.SayHelloResponse{
 		Hello: resp.HelloString,
 	}, nil
 
@@ -79,8 +79,8 @@ func (a *api) getHello(name string) (hello.HelloService, error) {
 }
 
 // GetConfiguration gets configuration from configuration store.
-func (a *api) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error) {
-	resp := &runtimev1pb.GetConfigurationResponse{}
+func (a *api) GetConfiguration(ctx context.Context, req *runtime.GetConfigurationRequest) (*runtime.GetConfigurationResponse, error) {
+	resp := &runtime.GetConfigurationResponse{}
 	// check store type supported or not
 	store, ok := a.configStores[req.StoreName]
 	if !ok {
@@ -98,13 +98,13 @@ func (a *api) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigur
 		return nil, errors.New(fmt.Sprintf("get configuration failed with error: %+v", err))
 	}
 	for _, item := range items {
-		resp.Items = append(resp.Items, &runtimev1pb.ConfigurationItem{Group: item.Group, Label: item.Label, Key: item.Key, Content: item.Content, Tags: item.Tags, Metadata: item.Metadata})
+		resp.Items = append(resp.Items, &runtime.ConfigurationItem{Group: item.Group, Label: item.Label, Key: item.Key, Content: item.Content, Tags: item.Tags, Metadata: item.Metadata})
 	}
 	return resp, err
 }
 
 // SaveConfiguration saves configuration into configuration store.
-func (a *api) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfigurationRequest) (*empty.Empty, error) {
+func (a *api) SaveConfiguration(ctx context.Context, req *runtime.SaveConfigurationRequest) (*empty.Empty, error) {
 	store, ok := a.configStores[req.StoreName]
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
@@ -127,7 +127,7 @@ func (a *api) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfig
 }
 
 // DeleteConfiguration deletes configuration from configuration store.
-func (a *api) DeleteConfiguration(ctx context.Context, req *runtimev1pb.DeleteConfigurationRequest) (*empty.Empty, error) {
+func (a *api) DeleteConfiguration(ctx context.Context, req *runtime.DeleteConfigurationRequest) (*empty.Empty, error) {
 	store, ok := a.configStores[req.StoreName]
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
@@ -143,7 +143,7 @@ func (a *api) DeleteConfiguration(ctx context.Context, req *runtimev1pb.DeleteCo
 }
 
 // SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
-func (a *api) SubscribeConfiguration(sub runtimev1pb.MosnRuntime_SubscribeConfigurationServer) error {
+func (a *api) SubscribeConfiguration(sub runtime.Runtime_SubscribeConfigurationServer) error {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	var subErr error
@@ -191,11 +191,11 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.MosnRuntime_SubscribeConfig
 				if !ok {
 					return
 				}
-				items := make([]*runtimev1pb.ConfigurationItem, 0, 10)
+				items := make([]*runtime.ConfigurationItem, 0, 10)
 				for _, item := range resp.Items {
-					items = append(items, &runtimev1pb.ConfigurationItem{Group: item.Group, Label: item.Label, Key: item.Key, Content: item.Content, Tags: item.Tags, Metadata: item.Metadata})
+					items = append(items, &runtime.ConfigurationItem{Group: item.Group, Label: item.Label, Key: item.Key, Content: item.Content, Tags: item.Tags, Metadata: item.Metadata})
 				}
-				sub.Send(&runtimev1pb.SubscribeConfigurationResponse{StoreName: resp.StoreName, AppId: resp.StoreName, Items: items})
+				sub.Send(&runtime.SubscribeConfigurationResponse{StoreName: resp.StoreName, AppId: resp.StoreName, Items: items})
 			case <-recvExitCh:
 				return
 			}

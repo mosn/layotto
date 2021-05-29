@@ -15,7 +15,7 @@
             "limit_key_type": "PATH",
             "rules": [
                 {
-                    "resource": "/mosn.proto.runtime.v1.MosnRuntime/SayHello",
+                    "resource": "/runtime.proto.runtime.v1.MosnRuntime/SayHello",
                     "grade": 1,
                     "threshold": 5
                 }
@@ -24,7 +24,7 @@
     }
 ]
 ```
-这段配置就是让`/mosn.proto.runtime.v1.MosnRuntime/SayHello`接口具备限流能力，1s只能调用5次。
+这段配置就是让`/spec.proto.runtime.v1.Runtime/SayHello`接口具备限流能力，1s只能调用5次。
 
 对应的调用端代码在[client.go](../../../../demo/flowcontrol/client.go)中，代码逻辑很简单，就是想服务端发起10次调用，调用结果如下：
 

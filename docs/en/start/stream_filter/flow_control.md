@@ -15,7 +15,7 @@ There is a config of flow control in [runtime_config.json](../../../../configs/r
             "limit_key_type": "PATH",
             "rules": [
                 {
-                    "resource": "/mosn.proto.runtime.v1.MosnRuntime/SayHello",
+                    "resource": "/spec.proto.runtime.v1.Runtime/SayHello",
                     "grade": 1,
                     "threshold": 5
                 }
@@ -24,7 +24,7 @@ There is a config of flow control in [runtime_config.json](../../../../configs/r
     }
 ]
 ```
-this can help `/mosn.proto.runtime.v1.MosnRuntime/SayHello` method has a flow control feature, which means we can only access this method below 5 times in 1 second.
+this can help `/spec.proto.runtime.v1.Runtime/SayHello` method has a flow control feature, which means we can only access this method below 5 times in 1 second.
 
 this code of the client is here [client.go](../../../../demo/flowcontrol/client.go)，the logic is very simple, send 10 times request to the server，and the result is below:
 

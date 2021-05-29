@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/layotto/layotto/pkg/services/configstores"
+	"github.com/layotto/layotto/spec/proto/runtime/v1"
 	"net"
 	"testing"
 	"time"
@@ -12,7 +13,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/layotto/layotto/pkg/mock"
 	"github.com/layotto/layotto/pkg/services/hello"
-	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 )
@@ -24,15 +24,15 @@ const (
 
 type MockGrpcServer struct {
 	err error
-	req *runtimev1pb.SubscribeConfigurationRequest
+	req *runtime.SubscribeConfigurationRequest
 	grpc.ServerStream
 }
 
-func (m *MockGrpcServer) Send(res *runtimev1pb.SubscribeConfigurationResponse) error {
+func (m *MockGrpcServer) Send(res *runtime.SubscribeConfigurationResponse) error {
 	return nil
 }
 
-func (m *MockGrpcServer) Recv() (*runtimev1pb.SubscribeConfigurationRequest, error) {
+func (m *MockGrpcServer) Recv() (*runtime.SubscribeConfigurationRequest, error) {
 	return m.req, m.err
 }
 
@@ -40,8 +40,8 @@ type mockGRPCAPI struct {
 	API
 }
 
-func (m *mockGRPCAPI) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error) {
-	return &runtimev1pb.SayHelloResponse{}, nil
+func (m *mockGRPCAPI) SayHello(ctx context.Context, in *runtime.SayHelloRequest) (*runtime.SayHelloResponse, error) {
+	return &runtime.SayHelloResponse{}, nil
 }
 
 func TestStartServerAPI(t *testing.T) {
@@ -60,7 +60,7 @@ func TestSayHello(t *testing.T) {
 		mockHello.EXPECT().Hello(gomock.Any()).Return(&hello.HelloReponse{
 			HelloString: "mock hello",
 		}, nil).Times(1)
-		resp, err := api.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
+		resp, err := api.SayHello(context.Background(), &runtime.SayHelloRequest{
 			ServiceName: "mock",
 		})
 		if err != nil {
@@ -77,7 +77,7 @@ func TestSayHello(t *testing.T) {
 		api := &api{hellos: map[string]hello.HelloService{
 			"mock": mockHello,
 		}}
-		_, err := api.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
+		_, err := api.SayHello(context.Background(), &runtime.SayHelloRequest{
 			ServiceName: "no register",
 		})
 		if err != ErrNoInstance {
@@ -87,7 +87,7 @@ func TestSayHello(t *testing.T) {
 
 	t.Run("empty say hello", func(t *testing.T) {
 		api := &api{hellos: map[string]hello.HelloService{}}
-		_, err := api.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
+		_, err := api.SayHello(context.Background(), &runtime.SayHelloRequest{
 			ServiceName: "mock",
 		})
 		if err != ErrNoInstance {
@@ -102,7 +102,7 @@ func startTestRuntimeAPIServer(port int, testAPIServer API) *grpc.Server {
 
 	server := grpc.NewServer(opts...)
 	go func() {
-		runtimev1pb.RegisterMosnRuntimeServer(server, testAPIServer)
+		runtime.RegisterRuntimeServer(server, testAPIServer)
 		if err := server.Serve(lis); err != nil {
 			panic(err)
 		}
@@ -120,11 +120,11 @@ func TestGetConfiguration(t *testing.T) {
 	mockConfigStore.EXPECT().Get(gomock.Any(), gomock.Any()).Return([]*configstores.ConfigurationItem{
 		&configstores.ConfigurationItem{Key: "sofa", Content: "sofa1"},
 	}, nil).Times(1)
-	res, err := api.GetConfiguration(context.Background(), &runtimev1pb.GetConfigurationRequest{StoreName: "mock", AppId: "mosn", Keys: []string{"sofa"}})
+	res, err := api.GetConfiguration(context.Background(), &runtime.GetConfigurationRequest{StoreName: "mock", AppId: "mosn", Keys: []string{"sofa"}})
 	assert.Nil(t, err)
 	assert.Equal(t, res.Items[0].Key, "sofa")
 	assert.Equal(t, res.Items[0].Content, "sofa1")
-	_, err = api.GetConfiguration(context.Background(), &runtimev1pb.GetConfigurationRequest{StoreName: "etcd", AppId: "mosn", Keys: []string{"sofa"}})
+	_, err = api.GetConfiguration(context.Background(), &runtime.GetConfigurationRequest{StoreName: "etcd", AppId: "mosn", Keys: []string{"sofa"}})
 	assert.Equal(t, err.Error(), "configure store [etcd] don't support now")
 
 }
@@ -133,7 +133,7 @@ func TestSaveConfiguration(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockConfigStore := mock.NewMockStore(ctrl)
 	api := NewAPI(nil, map[string]configstores.Store{"mock": mockConfigStore})
-	_, err := api.SaveConfiguration(context.Background(), &runtimev1pb.SaveConfigurationRequest{StoreName: "etcd"})
+	_, err := api.SaveConfiguration(context.Background(), &runtime.SaveConfigurationRequest{StoreName: "etcd"})
 	assert.Equal(t, err.Error(), "configure store [etcd] don't support now")
 }
 
@@ -141,7 +141,7 @@ func TestDeleteConfiguration(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockConfigStore := mock.NewMockStore(ctrl)
 	api := NewAPI(nil, map[string]configstores.Store{"mock": mockConfigStore})
-	_, err := api.DeleteConfiguration(context.Background(), &runtimev1pb.DeleteConfigurationRequest{StoreName: "etcd"})
+	_, err := api.DeleteConfiguration(context.Background(), &runtime.DeleteConfigurationRequest{StoreName: "etcd"})
 	assert.Equal(t, err.Error(), "configure store [etcd] don't support now")
 }
 
@@ -149,7 +149,7 @@ func TestSubscribeConfiguration(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockConfigStore := mock.NewMockStore(ctrl)
 	//test not support store type
-	grpcServer := &MockGrpcServer{req: &runtimev1pb.SubscribeConfigurationRequest{}, err: nil}
+	grpcServer := &MockGrpcServer{req: &runtime.SubscribeConfigurationRequest{}, err: nil}
 	api := NewAPI(nil, map[string]configstores.Store{"mock": mockConfigStore})
 	err := api.SubscribeConfiguration(grpcServer)
 	assert.NotNil(t, err)
@@ -157,7 +157,7 @@ func TestSubscribeConfiguration(t *testing.T) {
 
 	//test
 	mockConfigStore.EXPECT().StopSubscribe().Return().Times(1)
-	grpcServer2 := &MockGrpcServer{req: &runtimev1pb.SubscribeConfigurationRequest{}, err: errors.New("exit")}
+	grpcServer2 := &MockGrpcServer{req: &runtime.SubscribeConfigurationRequest{}, err: errors.New("exit")}
 	err = api.SubscribeConfiguration(grpcServer2)
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "exit")
