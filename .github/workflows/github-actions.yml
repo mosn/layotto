@@ -73,3 +73,6 @@ jobs:
       - name: Hello world
         run: echo Hello world ${{ secrets.DING_TOKEN }} ${{ secrets.DING_SIGN }}
 
+      - name: integrate
+        run: make wasm-integrate
+
