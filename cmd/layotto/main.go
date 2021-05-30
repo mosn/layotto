@@ -3,18 +3,41 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	_ "github.com/layotto/layotto/pkg/actuator"
-	health "github.com/layotto/layotto/pkg/actuator/health"
-	actuatorInfo "github.com/layotto/layotto/pkg/actuator/info"
-	_ "github.com/layotto/layotto/pkg/filter/network/tcpcopy"
-	_ "github.com/layotto/layotto/pkg/filter/stream/actuator/http"
-	"github.com/layotto/layotto/pkg/integrate/actuator"
-	"github.com/layotto/layotto/pkg/runtime"
+	"github.com/dapr/dapr/pkg/logger"
+
+	// Hello
+	"github.com/layotto/layotto/pkg/services/hello"
+	"github.com/layotto/layotto/pkg/services/hello/helloworld"
+
+	// Configuration
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/configstores/apollo"
 	"github.com/layotto/layotto/pkg/services/configstores/etcdv3"
-	"github.com/layotto/layotto/pkg/services/hello"
-	"github.com/layotto/layotto/pkg/services/hello/helloworld"
+
+	// Pub/Sub
+	dapr_comp_pubsub "github.com/dapr/components-contrib/pubsub"
+	pubsub_snssqs "github.com/dapr/components-contrib/pubsub/aws/snssqs"
+	pubsub_eventhubs "github.com/dapr/components-contrib/pubsub/azure/eventhubs"
+	"github.com/dapr/components-contrib/pubsub/azure/servicebus"
+	pubsub_gcp "github.com/dapr/components-contrib/pubsub/gcp/pubsub"
+	pubsub_hazelcast "github.com/dapr/components-contrib/pubsub/hazelcast"
+	pubsub_kafka "github.com/dapr/components-contrib/pubsub/kafka"
+	pubsub_mqtt "github.com/dapr/components-contrib/pubsub/mqtt"
+	"github.com/dapr/components-contrib/pubsub/natsstreaming"
+	pubsub_pulsar "github.com/dapr/components-contrib/pubsub/pulsar"
+	"github.com/dapr/components-contrib/pubsub/rabbitmq"
+	pubsub_redis "github.com/dapr/components-contrib/pubsub/redis"
+	"github.com/layotto/layotto/pkg/services/pubsub"
+
+	// Actuator
+	_ "github.com/layotto/layotto/pkg/actuator"
+	health "github.com/layotto/layotto/pkg/actuator/health"
+	actuatorInfo "github.com/layotto/layotto/pkg/actuator/info"
+	_ "github.com/layotto/layotto/pkg/filter/stream/actuator/http"
+	"github.com/layotto/layotto/pkg/integrate/actuator"
+
+	_ "github.com/layotto/layotto/pkg/filter/network/tcpcopy"
+	"github.com/layotto/layotto/pkg/runtime"
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 	"mosn.io/mosn/pkg/featuregate"
@@ -31,6 +54,10 @@ import (
 	"os"
 	"strconv"
 	"time"
+)
+
+var (
+	loggerForDaprComp = logger.NewLogger("dapr.contrib")
 )
 
 func init() {
@@ -53,12 +80,50 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	// 3. run
 	server, err := rt.Run(
 		runtime.WithGrpcOptions(opts...),
+		// Hello
 		runtime.WithHelloFactory(
 			hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),
 		),
+		// Configuration
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
+		),
+		// PubSub
+		runtime.WithPubSubFactory(
+			pubsub.NewFactory("redis", func() dapr_comp_pubsub.PubSub {
+				return pubsub_redis.NewRedisStreams(loggerForDaprComp)
+			}),
+			pubsub.NewFactory("natsstreaming", func() dapr_comp_pubsub.PubSub {
+				return natsstreaming.NewNATSStreamingPubSub(loggerForDaprComp)
+			}),
+			pubsub.NewFactory("azure.eventhubs", func() dapr_comp_pubsub.PubSub {
+				return pubsub_eventhubs.NewAzureEventHubs(loggerForDaprComp)
+			}),
+			pubsub.NewFactory("azure.servicebus", func() dapr_comp_pubsub.PubSub {
+				return servicebus.NewAzureServiceBus(loggerForDaprComp)
+			}),
+			pubsub.NewFactory("rabbitmq", func() dapr_comp_pubsub.PubSub {
+				return rabbitmq.NewRabbitMQ(loggerForDaprComp)
+			}),
+			pubsub.NewFactory("hazelcast", func() dapr_comp_pubsub.PubSub {
+				return pubsub_hazelcast.NewHazelcastPubSub(loggerForDaprComp)
+			}),
+			pubsub.NewFactory("gcp.pubsub", func() dapr_comp_pubsub.PubSub {
+				return pubsub_gcp.NewGCPPubSub(loggerForDaprComp)
+			}),
+			pubsub.NewFactory("kafka", func() dapr_comp_pubsub.PubSub {
+				return pubsub_kafka.NewKafka(loggerForDaprComp)
+			}),
+			pubsub.NewFactory("snssqs", func() dapr_comp_pubsub.PubSub {
+				return pubsub_snssqs.NewSnsSqs(loggerForDaprComp)
+			}),
+			pubsub.NewFactory("mqtt", func() dapr_comp_pubsub.PubSub {
+				return pubsub_mqtt.NewMQTTPubSub(loggerForDaprComp)
+			}),
+			pubsub.NewFactory("pulsar", func() dapr_comp_pubsub.PubSub {
+				return pubsub_pulsar.NewPulsar(loggerForDaprComp)
+			}),
 		),
 	)
 	// 4. check if unhealthy

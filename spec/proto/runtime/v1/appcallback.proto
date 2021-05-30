@@ -12,8 +12,8 @@ option go_package = "github.com/layotto/layotto/spec/proto/runtime/v1;runtime";
 // User application needs to implement AppCallback service if it needs to
 // receive message from runtime.
 service AppCallback {
-  // Invokes service method with InvokeRequest.
-  rpc OnInvoke (InvokeRequest) returns (InvokeResponse) {}
+//  // Invokes service method with InvokeRequest.
+//  rpc OnInvoke (InvokeRequest) returns (InvokeResponse) {}
 
   // Lists all topics subscribed by this app.
   rpc ListTopicSubscriptions(google.protobuf.Empty) returns (ListTopicSubscriptionsResponse) {}

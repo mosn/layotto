@@ -51,8 +51,8 @@ service Runtime {
 //  // Executes transactions for a specified store
 //  rpc ExecuteStateTransaction(ExecuteStateTransactionRequest) returns (google.protobuf.Empty) {}
 //
-//  // Publishes events to the specific topic.
-//  rpc PublishEvent(PublishEventRequest) returns (google.protobuf.Empty) {}
+  // Publishes events to the specific topic.
+  rpc PublishEvent(PublishEventRequest) returns (google.protobuf.Empty) {}
 //
 //  // Invokes binding data to specific output bindings
 //  rpc InvokeBinding(InvokeBindingRequest) returns (InvokeBindingResponse) {}

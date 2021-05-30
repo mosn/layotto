@@ -4,15 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/layotto/layotto/spec/proto/runtime/v1"
-	"strings"
-	"sync"
-
-	empty "google.golang.org/protobuf/types/known/emptypb"
-
+	"github.com/dapr/components-contrib/pubsub"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/layotto/layotto/pkg/messages"
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/hello"
+	pubsub_util "github.com/layotto/layotto/pkg/services/pubsub"
+	"github.com/layotto/layotto/spec/proto/runtime/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
+	empty "google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/pkg/log"
+	"strings"
+	"sync"
 )
 
 var (
@@ -29,21 +34,26 @@ type API interface {
 	DeleteConfiguration(context.Context, *runtime.DeleteConfigurationRequest) (*empty.Empty, error)
 	// SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
 	SubscribeConfiguration(runtime.Runtime_SubscribeConfigurationServer) error
+	// Publishes events to the specific topic.
+	PublishEvent(context.Context, *runtime.PublishEventRequest) (*empty.Empty, error)
 }
 
 // api is a default implementation for MosnRuntimeServer.
 type api struct {
 	hellos       map[string]hello.HelloService
 	configStores map[string]configstores.Store
+	pubSubs      map[string]pubsub.PubSub
 }
 
 func NewAPI(
 	hellos map[string]hello.HelloService,
 	configStores map[string]configstores.Store,
+	pubSubs map[string]pubsub.PubSub,
 ) API {
 	return &api{
 		hellos:       hellos,
 		configStores: configStores,
+		pubSubs:      pubSubs,
 	}
 }
 
@@ -204,4 +214,78 @@ func (a *api) SubscribeConfiguration(sub runtime.Runtime_SubscribeConfigurationS
 	wg.Wait()
 	log.DefaultLogger.Warnf("subscribe gorountine exit")
 	return subErr
+}
+
+func (a *api) PublishEvent(ctx context.Context, in *runtime.PublishEventRequest) (*emptypb.Empty, error) {
+	result, err := a.doPublishEvent(ctx, in.PubsubName, in.Topic, in.Data, in.DataContentType, in.Metadata)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
+	}
+	return result, err
+}
+
+// doPublishEvent is a protocal irrelevant function to do event publishing.
+// It's easy to add APIs for other protocals.Just move this func to a separate layer if you need.
+func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic string, data []byte, contentType string, metadata map[string]string) (*emptypb.Empty, error) {
+	// 1. validate
+	if pubsubName == "" {
+		err := status.Error(codes.InvalidArgument, messages.ErrPubsubEmpty)
+		return &emptypb.Empty{}, err
+	}
+	if topic == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrTopicEmpty, pubsubName)
+		return &emptypb.Empty{}, err
+	}
+	// 2. get component
+	component, ok := a.pubSubs[pubsubName]
+	if !ok {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrPubsubNotFound, pubsubName)
+		return &emptypb.Empty{}, err
+	}
+
+	// 3. new cloudevent request
+	if data == nil {
+		data = []byte{}
+	}
+	envelope, err := pubsub_util.NewCloudEvent(&pubsub_util.CloudEvent{
+		Topic:           topic,
+		DataContentType: contentType,
+		Data:            data,
+		Pubsub:          pubsubName,
+	})
+	if err != nil {
+		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
+		return &emptypb.Empty{}, err
+	}
+
+	features := component.Features()
+	pubsub.ApplyMetadata(envelope, features, metadata)
+
+	b, err := jsoniter.ConfigFastest.Marshal(envelope)
+	if err != nil {
+		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventsSer, topic, pubsubName, err.Error())
+		return &emptypb.Empty{}, err
+	}
+	// 4. publish
+	req := pubsub.PublishRequest{
+		PubsubName: pubsubName,
+		Topic:      topic,
+		Data:       b,
+		Metadata:   metadata,
+	}
+
+	// TODO limit topic scope
+	err = component.Publish(&req)
+	if err != nil {
+		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, topic, pubsubName, err.Error())
+		if errors.As(err, &pubsub_util.NotAllowedError{}) {
+			nerr = status.Errorf(codes.PermissionDenied, err.Error())
+		}
+
+		if errors.As(err, &pubsub_util.NotFoundError{}) {
+			nerr = status.Errorf(codes.NotFound, err.Error())
+		}
+		return &emptypb.Empty{}, nerr
+	}
+	return &emptypb.Empty{}, nil
 }
