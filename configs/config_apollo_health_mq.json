@@ -57,13 +57,15 @@
                       },
                       "pubsub": {
                         "redis": {
-                          "app_id": "test111",
-                          "grpc_callback_port": 1111,
                           "metadata": {
                             "redisHost": "localhost:6379",
                             "redisPassword": ""
                           }
                         }
+                      },
+                      "app": {
+                        "app_id": "test111",
+                        "grpc_callback_port": 9999
                       }
                     }
                   }

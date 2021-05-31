@@ -8,7 +8,13 @@ import (
 	"github.com/layotto/layotto/pkg/services/hello"
 )
 
+type AppConfig struct {
+	AppId            string `json:"app_id"`
+	GrpcCallbackPort int    `json:"grpc_callback_port"`
+}
+
 type MosnRuntimeConfig struct {
+	AppManagement          AppConfig                           `json:"app"`
 	HelloServiceManagement map[string]hello.HelloConfig        `json:"hellos"`
 	ConfigStoreManagement  map[string]configstores.StoreConfig `json:"config_stores"`
 	PubSubManagement       map[string]pubsub.Config            `json:"pub_subs"`

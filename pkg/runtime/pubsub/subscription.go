@@ -1,3 +1,4 @@
+// REF: https://github.com/dapr/dapr/blob/master/pkg/runtime/pubsub/subscription.go
 package pubsub
 
 type Subscription struct {

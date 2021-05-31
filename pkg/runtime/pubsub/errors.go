@@ -1,3 +1,4 @@
+// REF: https://github.com/dapr/dapr/blob/master/pkg/runtime/pubsub/errors.go
 package pubsub
 
 import (
