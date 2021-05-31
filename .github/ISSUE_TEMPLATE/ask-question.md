@@ -9,7 +9,7 @@ Describe your question clearly.
 
 ### Environment
 
-- LayOtto Version
+- Layotto Version
 
 ### Logs
 

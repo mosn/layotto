@@ -1,10 +1,10 @@
-<h2>LayOtto support configuration center</h2>
+<h2>Layotto support configuration center</h2>
 
 [查看中文版本](../../../zh/start/configuration/start.md)
 
 ## Quick start
 
-This example shows how to add, delete, modify, and watch the etcd configuration center through LayOtto. Please install [Docker](https://www.docker.com/get-started) software on this machine in advance.
+This example shows how to add, delete, modify, and watch the etcd configuration center through Layotto. Please install [Docker](https://www.docker.com/get-started) software on this machine in advance.
 [config file](../../../../configs/runtime_config.json) defines etcd in config_stores, and users can change the configuration file to the configuration center they want (currently supports etcd and apollo).
 
 ### Build docker image
@@ -31,7 +31,7 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
 layotto/layotto     0.1.0-662eab0       0370527a51a1        10 minutes ago      431MB
 ```
 
-### Start LayOtto
+### Start Layotto
 
 ```bash
 docker run -p 34904:34904 layotto/layotto:0.1.0-662eab0
@@ -49,7 +49,7 @@ go build
 ./etcd
 ```
 
-If the following information is printed out, it means the startup is complete and LayOtto is running now：
+If the following information is printed out, it means the startup is complete and Layotto is running now：
 
 ```bash
 runtime client initializing for: 127.0.0.1:34904
@@ -62,5 +62,5 @@ receive watch event, &{Key:hello1 Content: Group:default Label:default Tags:map[
 
 ### Next step
 
-LayOtto provides the golang version of the SDK, which is located in the runtime/sdk directory. Users can directly call the services provided by LayOtto through the corresponding SDK.
+Layotto provides the golang version of the SDK, which is located in the runtime/sdk directory. Users can directly call the services provided by Layotto through the corresponding SDK.
 

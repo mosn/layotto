@@ -46,7 +46,7 @@ func Test_tcpcopyFactory_OnData_switch_off(t *testing.T) {
 	strategy.DumpSwitch = false
 
 	type fields struct {
-		tcpcopy *tcpcopy
+		tcpcopy *config
 	}
 	type args struct {
 		data types.IoBuffer
@@ -59,7 +59,7 @@ func Test_tcpcopyFactory_OnData_switch_off(t *testing.T) {
 	}{
 		{
 			name:    "",
-			fields:  struct{ tcpcopy *tcpcopy }{tcpcopy: nil},
+			fields:  struct{ tcpcopy *config }{tcpcopy: nil},
 			args:    struct{ data types.IoBuffer }{data: nil},
 			wantRes: api.Continue,
 		},
@@ -67,7 +67,7 @@ func Test_tcpcopyFactory_OnData_switch_off(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &tcpcopyFactory{
-				tcpcopy: tt.fields.tcpcopy,
+				cfg: tt.fields.tcpcopy,
 			}
 			if gotRes := f.OnData(tt.args.data); gotRes != tt.wantRes {
 				t.Errorf("OnData() = %v, want %v", gotRes, tt.wantRes)
@@ -81,9 +81,9 @@ func Test_tcpcopyFactory_OnData_success(t *testing.T) {
 	strategy.DumpSampleFlag = 1
 
 	type fields struct {
-		tcpcopy *tcpcopy
+		tcpcopy *config
 	}
-	tcpcopy_value := tcpcopy{port: "12220"}
+	tcpcopy_value := config{port: "12220"}
 
 	type args struct {
 		data types.IoBuffer
@@ -99,7 +99,7 @@ func Test_tcpcopyFactory_OnData_success(t *testing.T) {
 	}{
 		{
 			name:    "",
-			fields:  struct{ tcpcopy *tcpcopy }{tcpcopy: &tcpcopy_value},
+			fields:  struct{ tcpcopy *config }{tcpcopy: &tcpcopy_value},
 			args:    struct{ data types.IoBuffer }{data: buffer},
 			wantRes: api.Continue,
 		},
@@ -107,7 +107,7 @@ func Test_tcpcopyFactory_OnData_success(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &tcpcopyFactory{
-				tcpcopy: tt.fields.tcpcopy,
+				cfg: tt.fields.tcpcopy,
 			}
 			if gotRes := f.OnData(tt.args.data); gotRes != tt.wantRes {
 				t.Errorf("OnData() = %v, want %v", gotRes, tt.wantRes)
@@ -118,7 +118,7 @@ func Test_tcpcopyFactory_OnData_success(t *testing.T) {
 
 func Test_tcpcopyFactory_OnNewConnection(t *testing.T) {
 	type fields struct {
-		tcpcopy *tcpcopy
+		tcpcopy *config
 	}
 	tests := []struct {
 		name   string
@@ -127,14 +127,14 @@ func Test_tcpcopyFactory_OnNewConnection(t *testing.T) {
 	}{
 		{
 			name:   "Test_tcpcopyFactory_OnNewConnection",
-			fields: struct{ tcpcopy *tcpcopy }{tcpcopy: nil},
+			fields: struct{ tcpcopy *config }{tcpcopy: nil},
 			want:   api.Continue,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &tcpcopyFactory{
-				tcpcopy: tt.fields.tcpcopy,
+				cfg: tt.fields.tcpcopy,
 			}
 			if got := f.OnNewConnection(); got != tt.want {
 				t.Errorf("OnNewConnection() = %v, want %v", got, tt.want)

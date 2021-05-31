@@ -2,15 +2,17 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	_ "github.com/layotto/layotto/pkg/actuator"
+	"github.com/layotto/layotto/pkg/actuator/health"
+	actuatorInfo "github.com/layotto/layotto/pkg/actuator/info"
+	_ "github.com/layotto/layotto/pkg/filter/network/tcpcopy"
+	_ "github.com/layotto/layotto/pkg/filter/stream/actuator/http"
+	"github.com/layotto/layotto/pkg/integrate/actuator"
+	"github.com/layotto/layotto/pkg/runtime"
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/configstores/apollo"
 	"github.com/layotto/layotto/pkg/services/configstores/etcdv3"
-	"os"
-	"strconv"
-	"time"
-
-	_ "github.com/layotto/layotto/pkg/filter/network/tcpcopy"
-	"github.com/layotto/layotto/pkg/runtime"
 	"github.com/layotto/layotto/pkg/services/hello"
 	"github.com/layotto/layotto/pkg/services/hello/helloworld"
 	_ "github.com/layotto/layotto/pkg/wasm"
@@ -28,19 +30,30 @@ import (
 	_ "mosn.io/mosn/pkg/stream/http"
 	_ "mosn.io/mosn/pkg/wasm/runtime/wasmer"
 	_ "mosn.io/pkg/buffer"
+	"os"
+	"strconv"
+	"time"
 )
 
 func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
+	// Register default actuator implementations
+	actuatorInfo.AddInfoContributor("app", actuator.GetAppContributor())
+	health.AddReadinessIndicator("runtime_startup", actuator.GetRuntimeReadinessIndicator())
+	health.AddLivenessIndicator("runtime_startup", actuator.GetRuntimeLivenessIndicator())
 }
 
 func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
+	// 1. parse config
 	cfg, err := runtime.ParseRuntimeConfig(data)
 	if err != nil {
+		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(fmt.Sprintf("parse config error.%v", err))
 		return nil, err
 	}
+	// 2. new instance
 	rt := runtime.NewMosnRuntime(cfg)
-	return rt.Run(
+	// 3. run
+	server, err := rt.Run(
 		runtime.WithGrpcOptions(opts...),
 		runtime.WithHelloFactory(
 			hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),
@@ -50,6 +63,12 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 		),
 	)
+	// 4. check if unhealthy
+	if err != nil {
+		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(err.Error())
+		actuator.GetRuntimeLivenessIndicator().SetUnhealthy(err.Error())
+	}
+	return server, err
 }
 
 var (
@@ -86,6 +105,8 @@ var (
 
 			stm.Run()
 
+			actuator.GetRuntimeReadinessIndicator().SetStarted()
+			actuator.GetRuntimeLivenessIndicator().SetStarted()
 			// wait mosn finished
 			stm.WaitFinish()
 			return nil
@@ -95,12 +116,21 @@ var (
 
 func main() {
 	app := newRuntimeApp(&cmdStart)
+	registerAppInfo(app)
 	_ = app.Run(os.Args)
+}
+
+func registerAppInfo(app *cli.App) {
+	appInfo := actuator.NewAppInfo()
+	appInfo.Name = app.Name
+	appInfo.Version = app.Version
+	appInfo.Compiled = app.Compiled
+	actuator.SetAppInfoSingleton(appInfo)
 }
 
 func newRuntimeApp(startCmd *cli.Command) *cli.App {
 	app := cli.NewApp()
-	app.Name = "LayOtto"
+	app.Name = "Layotto"
 	app.Version = "0.1.0"
 	app.Compiled = time.Now()
 	app.Copyright = "(c) " + strconv.Itoa(time.Now().Year()) + " Ant Group"
