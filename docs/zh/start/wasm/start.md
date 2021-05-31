@@ -8,9 +8,8 @@ Layotto支持加载编译好的WASM文件，并通过`proxy_abi_version_0_2_0`�
 
 1. 启动layotto
 ```
-cd ${projectpath}/cmd/layotto
-go build -tags wasmer
-./layotto start -c ../../demo/wasm/config.json
+go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
+./layotto start -c ./demo/wasm/config.json
 ```
 
 2. 发送请求

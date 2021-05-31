@@ -8,9 +8,8 @@ Layotto supports load the compiled WASM file, and interacts with it through the 
 
 1. start Layotto server
 ```
-cd ${projectpath}/cmd/layotto
-go build -tags wasmer
-./layotto start -c ../../demo/wasm/config.json
+go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
+./layotto start -c ./demo/wasm/config.json
 ```
 
 2. send request
