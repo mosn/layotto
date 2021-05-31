@@ -19,6 +19,7 @@ import (
 	"google.golang.org/grpc/status"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"mosn.io/pkg/log"
+	"strings"
 )
 
 type MosnRuntime struct {
@@ -56,6 +57,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		info:                info,
 		helloRegistry:       hello.NewRegistry(info),
 		configStoreRegistry: configstores.NewRegistry(info),
+		pubSubRegistry:      pubsub_service.NewRegistry(info),
 		hellos:              make(map[string]hello.HelloService),
 		configStores:        make(map[string]configstores.Store),
 		pubSubs:             make(map[string]pubsub.PubSub),
@@ -172,6 +174,11 @@ func (m *MosnRuntime) initPubSubs(factorys ...*pubsub_service.Factory) error {
 			m.errInt(err, "create configstore's component %s failed", name)
 			return err
 		}
+		consumerID := strings.TrimSpace(config.Metadata["consumerID"])
+		if consumerID == "" {
+			config.Metadata["consumerID"] = m.runtimeConfig.AppManagement.AppId
+		}
+
 		if err := comp.Init(pubsub.Metadata{Properties: config.Metadata}); err != nil {
 			m.errInt(err, "init configstore's component %s failed", name)
 			return err

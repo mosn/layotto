@@ -7,7 +7,7 @@ import (
 	"github.com/dapr/components-contrib/pubsub"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/layotto/layotto/pkg/messages"
-	pubsub2 "github.com/layotto/layotto/pkg/runtime/pubsub"
+	runtime_pubsub "github.com/layotto/layotto/pkg/runtime/pubsub"
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/hello"
 	"github.com/layotto/layotto/spec/proto/runtime/v1"
@@ -247,7 +247,7 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 	if data == nil {
 		data = []byte{}
 	}
-	envelope, err := pubsub2.NewCloudEvent(&pubsub2.CloudEvent{
+	envelope, err := runtime_pubsub.NewCloudEvent(&runtime_pubsub.CloudEvent{
 		Topic:           topic,
 		DataContentType: contentType,
 		Data:            data,
@@ -278,11 +278,11 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 	err = component.Publish(&req)
 	if err != nil {
 		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, topic, pubsubName, err.Error())
-		if errors.As(err, &pubsub2.NotAllowedError{}) {
+		if errors.As(err, &runtime_pubsub.NotAllowedError{}) {
 			nerr = status.Errorf(codes.PermissionDenied, err.Error())
 		}
 
-		if errors.As(err, &pubsub2.NotFoundError{}) {
+		if errors.As(err, &runtime_pubsub.NotFoundError{}) {
 			nerr = status.Errorf(codes.NotFound, err.Error())
 		}
 		return &emptypb.Empty{}, nerr

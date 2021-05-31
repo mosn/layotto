@@ -34,6 +34,8 @@ type Client interface {
 	DeleteConfiguration(ctx context.Context, in *ConfigurationRequestItem) error
 	// SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
 	SubscribeConfiguration(ctx context.Context, in *ConfigurationRequestItem) WatchChan
+	// Publishes events to the specific topic.
+	PublishEvent(ctx context.Context, in *PublishEventRequest) error
 	// Close cleans up all resources created by the client.
 	Close()
 }

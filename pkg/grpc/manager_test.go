@@ -3,6 +3,7 @@ package grpc
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/connectivity"
 	"testing"
 )
 
@@ -17,6 +18,9 @@ func TestGetGRPCConnection(t *testing.T) {
 	port := 55555
 	sslEnabled := false
 	conn, err := m.GetGRPCConnection(fmt.Sprintf("127.0.0.1:%v", port), "", "", true, true, sslEnabled)
-	assert.True(t, err != nil)
-	assert.True(t, conn == nil)
+	assert.NoError(t, err)
+	conn2, err2 := m.GetGRPCConnection(fmt.Sprintf("127.0.0.1:%v", port), "", "", true, true, sslEnabled)
+	assert.NoError(t, err2)
+	assert.Equal(t, connectivity.Shutdown, conn.GetState())
+	conn2.Close()
 }
