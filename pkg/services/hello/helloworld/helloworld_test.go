@@ -1,18 +1,22 @@
 package helloworld
 
 import (
-	"testing"
-
 	"github.com/layotto/layotto/pkg/services/hello"
+	"testing"
 )
 
 func TestHelloWorld(t *testing.T) {
 	hs := NewHelloWorld()
 	hs.Init(&hello.HelloConfig{
-		HelloString: "test",
+		HelloString: "Hi",
 	})
-	resp, _ := hs.Hello(nil)
-	if resp.HelloString != "test" {
+
+	req := &hello.HelloRequest{
+		Name: "Layotto",
+	}
+
+	resp, _ := hs.Hello(req)
+	if resp.HelloString != "Hi, Layotto" {
 		t.Fatalf("hello output failed")
 	}
 }
