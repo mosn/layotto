@@ -55,7 +55,6 @@ type Filter struct {
 	destroyOnce sync.Once
 
 	buffer api.IoBuffer
-
 }
 
 var contextIDGenerator int32
@@ -247,7 +246,6 @@ func (f *Filter) GetHttpResponseHeader() common.HeaderMap {
 	if f.senderFilterHandler == nil {
 		return nil
 	}
-
 
 	return &proxywasm010.HeaderMapWrapper{HeaderMap: f.senderFilterHandler.GetResponseHeaders()}
 }

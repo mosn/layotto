@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master, develop]
+    branches: [main, develop]
   pull_request:
     branches: "*"
 
@@ -69,9 +69,6 @@ jobs:
 
       - name: Post Coverage
         run: bash <(curl -s https://codecov.io/bash)
-
-      - name: Hello world
-        run: echo Hello world ${{ secrets.DING_TOKEN }} ${{ secrets.DING_SIGN }}
 
       - name: integrate
         run: make wasm-integrate
