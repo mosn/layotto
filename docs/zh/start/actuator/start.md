@@ -130,4 +130,4 @@ LayottoÄÚÖÃÌá¹©ÁË/actuator/health/readinessºÍ/actuator/health/liveness Á½¸ö½¡¿µ¼
 
 ### ÁË½âActuatorÊµÏÖÔ­Àí
 
-Èç¹ûÄú¶ÔÊµÏÖÔ­Àí¸ĞĞËÈ¤£¬»òÕßÏëÔÚActuatorÀ©Õ¹Ò»Ğ©¹¦ÄÜ£¬¿ÉÒÔÔÄ¶Á[ActuatorµÄÉè¼ÆÎÄµµ](../../design/actuator-design-doc.md)
+Èç¹ûÄú¶ÔÊµÏÖÔ­Àí¸ĞĞËÈ¤£¬»òÕßÏëÔÚActuatorÀ©Õ¹Ò»Ğ©¹¦ÄÜ£¬¿ÉÒÔÔÄ¶Á[ActuatorµÄÉè¼ÆÎÄµµ](../../design/actuator/actuator-design-doc.md)
