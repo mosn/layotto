@@ -1,4 +1,4 @@
-<h2>通过Layotto调用redis，进行消息发布/订阅</h2>
+# 通过Layotto调用redis，进行消息发布/订阅
 
 ## 快速开始
 

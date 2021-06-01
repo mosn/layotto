@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/layotto/layotto/spec/proto/runtime/v1"
+	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"time"
 
 	"google.golang.org/grpc"
@@ -15,10 +15,10 @@ func main() {
 		panic(err)
 	}
 	defer conn.Close()
-	c := runtime.NewRuntimeClient(conn)
+	c := runtimev1pb.NewRuntimeClient(conn)
 
 	for i := 0; i < 10; i++ {
-		r, err := c.SayHello(context.Background(), &runtime.SayHelloRequest{
+		r, err := c.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
 			ServiceName: "helloworld",
 		})
 		if err != nil {

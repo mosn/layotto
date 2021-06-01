@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	"github.com/layotto/layotto/spec/proto/runtime/v1"
+	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 )
 
 type PublishEventRequest struct {
@@ -22,7 +22,7 @@ type PublishEventRequest struct {
 }
 
 func (c *GRPCClient) PublishEvent(ctx context.Context, in *PublishEventRequest) error {
-	req := &runtime.PublishEventRequest{
+	req := &runtimev1pb.PublishEventRequest{
 		PubsubName:      in.PubsubName,
 		Topic:           in.Topic,
 		Data:            in.Data,

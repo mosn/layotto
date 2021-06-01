@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	"github.com/layotto/layotto/spec/proto/runtime/v1"
+	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"log"
@@ -88,14 +88,14 @@ func NewClientWithAddress(address string) (client Client, err error) {
 func NewClientWithConnection(conn *grpc.ClientConn) Client {
 	return &GRPCClient{
 		connection:  conn,
-		protoClient: runtime.NewRuntimeClient(conn),
+		protoClient: runtimev1pb.NewRuntimeClient(conn),
 	}
 }
 
 // GRPCClient is the gRPC implementation of runtime client.
 type GRPCClient struct {
 	connection  *grpc.ClientConn
-	protoClient runtime.RuntimeClient
+	protoClient runtimev1pb.RuntimeClient
 	mux         sync.Mutex
 }
 
