@@ -58,7 +58,7 @@
                       "pub_subs": {
                         "redis": {
                           "metadata": {
-                            "redisHost": "localhost:6379",
+                            "redisHost": "localhost:6380",
                             "redisPassword": ""
                           }
                         }

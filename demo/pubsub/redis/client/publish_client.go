@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/layotto/layotto/sdk/client"
 )
 
@@ -26,5 +27,10 @@ func testPublish(cli client.Client) error {
 		DataContentType: "",
 		Metadata:        nil,
 	}
-	return cli.PublishEvent(context.Background(), in)
+	err := cli.PublishEvent(context.Background(), in)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Published a new event.Topic: %s ,Data: %s \n", in.Topic, in.Data)
+	return err
 }

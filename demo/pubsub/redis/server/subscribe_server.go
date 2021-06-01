@@ -25,6 +25,7 @@ func testSub() {
 	}
 	grpcServer := grpc.NewServer()
 	runtime.RegisterAppCallbackServer(grpcServer, &AppCallbackServerImpl{})
+	fmt.Printf("Start listening on port %v ...... \n", port)
 	err = grpcServer.Serve(lis)
 	if err != nil {
 		panic(err)
@@ -46,6 +47,6 @@ func (a *AppCallbackServerImpl) ListTopicSubscriptions(ctx context.Context, empt
 }
 
 func (a *AppCallbackServerImpl) OnTopicEvent(ctx context.Context, request *runtime.TopicEventRequest) (*runtime.TopicEventResponse, error) {
-	fmt.Printf("%+v \n", *request)
+	fmt.Printf("Received a new event.Topic: %s , Data:%s \n", request.Topic, request.Data)
 	return &runtime.TopicEventResponse{}, nil
 }
