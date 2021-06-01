@@ -3,6 +3,7 @@ package runtime
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 	"github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
 	jsoniter "github.com/json-iterator/go"
@@ -15,6 +16,7 @@ import (
 	pubsub_service "github.com/layotto/layotto/pkg/services/pubsub"
 	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"github.com/pkg/errors"
+	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
@@ -34,20 +36,20 @@ type MosnRuntime struct {
 	hellos              map[string]hello.HelloService
 	configStores        map[string]configstores.Store
 	pubSubs             map[string]pubsub.PubSub
-	topicRoutes         map[string]TopicRoute
-	grpc                *grpc.Manager
+	topicPerComponent   map[string]TopicSubscriptions
+	// app callback
+	AppCallbackConn *rawGRPC.ClientConn
 	// extends
 	errInt ErrInterceptor
 	json   jsoniter.API
 }
 
-type Route struct {
-	path     string
+type Details struct {
 	metadata map[string]string
 }
 
-type TopicRoute struct {
-	routes map[string]Route
+type TopicSubscriptions struct {
+	topic2Details map[string]Details
 }
 
 func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
@@ -61,7 +63,6 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		hellos:              make(map[string]hello.HelloService),
 		configStores:        make(map[string]configstores.Store),
 		pubSubs:             make(map[string]pubsub.PubSub),
-		grpc:                grpc.NewManager(),
 		json:                jsoniter.ConfigFastest,
 	}
 }
@@ -112,7 +113,14 @@ func (m *MosnRuntime) Stop() {
 }
 
 func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
-	// init hello implementation by config
+	if m.runtimeConfig == nil {
+		return errors.New("[runtime] init error:no runtimeConfig")
+	}
+	// init callback connection
+	if err := m.initAppCallbackConnection(); err != nil {
+		return err
+	}
+	// init all kinds of components with config
 	if err := m.initHellos(o.services.hellos...); err != nil {
 		return err
 	}
@@ -185,43 +193,39 @@ func (m *MosnRuntime) initPubSubs(factorys ...*pubsub_service.Factory) error {
 		}
 		m.pubSubs[name] = comp
 	}
-	// 2. init the client for calling app
-	if m.runtimeConfig != nil && m.runtimeConfig.AppManagement.GrpcCallbackPort > 0 {
-		port := m.runtimeConfig.AppManagement.GrpcCallbackPort
-		err := m.grpc.InitAppClient(port)
-		if err != nil {
-			log.DefaultLogger.Warnf("[runtime]failed to init callback client at port %v : %s", port, err)
-		}
-	}
-	// 3. start subscribing
+	// 2. start subscribing
 	return m.startSubscribing()
 }
 
 func (m *MosnRuntime) startSubscribing() error {
+	// 1. check if there is no need to do it
+	topicRoutes, err := m.getInterestedTopics()
+	if err != nil {
+		return err
+	}
+	if len(topicRoutes) == 0 {
+		//	no need
+		return nil
+	}
+	// 2. loop subscribe
 	for name, pubsub := range m.pubSubs {
-		if err := m.beginPubSub(name, pubsub); err != nil {
+		if err := m.beginPubSub(name, pubsub, topicRoutes); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (m *MosnRuntime) beginPubSub(name string, ps pubsub.PubSub) error {
-	publishFunc := m.publishMessageGRPC
-	// 1. call app to find topic routes.
-	topicRoutes, err := m.getTopicRoutes()
-	if err != nil {
-		return err
-	}
-	v, ok := topicRoutes[name]
+func (m *MosnRuntime) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[string]TopicSubscriptions) error {
+	// 1. call app to find topic topic2Details.
+	v, ok := topicRoutes[pubsubName]
 	if !ok {
 		return nil
 	}
 	// 2. loop subscribing every <topic, route>
-	for topic, route := range v.routes {
+	for topic, route := range v.topic2Details {
 		// TODO limit topic scope
-		log.DefaultLogger.Debugf("[runtime][beginPubSub]subscribing to topic=%s on pubsub=%s", topic, name)
-
+		log.DefaultLogger.Debugf("[runtime][beginPubSub]subscribing to topic=%s on pubsub=%s", topic, pubsubName)
 		// ask component to subscribe
 		if err := ps.Subscribe(pubsub.SubscribeRequest{
 			Topic:    topic,
@@ -230,9 +234,8 @@ func (m *MosnRuntime) beginPubSub(name string, ps pubsub.PubSub) error {
 			if msg.Metadata == nil {
 				msg.Metadata = make(map[string]string, 1)
 			}
-
-			msg.Metadata[Metadata_key_pubsubName] = name
-			return publishFunc(msg)
+			msg.Metadata[Metadata_key_pubsubName] = pubsubName
+			return m.publishMessageGRPC(msg)
 		}); err != nil {
 			log.DefaultLogger.Warnf("[runtime][beginPubSub]failed to subscribe to topic %s: %s", topic, err)
 			return err
@@ -242,46 +245,49 @@ func (m *MosnRuntime) beginPubSub(name string, ps pubsub.PubSub) error {
 	return nil
 }
 
-func (m *MosnRuntime) getTopicRoutes() (map[string]TopicRoute, error) {
-	if m.topicRoutes != nil {
-		return m.topicRoutes, nil
+func (m *MosnRuntime) getInterestedTopics() (map[string]TopicSubscriptions, error) {
+	// 1. check
+	if m.topicPerComponent != nil {
+		return m.topicPerComponent, nil
 	}
-
-	topicRoutes := make(map[string]TopicRoute)
+	if m.AppCallbackConn == nil {
+		return make(map[string]TopicSubscriptions), nil
+	}
+	comp2Topic := make(map[string]TopicSubscriptions)
 	var subscriptions []runtime_pubsub.Subscription
 
-	// handle app subscriptions
-	client := runtimev1pb.NewAppCallbackClient(m.grpc.AppClientConn)
+	// 2. handle app subscriptions
+	client := runtimev1pb.NewAppCallbackClient(m.AppCallbackConn)
 	subscriptions = runtime_pubsub.GetSubscriptionsGRPC(client, log.DefaultLogger)
 	// TODO handle declarative subscriptions
 
-	// prepare result
+	// 3. prepare result
 	for _, s := range subscriptions {
-		if _, ok := topicRoutes[s.PubsubName]; !ok {
-			topicRoutes[s.PubsubName] = TopicRoute{routes: make(map[string]Route)}
+		if _, ok := comp2Topic[s.PubsubName]; !ok {
+			comp2Topic[s.PubsubName] = TopicSubscriptions{topic2Details: make(map[string]Details)}
 		}
-
-		topicRoutes[s.PubsubName].routes[s.Topic] = Route{path: s.Route, metadata: s.Metadata}
+		comp2Topic[s.PubsubName].topic2Details[s.Topic] = Details{metadata: s.Metadata}
 	}
 
-	// log
-	if len(topicRoutes) > 0 {
-		for pubsubName, v := range topicRoutes {
+	// 4. log
+	if len(comp2Topic) > 0 {
+		for pubsubName, v := range comp2Topic {
 			topics := []string{}
-			for topic := range v.routes {
+			for topic := range v.topic2Details {
 				topics = append(topics, topic)
 			}
-			log.DefaultLogger.Infof("[runtime][getTopicRoutes]app is subscribed to the following topics: %v through pubsub=%s", topics, pubsubName)
+			log.DefaultLogger.Infof("[runtime][getInterestedTopics]app is subscribed to the following topics: %v through pubsub=%s", topics, pubsubName)
 		}
 	}
-	m.topicRoutes = topicRoutes
-	return topicRoutes, nil
+	// 5. cache the result
+	m.topicPerComponent = comp2Topic
+	return comp2Topic, nil
 }
 
-func (a *MosnRuntime) publishMessageGRPC(msg *pubsub.NewMessage) error {
+func (m *MosnRuntime) publishMessageGRPC(msg *pubsub.NewMessage) error {
 	// 1. Unmarshal to cloudEvent model
 	var cloudEvent map[string]interface{}
-	err := a.json.Unmarshal(msg.Data, &cloudEvent)
+	err := m.json.Unmarshal(msg.Data, &cloudEvent)
 	if err != nil {
 		log.DefaultLogger.Debugf("[runtime]error deserializing cloud events proto: %s", err)
 		return err
@@ -319,14 +325,14 @@ func (a *MosnRuntime) publishMessageGRPC(msg *pubsub.NewMessage) error {
 		if contenttype.IsStringContentType(envelope.DataContentType) {
 			envelope.Data = []byte(data.(string))
 		} else if contenttype.IsJSONContentType(envelope.DataContentType) {
-			envelope.Data, _ = a.json.Marshal(data)
+			envelope.Data, _ = m.json.Marshal(data)
 		}
 	}
 	// TODO tracing
 
 	// 4. Call appcallback
 	ctx := context.Background()
-	clientV1 := runtimev1pb.NewAppCallbackClient(a.grpc.AppClientConn)
+	clientV1 := runtimev1pb.NewAppCallbackClient(m.AppCallbackConn)
 	res, err := clientV1.OnTopicEvent(ctx, envelope)
 
 	// 5. Check result
@@ -357,4 +363,22 @@ func (a *MosnRuntime) publishMessageGRPC(msg *pubsub.NewMessage) error {
 	}
 	// Consider unknown status field as error and retry
 	return errors.Errorf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus())
+}
+
+func (m *MosnRuntime) initAppCallbackConnection() error {
+	// init the client connection for calling app
+	if m.runtimeConfig == nil || m.runtimeConfig.AppManagement.GrpcCallbackPort == 0 {
+		return nil
+	}
+	port := m.runtimeConfig.AppManagement.GrpcCallbackPort
+	// dial
+	ctx, cancel := context.WithTimeout(context.Background(), dialTimeout)
+	defer cancel()
+	conn, err := rawGRPC.DialContext(ctx, fmt.Sprintf("127.0.0.1:%v", port))
+	if err != nil {
+		log.DefaultLogger.Warnf("[runtime]failed to init callback client at port %v : %s", port, err)
+		return err
+	}
+	m.AppCallbackConn = conn
+	return nil
 }

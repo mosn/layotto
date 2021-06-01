@@ -4,8 +4,10 @@
 2. 架构上尽量能复用Dapr的包
 # 二、概要设计
 ## 2.1. 整体架构：是否复用Dapr的sdk和proto
-基于@文徐 调研的成果,Dapr组件可以复用；
-下文讨论sdk和proto是否复用、怎么复用
+为了将来能够和Dapr、Envoy社区共同制定一套API spec，当前尽量和Dapr API保持一致。
+
+Dapr的组件库可以直接复用；下文讨论sdk和proto是否复用、怎么复用
+
 ### 面临的问题
 
 1. dapr的sdk写死了调用接口的包名，名字里有dapr
