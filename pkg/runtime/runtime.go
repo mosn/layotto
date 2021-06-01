@@ -61,7 +61,6 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	if o.srvMaker != nil {
 		grpcOpts = append(grpcOpts, grpc.WithNewServer(o.srvMaker))
 	}
-	// TODO: support NewAPI extends
 	wasm.Layotto = grpc.NewAPI(
 		m.hellos,
 		m.configStores,

@@ -18,23 +18,6 @@
                       "helloworld": {
                         "hello": "Hi"
                       }
-                    },
-                    "config_stores": {
-                      "apollo": {
-                        "address": [
-                          "http://106.54.227.205:8080"
-                        ],
-                        "metadata": {
-                          "app_id": "testApplication_yang",
-                          "cluster": "default",
-                          "namespace_name": "dubbo,product.joe,application",
-                          "is_backup_config": "true",
-                          "secret": "6ce3ff7e96a24335a9634fe9abca6d51",
-                          "open_api_token": "947b0db097d2931ba5bf503f1e33c10394f90d11",
-                          "open_api_address": "http://106.54.227.205",
-                          "open_api_user": "apollo"
-                        }
-                      }
                     }
                   }
                 }
