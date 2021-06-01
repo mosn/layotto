@@ -1,11 +1,13 @@
 package runtime
 
 import (
+	"github.com/layotto/L8-components/configstores"
+	"github.com/layotto/L8-components/hello"
+	"github.com/layotto/L8-components/pkg/actuators"
+	"github.com/layotto/L8-components/pkg/info"
+	"github.com/layotto/layotto/pkg/actuator/health"
 	"github.com/layotto/layotto/pkg/grpc"
-	"github.com/layotto/layotto/pkg/info"
 	"github.com/layotto/layotto/pkg/integrate/actuator"
-	"github.com/layotto/layotto/pkg/services/configstores"
-	"github.com/layotto/layotto/pkg/services/hello"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"mosn.io/pkg/log"
 )
@@ -125,6 +127,14 @@ func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactor
 			return err
 		}
 		m.configStores[name] = c
+		v := actuators.GetIndicatorWithName(name)
+		//Now force user implement actuator of components
+		if v == nil {
+			m.errInt(err, "get configstore's %s Indicator failed", name)
+			return err
+		}
+		health.AddLivenessIndicator(name, v.LivenessIndicator)
+		health.AddReadinessIndicator(name, v.ReadinessIndicator)
 	}
 	return nil
 }

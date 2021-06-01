@@ -5,10 +5,10 @@
 package mock
 
 import (
+	"github.com/layotto/L8-components/hello"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	hello "github.com/layotto/layotto/pkg/services/hello"
 )
 
 // MockHelloService is a mock of HelloService interface.

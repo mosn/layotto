@@ -9,10 +9,10 @@ import (
 type mockIndicator struct {
 }
 
-func (m mockIndicator) Report() Health {
+func (m mockIndicator) Report() (string, map[string]interface{}) {
 	h := NewHealth(DOWN)
 	h.SetDetail("reason", "mock")
-	return h
+	return h.Status, h.Details
 }
 
 type mockScanner struct {

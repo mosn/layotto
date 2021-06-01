@@ -1,9 +1,9 @@
 package runtime
 
 import (
+	"github.com/layotto/L8-components/configstores"
+	"github.com/layotto/L8-components/hello"
 	rgrpc "github.com/layotto/layotto/pkg/grpc"
-	"github.com/layotto/layotto/pkg/services/configstores"
-	"github.com/layotto/layotto/pkg/services/hello"
 	"google.golang.org/grpc"
 	"mosn.io/pkg/log"
 )
@@ -57,6 +57,7 @@ func WithHelloFactory(hellos ...*hello.HelloFactory) Option {
 }
 
 func WithConfigStoresFactory(configStores ...*configstores.StoreFactory) Option {
+
 	return func(o *runtimeOptions) {
 		o.services.configStores = append(o.services.configStores, configStores...)
 	}
