@@ -4,7 +4,7 @@ syntax = "proto3";
 package spec.proto.runtime.v1;
 
 import "google/protobuf/empty.proto";
-import "common.proto";
+//import "common.proto";
 
 option go_package = "github.com/layotto/layotto/spec/proto/runtime/v1;runtime";
 
@@ -21,14 +21,6 @@ service AppCallback {
   // Subscribes events from Pubsub
   rpc OnTopicEvent(TopicEventRequest) returns (TopicEventResponse) {}
 
-//  // Lists all input bindings subscribed by this app.
-//  rpc ListInputBindings(google.protobuf.Empty) returns (ListInputBindingsResponse) {}
-//
-//  // Listens events from the input bindings
-//  //
-//  // User application can save the states or send the events to the output
-//  // bindings optionally by returning BindingEventResponse.
-//  rpc OnBindingEvent(BindingEventRequest) returns (BindingEventResponse) {}
 }
 
 // TopicEventRequest message is compatible with CloudEvent spec v1.0
@@ -81,46 +73,6 @@ message TopicEventResponse {
   TopicEventResponseStatus status = 1;
 }
 
-// BindingEventRequest represents input bindings event.
-message BindingEventRequest {
-  // Required. The name of the input binding component.
-  string name = 1;
-
-  // Required. The payload that the input bindings sent
-  bytes data = 2;
-
-  // The metadata set by the input binging components.
-  map<string,string> metadata = 3;
-}
-
-// BindingEventResponse includes operations to save state or
-// send data to output bindings optionally.
-message BindingEventResponse {
-  // The name of state store where states are saved.
-  string store_name = 1;
-
-  // The state key values which will be stored in store_name.
-  repeated StateItem states = 2;
-
-  // BindingEventConcurrency is the kind of concurrency 
-  enum BindingEventConcurrency {
-    // SEQUENTIAL sends data to output bindings specified in "to" sequentially.
-    SEQUENTIAL = 0;
-    // PARALLEL sends data to output bindings specified in "to" in parallel.
-    PARALLEL = 1;
-  }
-
-  // The list of output bindings.
-  repeated string to = 3;
-
-  // The content which will be sent to "to" output bindings.
-  bytes data = 4;
-
-  // The concurrency of output bindings to send data to
-  // "to" output bindings list. The default is SEQUENTIAL.
-  BindingEventConcurrency concurrency = 5;
-}
-
 // ListTopicSubscriptionsResponse is the message including the list of the subscribing topics.
 message ListTopicSubscriptionsResponse {
   // The list of topics.
@@ -137,10 +89,4 @@ message TopicSubscription {
 
   // The optional properties used for this topic's subscription e.g. session id
   map<string,string> metadata = 3;
-}
-
-// ListInputBindingsResponse is the message including the list of input bindings.
-message ListInputBindingsResponse {
-  // The list of input bindings.
-  repeated string bindings = 1;
 }
