@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/golang/mock v1.4.4
 	github.com/golang/protobuf v1.5.0
-	github.com/layotto/L8-components v0.0.0-20210601074229-bd70bca53f76
+	github.com/layotto/L8-components v0.0.0-20210601091708-d25a6318176c
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0
