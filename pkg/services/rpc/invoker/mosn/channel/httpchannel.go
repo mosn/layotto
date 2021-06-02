@@ -2,6 +2,7 @@ package channel
 
 import (
 	"bufio"
+	"fmt"
 	"net"
 	"net/http"
 	"time"
@@ -54,6 +55,10 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	}
 	h.putConn(conn)
 
+	if httpResp.StatusCode() != http.StatusOK {
+		return nil, fmt.Errorf("http response code %d", httpResp.StatusCode())
+	}
+
 	body := httpResp.Body()
 	data := make([]byte, len(body))
 	copy(data, body)
@@ -95,6 +100,7 @@ func (h *httpChannel) putConn(conn net.Conn) {
 func (h *httpChannel) constructReq(req *rpc.RPCRequest) *fasthttp.Request {
 	httpReq := fasthttp.AcquireRequest()
 	httpReq.Header.Set("host", "localhost")
+	httpReq.Header.Set("id", req.Id)
 	httpReq.SetBody(req.Data)
 	httpReq.SetRequestURI(req.Method)
 	method := http.MethodGet
@@ -106,40 +112,4 @@ func (h *httpChannel) constructReq(req *rpc.RPCRequest) *fasthttp.Request {
 		httpReq.URI().SetQueryString(query)
 	}
 	return httpReq
-}
-
-type fakeTcpConn struct {
-	c net.Conn
-}
-
-func (t *fakeTcpConn) Read(b []byte) (n int, err error) {
-	return t.c.Read(b)
-}
-
-func (t *fakeTcpConn) Write(b []byte) (n int, err error) {
-	return t.c.Write(b)
-}
-
-func (t *fakeTcpConn) Close() error {
-	return t.c.Close()
-}
-
-func (t *fakeTcpConn) LocalAddr() net.Addr {
-	return &net.TCPAddr{}
-}
-
-func (t *fakeTcpConn) RemoteAddr() net.Addr {
-	return &net.TCPAddr{}
-}
-
-func (t *fakeTcpConn) SetDeadline(time time.Time) error {
-	return t.c.SetDeadline(time)
-}
-
-func (t *fakeTcpConn) SetReadDeadline(time time.Time) error {
-	return t.c.SetReadDeadline(time)
-}
-
-func (t fakeTcpConn) SetWriteDeadline(time time.Time) error {
-	return t.c.SetReadDeadline(time)
 }

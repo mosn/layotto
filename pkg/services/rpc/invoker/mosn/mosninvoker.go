@@ -65,31 +65,31 @@ func (m *mosnInvoker) Init(conf rpc.RpcConfig) error {
 	return nil
 }
 
-func (i *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
+func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	if req.Timeout == 0 {
 		req.Timeout = 3000
 	}
 	log.DefaultLogger.Debugf("[runtime][rpc]request %+v", req)
-	req, err := i.cb.BeforeInvoke(req)
+	req, err := m.cb.BeforeInvoke(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]before filter error %s", err.Error())
 		return nil, err
 	}
 
-	resp, err := i.getChannel().Do(req)
+	resp, err := m.getChannel().Do(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]error %s", err.Error())
 		return nil, err
 	}
 
-	resp, err = i.cb.AfterInvoke(resp)
+	resp, err = m.cb.AfterInvoke(resp)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]after filter error %s", err.Error())
 	}
 	return resp, err
 }
 
-func (i *mosnInvoker) getChannel() rpc.Channel {
-	idx := atomic.AddUint32(&i.rrIdx, 1) % uint32(len(i.channels))
-	return i.channels[idx]
+func (m *mosnInvoker) getChannel() rpc.Channel {
+	idx := atomic.AddUint32(&m.rrIdx, 1) % uint32(len(m.channels))
+	return m.channels[idx]
 }

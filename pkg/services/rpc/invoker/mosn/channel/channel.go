@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"time"
 
 	"github.com/layotto/layotto/pkg/services/rpc"
 	"mosn.io/mosn/pkg/server"
@@ -41,4 +42,40 @@ func GetChannel(config ChannelConfig) (rpc.Channel, error) {
 
 func RegistChannel(proto string, f func(config ChannelConfig) (rpc.Channel, error)) {
 	registry[proto] = f
+}
+
+type fakeTcpConn struct {
+	c net.Conn
+}
+
+func (t *fakeTcpConn) Read(b []byte) (n int, err error) {
+	return t.c.Read(b)
+}
+
+func (t *fakeTcpConn) Write(b []byte) (n int, err error) {
+	return t.c.Write(b)
+}
+
+func (t *fakeTcpConn) Close() error {
+	return t.c.Close()
+}
+
+func (t *fakeTcpConn) LocalAddr() net.Addr {
+	return &net.TCPAddr{}
+}
+
+func (t *fakeTcpConn) RemoteAddr() net.Addr {
+	return &net.TCPAddr{}
+}
+
+func (t *fakeTcpConn) SetDeadline(time time.Time) error {
+	return t.c.SetDeadline(time)
+}
+
+func (t *fakeTcpConn) SetReadDeadline(time time.Time) error {
+	return t.c.SetReadDeadline(time)
+}
+
+func (t fakeTcpConn) SetWriteDeadline(time time.Time) error {
+	return t.c.SetWriteDeadline(time)
 }

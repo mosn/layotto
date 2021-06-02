@@ -11,7 +11,14 @@
 						"domains": ["*"],
 						"routers": [
 							{
-								"match":{"prefix":"/"},
+								"match":{
+									"headers": [
+										{
+											"name":"id",
+											"value":"HelloService:1.0"
+										}
+									]
+								},
 								"route":{"cluster_name":"http_server"}
 							}
 						]

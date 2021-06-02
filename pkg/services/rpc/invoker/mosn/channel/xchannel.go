@@ -2,9 +2,7 @@ package channel
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"io"
 	"net"
 	"sync"
 	"sync/atomic"
@@ -31,225 +29,186 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	m := &xChannel{
 		listenerName: config.Listener,
 		proto:        proto,
-		reqIdMap:     map[uint64]chan api.XRespFrame{},
 	}
 	return m, nil
 }
 
 type xChannel struct {
-	reqId        uint64
 	listenerName string
 	proto        transport_protocol.TransportProtocol
 
-	connGuard sync.RWMutex
-	conn      *memConn
-
-	reqIdMapGuard sync.Mutex
-	reqIdMap      map[uint64]chan api.XRespFrame
+	streamGuard sync.RWMutex
+	xconn       *xConn
 }
 
 func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
-	reqFrame := m.proto.ToFrame(req)
-	id := atomic.AddUint64(&m.reqId, 1)
-	reqFrame.SetRequestId(id)
-	buf, encErr := m.proto.Encode(req.Ctx, reqFrame)
-	if encErr != nil {
-		return nil, encErr
-	}
-	defer buffer.PutIoBuffer(buf)
+	duration := time.Duration(req.Timeout) * time.Millisecond
+	deadline := time.Now().Add(duration)
+	timer := time.NewTimer(duration)
+	defer timer.Stop()
 
-	respChan := make(chan api.XRespFrame, 1)
-	m.reqIdMapGuard.Lock()
-	m.reqIdMap[id] = respChan
-	m.reqIdMapGuard.Unlock()
-
-	var (
-		conn *memConn
-		err  error
-	)
-
-	for i := 0; i < 4; i++ {
-		conn, err = m.getConn()
-		if err != nil {
-			m.deleteReqId(id)
-			return nil, err
-		}
-
-		if _, err = conn.write(buf.Bytes()); err == nil {
-			break
-		}
-
-		m.destroyConn(conn)
-	}
+	conn, err := m.getConn()
 	if err != nil {
-		m.deleteReqId(id)
 		return nil, err
 	}
-
-	timer := time.NewTimer(time.Duration(req.Timeout) * time.Millisecond)
-	defer timer.Stop()
+	respChan, closeChan, err := conn.WriteRequest(req, deadline)
+	if err != nil {
+		m.destroyConn(conn)
+		return nil, err
+	}
 
 	select {
 	case resp := <-respChan:
 		return m.proto.FromFrame(resp)
 	case <-timer.C:
-		m.deleteReqId(id)
+		m.destroyConn(conn)
 		return nil, ErrTimeout
-	case <-conn.closeChan():
-		m.deleteReqId(id)
+	case <-closeChan:
+		m.destroyConn(conn)
 		return nil, ErrConnClosed
 	}
 }
 
-func (m *xChannel) deleteReqId(id uint64) {
-	m.reqIdMapGuard.Lock()
-	delete(m.reqIdMap, id)
-	m.reqIdMapGuard.Unlock()
-}
-
-func (m *xChannel) acceptConn(conn *memConn) error {
-	if err := acceptFunc(conn, m.listenerName); err != nil {
-		return err
-	}
-	m.conn = conn
-	return nil
-}
-
-func (m *xChannel) getConn() (*memConn, error) {
-	m.connGuard.RLock()
-	conn := m.conn
-	m.connGuard.RUnlock()
-	if conn != nil {
-		return conn, nil
+func (m *xChannel) getConn() (*xConn, error) {
+	m.streamGuard.RLock()
+	sc := m.xconn
+	m.streamGuard.RUnlock()
+	if sc != nil {
+		return sc, nil
 	}
 
-	m.connGuard.Lock()
-	defer m.connGuard.Unlock()
-	if m.conn != nil {
-		return m.conn, nil
+	m.streamGuard.Lock()
+	defer m.streamGuard.Unlock()
+	if m.xconn != nil {
+		return m.xconn, nil
 	}
 
-	conn = newMemConn(m)
-	if err := m.acceptConn(conn); err != nil {
+	local, remote := net.Pipe()
+	localTcpConn := &fakeTcpConn{c: local}
+	remoteTcpConn := &fakeTcpConn{c: remote}
+	if err := acceptFunc(remoteTcpConn, m.listenerName); err != nil {
 		return nil, err
 	}
 
-	return conn, nil
+	m.xconn = newXConn(m.proto, localTcpConn)
+	go m.xconn.ReadResponse()
+	return m.xconn, nil
 }
 
-func (m *xChannel) destroyConn(oldConn *memConn) {
-	m.connGuard.RLock()
-	conn := m.conn
-	m.connGuard.RUnlock()
-	if oldConn != conn {
+func (m *xChannel) destroyConn(oldConn *xConn) {
+	m.streamGuard.RLock()
+	sc := m.xconn
+	m.streamGuard.RUnlock()
+	if oldConn != sc {
 		return
 	}
 
-	m.connGuard.Lock()
-	defer m.connGuard.Unlock()
+	m.streamGuard.Lock()
+	defer m.streamGuard.Unlock()
 
-	if oldConn != m.conn {
+	if oldConn != m.xconn {
 		return
 	}
-	m.conn = nil
+	m.xconn.Close()
+	m.xconn = nil
 }
 
-// xprotocol write complete packet at once
-func (m *xChannel) handleConnResp(b []byte) error {
-	iframe, err := m.proto.Decode(context.TODO(), buffer.NewIoBufferBytes(b))
-	if err != nil {
-		return err
+func newXConn(proto transport_protocol.TransportProtocol, conn net.Conn) *xConn {
+	return &xConn{
+		proto:     proto,
+		conn:      conn,
+		closeChan: make(chan struct{}),
+		respChans: map[uint64]chan api.XRespFrame{},
 	}
-
-	if iframe == nil {
-		return errors.New("xprotocol decode return nil")
-	}
-
-	frame, ok := iframe.(api.XRespFrame)
-	if !ok {
-		return errors.New("xprotocol frame not XRespFrame")
-	}
-
-	reqID := frame.GetRequestId()
-
-	m.reqIdMapGuard.Lock()
-	notifyChan, ok := m.reqIdMap[reqID]
-	if ok {
-		delete(m.reqIdMap, reqID)
-	}
-	m.reqIdMapGuard.Unlock()
-
-	if ok {
-		notifyChan <- frame
-	}
-
-	return nil
-}
-func newMemConn(c *xChannel) *memConn {
-	r, w := io.Pipe()
-	return &memConn{wPipe: w, rPipe: r, closed: make(chan struct{}), mosnChannel: c}
 }
 
-type memConn struct {
+type xConn struct {
+	reqId uint64
+	proto transport_protocol.TransportProtocol
+
 	closeOnce sync.Once
-	closed    chan struct{}
-	rPipe     *io.PipeReader
-	wPipe     *io.PipeWriter
+	closeChan chan struct{}
 
-	mosnChannel *xChannel
+	guard     sync.Mutex
+	conn      net.Conn
+	respChans map[uint64]chan api.XRespFrame
 }
 
-func (g *memConn) Read(b []byte) (n int, err error) {
-	return g.rPipe.Read(b)
+func (s *xConn) WriteRequest(req *rpc.RPCRequest, ddl time.Time) (chan api.XRespFrame, chan struct{}, error) {
+	// encode request
+	frame := s.proto.ToFrame(req)
+	id := atomic.AddUint64(&s.reqId, 1)
+	frame.SetRequestId(id)
+	buf, encErr := s.proto.Encode(req.Ctx, frame)
+	if encErr != nil {
+		return nil, nil, encErr
+	}
+	respChan := make(chan api.XRespFrame, 1)
+
+	s.guard.Lock()
+	defer s.guard.Unlock()
+
+	// set timeout
+	if err := s.conn.SetWriteDeadline(ddl); err != nil {
+		return nil, nil, err
+	}
+
+	// register response channel
+	s.respChans[id] = respChan
+
+	// write packet
+	if _, err := s.conn.Write(buf.Bytes()); err != nil {
+		delete(s.respChans, id)
+		return nil, nil, err
+	}
+
+	return respChan, s.closeChan, nil
 }
 
-func (g *memConn) Write(b []byte) (n int, err error) {
-	select {
-	case <-g.closed:
-		return 0, errors.New("mem conn closed")
-	default:
-		err := g.mosnChannel.handleConnResp(b)
-		if err != nil {
-			log.DefaultLogger.Errorf("[runtime][rpc][xchannel]Write err %s", err.Error())
+func (s *xConn) ReadResponse() {
+	defer s.Close()
+	buf := buffer.NewIoBuffer(16 * 1024)
+
+	for {
+		if _, err := buf.ReadOnce(s.conn); err != nil {
+			log.DefaultLogger.Errorf("[runtime][rpc]xchannel read err: %s", err.Error())
+			return
 		}
-		return len(b), err
+
+		for {
+			iframe, err := s.proto.Decode(context.TODO(), buf)
+			if err != nil {
+				log.DefaultLogger.Errorf("[runtime][rpc]xchannel decode err: %s", err.Error())
+				return
+			}
+
+			if iframe == nil {
+				break
+			}
+
+			frame, ok := iframe.(api.XRespFrame)
+			if !ok {
+				log.DefaultLogger.Errorf("[runtime][rpc]xchannel type not XRespFrame")
+				return
+			}
+
+			reqID := frame.GetRequestId()
+			s.guard.Lock()
+			notifyChan, ok := s.respChans[reqID]
+			if ok {
+				delete(s.respChans, reqID)
+			}
+			s.guard.Unlock()
+			if ok {
+				notifyChan <- frame
+			}
+		}
 	}
 }
 
-func (g *memConn) Close() error {
-	g.closeOnce.Do(func() {
-		g.rPipe.Close()
-		g.wPipe.Close()
-		close(g.closed)
-		log.DefaultLogger.Warnf("[runtime][rpc][xchannel]mem conn closed")
+func (s *xConn) Close() {
+	s.closeOnce.Do(func() {
+		close(s.closeChan)
+		s.conn.Close()
 	})
-	return nil
-}
-
-func (g *memConn) LocalAddr() net.Addr {
-	return &net.TCPAddr{}
-}
-
-func (g *memConn) RemoteAddr() net.Addr {
-	return &net.TCPAddr{}
-}
-
-func (g *memConn) SetDeadline(t time.Time) error {
-	return nil
-}
-
-func (g *memConn) SetReadDeadline(t time.Time) error {
-	return nil
-}
-
-func (g *memConn) SetWriteDeadline(t time.Time) error {
-	return nil
-}
-
-func (g *memConn) write(b []byte) (int, error) {
-	return g.wPipe.Write(b)
-}
-
-func (g *memConn) closeChan() chan struct{} {
-	return g.closed
 }

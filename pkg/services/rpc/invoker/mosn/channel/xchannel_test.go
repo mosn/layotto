@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"strconv"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -43,6 +45,11 @@ func (s *testserver) handleRequest(frame api.XFrame) ([]byte, error) {
 		case "close":
 			return nil, errors.New("trigger close")
 		default:
+			if strings.Contains(data, "echo") {
+				resp := bolt.NewRpcResponse(uint32(frame.GetRequestId()), bolt.ResponseStatusSuccess, nil, buffer.NewIoBufferBytes([]byte(data)))
+				buf, _ := s.XProtocol.Encode(context.TODO(), resp)
+				return buf.Bytes(), nil
+			}
 		}
 	}
 	resp := bolt.NewRpcResponse(uint32(frame.GetRequestId()), bolt.ResponseStatusSuccess, nil, buffer.NewIoBufferBytes([]byte("ok")))
@@ -145,7 +152,7 @@ func TestReturnInvalidPacket(t *testing.T) {
 
 	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("deformity"), Timeout: 1000}
 	_, err = channel.Do(req)
-	assert.Equal(t, err, ErrConnClosed)
+	assert.Equal(t, err, ErrTimeout)
 }
 
 func TestRenewConn(t *testing.T) {
@@ -220,4 +227,19 @@ func TestConncurrent(t *testing.T) {
 	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 1000}
 	_, err = channel.Do(req)
 	assert.NoError(t, err)
+
+	size = 100
+	wg.Add(size)
+	for i := 0; i < size; i++ {
+		go func(i int) {
+			defer wg.Done()
+
+			data := "echo" + strconv.Itoa(i)
+			req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte(data), Timeout: 1000}
+			resp, err := channel.Do(req)
+			assert.NoError(t, err)
+			assert.Equal(t, data, string(resp.Data))
+		}(i)
+	}
+	wg.Wait()
 }
