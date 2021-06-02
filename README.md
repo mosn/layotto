@@ -25,6 +25,10 @@ Layotto provides sdk in various languages. The sdk interacts with Layotto throug
 
 See the quick start guides [configuration demo with apollo](docs/en/start/configuration/start-apollo.md) or [configuration demo with etcd](docs/en/start/configuration/start.md) that can help you get started with Layotto.
 
+### Use Pub/Sub API
+
+[Implementing Pub/Sub Pattern using Layotto and Redis](docs/en/start/pubsub/start.md)
+
 ### Traffic intervention on the 4th layer network
 
 [Dump TCP Traffic](docs/en/start/network_filter/tcpcopy.md)
