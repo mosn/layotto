@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/layotto/L8-components/configstores"
+	"github.com/layotto/L8-components/hello"
 	"strings"
 	"sync"
 
 	empty "google.golang.org/protobuf/types/known/emptypb"
 
-	"github.com/layotto/layotto/pkg/services/configstores"
-	"github.com/layotto/layotto/pkg/services/hello"
 	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
