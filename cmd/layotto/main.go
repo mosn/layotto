@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dapr/dapr/pkg/logger"
+	"github.com/dapr/kit/logger"
 
 	// Hello
 	"github.com/layotto/layotto/pkg/services/hello"
@@ -57,7 +57,8 @@ import (
 )
 
 var (
-	loggerForDaprComp = logger.NewLogger("dapr.contrib")
+	// loggerForDaprComp is constructed for reusing dapr's components.
+	loggerForDaprComp = logger.NewLogger("reuse.dapr.component")
 )
 
 func init() {

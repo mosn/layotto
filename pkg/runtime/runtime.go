@@ -3,6 +3,7 @@ package runtime
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
@@ -15,7 +16,6 @@ import (
 	"github.com/layotto/layotto/pkg/services/hello"
 	pubsub_service "github.com/layotto/layotto/pkg/services/pubsub"
 	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
-	"github.com/pkg/errors"
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -230,12 +230,12 @@ func (m *MosnRuntime) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRout
 		if err := ps.Subscribe(pubsub.SubscribeRequest{
 			Topic:    topic,
 			Metadata: route.metadata,
-		}, func(msg *pubsub.NewMessage) error {
+		}, func(ctx context.Context, msg *pubsub.NewMessage) error {
 			if msg.Metadata == nil {
 				msg.Metadata = make(map[string]string, 1)
 			}
 			msg.Metadata[Metadata_key_pubsubName] = pubsubName
-			return m.publishMessageGRPC(msg)
+			return m.publishMessageGRPC(ctx, msg)
 		}); err != nil {
 			log.DefaultLogger.Warnf("[runtime][beginPubSub]failed to subscribe to topic %s: %s", topic, err)
 			return err
@@ -284,7 +284,7 @@ func (m *MosnRuntime) getInterestedTopics() (map[string]TopicSubscriptions, erro
 	return comp2Topic, nil
 }
 
-func (m *MosnRuntime) publishMessageGRPC(msg *pubsub.NewMessage) error {
+func (m *MosnRuntime) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMessage) error {
 	// 1. Unmarshal to cloudEvent model
 	var cloudEvent map[string]interface{}
 	err := m.json.Unmarshal(msg.Data, &cloudEvent)
@@ -331,11 +331,14 @@ func (m *MosnRuntime) publishMessageGRPC(msg *pubsub.NewMessage) error {
 	// TODO tracing
 
 	// 4. Call appcallback
-	ctx := context.Background()
 	clientV1 := runtimev1pb.NewAppCallbackClient(m.AppCallbackConn)
 	res, err := clientV1.OnTopicEvent(ctx, envelope)
 
 	// 5. Check result
+	return retryStrategy(err, res, cloudEvent)
+}
+
+func retryStrategy(err error, res *runtimev1pb.TopicEventResponse, cloudEvent map[string]interface{}) error {
 	if err != nil {
 		errStatus, hasErrStatus := status.FromError(err)
 		if hasErrStatus && (errStatus.Code() == codes.Unimplemented) {
@@ -344,7 +347,7 @@ func (m *MosnRuntime) publishMessageGRPC(msg *pubsub.NewMessage) error {
 			return nil
 		}
 
-		err = errors.Errorf("error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err)
+		err = errors.New(fmt.Sprintf("error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err))
 		log.DefaultLogger.Debugf("%s", err)
 		// on error from application, return error for redelivery of event
 		return err
@@ -356,13 +359,13 @@ func (m *MosnRuntime) publishMessageGRPC(msg *pubsub.NewMessage) error {
 		// success from protobuf definition
 		return nil
 	case runtimev1pb.TopicEventResponse_RETRY:
-		return errors.Errorf("RETRY status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
+		return errors.New(fmt.Sprintf("RETRY status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string)))
 	case runtimev1pb.TopicEventResponse_DROP:
 		log.DefaultLogger.Warnf("[runtime]DROP status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
 		return nil
 	}
 	// Consider unknown status field as error and retry
-	return errors.Errorf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus())
+	return errors.New(fmt.Sprintf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus()))
 }
 
 func (m *MosnRuntime) initAppCallbackConnection() error {
