@@ -128,13 +128,11 @@ func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactor
 		}
 		m.configStores[name] = c
 		v := actuators.GetIndicatorWithName(name)
-		//Now force user implement actuator of components
-		if v == nil {
-			m.errInt(err, "get configstore's %s Indicator failed", name)
-			return err
+		//Now don't force user implement actuator of components
+		if v != nil {
+			health.AddLivenessIndicator(name, v.LivenessIndicator)
+			health.AddReadinessIndicator(name, v.ReadinessIndicator)
 		}
-		health.AddLivenessIndicator(name, v.LivenessIndicator)
-		health.AddReadinessIndicator(name, v.ReadinessIndicator)
 	}
 	return nil
 }

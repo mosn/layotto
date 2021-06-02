@@ -57,7 +57,6 @@ func WithHelloFactory(hellos ...*hello.HelloFactory) Option {
 }
 
 func WithConfigStoresFactory(configStores ...*configstores.StoreFactory) Option {
-
 	return func(o *runtimeOptions) {
 		o.services.configStores = append(o.services.configStores, configStores...)
 	}
