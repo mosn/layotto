@@ -254,15 +254,18 @@ func (m *MosnRuntime) getInterestedTopics() (map[string]TopicSubscriptions, erro
 		return make(map[string]TopicSubscriptions), nil
 	}
 	comp2Topic := make(map[string]TopicSubscriptions)
-	var subscriptions []runtime_pubsub.Subscription
+	var subscriptions []*runtimev1pb.TopicSubscription
 
 	// 2. handle app subscriptions
 	client := runtimev1pb.NewAppCallbackClient(m.AppCallbackConn)
-	subscriptions = runtime_pubsub.GetSubscriptionsGRPC(client, log.DefaultLogger)
+	subscriptions = runtime_pubsub.ListTopicSubscriptions(client, log.DefaultLogger)
 	// TODO handle declarative subscriptions
 
 	// 3. prepare result
 	for _, s := range subscriptions {
+		if s == nil {
+			continue
+		}
 		if _, ok := comp2Topic[s.PubsubName]; !ok {
 			comp2Topic[s.PubsubName] = TopicSubscriptions{topic2Details: make(map[string]Details)}
 		}
@@ -338,6 +341,7 @@ func (m *MosnRuntime) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMes
 	return retryStrategy(err, res, cloudEvent)
 }
 
+// retryStrategy returns error when the message should be redelivered
 func retryStrategy(err error, res *runtimev1pb.TopicEventResponse, cloudEvent map[string]interface{}) error {
 	if err != nil {
 		errStatus, hasErrStatus := status.FromError(err)

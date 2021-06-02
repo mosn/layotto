@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
+	contrib_pubsub "github.com/dapr/components-contrib/pubsub"
+	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/layotto/layotto/pkg/messages"
-	runtime_pubsub "github.com/layotto/layotto/pkg/runtime/pubsub"
 	"github.com/layotto/layotto/pkg/services/configstores"
 	"github.com/layotto/layotto/pkg/services/hello"
 	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
@@ -247,17 +249,18 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 	if data == nil {
 		data = []byte{}
 	}
-	envelope, err := runtime_pubsub.NewCloudEvent(&runtime_pubsub.CloudEvent{
-		Topic:           topic,
-		DataContentType: contentType,
-		Data:            data,
-		Pubsub:          pubsubName,
-	})
-	if err != nil {
-		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
-		return &emptypb.Empty{}, err
+	var envelope map[string]interface{}
+	var err error = nil
+	if contrib_contenttype.IsCloudEventContentType(contentType) {
+		envelope, err = contrib_pubsub.FromCloudEvent(data, topic, pubsubName, "")
+		if err != nil {
+			err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
+			return &emptypb.Empty{}, err
+		}
+	} else {
+		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), "", contrib_pubsub.DefaultCloudEventType, "", topic, pubsubName,
+			contentType, data, "")
 	}
-
 	features := component.Features()
 	pubsub.ApplyMetadata(envelope, features, metadata)
 
@@ -278,13 +281,6 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 	err = component.Publish(&req)
 	if err != nil {
 		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, topic, pubsubName, err.Error())
-		if errors.As(err, &runtime_pubsub.NotAllowedError{}) {
-			nerr = status.Errorf(codes.PermissionDenied, err.Error())
-		}
-
-		if errors.As(err, &runtime_pubsub.NotFoundError{}) {
-			nerr = status.Errorf(codes.NotFound, err.Error())
-		}
 		return &emptypb.Empty{}, nerr
 	}
 	return &emptypb.Empty{}, nil
