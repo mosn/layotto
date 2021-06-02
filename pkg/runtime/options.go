@@ -1,10 +1,10 @@
 package runtime
 
 import (
-	rgrpc "github.com/layotto/layotto/pkg/grpc"
-	"github.com/layotto/layotto/pkg/services/configstores"
-	"github.com/layotto/layotto/pkg/services/hello"
+	"github.com/layotto/L8-components/configstores"
+	"github.com/layotto/L8-components/hello"
 	"github.com/layotto/layotto/pkg/services/pubsub"
+	rgrpc "github.com/layotto/layotto/pkg/grpc"
 	"google.golang.org/grpc"
 	"mosn.io/pkg/log"
 )

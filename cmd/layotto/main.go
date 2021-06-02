@@ -3,16 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dapr/kit/logger"
-
 	// Hello
-	"github.com/layotto/layotto/pkg/services/hello"
-	"github.com/layotto/layotto/pkg/services/hello/helloworld"
+	"github.com/layotto/L8-components/hello"
+	"github.com/layotto/L8-components/hello/helloworld"
 
 	// Configuration
-	"github.com/layotto/layotto/pkg/services/configstores"
-	"github.com/layotto/layotto/pkg/services/configstores/apollo"
-	"github.com/layotto/layotto/pkg/services/configstores/etcdv3"
+	"github.com/layotto/L8-components/configstores"
+	"github.com/layotto/L8-components/configstores/apollo"
 
 	// Pub/Sub
 	dapr_comp_pubsub "github.com/dapr/components-contrib/pubsub"
@@ -27,6 +24,7 @@ import (
 	pubsub_pulsar "github.com/dapr/components-contrib/pubsub/pulsar"
 	"github.com/dapr/components-contrib/pubsub/rabbitmq"
 	pubsub_redis "github.com/dapr/components-contrib/pubsub/redis"
+	"github.com/dapr/kit/logger"
 	"github.com/layotto/layotto/pkg/services/pubsub"
 
 	// Actuator
@@ -87,7 +85,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		),
 		// Configuration
 		runtime.WithConfigStoresFactory(
-			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 		),
 		// PubSub

@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/layotto/layotto/pkg/services/configstores"
+	"github.com/layotto/L8-components/configstores"
+	"github.com/layotto/L8-components/hello"
 	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"net"
 	"testing"
@@ -12,7 +13,6 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/layotto/layotto/pkg/mock"
-	"github.com/layotto/layotto/pkg/services/hello"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 )

@@ -67,12 +67,12 @@ func (e *Endpoint) Handle(ctx context.Context, params actuator.ParamsScanner) (m
 	components := make(map[string]Health)
 	result[components_key] = components
 	for k, idc := range m {
-		data := idc.Report()
-		components[k] = data
-		if data.Status == DOWN {
+		status, detail := idc.Report()
+		components[k] = Health{Status: status, Details: detail}
+		if status == DOWN {
 			result[status_key] = DOWN
 			resultErr = serviceDownError
-		} else if data.Status == INIT && result[status_key] == UP {
+		} else if status == INIT && result[status_key] == UP {
 			result[status_key] = INIT
 			resultErr = serviceInitError
 		}
@@ -86,7 +86,7 @@ func AddLivenessIndicator(name string, idc Indicator) {
 }
 
 // AddLivenessIndicatorFunc register health.Indicator for liveness check.Indicator.It's not concurrent-safe,so please invoke it ONLY in init method.
-func AddLivenessIndicatorFunc(name string, f func() Health) {
+func AddLivenessIndicatorFunc(name string, f func() (string, map[string]interface{})) {
 	addIndicator(liveness_key, name, IndicatorAdapter(f))
 }
 
@@ -96,7 +96,7 @@ func AddReadinessIndicator(name string, idc Indicator) {
 }
 
 // AddReadinessIndicatorFunc register health.Indicator for readiness check.Indicator.It's not concurrent-safe,so please invoke it ONLY in init method.
-func AddReadinessIndicatorFunc(name string, f func() Health) {
+func AddReadinessIndicatorFunc(name string, f func() (string, map[string]interface{})) {
 	addIndicator(readiness_key, name, IndicatorAdapter(f))
 }
 

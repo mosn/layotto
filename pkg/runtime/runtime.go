@@ -8,6 +8,11 @@ import (
 	"github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/layotto/L8-components/configstores"
+	"github.com/layotto/L8-components/hello"
+	"github.com/layotto/L8-components/pkg/actuators"
+	"github.com/layotto/L8-components/pkg/info"
+	"github.com/layotto/layotto/pkg/actuator/health"
 	"github.com/layotto/layotto/pkg/grpc"
 	"github.com/layotto/layotto/pkg/info"
 	"github.com/layotto/layotto/pkg/integrate/actuator"
@@ -167,6 +172,12 @@ func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactor
 			return err
 		}
 		m.configStores[name] = c
+		v := actuators.GetIndicatorWithName(name)
+		//Now don't force user implement actuator of components
+		if v != nil {
+			health.AddLivenessIndicator(name, v.LivenessIndicator)
+			health.AddReadinessIndicator(name, v.ReadinessIndicator)
+		}
 	}
 	return nil
 }
