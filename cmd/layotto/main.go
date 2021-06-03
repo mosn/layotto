@@ -8,12 +8,12 @@ import (
 	"time"
 
 	// Hello
-	"github.com/layotto/L8-components/hello"
-	"github.com/layotto/L8-components/hello/helloworld"
+	"github.com/layotto/layotto/components/hello"
+	"github.com/layotto/layotto/components/hello/helloworld"
 
 	// Configuration
-	"github.com/layotto/L8-components/configstores"
-	"github.com/layotto/L8-components/configstores/apollo"
+	"github.com/layotto/layotto/components/configstores"
+	"github.com/layotto/layotto/components/configstores/apollo"
 
 	// Pub/Sub
 	dapr_comp_pubsub "github.com/dapr/components-contrib/pubsub"
@@ -31,6 +31,10 @@ import (
 	"github.com/dapr/kit/logger"
 	"github.com/layotto/layotto/pkg/services/pubsub"
 
+	// RPC
+	"github.com/layotto/layotto/components/rpc"
+	mosninvoker "github.com/layotto/layotto/components/rpc/invoker/mosn"
+
 	// Actuator
 	_ "github.com/layotto/layotto/pkg/actuator"
 	health "github.com/layotto/layotto/pkg/actuator/health"
@@ -40,8 +44,6 @@ import (
 
 	_ "github.com/layotto/layotto/pkg/filter/network/tcpcopy"
 	"github.com/layotto/layotto/pkg/runtime"
-	"github.com/layotto/layotto/pkg/services/rpc"
-	mosninvoker "github.com/layotto/layotto/pkg/services/rpc/invoker/mosn"
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 	"mosn.io/mosn/pkg/featuregate"

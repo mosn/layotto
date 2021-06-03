@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"sync"
+
 	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
 	contrib_pubsub "github.com/dapr/components-contrib/pubsub"
@@ -11,6 +14,10 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/layotto/L8-components/configstores"
 	"github.com/layotto/L8-components/hello"
+	"github.com/layotto/layotto/components/configstores"
+	"github.com/layotto/layotto/components/hello"
+	"github.com/layotto/layotto/components/rpc"
+	mosninvoker "github.com/layotto/layotto/components/rpc/invoker/mosn"
 	"github.com/layotto/layotto/pkg/messages"
 	"github.com/layotto/layotto/pkg/services/rpc"
 	mosninvoker "github.com/layotto/layotto/pkg/services/rpc/invoker/mosn"
@@ -22,8 +29,6 @@ import (
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/pkg/log"
-	"strings"
-	"sync"
 )
 
 var (
