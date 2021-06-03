@@ -3,7 +3,7 @@ package pubsub
 import (
 	"fmt"
 	"github.com/dapr/components-contrib/pubsub"
-	"github.com/layotto/layotto/pkg/info"
+	"github.com/layotto/L8-components/pkg/info"
 )
 
 const (
