@@ -3,14 +3,13 @@ package client
 import (
 	"context"
 	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
-	"net"
-	"os"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	empty "google.golang.org/protobuf/types/known/emptypb"
+	"net"
+	"os"
+	"testing"
 )
 
 const (

@@ -3,6 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
+	"time"
+
 	// Hello
 	"github.com/layotto/L8-components/hello"
 	"github.com/layotto/L8-components/hello/helloworld"
@@ -36,6 +40,8 @@ import (
 
 	_ "github.com/layotto/layotto/pkg/filter/network/tcpcopy"
 	"github.com/layotto/layotto/pkg/runtime"
+	"github.com/layotto/layotto/pkg/services/rpc"
+	mosninvoker "github.com/layotto/layotto/pkg/services/rpc/invoker/mosn"
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 	"mosn.io/mosn/pkg/featuregate"
@@ -49,9 +55,6 @@ import (
 	_ "mosn.io/mosn/pkg/network"
 	_ "mosn.io/mosn/pkg/stream/http"
 	_ "mosn.io/pkg/buffer"
-	"os"
-	"strconv"
-	"time"
 )
 
 var (
@@ -86,6 +89,10 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// Configuration
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
+		),
+		// RPC
+		runtime.WithRpcFactory(
+			rpc.NewRpcFactory("mosn", mosninvoker.NewMosnInvoker),
 		),
 		// PubSub
 		runtime.WithPubSubFactory(

@@ -4,17 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/golang/mock/gomock"
 	"github.com/layotto/L8-components/configstores"
 	"github.com/layotto/L8-components/hello"
+	"github.com/layotto/layotto/pkg/mock"
 	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
+	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc"
 	"net"
 	"testing"
 	"time"
-
-	"github.com/golang/mock/gomock"
-	"github.com/layotto/layotto/pkg/mock"
-	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc"
 )
 
 const (

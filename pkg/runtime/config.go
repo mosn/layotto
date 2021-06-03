@@ -5,6 +5,7 @@ import (
 	"github.com/layotto/L8-components/configstores"
 	"github.com/layotto/L8-components/hello"
 	"github.com/layotto/layotto/pkg/services/pubsub"
+	"github.com/layotto/layotto/pkg/services/rpc"
 )
 
 type AppConfig struct {
@@ -16,6 +17,7 @@ type MosnRuntimeConfig struct {
 	AppManagement          AppConfig                           `json:"app"`
 	HelloServiceManagement map[string]hello.HelloConfig        `json:"hellos"`
 	ConfigStoreManagement  map[string]configstores.StoreConfig `json:"config_stores"`
+	RpcManagement          map[string]rpc.RpcConfig            `json:"rpcs"`
 	PubSubManagement       map[string]pubsub.Config            `json:"pub_subs"`
 }
 

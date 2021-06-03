@@ -3,7 +3,7 @@ syntax = "proto3";
 package spec.proto.runtime.v1;
 
 import "google/protobuf/empty.proto";
-//import "common.proto";
+import "google/protobuf/any.proto";
 
 option go_package = "github.com/layotto/layotto/spec/proto/runtime/v1;runtime";
 
@@ -11,8 +11,11 @@ service Runtime {
   //SayHello used for test
   rpc SayHello(SayHelloRequest) returns (SayHelloResponse) {}
 
-  // GetConfiguration gets configuration from configuration store.
-  rpc GetConfiguration(GetConfigurationRequest) returns (GetConfigurationResponse) {}
+  // InvokeService do rpc calls
+  rpc InvokeService(InvokeServiceRequest) returns (InvokeResponse) {}
+
+	// GetConfiguration gets configuration from configuration store.
+	rpc GetConfiguration(GetConfigurationRequest) returns (GetConfigurationResponse) {}
 
   // SaveConfiguration saves configuration into configuration store.
   rpc SaveConfiguration(SaveConfigurationRequest) returns (google.protobuf.Empty) {}
@@ -37,6 +40,41 @@ message SayHelloRequest {
 
 message SayHelloResponse {
   string hello = 1;
+}
+
+message InvokeServiceRequest {
+  string id = 1;
+  CommonInvokeRequest message = 3;
+}
+
+message CommonInvokeRequest {
+  string method = 1;
+  google.protobuf.Any data = 2;
+  string content_type = 3;
+  HTTPExtension http_extension = 4;
+}
+
+message HTTPExtension {
+  enum Verb {
+    NONE = 0;
+    GET = 1;
+    HEAD = 2;
+    POST = 3;
+    PUT = 4;
+    DELETE = 5;
+    CONNECT = 6;
+    OPTIONS = 7;
+    TRACE = 8;
+  }
+
+  Verb verb = 1;
+
+  string querystring = 2;
+}
+
+message InvokeResponse {
+  google.protobuf.Any data = 1;
+  string content_type = 2;
 }
 
 // ConfigurationItem represents a configuration item with key, content and other information.

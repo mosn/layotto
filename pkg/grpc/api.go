@@ -9,13 +9,13 @@ import (
 	contrib_pubsub "github.com/dapr/components-contrib/pubsub"
 	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/layotto/layotto/pkg/messages"
 	"github.com/layotto/L8-components/configstores"
 	"github.com/layotto/L8-components/hello"
+	"github.com/layotto/layotto/pkg/messages"
 	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	empty "google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/pkg/log"
 	"strings"
 	"sync"
@@ -29,31 +29,36 @@ type API interface {
 	SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error)
 	// GetConfiguration gets configuration from configuration store.
 	GetConfiguration(context.Context, *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error)
+	// InvokeService do rpc calls.
+	InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error)
 	// SaveConfiguration saves configuration into configuration store.
-	SaveConfiguration(context.Context, *runtimev1pb.SaveConfigurationRequest) (*empty.Empty, error)
+	SaveConfiguration(context.Context, *runtimev1pb.SaveConfigurationRequest) (*emptypb.Empty, error)
 	// DeleteConfiguration deletes configuration from configuration store.
-	DeleteConfiguration(context.Context, *runtimev1pb.DeleteConfigurationRequest) (*empty.Empty, error)
+	DeleteConfiguration(context.Context, *runtimev1pb.DeleteConfigurationRequest) (*emptypb.Empty, error)
 	// SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
 	SubscribeConfiguration(runtimev1pb.Runtime_SubscribeConfigurationServer) error
 	// Publishes events to the specific topic.
-	PublishEvent(context.Context, *runtimev1pb.PublishEventRequest) (*empty.Empty, error)
+	PublishEvent(context.Context, *runtimev1pb.PublishEventRequest) (*emptypb.Empty, error)
 }
 
 // api is a default implementation for MosnRuntimeServer.
 type api struct {
 	hellos       map[string]hello.HelloService
 	configStores map[string]configstores.Store
+	rpcs         map[string]rpc.Invoker
 	pubSubs      map[string]pubsub.PubSub
 }
 
 func NewAPI(
 	hellos map[string]hello.HelloService,
 	configStores map[string]configstores.Store,
+	rpcs map[string]rpc.Invoker,
 	pubSubs map[string]pubsub.PubSub,
 ) API {
 	return &api{
 		hellos:       hellos,
 		configStores: configStores,
+		rpcs:         rpcs,
 		pubSubs:      pubSubs,
 	}
 }
@@ -89,6 +94,50 @@ func (a *api) getHello(name string) (hello.HelloService, error) {
 	return h, nil
 }
 
+func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error) {
+	msg := in.GetMessage()
+	req := &rpc.RPCRequest{
+		Ctx:         ctx,
+		Id:          in.GetId(),
+		Method:      msg.GetMethod(),
+		ContentType: msg.GetContentType(),
+		Data:        msg.GetData().GetValue(),
+	}
+	if md, ok := metadata.FromIncomingContext(ctx); ok {
+		req.Header = rpc.RPCHeader(md)
+	} else {
+		req.Header = rpc.RPCHeader(map[string][]string{})
+	}
+	if ext := msg.GetHttpExtension(); ext != nil {
+		req.Header["verb"] = []string{ext.Verb.String()}
+		req.Header["query_string"] = []string{ext.GetQuerystring()}
+	}
+
+	invoker, ok := a.rpcs[mosninvoker.Name]
+	if !ok {
+		return nil, errors.New("invoker not init")
+	}
+
+	resp, err := invoker.Invoke(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.Header != nil {
+		header := metadata.Pairs()
+		for k, values := range resp.Header {
+			for _, v := range values {
+				header.Append(k, v)
+			}
+		}
+		grpc.SetHeader(ctx, header)
+	}
+	return &runtimev1pb.InvokeResponse{
+		ContentType: resp.ContentType,
+		Data:        &anypb.Any{Value: resp.Data},
+	}, nil
+}
+
 // GetConfiguration gets configuration from configuration store.
 func (a *api) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error) {
 	resp := &runtimev1pb.GetConfigurationResponse{}
@@ -115,7 +164,7 @@ func (a *api) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigur
 }
 
 // SaveConfiguration saves configuration into configuration store.
-func (a *api) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfigurationRequest) (*empty.Empty, error) {
+func (a *api) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfigurationRequest) (*emptypb.Empty, error) {
 	store, ok := a.configStores[req.StoreName]
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
@@ -134,11 +183,11 @@ func (a *api) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfig
 		setReq.Items = append(setReq.Items, &configstores.ConfigurationItem{Group: item.Group, Label: item.Label, Key: item.Key, Content: item.Content, Tags: item.Tags, Metadata: item.Metadata})
 	}
 	err := store.Set(ctx, setReq)
-	return &empty.Empty{}, err
+	return &emptypb.Empty{}, err
 }
 
 // DeleteConfiguration deletes configuration from configuration store.
-func (a *api) DeleteConfiguration(ctx context.Context, req *runtimev1pb.DeleteConfigurationRequest) (*empty.Empty, error) {
+func (a *api) DeleteConfiguration(ctx context.Context, req *runtimev1pb.DeleteConfigurationRequest) (*emptypb.Empty, error) {
 	store, ok := a.configStores[req.StoreName]
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
@@ -150,7 +199,7 @@ func (a *api) DeleteConfiguration(ctx context.Context, req *runtimev1pb.DeleteCo
 		req.Label = store.GetDefaultLabel()
 	}
 	err := store.Delete(ctx, &configstores.DeleteRequest{AppId: req.AppId, Group: req.Group, Label: req.Label, Keys: req.Keys, Metadata: req.Metadata})
-	return &empty.Empty{}, err
+	return &emptypb.Empty{}, err
 }
 
 // SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
