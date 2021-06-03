@@ -3,15 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/layotto/L8-components/configstores"
-	"github.com/layotto/L8-components/configstores/apollo"
-	"github.com/layotto/L8-components/hello"
 	"os"
 	"strconv"
 	"time"
 
+	"github.com/layotto/L8-components/configstores"
+	"github.com/layotto/L8-components/configstores/apollo"
+	"github.com/layotto/L8-components/hello"
 	"github.com/layotto/L8-components/hello/helloworld"
-
 	_ "github.com/layotto/layotto/pkg/actuator"
 	health "github.com/layotto/layotto/pkg/actuator/health"
 	actuatorInfo "github.com/layotto/layotto/pkg/actuator/info"
@@ -19,6 +18,8 @@ import (
 	_ "github.com/layotto/layotto/pkg/filter/stream/actuator/http"
 	"github.com/layotto/layotto/pkg/integrate/actuator"
 	"github.com/layotto/layotto/pkg/runtime"
+	"github.com/layotto/layotto/pkg/services/rpc"
+	mosninvoker "github.com/layotto/layotto/pkg/services/rpc/invoker/mosn"
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 	"mosn.io/mosn/pkg/featuregate"
@@ -59,6 +60,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		),
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
+		),
+		runtime.WithRpcFactory(
+			rpc.NewRpcFactory("mosn", mosninvoker.NewMosnInvoker),
 		),
 	)
 	// 4. check if unhealthy

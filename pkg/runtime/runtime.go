@@ -8,6 +8,7 @@ import (
 	"github.com/layotto/layotto/pkg/actuator/health"
 	"github.com/layotto/layotto/pkg/grpc"
 	"github.com/layotto/layotto/pkg/integrate/actuator"
+	"github.com/layotto/layotto/pkg/services/rpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"mosn.io/pkg/log"
 )
@@ -20,8 +21,10 @@ type MosnRuntime struct {
 	// services
 	helloRegistry       hello.Registry
 	configStoreRegistry configstores.Registry
+	rpcRegistry         rpc.Registry
 	hellos              map[string]hello.HelloService
 	configStores        map[string]configstores.Store
+	rpcs                map[string]rpc.Invoker
 	// extends
 	errInt ErrInterceptor
 }
@@ -33,8 +36,10 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		info:                info,
 		helloRegistry:       hello.NewRegistry(info),
 		configStoreRegistry: configstores.NewRegistry(info),
+		rpcRegistry:         rpc.NewRegistry(info),
 		hellos:              make(map[string]hello.HelloService),
 		configStores:        make(map[string]configstores.Store),
+		rpcs:                make(map[string]rpc.Invoker),
 	}
 }
 
@@ -68,6 +73,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		grpc.WithAPI(grpc.NewAPI(
 			m.hellos,
 			m.configStores,
+			m.rpcs,
 		)),
 	)
 	m.srv = grpc.NewGrpcServer(grpcOpts...)
@@ -88,6 +94,9 @@ func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
 		return err
 	}
 	if err := m.initConfigStores(o.services.configStores...); err != nil {
+		return err
+	}
+	if err := m.initRpcs(o.services.rpcs...); err != nil {
 		return err
 	}
 	return nil
@@ -133,6 +142,25 @@ func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactor
 			health.AddLivenessIndicator(name, v.LivenessIndicator)
 			health.AddReadinessIndicator(name, v.ReadinessIndicator)
 		}
+	}
+	return nil
+}
+
+func (m *MosnRuntime) initRpcs(rpcs ...*rpc.Factory) error {
+	log.DefaultLogger.Infof("[runtime] init rpc service")
+	// register all config store services implementation
+	m.rpcRegistry.Register(rpcs...)
+	for name, config := range m.runtimeConfig.RpcManagement {
+		c, err := m.rpcRegistry.Create(name)
+		if err != nil {
+			m.errInt(err, "create rpc's component %s failed", name)
+			return err
+		}
+		if err := c.Init(config); err != nil {
+			m.errInt(err, "init rpc's component %s failed", name)
+			return err
+		}
+		m.rpcs[name] = c
 	}
 	return nil
 }

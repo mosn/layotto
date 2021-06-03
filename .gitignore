@@ -11,3 +11,4 @@ coverage.txt
 logs/
 *.swp
 /cover.out
+vendor/
