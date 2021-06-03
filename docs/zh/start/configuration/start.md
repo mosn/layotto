@@ -1,4 +1,4 @@
-<h2>通过Layotto调用etcd配置中心</h2>
+# 通过Layotto调用etcd配置中心
 
 [English Version](../../../en/start/configuration/start.md)
 

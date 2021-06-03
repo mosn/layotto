@@ -126,8 +126,8 @@ LayottoÄÚÖÃÌá¹©ÁË/actuator/health/readinessºÍ/actuator/health/liveness Á½¸ö½¡¿µ¼
 
 ### ÎªÄúµÄ×é¼şÌí¼Ó½¡¿µ¼ì²é»òÔªÊı¾İ²éÑ¯ÄÜÁ¦
 
-Èç¹ûÄúÊµÏÖÁË×Ô¼ºµÄLayotto×é¼ş£¬¿ÉÒÔÎªÆäÌí¼Ó½¡¿µ¼ì²éÄÜÁ¦¡£¿ÉÒÔ²Î¿¼apollo×é¼şµÄÊµÏÖ£¨ÎÄ¼şÔÚpkg/services/configstores/apollo/indicator.go£©£¬ÊµÏÖinfo.Indicator½Ó¿Ú£¬²¢½«Æä×¢Èë½øActuator¼´¿É¡£
+Èç¹ûÄúÊµÏÖÁË×Ô¼ºµÄLayotto×é¼ş£¬¿ÉÒÔÎªÆäÌí¼Ó½¡¿µ¼ì²éÄÜÁ¦¡£¿ÉÒÔ²Î¿¼apollo×é¼şµÄÊµÏÖ£¨ÎÄ¼şÔÚcomponents/configstores/apollo/indicator.go£©£¬ÊµÏÖinfo.Indicator½Ó¿Ú£¬²¢½«Æä×¢Èë½øActuator¼´¿É¡£
 
 ### ÁË½âActuatorÊµÏÖÔ­Àí
 
-Èç¹ûÄú¶ÔÊµÏÖÔ­Àí¸ĞĞËÈ¤£¬»òÕßÏëÔÚActuatorÀ©Õ¹Ò»Ğ©¹¦ÄÜ£¬¿ÉÒÔÔÄ¶Á[ActuatorµÄÉè¼ÆÎÄµµ](../../design/actuator-design-doc.md)
+Èç¹ûÄú¶ÔÊµÏÖÔ­Àí¸ĞĞËÈ¤£¬»òÕßÏëÔÚActuatorÀ©Õ¹Ò»Ğ©¹¦ÄÜ£¬¿ÉÒÔÔÄ¶Á[ActuatorµÄÉè¼ÆÎÄµµ](../../design/actuator/actuator-design-doc.md)

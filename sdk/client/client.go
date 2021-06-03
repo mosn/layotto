@@ -2,15 +2,13 @@ package client
 
 import (
 	"context"
+	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
+	"github.com/pkg/errors"
+	"google.golang.org/grpc"
 	"log"
 	"net"
 	"os"
 	"sync"
-
-	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
-
-	"github.com/pkg/errors"
-	"google.golang.org/grpc"
 )
 
 const (
@@ -36,6 +34,8 @@ type Client interface {
 	DeleteConfiguration(ctx context.Context, in *ConfigurationRequestItem) error
 	// SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
 	SubscribeConfiguration(ctx context.Context, in *ConfigurationRequestItem) WatchChan
+	// Publishes events to the specific topic.
+	PublishEvent(ctx context.Context, in *PublishEventRequest) error
 	// Close cleans up all resources created by the client.
 	Close()
 }
@@ -88,14 +88,14 @@ func NewClientWithAddress(address string) (client Client, err error) {
 func NewClientWithConnection(conn *grpc.ClientConn) Client {
 	return &GRPCClient{
 		connection:  conn,
-		protoClient: runtimev1pb.NewMosnRuntimeClient(conn),
+		protoClient: runtimev1pb.NewRuntimeClient(conn),
 	}
 }
 
 // GRPCClient is the gRPC implementation of runtime client.
 type GRPCClient struct {
 	connection  *grpc.ClientConn
-	protoClient runtimev1pb.MosnRuntimeClient
+	protoClient runtimev1pb.RuntimeClient
 	mux         sync.Mutex
 }
 

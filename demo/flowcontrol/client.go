@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"time"
 
-	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
 	"google.golang.org/grpc"
 )
 
@@ -15,7 +15,7 @@ func main() {
 		panic(err)
 	}
 	defer conn.Close()
-	c := runtimev1pb.NewMosnRuntimeClient(conn)
+	c := runtimev1pb.NewRuntimeClient(conn)
 
 	for i := 0; i < 10; i++ {
 		r, err := c.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{

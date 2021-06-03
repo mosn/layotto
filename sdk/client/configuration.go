@@ -2,8 +2,7 @@ package client
 
 import (
 	"context"
-
-	runtime "github.com/layotto/layotto/proto/runtime/v1"
+	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 )
 
 type WatchChan <-chan WatchResponse
@@ -71,7 +70,7 @@ type WatchResponse struct {
 }
 
 func (c *GRPCClient) GetConfiguration(ctx context.Context, in *ConfigurationRequestItem) ([]*ConfigurationItem, error) {
-	req := &runtime.GetConfigurationRequest{StoreName: in.StoreName, AppId: in.AppId, Group: in.Group, Label: in.Label, Keys: in.Keys, Metadata: in.Metadata}
+	req := &runtimev1pb.GetConfigurationRequest{StoreName: in.StoreName, AppId: in.AppId, Group: in.Group, Label: in.Label, Keys: in.Keys, Metadata: in.Metadata}
 	resp, err := c.protoClient.GetConfiguration(ctx, req)
 	if err != nil {
 		return nil, err
@@ -86,9 +85,9 @@ func (c *GRPCClient) GetConfiguration(ctx context.Context, in *ConfigurationRequ
 
 // SaveConfiguration saves configuration into configuration store.
 func (c *GRPCClient) SaveConfiguration(ctx context.Context, in *SaveConfigurationRequest) error {
-	req := &runtime.SaveConfigurationRequest{StoreName: in.StoreName, AppId: in.AppId, Metadata: in.Metadata}
+	req := &runtimev1pb.SaveConfigurationRequest{StoreName: in.StoreName, AppId: in.AppId, Metadata: in.Metadata}
 	for _, v := range in.Items {
-		c := &runtime.ConfigurationItem{Group: v.Group, Label: v.Label, Key: v.Key, Content: v.Content, Tags: v.Tags, Metadata: v.Metadata}
+		c := &runtimev1pb.ConfigurationItem{Group: v.Group, Label: v.Label, Key: v.Key, Content: v.Content, Tags: v.Tags, Metadata: v.Metadata}
 		req.Items = append(req.Items, c)
 	}
 	_, err := c.protoClient.SaveConfiguration(ctx, req)
@@ -97,7 +96,7 @@ func (c *GRPCClient) SaveConfiguration(ctx context.Context, in *SaveConfiguratio
 
 // DeleteConfiguration deletes configuration from configuration store.
 func (c *GRPCClient) DeleteConfiguration(ctx context.Context, in *ConfigurationRequestItem) error {
-	req := &runtime.DeleteConfigurationRequest{StoreName: in.StoreName, AppId: in.AppId, Group: in.Group, Label: in.Label, Keys: in.Keys, Metadata: in.Metadata}
+	req := &runtimev1pb.DeleteConfigurationRequest{StoreName: in.StoreName, AppId: in.AppId, Group: in.Group, Label: in.Label, Keys: in.Keys, Metadata: in.Metadata}
 	_, err := c.protoClient.DeleteConfiguration(ctx, req)
 	return err
 }
@@ -113,7 +112,7 @@ func (c *GRPCClient) SubscribeConfiguration(ctx context.Context, in *Configurati
 		close(resCh)
 		return resCh
 	}
-	request := &runtime.SubscribeConfigurationRequest{StoreName: in.StoreName, AppId: in.AppId, Group: in.Group, Label: in.Label, Keys: in.Keys, Metadata: in.Metadata}
+	request := &runtimev1pb.SubscribeConfigurationRequest{StoreName: in.StoreName, AppId: in.AppId, Group: in.Group, Label: in.Label, Keys: in.Keys, Metadata: in.Metadata}
 	err = cli.Send(request)
 	if err != nil {
 		res.Err = err

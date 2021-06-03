@@ -2,15 +2,14 @@ package client
 
 import (
 	"context"
-	"net"
-	"os"
-	"testing"
-
-	runtime "github.com/layotto/layotto/proto/runtime/v1"
+	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	empty "google.golang.org/protobuf/types/known/emptypb"
+	"net"
+	"os"
+	"testing"
 )
 
 const (
@@ -56,7 +55,7 @@ func TestNewClient(t *testing.T) {
 
 func getTestClient(ctx context.Context) (client Client, closer func()) {
 	s := grpc.NewServer()
-	runtime.RegisterMosnRuntimeServer(s, &testRuntimeServer{kv: make(map[string]string), subscribed: make(map[string]bool)})
+	runtimev1pb.RegisterRuntimeServer(s, &testRuntimeServer{kv: make(map[string]string), subscribed: make(map[string]bool)})
 
 	l := bufconn.Listen(testBufSize)
 	go func() {
@@ -84,34 +83,34 @@ func getTestClient(ctx context.Context) (client Client, closer func()) {
 }
 
 type testRuntimeServer struct {
-	runtime.UnimplementedMosnRuntimeServer
+	runtimev1pb.UnimplementedRuntimeServer
 	kv         map[string]string
 	subscribed map[string]bool
 }
 
-func (t *testRuntimeServer) GetConfiguration(ctx context.Context, req *runtime.GetConfigurationRequest) (*runtime.GetConfigurationResponse, error) {
-	resp := &runtime.GetConfigurationResponse{}
+func (t *testRuntimeServer) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error) {
+	resp := &runtimev1pb.GetConfigurationResponse{}
 	for _, v := range req.Keys {
 		if _, ok := t.kv[v]; ok {
-			item := &runtime.ConfigurationItem{Key: v, Content: t.kv[v]}
+			item := &runtimev1pb.ConfigurationItem{Key: v, Content: t.kv[v]}
 			resp.Items = append(resp.Items, item)
 		}
 	}
 	return resp, nil
 }
-func (t *testRuntimeServer) SaveConfiguration(ctx context.Context, req *runtime.SaveConfigurationRequest) (*empty.Empty, error) {
+func (t *testRuntimeServer) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfigurationRequest) (*empty.Empty, error) {
 	for _, v := range req.Items {
 		t.kv[v.Key] = v.Content
 	}
 	return &empty.Empty{}, nil
 }
-func (t *testRuntimeServer) DeleteConfiguration(ctx context.Context, req *runtime.DeleteConfigurationRequest) (*empty.Empty, error) {
+func (t *testRuntimeServer) DeleteConfiguration(ctx context.Context, req *runtimev1pb.DeleteConfigurationRequest) (*empty.Empty, error) {
 	for _, v := range req.Keys {
 		delete(t.kv, v)
 	}
 	return &empty.Empty{}, nil
 }
-func (t *testRuntimeServer) SubscribeConfiguration(srv runtime.MosnRuntime_SubscribeConfigurationServer) error {
+func (t *testRuntimeServer) SubscribeConfiguration(srv runtimev1pb.Runtime_SubscribeConfigurationServer) error {
 	req, err := srv.Recv()
 	if err != nil {
 		return err
@@ -119,16 +118,16 @@ func (t *testRuntimeServer) SubscribeConfiguration(srv runtime.MosnRuntime_Subsc
 	for _, key := range req.Keys {
 		t.subscribed[key] = true
 	}
-	resp := &runtime.SubscribeConfigurationResponse{}
+	resp := &runtimev1pb.SubscribeConfigurationResponse{}
 	for key, _ := range t.subscribed {
-		item := &runtime.ConfigurationItem{Key: key, Content: "Test"}
+		item := &runtimev1pb.ConfigurationItem{Key: key, Content: "Test"}
 		resp.Items = append(resp.Items, item)
 	}
 	err = srv.Send(resp)
 	return err
 }
 
-func (*testRuntimeServer) SayHello(ctx context.Context, req *runtime.SayHelloRequest) (*runtime.SayHelloResponse, error) {
-	resp := &runtime.SayHelloResponse{Hello: "world"}
+func (*testRuntimeServer) SayHello(ctx context.Context, req *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error) {
+	resp := &runtimev1pb.SayHelloResponse{Hello: "world"}
 	return resp, nil
 }

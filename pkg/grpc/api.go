@@ -7,13 +7,21 @@ import (
 	"strings"
 	"sync"
 
+	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
+	"github.com/dapr/components-contrib/pubsub"
+	contrib_pubsub "github.com/dapr/components-contrib/pubsub"
+	"github.com/google/uuid"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/layotto/layotto/components/configstores"
 	"github.com/layotto/layotto/components/hello"
 	"github.com/layotto/layotto/components/rpc"
 	mosninvoker "github.com/layotto/layotto/components/rpc/invoker/mosn"
-	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
+	"github.com/layotto/layotto/pkg/messages"
+	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/pkg/log"
@@ -34,7 +42,9 @@ type API interface {
 	// DeleteConfiguration deletes configuration from configuration store.
 	DeleteConfiguration(context.Context, *runtimev1pb.DeleteConfigurationRequest) (*emptypb.Empty, error)
 	// SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
-	SubscribeConfiguration(runtimev1pb.MosnRuntime_SubscribeConfigurationServer) error
+	SubscribeConfiguration(runtimev1pb.Runtime_SubscribeConfigurationServer) error
+	// Publishes events to the specific topic.
+	PublishEvent(context.Context, *runtimev1pb.PublishEventRequest) (*emptypb.Empty, error)
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -42,17 +52,20 @@ type api struct {
 	hellos       map[string]hello.HelloService
 	configStores map[string]configstores.Store
 	rpcs         map[string]rpc.Invoker
+	pubSubs      map[string]pubsub.PubSub
 }
 
 func NewAPI(
 	hellos map[string]hello.HelloService,
 	configStores map[string]configstores.Store,
 	rpcs map[string]rpc.Invoker,
+	pubSubs map[string]pubsub.PubSub,
 ) API {
 	return &api{
 		hellos:       hellos,
 		configStores: configStores,
 		rpcs:         rpcs,
+		pubSubs:      pubSubs,
 	}
 }
 
@@ -196,7 +209,7 @@ func (a *api) DeleteConfiguration(ctx context.Context, req *runtimev1pb.DeleteCo
 }
 
 // SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
-func (a *api) SubscribeConfiguration(sub runtimev1pb.MosnRuntime_SubscribeConfigurationServer) error {
+func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurationServer) error {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	var subErr error
@@ -257,4 +270,72 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.MosnRuntime_SubscribeConfig
 	wg.Wait()
 	log.DefaultLogger.Warnf("subscribe gorountine exit")
 	return subErr
+}
+
+func (a *api) PublishEvent(ctx context.Context, in *runtimev1pb.PublishEventRequest) (*emptypb.Empty, error) {
+	result, err := a.doPublishEvent(ctx, in.PubsubName, in.Topic, in.Data, in.DataContentType, in.Metadata)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
+	}
+	return result, err
+}
+
+// doPublishEvent is a protocal irrelevant function to do event publishing.
+// It's easy to add APIs for other protocals.Just move this func to a separate layer if you need.
+func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic string, data []byte, contentType string, metadata map[string]string) (*emptypb.Empty, error) {
+	// 1. validate
+	if pubsubName == "" {
+		err := status.Error(codes.InvalidArgument, messages.ErrPubsubEmpty)
+		return &emptypb.Empty{}, err
+	}
+	if topic == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrTopicEmpty, pubsubName)
+		return &emptypb.Empty{}, err
+	}
+	// 2. get component
+	component, ok := a.pubSubs[pubsubName]
+	if !ok {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrPubsubNotFound, pubsubName)
+		return &emptypb.Empty{}, err
+	}
+
+	// 3. new cloudevent request
+	if data == nil {
+		data = []byte{}
+	}
+	var envelope map[string]interface{}
+	var err error = nil
+	if contrib_contenttype.IsCloudEventContentType(contentType) {
+		envelope, err = contrib_pubsub.FromCloudEvent(data, topic, pubsubName, "")
+		if err != nil {
+			err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
+			return &emptypb.Empty{}, err
+		}
+	} else {
+		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), "", contrib_pubsub.DefaultCloudEventType, "", topic, pubsubName,
+			contentType, data, "")
+	}
+	features := component.Features()
+	pubsub.ApplyMetadata(envelope, features, metadata)
+
+	b, err := jsoniter.ConfigFastest.Marshal(envelope)
+	if err != nil {
+		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventsSer, topic, pubsubName, err.Error())
+		return &emptypb.Empty{}, err
+	}
+	// 4. publish
+	req := pubsub.PublishRequest{
+		PubsubName: pubsubName,
+		Topic:      topic,
+		Data:       b,
+		Metadata:   metadata,
+	}
+
+	// TODO limit topic scope
+	err = component.Publish(&req)
+	if err != nil {
+		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, topic, pubsubName, err.Error())
+		return &emptypb.Empty{}, nerr
+	}
+	return &emptypb.Empty{}, nil
 }

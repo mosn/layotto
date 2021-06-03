@@ -65,7 +65,7 @@ A: 先不搞，有反馈需求再加个钩子
 
 Actuator内部抽象出Endpoint概念，新请求到达服务器后，Actuator会委托对应的Endpoint进行处理。Endpoint支持按需扩展、注入进Actuator：
 
-![img.png](../../../img/actuator/abstract.png)
+![img.png](../../../../img/actuator/abstract.png)
 
 ## 2.2. Http API设计
 
@@ -184,13 +184,13 @@ GET
 
 ## 2.3. 配置数据的数据模型
 
-![img.png](../../../img/actuator/actuator_config.png)
+![img.png](../../../../img/actuator/actuator_config.png)
 
 新增listener用于处理actuator，stream_filters新增actuator_filter，用于处理actuator的请求（见下）
 
 ## 2.4. 内部结构与请求处理流程
 
-![img.png](../../../img/actuator/actuator_process.png)
+![img.png](../../../../img/actuator/actuator_process.png)
 
 解释：
 
@@ -261,23 +261,23 @@ info.Endpoint将请求分发给info.Contributor的实现
 
 - SetStarted埋点
 
-![img.png](../../../img/actuator/set_started.png)
+![img.png](../../../../img/actuator/set_started.png)
 
 - SetUnhealthy埋点
 
 启动失败:
 
-![img.png](../../../img/actuator/img.png)
+![img.png](../../../../img/actuator/img.png)
 
 Stop的时候：
 
-![img.png](../../../img/actuator/img_1.png)
+![img.png](../../../../img/actuator/img_1.png)
 
 ### 3.1.2. apollo组件
 
 init:
 
-![img_2.png](../../../img/actuator/img_2.png)
+![img_2.png](../../../../img/actuator/img_2.png)
 
 其实目前没有需要埋点的地方，因为这里init初始化连接失败的话，runtime_startup的indicator也能报unhealthy
 
