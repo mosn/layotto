@@ -3,7 +3,7 @@ package rpc
 import (
 	"fmt"
 
-	"github.com/layotto/layotto/components/pkg/info"
+	"github.com/layotto/components/pkg/info"
 )
 
 const ServiceName = "rpc"

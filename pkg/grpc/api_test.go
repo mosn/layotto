@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/layotto/layotto/components/configstores"
-	"github.com/layotto/layotto/components/hello"
+	"github.com/layotto/components/configstores"
+	"github.com/layotto/components/hello"
 	"github.com/layotto/layotto/pkg/mock"
 	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
 	"github.com/stretchr/testify/assert"

@@ -6,7 +6,7 @@ package mock
 
 import (
 	context "context"
-	"github.com/layotto/layotto/components/configstores"
+	"github.com/layotto/components/configstores"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
