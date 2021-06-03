@@ -5,8 +5,7 @@ import (
 	"github.com/layotto/layotto/components/hello"
 	"github.com/layotto/layotto/components/rpc"
 	rgrpc "github.com/layotto/layotto/pkg/grpc"
-	"github.com/layotto/layotto/pkg/services/pubsub"
-	"github.com/layotto/layotto/pkg/services/rpc"
+	"github.com/layotto/layotto/pkg/runtime/pubsub"
 	"google.golang.org/grpc"
 	"mosn.io/pkg/log"
 )

@@ -29,7 +29,7 @@ import (
 	"github.com/dapr/components-contrib/pubsub/rabbitmq"
 	pubsub_redis "github.com/dapr/components-contrib/pubsub/redis"
 	"github.com/dapr/kit/logger"
-	"github.com/layotto/layotto/pkg/services/pubsub"
+	"github.com/layotto/layotto/pkg/runtime/pubsub"
 
 	// RPC
 	"github.com/layotto/layotto/components/rpc"
