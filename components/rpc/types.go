@@ -42,6 +42,7 @@ type RPCRequest struct {
 }
 
 type RPCResponse struct {
+	Ctx         context.Context
 	Header      RPCHeader
 	ContentType string
 	Data        []byte
