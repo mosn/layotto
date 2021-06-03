@@ -9,8 +9,8 @@ import (
 
 	"github.com/layotto/layotto/components/configstores"
 	"github.com/layotto/layotto/components/hello"
-	"github.com/layotto/layotto/pkg/services/rpc"
-	mosninvoker "github.com/layotto/layotto/pkg/services/rpc/invoker/mosn"
+	"github.com/layotto/layotto/components/rpc"
+	mosninvoker "github.com/layotto/layotto/components/rpc/invoker/mosn"
 	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"

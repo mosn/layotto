@@ -42,6 +42,7 @@ type RPCRequest struct {
 }
 
 type RPCResponse struct {
+	Ctx         context.Context
 	Header      RPCHeader
 	ContentType string
 	Data        []byte
@@ -57,11 +58,11 @@ type Invoker interface {
 }
 
 type Callback interface {
-	BeforeInvoke(*RPCRequest) (*RPCRequest, error)
-	AddBeforeInvoke(func(*RPCRequest) (*RPCRequest, error))
+	AddBeforeInvoke(CallbackFunc)
+	AddAfterInvoke(CallbackFunc)
 
+	BeforeInvoke(*RPCRequest) (*RPCRequest, error)
 	AfterInvoke(*RPCResponse) (*RPCResponse, error)
-	AddAfterInvoke(func(*RPCResponse) (*RPCResponse, error))
 }
 
 type CallbackFunc struct {
