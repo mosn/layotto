@@ -1,10 +1,10 @@
 package runtime
 
 import (
-	"github.com/layotto/L8-components/configstores"
-	"github.com/layotto/L8-components/hello"
-	"github.com/layotto/L8-components/pkg/actuators"
-	"github.com/layotto/L8-components/pkg/info"
+	"github.com/layotto/layotto/components/configstores"
+	"github.com/layotto/layotto/components/hello"
+	"github.com/layotto/layotto/components/pkg/actuators"
+	"github.com/layotto/layotto/components/pkg/info"
 	"github.com/layotto/layotto/pkg/actuator/health"
 	"github.com/layotto/layotto/pkg/grpc"
 	"github.com/layotto/layotto/pkg/integrate/actuator"

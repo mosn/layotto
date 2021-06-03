@@ -5,13 +5,13 @@ go 1.14
 require (
 	github.com/golang/mock v1.4.4
 	github.com/golang/protobuf v1.5.0
-	github.com/layotto/L8-components v0.0.0-20210601091708-d25a6318176c
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/urfave/cli v1.20.0
 	github.com/valyala/fasthttp v0.0.0-20200605121233-ac51d598dc54
+	github.com/zouyx/agollo/v4 v4.0.7 // indirect
 	golang.org/x/text v0.3.3 // indirect
 	google.golang.org/grpc v1.37.0
 	google.golang.org/grpc/examples v0.0.0-20210526223527-2de42fcbbce3 // indirect
