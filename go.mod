@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/golang/mock v1.4.4
 	github.com/golang/protobuf v1.5.0
-	github.com/layotto/components v0.0.0-20210603045430-66065fa0b67f
+	github.com/layotto/layotto/components v0.0.0-20210603045430-66065fa0b67f
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0
@@ -20,4 +20,4 @@ require (
 	mosn.io/pkg v0.0.0-20210401090620-f0e0d1a3efce
 )
 
-replace github.com/layotto/components v0.0.0-20210603045430-66065fa0b67f => ./components
+replace github.com/layotto/layotto/components v0.0.0-20210603045430-66065fa0b67f => ./components

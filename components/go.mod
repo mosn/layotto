@@ -1,4 +1,4 @@
-module github.com/layotto/components
+module github.com/layotto/layotto/components
 
 go 1.14
 
