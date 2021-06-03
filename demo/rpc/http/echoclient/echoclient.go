@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
+	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/anypb"
@@ -21,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cli := runtimev1pb.NewMosnRuntimeClient(conn)
+	cli := runtimev1pb.NewRuntimeClient(conn)
 	ctx, cancel := context.WithCancel(context.TODO())
 	defer cancel()
 

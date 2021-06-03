@@ -4,7 +4,6 @@ syntax = "proto3";
 package spec.proto.runtime.v1;
 
 import "google/protobuf/empty.proto";
-//import "common.proto";
 
 option go_package = "github.com/layotto/layotto/spec/proto/runtime/v1;runtime";
 
