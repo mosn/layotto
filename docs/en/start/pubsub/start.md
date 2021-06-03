@@ -104,7 +104,11 @@ Received a new event.Topic: topic1 , Data:value1
 ```
 
 ### Next Step
-
+#### Use sdk or grpc client
 The example Publisher program uses the golang version SDK provided by Layotto. The SDK is located in the `sdk` directory. Users can directly call the services provided by Layotto through the corresponding SDK.
 
 In addition to using sdk, you can also interact with Layotto directly through grpc in any language you like.
+
+#### Understand the principle of Pub/Sub API implementation
+
+If you are interested in the implementation principle, or want to extend some functions, you can read [Pub/Sub API design document](../../design/pubsub/pubsub API and compatibility with Dapr's packages.md)

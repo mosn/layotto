@@ -101,7 +101,11 @@ Received a new event.Topic: topic1 , Data:value1
 ```
 
 ### 下一步
-
+#### 使用sdk或者grpc客户端
 示例Publisher程序中使用了Layotto提供的golang版本sdk，sdk位于`sdk`目录下，用户可以通过对应的sdk直接调用Layotto提供的服务。
 
 除了使用sdk，您也可以用任何您喜欢的语言、通过grpc直接和Layotto交互
+
+#### 了解Pub/Sub API实现原理
+
+如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Pub/Sub API的设计文档](../../design/pubsub/Layotto MQ、兼容Dapr包方案.md)
