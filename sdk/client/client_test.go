@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/layotto/layotto/proto/runtime/v1"
+	runtime "github.com/layotto/layotto/proto/runtime/v1"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
