@@ -7,11 +7,10 @@ import (
 	"strings"
 	"sync"
 
-	mosninvoker "github.com/layotto/layotto/pkg/services/rpc/invoker/mosn"
-
-	"github.com/layotto/layotto/pkg/services/configstores"
-	"github.com/layotto/layotto/pkg/services/hello"
+	"github.com/layotto/L8-components/configstores"
+	"github.com/layotto/L8-components/hello"
 	"github.com/layotto/layotto/pkg/services/rpc"
+	mosninvoker "github.com/layotto/layotto/pkg/services/rpc/invoker/mosn"
 	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"

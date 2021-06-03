@@ -8,11 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/layotto/layotto/pkg/services/configstores"
-
 	"github.com/golang/mock/gomock"
+	"github.com/layotto/L8-components/configstores"
+	"github.com/layotto/L8-components/hello"
 	"github.com/layotto/layotto/pkg/mock"
-	"github.com/layotto/layotto/pkg/services/hello"
 	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"

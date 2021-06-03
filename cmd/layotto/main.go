@@ -7,6 +7,10 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/layotto/L8-components/configstores"
+	"github.com/layotto/L8-components/configstores/apollo"
+	"github.com/layotto/L8-components/hello"
+	"github.com/layotto/L8-components/hello/helloworld"
 	_ "github.com/layotto/layotto/pkg/actuator"
 	health "github.com/layotto/layotto/pkg/actuator/health"
 	actuatorInfo "github.com/layotto/layotto/pkg/actuator/info"
@@ -14,11 +18,6 @@ import (
 	_ "github.com/layotto/layotto/pkg/filter/stream/actuator/http"
 	"github.com/layotto/layotto/pkg/integrate/actuator"
 	"github.com/layotto/layotto/pkg/runtime"
-	"github.com/layotto/layotto/pkg/services/configstores"
-	"github.com/layotto/layotto/pkg/services/configstores/apollo"
-	"github.com/layotto/layotto/pkg/services/configstores/etcdv3"
-	"github.com/layotto/layotto/pkg/services/hello"
-	"github.com/layotto/layotto/pkg/services/hello/helloworld"
 	"github.com/layotto/layotto/pkg/services/rpc"
 	mosninvoker "github.com/layotto/layotto/pkg/services/rpc/invoker/mosn"
 	"github.com/urfave/cli"
@@ -60,7 +59,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),
 		),
 		runtime.WithConfigStoresFactory(
-			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 		),
 		runtime.WithRpcFactory(
