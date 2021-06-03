@@ -1,7 +1,7 @@
 package transport_protocol
 
 import (
-	"github.com/layotto/components/rpc"
+	"github.com/layotto/layotto/components/rpc"
 	"mosn.io/api"
 )
 

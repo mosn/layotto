@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/layotto/components/pkg/info"
+	"github.com/layotto/layotto/components/pkg/info"
 )
 
 func TestNewRegistry(t *testing.T) {

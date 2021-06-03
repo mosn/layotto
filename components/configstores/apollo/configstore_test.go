@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/layotto/components/configstores"
+	"github.com/layotto/layotto/components/configstores"
 	"github.com/stretchr/testify/assert"
 	"github.com/zouyx/agollo/v4"
 	"io/ioutil"

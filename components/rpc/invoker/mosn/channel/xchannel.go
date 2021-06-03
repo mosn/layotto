@@ -8,8 +8,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/layotto/components/rpc"
-	"github.com/layotto/components/rpc/invoker/mosn/transport_protocol"
+	"github.com/layotto/layotto/components/rpc"
+	"github.com/layotto/layotto/components/rpc/invoker/mosn/transport_protocol"
 	"mosn.io/api"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"

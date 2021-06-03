@@ -1,6 +1,6 @@
 package callback
 
-import "github.com/layotto/components/rpc"
+import "github.com/layotto/layotto/components/rpc"
 
 var (
 	beforeInvokeRegistry = map[string]func(*rpc.RPCRequest) (*rpc.RPCRequest, error){}

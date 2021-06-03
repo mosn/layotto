@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/layotto/components/rpc"
+	"github.com/layotto/layotto/components/rpc"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/protocol/xprotocol"

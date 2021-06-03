@@ -3,7 +3,7 @@ package configstores
 import (
 	"fmt"
 
-	"github.com/layotto/components/pkg/info"
+	"github.com/layotto/layotto/components/pkg/info"
 )
 
 type Registry interface {

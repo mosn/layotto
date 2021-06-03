@@ -3,7 +3,7 @@ package apollo
 import (
 	"testing"
 
-	"github.com/layotto/components/pkg/common"
+	"github.com/layotto/layotto/components/pkg/common"
 
 	testify "github.com/stretchr/testify/assert"
 )

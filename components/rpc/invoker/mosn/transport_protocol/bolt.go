@@ -3,7 +3,7 @@ package transport_protocol
 import (
 	"fmt"
 
-	"github.com/layotto/components/rpc"
+	"github.com/layotto/layotto/components/rpc"
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/protocol/xprotocol"
 	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"

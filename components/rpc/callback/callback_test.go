@@ -3,7 +3,7 @@ package callback
 import (
 	"testing"
 
-	"github.com/layotto/components/rpc"
+	"github.com/layotto/layotto/components/rpc"
 	"github.com/stretchr/testify/assert"
 )
 

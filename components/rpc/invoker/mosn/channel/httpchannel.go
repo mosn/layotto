@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/layotto/components/rpc"
+	"github.com/layotto/layotto/components/rpc"
 	"github.com/valyala/fasthttp"
 	_ "mosn.io/mosn/pkg/stream/http"
 )

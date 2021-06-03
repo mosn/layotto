@@ -3,7 +3,7 @@ package helloworld
 import (
 	"testing"
 
-	"github.com/layotto/components/hello"
+	"github.com/layotto/layotto/components/hello"
 )
 
 func TestHelloWorld(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/layotto/components/rpc"
+	"github.com/layotto/layotto/components/rpc"
 	"github.com/stretchr/testify/assert"
 	"github.com/valyala/fasthttp"
 )

@@ -3,8 +3,8 @@ package runtime
 import (
 	"encoding/json"
 
-	"github.com/layotto/components/configstores"
-	"github.com/layotto/components/hello"
+	"github.com/layotto/layotto/components/configstores"
+	"github.com/layotto/layotto/components/hello"
 	"github.com/layotto/layotto/pkg/services/rpc"
 )
 

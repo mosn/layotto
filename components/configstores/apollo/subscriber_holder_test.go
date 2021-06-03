@@ -1,7 +1,7 @@
 package apollo
 
 import (
-	"github.com/layotto/components/configstores"
+	"github.com/layotto/layotto/components/configstores"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

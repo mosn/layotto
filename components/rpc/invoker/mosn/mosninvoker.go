@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"sync/atomic"
 
-	"github.com/layotto/components/rpc"
-	"github.com/layotto/components/rpc/callback"
-	"github.com/layotto/components/rpc/invoker/mosn/channel"
+	"github.com/layotto/layotto/components/rpc"
+	"github.com/layotto/layotto/components/rpc/callback"
+	"github.com/layotto/layotto/components/rpc/invoker/mosn/channel"
 	_ "mosn.io/mosn/pkg/filter/network/proxy"
 	"mosn.io/pkg/log"
 )

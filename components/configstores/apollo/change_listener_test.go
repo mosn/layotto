@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/layotto/components/configstores"
+	"github.com/layotto/layotto/components/configstores"
 	"github.com/stretchr/testify/assert"
 	"github.com/zouyx/agollo/v4/storage"
 )

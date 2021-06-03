@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/layotto/components/configstores"
+	"github.com/layotto/layotto/components/configstores"
 	"mosn.io/pkg/log"
 )
 
