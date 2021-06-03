@@ -5,7 +5,7 @@ import (
 
 	"github.com/layotto/layotto/components/configstores"
 	"github.com/layotto/layotto/components/hello"
-	"github.com/layotto/layotto/pkg/services/rpc"
+	"github.com/layotto/layotto/components/rpc"
 )
 
 type MosnRuntimeConfig struct {

@@ -41,15 +41,11 @@ func (m *mosnInvoker) Init(conf rpc.RpcConfig) error {
 	}
 
 	for _, before := range config.Before {
-		if f := callback.GetBefore(before); f != nil {
-			m.cb.AddBeforeInvoke(f)
-		}
+		m.cb.AddBeforeInvoke(before)
 	}
 
 	for _, after := range config.After {
-		if f := callback.GetAfter(after); f != nil {
-			m.cb.AddAfterInvoke(f)
-		}
+		m.cb.AddAfterInvoke(after)
 	}
 
 	if config.TotalChannels <= 0 {

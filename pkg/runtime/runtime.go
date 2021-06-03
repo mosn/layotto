@@ -5,10 +5,10 @@ import (
 	"github.com/layotto/layotto/components/hello"
 	"github.com/layotto/layotto/components/pkg/actuators"
 	"github.com/layotto/layotto/components/pkg/info"
+	"github.com/layotto/layotto/components/rpc"
 	"github.com/layotto/layotto/pkg/actuator/health"
 	"github.com/layotto/layotto/pkg/grpc"
 	"github.com/layotto/layotto/pkg/integrate/actuator"
-	"github.com/layotto/layotto/pkg/services/rpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"mosn.io/pkg/log"
 )
