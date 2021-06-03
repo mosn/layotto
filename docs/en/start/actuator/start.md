@@ -128,7 +128,7 @@ Therefore, you can refer to [Kubernetes documentation](https://kubernetes.io/doc
 
 ### Add health check or metadata query capabilities to your components
 
-If you are implementing your own Layotto component, you can add health check capabilities to it. You can refer to the implementation of the apollo component (the code is at github.com/layotto/L8-components/configstores/apollo/indicator.go), implement the info.Indicator interface, and inject it into the Actuator.
+If you are implementing your own Layotto component, you can add health check capabilities to it. You can refer to the implementation of the apollo component (the code is at components/configstores/apollo/indicator.go), implement the info.Indicator interface, and inject it into the Actuator.
 
 ### How it works
 
