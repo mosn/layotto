@@ -1,4 +1,4 @@
-<h2>通过Layotto调用apollo配置中心</h2>
+# 通过Layotto调用apollo配置中心
 
 ## 快速开始
 

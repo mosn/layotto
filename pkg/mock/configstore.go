@@ -6,10 +6,10 @@ package mock
 
 import (
 	context "context"
+	"github.com/layotto/layotto/components/configstores"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	configstores "github.com/layotto/layotto/pkg/services/configstores"
 )
 
 // MockStore is a mock of Store interface.

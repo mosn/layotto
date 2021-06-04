@@ -22,7 +22,7 @@ import (
 	"encoding/json"
 	"github.com/golang/protobuf/proto"
 	"github.com/layotto/layotto/pkg/grpc"
-	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
+	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 	"mosn.io/proxy-wasm-go-host/proxywasm"
 )

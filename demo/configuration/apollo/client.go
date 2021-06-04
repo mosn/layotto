@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	runtimev1pb "github.com/layotto/layotto/proto/runtime/v1"
-	"github.com/layotto/layotto/sdk/client"
+	client "github.com/layotto/layotto/sdk/go-sdk/client"
+	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"google.golang.org/grpc"
 	"strconv"
 	"sync"
@@ -43,7 +43,7 @@ func testSubscribeWithGrpc() {
 		panic(err)
 	}
 	defer conn.Close()
-	c := runtimev1pb.NewMosnRuntimeClient(conn)
+	c := runtimev1pb.NewRuntimeClient(conn)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
