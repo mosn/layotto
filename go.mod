@@ -6,7 +6,6 @@ require (
 	github.com/dapr/components-contrib v1.2.0
 	github.com/dapr/kit v0.0.1
 	github.com/golang/mock v1.4.4
-	github.com/golang/protobuf v1.5.0
 	github.com/google/uuid v1.2.0
 	github.com/json-iterator/go v1.1.10
 	github.com/layotto/layotto/components v0.0.0-20210603045430-66065fa0b67f
