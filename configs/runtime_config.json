@@ -2,7 +2,7 @@
 	"servers":[
 		{
 			"default_log_path":"stdout",
-			"default_log_level": "INFO",
+			"default_log_level": "DEBUG",
 			"listeners":[
 				{
 					"name":"grpc",

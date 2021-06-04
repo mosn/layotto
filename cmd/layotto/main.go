@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/layotto/layotto/components/configstores/etcdv3"
 	"os"
 	"strconv"
 	"time"
@@ -90,6 +91,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// Configuration
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
+			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 		),
 		// RPC
 		runtime.WithRpcFactory(
