@@ -53,13 +53,12 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		conn.Close()
 		return nil, err
 	}
+	body := httpResp.Body()
 	h.putConn(conn)
-
 	if httpResp.StatusCode() != http.StatusOK {
-		return nil, fmt.Errorf("http response code %d", httpResp.StatusCode())
+		return nil, fmt.Errorf("http response code %d, body: %s", httpResp.StatusCode(), string(body))
 	}
 
-	body := httpResp.Body()
 	data := make([]byte, len(body))
 	copy(data, body)
 	rpcResp := &rpc.RPCResponse{
@@ -99,17 +98,24 @@ func (h *httpChannel) putConn(conn net.Conn) {
 
 func (h *httpChannel) constructReq(req *rpc.RPCRequest) *fasthttp.Request {
 	httpReq := fasthttp.AcquireRequest()
-	httpReq.Header.Set("host", "localhost")
-	httpReq.Header.Set("id", req.Id)
 	httpReq.SetBody(req.Data)
 	httpReq.SetRequestURI(req.Method)
 	method := http.MethodGet
 	if verb := req.Header.Get("verb"); verb != "" {
 		method = verb
+		delete(req.Header, "verb")
 	}
 	httpReq.Header.SetMethod(method)
 	if query := req.Header.Get("query_string"); query != "" {
 		httpReq.URI().SetQueryString(query)
+		delete(req.Header, "query_string")
 	}
+	req.Header.Range(func(key string, value string) bool {
+		httpReq.Header.Set(key, value)
+		return true
+	})
+
+	httpReq.Header.Set("host", "localhost")
+	httpReq.Header.Set("id", req.Id)
 	return httpReq
 }
