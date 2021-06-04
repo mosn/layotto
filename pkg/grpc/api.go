@@ -76,7 +76,9 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 		return nil, err
 	}
 	// create hello request based on pb.go struct
-	req := &hello.HelloRequest{}
+	req := &hello.HelloRequest{
+		Name: in.Name,
+	}
 	resp, err := h.Hello(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.say_hello] request hello error: %v", err)

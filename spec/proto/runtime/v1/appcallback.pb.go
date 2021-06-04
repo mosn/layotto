@@ -7,10 +7,10 @@ import (
 	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
-	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	math "math"
 )
 
@@ -373,7 +373,7 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AppCallbackClient interface {
 	// Lists all topics subscribed by this app.
-	ListTopicSubscriptions(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ListTopicSubscriptionsResponse, error)
+	ListTopicSubscriptions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListTopicSubscriptionsResponse, error)
 	// Subscribes events from Pubsub
 	OnTopicEvent(ctx context.Context, in *TopicEventRequest, opts ...grpc.CallOption) (*TopicEventResponse, error)
 }
@@ -386,7 +386,7 @@ func NewAppCallbackClient(cc grpc.ClientConnInterface) AppCallbackClient {
 	return &appCallbackClient{cc}
 }
 
-func (c *appCallbackClient) ListTopicSubscriptions(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ListTopicSubscriptionsResponse, error) {
+func (c *appCallbackClient) ListTopicSubscriptions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListTopicSubscriptionsResponse, error) {
 	out := new(ListTopicSubscriptionsResponse)
 	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.AppCallback/ListTopicSubscriptions", in, out, opts...)
 	if err != nil {
@@ -407,7 +407,7 @@ func (c *appCallbackClient) OnTopicEvent(ctx context.Context, in *TopicEventRequ
 // AppCallbackServer is the server API for AppCallback service.
 type AppCallbackServer interface {
 	// Lists all topics subscribed by this app.
-	ListTopicSubscriptions(context.Context, *empty.Empty) (*ListTopicSubscriptionsResponse, error)
+	ListTopicSubscriptions(context.Context, *emptypb.Empty) (*ListTopicSubscriptionsResponse, error)
 	// Subscribes events from Pubsub
 	OnTopicEvent(context.Context, *TopicEventRequest) (*TopicEventResponse, error)
 }
@@ -416,7 +416,7 @@ type AppCallbackServer interface {
 type UnimplementedAppCallbackServer struct {
 }
 
-func (*UnimplementedAppCallbackServer) ListTopicSubscriptions(ctx context.Context, req *empty.Empty) (*ListTopicSubscriptionsResponse, error) {
+func (*UnimplementedAppCallbackServer) ListTopicSubscriptions(ctx context.Context, req *emptypb.Empty) (*ListTopicSubscriptionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTopicSubscriptions not implemented")
 }
 func (*UnimplementedAppCallbackServer) OnTopicEvent(ctx context.Context, req *TopicEventRequest) (*TopicEventResponse, error) {
@@ -428,7 +428,7 @@ func RegisterAppCallbackServer(s *grpc.Server, srv AppCallbackServer) {
 }
 
 func _AppCallback_ListTopicSubscriptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -440,7 +440,7 @@ func _AppCallback_ListTopicSubscriptions_Handler(srv interface{}, ctx context.Co
 		FullMethod: "/spec.proto.runtime.v1.AppCallback/ListTopicSubscriptions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppCallbackServer).ListTopicSubscriptions(ctx, req.(*empty.Empty))
+		return srv.(AppCallbackServer).ListTopicSubscriptions(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

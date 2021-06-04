@@ -37,7 +37,7 @@ import (
 
 	// Actuator
 	_ "github.com/layotto/layotto/pkg/actuator"
-	health "github.com/layotto/layotto/pkg/actuator/health"
+	"github.com/layotto/layotto/pkg/actuator/health"
 	actuatorInfo "github.com/layotto/layotto/pkg/actuator/info"
 	_ "github.com/layotto/layotto/pkg/filter/stream/actuator/http"
 	"github.com/layotto/layotto/pkg/integrate/actuator"
@@ -55,6 +55,7 @@ import (
 	"mosn.io/mosn/pkg/mosn"
 	_ "mosn.io/mosn/pkg/network"
 	_ "mosn.io/mosn/pkg/stream/http"
+	_ "mosn.io/mosn/pkg/wasm/runtime/wasmer"
 	_ "mosn.io/pkg/buffer"
 )
 

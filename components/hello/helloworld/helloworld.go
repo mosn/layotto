@@ -19,6 +19,6 @@ func (hw *HelloWorld) Init(config *hello.HelloConfig) error {
 
 func (hw *HelloWorld) Hello(req *hello.HelloRequest) (*hello.HelloReponse, error) {
 	return &hello.HelloReponse{
-		HelloString: hw.Say,
+		HelloString: hw.Say + ", " + req.Name,
 	}, nil
 }

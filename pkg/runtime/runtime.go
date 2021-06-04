@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+
 	"github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
 	jsoniter "github.com/json-iterator/go"
@@ -18,6 +19,7 @@ import (
 	"github.com/layotto/layotto/pkg/integrate/actuator"
 	pubsub_service "github.com/layotto/layotto/pkg/runtime/pubsub"
 	runtime_pubsub "github.com/layotto/layotto/pkg/runtime/pubsub"
+	"github.com/layotto/layotto/pkg/wasm"
 	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -98,15 +100,15 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	if o.srvMaker != nil {
 		grpcOpts = append(grpcOpts, grpc.WithNewServer(o.srvMaker))
 	}
-	// TODO: support NewAPI extends
+	wasm.Layotto = grpc.NewAPI(
+		m.hellos,
+		m.configStores,
+		m.rpcs,
+		m.pubSubs,
+	)
 	grpcOpts = append(grpcOpts,
 		grpc.WithGrpcOptions(o.options...),
-		grpc.WithAPI(grpc.NewAPI(
-			m.hellos,
-			m.configStores,
-			m.rpcs,
-			m.pubSubs,
-		)),
+		grpc.WithAPI(wasm.Layotto),
 	)
 	m.srv = grpc.NewGrpcServer(grpcOpts...)
 	return m.srv, nil
