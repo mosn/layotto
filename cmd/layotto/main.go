@@ -91,9 +91,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// Configuration
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
-		),
-		runtime.WithConfigStoresFactory(
-			configstores.NewStoreFactory("apollo", etcdv3.NewStore),
+			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 		),
 		// RPC
 		runtime.WithRpcFactory(
