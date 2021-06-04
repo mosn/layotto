@@ -23,27 +23,27 @@ func NewHelloFactory(name string, f func() HelloService) *HelloFactory {
 	}
 }
 
-type helloServiceRegistry struct {
+type helloRegistry struct {
 	stores map[string]func() HelloService
 	info   *info.RuntimeInfo
 }
 
 func NewRegistry(info *info.RuntimeInfo) Registry {
 	info.AddService(ServiceName) // 添加服务信息
-	return &helloServiceRegistry{
+	return &helloRegistry{
 		stores: make(map[string]func() HelloService),
 		info:   info,
 	}
 }
 
-func (r *helloServiceRegistry) Register(fs ...*HelloFactory) {
+func (r *helloRegistry) Register(fs ...*HelloFactory) {
 	for _, f := range fs {
 		r.stores[f.Name] = f.FatcoryMethod
 		r.info.RegisterComponent(ServiceName, f.Name) // 注册组件信息
 	}
 }
 
-func (r *helloServiceRegistry) Create(name string) (HelloService, error) {
+func (r *helloRegistry) Create(name string) (HelloService, error) {
 	if f, ok := r.stores[name]; ok {
 		r.info.LoadComponent(ServiceName, name) // 加载组件信息
 		return f(), nil
