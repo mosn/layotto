@@ -9,6 +9,7 @@ var protocolRegistry = map[string]TransportProtocol{}
 
 // transport protocol support by mosn(bolt/boltv2...)
 type TransportProtocol interface {
+	Init(map[string]interface{}) error
 	api.Encoder
 	api.Decoder
 	ToFrame(*rpc.RPCRequest) api.XFrame

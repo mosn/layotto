@@ -1,6 +1,7 @@
 package transport_protocol
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/layotto/layotto/components/rpc"
@@ -11,15 +12,27 @@ import (
 	"mosn.io/pkg/buffer"
 )
 
-var sofaRequestClassName = "com.alipay.sofa.rpc.core.request.SofaRequest"
-
 func init() {
 	RegistProtocol("bolt", newBoltProtocol())
 	RegistProtocol("boltv2", newBoltV2Protocol())
 }
 
 type boltCommon struct {
+	className string
 	fromFrame
+}
+
+func (b *boltCommon) Init(conf map[string]interface{}) error {
+	class, ok := conf["class"]
+	if !ok {
+		return errors.New("bolt need class")
+	}
+	classStr, ok := class.(string)
+	if !ok {
+		return errors.New("bolt class not string")
+	}
+	b.className = classStr
+	return nil
 }
 
 func (b *boltCommon) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
@@ -42,7 +55,7 @@ type boltProtocol struct {
 func (b *boltProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	buf := buffer.NewIoBufferBytes(req.Data)
 	boltreq := bolt.NewRpcRequest(0, nil, buf)
-	boltreq.Class = sofaRequestClassName
+	boltreq.Class = b.className
 	boltreq.Timeout = req.Timeout
 
 	req.Header.Range(func(key string, value string) bool {
@@ -78,7 +91,7 @@ func (b *boltv2Protocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 
 	buf := buffer.NewIoBufferBytes(req.Data)
 	boltv2Req.SetData(buf)
-	boltv2Req.Class = sofaRequestClassName
+	boltv2Req.Class = b.className
 	boltv2Req.Timeout = req.Timeout
 
 	req.Header.Range(func(key string, value string) bool {

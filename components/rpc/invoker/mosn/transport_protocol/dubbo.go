@@ -23,6 +23,10 @@ type dubboProtocol struct {
 	api.XProtocol
 }
 
+func (d *dubboProtocol) Init(map[string]interface{}) error {
+	return nil
+}
+
 func (d *dubboProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	dubboReq := dubbo.NewRpcRequest(nil, buffer.NewIoBufferBytes(req.Data))
 	req.Header.Range(func(key string, value string) bool {
