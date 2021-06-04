@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/layotto/layotto/sdk/client"
+	client "github.com/layotto/layotto/sdk/go-sdk/client"
 )
 
 const topicName = "topic1"

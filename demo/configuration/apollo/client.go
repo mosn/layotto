@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/layotto/layotto/sdk/client"
+	client "github.com/layotto/layotto/sdk/go-sdk/client"
 	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"google.golang.org/grpc"
 	"strconv"
