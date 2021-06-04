@@ -17,6 +17,7 @@ require (
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.26.0
 	google.golang.org/grpc v1.38.0
+	google.golang.org/grpc/examples v0.0.0-20210603231021-5c164e2b8f22 // indirect
 	google.golang.org/protobuf v1.26.0
 	mosn.io/api v0.0.0-20210414070543-8a0686b03540
 	mosn.io/mosn v0.22.1-0.20210425073346-b6880db4669c
