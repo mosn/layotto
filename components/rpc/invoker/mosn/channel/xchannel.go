@@ -26,6 +26,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	if proto == nil {
 		return nil, fmt.Errorf("protocol %s not found", proto)
 	}
+	proto.Init(config.Ext)
 	m := &xChannel{
 		listenerName: config.Listener,
 		proto:        proto,

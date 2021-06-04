@@ -28,8 +28,9 @@ var (
 )
 
 type ChannelConfig struct {
-	Protocol string
-	Listener string
+	Protocol string                 `json:"protocol"`
+	Listener string                 `json:"listener"`
+	Ext      map[string]interface{} `json:"ext"`
 }
 
 func GetChannel(config ChannelConfig) (rpc.Channel, error) {
