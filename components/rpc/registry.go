@@ -13,7 +13,7 @@ type Registry interface {
 	Create(name string) (Invoker, error)
 }
 
-type RegistryImpl struct {
+type rpcRegistry struct {
 	// Key as implementing component name
 	rpc  map[string]FactoryMethod
 	info *info.RuntimeInfo
@@ -23,20 +23,20 @@ type FactoryMethod func() Invoker
 
 func NewRegistry(info *info.RuntimeInfo) Registry {
 	info.AddService(ServiceName)
-	return &RegistryImpl{
+	return &rpcRegistry{
 		rpc:  make(map[string]FactoryMethod),
 		info: info,
 	}
 }
 
-func (r RegistryImpl) Register(fs ...*Factory) {
+func (r rpcRegistry) Register(fs ...*Factory) {
 	for _, f := range fs {
 		r.rpc[f.Name] = f.Fm
 		r.info.RegisterComponent(ServiceName, f.Name)
 	}
 }
 
-func (r RegistryImpl) Create(name string) (Invoker, error) {
+func (r rpcRegistry) Create(name string) (Invoker, error) {
 	if f, ok := r.rpc[name]; ok {
 		r.info.LoadComponent(ServiceName, name)
 		return f(), nil

@@ -15,27 +15,27 @@ type Registry interface {
 	Create(name string) (pubsub.PubSub, error)
 }
 
-type StoreRegistry struct {
+type pubsubRegistry struct {
 	stores map[string]func() pubsub.PubSub
 	info   *info.RuntimeInfo
 }
 
 func NewRegistry(info *info.RuntimeInfo) Registry {
 	info.AddService(ServiceName)
-	return &StoreRegistry{
+	return &pubsubRegistry{
 		stores: make(map[string]func() pubsub.PubSub),
 		info:   info,
 	}
 }
 
-func (r *StoreRegistry) Register(fs ...*Factory) {
+func (r *pubsubRegistry) Register(fs ...*Factory) {
 	for _, f := range fs {
 		r.stores[f.Name] = f.FactoryMethod
 		r.info.RegisterComponent(ServiceName, f.Name)
 	}
 }
 
-func (r *StoreRegistry) Create(name string) (pubsub.PubSub, error) {
+func (r *pubsubRegistry) Create(name string) (pubsub.PubSub, error) {
 	if f, ok := r.stores[name]; ok {
 		r.info.LoadComponent(ServiceName, name)
 		return f(), nil
