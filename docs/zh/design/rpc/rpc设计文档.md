@@ -30,3 +30,24 @@ layotto的RPC是基于Mosn grpc handler的，工作在7层，而Mosn的代理能
 #### xprotocol
 Mosn通过xprotocol支持了流行的RPC协议.
 在Layotto里设计了对应的扩展机制，只需要完成RPC请求响应与xprotocol frame的互相转换，就可以方便的支持xprotocl协议.
+
+#### 配置参数
+```bigquery
+{
+  "mosn": {
+    "config": {
+      "before_invoke": [{
+        "name": "xxx" // rpc调用前的filter
+      }],
+      "after_invoke": [{
+        "name": "xxx" // rpc调用后的filter
+      }],
+      "total_channels": 1, // 与mosn通信使用的通道数量，可以简单理解成连接数
+      "channel": {
+        "protocol": "http", // 与mosn通信使用的协议
+        "listener": "egress_runtime_http" // mosn对应的listener端口
+      }
+    }
+  }
+}
+```

@@ -32,3 +32,24 @@ in order to reuse Mosn's powerful proxy and filter ability, use brand new way to
 Mosn's xprotocol support popular protocols such as dubbo、thrift...
 
 In layotto, we design a convenient way to support xprotocols. The only task need to be finished is convert RPC request and response to xprotocol frames.
+
+#### config params
+```bigquery
+{
+  "mosn": {
+    "config": {
+      "before_invoke": [{
+        "name": "xxx" // filter before invoke
+      }],
+      "after_invoke": [{
+        "name": "xxx" // filter after invoke
+      }],
+      "total_channels": 1, // analogy to connection nums
+      "channel": {
+        "protocol": "http", // communicate with mosn via this protocol
+        "listener": "egress_runtime_http" // mosn's protocol listener name
+      }
+    }
+  }
+}
+```

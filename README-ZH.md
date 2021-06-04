@@ -39,6 +39,12 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 [方法级别限流](docs/zh/start/stream_filter/flow_control.md)
 
+### 进行RPC调用
+
+[Hello World](docs/zh/start/rpc/helloworld.md)
+
+[Dubbo JSON RPC](docs/zh/start/rpc/dubbo_json_rpc.md)
+
 ### 健康检查、查询运行时元数据
 
 [使用 Layotto Actuator 进行健康检查和元数据查询](docs/zh/start/actuator/start.md)
