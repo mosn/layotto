@@ -1,4 +1,4 @@
-module github.com/layotto/layotto/go-sdk
+module github.com/layotto/layotto/sdk/go-sdk
 
 go 1.14
 
