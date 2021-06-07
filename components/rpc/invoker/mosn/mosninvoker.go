@@ -62,6 +62,12 @@ func (m *mosnInvoker) Init(conf rpc.RpcConfig) error {
 }
 
 func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.DefaultLogger.Errorf("[runtime][rpc]mosn invoker panic: %v", r)
+		}
+	}()
+
 	if req.Timeout == 0 {
 		req.Timeout = 3000
 	}

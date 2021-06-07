@@ -13,6 +13,7 @@ import (
 	"mosn.io/api"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
+	"mosn.io/pkg/utils"
 )
 
 func init() {
@@ -92,7 +93,7 @@ func (m *xChannel) getConn() (*xConn, error) {
 	}
 
 	m.xconn = newXConn(m.proto, localTcpConn)
-	go m.xconn.ReadResponse()
+	utils.GoWithRecover(m.xconn.ReadResponse, nil)
 	return m.xconn, nil
 }
 
