@@ -84,6 +84,7 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (*rpc.RPC
 		return nil, err
 	}
 
+	resp.Ctx = req.Ctx
 	resp, err = m.cb.AfterInvoke(resp)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]after filter error %s", err.Error())
