@@ -14,8 +14,8 @@ service Runtime {
   // InvokeService do rpc calls
   rpc InvokeService(InvokeServiceRequest) returns (InvokeResponse) {}
 
-	// GetConfiguration gets configuration from configuration store.
-	rpc GetConfiguration(GetConfigurationRequest) returns (GetConfigurationResponse) {}
+  // GetConfiguration gets configuration from configuration store.
+  rpc GetConfiguration(GetConfigurationRequest) returns (GetConfigurationResponse) {}
 
   // SaveConfiguration saves configuration into configuration store.
   rpc SaveConfiguration(SaveConfigurationRequest) returns (google.protobuf.Empty) {}
@@ -31,12 +31,11 @@ service Runtime {
   //  ,like CloudEvent for event data.
 
   // Publishes events to the specific topic.
-  rpc PublishEvent(PublishEventRequest) returns (google.protobuf.Empty) {}
+  rpc PublishEvent(PublishEventRequest) returns (PublishEventResponse) {}
 }
 
 message SayHelloRequest {
-	string service_name = 1;
-	string name = 2;
+  string service_name = 1;
 }
 
 message SayHelloResponse {
@@ -225,4 +224,12 @@ message PublishEventRequest {
   // metadata property:
   // - key : the key of the message.
   map<string, string> metadata = 5;
+}
+
+// PublishEventResponse is the response for publishing an event
+message PublishEventResponse {
+  // true if event publish succeeds.
+  bool success = 1;
+  // extra data for event publish
+  map<string, string> metadata = 2;
 }
