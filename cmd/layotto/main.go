@@ -42,6 +42,7 @@ import (
 	_ "github.com/layotto/layotto/pkg/filter/stream/actuator/http"
 	"github.com/layotto/layotto/pkg/integrate/actuator"
 
+	_ "github.com/layotto/layotto/pkg/filter/network/tcpcopy"
 	"github.com/layotto/layotto/pkg/runtime"
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
