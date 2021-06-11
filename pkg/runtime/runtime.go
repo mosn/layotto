@@ -237,6 +237,9 @@ func (m *MosnRuntime) initPubSubs(factorys ...*pubsub_service.Factory) error {
 
 func (m *MosnRuntime) startSubscribing() error {
 	// 1. check if there is no need to do it
+	if len(m.pubSubs) == 0 {
+		return nil
+	}
 	topicRoutes, err := m.getInterestedTopics()
 	if err != nil {
 		return err
