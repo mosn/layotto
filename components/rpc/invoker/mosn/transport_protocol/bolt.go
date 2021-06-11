@@ -23,6 +23,9 @@ type boltCommon struct {
 }
 
 func (b *boltCommon) Init(conf map[string]interface{}) error {
+	if len(conf) == 0 {
+		return errors.New("missing bolt classname")
+	}
 	class, ok := conf["class"]
 	if !ok {
 		return errors.New("bolt need class")

@@ -2,6 +2,7 @@ package channel
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"sync"
@@ -11,9 +12,6 @@ import (
 	"mosn.io/api"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/rpc/invoker/mosn/transport_protocol"
-	"mosn.io/pkg/buffer"
-	"mosn.io/pkg/log"
-	"mosn.io/pkg/utils"
 )
 
 func init() {
@@ -27,190 +25,129 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	if proto == nil {
 		return nil, fmt.Errorf("protocol %s not found", proto)
 	}
-	proto.Init(config.Ext)
-	m := &xChannel{
-		listenerName: config.Listener,
-		proto:        proto,
+	if err := proto.Init(config.Ext); err != nil {
+		return nil, err
 	}
+
+	m := &xChannel{proto: proto}
+	m.pool = newConnPool(
+		config.Size,
+		func() (net.Conn, error) {
+			local, remote := net.Pipe()
+			localTcpConn := &fakeTcpConn{c: local}
+			remoteTcpConn := &fakeTcpConn{c: remote}
+			if err := acceptFunc(remoteTcpConn, config.Listener); err != nil {
+				return nil, err
+			}
+			return localTcpConn, nil
+		},
+		func() interface{} {
+			return &xstate{respChans: map[uint64]chan api.XRespFrame{}}
+		},
+		m.onData,
+	)
+
 	return m, nil
 }
 
-type xChannel struct {
-	listenerName string
-	proto        transport_protocol.TransportProtocol
+type xstate struct {
+	reqid     uint64
+	mu        sync.Mutex
+	respChans map[uint64]chan api.XRespFrame
+}
 
-	streamGuard sync.RWMutex
-	xconn       *xConn
+type xChannel struct {
+	proto transport_protocol.TransportProtocol
+	pool  *connPool
 }
 
 func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
-	duration := time.Duration(req.Timeout) * time.Millisecond
-	deadline := time.Now().Add(duration)
-	timer := time.NewTimer(duration)
-	defer timer.Stop()
+	timeout := time.Duration(req.Timeout) * time.Millisecond
+	ctx, cancel := context.WithTimeout(req.Ctx, timeout)
+	defer cancel()
 
-	conn, err := m.getConn()
+	conn, err := m.pool.Get(ctx)
 	if err != nil {
 		return nil, err
 	}
-	respChan, closeChan, err := conn.WriteRequest(req, deadline)
-	if err != nil {
-		m.destroyConn(conn)
+
+	xstate := conn.state.(*xstate)
+
+	// encode request
+	frame := m.proto.ToFrame(req)
+	id := atomic.AddUint64(&xstate.reqid, 1)
+	frame.SetRequestId(id)
+	buf, encErr := m.proto.Encode(req.Ctx, frame)
+	if encErr != nil {
+		m.pool.Put(conn, false)
+		return nil, encErr
+	}
+
+	respChan := make(chan api.XRespFrame, 1)
+	// set timeout
+	deadline, _ := ctx.Deadline()
+	if err := conn.SetWriteDeadline(deadline); err != nil {
+		m.pool.Put(conn, true)
 		return nil, err
 	}
+	// register response channel
+	xstate.mu.Lock()
+	xstate.respChans[id] = respChan
+	xstate.mu.Unlock()
+
+	// write packet
+	if _, err := conn.Write(buf.Bytes()); err != nil {
+		m.removeRespChan(xstate, id)
+		m.pool.Put(conn, true)
+		return nil, err
+	}
+	m.pool.Put(conn, false)
 
 	select {
 	case resp := <-respChan:
 		return m.proto.FromFrame(resp)
-	case <-timer.C:
-		m.destroyConn(conn)
+	case <-ctx.Done():
+		m.removeRespChan(xstate, id)
 		return nil, ErrTimeout
-	case <-closeChan:
-		m.destroyConn(conn)
+	case <-conn.closeChan:
+		m.removeRespChan(xstate, id)
 		return nil, ErrConnClosed
 	}
 }
 
-func (m *xChannel) getConn() (*xConn, error) {
-	m.streamGuard.RLock()
-	sc := m.xconn
-	m.streamGuard.RUnlock()
-	if sc != nil {
-		return sc, nil
-	}
-
-	m.streamGuard.Lock()
-	defer m.streamGuard.Unlock()
-	if m.xconn != nil {
-		return m.xconn, nil
-	}
-
-	local, remote := net.Pipe()
-	localTcpConn := &fakeTcpConn{c: local}
-	remoteTcpConn := &fakeTcpConn{c: remote}
-	if err := acceptFunc(remoteTcpConn, m.listenerName); err != nil {
-		return nil, err
-	}
-
-	m.xconn = newXConn(m.proto, localTcpConn)
-	utils.GoWithRecover(m.xconn.ReadResponse, nil)
-	return m.xconn, nil
+func (m *xChannel) removeRespChan(xstate *xstate, id uint64) {
+	xstate.mu.Lock()
+	delete(xstate.respChans, id)
+	xstate.mu.Unlock()
 }
 
-func (m *xChannel) destroyConn(oldConn *xConn) {
-	m.streamGuard.RLock()
-	sc := m.xconn
-	m.streamGuard.RUnlock()
-	if oldConn != sc {
-		return
-	}
-
-	m.streamGuard.Lock()
-	defer m.streamGuard.Unlock()
-
-	if oldConn != m.xconn {
-		return
-	}
-	m.xconn.Close()
-	m.xconn = nil
-}
-
-func newXConn(proto transport_protocol.TransportProtocol, conn net.Conn) *xConn {
-	return &xConn{
-		proto:     proto,
-		conn:      conn,
-		closeChan: make(chan struct{}),
-		respChans: map[uint64]chan api.XRespFrame{},
-	}
-}
-
-type xConn struct {
-	reqId uint64
-	proto transport_protocol.TransportProtocol
-
-	closeOnce sync.Once
-	closeChan chan struct{}
-
-	guard     sync.Mutex
-	conn      net.Conn
-	respChans map[uint64]chan api.XRespFrame
-}
-
-func (s *xConn) WriteRequest(req *rpc.RPCRequest, ddl time.Time) (chan api.XRespFrame, chan struct{}, error) {
-	// encode request
-	frame := s.proto.ToFrame(req)
-	id := atomic.AddUint64(&s.reqId, 1)
-	frame.SetRequestId(id)
-	buf, encErr := s.proto.Encode(req.Ctx, frame)
-	if encErr != nil {
-		return nil, nil, encErr
-	}
-	respChan := make(chan api.XRespFrame, 1)
-
-	s.guard.Lock()
-	defer s.guard.Unlock()
-
-	// set timeout
-	if err := s.conn.SetWriteDeadline(ddl); err != nil {
-		return nil, nil, err
-	}
-
-	// register response channel
-	s.respChans[id] = respChan
-
-	// write packet
-	if _, err := s.conn.Write(buf.Bytes()); err != nil {
-		delete(s.respChans, id)
-		return nil, nil, err
-	}
-
-	return respChan, s.closeChan, nil
-}
-
-func (s *xConn) ReadResponse() {
-	defer s.Close()
-	buf := buffer.NewIoBuffer(16 * 1024)
-
+func (m *xChannel) onData(conn *wrapConn) error {
 	for {
-		if _, err := buf.ReadOnce(s.conn); err != nil {
-			log.DefaultLogger.Errorf("[runtime][rpc]xchannel read err: %s", err.Error())
-			return
+		iframe, err := m.proto.Decode(context.TODO(), conn.buf)
+		if err != nil {
+			return err
 		}
 
-		for {
-			iframe, err := s.proto.Decode(context.TODO(), buf)
-			if err != nil {
-				log.DefaultLogger.Errorf("[runtime][rpc]xchannel decode err: %s", err.Error())
-				return
-			}
+		if iframe == nil {
+			break
+		}
 
-			if iframe == nil {
-				break
-			}
+		frame, ok := iframe.(api.XRespFrame)
+		if !ok {
+			return errors.New("[runtime][rpc]xchannel type not XRespFrame")
+		}
 
-			frame, ok := iframe.(api.XRespFrame)
-			if !ok {
-				log.DefaultLogger.Errorf("[runtime][rpc]xchannel type not XRespFrame")
-				return
-			}
-
-			reqID := frame.GetRequestId()
-			s.guard.Lock()
-			notifyChan, ok := s.respChans[reqID]
-			if ok {
-				delete(s.respChans, reqID)
-			}
-			s.guard.Unlock()
-			if ok {
-				notifyChan <- frame
-			}
+		reqID := frame.GetRequestId()
+		xstate := conn.state.(*xstate)
+		xstate.mu.Lock()
+		notifyChan, ok := xstate.respChans[reqID]
+		if ok {
+			delete(xstate.respChans, reqID)
+		}
+		xstate.mu.Unlock()
+		if ok {
+			notifyChan <- frame
 		}
 	}
-}
-
-func (s *xConn) Close() {
-	s.closeOnce.Do(func() {
-		close(s.closeChan)
-		s.conn.Close()
-	})
+	return nil
 }

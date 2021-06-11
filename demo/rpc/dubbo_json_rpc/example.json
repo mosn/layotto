@@ -37,11 +37,11 @@
                           "before_invoke": [{
                             "name": "dubbo_json_rpc"
                           }],
-                          "total_channels": 1,
-                          "channel": {
+                          "channel": [{
+                            "size": 1,
                             "protocol": "http",
                             "listener": "egress_runtime_http"
-                          }
+                          }]
                         }
                       }
                     }

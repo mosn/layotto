@@ -53,20 +53,20 @@ func startTestHttpServer() {
 func TestHttpChannel(t *testing.T) {
 	startTestHttpServer()
 
-	channel, err := newHttpChannel(ChannelConfig{})
-	assert.NoError(t, err)
+	channel, err := newHttpChannel(ChannelConfig{Size: 1})
+	assert.Nil(t, err)
 
 	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("hello"), Timeout: 1000}
 	resp, err := channel.Do(req)
-	assert.NoError(t, err)
+	assert.Nil(t, err)
 	assert.Equal(t, "hello", string(resp.Data))
 }
 
 func TestRenewHttpConn(t *testing.T) {
 	startTestHttpServer()
 
-	channel, err := newHttpChannel(ChannelConfig{})
-	assert.NoError(t, err)
+	channel, err := newHttpChannel(ChannelConfig{Size: 1})
+	assert.Nil(t, err)
 
 	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 1000}
 	_, err = channel.Do(req)
@@ -74,15 +74,15 @@ func TestRenewHttpConn(t *testing.T) {
 
 	req = &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("hello"), Timeout: 1000}
 	resp, err := channel.Do(req)
-	assert.NoError(t, err)
+	assert.Nil(t, err)
 	assert.Equal(t, "hello", string(resp.Data))
 }
 
 func TestConcurrent(t *testing.T) {
 	startTestHttpServer()
 
-	channel, err := newHttpChannel(ChannelConfig{})
-	assert.NoError(t, err)
+	channel, err := newHttpChannel(ChannelConfig{Size: 1})
+	assert.Nil(t, err)
 
 	var wg sync.WaitGroup
 	for i := 0; i < 30; i++ {
@@ -91,7 +91,7 @@ func TestConcurrent(t *testing.T) {
 			defer wg.Done()
 			req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("hello" + strconv.Itoa(i)), Timeout: 1000}
 			resp, err := channel.Do(req)
-			assert.NoError(t, err)
+			assert.Nil(t, err)
 			assert.Equal(t, "hello"+strconv.Itoa(i), string(resp.Data))
 		}(i)
 	}

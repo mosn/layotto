@@ -2,6 +2,7 @@ package channel
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"net"
 	"net/http"
@@ -17,25 +18,41 @@ func init() {
 }
 
 type httpChannel struct {
-	listenerName string
-	conns        chan net.Conn
+	pool *connPool
 }
 
 func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 	return &httpChannel{
-		listenerName: config.Listener,
-		conns:        make(chan net.Conn, 2),
+		pool: newConnPool(
+			config.Size,
+			func() (net.Conn, error) {
+				local, remote := net.Pipe()
+				localTcpConn := &fakeTcpConn{c: local}
+				remoteTcpConn := &fakeTcpConn{c: remote}
+				if err := acceptFunc(remoteTcpConn, config.Listener); err != nil {
+					return nil, err
+				}
+				return localTcpConn, nil
+			},
+			nil,
+			nil,
+		),
 	}, nil
 }
 
 func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
-	conn, err := h.getConn()
+	timeout := time.Duration(req.Timeout) * time.Millisecond
+	ctx, cancel := context.WithTimeout(req.Ctx, timeout)
+	defer cancel()
+
+	conn, err := h.pool.Get(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = conn.SetDeadline(time.Now().Add(time.Duration(req.Timeout) * time.Millisecond)); err != nil {
-		conn.Close()
+	deadline, _ := ctx.Deadline()
+	if err = conn.SetDeadline(deadline); err != nil {
+		h.pool.Put(conn, true)
 		return nil, err
 	}
 
@@ -43,18 +60,18 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	defer fasthttp.ReleaseRequest(httpReq)
 
 	if _, err = httpReq.WriteTo(conn); err != nil {
-		conn.Close()
+		h.pool.Put(conn, true)
 		return nil, err
 	}
 
 	httpResp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(httpResp)
 	if err = httpResp.Read(bufio.NewReader(conn)); err != nil {
-		conn.Close()
+		h.pool.Put(conn, true)
 		return nil, err
 	}
 	body := httpResp.Body()
-	h.putConn(conn)
+	h.pool.Put(conn, false)
 	if httpResp.StatusCode() != http.StatusOK {
 		return nil, fmt.Errorf("http response code %d, body: %s", httpResp.StatusCode(), string(body))
 	}
@@ -70,30 +87,6 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		rpcResp.Header[string(key)] = []string{string(value)}
 	})
 	return rpcResp, nil
-}
-
-func (h *httpChannel) getConn() (net.Conn, error) {
-	select {
-	case conn := <-h.conns:
-		return conn, nil
-	default:
-	}
-
-	local, remote := net.Pipe()
-	localTcpConn := &fakeTcpConn{c: local}
-	remoteTcpConn := &fakeTcpConn{c: remote}
-	if err := acceptFunc(remoteTcpConn, h.listenerName); err != nil {
-		return nil, err
-	}
-	return localTcpConn, nil
-}
-
-func (h *httpChannel) putConn(conn net.Conn) {
-	select {
-	case h.conns <- conn:
-	default:
-		conn.Close()
-	}
 }
 
 func (h *httpChannel) constructReq(req *rpc.RPCRequest) *fasthttp.Request {

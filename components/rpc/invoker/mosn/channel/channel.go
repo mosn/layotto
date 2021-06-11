@@ -30,6 +30,7 @@ var (
 type ChannelConfig struct {
 	Protocol string                 `json:"protocol"`
 	Listener string                 `json:"listener"`
+	Size     int                    `json:"size"`
 	Ext      map[string]interface{} `json:"ext"`
 }
 
