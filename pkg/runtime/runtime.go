@@ -250,7 +250,7 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 	// 1. register all the implementation
 	m.stateRegistry.Register(factorys...)
 	// 2. loop initializing
-	for name, config := range m.runtimeConfig.PubSubManagement {
+	for name, config := range m.runtimeConfig.StateManagement {
 		// 2.1. create and store the component
 		comp, err := m.stateRegistry.Create(name)
 		if err != nil {
