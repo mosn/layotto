@@ -2,7 +2,7 @@ package strategy
 
 import (
 	"encoding/json"
-	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/model"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/pkg/utils"
 	"sync"

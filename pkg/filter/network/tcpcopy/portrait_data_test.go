@@ -1,8 +1,8 @@
 package tcpcopy
 
 import (
-	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/strategy"
-	_type "github.com/layotto/layotto/pkg/filter/network/tcpcopy/type"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
+	_type "mosn.io/layotto/pkg/filter/network/tcpcopy/type"
 	"mosn.io/pkg/log"
 	"testing"
 )

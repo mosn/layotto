@@ -6,7 +6,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/layotto/layotto/components/rpc"
+	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/server"
 )
 

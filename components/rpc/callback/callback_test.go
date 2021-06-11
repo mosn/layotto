@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/layotto/layotto/components/rpc"
+	"mosn.io/layotto/components/rpc"
 )
 
 type bf struct{}

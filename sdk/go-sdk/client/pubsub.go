@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 type PublishEventRequest struct {

@@ -3,9 +3,9 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"github.com/layotto/layotto/pkg/actuator"
 	"github.com/valyala/fasthttp"
 	"mosn.io/api"
+	"mosn.io/layotto/pkg/actuator"
 	mosnhttp "mosn.io/mosn/pkg/protocol/http"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/mosn/pkg/variable"

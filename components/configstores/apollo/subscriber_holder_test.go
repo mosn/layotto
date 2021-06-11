@@ -1,8 +1,8 @@
 package apollo
 
 import (
-	"github.com/layotto/layotto/components/configstores"
 	"github.com/stretchr/testify/assert"
+	"mosn.io/layotto/components/configstores"
 	"testing"
 )
 

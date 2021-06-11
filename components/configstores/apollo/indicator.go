@@ -3,9 +3,9 @@ package apollo
 import (
 	"sync"
 
-	"github.com/layotto/layotto/components/pkg/actuators"
+	"mosn.io/layotto/components/pkg/actuators"
 
-	"github.com/layotto/layotto/components/pkg/common"
+	"mosn.io/layotto/components/pkg/common"
 )
 
 const (

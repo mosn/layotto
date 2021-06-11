@@ -1,9 +1,9 @@
 package persistence
 
 import (
-	"github.com/layotto/layotto/pkg/common"
-	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/model"
-	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/strategy"
+	"mosn.io/layotto/pkg/common"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 	"os"
 	"sync"
 	"sync/atomic"

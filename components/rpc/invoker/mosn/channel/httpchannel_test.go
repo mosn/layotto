@@ -7,9 +7,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/layotto/layotto/components/rpc"
 	"github.com/stretchr/testify/assert"
 	"github.com/valyala/fasthttp"
+	"mosn.io/layotto/components/rpc"
 )
 
 type testhttpServer struct {

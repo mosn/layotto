@@ -1,8 +1,8 @@
 package transport_protocol
 
 import (
-	"github.com/layotto/layotto/components/rpc"
 	"mosn.io/api"
+	"mosn.io/layotto/components/rpc"
 )
 
 var protocolRegistry = map[string]TransportProtocol{}

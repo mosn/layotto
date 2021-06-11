@@ -2,7 +2,7 @@ package persistence
 
 import (
 	"fmt"
-	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/strategy"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 	"mosn.io/pkg/log"
 	"os"
 	"path"

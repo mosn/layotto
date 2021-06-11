@@ -5,7 +5,7 @@
 package mock
 
 import (
-	"github.com/layotto/layotto/components/hello"
+	"mosn.io/layotto/components/hello"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
