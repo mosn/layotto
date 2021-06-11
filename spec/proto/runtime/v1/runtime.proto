@@ -14,8 +14,8 @@ service Runtime {
   // InvokeService do rpc calls
   rpc InvokeService(InvokeServiceRequest) returns (InvokeResponse) {}
 
-	// GetConfiguration gets configuration from configuration store.
-	rpc GetConfiguration(GetConfigurationRequest) returns (GetConfigurationResponse) {}
+  // GetConfiguration gets configuration from configuration store.
+  rpc GetConfiguration(GetConfigurationRequest) returns (GetConfigurationResponse) {}
 
   // SaveConfiguration saves configuration into configuration store.
   rpc SaveConfiguration(SaveConfigurationRequest) returns (google.protobuf.Empty) {}
@@ -30,13 +30,32 @@ service Runtime {
   //  We try to keep them same as Dapr's because we want to work with Dapr to build an API spec for cloud native runtime
   //  ,like CloudEvent for event data.
 
+  // Gets the state for a specific key.
+  rpc GetState(GetStateRequest) returns (GetStateResponse) {}
+
+  // Gets a bulk of state items for a list of keys
+  rpc GetBulkState(GetBulkStateRequest) returns (GetBulkStateResponse) {}
+
+  // Saves the state for a specific key.
+  rpc SaveState(SaveStateRequest) returns (google.protobuf.Empty) {}
+
+  // Deletes the state for a specific key.
+  rpc DeleteState(DeleteStateRequest) returns (google.protobuf.Empty) {}
+
+  // Deletes a bulk of state items for a list of keys
+  rpc DeleteBulkState(DeleteBulkStateRequest) returns (google.protobuf.Empty) {}
+
+  // Executes transactions for a specified store
+  rpc ExecuteStateTransaction(ExecuteStateTransactionRequest) returns (google.protobuf.Empty) {}
+
   // Publishes events to the specific topic.
   rpc PublishEvent(PublishEventRequest) returns (google.protobuf.Empty) {}
+
 }
 
 message SayHelloRequest {
-	string service_name = 1;
-	string name = 2;
+  string service_name = 1;
+  string name = 2;
 }
 
 message SayHelloResponse {
@@ -204,6 +223,179 @@ message DeleteConfigurationRequest {
 
   // The metadata which will be sent to configuration store components.
   map<string, string> metadata = 6;
+}
+
+
+// GetStateRequest is the message to get key-value states from specific state store.
+message GetStateRequest {
+  // The name of state store.
+  string store_name = 1;
+
+  // The key of the desired state
+  string key = 2;
+
+  // The read consistency of the state store.
+  StateOptions.StateConsistency consistency = 3;
+
+  // The metadata which will be sent to state store components.
+  map<string, string> metadata = 4;
+}
+
+// GetBulkStateRequest is the message to get a list of key-value states from specific state store.
+message GetBulkStateRequest {
+  // The name of state store.
+  string store_name = 1;
+
+  // The keys to get.
+  repeated string keys = 2;
+
+  // The number of parallel operations executed on the state store for a get operation.
+  int32 parallelism = 3;
+
+  // The metadata which will be sent to state store components.
+  map<string, string> metadata = 4;
+}
+
+// GetBulkStateResponse is the response conveying the list of state values.
+message GetBulkStateResponse {
+  // The list of items containing the keys to get values for.
+  repeated BulkStateItem items = 1;
+}
+
+// BulkStateItem is the response item for a bulk get operation.
+// Return values include the item key, data and etag.
+message BulkStateItem {
+  // state item key
+  string key = 1;
+
+  // The byte array data
+  bytes data = 2;
+
+  // The entity tag which represents the specific version of data.
+  // ETag format is defined by the corresponding data store.
+  string etag = 3;
+
+  // The error that was returned from the state store in case of a failed get operation.
+  string error = 4;
+
+  // The metadata which will be sent to app.
+  map<string, string> metadata = 5;
+}
+
+// GetStateResponse is the response conveying the state value and etag.
+message GetStateResponse {
+  // The byte array data
+  bytes data = 1;
+
+  // The entity tag which represents the specific version of data.
+  // ETag format is defined by the corresponding data store.
+  string etag = 2;
+
+  // The metadata which will be sent to app.
+  map<string, string> metadata = 3;
+}
+
+// DeleteStateRequest is the message to delete key-value states in the specific state store.
+message DeleteStateRequest {
+  // The name of state store.
+  string store_name = 1;
+
+  // The key of the desired state
+  string key = 2;
+
+  // The entity tag which represents the specific version of data.
+  // The exact ETag format is defined by the corresponding data store.
+  Etag etag = 3;
+
+  // State operation options which includes concurrency/
+  // consistency/retry_policy.
+  StateOptions options = 4;
+
+  // The metadata which will be sent to state store components.
+  map<string, string> metadata = 5;
+}
+
+// DeleteBulkStateRequest is the message to delete a list of key-value states from specific state store.
+message DeleteBulkStateRequest {
+  // The name of state store.
+  string store_name = 1;
+
+  // The array of the state key values.
+  repeated StateItem states = 2;
+}
+
+// SaveStateRequest is the message to save multiple states into state store.
+message SaveStateRequest {
+  // The name of state store.
+  string store_name = 1;
+
+  // The array of the state key values.
+  repeated StateItem states = 2;
+}
+
+// StateItem represents state key, value, and additional options to save state.
+message StateItem {
+  // Required. The state key
+  string key = 1;
+
+  // Required. The state data for key
+  bytes value = 2;
+
+  // The entity tag which represents the specific version of data.
+  // The exact ETag format is defined by the corresponding data store.
+  Etag etag = 3;
+
+  // The metadata which will be passed to state store component.
+  map<string, string> metadata = 4;
+
+  // Options for concurrency and consistency to save the state.
+  StateOptions options = 5;
+}
+
+// Etag represents a state item version
+message Etag {
+  // value sets the etag value
+  string value = 1;
+}
+
+// StateOptions configures concurrency and consistency for state operations
+message StateOptions {
+  // Enum describing the supported concurrency for state.
+  enum StateConcurrency {
+    CONCURRENCY_UNSPECIFIED = 0;
+    CONCURRENCY_FIRST_WRITE = 1;
+    CONCURRENCY_LAST_WRITE = 2;
+  }
+
+  // Enum describing the supported consistency for state.
+  enum StateConsistency {
+    CONSISTENCY_UNSPECIFIED = 0;
+    CONSISTENCY_EVENTUAL = 1;
+    CONSISTENCY_STRONG = 2;
+  }
+
+  StateConcurrency concurrency = 1;
+  StateConsistency consistency = 2;
+}
+
+// TransactionalStateOperation is the message to execute a specified operation with a key-value pair.
+message TransactionalStateOperation {
+  // The type of operation to be executed
+  string operationType = 1;
+
+  // State values to be operated on
+  StateItem request = 2;
+}
+// ExecuteStateTransactionRequest is the message to execute multiple operations on a specified store.
+message ExecuteStateTransactionRequest {
+  // Required. name of state store.
+  string storeName = 1;
+
+  // Required. transactional operation list.
+  repeated TransactionalStateOperation operations = 2;
+
+  // The metadata used for transactional operations.
+  map<string,string> metadata = 3;
 }
 
 // PublishEventRequest is the message to publish event data to pubsub topic

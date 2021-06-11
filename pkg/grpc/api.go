@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/dapr/components-contrib/state"
+	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/layotto/layotto/pkg/common"
 	"strings"
 	"sync"
 
@@ -17,6 +20,7 @@ import (
 	"github.com/layotto/layotto/components/rpc"
 	mosninvoker "github.com/layotto/layotto/components/rpc/invoker/mosn"
 	"github.com/layotto/layotto/pkg/messages"
+	runtime_state "github.com/layotto/layotto/pkg/runtime/state"
 	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -45,27 +49,48 @@ type API interface {
 	SubscribeConfiguration(runtimev1pb.Runtime_SubscribeConfigurationServer) error
 	// Publishes events to the specific topic.
 	PublishEvent(context.Context, *runtimev1pb.PublishEventRequest) (*emptypb.Empty, error)
+	// State
+	GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*runtimev1pb.GetStateResponse, error)
+	GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequest) (*runtimev1pb.GetBulkStateResponse, error)
+	SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (*emptypb.Empty, error)
+	DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateRequest) (*emptypb.Empty, error)
+	DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkStateRequest) (*emptypb.Empty, error)
+	ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*emptypb.Empty, error)
 }
 
 // api is a default implementation for MosnRuntimeServer.
 type api struct {
-	hellos       map[string]hello.HelloService
-	configStores map[string]configstores.Store
-	rpcs         map[string]rpc.Invoker
-	pubSubs      map[string]pubsub.PubSub
+	appId                    string
+	hellos                   map[string]hello.HelloService
+	configStores             map[string]configstores.Store
+	rpcs                     map[string]rpc.Invoker
+	pubSubs                  map[string]pubsub.PubSub
+	stateStores              map[string]state.Store
+	transactionalStateStores map[string]state.TransactionalStore
 }
 
 func NewAPI(
+	appId string,
 	hellos map[string]hello.HelloService,
 	configStores map[string]configstores.Store,
 	rpcs map[string]rpc.Invoker,
 	pubSubs map[string]pubsub.PubSub,
+	stateStores map[string]state.Store,
 ) API {
+	transactionalStateStores := map[string]state.TransactionalStore{}
+	for key, store := range stateStores {
+		if state.FeatureTransactional.IsPresent(store.Features()) {
+			transactionalStateStores[key] = store.(state.TransactionalStore)
+		}
+	}
 	return &api{
-		hellos:       hellos,
-		configStores: configStores,
-		rpcs:         rpcs,
-		pubSubs:      pubSubs,
+		appId:                    appId,
+		hellos:                   hellos,
+		configStores:             configStores,
+		rpcs:                     rpcs,
+		pubSubs:                  pubSubs,
+		stateStores:              stateStores,
+		transactionalStateStores: transactionalStateStores,
 	}
 }
 
@@ -340,4 +365,385 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 		return &emptypb.Empty{}, nerr
 	}
 	return &emptypb.Empty{}, nil
+}
+
+// GetState obtains the state for a specific key.
+func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*runtimev1pb.GetStateResponse, error) {
+	// 1. get store
+	store, err := a.getStateStore(in.StoreName)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetState] error: %v", err)
+		return nil, err
+	}
+	// 2. generate the actual key
+	key, err := runtime_state.GetModifiedStateKey(in.Key, in.StoreName, a.appId)
+	if err != nil {
+		return &runtimev1pb.GetStateResponse{}, err
+	}
+	req := state.GetRequest{
+		Key:      key,
+		Metadata: in.Metadata,
+		Options: state.GetStateOption{
+			Consistency: stateConsistencyToString(in.Consistency),
+		},
+	}
+	// 3. query
+	getResponse, err := store.Get(&req)
+	// 4. check result
+	if err != nil {
+		err = status.Errorf(codes.Internal, messages.ErrStateGet, in.Key, in.StoreName, err.Error())
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetState] %v", err)
+		return &runtimev1pb.GetStateResponse{}, err
+	}
+
+	response := &runtimev1pb.GetStateResponse{}
+	if getResponse != nil {
+		response.Etag = stringValueOrEmpty(getResponse.ETag)
+		response.Data = getResponse.Data
+		response.Metadata = getResponse.Metadata
+	}
+	return response, nil
+}
+
+func (a *api) getStateStore(name string) (state.Store, error) {
+	if a.stateStores == nil || len(a.stateStores) == 0 {
+		return nil, status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
+	}
+
+	if a.stateStores[name] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, name)
+	}
+	return a.stateStores[name], nil
+}
+
+func stringValueOrEmpty(value *string) string {
+	if value == nil {
+		return ""
+	}
+
+	return *value
+}
+
+func (a *api) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequest) (*runtimev1pb.GetBulkStateResponse, error) {
+	// 1. get store
+	store, err := a.getStateStore(in.StoreName)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetBulkState] error: %v", err)
+		return &runtimev1pb.GetBulkStateResponse{}, err
+	}
+
+	bulkResp := &runtimev1pb.GetBulkStateResponse{}
+	if len(in.Keys) == 0 {
+		return bulkResp, nil
+	}
+
+	// 2. try bulk get first
+	// 2.1. convert reqs
+	reqs := make([]state.GetRequest, len(in.Keys))
+	for i, k := range in.Keys {
+		key, err1 := runtime_state.GetModifiedStateKey(k, in.StoreName, a.appId)
+		if err1 != nil {
+			return &runtimev1pb.GetBulkStateResponse{}, err1
+		}
+		r := state.GetRequest{
+			Key:      key,
+			Metadata: in.Metadata,
+		}
+		reqs[i] = r
+	}
+	// 2.2. query
+	bulkGet, responses, err := store.BulkGet(reqs)
+	// 2.3. parse and return result if store supports bulk get
+	if bulkGet {
+		if err != nil {
+			return bulkResp, err
+		}
+		for i := 0; i < len(responses); i++ {
+			item := &runtimev1pb.BulkStateItem{
+				Key:      runtime_state.GetOriginalStateKey(responses[i].Key),
+				Data:     responses[i].Data,
+				Etag:     stringValueOrEmpty(responses[i].ETag),
+				Metadata: responses[i].Metadata,
+				Error:    responses[i].Error,
+			}
+			bulkResp.Items = append(bulkResp.Items, item)
+		}
+		return bulkResp, nil
+	}
+
+	// 3. if store doesn't support bulk get, fallback to call get() method one by one
+	limiter := common.NewLimiter(int(in.Parallelism))
+	for i := 0; i < len(reqs); i++ {
+		fn := func(param interface{}) {
+			req := param.(*state.GetRequest)
+			r, err := store.Get(req)
+			item := &runtimev1pb.BulkStateItem{
+				Key: runtime_state.GetOriginalStateKey(req.Key),
+			}
+			if err != nil {
+				item.Error = err.Error()
+			} else if r != nil {
+				item.Data = r.Data
+				item.Etag = stringValueOrEmpty(r.ETag)
+				item.Metadata = r.Metadata
+			}
+			bulkResp.Items = append(bulkResp.Items, item)
+		}
+		limiter.Execute(fn, &reqs[i])
+	}
+	limiter.Wait()
+
+	return bulkResp, nil
+}
+
+func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (*emptypb.Empty, error) {
+	// 1. get store
+	store, err := a.getStateStore(in.StoreName)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+
+	// 2. convert requests
+	reqs := []state.SetRequest{}
+	for _, s := range in.States {
+		key, err1 := runtime_state.GetModifiedStateKey(s.Key, in.StoreName, a.appId)
+		if err1 != nil {
+			return &emptypb.Empty{}, err1
+		}
+		req := state.SetRequest{
+			Key:      key,
+			Metadata: s.Metadata,
+			Value:    s.Value,
+		}
+		if s.Etag != nil {
+			req.ETag = &s.Etag.Value
+		}
+		if s.Options != nil {
+			req.Options = state.SetStateOption{
+				Consistency: stateConsistencyToString(s.Options.Consistency),
+				Concurrency: stateConcurrencyToString(s.Options.Concurrency),
+			}
+		}
+		reqs = append(reqs, req)
+	}
+
+	// 3. query
+	err = store.BulkSet(reqs)
+	// 4. check result
+	if err != nil {
+		err = a.stateErrorResponse(err, messages.ErrStateSave, in.StoreName, err.Error())
+		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+// stateErrorResponse takes a state store error, format and args and returns a status code encoded gRPC error
+func (a *api) stateErrorResponse(err error, format string, args ...interface{}) error {
+	e, ok := err.(*state.ETagError)
+	if !ok {
+		return status.Errorf(codes.Internal, format, args...)
+	}
+	switch e.Kind() {
+	case state.ETagMismatch:
+		return status.Errorf(codes.Aborted, format, args...)
+	case state.ETagInvalid:
+		return status.Errorf(codes.InvalidArgument, format, args...)
+	}
+
+	return status.Errorf(codes.Internal, format, args...)
+}
+
+func (a *api) DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateRequest) (*emptypb.Empty, error) {
+	// 1. get store
+	store, err := a.getStateStore(in.StoreName)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteState] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+	// 2. generate the actual key
+	key, err := runtime_state.GetModifiedStateKey(in.Key, in.StoreName, a.appId)
+	if err != nil {
+		return &empty.Empty{}, err
+	}
+	// 3. convert request
+	req := state.DeleteRequest{
+		Key:      key,
+		Metadata: in.Metadata,
+	}
+	if in.Etag != nil {
+		req.ETag = &in.Etag.Value
+	}
+	if in.Options != nil {
+		req.Options = state.DeleteStateOption{
+			Concurrency: stateConcurrencyToString(in.Options.Concurrency),
+			Consistency: stateConsistencyToString(in.Options.Consistency),
+		}
+	}
+	// 4. send request
+	err = store.Delete(&req)
+	// 5. check result
+	if err != nil {
+		err = a.stateErrorResponse(err, messages.ErrStateDelete, in.Key, err.Error())
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteState] error: %v", err)
+		return &empty.Empty{}, err
+	}
+	return &empty.Empty{}, nil
+}
+
+func (a *api) DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkStateRequest) (*empty.Empty, error) {
+	// 1. get store
+	store, err := a.getStateStore(in.StoreName)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteBulkState] error: %v", err)
+		return &empty.Empty{}, err
+	}
+	// 2. convert request
+	reqs := make([]state.DeleteRequest, 0, len(in.States))
+	for _, item := range in.States {
+		key, err1 := runtime_state.GetModifiedStateKey(item.Key, in.StoreName, a.appId)
+		if err1 != nil {
+			return &empty.Empty{}, err1
+		}
+		req := state.DeleteRequest{
+			Key:      key,
+			Metadata: item.Metadata,
+		}
+		if item.Etag != nil {
+			req.ETag = &item.Etag.Value
+		}
+		if item.Options != nil {
+			req.Options = state.DeleteStateOption{
+				Concurrency: stateConcurrencyToString(item.Options.Concurrency),
+				Consistency: stateConsistencyToString(item.Options.Consistency),
+			}
+		}
+		reqs = append(reqs, req)
+	}
+	// 3. send request
+	err = store.BulkDelete(reqs)
+	// 4. check result
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteBulkState] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*emptypb.Empty, error) {
+	// 1. check params
+	if a.stateStores == nil || len(a.stateStores) == 0 {
+		err := status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+	storeName := in.StoreName
+	if a.stateStores[storeName] == nil {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, storeName)
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+	// 2. find store
+	transactionalStore, ok := a.transactionalStateStores[storeName]
+	if !ok {
+		err := status.Errorf(codes.Unimplemented, messages.ErrStateStoreNotSupported, storeName)
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+	// 3. convert request
+	operations := []state.TransactionalStateOperation{}
+	for _, inputReq := range in.Operations {
+		// 3.1. extract and validate fields
+		var operation state.TransactionalStateOperation
+		var req = inputReq.Request
+		// tolerant npe
+		if req == nil {
+			log.DefaultLogger.Warnf("[runtime] [grpc.ExecuteStateTransaction] one of TransactionalStateOperation.Request is nil")
+			continue
+		}
+		key, err := runtime_state.GetModifiedStateKey(req.Key, in.StoreName, a.appId)
+		if err != nil {
+			return &emptypb.Empty{}, err
+		}
+		// 3.2. prepare TransactionalStateOperation struct according to the operation type
+		switch state.OperationType(inputReq.OperationType) {
+		case state.Upsert:
+			operation = state.TransactionalStateOperation{
+				Operation: state.Upsert,
+				Request:   prepareSetRequest(req, key),
+			}
+		case state.Delete:
+			operation = state.TransactionalStateOperation{
+				Operation: state.Delete,
+				Request:   prepareDelRequest(req, key),
+			}
+		default:
+			err := status.Errorf(codes.Unimplemented, messages.ErrNotSupportedStateOperation, inputReq.OperationType)
+			log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+			return &emptypb.Empty{}, err
+		}
+		operations = append(operations, operation)
+	}
+	// 4. submit transactional request
+	err := transactionalStore.Multi(&state.TransactionalStateRequest{
+		Operations: operations,
+		Metadata:   in.Metadata,
+	})
+	// 5. check result
+	if err != nil {
+		err = status.Errorf(codes.Internal, messages.ErrStateTransaction, err.Error())
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func prepareDelRequest(req *runtimev1pb.StateItem, key string) state.DeleteRequest {
+	hasEtag, etag := extractEtag(req)
+	delReq := state.DeleteRequest{
+		Key:      key,
+		Metadata: req.Metadata,
+	}
+
+	if hasEtag {
+		delReq.ETag = &etag
+	}
+	if req.Options != nil {
+		delReq.Options = state.DeleteStateOption{
+			Concurrency: stateConcurrencyToString(req.Options.Concurrency),
+			Consistency: stateConsistencyToString(req.Options.Consistency),
+		}
+	}
+	return delReq
+}
+
+func prepareSetRequest(req *runtimev1pb.StateItem, key string) state.SetRequest {
+	hasEtag, etag := extractEtag(req)
+	setReq := state.SetRequest{
+		Key: key,
+		// Limitation:
+		// components that cannot handle byte array need to deserialize/serialize in
+		// component specific way in components-contrib repo.
+		Value:    req.Value,
+		Metadata: req.Metadata,
+	}
+
+	if hasEtag {
+		setReq.ETag = &etag
+	}
+	if req.Options != nil {
+		setReq.Options = state.SetStateOption{
+			Concurrency: stateConcurrencyToString(req.Options.Concurrency),
+			Consistency: stateConsistencyToString(req.Options.Consistency),
+		}
+	}
+	return setReq
+}
+
+func extractEtag(req *runtimev1pb.StateItem) (bool, string) {
+	if req.Etag != nil {
+		return true, req.Etag.Value
+	}
+	return false, ""
 }
