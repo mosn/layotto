@@ -1,7 +1,7 @@
 package apollo
 
 import (
-	"github.com/layotto/layotto/components/configstores"
+	"mosn.io/layotto/components/configstores"
 	"sync"
 )
 

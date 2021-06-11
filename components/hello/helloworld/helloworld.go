@@ -1,6 +1,6 @@
 package helloworld
 
-import "github.com/layotto/layotto/components/hello"
+import "mosn.io/layotto/components/hello"
 
 type HelloWorld struct {
 	Say string

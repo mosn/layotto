@@ -8,12 +8,12 @@ import (
 	"time"
 
 	// Hello
-	"github.com/layotto/layotto/components/hello"
-	"github.com/layotto/layotto/components/hello/helloworld"
+	"mosn.io/layotto/components/hello"
+	"mosn.io/layotto/components/hello/helloworld"
 
 	// Configuration
-	"github.com/layotto/layotto/components/configstores"
-	"github.com/layotto/layotto/components/configstores/apollo"
+	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/configstores/apollo"
 
 	// Pub/Sub
 	dapr_comp_pubsub "github.com/dapr/components-contrib/pubsub"
@@ -29,23 +29,23 @@ import (
 	"github.com/dapr/components-contrib/pubsub/rabbitmq"
 	pubsub_redis "github.com/dapr/components-contrib/pubsub/redis"
 	"github.com/dapr/kit/logger"
-	"github.com/layotto/layotto/pkg/runtime/pubsub"
+	"mosn.io/layotto/pkg/runtime/pubsub"
 
 	// RPC
-	"github.com/layotto/layotto/components/rpc"
-	mosninvoker "github.com/layotto/layotto/components/rpc/invoker/mosn"
+	"mosn.io/layotto/components/rpc"
+	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
 
 	// Actuator
-	_ "github.com/layotto/layotto/pkg/actuator"
-	"github.com/layotto/layotto/pkg/actuator/health"
-	actuatorInfo "github.com/layotto/layotto/pkg/actuator/info"
-	_ "github.com/layotto/layotto/pkg/filter/stream/actuator/http"
-	"github.com/layotto/layotto/pkg/integrate/actuator"
+	_ "mosn.io/layotto/pkg/actuator"
+	"mosn.io/layotto/pkg/actuator/health"
+	actuatorInfo "mosn.io/layotto/pkg/actuator/info"
+	_ "mosn.io/layotto/pkg/filter/stream/actuator/http"
+	"mosn.io/layotto/pkg/integrate/actuator"
 
-	_ "github.com/layotto/layotto/pkg/filter/network/tcpcopy"
-	"github.com/layotto/layotto/pkg/runtime"
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
+	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
+	"mosn.io/layotto/pkg/runtime"
 	"mosn.io/mosn/pkg/featuregate"
 	_ "mosn.io/mosn/pkg/filter/network/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"

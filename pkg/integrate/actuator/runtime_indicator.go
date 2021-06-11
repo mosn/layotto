@@ -1,7 +1,7 @@
 package actuator
 
 import (
-	"github.com/layotto/layotto/pkg/actuator/health"
+	"mosn.io/layotto/pkg/actuator/health"
 	"sync"
 )
 

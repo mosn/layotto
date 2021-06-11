@@ -2,8 +2,8 @@ package pubsub
 
 import (
 	"context"
-	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"google.golang.org/protobuf/types/known/emptypb"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
 

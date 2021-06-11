@@ -2,7 +2,7 @@ package info
 
 import (
 	"context"
-	"github.com/layotto/layotto/pkg/actuator"
+	"mosn.io/layotto/pkg/actuator"
 	"mosn.io/pkg/log"
 )
 

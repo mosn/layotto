@@ -2,10 +2,10 @@ package client
 
 import (
 	"context"
-	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"log"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"net"
 	"os"
 	"sync"
