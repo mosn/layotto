@@ -5,7 +5,7 @@ package spec.proto.runtime.v1;
 
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/layotto/layotto/spec/proto/runtime/v1;runtime";
+option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 
 // AppCallback V1 allows user application to interact with runtime.
 // User application needs to implement AppCallback service if it needs to

@@ -1,4 +1,4 @@
-module github.com/layotto/layotto/spec
+module mosn.io/layotto/spec
 
 go 1.14
 

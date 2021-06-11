@@ -2,8 +2,8 @@ package persistence
 
 import (
 	"fmt"
-	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/model"
-	_type "github.com/layotto/layotto/pkg/filter/network/tcpcopy/type"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
+	_type "mosn.io/layotto/pkg/filter/network/tcpcopy/type"
 	"mosn.io/mosn/pkg/log"
 	"testing"
 	"time"

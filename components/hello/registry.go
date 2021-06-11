@@ -3,7 +3,7 @@ package hello
 import (
 	"fmt"
 
-	"github.com/layotto/layotto/components/pkg/info"
+	"mosn.io/layotto/components/pkg/info"
 )
 
 type Registry interface {

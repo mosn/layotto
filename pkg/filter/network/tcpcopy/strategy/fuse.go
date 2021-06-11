@@ -1,8 +1,8 @@
 package strategy
 
 import (
-	"github.com/layotto/layotto/pkg/common"
-	"github.com/layotto/layotto/pkg/filter/network/tcpcopy/model"
+	"mosn.io/layotto/pkg/common"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
 	"mosn.io/pkg/log"
 )
 

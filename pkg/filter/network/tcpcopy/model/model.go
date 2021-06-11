@@ -1,7 +1,7 @@
 package model
 
 import (
-	_type "github.com/layotto/layotto/pkg/filter/network/tcpcopy/type"
+	_type "mosn.io/layotto/pkg/filter/network/tcpcopy/type"
 )
 
 const (

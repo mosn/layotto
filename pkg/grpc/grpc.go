@@ -1,8 +1,8 @@
 package grpc
 
 import (
-	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"google.golang.org/grpc"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 )
 

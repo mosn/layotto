@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang/protobuf/ptypes/empty"
-	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"google.golang.org/grpc"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"net"
 	"strconv"
 )

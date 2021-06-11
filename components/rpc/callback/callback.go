@@ -3,7 +3,7 @@ package callback
 import (
 	"encoding/json"
 
-	"github.com/layotto/layotto/components/rpc"
+	"mosn.io/layotto/components/rpc"
 	"mosn.io/pkg/log"
 )
 

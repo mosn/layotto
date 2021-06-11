@@ -2,11 +2,10 @@ package runtime
 
 import (
 	"encoding/json"
-	"github.com/layotto/layotto/components/configstores"
-	"github.com/layotto/layotto/components/hello"
-	"github.com/layotto/layotto/components/rpc"
-	"github.com/layotto/layotto/pkg/runtime/pubsub"
-	"github.com/layotto/layotto/pkg/runtime/state"
+	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/hello"
+	"mosn.io/layotto/components/rpc"
+	"mosn.io/layotto/pkg/runtime/pubsub"
 )
 
 type AppConfig struct {

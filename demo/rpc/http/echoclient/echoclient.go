@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/anypb"

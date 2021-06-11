@@ -2,7 +2,7 @@ package pubsub
 
 import (
 	"github.com/dapr/components-contrib/pubsub"
-	"github.com/layotto/layotto/components/pkg/info"
+	"mosn.io/layotto/components/pkg/info"
 	"strings"
 	"testing"
 )

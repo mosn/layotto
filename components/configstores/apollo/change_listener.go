@@ -1,8 +1,8 @@
 package apollo
 
 import (
-	"github.com/layotto/layotto/components/configstores"
 	"github.com/zouyx/agollo/v4/storage"
+	"mosn.io/layotto/components/configstores"
 	"mosn.io/pkg/log"
 	"time"
 )

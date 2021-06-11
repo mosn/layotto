@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"time"
 
 	"google.golang.org/grpc"
