@@ -57,7 +57,7 @@ import (
 	"github.com/dapr/components-contrib/state/sqlserver"
 	"github.com/dapr/components-contrib/state/zookeeper"
 
-	state_loader "mosn.io/layotto/pkg/runtime/state"
+	runtime_state "mosn.io/layotto/pkg/runtime/state"
 
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
@@ -159,59 +159,59 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		),
 		// State
 		runtime.WithStateFactory(
-			state_loader.NewFactory("redis", func() state.Store {
+			runtime_state.NewFactory("redis", func() state.Store {
 				return state_redis.NewRedisStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("consul", func() state.Store {
+			runtime_state.NewFactory("consul", func() state.Store {
 				return consul.NewConsulStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("azure.blobstorage", func() state.Store {
+			runtime_state.NewFactory("azure.blobstorage", func() state.Store {
 				return state_azure_blobstorage.NewAzureBlobStorageStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("azure.cosmosdb", func() state.Store {
+			runtime_state.NewFactory("azure.cosmosdb", func() state.Store {
 				return state_cosmosdb.NewCosmosDBStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("azure.tablestorage", func() state.Store {
+			runtime_state.NewFactory("azure.tablestorage", func() state.Store {
 				return state_azure_tablestorage.NewAzureTablesStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("cassandra", func() state.Store {
+			runtime_state.NewFactory("cassandra", func() state.Store {
 				return cassandra.NewCassandraStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("memcached", func() state.Store {
+			runtime_state.NewFactory("memcached", func() state.Store {
 				return memcached.NewMemCacheStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("mongodb", func() state.Store {
+			runtime_state.NewFactory("mongodb", func() state.Store {
 				return mongodb.NewMongoDB(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("zookeeper", func() state.Store {
+			runtime_state.NewFactory("zookeeper", func() state.Store {
 				return zookeeper.NewZookeeperStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("gcp.firestore", func() state.Store {
+			runtime_state.NewFactory("gcp.firestore", func() state.Store {
 				return firestore.NewFirestoreStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("postgresql", func() state.Store {
+			runtime_state.NewFactory("postgresql", func() state.Store {
 				return postgresql.NewPostgreSQLStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("sqlserver", func() state.Store {
+			runtime_state.NewFactory("sqlserver", func() state.Store {
 				return sqlserver.NewSQLServerStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("hazelcast", func() state.Store {
+			runtime_state.NewFactory("hazelcast", func() state.Store {
 				return hazelcast.NewHazelcastStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("cloudstate.crdt", func() state.Store {
+			runtime_state.NewFactory("cloudstate.crdt", func() state.Store {
 				return cloudstate.NewCRDT(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("couchbase", func() state.Store {
+			runtime_state.NewFactory("couchbase", func() state.Store {
 				return couchbase.NewCouchbaseStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("aerospike", func() state.Store {
+			runtime_state.NewFactory("aerospike", func() state.Store {
 				return aerospike.NewAerospikeStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("rethinkdb", func() state.Store {
+			runtime_state.NewFactory("rethinkdb", func() state.Store {
 				return rethinkdb.NewRethinkDBStateStore(loggerForDaprComp)
 			}),
-			state_loader.NewFactory("aws.dynamodb", state_dynamodb.NewDynamoDBStateStore),
-			state_loader.NewFactory("mysql", func() state.Store {
+			runtime_state.NewFactory("aws.dynamodb", state_dynamodb.NewDynamoDBStateStore),
+			runtime_state.NewFactory("mysql", func() state.Store {
 				return state_mysql.NewMySQLStateStore(loggerForDaprComp)
 			}),
 		),
