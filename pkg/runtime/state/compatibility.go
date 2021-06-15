@@ -1,4 +1,4 @@
-// CODE ATTRIBUTION: https://github.com/dapr/go-sdk
+// CODE ATTRIBUTION: https://github.com/dapr/dapr
 // We copied these code here to make our runtime compatible with dapr's component.
 package state
 
