@@ -1,3 +1,6 @@
+// CODE ATTRIBUTION: https://github.com/dapr/go-sdk
+// Modified the import package to use layotto's pb
+// We use same sdk code with Dapr's for state API because we want to keep compatible with Dapr state API
 package client
 
 import (
@@ -5,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	v1 "github.com/layotto/layotto/spec/proto/runtime/v1"
 	"github.com/stretchr/testify/assert"
+	v1 "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 func TestTypes(t *testing.T) {

@@ -3,7 +3,7 @@ package state
 import (
 	"fmt"
 	"github.com/dapr/components-contrib/state"
-	"github.com/layotto/layotto/components/pkg/info"
+	"mosn.io/layotto/components/pkg/info"
 )
 
 const (

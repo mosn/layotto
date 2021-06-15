@@ -57,7 +57,7 @@ import (
 	"github.com/dapr/components-contrib/state/sqlserver"
 	"github.com/dapr/components-contrib/state/zookeeper"
 
-	state_loader "github.com/layotto/layotto/pkg/runtime/state"
+	state_loader "mosn.io/layotto/pkg/runtime/state"
 
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"

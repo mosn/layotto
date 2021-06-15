@@ -6,6 +6,7 @@ import (
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/pkg/runtime/pubsub"
+	"mosn.io/layotto/pkg/runtime/state"
 )
 
 type AppConfig struct {

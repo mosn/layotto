@@ -1,8 +1,11 @@
+// CODE ATTRIBUTION: https://github.com/dapr/go-sdk
+// Modified the import package to use layotto's pb
+// We use same sdk code with Dapr's for state API because we want to keep compatible with Dapr state API
 package client
 
 import (
 	"context"
-	runtimev1pb "github.com/layotto/layotto/spec/proto/runtime/v1"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/duration"
