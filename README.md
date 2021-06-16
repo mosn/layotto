@@ -23,7 +23,7 @@ Layotto provides sdk in various languages. The sdk interacts with Layotto throug
 
 ### Get started with Layotto
 
-See the quick start guides [configuration demo with apollo](docs/en/start/configuration/start-apollo.md) or [configuration demo with etcd](docs/en/start/configuration/start.md) that can help you get started with Layotto.
+See the quick start guide [configuration demo with apollo](docs/en/start/configuration/start-apollo.md) that can help you get started with Layotto.
 
 ### Use Pub/Sub API
 
