@@ -440,11 +440,11 @@ func (a *api) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequ
 	}
 	// 2.2. query
 	support, responses, err := store.BulkGet(reqs)
+	if err != nil {
+		return bulkResp, err
+	}
 	// 2.3. parse and return result if store supports this method
 	if support {
-		if err != nil {
-			return bulkResp, err
-		}
 		for i := 0; i < len(responses); i++ {
 			bulkResp.Items = append(bulkResp.Items, converter.BulkGetResponse2BulkStateItem(&responses[i]))
 		}
