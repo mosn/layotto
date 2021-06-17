@@ -12,7 +12,6 @@ import (
 
 func TestGetPut(t *testing.T) {
 	active := 2
-	ch := make(chan error)
 	p := newConnPool(
 		active,
 		func() (net.Conn, error) {
@@ -22,7 +21,7 @@ func TestGetPut(t *testing.T) {
 		func() interface{} {
 			return nil
 		}, func(conn *wrapConn) error {
-			return <-ch
+			return nil
 		},
 	)
 
@@ -68,10 +67,40 @@ func (s *conns) close() {
 	s.Unlock()
 }
 
+func TestDeadconnRenew(t *testing.T) {
+	conns := &conns{}
+	active := 1
+	p := newConnPool(
+		active,
+		func() (net.Conn, error) {
+			p1, p2 := net.Pipe()
+			conns.add(p2)
+			return &fakeTcpConn{c: p1}, nil
+		},
+		func() interface{} {
+			return nil
+		}, func(conn *wrapConn) error {
+			return nil
+		},
+	)
+
+	c1, err := p.Get(context.TODO())
+	assert.Nil(t, err)
+
+	conns.close()
+	p.Put(c1, false)
+	c1.close()
+
+	assert.Equal(t, active, p.free.Len())
+
+	c2, err := p.Get(context.TODO())
+	assert.Nil(t, err)
+	assert.False(t, c1 == c2)
+}
+
 func TestPoolConcurrent(t *testing.T) {
 	conns := &conns{}
-
-	active := 3
+	active := 5
 	ch := make(chan error)
 	p := newConnPool(
 		active,
