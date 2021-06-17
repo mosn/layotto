@@ -42,8 +42,8 @@ Mosn通过xprotocol支持了流行的RPC协议.
       "after_invoke": [{
         "name": "xxx" // rpc调用后的filter
       }],
-      "total_channels": 1, // 与mosn通信使用的通道数量，可以简单理解成连接数
       "channel": {
+        "size": 1, // 与mosn通信使用的通道数量，可以简单理解成连接数
         "protocol": "http", // 与mosn通信使用的协议
         "listener": "egress_runtime_http" // mosn对应的listener端口
       }

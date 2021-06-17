@@ -3,7 +3,7 @@ package mosn
 import (
 	"context"
 	"encoding/json"
-	"sync/atomic"
+	"errors"
 
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/rpc/callback"
@@ -17,16 +17,14 @@ const (
 )
 
 type mosnInvoker struct {
-	channels []rpc.Channel
-	rrIdx    uint32
-	cb       rpc.Callback
+	channel rpc.Channel
+	cb      rpc.Callback
 }
 
 type mosnConfig struct {
-	Before        []rpc.CallbackFunc    `json:"before_invoke"`
-	After         []rpc.CallbackFunc    `json:"after_invoke"`
-	TotalChannels int                   `json:"total_channels"`
-	Channel       channel.ChannelConfig `json:"channel"`
+	Before  []rpc.CallbackFunc      `json:"before_invoke"`
+	After   []rpc.CallbackFunc      `json:"after_invoke"`
+	Channel []channel.ChannelConfig `json:"channel"`
 }
 
 func NewMosnInvoker() rpc.Invoker {
@@ -48,16 +46,16 @@ func (m *mosnInvoker) Init(conf rpc.RpcConfig) error {
 		m.cb.AddAfterInvoke(after)
 	}
 
-	if config.TotalChannels <= 0 {
-		config.TotalChannels = 1
+	if len(config.Channel) == 0 {
+		return errors.New("missing channel config")
 	}
-	for i := 0; i < config.TotalChannels; i++ {
-		channel, err := channel.GetChannel(config.Channel)
-		if err != nil {
-			return err
-		}
-		m.channels = append(m.channels, channel)
+
+	// todo support multiple channel
+	channel, err := channel.GetChannel(config.Channel[0])
+	if err != nil {
+		return err
 	}
+	m.channel = channel
 	return nil
 }
 
@@ -78,7 +76,7 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (*rpc.RPC
 		return nil, err
 	}
 
-	resp, err := m.getChannel().Do(req)
+	resp, err := m.channel.Do(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]error %s", err.Error())
 		return nil, err
@@ -90,9 +88,4 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (*rpc.RPC
 		log.DefaultLogger.Errorf("[runtime][rpc]after filter error %s", err.Error())
 	}
 	return resp, err
-}
-
-func (m *mosnInvoker) getChannel() rpc.Channel {
-	idx := atomic.AddUint32(&m.rrIdx, 1) % uint32(len(m.channels))
-	return m.channels[idx]
 }

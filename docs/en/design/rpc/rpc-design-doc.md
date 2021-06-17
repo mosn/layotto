@@ -44,11 +44,11 @@ In layotto, we design a convenient way to support xprotocols. The only task need
       "after_invoke": [{
         "name": "xxx" // filter after invoke
       }],
-      "total_channels": 1, // analogy to connection nums
-      "channel": {
+      "channel": [{
+        "size": 16, // analogy to connection nums
         "protocol": "http", // communicate with mosn via this protocol
         "listener": "egress_runtime_http" // mosn's protocol listener name
-      }
+      }]
     }
   }
 }
