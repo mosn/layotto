@@ -41,6 +41,12 @@ See the quick start guides [configuration demo with apollo](docs/en/start/config
 
 [Use Layotto Actuator for health check and metadata query](docs/en/start/actuator/start.md)
 
+### Service Invocation
+
+[Hello World](docs/en/start/rpc/helloworld.md)
+
+[Dubbo JSON RPC](docs/en/start/rpc/dubbo_json_rpc.md)
+
 ## Contributing to Layotto
 
 See the Development Guide [contributing](CONTRIBUTING.md) to get started with building and developing.
