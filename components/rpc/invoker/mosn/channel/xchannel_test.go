@@ -112,7 +112,7 @@ func TestChannel(t *testing.T) {
 	channel, err := newXChannel(config)
 	assert.Nil(t, err)
 
-	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 1000}
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 1000}
 	resp, err := channel.Do(req)
 	assert.Nil(t, err)
 	assert.Equal(t, "ok", string(resp.Data))
@@ -125,7 +125,7 @@ func TestChannelTimeout(t *testing.T) {
 	channel, err := newXChannel(config)
 	assert.Nil(t, err)
 
-	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("timeout"), Timeout: 500}
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("timeout"), Timeout: 500}
 	_, err = channel.Do(req)
 	t.Log(err)
 	assert.Equal(t, ErrTimeout, err)
@@ -138,7 +138,7 @@ func TestMemConnClosed(t *testing.T) {
 	channel, err := newXChannel(config)
 	assert.Nil(t, err)
 
-	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 1000}
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 1000}
 	_, err = channel.Do(req)
 	assert.Equal(t, err, ErrConnClosed)
 }
@@ -150,7 +150,7 @@ func TestReturnInvalidPacket(t *testing.T) {
 	channel, err := newXChannel(config)
 	assert.Nil(t, err)
 
-	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("deformity"), Timeout: 1000}
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("deformity"), Timeout: 1000}
 	_, err = channel.Do(req)
 	assert.Equal(t, err, ErrTimeout)
 }
@@ -162,7 +162,7 @@ func TestRenewConn(t *testing.T) {
 	channel, err := newXChannel(config)
 	assert.Nil(t, err)
 
-	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 1000}
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 1000}
 	_, err = channel.Do(req)
 	assert.Equal(t, err, ErrConnClosed)
 
@@ -172,7 +172,7 @@ func TestRenewConn(t *testing.T) {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 1000}
+			req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 1000}
 			resp, err := channel.Do(req)
 			if err != nil {
 				assert.Equal(t, "io: read/write on closed pipe", err.Error())
@@ -202,7 +202,7 @@ func TestConncurrent(t *testing.T) {
 		for i := 0; i < size; i++ {
 			go func(i int) {
 				defer wg.Done()
-				req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 1000}
+				req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 1000}
 				channel.Do(req)
 			}(i)
 		}
@@ -213,7 +213,7 @@ func TestConncurrent(t *testing.T) {
 		for i := 0; i < size; i++ {
 			go func(i int) {
 				defer wg.Done()
-				req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("timeout"), Timeout: 1000}
+				req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("timeout"), Timeout: 1000}
 				channel.Do(req)
 			}(i)
 		}
@@ -224,14 +224,14 @@ func TestConncurrent(t *testing.T) {
 		for i := 0; i < size; i++ {
 			go func(i int) {
 				defer wg.Done()
-				req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 1000}
+				req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 1000}
 				channel.Do(req)
 			}(i)
 		}
 	}()
 
 	wg.Wait()
-	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 1000}
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 1000}
 	_, err = channel.Do(req)
 	//assert.Nil(t, err)
 
@@ -242,7 +242,7 @@ func TestConncurrent(t *testing.T) {
 			defer wg.Done()
 
 			data := "echo" + strconv.Itoa(i)
-			req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte(data), Timeout: 1000}
+			req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte(data), Timeout: 1000}
 			resp, err := channel.Do(req)
 			assert.Nil(t, err)
 			assert.Equal(t, data, string(resp.Data))

@@ -69,6 +69,7 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (*rpc.RPC
 	if req.Timeout == 0 {
 		req.Timeout = 3000
 	}
+	req.Ctx = ctx
 	log.DefaultLogger.Debugf("[runtime][rpc]request %+v", req)
 	req, err := m.cb.BeforeInvoke(req)
 	if err != nil {

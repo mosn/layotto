@@ -2,6 +2,7 @@ package channel
 
 import (
 	"bufio"
+	"context"
 	"net"
 	"strconv"
 	"sync"
@@ -56,7 +57,7 @@ func TestHttpChannel(t *testing.T) {
 	channel, err := newHttpChannel(ChannelConfig{Size: 1})
 	assert.Nil(t, err)
 
-	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("hello"), Timeout: 1000}
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello"), Timeout: 1000}
 	resp, err := channel.Do(req)
 	assert.Nil(t, err)
 	assert.Equal(t, "hello", string(resp.Data))
@@ -68,11 +69,11 @@ func TestRenewHttpConn(t *testing.T) {
 	channel, err := newHttpChannel(ChannelConfig{Size: 1})
 	assert.Nil(t, err)
 
-	req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 1000}
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 1000}
 	_, err = channel.Do(req)
 	assert.Error(t, err)
 
-	req = &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("hello"), Timeout: 1000}
+	req = &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello"), Timeout: 1000}
 	resp, err := channel.Do(req)
 	assert.Nil(t, err)
 	assert.Equal(t, "hello", string(resp.Data))
@@ -89,7 +90,7 @@ func TestConcurrent(t *testing.T) {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			req := &rpc.RPCRequest{Id: "foo", Method: "bar", Data: []byte("hello" + strconv.Itoa(i)), Timeout: 1000}
+			req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello" + strconv.Itoa(i)), Timeout: 1000}
 			resp, err := channel.Do(req)
 			assert.Nil(t, err)
 			assert.Equal(t, "hello"+strconv.Itoa(i), string(resp.Data))

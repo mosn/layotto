@@ -1,6 +1,7 @@
 package channel
 
 import (
+	"context"
 	"net"
 	"sync"
 	"testing"
@@ -25,9 +26,12 @@ func TestGetPut(t *testing.T) {
 		},
 	)
 
-	c1, err := p.Get(1000)
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
+	defer cancel()
+
+	c1, err := p.Get(ctx)
 	assert.Nil(t, err)
-	c2, err := p.Get(1000)
+	c2, err := p.Get(ctx)
 	assert.Nil(t, err)
 	assert.Equal(t, 0, p.free.Len())
 
@@ -35,7 +39,7 @@ func TestGetPut(t *testing.T) {
 	assert.NotNil(t, c2)
 	assert.Equal(t, 0, p.free.Len())
 
-	_, err = p.Get(100)
+	_, err = p.Get(ctx)
 	t.Log(err)
 	assert.Error(t, err)
 
@@ -106,7 +110,9 @@ func TestPoolConcurrent(t *testing.T) {
 			for _, act := range actions {
 				switch act {
 				case "Get":
-					c, err = p.Get(100 * time.Hour)
+					ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
+					c, err = p.Get(ctx)
+					cancel()
 					assert.Nil(t, err)
 				case "Put":
 					p.Put(c, false)
