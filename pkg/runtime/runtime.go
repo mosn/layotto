@@ -5,9 +5,9 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-
 	"github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
+	"github.com/dapr/components-contrib/state"
 	jsoniter "github.com/json-iterator/go"
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -20,8 +20,8 @@ import (
 	"mosn.io/layotto/pkg/actuator/health"
 	"mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/integrate/actuator"
-	pubsub_service "mosn.io/layotto/pkg/runtime/pubsub"
 	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
+	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	"mosn.io/layotto/pkg/wasm"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
@@ -34,16 +34,19 @@ type MosnRuntime struct {
 	runtimeConfig *MosnRuntimeConfig
 	info          *info.RuntimeInfo
 	srv           mgrpc.RegisteredServer
-	// services
+	// component registry
 	helloRegistry       hello.Registry
 	configStoreRegistry configstores.Registry
 	rpcRegistry         rpc.Registry
-	pubSubRegistry      pubsub_service.Registry
-	hellos              map[string]hello.HelloService
-	configStores        map[string]configstores.Store
-	rpcs                map[string]rpc.Invoker
-	pubSubs             map[string]pubsub.PubSub
-	topicPerComponent   map[string]TopicSubscriptions
+	pubSubRegistry      runtime_pubsub.Registry
+	stateRegistry       runtime_state.Registry
+	// component pool
+	hellos            map[string]hello.HelloService
+	configStores      map[string]configstores.Store
+	rpcs              map[string]rpc.Invoker
+	pubSubs           map[string]pubsub.PubSub
+	topicPerComponent map[string]TopicSubscriptions
+	states            map[string]state.Store
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
 	// extends
@@ -67,11 +70,13 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		helloRegistry:       hello.NewRegistry(info),
 		configStoreRegistry: configstores.NewRegistry(info),
 		rpcRegistry:         rpc.NewRegistry(info),
-		pubSubRegistry:      pubsub_service.NewRegistry(info),
+		pubSubRegistry:      runtime_pubsub.NewRegistry(info),
+		stateRegistry:       runtime_state.NewRegistry(info),
 		hellos:              make(map[string]hello.HelloService),
 		configStores:        make(map[string]configstores.Store),
 		rpcs:                make(map[string]rpc.Invoker),
 		pubSubs:             make(map[string]pubsub.PubSub),
+		states:              make(map[string]state.Store),
 		json:                jsoniter.ConfigFastest,
 	}
 }
@@ -101,10 +106,12 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		grpcOpts = append(grpcOpts, grpc.WithNewServer(o.srvMaker))
 	}
 	wasm.Layotto = grpc.NewAPI(
+		m.runtimeConfig.AppManagement.AppId,
 		m.hellos,
 		m.configStores,
 		m.rpcs,
 		m.pubSubs,
+		m.states,
 	)
 	grpcOpts = append(grpcOpts,
 		grpc.WithGrpcOptions(o.options...),
@@ -141,6 +148,9 @@ func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
 		return err
 	}
 	if err := m.initPubSubs(o.services.pubSubs...); err != nil {
+		return err
+	}
+	if err := m.initStates(o.services.states...); err != nil {
 		return err
 	}
 	return nil
@@ -209,15 +219,15 @@ func (m *MosnRuntime) initRpcs(rpcs ...*rpc.Factory) error {
 	return nil
 }
 
-func (m *MosnRuntime) initPubSubs(factorys ...*pubsub_service.Factory) error {
+func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 	// 1. init components
-	log.DefaultLogger.Infof("[runtime] init config service")
+	log.DefaultLogger.Infof("[runtime] start initializing pubsub components")
 	// register all config store services implementation
 	m.pubSubRegistry.Register(factorys...)
 	for name, config := range m.runtimeConfig.PubSubManagement {
 		comp, err := m.pubSubRegistry.Create(name)
 		if err != nil {
-			m.errInt(err, "create configstore's component %s failed", name)
+			m.errInt(err, "create pubsub component %s failed", name)
 			return err
 		}
 		consumerID := strings.TrimSpace(config.Metadata["consumerID"])
@@ -226,13 +236,40 @@ func (m *MosnRuntime) initPubSubs(factorys ...*pubsub_service.Factory) error {
 		}
 
 		if err := comp.Init(pubsub.Metadata{Properties: config.Metadata}); err != nil {
-			m.errInt(err, "init configstore's component %s failed", name)
+			m.errInt(err, "init pubsub component %s failed", name)
 			return err
 		}
 		m.pubSubs[name] = comp
 	}
 	// 2. start subscribing
 	return m.startSubscribing()
+}
+
+func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
+	log.DefaultLogger.Infof("[runtime] start initializing state components")
+	// 1. register all the implementation
+	m.stateRegistry.Register(factorys...)
+	// 2. loop initializing
+	for name, config := range m.runtimeConfig.StateManagement {
+		// 2.1. create and store the component
+		comp, err := m.stateRegistry.Create(name)
+		if err != nil {
+			m.errInt(err, "create state component %s failed", name)
+			return err
+		}
+		if err := comp.Init(state.Metadata{Properties: config.Metadata}); err != nil {
+			m.errInt(err, "init state component %s failed", name)
+			return err
+		}
+		m.states[name] = comp
+		// 2.2. save prefix strategy
+		err = runtime_state.SaveStateConfiguration(name, config.Metadata)
+		if err != nil {
+			log.DefaultLogger.Errorf("error save state keyprefix: %s", err.Error())
+			return err
+		}
+	}
+	return nil
 }
 
 func (m *MosnRuntime) startSubscribing() error {

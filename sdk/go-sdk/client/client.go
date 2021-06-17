@@ -27,15 +27,51 @@ var (
 
 type Client interface {
 	SayHello(ctx context.Context, in *SayHelloRequest) (*SayHelloResp, error)
+
 	GetConfiguration(ctx context.Context, in *ConfigurationRequestItem) ([]*ConfigurationItem, error)
+
 	// SaveConfiguration saves configuration into configuration store.
 	SaveConfiguration(ctx context.Context, in *SaveConfigurationRequest) error
+
 	// DeleteConfiguration deletes configuration from configuration store.
 	DeleteConfiguration(ctx context.Context, in *ConfigurationRequestItem) error
+
 	// SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
 	SubscribeConfiguration(ctx context.Context, in *ConfigurationRequestItem) WatchChan
+
 	// Publishes events to the specific topic.
 	PublishEvent(ctx context.Context, in *PublishEventRequest) error
+
+	// SaveState saves the raw data into store using default state options.
+	SaveState(ctx context.Context, storeName, key string, data []byte, so ...StateOption) error
+
+	// SaveBulkState saves multiple state item to store with specified options.
+	SaveBulkState(ctx context.Context, storeName string, items ...*SetStateItem) error
+
+	// GetState retrieves state from specific store using default consistency option.
+	GetState(ctx context.Context, storeName, key string) (item *StateItem, err error)
+
+	// GetStateWithConsistency retrieves state from specific store using provided state consistency.
+	GetStateWithConsistency(ctx context.Context, storeName, key string, meta map[string]string, sc StateConsistency) (item *StateItem, err error)
+
+	// GetBulkState retrieves state for multiple keys from specific store.
+	GetBulkState(ctx context.Context, storeName string, keys []string, meta map[string]string, parallelism int32) ([]*BulkStateItem, error)
+
+	// DeleteState deletes content from store using default state options.
+	DeleteState(ctx context.Context, storeName, key string) error
+
+	// DeleteStateWithETag deletes content from store using provided state options and etag.
+	DeleteStateWithETag(ctx context.Context, storeName, key string, etag *ETag, meta map[string]string, opts *StateOptions) error
+
+	// ExecuteStateTransaction provides way to execute multiple operations on a specified store.
+	ExecuteStateTransaction(ctx context.Context, storeName string, meta map[string]string, ops []*StateOperation) error
+
+	// DeleteBulkState deletes content for multiple keys from store.
+	DeleteBulkState(ctx context.Context, storeName string, keys []string) error
+
+	// DeleteBulkState deletes content for multiple keys from store.
+	DeleteBulkStateItems(ctx context.Context, storeName string, items []*DeleteStateItem) error
+
 	// Close cleans up all resources created by the client.
 	Close()
 }

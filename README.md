@@ -29,6 +29,10 @@ See the quick start guides [configuration demo with apollo](docs/en/start/config
 
 [Implementing Pub/Sub Pattern using Layotto and Redis](docs/en/start/pubsub/start.md)
 
+### Use State API to manage state
+
+[State management demo with redis](docs/en/start/state/start.md)
+
 ### Traffic intervention on the 4th layer network
 
 [Dump TCP Traffic](docs/en/start/network_filter/tcpcopy.md)

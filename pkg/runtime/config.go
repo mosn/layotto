@@ -6,6 +6,7 @@ import (
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/pkg/runtime/pubsub"
+	"mosn.io/layotto/pkg/runtime/state"
 )
 
 type AppConfig struct {
@@ -19,6 +20,7 @@ type MosnRuntimeConfig struct {
 	ConfigStoreManagement  map[string]configstores.StoreConfig `json:"config_stores"`
 	RpcManagement          map[string]rpc.RpcConfig            `json:"rpcs"`
 	PubSubManagement       map[string]pubsub.Config            `json:"pub_subs"`
+	StateManagement        map[string]state.Config             `json:"state"`
 }
 
 func ParseRuntimeConfig(data json.RawMessage) (*MosnRuntimeConfig, error) {

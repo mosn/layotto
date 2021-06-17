@@ -7,11 +7,11 @@ import (
 	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	any "github.com/golang/protobuf/ptypes/any"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	anypb "google.golang.org/protobuf/types/known/anypb"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	math "math"
 )
 
@@ -70,6 +70,64 @@ func (x HTTPExtension_Verb) String() string {
 
 func (HTTPExtension_Verb) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_86e2dd377c869464, []int{4, 0}
+}
+
+// Enum describing the supported concurrency for state.
+type StateOptions_StateConcurrency int32
+
+const (
+	StateOptions_CONCURRENCY_UNSPECIFIED StateOptions_StateConcurrency = 0
+	StateOptions_CONCURRENCY_FIRST_WRITE StateOptions_StateConcurrency = 1
+	StateOptions_CONCURRENCY_LAST_WRITE  StateOptions_StateConcurrency = 2
+)
+
+var StateOptions_StateConcurrency_name = map[int32]string{
+	0: "CONCURRENCY_UNSPECIFIED",
+	1: "CONCURRENCY_FIRST_WRITE",
+	2: "CONCURRENCY_LAST_WRITE",
+}
+
+var StateOptions_StateConcurrency_value = map[string]int32{
+	"CONCURRENCY_UNSPECIFIED": 0,
+	"CONCURRENCY_FIRST_WRITE": 1,
+	"CONCURRENCY_LAST_WRITE":  2,
+}
+
+func (x StateOptions_StateConcurrency) String() string {
+	return proto.EnumName(StateOptions_StateConcurrency_name, int32(x))
+}
+
+func (StateOptions_StateConcurrency) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{23, 0}
+}
+
+// Enum describing the supported consistency for state.
+type StateOptions_StateConsistency int32
+
+const (
+	StateOptions_CONSISTENCY_UNSPECIFIED StateOptions_StateConsistency = 0
+	StateOptions_CONSISTENCY_EVENTUAL    StateOptions_StateConsistency = 1
+	StateOptions_CONSISTENCY_STRONG      StateOptions_StateConsistency = 2
+)
+
+var StateOptions_StateConsistency_name = map[int32]string{
+	0: "CONSISTENCY_UNSPECIFIED",
+	1: "CONSISTENCY_EVENTUAL",
+	2: "CONSISTENCY_STRONG",
+}
+
+var StateOptions_StateConsistency_value = map[string]int32{
+	"CONSISTENCY_UNSPECIFIED": 0,
+	"CONSISTENCY_EVENTUAL":    1,
+	"CONSISTENCY_STRONG":      2,
+}
+
+func (x StateOptions_StateConsistency) String() string {
+	return proto.EnumName(StateOptions_StateConsistency_name, int32(x))
+}
+
+func (StateOptions_StateConsistency) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{23, 1}
 }
 
 type SayHelloRequest struct {
@@ -207,7 +265,7 @@ func (m *InvokeServiceRequest) GetMessage() *CommonInvokeRequest {
 
 type CommonInvokeRequest struct {
 	Method               string         `protobuf:"bytes,1,opt,name=method,proto3" json:"method,omitempty"`
-	Data                 *anypb.Any     `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data                 *any.Any       `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	ContentType          string         `protobuf:"bytes,3,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
 	HttpExtension        *HTTPExtension `protobuf:"bytes,4,opt,name=http_extension,json=httpExtension,proto3" json:"http_extension,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
@@ -247,7 +305,7 @@ func (m *CommonInvokeRequest) GetMethod() string {
 	return ""
 }
 
-func (m *CommonInvokeRequest) GetData() *anypb.Any {
+func (m *CommonInvokeRequest) GetData() *any.Any {
 	if m != nil {
 		return m.Data
 	}
@@ -316,11 +374,11 @@ func (m *HTTPExtension) GetQuerystring() string {
 }
 
 type InvokeResponse struct {
-	Data                 *anypb.Any `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	ContentType          string     `protobuf:"bytes,2,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
+	Data                 *any.Any `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	ContentType          string   `protobuf:"bytes,2,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *InvokeResponse) Reset()         { *m = InvokeResponse{} }
@@ -348,7 +406,7 @@ func (m *InvokeResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_InvokeResponse proto.InternalMessageInfo
 
-func (m *InvokeResponse) GetData() *anypb.Any {
+func (m *InvokeResponse) GetData() *any.Any {
 	if m != nil {
 		return m.Data
 	}
@@ -891,6 +949,777 @@ func (m *DeleteConfigurationRequest) GetMetadata() map[string]string {
 	return nil
 }
 
+// GetStateRequest is the message to get key-value states from specific state store.
+type GetStateRequest struct {
+	// The name of state store.
+	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	// The key of the desired state
+	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	// The read consistency of the state store.
+	Consistency StateOptions_StateConsistency `protobuf:"varint,3,opt,name=consistency,proto3,enum=spec.proto.runtime.v1.StateOptions_StateConsistency" json:"consistency,omitempty"`
+	// The metadata which will be sent to state store components.
+	Metadata             map[string]string `protobuf:"bytes,4,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *GetStateRequest) Reset()         { *m = GetStateRequest{} }
+func (m *GetStateRequest) String() string { return proto.CompactTextString(m) }
+func (*GetStateRequest) ProtoMessage()    {}
+func (*GetStateRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{13}
+}
+
+func (m *GetStateRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetStateRequest.Unmarshal(m, b)
+}
+func (m *GetStateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetStateRequest.Marshal(b, m, deterministic)
+}
+func (m *GetStateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetStateRequest.Merge(m, src)
+}
+func (m *GetStateRequest) XXX_Size() int {
+	return xxx_messageInfo_GetStateRequest.Size(m)
+}
+func (m *GetStateRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetStateRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetStateRequest proto.InternalMessageInfo
+
+func (m *GetStateRequest) GetStoreName() string {
+	if m != nil {
+		return m.StoreName
+	}
+	return ""
+}
+
+func (m *GetStateRequest) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+func (m *GetStateRequest) GetConsistency() StateOptions_StateConsistency {
+	if m != nil {
+		return m.Consistency
+	}
+	return StateOptions_CONSISTENCY_UNSPECIFIED
+}
+
+func (m *GetStateRequest) GetMetadata() map[string]string {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+// GetBulkStateRequest is the message to get a list of key-value states from specific state store.
+type GetBulkStateRequest struct {
+	// The name of state store.
+	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	// The keys to get.
+	Keys []string `protobuf:"bytes,2,rep,name=keys,proto3" json:"keys,omitempty"`
+	// The number of parallel operations executed on the state store for a get operation.
+	Parallelism int32 `protobuf:"varint,3,opt,name=parallelism,proto3" json:"parallelism,omitempty"`
+	// The metadata which will be sent to state store components.
+	Metadata             map[string]string `protobuf:"bytes,4,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *GetBulkStateRequest) Reset()         { *m = GetBulkStateRequest{} }
+func (m *GetBulkStateRequest) String() string { return proto.CompactTextString(m) }
+func (*GetBulkStateRequest) ProtoMessage()    {}
+func (*GetBulkStateRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{14}
+}
+
+func (m *GetBulkStateRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetBulkStateRequest.Unmarshal(m, b)
+}
+func (m *GetBulkStateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetBulkStateRequest.Marshal(b, m, deterministic)
+}
+func (m *GetBulkStateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetBulkStateRequest.Merge(m, src)
+}
+func (m *GetBulkStateRequest) XXX_Size() int {
+	return xxx_messageInfo_GetBulkStateRequest.Size(m)
+}
+func (m *GetBulkStateRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetBulkStateRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetBulkStateRequest proto.InternalMessageInfo
+
+func (m *GetBulkStateRequest) GetStoreName() string {
+	if m != nil {
+		return m.StoreName
+	}
+	return ""
+}
+
+func (m *GetBulkStateRequest) GetKeys() []string {
+	if m != nil {
+		return m.Keys
+	}
+	return nil
+}
+
+func (m *GetBulkStateRequest) GetParallelism() int32 {
+	if m != nil {
+		return m.Parallelism
+	}
+	return 0
+}
+
+func (m *GetBulkStateRequest) GetMetadata() map[string]string {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+// GetBulkStateResponse is the response conveying the list of state values.
+type GetBulkStateResponse struct {
+	// The list of items containing the keys to get values for.
+	Items                []*BulkStateItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
+}
+
+func (m *GetBulkStateResponse) Reset()         { *m = GetBulkStateResponse{} }
+func (m *GetBulkStateResponse) String() string { return proto.CompactTextString(m) }
+func (*GetBulkStateResponse) ProtoMessage()    {}
+func (*GetBulkStateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{15}
+}
+
+func (m *GetBulkStateResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetBulkStateResponse.Unmarshal(m, b)
+}
+func (m *GetBulkStateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetBulkStateResponse.Marshal(b, m, deterministic)
+}
+func (m *GetBulkStateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetBulkStateResponse.Merge(m, src)
+}
+func (m *GetBulkStateResponse) XXX_Size() int {
+	return xxx_messageInfo_GetBulkStateResponse.Size(m)
+}
+func (m *GetBulkStateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetBulkStateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetBulkStateResponse proto.InternalMessageInfo
+
+func (m *GetBulkStateResponse) GetItems() []*BulkStateItem {
+	if m != nil {
+		return m.Items
+	}
+	return nil
+}
+
+// BulkStateItem is the response item for a bulk get operation.
+// Return values include the item key, data and etag.
+type BulkStateItem struct {
+	// state item key
+	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	// The byte array data
+	Data []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	// The entity tag which represents the specific version of data.
+	// ETag format is defined by the corresponding data store.
+	Etag string `protobuf:"bytes,3,opt,name=etag,proto3" json:"etag,omitempty"`
+	// The error that was returned from the state store in case of a failed get operation.
+	Error string `protobuf:"bytes,4,opt,name=error,proto3" json:"error,omitempty"`
+	// The metadata which will be sent to app.
+	Metadata             map[string]string `protobuf:"bytes,5,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *BulkStateItem) Reset()         { *m = BulkStateItem{} }
+func (m *BulkStateItem) String() string { return proto.CompactTextString(m) }
+func (*BulkStateItem) ProtoMessage()    {}
+func (*BulkStateItem) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{16}
+}
+
+func (m *BulkStateItem) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_BulkStateItem.Unmarshal(m, b)
+}
+func (m *BulkStateItem) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_BulkStateItem.Marshal(b, m, deterministic)
+}
+func (m *BulkStateItem) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BulkStateItem.Merge(m, src)
+}
+func (m *BulkStateItem) XXX_Size() int {
+	return xxx_messageInfo_BulkStateItem.Size(m)
+}
+func (m *BulkStateItem) XXX_DiscardUnknown() {
+	xxx_messageInfo_BulkStateItem.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BulkStateItem proto.InternalMessageInfo
+
+func (m *BulkStateItem) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+func (m *BulkStateItem) GetData() []byte {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
+func (m *BulkStateItem) GetEtag() string {
+	if m != nil {
+		return m.Etag
+	}
+	return ""
+}
+
+func (m *BulkStateItem) GetError() string {
+	if m != nil {
+		return m.Error
+	}
+	return ""
+}
+
+func (m *BulkStateItem) GetMetadata() map[string]string {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+// GetStateResponse is the response conveying the state value and etag.
+type GetStateResponse struct {
+	// The byte array data
+	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	// The entity tag which represents the specific version of data.
+	// ETag format is defined by the corresponding data store.
+	Etag string `protobuf:"bytes,2,opt,name=etag,proto3" json:"etag,omitempty"`
+	// The metadata which will be sent to app.
+	Metadata             map[string]string `protobuf:"bytes,3,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *GetStateResponse) Reset()         { *m = GetStateResponse{} }
+func (m *GetStateResponse) String() string { return proto.CompactTextString(m) }
+func (*GetStateResponse) ProtoMessage()    {}
+func (*GetStateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{17}
+}
+
+func (m *GetStateResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetStateResponse.Unmarshal(m, b)
+}
+func (m *GetStateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetStateResponse.Marshal(b, m, deterministic)
+}
+func (m *GetStateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetStateResponse.Merge(m, src)
+}
+func (m *GetStateResponse) XXX_Size() int {
+	return xxx_messageInfo_GetStateResponse.Size(m)
+}
+func (m *GetStateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetStateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetStateResponse proto.InternalMessageInfo
+
+func (m *GetStateResponse) GetData() []byte {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
+func (m *GetStateResponse) GetEtag() string {
+	if m != nil {
+		return m.Etag
+	}
+	return ""
+}
+
+func (m *GetStateResponse) GetMetadata() map[string]string {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+// DeleteStateRequest is the message to delete key-value states in the specific state store.
+type DeleteStateRequest struct {
+	// The name of state store.
+	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	// The key of the desired state
+	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	// The entity tag which represents the specific version of data.
+	// The exact ETag format is defined by the corresponding data store.
+	Etag *Etag `protobuf:"bytes,3,opt,name=etag,proto3" json:"etag,omitempty"`
+	// State operation options which includes concurrency/
+	// consistency/retry_policy.
+	Options *StateOptions `protobuf:"bytes,4,opt,name=options,proto3" json:"options,omitempty"`
+	// The metadata which will be sent to state store components.
+	Metadata             map[string]string `protobuf:"bytes,5,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *DeleteStateRequest) Reset()         { *m = DeleteStateRequest{} }
+func (m *DeleteStateRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteStateRequest) ProtoMessage()    {}
+func (*DeleteStateRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{18}
+}
+
+func (m *DeleteStateRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteStateRequest.Unmarshal(m, b)
+}
+func (m *DeleteStateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteStateRequest.Marshal(b, m, deterministic)
+}
+func (m *DeleteStateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteStateRequest.Merge(m, src)
+}
+func (m *DeleteStateRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteStateRequest.Size(m)
+}
+func (m *DeleteStateRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteStateRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteStateRequest proto.InternalMessageInfo
+
+func (m *DeleteStateRequest) GetStoreName() string {
+	if m != nil {
+		return m.StoreName
+	}
+	return ""
+}
+
+func (m *DeleteStateRequest) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+func (m *DeleteStateRequest) GetEtag() *Etag {
+	if m != nil {
+		return m.Etag
+	}
+	return nil
+}
+
+func (m *DeleteStateRequest) GetOptions() *StateOptions {
+	if m != nil {
+		return m.Options
+	}
+	return nil
+}
+
+func (m *DeleteStateRequest) GetMetadata() map[string]string {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+// DeleteBulkStateRequest is the message to delete a list of key-value states from specific state store.
+type DeleteBulkStateRequest struct {
+	// The name of state store.
+	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	// The array of the state key values.
+	States               []*StateItem `protobuf:"bytes,2,rep,name=states,proto3" json:"states,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *DeleteBulkStateRequest) Reset()         { *m = DeleteBulkStateRequest{} }
+func (m *DeleteBulkStateRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteBulkStateRequest) ProtoMessage()    {}
+func (*DeleteBulkStateRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{19}
+}
+
+func (m *DeleteBulkStateRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteBulkStateRequest.Unmarshal(m, b)
+}
+func (m *DeleteBulkStateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteBulkStateRequest.Marshal(b, m, deterministic)
+}
+func (m *DeleteBulkStateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteBulkStateRequest.Merge(m, src)
+}
+func (m *DeleteBulkStateRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteBulkStateRequest.Size(m)
+}
+func (m *DeleteBulkStateRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteBulkStateRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteBulkStateRequest proto.InternalMessageInfo
+
+func (m *DeleteBulkStateRequest) GetStoreName() string {
+	if m != nil {
+		return m.StoreName
+	}
+	return ""
+}
+
+func (m *DeleteBulkStateRequest) GetStates() []*StateItem {
+	if m != nil {
+		return m.States
+	}
+	return nil
+}
+
+// SaveStateRequest is the message to save multiple states into state store.
+type SaveStateRequest struct {
+	// The name of state store.
+	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	// The array of the state key values.
+	States               []*StateItem `protobuf:"bytes,2,rep,name=states,proto3" json:"states,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *SaveStateRequest) Reset()         { *m = SaveStateRequest{} }
+func (m *SaveStateRequest) String() string { return proto.CompactTextString(m) }
+func (*SaveStateRequest) ProtoMessage()    {}
+func (*SaveStateRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{20}
+}
+
+func (m *SaveStateRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SaveStateRequest.Unmarshal(m, b)
+}
+func (m *SaveStateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SaveStateRequest.Marshal(b, m, deterministic)
+}
+func (m *SaveStateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SaveStateRequest.Merge(m, src)
+}
+func (m *SaveStateRequest) XXX_Size() int {
+	return xxx_messageInfo_SaveStateRequest.Size(m)
+}
+func (m *SaveStateRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SaveStateRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SaveStateRequest proto.InternalMessageInfo
+
+func (m *SaveStateRequest) GetStoreName() string {
+	if m != nil {
+		return m.StoreName
+	}
+	return ""
+}
+
+func (m *SaveStateRequest) GetStates() []*StateItem {
+	if m != nil {
+		return m.States
+	}
+	return nil
+}
+
+// StateItem represents state key, value, and additional options to save state.
+type StateItem struct {
+	// Required. The state key
+	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	// Required. The state data for key
+	Value []byte `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	// The entity tag which represents the specific version of data.
+	// The exact ETag format is defined by the corresponding data store.
+	Etag *Etag `protobuf:"bytes,3,opt,name=etag,proto3" json:"etag,omitempty"`
+	// The metadata which will be passed to state store component.
+	Metadata map[string]string `protobuf:"bytes,4,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Options for concurrency and consistency to save the state.
+	Options              *StateOptions `protobuf:"bytes,5,opt,name=options,proto3" json:"options,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *StateItem) Reset()         { *m = StateItem{} }
+func (m *StateItem) String() string { return proto.CompactTextString(m) }
+func (*StateItem) ProtoMessage()    {}
+func (*StateItem) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{21}
+}
+
+func (m *StateItem) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StateItem.Unmarshal(m, b)
+}
+func (m *StateItem) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StateItem.Marshal(b, m, deterministic)
+}
+func (m *StateItem) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StateItem.Merge(m, src)
+}
+func (m *StateItem) XXX_Size() int {
+	return xxx_messageInfo_StateItem.Size(m)
+}
+func (m *StateItem) XXX_DiscardUnknown() {
+	xxx_messageInfo_StateItem.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StateItem proto.InternalMessageInfo
+
+func (m *StateItem) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+func (m *StateItem) GetValue() []byte {
+	if m != nil {
+		return m.Value
+	}
+	return nil
+}
+
+func (m *StateItem) GetEtag() *Etag {
+	if m != nil {
+		return m.Etag
+	}
+	return nil
+}
+
+func (m *StateItem) GetMetadata() map[string]string {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+func (m *StateItem) GetOptions() *StateOptions {
+	if m != nil {
+		return m.Options
+	}
+	return nil
+}
+
+// Etag represents a state item version
+type Etag struct {
+	// value sets the etag value
+	Value                string   `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Etag) Reset()         { *m = Etag{} }
+func (m *Etag) String() string { return proto.CompactTextString(m) }
+func (*Etag) ProtoMessage()    {}
+func (*Etag) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{22}
+}
+
+func (m *Etag) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Etag.Unmarshal(m, b)
+}
+func (m *Etag) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Etag.Marshal(b, m, deterministic)
+}
+func (m *Etag) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Etag.Merge(m, src)
+}
+func (m *Etag) XXX_Size() int {
+	return xxx_messageInfo_Etag.Size(m)
+}
+func (m *Etag) XXX_DiscardUnknown() {
+	xxx_messageInfo_Etag.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Etag proto.InternalMessageInfo
+
+func (m *Etag) GetValue() string {
+	if m != nil {
+		return m.Value
+	}
+	return ""
+}
+
+// StateOptions configures concurrency and consistency for state operations
+type StateOptions struct {
+	Concurrency          StateOptions_StateConcurrency `protobuf:"varint,1,opt,name=concurrency,proto3,enum=spec.proto.runtime.v1.StateOptions_StateConcurrency" json:"concurrency,omitempty"`
+	Consistency          StateOptions_StateConsistency `protobuf:"varint,2,opt,name=consistency,proto3,enum=spec.proto.runtime.v1.StateOptions_StateConsistency" json:"consistency,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                      `json:"-"`
+	XXX_unrecognized     []byte                        `json:"-"`
+	XXX_sizecache        int32                         `json:"-"`
+}
+
+func (m *StateOptions) Reset()         { *m = StateOptions{} }
+func (m *StateOptions) String() string { return proto.CompactTextString(m) }
+func (*StateOptions) ProtoMessage()    {}
+func (*StateOptions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{23}
+}
+
+func (m *StateOptions) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StateOptions.Unmarshal(m, b)
+}
+func (m *StateOptions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StateOptions.Marshal(b, m, deterministic)
+}
+func (m *StateOptions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StateOptions.Merge(m, src)
+}
+func (m *StateOptions) XXX_Size() int {
+	return xxx_messageInfo_StateOptions.Size(m)
+}
+func (m *StateOptions) XXX_DiscardUnknown() {
+	xxx_messageInfo_StateOptions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StateOptions proto.InternalMessageInfo
+
+func (m *StateOptions) GetConcurrency() StateOptions_StateConcurrency {
+	if m != nil {
+		return m.Concurrency
+	}
+	return StateOptions_CONCURRENCY_UNSPECIFIED
+}
+
+func (m *StateOptions) GetConsistency() StateOptions_StateConsistency {
+	if m != nil {
+		return m.Consistency
+	}
+	return StateOptions_CONSISTENCY_UNSPECIFIED
+}
+
+// TransactionalStateOperation is the message to execute a specified operation with a key-value pair.
+type TransactionalStateOperation struct {
+	// The type of operation to be executed
+	OperationType string `protobuf:"bytes,1,opt,name=operationType,proto3" json:"operationType,omitempty"`
+	// State values to be operated on
+	Request              *StateItem `protobuf:"bytes,2,opt,name=request,proto3" json:"request,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
+}
+
+func (m *TransactionalStateOperation) Reset()         { *m = TransactionalStateOperation{} }
+func (m *TransactionalStateOperation) String() string { return proto.CompactTextString(m) }
+func (*TransactionalStateOperation) ProtoMessage()    {}
+func (*TransactionalStateOperation) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{24}
+}
+
+func (m *TransactionalStateOperation) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TransactionalStateOperation.Unmarshal(m, b)
+}
+func (m *TransactionalStateOperation) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TransactionalStateOperation.Marshal(b, m, deterministic)
+}
+func (m *TransactionalStateOperation) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TransactionalStateOperation.Merge(m, src)
+}
+func (m *TransactionalStateOperation) XXX_Size() int {
+	return xxx_messageInfo_TransactionalStateOperation.Size(m)
+}
+func (m *TransactionalStateOperation) XXX_DiscardUnknown() {
+	xxx_messageInfo_TransactionalStateOperation.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TransactionalStateOperation proto.InternalMessageInfo
+
+func (m *TransactionalStateOperation) GetOperationType() string {
+	if m != nil {
+		return m.OperationType
+	}
+	return ""
+}
+
+func (m *TransactionalStateOperation) GetRequest() *StateItem {
+	if m != nil {
+		return m.Request
+	}
+	return nil
+}
+
+// ExecuteStateTransactionRequest is the message to execute multiple operations on a specified store.
+type ExecuteStateTransactionRequest struct {
+	// Required. name of state store.
+	StoreName string `protobuf:"bytes,1,opt,name=storeName,proto3" json:"storeName,omitempty"`
+	// Required. transactional operation list.
+	Operations []*TransactionalStateOperation `protobuf:"bytes,2,rep,name=operations,proto3" json:"operations,omitempty"`
+	// The metadata used for transactional operations.
+	Metadata             map[string]string `protobuf:"bytes,3,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *ExecuteStateTransactionRequest) Reset()         { *m = ExecuteStateTransactionRequest{} }
+func (m *ExecuteStateTransactionRequest) String() string { return proto.CompactTextString(m) }
+func (*ExecuteStateTransactionRequest) ProtoMessage()    {}
+func (*ExecuteStateTransactionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_86e2dd377c869464, []int{25}
+}
+
+func (m *ExecuteStateTransactionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ExecuteStateTransactionRequest.Unmarshal(m, b)
+}
+func (m *ExecuteStateTransactionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ExecuteStateTransactionRequest.Marshal(b, m, deterministic)
+}
+func (m *ExecuteStateTransactionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ExecuteStateTransactionRequest.Merge(m, src)
+}
+func (m *ExecuteStateTransactionRequest) XXX_Size() int {
+	return xxx_messageInfo_ExecuteStateTransactionRequest.Size(m)
+}
+func (m *ExecuteStateTransactionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ExecuteStateTransactionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ExecuteStateTransactionRequest proto.InternalMessageInfo
+
+func (m *ExecuteStateTransactionRequest) GetStoreName() string {
+	if m != nil {
+		return m.StoreName
+	}
+	return ""
+}
+
+func (m *ExecuteStateTransactionRequest) GetOperations() []*TransactionalStateOperation {
+	if m != nil {
+		return m.Operations
+	}
+	return nil
+}
+
+func (m *ExecuteStateTransactionRequest) GetMetadata() map[string]string {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
 // PublishEventRequest is the message to publish event data to pubsub topic
 type PublishEventRequest struct {
 	// The name of the pubsub component
@@ -915,7 +1744,7 @@ func (m *PublishEventRequest) Reset()         { *m = PublishEventRequest{} }
 func (m *PublishEventRequest) String() string { return proto.CompactTextString(m) }
 func (*PublishEventRequest) ProtoMessage()    {}
 func (*PublishEventRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_86e2dd377c869464, []int{13}
+	return fileDescriptor_86e2dd377c869464, []int{26}
 }
 
 func (m *PublishEventRequest) XXX_Unmarshal(b []byte) error {
@@ -973,6 +1802,8 @@ func (m *PublishEventRequest) GetMetadata() map[string]string {
 
 func init() {
 	proto.RegisterEnum("spec.proto.runtime.v1.HTTPExtension_Verb", HTTPExtension_Verb_name, HTTPExtension_Verb_value)
+	proto.RegisterEnum("spec.proto.runtime.v1.StateOptions_StateConcurrency", StateOptions_StateConcurrency_name, StateOptions_StateConcurrency_value)
+	proto.RegisterEnum("spec.proto.runtime.v1.StateOptions_StateConsistency", StateOptions_StateConsistency_name, StateOptions_StateConsistency_value)
 	proto.RegisterType((*SayHelloRequest)(nil), "spec.proto.runtime.v1.SayHelloRequest")
 	proto.RegisterType((*SayHelloResponse)(nil), "spec.proto.runtime.v1.SayHelloResponse")
 	proto.RegisterType((*InvokeServiceRequest)(nil), "spec.proto.runtime.v1.InvokeServiceRequest")
@@ -992,6 +1823,26 @@ func init() {
 	proto.RegisterMapType((map[string]string)(nil), "spec.proto.runtime.v1.SaveConfigurationRequest.MetadataEntry")
 	proto.RegisterType((*DeleteConfigurationRequest)(nil), "spec.proto.runtime.v1.DeleteConfigurationRequest")
 	proto.RegisterMapType((map[string]string)(nil), "spec.proto.runtime.v1.DeleteConfigurationRequest.MetadataEntry")
+	proto.RegisterType((*GetStateRequest)(nil), "spec.proto.runtime.v1.GetStateRequest")
+	proto.RegisterMapType((map[string]string)(nil), "spec.proto.runtime.v1.GetStateRequest.MetadataEntry")
+	proto.RegisterType((*GetBulkStateRequest)(nil), "spec.proto.runtime.v1.GetBulkStateRequest")
+	proto.RegisterMapType((map[string]string)(nil), "spec.proto.runtime.v1.GetBulkStateRequest.MetadataEntry")
+	proto.RegisterType((*GetBulkStateResponse)(nil), "spec.proto.runtime.v1.GetBulkStateResponse")
+	proto.RegisterType((*BulkStateItem)(nil), "spec.proto.runtime.v1.BulkStateItem")
+	proto.RegisterMapType((map[string]string)(nil), "spec.proto.runtime.v1.BulkStateItem.MetadataEntry")
+	proto.RegisterType((*GetStateResponse)(nil), "spec.proto.runtime.v1.GetStateResponse")
+	proto.RegisterMapType((map[string]string)(nil), "spec.proto.runtime.v1.GetStateResponse.MetadataEntry")
+	proto.RegisterType((*DeleteStateRequest)(nil), "spec.proto.runtime.v1.DeleteStateRequest")
+	proto.RegisterMapType((map[string]string)(nil), "spec.proto.runtime.v1.DeleteStateRequest.MetadataEntry")
+	proto.RegisterType((*DeleteBulkStateRequest)(nil), "spec.proto.runtime.v1.DeleteBulkStateRequest")
+	proto.RegisterType((*SaveStateRequest)(nil), "spec.proto.runtime.v1.SaveStateRequest")
+	proto.RegisterType((*StateItem)(nil), "spec.proto.runtime.v1.StateItem")
+	proto.RegisterMapType((map[string]string)(nil), "spec.proto.runtime.v1.StateItem.MetadataEntry")
+	proto.RegisterType((*Etag)(nil), "spec.proto.runtime.v1.Etag")
+	proto.RegisterType((*StateOptions)(nil), "spec.proto.runtime.v1.StateOptions")
+	proto.RegisterType((*TransactionalStateOperation)(nil), "spec.proto.runtime.v1.TransactionalStateOperation")
+	proto.RegisterType((*ExecuteStateTransactionRequest)(nil), "spec.proto.runtime.v1.ExecuteStateTransactionRequest")
+	proto.RegisterMapType((map[string]string)(nil), "spec.proto.runtime.v1.ExecuteStateTransactionRequest.MetadataEntry")
 	proto.RegisterType((*PublishEventRequest)(nil), "spec.proto.runtime.v1.PublishEventRequest")
 	proto.RegisterMapType((map[string]string)(nil), "spec.proto.runtime.v1.PublishEventRequest.MetadataEntry")
 }
@@ -1001,75 +1852,114 @@ func init() {
 }
 
 var fileDescriptor_86e2dd377c869464 = []byte{
-	// 1073 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x57, 0x4d, 0x6f, 0xe3, 0x44,
-	0x18, 0x5e, 0x3b, 0x4e, 0xd2, 0xbc, 0xe9, 0x87, 0x3b, 0xed, 0x96, 0x60, 0xb4, 0x50, 0x2c, 0x3e,
-	0xb2, 0x45, 0x72, 0x68, 0xf8, 0xaa, 0x76, 0x59, 0x50, 0x37, 0x35, 0xdb, 0x0a, 0x48, 0x2b, 0xc7,
-	0x8b, 0x60, 0xd1, 0x6e, 0x64, 0x27, 0xb3, 0xae, 0x55, 0xdb, 0xe3, 0xb5, 0xc7, 0x11, 0xfe, 0x0d,
-	0xdc, 0xb9, 0x72, 0xe5, 0xc0, 0x89, 0x3f, 0xc1, 0x99, 0x23, 0x7f, 0x82, 0x7f, 0x80, 0x84, 0x3c,
-	0xb6, 0x43, 0xd2, 0xc4, 0xa5, 0x69, 0xa9, 0xb4, 0xa7, 0xcc, 0xfb, 0xfd, 0xbe, 0xcf, 0x33, 0xe3,
-	0x99, 0xc0, 0x4a, 0x10, 0x79, 0xd4, 0x76, 0xb1, 0xe2, 0x07, 0x84, 0x12, 0x74, 0x3b, 0xf4, 0xf1,
-	0x20, 0x5d, 0x2b, 0xb9, 0x65, 0xb4, 0x2b, 0xbd, 0x66, 0x11, 0x62, 0x39, 0xb8, 0xc5, 0x0c, 0x66,
-	0xf4, 0xbc, 0x85, 0x5d, 0x9f, 0xc6, 0xa9, 0x9f, 0xf4, 0xea, 0x79, 0xa3, 0xe1, 0x65, 0x26, 0xf9,
-	0x10, 0xd6, 0x7a, 0x46, 0x7c, 0x88, 0x1d, 0x87, 0x68, 0xf8, 0x45, 0x84, 0x43, 0x8a, 0xde, 0x84,
-	0xe5, 0x10, 0x07, 0x23, 0x7b, 0x80, 0xfb, 0x9e, 0xe1, 0xe2, 0x06, 0xb7, 0xcd, 0x35, 0x6b, 0x5a,
-	0x3d, 0xd3, 0x75, 0x0d, 0x17, 0x23, 0x04, 0x02, 0x33, 0xf1, 0xcc, 0xc4, 0xd6, 0x72, 0x13, 0xc4,
-	0x7f, 0x33, 0x85, 0x3e, 0xf1, 0x42, 0x8c, 0x36, 0xa1, 0x7c, 0x9a, 0x28, 0xb2, 0x1c, 0xa9, 0x20,
-	0x3b, 0xb0, 0x79, 0xe4, 0x8d, 0xc8, 0x19, 0xee, 0xa5, 0x29, 0xf3, 0xc2, 0xab, 0xc0, 0xdb, 0xc3,
-	0xcc, 0x95, 0xb7, 0x87, 0xe8, 0x00, 0xaa, 0x2e, 0x0e, 0x43, 0xc3, 0xc2, 0x8d, 0xd2, 0x36, 0xd7,
-	0xac, 0xb7, 0x77, 0x94, 0xb9, 0xc3, 0x2b, 0x1d, 0xe2, 0xba, 0xc4, 0x4b, 0x73, 0x66, 0xc9, 0xb4,
-	0x3c, 0x54, 0xfe, 0x9d, 0x83, 0x8d, 0x39, 0x0e, 0x68, 0x0b, 0x2a, 0x2e, 0xa6, 0xa7, 0x24, 0xaf,
-	0x98, 0x49, 0xa8, 0x09, 0xc2, 0xd0, 0xa0, 0x06, 0x9b, 0xad, 0xde, 0xde, 0x54, 0x52, 0xec, 0x94,
-	0x1c, 0x3b, 0x65, 0xdf, 0x8b, 0x35, 0xe6, 0x91, 0x00, 0x35, 0x20, 0x1e, 0xc5, 0x1e, 0xed, 0xd3,
-	0xd8, 0x4f, 0x9b, 0xac, 0x69, 0xf5, 0x4c, 0xa7, 0xc7, 0x3e, 0x46, 0x5f, 0xc2, 0xea, 0x29, 0xa5,
-	0x7e, 0x1f, 0xff, 0x40, 0xb1, 0x17, 0xda, 0xc4, 0x6b, 0x08, 0x2c, 0xed, 0x5b, 0x05, 0x93, 0x1c,
-	0xea, 0xfa, 0x89, 0x9a, 0xfb, 0x6a, 0x2b, 0x49, 0xec, 0x58, 0x94, 0xff, 0xe4, 0x60, 0x65, 0xca,
-	0x01, 0x3d, 0x00, 0x61, 0x84, 0x03, 0x93, 0x4d, 0xb0, 0xda, 0xbe, 0x7b, 0x99, 0xa4, 0xca, 0x37,
-	0x38, 0x30, 0x35, 0x16, 0x86, 0xb6, 0xa1, 0xfe, 0x22, 0xc2, 0x41, 0x1c, 0xd2, 0xc0, 0xf6, 0xac,
-	0x8c, 0xcd, 0x49, 0x95, 0x6c, 0x81, 0x90, 0xf8, 0xa3, 0x25, 0x10, 0xba, 0xc7, 0x5d, 0x55, 0xbc,
-	0x85, 0xaa, 0x50, 0x7a, 0xa4, 0xea, 0x22, 0x97, 0xa8, 0x0e, 0xd5, 0xfd, 0x03, 0x91, 0x4f, 0x56,
-	0x27, 0xc7, 0x3d, 0x5d, 0x2c, 0x25, 0xc6, 0x93, 0xc7, 0xba, 0x28, 0x20, 0x80, 0xca, 0x81, 0xfa,
-	0x95, 0xaa, 0xab, 0x62, 0x19, 0xd5, 0xa1, 0xda, 0x39, 0xee, 0x76, 0xd5, 0x8e, 0x2e, 0x56, 0x12,
-	0xe1, 0xf8, 0x44, 0x3f, 0x3a, 0xee, 0xf6, 0xc4, 0x2a, 0xaa, 0x41, 0x59, 0xd7, 0xf6, 0x3b, 0xaa,
-	0xb8, 0x24, 0x3f, 0x85, 0xd5, 0x9c, 0x9e, 0x6c, 0xef, 0xe4, 0x3c, 0x70, 0x0b, 0xf3, 0xc0, 0xcf,
-	0xf0, 0x20, 0xff, 0xcd, 0xc3, 0x7a, 0x87, 0x78, 0xcf, 0x6d, 0x2b, 0x0a, 0x0c, 0x6a, 0x13, 0xef,
-	0x88, 0x62, 0x17, 0x89, 0x50, 0x3a, 0xc3, 0x71, 0xc6, 0x7f, 0xb2, 0x44, 0x0d, 0xa8, 0x66, 0x61,
-	0x59, 0x96, 0x5c, 0x4c, 0xb6, 0xb2, 0x15, 0x90, 0xc8, 0xcf, 0x58, 0x4e, 0x85, 0x44, 0xeb, 0x18,
-	0x26, 0x76, 0x18, 0xad, 0x35, 0x2d, 0x15, 0xd0, 0x17, 0x20, 0x50, 0xc3, 0x0a, 0x1b, 0xe5, 0xed,
-	0x52, 0xb3, 0xde, 0x6e, 0x17, 0xee, 0xda, 0x73, 0xfd, 0x28, 0xba, 0x61, 0x85, 0xaa, 0x47, 0x83,
-	0x58, 0x63, 0xf1, 0x48, 0x83, 0x25, 0x17, 0x53, 0x83, 0xc1, 0x50, 0x61, 0xb9, 0x3e, 0xbe, 0x74,
-	0xae, 0xaf, 0xb3, 0xc0, 0x34, 0xdf, 0x38, 0x8f, 0xf4, 0x09, 0xd4, 0xc6, 0x65, 0xe6, 0x00, 0xb0,
-	0x09, 0xe5, 0x91, 0xe1, 0x44, 0x39, 0x88, 0xa9, 0x70, 0x8f, 0xdf, 0xe3, 0xa4, 0xfb, 0xb0, 0x32,
-	0x95, 0x73, 0x91, 0x60, 0xf9, 0x0f, 0x1e, 0x5e, 0x79, 0x84, 0xe9, 0x54, 0x9b, 0xf9, 0x41, 0xbc,
-	0x03, 0x10, 0x52, 0x12, 0x4c, 0x7d, 0x6d, 0x6a, 0x4c, 0xc3, 0xbe, 0x35, 0xb7, 0xa1, 0x62, 0xf8,
-	0x7e, 0xdf, 0x1e, 0xe6, 0x59, 0x0d, 0xdf, 0x3f, 0x1a, 0x2e, 0xc4, 0x07, 0x02, 0xe1, 0x0c, 0xc7,
-	0x29, 0x1f, 0x35, 0x8d, 0xad, 0xd1, 0xb7, 0x33, 0xd8, 0x7e, 0x5a, 0x80, 0x6d, 0x41, 0xdf, 0x45,
-	0x08, 0xa3, 0xbb, 0x20, 0x86, 0x91, 0x19, 0x0e, 0x02, 0xdb, 0xc4, 0xfd, 0xc8, 0x1f, 0x1a, 0x14,
-	0x37, 0xaa, 0xdb, 0x5c, 0x73, 0x49, 0x5b, 0x1b, 0xeb, 0x1f, 0x33, 0xf5, 0xf5, 0x30, 0x7d, 0x02,
-	0x8d, 0xd9, 0xd6, 0xb2, 0xc3, 0xf3, 0x19, 0x94, 0x6d, 0x8a, 0xdd, 0xb0, 0xc1, 0xb1, 0xd1, 0x9a,
-	0x97, 0xdd, 0x36, 0x5a, 0x1a, 0x26, 0xff, 0xc6, 0xc3, 0x9d, 0x5e, 0xde, 0xec, 0x4b, 0xc4, 0xda,
-	0xb3, 0x19, 0xd6, 0x1e, 0x16, 0x8c, 0x76, 0x61, 0xf7, 0x85, 0xa7, 0xe3, 0x5a, 0x84, 0xfc, 0xc4,
-	0xc1, 0xeb, 0x45, 0x65, 0x33, 0x5e, 0xae, 0x86, 0xda, 0x98, 0xcd, 0xd2, 0xd5, 0xd8, 0xfc, 0x85,
-	0x87, 0x46, 0xcf, 0x18, 0xfd, 0x9f, 0x44, 0x5e, 0xb3, 0x25, 0xf4, 0xdd, 0x04, 0x91, 0x02, 0x4b,
-	0xf1, 0xa0, 0x88, 0xc8, 0x82, 0xc6, 0x6f, 0x86, 0xc3, 0x5f, 0x79, 0x90, 0x0e, 0xb0, 0x83, 0xe9,
-	0xcb, 0xb4, 0xeb, 0xbf, 0x9f, 0xd9, 0xf5, 0x9f, 0x17, 0x80, 0x55, 0xdc, 0xfa, 0xcd, 0xc0, 0xf5,
-	0x33, 0x0f, 0x1b, 0x27, 0x91, 0xe9, 0xd8, 0xe1, 0xa9, 0x3a, 0xc2, 0x1e, 0xcd, 0x71, 0x7a, 0x03,
-	0xea, 0x7e, 0x64, 0x86, 0x91, 0x39, 0x09, 0x14, 0xa4, 0x2a, 0x86, 0xd4, 0x26, 0x94, 0x29, 0xf1,
-	0xed, 0x41, 0x9e, 0x92, 0x09, 0xc9, 0xf0, 0x6c, 0xc8, 0x04, 0xa7, 0xe5, 0xec, 0x76, 0xdf, 0x81,
-	0xf5, 0xe4, 0xb7, 0x3f, 0x75, 0xc5, 0xa7, 0x90, 0xad, 0x25, 0x86, 0xce, 0xc4, 0x73, 0x4b, 0x9f,
-	0x00, 0x2a, 0xbd, 0x7c, 0xf7, 0x0a, 0x80, 0x9a, 0xd3, 0xf4, 0x8d, 0x20, 0xd4, 0xfe, 0xab, 0x0c,
-	0x55, 0x2d, 0xad, 0x8b, 0x9e, 0xc2, 0x52, 0xfe, 0x44, 0x46, 0xef, 0x14, 0x6e, 0xf7, 0xa9, 0xd7,
-	0xb8, 0xf4, 0xee, 0x7f, 0xfa, 0xa5, 0x9f, 0x16, 0xf9, 0x16, 0xc2, 0xb0, 0x32, 0xf5, 0xae, 0x46,
-	0xef, 0x15, 0xc4, 0xce, 0x7b, 0x7d, 0x4b, 0x6f, 0x5f, 0xe8, 0x3c, 0x51, 0x26, 0x02, 0xf1, 0xfc,
-	0xbd, 0x83, 0x94, 0xc5, 0xee, 0x4e, 0xa9, 0x75, 0x69, 0xff, 0x71, 0xd9, 0x67, 0xb0, 0x3e, 0xf3,
-	0x29, 0x40, 0xad, 0x05, 0x3f, 0x1a, 0xd2, 0xd6, 0xcc, 0x3b, 0x52, 0x4d, 0xfe, 0x28, 0xc9, 0xb7,
-	0x90, 0x09, 0x1b, 0x73, 0x4e, 0x0f, 0xda, 0x5d, 0xf8, 0xa4, 0x5d, 0x50, 0xe3, 0x47, 0x0e, 0xb6,
-	0xe6, 0xdf, 0x10, 0xe8, 0xc3, 0xab, 0xdc, 0x63, 0xd2, 0x47, 0x0b, 0x46, 0xe5, 0x68, 0x36, 0xb9,
-	0xf7, 0x39, 0xa4, 0xc3, 0xf2, 0xe4, 0x31, 0x40, 0x3b, 0x97, 0x3f, 0x2b, 0xc5, 0x33, 0x3e, 0xbc,
-	0xf7, 0x64, 0xcf, 0xb2, 0xe9, 0x69, 0x64, 0x2a, 0x03, 0xe2, 0xb6, 0x1c, 0x23, 0x26, 0x94, 0x92,
-	0xf1, 0x6f, 0x52, 0x21, 0xfd, 0x1f, 0xda, 0xca, 0x2a, 0xb4, 0x46, 0xbb, 0xf7, 0xb3, 0xa5, 0x59,
-	0x61, 0x96, 0x0f, 0xfe, 0x09, 0x00, 0x00, 0xff, 0xff, 0xfe, 0x02, 0xdf, 0x83, 0xf4, 0x0e, 0x00,
-	0x00,
+	// 1711 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x59, 0x4b, 0x73, 0xd3, 0xd6,
+	0x1e, 0x8f, 0x64, 0x3b, 0x8e, 0xff, 0xce, 0x43, 0x9c, 0x84, 0xe0, 0xeb, 0x00, 0x37, 0x57, 0x97,
+	0x7b, 0x31, 0x30, 0xb5, 0x8b, 0x0b, 0x25, 0x13, 0x4a, 0x3b, 0xc1, 0x11, 0x89, 0x5b, 0x6a, 0xa7,
+	0xb2, 0x42, 0x0b, 0x1d, 0xf0, 0xc8, 0xce, 0xc1, 0x51, 0x63, 0x4b, 0x42, 0x3a, 0xf2, 0xe0, 0x55,
+	0x3f, 0x00, 0xfb, 0x6e, 0xbb, 0xe9, 0xa2, 0x9d, 0x61, 0xd1, 0xe9, 0x97, 0x60, 0xa6, 0xbb, 0x2e,
+	0xfb, 0x1d, 0xfa, 0x15, 0x98, 0xe9, 0x48, 0x3a, 0x72, 0xe4, 0xc7, 0x71, 0xec, 0x04, 0x77, 0x58,
+	0x59, 0xe7, 0xf1, 0x7f, 0xfd, 0xfe, 0x8f, 0xf3, 0x3f, 0xc7, 0xb0, 0x60, 0x39, 0x3a, 0xd1, 0x5a,
+	0x38, 0x6b, 0x5a, 0x06, 0x31, 0xd0, 0x79, 0xdb, 0xc4, 0x75, 0xff, 0x3b, 0x1b, 0xac, 0xb4, 0x6f,
+	0xa6, 0xd7, 0x1a, 0x86, 0xd1, 0x68, 0xe2, 0x9c, 0xb7, 0x50, 0x73, 0x9e, 0xe7, 0x70, 0xcb, 0x24,
+	0x1d, 0x7f, 0x5f, 0xfa, 0x5f, 0xfd, 0x8b, 0xaa, 0x4e, 0x97, 0xc4, 0x5d, 0x58, 0xaa, 0xa8, 0x9d,
+	0x5d, 0xdc, 0x6c, 0x1a, 0x32, 0x7e, 0xe1, 0x60, 0x9b, 0xa0, 0xff, 0xc0, 0xbc, 0x8d, 0xad, 0xb6,
+	0x56, 0xc7, 0x55, 0x5d, 0x6d, 0xe1, 0x14, 0xb7, 0xce, 0x65, 0x12, 0x72, 0x92, 0xce, 0x95, 0xd4,
+	0x16, 0x46, 0x08, 0xa2, 0xde, 0x12, 0xef, 0x2d, 0x79, 0xdf, 0x62, 0x06, 0x84, 0x63, 0x4e, 0xb6,
+	0x69, 0xe8, 0x36, 0x46, 0x2b, 0x10, 0x3b, 0x74, 0x27, 0x28, 0x0f, 0x7f, 0x20, 0x36, 0x61, 0xa5,
+	0xa8, 0xb7, 0x8d, 0x23, 0x5c, 0xf1, 0x59, 0x06, 0x82, 0x17, 0x81, 0xd7, 0x0e, 0xe8, 0x56, 0x5e,
+	0x3b, 0x40, 0xdb, 0x10, 0x6f, 0x61, 0xdb, 0x56, 0x1b, 0x38, 0x15, 0x59, 0xe7, 0x32, 0xc9, 0xfc,
+	0xf5, 0xec, 0x50, 0xe3, 0xb3, 0x05, 0xa3, 0xd5, 0x32, 0x74, 0x9f, 0x27, 0x65, 0x26, 0x07, 0xa4,
+	0xe2, 0x1b, 0x0e, 0x96, 0x87, 0x6c, 0x40, 0xab, 0x30, 0xdb, 0xc2, 0xe4, 0xd0, 0x08, 0x24, 0xd2,
+	0x11, 0xca, 0x40, 0xf4, 0x40, 0x25, 0xaa, 0x67, 0x5b, 0x32, 0xbf, 0x92, 0xf5, 0xb1, 0xcb, 0x06,
+	0xd8, 0x65, 0xb7, 0xf4, 0x8e, 0xec, 0xed, 0x70, 0x81, 0xaa, 0x1b, 0x3a, 0xc1, 0x3a, 0xa9, 0x92,
+	0x8e, 0xe9, 0x2b, 0x99, 0x90, 0x93, 0x74, 0x4e, 0xe9, 0x98, 0x18, 0x7d, 0x01, 0x8b, 0x87, 0x84,
+	0x98, 0x55, 0xfc, 0x92, 0x60, 0xdd, 0xd6, 0x0c, 0x3d, 0x15, 0xf5, 0xd8, 0x5e, 0x61, 0x58, 0xb2,
+	0xab, 0x28, 0x7b, 0x52, 0xb0, 0x57, 0x5e, 0x70, 0x69, 0xbb, 0x43, 0xf1, 0x4f, 0x0e, 0x16, 0x7a,
+	0x36, 0xa0, 0x7b, 0x10, 0x6d, 0x63, 0xab, 0xe6, 0x59, 0xb0, 0x98, 0xbf, 0x36, 0x0e, 0xd3, 0xec,
+	0x23, 0x6c, 0xd5, 0x64, 0x8f, 0x0c, 0xad, 0x43, 0xf2, 0x85, 0x83, 0xad, 0x8e, 0x4d, 0x2c, 0x4d,
+	0x6f, 0x50, 0x6f, 0x86, 0xa7, 0xc4, 0x06, 0x44, 0xdd, 0xfd, 0x68, 0x0e, 0xa2, 0xa5, 0x72, 0x49,
+	0x12, 0x66, 0x50, 0x1c, 0x22, 0x3b, 0x92, 0x22, 0x70, 0xee, 0xd4, 0xae, 0xb4, 0xb5, 0x2d, 0xf0,
+	0xee, 0xd7, 0x5e, 0xb9, 0xa2, 0x08, 0x11, 0x77, 0x71, 0x6f, 0x5f, 0x11, 0xa2, 0x08, 0x60, 0x76,
+	0x5b, 0x7a, 0x28, 0x29, 0x92, 0x10, 0x43, 0x49, 0x88, 0x17, 0xca, 0xa5, 0x92, 0x54, 0x50, 0x84,
+	0x59, 0x77, 0x50, 0xde, 0x53, 0x8a, 0xe5, 0x52, 0x45, 0x88, 0xa3, 0x04, 0xc4, 0x14, 0x79, 0xab,
+	0x20, 0x09, 0x73, 0xe2, 0x53, 0x58, 0x0c, 0xdc, 0x43, 0x63, 0x27, 0xf0, 0x03, 0x37, 0xb1, 0x1f,
+	0xf8, 0x01, 0x3f, 0x88, 0x6f, 0x79, 0x38, 0x57, 0x30, 0xf4, 0xe7, 0x5a, 0xc3, 0xb1, 0x54, 0xa2,
+	0x19, 0x7a, 0x91, 0xe0, 0x16, 0x12, 0x20, 0x72, 0x84, 0x3b, 0xd4, 0xff, 0xee, 0x27, 0x4a, 0x41,
+	0x9c, 0x92, 0x51, 0x2e, 0xc1, 0xd0, 0x0d, 0xe5, 0x86, 0x65, 0x38, 0x26, 0xf5, 0xb2, 0x3f, 0x70,
+	0x67, 0x9b, 0x6a, 0x0d, 0x37, 0x3d, 0xb7, 0x26, 0x64, 0x7f, 0x80, 0x1e, 0x40, 0x94, 0xa8, 0x0d,
+	0x3b, 0x15, 0x5b, 0x8f, 0x64, 0x92, 0xf9, 0x3c, 0x33, 0x6a, 0xfb, 0xf4, 0xc9, 0x2a, 0x6a, 0xc3,
+	0x96, 0x74, 0x62, 0x75, 0x64, 0x8f, 0x1e, 0xc9, 0x30, 0xd7, 0xc2, 0x44, 0xf5, 0x60, 0x98, 0xf5,
+	0x78, 0x7d, 0x3c, 0x36, 0xaf, 0x2f, 0x29, 0xa1, 0xcf, 0xaf, 0xcb, 0x27, 0x7d, 0x07, 0x12, 0x5d,
+	0x31, 0x43, 0x00, 0x58, 0x81, 0x58, 0x5b, 0x6d, 0x3a, 0x01, 0x88, 0xfe, 0x60, 0x93, 0xdf, 0xe0,
+	0xd2, 0x77, 0x61, 0xa1, 0x87, 0xe7, 0x24, 0xc4, 0xe2, 0x1f, 0x3c, 0x5c, 0xd8, 0xc1, 0xa4, 0x47,
+	0xcd, 0x20, 0x11, 0x2f, 0x01, 0xd8, 0xc4, 0xb0, 0x7a, 0xaa, 0x4d, 0xc2, 0x9b, 0xf1, 0x6a, 0xcd,
+	0x79, 0x98, 0x55, 0x4d, 0xb3, 0xaa, 0x1d, 0x04, 0x5c, 0x55, 0xd3, 0x2c, 0x1e, 0x4c, 0xe4, 0x0f,
+	0x04, 0xd1, 0x23, 0xdc, 0xf1, 0xfd, 0x91, 0x90, 0xbd, 0x6f, 0xf4, 0xcd, 0x00, 0xb6, 0x9f, 0x30,
+	0xb0, 0x65, 0xe8, 0xcd, 0x42, 0x18, 0x5d, 0x03, 0xc1, 0x76, 0x6a, 0x76, 0xdd, 0xd2, 0x6a, 0xb8,
+	0xea, 0x98, 0x07, 0x2a, 0xc1, 0xa9, 0xf8, 0x3a, 0x97, 0x99, 0x93, 0x97, 0xba, 0xf3, 0xfb, 0xde,
+	0xf4, 0xd9, 0x30, 0x7d, 0x02, 0xa9, 0x41, 0xd5, 0x68, 0xf2, 0x7c, 0x0a, 0x31, 0x8d, 0xe0, 0x96,
+	0x9d, 0xe2, 0x3c, 0xd3, 0x32, 0xe3, 0x86, 0x8d, 0xec, 0x93, 0x89, 0xbf, 0xf1, 0x70, 0xa9, 0x12,
+	0x28, 0xfb, 0x1e, 0x79, 0xed, 0xd9, 0x80, 0xd7, 0xee, 0x33, 0x4c, 0x1b, 0xa9, 0x3d, 0x33, 0x3b,
+	0xce, 0xe4, 0x90, 0x1f, 0x38, 0xb8, 0xcc, 0x12, 0x4b, 0xfd, 0x72, 0x3a, 0xd4, 0xba, 0xde, 0x8c,
+	0x9c, 0xce, 0x9b, 0x3f, 0xf3, 0x90, 0xaa, 0xa8, 0xed, 0x77, 0xe9, 0xc8, 0x33, 0xaa, 0x84, 0x1e,
+	0x87, 0x1c, 0x19, 0xf5, 0x58, 0xdc, 0x63, 0x39, 0x92, 0xa1, 0xf8, 0x74, 0x7c, 0xf8, 0x9a, 0x87,
+	0xf4, 0x36, 0x6e, 0x62, 0xf2, 0x3e, 0x45, 0xfd, 0xb7, 0x03, 0x51, 0xff, 0x19, 0x03, 0x2c, 0xb6,
+	0xea, 0xd3, 0x81, 0xeb, 0x17, 0x1e, 0x96, 0x76, 0x30, 0xa9, 0x10, 0x95, 0xe0, 0x31, 0x31, 0xa2,
+	0xec, 0xf9, 0x63, 0xf6, 0x8f, 0xc0, 0x3d, 0xab, 0x6d, 0xcd, 0x26, 0x58, 0xaf, 0x77, 0x3c, 0x90,
+	0x16, 0xf3, 0xb7, 0x58, 0xe1, 0xe0, 0x8a, 0x2a, 0x9b, 0xae, 0x65, 0xb6, 0x3f, 0x28, 0x1c, 0xd3,
+	0xca, 0x61, 0x46, 0x68, 0x6f, 0x20, 0xc6, 0x6e, 0xb1, 0x4b, 0x7c, 0xd8, 0x84, 0xe9, 0x60, 0xf5,
+	0x96, 0x83, 0xe5, 0x1d, 0x4c, 0xee, 0x3b, 0xcd, 0xa3, 0x49, 0xf0, 0x0a, 0x02, 0x82, 0x0f, 0x05,
+	0xc4, 0x3a, 0x24, 0x4d, 0xd5, 0x52, 0x9b, 0x4d, 0xdc, 0xd4, 0xec, 0x96, 0x87, 0x58, 0x4c, 0x0e,
+	0x4f, 0x21, 0x65, 0xc0, 0xf6, 0x0d, 0xb6, 0xed, 0xfd, 0x2a, 0x4d, 0xc7, 0x7e, 0x19, 0x56, 0x7a,
+	0x65, 0xd1, 0x9a, 0xb8, 0xd9, 0x7b, 0x56, 0xb1, 0x5a, 0xe3, 0x2e, 0x61, 0xb8, 0xb2, 0xfd, 0xc5,
+	0xc1, 0x42, 0xcf, 0xc2, 0x10, 0x8d, 0x50, 0xa8, 0xa1, 0x9f, 0xa7, 0x2d, 0x23, 0x82, 0x28, 0x26,
+	0x6a, 0x83, 0x26, 0xa4, 0xf7, 0xed, 0x6a, 0x8e, 0x2d, 0xcb, 0xb0, 0x82, 0x7c, 0xf4, 0x06, 0xa8,
+	0x14, 0x02, 0x72, 0x74, 0x3f, 0xd7, 0xa3, 0xc7, 0x74, 0x20, 0xfc, 0x9d, 0x03, 0xe1, 0x38, 0x56,
+	0x29, 0x7e, 0x28, 0xd4, 0x28, 0xf7, 0xdb, 0xc7, 0x87, 0xec, 0xfb, 0x2a, 0x64, 0x89, 0x5f, 0xb5,
+	0x6f, 0x9f, 0x98, 0x0e, 0xbe, 0x88, 0xe9, 0x18, 0xf3, 0x86, 0x07, 0xe4, 0xd7, 0xab, 0xb3, 0x95,
+	0x8f, 0x5c, 0xc8, 0x97, 0xc9, 0xfc, 0x1a, 0xc3, 0x26, 0x89, 0xa8, 0x0d, 0x0a, 0xc4, 0x3d, 0x88,
+	0x1b, 0x7e, 0x01, 0xa1, 0xb7, 0xb1, 0xff, 0x8e, 0x51, 0x6b, 0xe4, 0x80, 0x06, 0x55, 0x06, 0x22,
+	0xe2, 0xce, 0xc8, 0x6a, 0x3c, 0xfd, 0xcc, 0x7a, 0x01, 0xab, 0xbe, 0xa8, 0x49, 0x6b, 0xcb, 0x06,
+	0xcc, 0xda, 0xee, 0x76, 0xbf, 0xba, 0x24, 0xf3, 0xeb, 0xa3, 0x80, 0xf0, 0xf2, 0x8e, 0xee, 0x17,
+	0x8f, 0xdc, 0xdb, 0x7e, 0x1b, 0xff, 0x33, 0xc2, 0x5e, 0xf3, 0x90, 0x18, 0x95, 0xe1, 0x3d, 0xc8,
+	0xcc, 0x53, 0x64, 0x26, 0x8f, 0x8b, 0xcf, 0x07, 0x6a, 0x66, 0xf6, 0x24, 0x15, 0x99, 0x97, 0x80,
+	0x50, 0x8c, 0xc5, 0x26, 0x8f, 0xb1, 0xb3, 0x85, 0xc3, 0x45, 0x88, 0x4a, 0xb4, 0xa0, 0xf9, 0x3b,
+	0xb8, 0xd0, 0x0e, 0xf1, 0x55, 0x04, 0xe6, 0xc3, 0x42, 0xe9, 0xf1, 0x5b, 0x77, 0x2c, 0xcb, 0x3b,
+	0x7e, 0xb9, 0xc9, 0x8f, 0xdf, 0x80, 0x56, 0x0e, 0x33, 0xea, 0x3f, 0xd6, 0xf9, 0x77, 0x74, 0xac,
+	0x8b, 0x87, 0x20, 0xf4, 0x0b, 0x46, 0x6b, 0x70, 0xa1, 0x50, 0x2e, 0x15, 0xf6, 0x65, 0x59, 0x2a,
+	0x15, 0x1e, 0x57, 0xf7, 0x4b, 0x95, 0x3d, 0xa9, 0x50, 0x7c, 0x50, 0x94, 0xb6, 0x85, 0x99, 0xfe,
+	0xc5, 0x07, 0x45, 0xb9, 0xa2, 0x54, 0xbf, 0x96, 0x8b, 0x8a, 0x24, 0x70, 0x28, 0x0d, 0xab, 0xe1,
+	0xc5, 0x87, 0x5b, 0xdd, 0x35, 0x5e, 0x54, 0x8f, 0x25, 0x75, 0x9b, 0x0a, 0x9f, 0x59, 0xa5, 0x58,
+	0x51, 0x86, 0x48, 0x4a, 0xc1, 0x4a, 0x78, 0x51, 0x7a, 0x24, 0x95, 0x94, 0xfd, 0xad, 0x87, 0x02,
+	0x87, 0x56, 0x01, 0x85, 0x57, 0x2a, 0x8a, 0x5c, 0x2e, 0xed, 0x08, 0xbc, 0xf8, 0x3d, 0xac, 0x29,
+	0x96, 0xaa, 0xdb, 0x6a, 0xdd, 0x35, 0x5d, 0x6d, 0x52, 0x1c, 0xb0, 0xdf, 0xbb, 0xa1, 0x2b, 0xb0,
+	0x60, 0x04, 0x03, 0xa5, 0x63, 0x06, 0xae, 0xec, 0x9d, 0x44, 0x9b, 0x10, 0xb7, 0xfc, 0x1c, 0xa4,
+	0xaf, 0x56, 0x27, 0xa7, 0x56, 0x40, 0x20, 0xfe, 0xca, 0xc3, 0x65, 0xe9, 0x25, 0xae, 0x3b, 0xb4,
+	0x50, 0x85, 0xb4, 0x09, 0xf2, 0xfa, 0x22, 0x1c, 0x67, 0xf1, 0x60, 0x5a, 0xcb, 0x00, 0x5d, 0x6d,
+	0x82, 0xd4, 0x66, 0x1d, 0x91, 0x23, 0x4c, 0x95, 0x43, 0x5c, 0x50, 0x75, 0xe0, 0xa8, 0x2a, 0xb0,
+	0xd2, 0x77, 0xa4, 0xea, 0xd3, 0x29, 0xb7, 0x3f, 0xf2, 0xb0, 0xbc, 0xe7, 0xd4, 0x9a, 0x9a, 0x7d,
+	0x28, 0xb5, 0xb1, 0x4e, 0x02, 0x9c, 0xfe, 0x0d, 0x49, 0xd3, 0xa9, 0xd9, 0x4e, 0x2d, 0x5c, 0x00,
+	0xc1, 0x9f, 0xf2, 0xa0, 0x5a, 0x81, 0x18, 0x31, 0x4c, 0xad, 0x1e, 0xb0, 0xf4, 0x06, 0xdd, 0xf3,
+	0x3b, 0x12, 0x3a, 0xbf, 0xaf, 0xc3, 0x39, 0xf7, 0xb7, 0xda, 0xf3, 0xae, 0xe5, 0xf7, 0x25, 0x4b,
+	0xee, 0x42, 0x21, 0xf4, 0xc6, 0xa8, 0x0c, 0x9c, 0x47, 0xac, 0x56, 0x6f, 0x88, 0xd2, 0x53, 0x41,
+	0x28, 0xff, 0x13, 0x40, 0x5c, 0xf6, 0xe5, 0xa2, 0xa7, 0x30, 0x17, 0xbc, 0x0b, 0xa3, 0xff, 0x33,
+	0xef, 0x78, 0x3d, 0x4f, 0xd0, 0xe9, 0xab, 0x27, 0xee, 0xf3, 0x1b, 0x13, 0x71, 0x06, 0x61, 0x58,
+	0xe8, 0x79, 0x4c, 0x46, 0x37, 0x18, 0xb4, 0xc3, 0x9e, 0x9c, 0xd3, 0xff, 0x1b, 0xb9, 0x39, 0x24,
+	0xc6, 0xf1, 0x1a, 0xaf, 0x9e, 0x8b, 0x15, 0xca, 0x4e, 0xf6, 0x60, 0x94, 0xce, 0x8d, 0xbd, 0xbf,
+	0x2b, 0xf6, 0x19, 0x9c, 0x1b, 0xb8, 0xff, 0xa2, 0xdc, 0x84, 0x37, 0xe5, 0xf4, 0xea, 0xc0, 0xe3,
+	0xa9, 0xd4, 0x32, 0x49, 0x47, 0x9c, 0x41, 0x35, 0x58, 0x1e, 0x72, 0x65, 0x44, 0x37, 0x27, 0xbe,
+	0x5e, 0x8e, 0x90, 0xf1, 0x8a, 0x83, 0xd5, 0xe1, 0xcf, 0x22, 0xe8, 0xd6, 0x69, 0x1e, 0x6f, 0xd2,
+	0xb7, 0x27, 0xa4, 0x0a, 0xd0, 0xcc, 0x70, 0x1f, 0x72, 0x6e, 0x38, 0x06, 0xed, 0x2d, 0x33, 0x1c,
+	0xfb, 0xae, 0x83, 0xcc, 0x70, 0xec, 0xef, 0x93, 0xc5, 0x19, 0xa4, 0xc1, 0x7c, 0xf8, 0x92, 0x83,
+	0xae, 0x8f, 0x7f, 0xeb, 0x4a, 0xdf, 0x18, 0x6b, 0x6f, 0x57, 0x54, 0x09, 0x12, 0xdd, 0x16, 0x0c,
+	0x5d, 0x1d, 0x11, 0x13, 0x3d, 0x42, 0xd8, 0x7e, 0x92, 0x21, 0x19, 0x6a, 0x58, 0xd1, 0xb5, 0xb1,
+	0x9b, 0xda, 0x11, 0x3c, 0x9f, 0xc0, 0x52, 0x5f, 0x67, 0x8a, 0x3e, 0x18, 0xc9, 0x77, 0x00, 0x14,
+	0x36, 0xef, 0xef, 0xe0, 0x02, 0xa3, 0xfa, 0xa3, 0xdb, 0xa7, 0x3a, 0x2d, 0x46, 0xc8, 0x52, 0x60,
+	0x3e, 0x5c, 0x3c, 0x99, 0x6e, 0x1d, 0x52, 0x61, 0xd9, 0x5c, 0xef, 0x6f, 0x3e, 0xd9, 0x68, 0x68,
+	0xe4, 0xd0, 0xa9, 0x65, 0xeb, 0x46, 0x2b, 0xd7, 0x54, 0x3b, 0x06, 0x21, 0x46, 0xf7, 0xd7, 0x95,
+	0xe0, 0xff, 0x65, 0x97, 0xa3, 0x12, 0x72, 0xed, 0x9b, 0x77, 0xe9, 0x67, 0x6d, 0xd6, 0x5b, 0xf9,
+	0xe8, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff, 0x22, 0x34, 0x1a, 0x3a, 0x1f, 0x1c, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1091,13 +1981,25 @@ type RuntimeClient interface {
 	// GetConfiguration gets configuration from configuration store.
 	GetConfiguration(ctx context.Context, in *GetConfigurationRequest, opts ...grpc.CallOption) (*GetConfigurationResponse, error)
 	// SaveConfiguration saves configuration into configuration store.
-	SaveConfiguration(ctx context.Context, in *SaveConfigurationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SaveConfiguration(ctx context.Context, in *SaveConfigurationRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// DeleteConfiguration deletes configuration from configuration store.
-	DeleteConfiguration(ctx context.Context, in *DeleteConfigurationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteConfiguration(ctx context.Context, in *DeleteConfigurationRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
 	SubscribeConfiguration(ctx context.Context, opts ...grpc.CallOption) (Runtime_SubscribeConfigurationClient, error)
+	// Gets the state for a specific key.
+	GetState(ctx context.Context, in *GetStateRequest, opts ...grpc.CallOption) (*GetStateResponse, error)
+	// Gets a bulk of state items for a list of keys
+	GetBulkState(ctx context.Context, in *GetBulkStateRequest, opts ...grpc.CallOption) (*GetBulkStateResponse, error)
+	// Saves the state for a specific key.
+	SaveState(ctx context.Context, in *SaveStateRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// Deletes the state for a specific key.
+	DeleteState(ctx context.Context, in *DeleteStateRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// Deletes a bulk of state items for a list of keys
+	DeleteBulkState(ctx context.Context, in *DeleteBulkStateRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	// Executes transactions for a specified store
+	ExecuteStateTransaction(ctx context.Context, in *ExecuteStateTransactionRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// Publishes events to the specific topic.
-	PublishEvent(ctx context.Context, in *PublishEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	PublishEvent(ctx context.Context, in *PublishEventRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type runtimeClient struct {
@@ -1135,8 +2037,8 @@ func (c *runtimeClient) GetConfiguration(ctx context.Context, in *GetConfigurati
 	return out, nil
 }
 
-func (c *runtimeClient) SaveConfiguration(ctx context.Context, in *SaveConfigurationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *runtimeClient) SaveConfiguration(ctx context.Context, in *SaveConfigurationRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.Runtime/SaveConfiguration", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1144,8 +2046,8 @@ func (c *runtimeClient) SaveConfiguration(ctx context.Context, in *SaveConfigura
 	return out, nil
 }
 
-func (c *runtimeClient) DeleteConfiguration(ctx context.Context, in *DeleteConfigurationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *runtimeClient) DeleteConfiguration(ctx context.Context, in *DeleteConfigurationRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.Runtime/DeleteConfiguration", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1184,8 +2086,62 @@ func (x *runtimeSubscribeConfigurationClient) Recv() (*SubscribeConfigurationRes
 	return m, nil
 }
 
-func (c *runtimeClient) PublishEvent(ctx context.Context, in *PublishEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *runtimeClient) GetState(ctx context.Context, in *GetStateRequest, opts ...grpc.CallOption) (*GetStateResponse, error) {
+	out := new(GetStateResponse)
+	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.Runtime/GetState", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeClient) GetBulkState(ctx context.Context, in *GetBulkStateRequest, opts ...grpc.CallOption) (*GetBulkStateResponse, error) {
+	out := new(GetBulkStateResponse)
+	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.Runtime/GetBulkState", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeClient) SaveState(ctx context.Context, in *SaveStateRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.Runtime/SaveState", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeClient) DeleteState(ctx context.Context, in *DeleteStateRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.Runtime/DeleteState", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeClient) DeleteBulkState(ctx context.Context, in *DeleteBulkStateRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.Runtime/DeleteBulkState", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeClient) ExecuteStateTransaction(ctx context.Context, in *ExecuteStateTransactionRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.Runtime/ExecuteStateTransaction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeClient) PublishEvent(ctx context.Context, in *PublishEventRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.Runtime/PublishEvent", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1202,13 +2158,25 @@ type RuntimeServer interface {
 	// GetConfiguration gets configuration from configuration store.
 	GetConfiguration(context.Context, *GetConfigurationRequest) (*GetConfigurationResponse, error)
 	// SaveConfiguration saves configuration into configuration store.
-	SaveConfiguration(context.Context, *SaveConfigurationRequest) (*emptypb.Empty, error)
+	SaveConfiguration(context.Context, *SaveConfigurationRequest) (*empty.Empty, error)
 	// DeleteConfiguration deletes configuration from configuration store.
-	DeleteConfiguration(context.Context, *DeleteConfigurationRequest) (*emptypb.Empty, error)
+	DeleteConfiguration(context.Context, *DeleteConfigurationRequest) (*empty.Empty, error)
 	// SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
 	SubscribeConfiguration(Runtime_SubscribeConfigurationServer) error
+	// Gets the state for a specific key.
+	GetState(context.Context, *GetStateRequest) (*GetStateResponse, error)
+	// Gets a bulk of state items for a list of keys
+	GetBulkState(context.Context, *GetBulkStateRequest) (*GetBulkStateResponse, error)
+	// Saves the state for a specific key.
+	SaveState(context.Context, *SaveStateRequest) (*empty.Empty, error)
+	// Deletes the state for a specific key.
+	DeleteState(context.Context, *DeleteStateRequest) (*empty.Empty, error)
+	// Deletes a bulk of state items for a list of keys
+	DeleteBulkState(context.Context, *DeleteBulkStateRequest) (*empty.Empty, error)
+	// Executes transactions for a specified store
+	ExecuteStateTransaction(context.Context, *ExecuteStateTransactionRequest) (*empty.Empty, error)
 	// Publishes events to the specific topic.
-	PublishEvent(context.Context, *PublishEventRequest) (*emptypb.Empty, error)
+	PublishEvent(context.Context, *PublishEventRequest) (*empty.Empty, error)
 }
 
 // UnimplementedRuntimeServer can be embedded to have forward compatible implementations.
@@ -1224,16 +2192,34 @@ func (*UnimplementedRuntimeServer) InvokeService(ctx context.Context, req *Invok
 func (*UnimplementedRuntimeServer) GetConfiguration(ctx context.Context, req *GetConfigurationRequest) (*GetConfigurationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConfiguration not implemented")
 }
-func (*UnimplementedRuntimeServer) SaveConfiguration(ctx context.Context, req *SaveConfigurationRequest) (*emptypb.Empty, error) {
+func (*UnimplementedRuntimeServer) SaveConfiguration(ctx context.Context, req *SaveConfigurationRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveConfiguration not implemented")
 }
-func (*UnimplementedRuntimeServer) DeleteConfiguration(ctx context.Context, req *DeleteConfigurationRequest) (*emptypb.Empty, error) {
+func (*UnimplementedRuntimeServer) DeleteConfiguration(ctx context.Context, req *DeleteConfigurationRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteConfiguration not implemented")
 }
 func (*UnimplementedRuntimeServer) SubscribeConfiguration(srv Runtime_SubscribeConfigurationServer) error {
 	return status.Errorf(codes.Unimplemented, "method SubscribeConfiguration not implemented")
 }
-func (*UnimplementedRuntimeServer) PublishEvent(ctx context.Context, req *PublishEventRequest) (*emptypb.Empty, error) {
+func (*UnimplementedRuntimeServer) GetState(ctx context.Context, req *GetStateRequest) (*GetStateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetState not implemented")
+}
+func (*UnimplementedRuntimeServer) GetBulkState(ctx context.Context, req *GetBulkStateRequest) (*GetBulkStateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBulkState not implemented")
+}
+func (*UnimplementedRuntimeServer) SaveState(ctx context.Context, req *SaveStateRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveState not implemented")
+}
+func (*UnimplementedRuntimeServer) DeleteState(ctx context.Context, req *DeleteStateRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteState not implemented")
+}
+func (*UnimplementedRuntimeServer) DeleteBulkState(ctx context.Context, req *DeleteBulkStateRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBulkState not implemented")
+}
+func (*UnimplementedRuntimeServer) ExecuteStateTransaction(ctx context.Context, req *ExecuteStateTransactionRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecuteStateTransaction not implemented")
+}
+func (*UnimplementedRuntimeServer) PublishEvent(ctx context.Context, req *PublishEventRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PublishEvent not implemented")
 }
 
@@ -1357,6 +2343,114 @@ func (x *runtimeSubscribeConfigurationServer) Recv() (*SubscribeConfigurationReq
 	return m, nil
 }
 
+func _Runtime_GetState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServer).GetState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.runtime.v1.Runtime/GetState",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServer).GetState(ctx, req.(*GetStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Runtime_GetBulkState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBulkStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServer).GetBulkState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.runtime.v1.Runtime/GetBulkState",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServer).GetBulkState(ctx, req.(*GetBulkStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Runtime_SaveState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServer).SaveState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.runtime.v1.Runtime/SaveState",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServer).SaveState(ctx, req.(*SaveStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Runtime_DeleteState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServer).DeleteState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.runtime.v1.Runtime/DeleteState",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServer).DeleteState(ctx, req.(*DeleteStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Runtime_DeleteBulkState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBulkStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServer).DeleteBulkState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.runtime.v1.Runtime/DeleteBulkState",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServer).DeleteBulkState(ctx, req.(*DeleteBulkStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Runtime_ExecuteStateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecuteStateTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServer).ExecuteStateTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.runtime.v1.Runtime/ExecuteStateTransaction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServer).ExecuteStateTransaction(ctx, req.(*ExecuteStateTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Runtime_PublishEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PublishEventRequest)
 	if err := dec(in); err != nil {
@@ -1398,6 +2492,30 @@ var _Runtime_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteConfiguration",
 			Handler:    _Runtime_DeleteConfiguration_Handler,
+		},
+		{
+			MethodName: "GetState",
+			Handler:    _Runtime_GetState_Handler,
+		},
+		{
+			MethodName: "GetBulkState",
+			Handler:    _Runtime_GetBulkState_Handler,
+		},
+		{
+			MethodName: "SaveState",
+			Handler:    _Runtime_SaveState_Handler,
+		},
+		{
+			MethodName: "DeleteState",
+			Handler:    _Runtime_DeleteState_Handler,
+		},
+		{
+			MethodName: "DeleteBulkState",
+			Handler:    _Runtime_DeleteBulkState_Handler,
+		},
+		{
+			MethodName: "ExecuteStateTransaction",
+			Handler:    _Runtime_ExecuteStateTransaction_Handler,
 		},
 		{
 			MethodName: "PublishEvent",

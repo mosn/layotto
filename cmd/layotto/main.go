@@ -35,6 +35,30 @@ import (
 	"mosn.io/layotto/components/rpc"
 	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
 
+	// State Stores
+	"github.com/dapr/components-contrib/state"
+	"github.com/dapr/components-contrib/state/aerospike"
+	state_dynamodb "github.com/dapr/components-contrib/state/aws/dynamodb"
+	state_azure_blobstorage "github.com/dapr/components-contrib/state/azure/blobstorage"
+	state_cosmosdb "github.com/dapr/components-contrib/state/azure/cosmosdb"
+	state_azure_tablestorage "github.com/dapr/components-contrib/state/azure/tablestorage"
+	"github.com/dapr/components-contrib/state/cassandra"
+	"github.com/dapr/components-contrib/state/cloudstate"
+	"github.com/dapr/components-contrib/state/couchbase"
+	"github.com/dapr/components-contrib/state/gcp/firestore"
+	"github.com/dapr/components-contrib/state/hashicorp/consul"
+	"github.com/dapr/components-contrib/state/hazelcast"
+	"github.com/dapr/components-contrib/state/memcached"
+	"github.com/dapr/components-contrib/state/mongodb"
+	state_mysql "github.com/dapr/components-contrib/state/mysql"
+	"github.com/dapr/components-contrib/state/postgresql"
+	state_redis "github.com/dapr/components-contrib/state/redis"
+	"github.com/dapr/components-contrib/state/rethinkdb"
+	"github.com/dapr/components-contrib/state/sqlserver"
+	"github.com/dapr/components-contrib/state/zookeeper"
+
+	runtime_state "mosn.io/layotto/pkg/runtime/state"
+
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
 	"mosn.io/layotto/pkg/actuator/health"
@@ -131,6 +155,64 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			pubsub.NewFactory("pulsar", func() dapr_comp_pubsub.PubSub {
 				return pubsub_pulsar.NewPulsar(loggerForDaprComp)
+			}),
+		),
+		// State
+		runtime.WithStateFactory(
+			runtime_state.NewFactory("redis", func() state.Store {
+				return state_redis.NewRedisStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("consul", func() state.Store {
+				return consul.NewConsulStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("azure.blobstorage", func() state.Store {
+				return state_azure_blobstorage.NewAzureBlobStorageStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("azure.cosmosdb", func() state.Store {
+				return state_cosmosdb.NewCosmosDBStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("azure.tablestorage", func() state.Store {
+				return state_azure_tablestorage.NewAzureTablesStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("cassandra", func() state.Store {
+				return cassandra.NewCassandraStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("memcached", func() state.Store {
+				return memcached.NewMemCacheStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("mongodb", func() state.Store {
+				return mongodb.NewMongoDB(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("zookeeper", func() state.Store {
+				return zookeeper.NewZookeeperStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("gcp.firestore", func() state.Store {
+				return firestore.NewFirestoreStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("postgresql", func() state.Store {
+				return postgresql.NewPostgreSQLStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("sqlserver", func() state.Store {
+				return sqlserver.NewSQLServerStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("hazelcast", func() state.Store {
+				return hazelcast.NewHazelcastStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("cloudstate.crdt", func() state.Store {
+				return cloudstate.NewCRDT(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("couchbase", func() state.Store {
+				return couchbase.NewCouchbaseStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("aerospike", func() state.Store {
+				return aerospike.NewAerospikeStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("rethinkdb", func() state.Store {
+				return rethinkdb.NewRethinkDBStateStore(loggerForDaprComp)
+			}),
+			runtime_state.NewFactory("aws.dynamodb", state_dynamodb.NewDynamoDBStateStore),
+			runtime_state.NewFactory("mysql", func() state.Store {
+				return state_mysql.NewMySQLStateStore(loggerForDaprComp)
 			}),
 		),
 	)
