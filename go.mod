@@ -20,14 +20,14 @@ require (
 	google.golang.org/grpc/examples v0.0.0-20210526223527-2de42fcbbce3 // indirect
 	google.golang.org/protobuf v1.26.0
 	mosn.io/api v0.0.0-20210414070543-8a0686b03540
-	mosn.io/layotto/components v0.0.0-20210611132308-d8b5236001d0
-	mosn.io/layotto/spec v0.0.0-20210604023314-bb30491493a4
+	mosn.io/layotto/components v0.0.0-20210617023402-38c9d79ebb37
+	mosn.io/layotto/spec v0.0.0-20210617023402-38c9d79ebb37
 	mosn.io/mosn v0.22.1-0.20210425073346-b6880db4669c
 	mosn.io/pkg v0.0.0-20210401090620-f0e0d1a3efce
 	mosn.io/proxy-wasm-go-host v0.0.0-20210312032409-2334f9cf62ec
 )
 
 replace (
-	mosn.io/layotto/components  => ./components
-	mosn.io/layotto/spec  => ./spec
+	mosn.io/layotto/components => ./components
+	mosn.io/layotto/spec => ./spec
 )
