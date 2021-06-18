@@ -53,16 +53,14 @@ See the quick start guide [configuration demo with apollo](docs/en/start/configu
 
 [Dubbo JSON RPC](docs/en/start/rpc/dubbo_json_rpc.md)
 
-## Contributing to Layotto
-
-See the Development Guide [contributing](CONTRIBUTING.md) to get started with building and developing.
-
 ## Community
 
 ### Contact Us
 
-Use [DingTalk](https://www.dingtalk.com/en) to scan the QR code below to join the Layotto user exchange group.
+| Platform  | Link        |
+|:----------|:------------|
+| 💬 [DingTalk](https://www.dingtalk.com/en) (preferred) | Group number: 31912621 or scan the QR code below <img src="/img/ding-talk-group-1.png" height="200px">
 
-![Ding Talk Group QR Code](img/ding-talk-group-1.jpg)
+## Contributing to Layotto
 
-Or through Ding Talk search group number 31912621, join the user exchange group.
+See the Development Guide [contributing](CONTRIBUTING.md) to get started with building and developing.
