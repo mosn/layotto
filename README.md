@@ -9,8 +9,8 @@ Layotto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, i
 
 ## Features
 
-- Service Communication.
-- Service Governance.Such as traffic hijacking and observation, service rate limiting, etc.
+- Service Communication
+- Service Governance.Such as traffic hijacking and observation, service rate limiting, etc
 - Configuration management
 - State management
 - Event publish and subscribe
