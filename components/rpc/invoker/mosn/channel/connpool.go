@@ -4,8 +4,10 @@ import (
 	"container/list"
 	"context"
 	"errors"
+	"io"
 	"net"
 	"sync"
+	"sync/atomic"
 
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
@@ -21,16 +23,21 @@ type wrapConn struct {
 	buf   buffer.IoBuffer
 	state interface{}
 
-	closeOnce sync.Once
+	closed    int32
 	closeChan chan struct{}
 }
 
-func (w *wrapConn) Close() error {
-	w.closeOnce.Do(func() {
-		w.Conn.Close()
+func (w *wrapConn) isClose() bool {
+	return atomic.LoadInt32(&w.closed) == 1
+}
+
+func (w *wrapConn) close() error {
+	var err error
+	if atomic.CompareAndSwapInt32(&w.closed, 0, 1) {
+		err = w.Conn.Close()
 		close(w.closeChan)
-	})
-	return nil
+	}
+	return err
 }
 
 // im-memory fake conn pool
@@ -73,9 +80,12 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 		p.free.Remove(ele)
 		p.mu.Unlock()
 		wc := ele.Value.(*wrapConn)
-		return wc, nil
+		if !wc.isClose() {
+			return wc, nil
+		}
+	} else {
+		p.mu.Unlock()
 	}
-	p.mu.Unlock()
 
 	// create new conn
 	c, err := p.dialFunc()
@@ -97,7 +107,7 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 
 func (p *connPool) Put(c *wrapConn, close bool) {
 	if close {
-		c.Close()
+		c.close()
 		p.freeTurn()
 		return
 	}
@@ -108,19 +118,23 @@ func (p *connPool) Put(c *wrapConn, close bool) {
 		p.mu.Unlock()
 	} else {
 		p.mu.Unlock()
-		c.Close()
+		c.close()
 	}
 	p.freeTurn()
 }
 
 func (p *connPool) readloop(c *wrapConn) {
-	defer c.Close()
+	defer c.close()
 
 	c.buf = buffer.NewIoBuffer(16 * 1024)
 	for {
 		_, err := c.buf.ReadOnce(c)
 		if err != nil {
-			log.DefaultLogger.Errorf("[runtime][rpc]connpool readloop err: %s", err.Error())
+			if err == io.EOF {
+				log.DefaultLogger.Debugf("[runtime][rpc]connpool readloop err: %s", err.Error())
+			} else {
+				log.DefaultLogger.Errorf("[runtime][rpc]connpool readloop err: %s", err.Error())
+			}
 			return
 		}
 		if err = p.onDataFunc(c); err != nil {
