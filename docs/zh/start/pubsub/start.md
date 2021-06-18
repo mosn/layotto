@@ -108,4 +108,4 @@ Received a new event.Topic: topic1 , Data:value1
 
 #### 了解Pub/Sub API实现原理
 
-如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Pub/Sub API的设计文档](../../design/pubsub/Layotto MQ、兼容Dapr包方案.md)
+如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Pub/Sub API的设计文档](../../design/pubsub/layotto-pubsub-and-compability-with-dapr.md)
