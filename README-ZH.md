@@ -22,7 +22,7 @@ Layotto = Service Mesh + Multi-Runtime + Serverless Runtime = Layer8
 - [Multi-Runtime](https://www.infoq.com/articles/multi-runtime-microservice-architecture/)
     - 状态管理
     - 配置管理  
-    - Pub/Sub
+    - 事件发布/订阅
     - 分布式锁
     - ……
 - 基于WASM的Serverless运行时
