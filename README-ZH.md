@@ -25,8 +25,6 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 [通过 Layotto 调用 apollo 配置中心](docs/zh/start/configuration/start-apollo.md) 
 
-[通过 Layotto 调用 etcd 配置中心](docs/zh/start/configuration/start.md)
-
 ### 使用Pub/Sub API实现发布/订阅模式
 
 [通过Layotto调用redis，进行消息发布/订阅](docs/zh/start/pubsub/start.md)
