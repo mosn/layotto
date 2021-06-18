@@ -3,7 +3,7 @@
 
 [查看中文版本](README-ZH.md)
 
-Layotto is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event-driven capabilities to simplify application development.
+Layotto is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event pub/sub capabilities to simplify application development.
 
 Layotto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, in addition to providing distributed capabilities, it also provides Service Mesh's ability to control traffic.
 
@@ -56,6 +56,10 @@ See the quick start guide [configuration demo with apollo](docs/en/start/configu
 [Hello World](docs/en/start/rpc/helloworld.md)
 
 [Dubbo JSON RPC](docs/en/start/rpc/dubbo_json_rpc.md)
+
+### Multilingual programming based on WASM
+
+[WASM on Layotto](docs/en/start/wasm/start.md)
 
 ## Community
 
