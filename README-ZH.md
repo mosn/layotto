@@ -1,4 +1,6 @@
 # Layotto (L8):To be the next layer of OSI layer 7
+<img src="/img/logo/grey2-1.svg" height="120px">
+
 [English Version](README.md)
 
 Layotto 是一款使用 Golang 开发的应用运行时, 旨在帮助开发人员快速构建云原生应用，帮助应用和基础设施解耦。它为应用提供了各种分布式能力，比如状态管理，配置管理，事件驱动等能力，以简化应用的开发。

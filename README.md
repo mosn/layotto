@@ -1,4 +1,6 @@
 # Layotto (L8):To be the next layer of OSI layer 7
+<img src="/img/logo/grey2-1.svg" height="120px">
+
 [查看中文版本](README-ZH.md)
 
 Layotto is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event-driven capabilities to simplify application development.
