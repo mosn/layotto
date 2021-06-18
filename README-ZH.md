@@ -4,33 +4,15 @@
 
 [English Version](README.md)
 
-Layotto 是一款使用 Golang 开发的网络代理软件，可以同时作为服务网格(Service Mesh)的sidecar、[微服务和云原生应用的运行时](https://www.infoq.com/articles/multi-runtime-microservice-architecture/) 、Serverless的运行时。 
+Layotto 是一款使用 Golang 开发的应用运行时, 旨在帮助开发人员快速构建云原生应用，帮助应用和基础设施解耦。它为应用提供了各种分布式能力，比如状态管理，配置管理，事件驱动等能力，以简化应用的开发。
 
-作为云原生应用的运行时，Layotto旨在帮助开发人员快速构建云原生应用，帮助应用和基础设施解耦。它为应用提供了各种分布式能力作为积木，比如状态管理，配置管理，事件发布订阅等模块，以简化应用的开发；同时赋予应用可移植性，实现跨云部署、与云厂商解绑。
-
-作为Service Mesh的sidecar，Layotto 以开源的 [MOSN](https://github.com/mosn/mosn) 为底座，在提供最基础的服务通信能力以外，也提供了 Service Mesh 的服务治理能力。
-
-所以，什么是Layotto?
-
-Layotto = Service Mesh + Multi-Runtime + Serverless Runtime = Layer8
+Layotto 以开源的 [MOSN](https://github.com/mosn/mosn) 为底座，在提供分布式能力以外，提供了 Service Mesh 对于流量的管控能力。
 
 ## 功能
 
-- Service Mesh
-  - 服务通信
-  - 服务治理。例如数据流量的劫持和观测，服务限流等
-- [Multi-Runtime](https://www.infoq.com/articles/multi-runtime-microservice-architecture/)
-    - 状态管理
-    - 配置管理  
-    - 事件发布/订阅
-    - 分布式锁
-    - ……
-- 基于WASM的Serverless运行时
-- 可观测性
-    - 健康检查
-    - 查询运行时元数据
-    - ……  
-- 其他：所有 [MOSN](https://github.com/mosn/mosn) 已有的酷炫功能，例如平滑热升级
+- 数据流量的劫持和观测
+- 服务的限流能力
+- 配置中心读写监听
 
 ## 工程架构
 
@@ -55,19 +37,19 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 [通过Layotto调用redis，进行状态管理](docs/zh/start/state/start.md)
 
-### 服务通信：进行RPC调用
+### 在四层网络进行流量干预
+
+[Dump TCP 流量](docs/zh/start/network_filter/tcpcopy.md)
+
+### 在七层网络进行流量干预
+
+[方法级别限流](docs/zh/start/stream_filter/flow_control.md)
+
+### 进行RPC调用
 
 [Hello World](docs/zh/start/rpc/helloworld.md)
 
 [Dubbo JSON RPC](docs/zh/start/rpc/dubbo_json_rpc.md)
-
-### 服务治理：在四层网络进行流量干预
-
-[Dump TCP 流量](docs/zh/start/network_filter/tcpcopy.md)
-
-### 服务治理：在七层网络进行流量干预
-
-[方法级别限流](docs/zh/start/stream_filter/flow_control.md)
 
 ### 健康检查、查询运行时元数据
 
