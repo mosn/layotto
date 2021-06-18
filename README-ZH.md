@@ -53,10 +53,6 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 [使用 Layotto Actuator 进行健康检查和元数据查询](docs/zh/start/actuator/start.md)
 
-## 如何贡献代码
-
-请参阅[贡献者指南](CONTRIBUTING_ZH.md)。
-
 ## 社区
 
 使用 [钉钉](https://www.dingtalk.com/) 扫描下面的二维码加入 Layotto 用户交流群。
@@ -64,4 +60,8 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 ![群二维码](img/ding-talk-group-1.jpg)
 
 或者通过钉钉搜索群号 31912621，加入用户交流群。
+
+## 如何贡献代码
+
+请参阅[贡献者指南](CONTRIBUTING_ZH.md)。
 
