@@ -1,6 +1,6 @@
-# Layotto MQ、兼容Dapr包方案
+# Layotto Pub/Sub、兼容Dapr包方案
 # 一、需求分析
-1. 支持MQ API
+1. 支持Pub/Sub API
 2. 架构上尽量能复用Dapr的包
 # 二、概要设计
 ## 2.1. 整体架构：是否复用Dapr的sdk和proto

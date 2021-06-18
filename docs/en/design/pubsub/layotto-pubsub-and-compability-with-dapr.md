@@ -46,7 +46,7 @@ If we add a field to the original method, it may cause field conflicts.
 
 After serveral discussion,we finally decide to add fields directly in that situation.Conflicts of API are inevitable (of course,we will try to raise pull requests to the Dapr community to avoid conflicts)
 
-In the future, when everyone really sits together to reach a consensus and build api-spec, a new proto with a new path will be created. Anyway, there will be a new proto at that time, so don’t worry about the current conflict.
+In the future, when everyone really sits together to reach a consensus and build api-spec, a new proto with a new path will be created. Anyway, there will be a new proto at that time, so don't worry about the current conflict.
 
 ### 2.2.2. Between APP and Layotto
 Use the same grpc API as Dapr
