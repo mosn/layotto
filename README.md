@@ -9,9 +9,13 @@ Layotto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, i
 
 ## Features
 
-- Hijacking and observation of data traffic
-- The current limiting capability of the service
-- Configuration center read and write monitoring capabilities
+- Service Communication.
+- Service Governance.Such as traffic hijacking and observation, service rate limiting, etc.
+- Configuration management
+- State management
+- Event publish and subscribe
+- Health check, query runtime metadata
+- Multilingual programming based on WASM
 
 ## Project Architecture
 
