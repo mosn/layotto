@@ -3,33 +3,19 @@
 
 [查看中文版本](README-ZH.md)
 
-Layotto is a network proxy developed using Golang, which can be used as the sidecar of Service Mesh, the [multi-runtime of microservices and cloud native applications](https://www.infoq.com/articles/multi-runtime-microservice-architecture/) and also the runtime of Serverless.
+Layotto is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event-driven capabilities to simplify application development.
 
-As the multi-runtime of cloud native applications,Layotto provides various distributed building blocks for applications, such as state management, configuration management, and event-driven capabilities to simplify application development.At the same time, Layotto gives application portability, enabling cross-cloud deployment and unbinding with cloud vendors.
-
-As the sidecar of Service Mesh,Layotto is based on the open source network proxy [MOSN](https://github.com/mosn/mosn) .In addition to providing service communication capabilities, it also provides Service Mesh's ability of service governance.
-
-So,what is Layotto?
-
-Layotto = Service Mesh + Multi-Runtime + Serverless Runtime = Layer8
+Layotto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, in addition to providing distributed capabilities, it also provides Service Mesh's ability to control traffic.
 
 ## Features
 
-- Service Mesh
-    - Service communication
-    - Service governance. Such as the hijacking and observation of data traffic, service rate limiting, etc.
-- [Multi-Runtime](https://www.infoq.com/articles/multi-runtime-microservice-architecture/)
-    - State management
-    - Configuration management
-    - Event pub/sub
-    - Distributed lock
-    - ...
-- Serverless runtime based on WASM
-- Observability
-    - health examination
-    - Query runtime metadata
-    - ...
-- Others: all the cool features of [MOSN](https://github.com/mosn/mosn) , such as smooth hot upgrade
+- Service Communication.
+- Service Governance.Such as traffic hijacking and observation, service rate limiting, etc.
+- Configuration management
+- State management
+- Event publish and subscribe
+- Health check, query runtime metadata
+- Multilingual programming based on WASM
 
 ## Project Architecture
 
@@ -53,12 +39,6 @@ See the quick start guide [configuration demo with apollo](docs/en/start/configu
 
 [State management demo with redis](docs/en/start/state/start.md)
 
-### Service Invocation
-
-[Hello World](docs/en/start/rpc/helloworld.md)
-
-[Dubbo JSON RPC](docs/en/start/rpc/dubbo_json_rpc.md)
-
 ### Traffic intervention on the 4th layer network
 
 [Dump TCP Traffic](docs/en/start/network_filter/tcpcopy.md)
@@ -70,6 +50,12 @@ See the quick start guide [configuration demo with apollo](docs/en/start/configu
 ### Health check and metadata query
 
 [Use Layotto Actuator for health check and metadata query](docs/en/start/actuator/start.md)
+
+### Service Invocation
+
+[Hello World](docs/en/start/rpc/helloworld.md)
+
+[Dubbo JSON RPC](docs/en/start/rpc/dubbo_json_rpc.md)
 
 ## Community
 
