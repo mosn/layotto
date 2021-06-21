@@ -22,8 +22,8 @@ require (
 	mosn.io/api v0.0.0-20210414070543-8a0686b03540
 	mosn.io/layotto/components v0.0.0-20210617023402-38c9d79ebb37
 	mosn.io/layotto/spec v0.0.0-20210617023402-38c9d79ebb37
-	mosn.io/mosn v0.22.1-0.20210425073346-b6880db4669c
-	mosn.io/pkg v0.0.0-20210401090620-f0e0d1a3efce
+	mosn.io/mosn v0.23.0
+	mosn.io/pkg v0.0.0-20210604065522-6e8f5a087814
 	mosn.io/proxy-wasm-go-host v0.0.0-20210312032409-2334f9cf62ec
 )
 
