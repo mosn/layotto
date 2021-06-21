@@ -63,6 +63,16 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 [WASM概述](docs/zh/start/wasm/start.md)
 
+## 设计文档
+
+[pubsub-api-and-compability-with-dapr-component](docs/zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+
+[configuration-api-with-apollo(英文)](docs/en/design/configuration/configuration-api-with-apollo.md)
+
+[rpc设计文档](docs/zh/design/rpc/rpc设计文档.md)
+
+[actuator-design-doc](docs/zh/design/actuator/actuator-design-doc.md)
+
 ## 社区
 
 | 平台  | 联系方式        |

@@ -61,6 +61,16 @@ See the quick start guide [configuration demo with apollo](docs/en/start/configu
 
 [WASM on Layotto](docs/en/start/wasm/start.md)
 
+## Design Documents
+
+[configuration-api-with-apollo](docs/en/design/configuration/configuration-api-with-apollo.md)
+
+[pubsub-api-and-compability-with-dapr-component](docs/en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+
+[rpc-design-doc](docs/en/design/rpc/rpc-design-doc.md)
+
+[actuator-design-doc](docs/en/design/actuator/actuator-design-doc.md)
+
 ## Community
 
 ### Contact Us
