@@ -68,7 +68,8 @@ See the quick start guide [configuration demo with apollo](docs/en/start/configu
 | Platform  | Link        |
 |:----------|:------------|
 | 💬 [DingTalk](https://www.dingtalk.com/en) (preferred) | Search the group number: 31912621 or scan the QR code below <br> <img src="/img/ding-talk-group-1.png" height="200px">
-| 💬 [Wechat](https://www.wechat.com/en/)  | Scan the QR code below and she will invite you into the wechat group <br> <img src="/img/wechat-group.jpg" height="200px">
+
+[comment]: <> (| 💬 [Wechat]&#40;https://www.wechat.com/en/&#41;  | Scan the QR code below and she will invite you into the wechat group <br> <img src="/img/wechat-group.jpg" height="200px">)
 
 ## Contributing to Layotto
 
