@@ -68,7 +68,8 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 | 平台  | 联系方式        |
 |:----------|:------------|
 | 💬 [钉钉](https://www.dingtalk.com/zh) (推荐) | 群号: 31912621 或者扫描下方二维码 <br> <img src="/img/ding-talk-group-1.png" height="200px">
-| 💬 [微信](https://www.wechat.com/)  | 扫描下方二维码添加好友，她会邀请您加入微信群 <br> <img src="/img/wechat-group.jpg" height="200px">
+
+[comment]: <> (| 💬 [微信]&#40;https://www.wechat.com/&#41;  | 扫描下方二维码添加好友，她会邀请您加入微信群 <br> <img src="/img/wechat-group.jpg" height="200px">)
 
 ## 如何贡献代码
 
