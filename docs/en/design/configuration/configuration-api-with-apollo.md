@@ -1,6 +1,6 @@
 # Implement Configuration API with ctripcorp/apollo
 ## Goals
-Implement Configuration API(level-2) with ctripcorp/apollo.
+Implement [Configuration API(level-2)](https://github.com/dapr/dapr/issues/2988) with ctripcorp/apollo.
 
 ## Schema
 
