@@ -111,4 +111,4 @@ In addition to using sdk, you can also interact with Layotto directly through gr
 
 #### Understand the principle of Pub/Sub API implementation
 
-If you are interested in the implementation principle, or want to extend some functions, you can read [Pub/Sub API design document](../../design/pubsub/layotto-pubsub-and-compability-with-dapr.md)
+If you are interested in the implementation principle, or want to extend some functions, you can read [Pub/Sub API design document](../../design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
