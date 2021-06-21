@@ -1655,8 +1655,12 @@ mosn.io/api v0.0.0-20210414070543-8a0686b03540 h1:hdfOaKU2c5jpLCdJC22IQ8kR7qVCUt
 mosn.io/api v0.0.0-20210414070543-8a0686b03540/go.mod h1:TBv4bz2f2RbpgdohbVAFRFVOoN8YyEUiLH3jAh752Qc=
 mosn.io/mosn v0.22.1-0.20210425073346-b6880db4669c h1:xBzYFAusE0hCDsUHATJPT1EklpAwtyMOgJU6nu3L8f8=
 mosn.io/mosn v0.22.1-0.20210425073346-b6880db4669c/go.mod h1:YJmivhBjRLif073XgEQRIlEpk15/S4V7cysS2H/40io=
+mosn.io/mosn v0.23.0 h1:XwI99UnGFZ336hCxyEoM97MJ5aJI5F127zNKfCRGQ64=
+mosn.io/mosn v0.23.0/go.mod h1:9miwkXcUXDYHYIgS+PqyapiRQFpoeNaQDxG2UdGLS3Y=
 mosn.io/pkg v0.0.0-20210401090620-f0e0d1a3efce h1:IIFQeU7soHO5wO9tYKkT5bbse5Vwkzgx/4NgoZrIgL4=
 mosn.io/pkg v0.0.0-20210401090620-f0e0d1a3efce/go.mod h1:YEv5sGe7kqo/Yzj7OJI7Udl3iUcagNeo5unGPiUaUfw=
+mosn.io/pkg v0.0.0-20210604065522-6e8f5a087814 h1:42A6tqajl/hGKkSVLa3mCnaQh8i568Zxgtx0ZECjCmw=
+mosn.io/pkg v0.0.0-20210604065522-6e8f5a087814/go.mod h1:YEv5sGe7kqo/Yzj7OJI7Udl3iUcagNeo5unGPiUaUfw=
 mosn.io/proxy-wasm-go-host v0.0.0-20210312032409-2334f9cf62ec h1:Q5OprvuVc7VNnI8Q+mUb3VsG9uxP/PcRn2KdeWmx8Mc=
 mosn.io/proxy-wasm-go-host v0.0.0-20210312032409-2334f9cf62ec/go.mod h1:wBRY9Xjf77GZhvAuEc6nQXZ6dQK39kNU2ok/+Z8mSU8=
 nhooyr.io/websocket v1.8.6 h1:s+C3xAMLwGmlI31Nyn/eAehUlZPwfYZu2JXM621Q5/k=
