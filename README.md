@@ -7,6 +7,11 @@ Layotto is an application runtime developed using Golang, which provides various
 
 Layotto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, in addition to providing distributed capabilities, it also provides Service Mesh's ability to control traffic.
 
+## Motivation
+
+Layotto aims to combine Runtime with Service Mesh into one sidecar, no matter you are using mosn or envoy or any other
+product as Service Mesh data plane, you can always add Runtime capabilities to these data planes without add a new Runtime sidecar. 
+
 ## Features
 
 - Service Communication
@@ -84,3 +89,11 @@ See the quick start guide [configuration demo with apollo](docs/en/start/configu
 ## Contributing to Layotto
 
 See the Development Guide [contributing](CONTRIBUTING.md) to get started with building and developing.
+
+## FAQ
+
+### Difference with dapr?
+
+dapr is an excellent Runtime product, but it lacks the ability of Service Mesh, which is necessary for the Runtime 
+product used in production environment, so we hope to combine Runtime with Service Mesh into one sidecar to meet 
+more complex production requirements.
