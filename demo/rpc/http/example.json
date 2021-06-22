@@ -1,7 +1,7 @@
 {
 	"servers":[
 		{
-			"default_log_path":"./debug.log",
+			"default_log_path": "stdout",
 			"default_log_level": "DEBUG",
 			"routers": [
 				{
