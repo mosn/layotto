@@ -2,7 +2,7 @@
 
 ### Introduction
 
-When you run the demo according to the quick-start document [Configuration demo with apollo](docs/en/start/configuration/start-apollo.md), you may notice that there is such a configuration in the configuration file config_apollo.json:
+When you run the demo according to the quick-start document [Configuration demo with apollo](../configuration/start-apollo.md), you may notice that there is such a configuration in the configuration file config_apollo.json:
 ```json
                 {
                   "type": "tcpcopy",
