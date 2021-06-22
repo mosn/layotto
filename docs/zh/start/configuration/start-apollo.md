@@ -17,6 +17,8 @@
 ```bash
 cd ${projectpath}/cmd/layotto
 go build
+#备注 如果发现构建失败无法下载,请进行如先设置
+go env -w GOPROXY="https://goproxy.cn,direct"
 ```
 
 完成后目录下会生成layotto文件，运行它：
