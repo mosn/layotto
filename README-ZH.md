@@ -8,6 +8,11 @@ Layotto 是一款使用 Golang 开发的应用运行时, 旨在帮助开发人�
 
 Layotto 以开源的 [MOSN](https://github.com/mosn/mosn) 为底座，在提供分布式能力以外，提供了 Service Mesh 对于流量的管控能力。
 
+## 诞生背景
+
+Layotto希望可以把Runtime跟Service Mesh两者的能力结合起来，无论你是使用mosn还是envoy或者其他产品作为Service Mesh的数据面，都可以在
+不增加新的sidecar的前提下，使用Layotto为这些数据面追加Runtime的能力。
+
 ## 功能
 
 - 服务通信 
@@ -15,7 +20,7 @@ Layotto 以开源的 [MOSN](https://github.com/mosn/mosn) 为底座，在提供�
 - 配置管理
 - 状态管理
 - 事件发布订阅
-- 健康检查、查询运行时元数据  
+- 健康检查、查询运行时元数据
 - 基于WASM的多语言编程
 
 ## 工程架构
@@ -85,3 +90,9 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 请参阅[贡献者指南](CONTRIBUTING_ZH.md)。
 
+## FAQ
+
+### 跟dapr有什么差异？
+
+dapr是一款优秀的Runtime产品，但它本身缺失了Service Mesh的能力，而这部分能力对于实际在生产环境落地是至关重要的，因此我们希望把Runtime
+跟Service Mesh两种能力结合在一起，满足更复杂的生产落地需求。
