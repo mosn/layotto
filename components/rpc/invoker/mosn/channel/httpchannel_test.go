@@ -5,6 +5,7 @@ import (
 	"context"
 	"net"
 	"strconv"
+	"strings"
 	"sync"
 	"testing"
 
@@ -97,4 +98,23 @@ func TestConcurrent(t *testing.T) {
 		}(i)
 	}
 	wg.Wait()
+}
+
+func TestConstructReq(t *testing.T) {
+	channel, err := newHttpChannel(ChannelConfig{Size: 1})
+	assert.Nil(t, err)
+
+	httpChannel := channel.(*httpChannel)
+
+	reqs := []*rpc.RPCRequest{
+		{Id: "foo", Method: "bar", Data: []byte("hello world")},
+		{Id: "foo", Method: "/bar", Data: []byte("hello world")},
+	}
+
+	for _, req := range reqs {
+		fastHttpReq := httpChannel.constructReq(req)
+		sb := &strings.Builder{}
+		fastHttpReq.WriteTo(sb)
+		assert.Equal(t, "GET /bar HTTP/1.1\r\nHost: localhost\r\nContent-Length: 11\r\nId: foo\r\n\r\nhello world", sb.String())
+	}
 }
