@@ -30,7 +30,7 @@ func main() {
 		&runtimev1pb.InvokeServiceRequest{
 			Id: "HelloService:1.0",
 			Message: &runtimev1pb.CommonInvokeRequest{
-				Method:      "hello",
+				Method:      "/hello",
 				ContentType: "",
 				Data:        &anypb.Any{Value: []byte(*data)}}},
 	)
