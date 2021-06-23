@@ -107,8 +107,7 @@ func (h *httpChannel) constructReq(req *rpc.RPCRequest) *fasthttp.Request {
 		httpReq.Header.Set(key, value)
 		return true
 	})
-
-	httpReq.Header.Set("host", "localhost")
+	httpReq.SetHost("localhost")
 	httpReq.Header.Set("id", req.Id)
 	return httpReq
 }
