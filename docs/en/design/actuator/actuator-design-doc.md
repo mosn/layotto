@@ -187,7 +187,7 @@ A new listener is added for handling actuator requests. A new stream_filter call
 
 ![img.png](../../../../img/actuator/actuator_process.png)
 
-explanation£º
+explanation:
 
 ### 2.4.1. When requests arrive
 
@@ -258,7 +258,7 @@ When the path '/actuator/info' is visited,Actuator dispatch the request to info.
 
 info.Endpoint will collect information from all the implementation of info.Contributor
 
-# Èý¡¢Detailed design
+# 3. Detailed design
 
 ## 3.1. When will health state change
 ### 3.1.1. runtime_startup Indicator
