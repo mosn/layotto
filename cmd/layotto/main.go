@@ -80,6 +80,7 @@ import (
 	"mosn.io/mosn/pkg/mosn"
 	_ "mosn.io/mosn/pkg/network"
 	_ "mosn.io/mosn/pkg/stream/http"
+	_ "mosn.io/mosn/pkg/stream/xprotocol"
 	_ "mosn.io/mosn/pkg/wasm/runtime/wasmer"
 	_ "mosn.io/pkg/buffer"
 )

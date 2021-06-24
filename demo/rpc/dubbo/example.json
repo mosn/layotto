@@ -1,0 +1,91 @@
+{
+	"servers":[
+		{
+			"default_log_path":"stdout",
+			"default_log_level": "DEBUG",
+			"routers": [
+				{
+					"router_config_name":"dubbo_router",
+					"virtual_hosts":[{
+						"name":"http_host",
+						"domains": ["*"],
+						"routers": [
+							{
+								"route":{"cluster_name":"dubbo_server"}
+							}
+						]
+					}]
+				}],
+			"listeners":[
+				{
+					"name":"grpc",
+					"address": "127.0.0.1:34904",
+					"bind_port": true,
+					"filter_chains": [{
+						"filters": [
+							{
+								"type": "grpc",
+								"config": {
+									"server_name":"runtime",
+									"grpc_config": {
+										"rpcs": {
+											"mosn": {
+												"config": {
+													"channel": [{
+														"size": 16,
+														"protocol": "dubbo",
+														"listener": "egress_runtime_dubbo"
+													}]
+												}
+											}
+										}
+									}
+								}
+							}
+						]
+					}]
+				},
+				{
+					"name": "egress_runtime_dubbo",
+					"address": "0.0.0.0:20880",
+					"bind_port": true,
+					"filter_chains": [
+						{
+							"filters": [
+								{
+									"type": "proxy",
+									"config": {
+										"downstream_protocol": "X",
+										"upstream_protocol": "X",
+										"extend_config": {
+										  "sub_protocol": "dubbo"
+										},
+										"name": "proxy_config",
+										"router_config_name": "dubbo_router"
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"cluster_manager": {
+		"tls_context": {},
+		"clusters": [
+			{
+				"name": "dubbo_server",
+				"type": "SIMPLE",
+				"lb_type": "LB_RANDOM",
+				"hosts": [
+					{
+						"address": "127.0.0.1:20880",
+						"hostname": "downstream_machine1",
+						"weight": 1
+					}
+				]
+			}
+		]
+	}
+}
