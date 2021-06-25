@@ -25,6 +25,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"mosn.io/api"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/rpc/invoker/mosn/transport_protocol"
@@ -53,7 +55,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 			localTcpConn := &fakeTcpConn{c: local}
 			remoteTcpConn := &fakeTcpConn{c: remote}
 			if err := acceptFunc(remoteTcpConn, config.Listener); err != nil {
-				return nil, err
+				return nil, status.Error(codes.Internal, err.Error())
 			}
 			return localTcpConn, nil
 		},
@@ -96,7 +98,7 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	buf, encErr := m.proto.Encode(req.Ctx, frame)
 	if encErr != nil {
 		m.pool.Put(conn, false)
-		return nil, encErr
+		return nil, status.Error(codes.InvalidArgument, encErr.Error())
 	}
 
 	respChan := make(chan api.XRespFrame, 1)
@@ -104,7 +106,7 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	deadline, _ := ctx.Deadline()
 	if err := conn.SetWriteDeadline(deadline); err != nil {
 		m.pool.Put(conn, true)
-		return nil, err
+		return nil, status.Error(codes.Unavailable, err.Error())
 	}
 	// register response channel
 	xstate.mu.Lock()
@@ -115,7 +117,7 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	if _, err := conn.Write(buf.Bytes()); err != nil {
 		m.removeRespChan(xstate, id)
 		m.pool.Put(conn, true)
-		return nil, err
+		return nil, status.Error(codes.Unavailable, err.Error())
 	}
 	m.pool.Put(conn, false)
 
@@ -124,10 +126,10 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		return m.proto.FromFrame(resp)
 	case <-ctx.Done():
 		m.removeRespChan(xstate, id)
-		return nil, ErrTimeout
+		return nil, status.Error(codes.DeadlineExceeded, ErrTimeout.Error())
 	case <-conn.closeChan:
 		m.removeRespChan(xstate, id)
-		return nil, ErrConnClosed
+		return nil, status.Error(codes.Unavailable, ErrConnClosed.Error())
 	}
 }
 

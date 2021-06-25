@@ -19,19 +19,20 @@ package channel
 import (
 	"container/list"
 	"context"
-	"errors"
 	"io"
 	"net"
 	"sync"
 	"sync/atomic"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
 )
 
 var (
-	connpoolTimeout = errors.New("connection pool timeout")
+	connpoolTimeout = "connection pool timeout"
 )
 
 type wrapConn struct {
@@ -163,7 +164,7 @@ func (p *connPool) readloop(c *wrapConn) {
 func (p *connPool) waitTurn(ctx context.Context) error {
 	select {
 	case <-ctx.Done():
-		return connpoolTimeout
+		return status.Error(codes.DeadlineExceeded, connpoolTimeout)
 	case p.sema <- struct{}{}:
 		return nil
 	}
