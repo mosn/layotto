@@ -132,4 +132,4 @@ If you are implementing your own Layotto component, you can add health check cap
 
 ### How it works
 
-If you are interested in the implementation principle, or want to extend some functions in Actuator, you can read [Actuator's design document](../../design/actuator-design-doc.md)
+If you are interested in the implementation principle, or want to extend some functions in Actuator, you can read [Actuator's design document](../../design/actuator/actuator-design-doc.md)
