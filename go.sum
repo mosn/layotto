@@ -1653,11 +1653,9 @@ k8s.io/utils v0.0.0-20201110183641-67b214c5f920/go.mod h1:jPW/WVKK9YHAvNhRxK0md/
 mosn.io/api v0.0.0-20210204052134-5b9a826795fd/go.mod h1:TBv4bz2f2RbpgdohbVAFRFVOoN8YyEUiLH3jAh752Qc=
 mosn.io/api v0.0.0-20210414070543-8a0686b03540 h1:hdfOaKU2c5jpLCdJC22IQ8kR7qVCUtl6dSq/FsepnuY=
 mosn.io/api v0.0.0-20210414070543-8a0686b03540/go.mod h1:TBv4bz2f2RbpgdohbVAFRFVOoN8YyEUiLH3jAh752Qc=
-mosn.io/mosn v0.22.1-0.20210425073346-b6880db4669c h1:xBzYFAusE0hCDsUHATJPT1EklpAwtyMOgJU6nu3L8f8=
 mosn.io/mosn v0.22.1-0.20210425073346-b6880db4669c/go.mod h1:YJmivhBjRLif073XgEQRIlEpk15/S4V7cysS2H/40io=
 mosn.io/mosn v0.23.0 h1:XwI99UnGFZ336hCxyEoM97MJ5aJI5F127zNKfCRGQ64=
 mosn.io/mosn v0.23.0/go.mod h1:9miwkXcUXDYHYIgS+PqyapiRQFpoeNaQDxG2UdGLS3Y=
-mosn.io/pkg v0.0.0-20210401090620-f0e0d1a3efce h1:IIFQeU7soHO5wO9tYKkT5bbse5Vwkzgx/4NgoZrIgL4=
 mosn.io/pkg v0.0.0-20210401090620-f0e0d1a3efce/go.mod h1:YEv5sGe7kqo/Yzj7OJI7Udl3iUcagNeo5unGPiUaUfw=
 mosn.io/pkg v0.0.0-20210604065522-6e8f5a087814 h1:42A6tqajl/hGKkSVLa3mCnaQh8i568Zxgtx0ZECjCmw=
 mosn.io/pkg v0.0.0-20210604065522-6e8f5a087814/go.mod h1:YEv5sGe7kqo/Yzj7OJI7Udl3iUcagNeo5unGPiUaUfw=
