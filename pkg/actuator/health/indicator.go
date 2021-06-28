@@ -1,12 +1,12 @@
 package health
 
 type Indicator interface {
-	Report() (string, map[string]interface{})
+	Report() (status string, details map[string]interface{})
 }
 
 type IndicatorAdapter func() (string, map[string]interface{})
 
-func (ca IndicatorAdapter) Report() (string, map[string]interface{}) {
+func (ca IndicatorAdapter) Report() (status string, details map[string]interface{}) {
 	return ca()
 }
 
