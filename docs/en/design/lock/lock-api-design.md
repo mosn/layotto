@@ -31,31 +31,32 @@ TryLock is non-blocking, it return directly if the lock is not obtained.
 proto:
 ```protobuf
 // Distributed Lock API
-rpc TryLock(TryLockRequest)returns (TryLockResponse) {}
-
-rpc Unlock(UnlockRequest)returns (UnlockResponse) {}
-
 message TryLockRequest {
+  string store_name = 1;
   // resource_id is the lock key.
-  string resource_id = 1;
-  // client_id will be automatically generated if not set
-  optional string client_id = 2;
-  // expire is the time before expire
-  int64 expire = 3;
+  string resource_id = 2;
+  // lock_owner indicate the lock owner.
+  // It will be automatically generated if not set.
+  // This field is per request,not per process,so it is different for each request,which aims to prevent multi-thread in the same process trying the same lock concurrently.
+  // The reason why we don't remove this field in the request struct is that when reentrant lock is needed,the existing lock_owner is required to identify client and check "whether this client can reenter this lock"
+  string lock_owner = 3;
+  // expire is the time before expire.The time unit is second.
+  int32 expire = 4;
 }
 
 message TryLockResponse {
 
   bool success = 1;
 
-  string client_id = 2;
+  string lock_owner = 2;
 }
 
 message UnlockRequest {
+  string store_name = 1;
   // resource_id is the lock key.
-  string resource_id = 1;
+  string resource_id = 2;
 
-  string client_id = 2;
+  string lock_owner = 3;
 }
 
 message UnlockResponse {
@@ -63,10 +64,12 @@ message UnlockResponse {
     SUCCESS = 0;
     LOCK_UNEXIST = 1;
     LOCK_BELONG_TO_OTHERS = 2;
+    INTERNAL_ERROR = 3;
   }
 
   Status status = 1;
 }
+
 
 ```
 **Q: What is the time unit of the expire field?**
@@ -76,6 +79,15 @@ A: Seconds.
 **Q: Can we force the user to set the number of seconds to be large enough(instead of too small)?**
 
 A: There is no way to limit it at compile time or startup, forget it
+
+**Q: What would happen if different applications pass the same lock_owner?**
+
+case 1. If two apps with different app-id pass the same lock_owner,they won't conflict because lock_owner is grouped by 'app-id ',while 'app-id' is configurated in sidecar's static config(configurated in config.json or passed as parameters at startup)
+
+case 2.If two apps with same app-id pass the same lock_owner,they will conflict and the second app will obtained the same lock already used by the first app.Then the correctness property will be broken.
+So user has to care about the uniqueness property of lock_owner.
+
+We let lock_owner field optional.If lock_owner is blank,the sidecar will generate a uuid for the request.
 
 **Q: Why not add metadata field**
 
@@ -94,7 +106,7 @@ message LockKeepAliveRequest {
   // resource_id is the lock key.
   string resource_id = 1;
 
-  string client_id = 2;
+  string lock_owner = 2;
   // expire is the time to expire
   int64 expire = 3;
 }
@@ -153,7 +165,7 @@ We can define the http callback SPI, which is polled and detected by the Layotto
     "lock": [
       {
         "resource_id": "res1",
-        "client_id": "dasfdasfasdfa",
+        "lock_owner": "dasfdasfasdfa",
         "type": "unlock_fail"
       }
     ],

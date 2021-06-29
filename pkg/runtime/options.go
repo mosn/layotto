@@ -6,6 +6,7 @@ import (
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/rpc"
 	rgrpc "mosn.io/layotto/pkg/grpc"
+	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 	"mosn.io/layotto/pkg/runtime/pubsub"
 	"mosn.io/layotto/pkg/runtime/state"
 	"mosn.io/pkg/log"
@@ -18,6 +19,7 @@ type services struct {
 	rpcs         []*rpc.Factory
 	pubSubs      []*pubsub.Factory
 	states       []*state.Factory
+	locks        []*runtime_lock.Factory
 }
 
 type runtimeOptions struct {
@@ -77,6 +79,12 @@ func WithRpcFactory(rpcs ...*rpc.Factory) Option {
 func WithPubSubFactory(factorys ...*pubsub.Factory) Option {
 	return func(o *runtimeOptions) {
 		o.services.pubSubs = append(o.services.pubSubs, factorys...)
+	}
+}
+
+func WithLockFactory(factorys ...*runtime_lock.Factory) Option {
+	return func(o *runtimeOptions) {
+		o.services.locks = append(o.services.locks, factorys...)
 	}
 }
 

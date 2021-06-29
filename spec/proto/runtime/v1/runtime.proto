@@ -26,6 +26,11 @@ service Runtime {
   // SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
   rpc SubscribeConfiguration(stream SubscribeConfigurationRequest) returns (stream SubscribeConfigurationResponse) {}
 
+  // Distributed Lock API
+  rpc TryLock(TryLockRequest)returns (TryLockResponse) {}
+
+  rpc Unlock(UnlockRequest)returns (UnlockResponse) {}
+
   //  Below are the APIs compatible with Dapr.
   //  We try to keep them same as Dapr's because we want to work with Dapr to build an API spec for cloud native runtime
   //  ,like CloudEvent for event data.
@@ -51,6 +56,45 @@ service Runtime {
   // Publishes events to the specific topic.
   rpc PublishEvent(PublishEventRequest) returns (google.protobuf.Empty) {}
 
+}
+
+message TryLockRequest {
+  string store_name = 1;
+  // resource_id is the lock key.
+  string resource_id = 2;
+  // lock_owner indicate the lock owner.
+  // It will be automatically generated if not set.
+  // This field is per request,not per process,so it is different for each request,which aims to prevent multi-thread in the same process trying the same lock concurrently.
+  // The reason why we don't remove this field in the request struct is that when reentrant lock is needed,the existing lock_owner is required to identify client and check "whether this client can reenter this lock"
+  string lock_owner = 3;
+  // expire is the time before expire.The time unit is second.
+  int32 expire = 4;
+}
+
+message TryLockResponse {
+
+  bool success = 1;
+
+  string lock_owner = 2;
+}
+
+message UnlockRequest {
+  string store_name = 1;
+  // resource_id is the lock key.
+  string resource_id = 2;
+
+  string lock_owner = 3;
+}
+
+message UnlockResponse {
+  enum Status {
+    SUCCESS = 0;
+    LOCK_UNEXIST = 1;
+    LOCK_BELONG_TO_OTHERS = 2;
+    INTERNAL_ERROR = 3;
+  }
+
+  Status status = 1;
 }
 
 message SayHelloRequest {
@@ -395,7 +439,7 @@ message ExecuteStateTransactionRequest {
   repeated TransactionalStateOperation operations = 2;
 
   // The metadata used for transactional operations.
-  map<string,string> metadata = 3;
+  map<string, string> metadata = 3;
 }
 
 // PublishEventRequest is the message to publish event data to pubsub topic
