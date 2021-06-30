@@ -22,6 +22,7 @@ func TryLockResponse2GrpcResponse(compResponse *lock.TryLockResponse) *runtimev1
 		return result
 	}
 	result.Success = compResponse.Success
+	//result.LockOwner=compResponse.LockOwner
 	return result
 }
 

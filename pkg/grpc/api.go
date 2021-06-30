@@ -677,6 +677,10 @@ func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*ru
 		err := status.Errorf(codes.InvalidArgument, messages.ErrResourceIdEmpty, req.StoreName)
 		return &runtimev1pb.TryLockResponse{}, err
 	}
+	if req.LockOwner == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrLockOwnerEmpty, req.StoreName)
+		return &runtimev1pb.TryLockResponse{}, err
+	}
 	if req.Expire <= 0 {
 		err := status.Errorf(codes.InvalidArgument, messages.ErrExpireNotPositive, req.StoreName)
 		return &runtimev1pb.TryLockResponse{}, err
@@ -687,9 +691,9 @@ func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*ru
 		return &runtimev1pb.TryLockResponse{}, status.Errorf(codes.InvalidArgument, messages.ErrLockStoreNotFound, req.StoreName)
 	}
 	// 3. generate LockOwner if not set
-	if req.LockOwner == "" {
-		req.LockOwner = uuid.New().String()
-	}
+	//if req.LockOwner == "" {
+	//	req.LockOwner = uuid.New().String()
+	//}
 	// 4. convert request
 	compReq := converter.TryLockRequest2ComponentRequest(req)
 	// modify key
@@ -707,8 +711,6 @@ func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*ru
 	}
 	// 6. convert response
 	resp := converter.TryLockResponse2GrpcResponse(compResp)
-	// 7. set clientId in response
-	resp.LockOwner = req.LockOwner
 	return resp, nil
 }
 

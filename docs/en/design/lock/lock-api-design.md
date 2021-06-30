@@ -1,5 +1,7 @@
 # 0. tl;dl
-Add TryLock and Unlock API. The Lock Renewal API is controversial and will not be added into the first version
+Add TryLock and Unlock API. 
+
+The Lock Renewal API is controversial and will not be added into the first version
 
 # 1. Evaluation of products on the market
 | **System** | **try lock** | **Blocking lock(based on watch)** | **Availability** | **Write operations are linearizable** | **sequencer([chubby's feature](https://static.googleusercontent.com/media/research.google.com/zh-TW//archive/chubby-osdi06.pdf))** | **Lock renewal** |

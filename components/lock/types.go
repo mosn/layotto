@@ -17,7 +17,8 @@ type TryLockRequest struct {
 }
 
 type TryLockResponse struct {
-	Success bool
+	Success   bool
+	LockOwner string
 }
 
 type UnlockRequest struct {

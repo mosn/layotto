@@ -115,17 +115,19 @@ func (p *StandaloneRedisLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockRespo
 		return newInternalErrorUnlockResponse(), err
 	}
 	// 3. parse result
-	v := eval.Val()
-	i, ok := v.(int)
+	i, err := eval.Int()
 	status := lock.INTERNAL_ERROR
-	if ok {
-		if i >= 0 {
-			status = lock.SUCCESS
-		} else if i == -1 {
-			status = lock.LOCK_UNEXIST
-		} else if i == -2 {
-			status = lock.LOCK_BELONG_TO_OTHERS
-		}
+	if err != nil {
+		return &lock.UnlockResponse{
+			Status: status,
+		}, err
+	}
+	if i >= 0 {
+		status = lock.SUCCESS
+	} else if i == -1 {
+		status = lock.LOCK_UNEXIST
+	} else if i == -2 {
+		status = lock.LOCK_BELONG_TO_OTHERS
 	}
 	return &lock.UnlockResponse{
 		Status: status,

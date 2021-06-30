@@ -1,5 +1,7 @@
 # 0. 太长，不看
-添加TryLock和Unlock API. 续租API有争议，第一版不加入续租API
+添加TryLock和Unlock API. 
+
+续租API有争议，第一版不加入续租API
 
 # 1. 调研
 | **系统** | **能否实现分布式锁** | **阻塞锁(基于watch)** | **可用性** | **写操作线性一致** | **sequencer([chubby论文里提出的feature]([https://static.googleusercontent.com/media/research.google.com/zh-TW//archive/chubby-osdi06.pdf](https://static.googleusercontent.com/media/research.google.com/zh-TW//archive/chubby-osdi06.pdf)))** | **续租** |
