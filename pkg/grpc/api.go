@@ -690,11 +690,7 @@ func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*ru
 	if !ok {
 		return &runtimev1pb.TryLockResponse{}, status.Errorf(codes.InvalidArgument, messages.ErrLockStoreNotFound, req.StoreName)
 	}
-	// 3. generate LockOwner if not set
-	//if req.LockOwner == "" {
-	//	req.LockOwner = uuid.New().String()
-	//}
-	// 4. convert request
+	// 3. convert request
 	compReq := converter.TryLockRequest2ComponentRequest(req)
 	// modify key
 	var err error
@@ -703,13 +699,13 @@ func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*ru
 		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
 		return &runtimev1pb.TryLockResponse{}, err
 	}
-	// 5. delegate to the component
+	// 4. delegate to the component
 	compResp, err := store.TryLock(compReq)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
 		return &runtimev1pb.TryLockResponse{}, err
 	}
-	// 6. convert response
+	// 5. convert response
 	resp := converter.TryLockResponse2GrpcResponse(compResp)
 	return resp, nil
 }

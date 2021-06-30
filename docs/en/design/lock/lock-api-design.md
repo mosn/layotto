@@ -33,14 +33,29 @@ TryLock is non-blocking, it return directly if the lock is not obtained.
 proto:
 ```protobuf
 // Distributed Lock API
+rpc TryLock(TryLockRequest)returns (TryLockResponse) {}
+
+rpc Unlock(UnlockRequest)returns (UnlockResponse) {}
+
 message TryLockRequest {
   string store_name = 1;
   // resource_id is the lock key.
   string resource_id = 2;
-  // lock_owner indicate the lock owner.
-  // It will be automatically generated if not set.
-  // This field is per request,not per process,so it is different for each request,which aims to prevent multi-thread in the same process trying the same lock concurrently.
-  // The reason why we don't remove this field in the request struct is that when reentrant lock is needed,the existing lock_owner is required to identify client and check "whether this client can reenter this lock"
+  // lock_owner indicate the identifier of lock owner.
+  // This field is required.You can generate a uuid as lock_owner.For example,in golang:
+  //
+  // req.LockOwner = uuid.New().String()
+  //
+  // This field is per request,not per process,so it is different for each request,
+  // which aims to prevent multi-thread in the same process trying the same lock concurrently.
+  //
+  // The reason why we don't make it automatically generated is:
+  // 1. If it is automatically generated,there must be a 'my_lock_owner_id' field in the response.
+  // This name is so weird that we think it is inappropriate to put it into the api spec
+  // 2. If we change the field 'my_lock_owner_id' in the response to 'lock_owner',which means the current lock owner of this lock,
+  // we find that in some lock services users can't get the current lock owner.Actually users don't need it at all.
+  // 3. When reentrant lock is needed,the existing lock_owner is required to identify client and check "whether this client can reenter this lock".
+  // So this field in the request shouldn't be removed.
   string lock_owner = 3;
   // expire is the time before expire.The time unit is second.
   int32 expire = 4;
@@ -49,8 +64,6 @@ message TryLockRequest {
 message TryLockResponse {
 
   bool success = 1;
-
-  string lock_owner = 2;
 }
 
 message UnlockRequest {
@@ -72,7 +85,6 @@ message UnlockResponse {
   Status status = 1;
 }
 
-
 ```
 **Q: What is the time unit of the expire field?**
 
@@ -87,9 +99,8 @@ A: There is no way to limit it at compile time or startup, forget it
 case 1. If two apps with different app-id pass the same lock_owner,they won't conflict because lock_owner is grouped by 'app-id ',while 'app-id' is configurated in sidecar's static config(configurated in config.json or passed as parameters at startup)
 
 case 2.If two apps with same app-id pass the same lock_owner,they will conflict and the second app will obtained the same lock already used by the first app.Then the correctness property will be broken.
-So user has to care about the uniqueness property of lock_owner.
 
-We let lock_owner field optional.If lock_owner is blank,the sidecar will generate a uuid for the request.
+So user has to care about the uniqueness property of lock_owner.
 
 **Q: Why not add metadata field**
 

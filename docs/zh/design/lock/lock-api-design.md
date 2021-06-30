@@ -30,14 +30,29 @@
 proto:
 ```protobuf
 // Distributed Lock API
+rpc TryLock(TryLockRequest)returns (TryLockResponse) {}
+
+rpc Unlock(UnlockRequest)returns (UnlockResponse) {}
+
 message TryLockRequest {
   string store_name = 1;
   // resource_id is the lock key.
   string resource_id = 2;
-  // lock_owner indicate the lock owner.
-  // It will be automatically generated if not set.
-  // This field is per request,not per process,so it is different for each request,which aims to prevent multi-thread in the same process trying the same lock concurrently.
-  // The reason why we don't remove this field in the request struct is that when reentrant lock is needed,the existing lock_owner is required to identify client and check "whether this client can reenter this lock"
+  // lock_owner indicate the identifier of lock owner.
+  // This field is required.You can generate a uuid as lock_owner.For example,in golang:
+  //
+  // req.LockOwner = uuid.New().String()
+  //
+  // This field is per request,not per process,so it is different for each request,
+  // which aims to prevent multi-thread in the same process trying the same lock concurrently.
+  //
+  // The reason why we don't make it automatically generated is:
+  // 1. If it is automatically generated,there must be a 'my_lock_owner_id' field in the response.
+  // This name is so weird that we think it is inappropriate to put it into the api spec
+  // 2. If we change the field 'my_lock_owner_id' in the response to 'lock_owner',which means the current lock owner of this lock,
+  // we find that in some lock services users can't get the current lock owner.Actually users don't need it at all.
+  // 3. When reentrant lock is needed,the existing lock_owner is required to identify client and check "whether this client can reenter this lock".
+  // So this field in the request shouldn't be removed.
   string lock_owner = 3;
   // expire is the time before expire.The time unit is second.
   int32 expire = 4;
@@ -46,8 +61,6 @@ message TryLockRequest {
 message TryLockResponse {
 
   bool success = 1;
-
-  string lock_owner = 2;
 }
 
 message UnlockRequest {
@@ -79,6 +92,20 @@ A: 秒。
 **Q: 能否强制让用户把秒数配大点，别配太小？**
 
 A: 没法在编译时或者启动时限制，算了
+
+**Q: 如果多个客户端传相同的LockOwner会怎么样?**
+
+case 1. 两个客户端app-id不一样，传的LockOwner相同，不会发生冲突
+
+case 2. 两个客户端app-id一样，传的LockOwner相同，会发生冲突。可能会出现抢到别人的锁、释放别人的锁等异常情况
+
+因此用户需要保证LockOwner的唯一性，例如给每个请求分配一个UUID,golang写法：
+
+```go
+import "github.com/google/uuid"
+//...
+req.LockOwner = uuid.New().String()
+```
 
 **Q: 为啥不加metadata**
 
