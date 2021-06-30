@@ -9,9 +9,7 @@
 | 单机redis | yes | x | 单点失效时，锁服务不可用 | yes | yes(need poc) | yes |
 | redis集群 | yes | x | yes | no. 故障转移可能导致丢锁 | yes(need poc) | yes |
 | redis Redlock | yes |  |  |  |  |  |
-| nacos | × |  |  |  |  |  |
 | consul | yes |  |  |  |  |  |
-| eureka | × |  |  |  |  |  |
 | zookeeper | yes | yes | yes 有fo能力,[200 ms内完成选举](https://pdos.csail.mit.edu/6.824/papers/zookeeper.pdf) | yes | yes 使用zxid作为sequencer | yes |
 | etcd | yes | yes | yes | yes | yes use revision | yes lease.KeepAlive |
 

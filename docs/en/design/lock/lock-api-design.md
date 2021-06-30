@@ -9,9 +9,7 @@ The Lock Renewal API is controversial and will not be added into the first versi
 | Stand-alone redis | yes | x | unavailable when single failure | yes | yes(need poc) | yes |
 | redis cluster | yes | x | yes | no. Locks will be unsafe when fail-over happens | yes(need poc) | yes |
 | redis Redlock | yes | | | | | |
-| nacos | × | | | | | |
 | consul | yes | | | | | |
-| eureka | × | | | | | |
 | zookeeper | yes | yes | yes. [the election completes within 200 ms](https://pdos.csail.mit.edu/6.824/papers/zookeeper.pdf) | yes | yes use zxid as sequencer | yes |
 | etcd | yes | yes | yes | yes | yes use revision | yes lease.KeepAlive |
 
