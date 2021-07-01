@@ -4,12 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"strings"
+	"sync"
+	"sync/atomic"
+
 	"github.com/dapr/components-contrib/state"
 	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
+	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/pkg/converter"
-	"strings"
-	"sync"
 
 	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
@@ -34,6 +38,14 @@ import (
 
 var (
 	ErrNoInstance = errors.New("no instance found")
+	streamId      int64
+	chunkNum      int
+	bytesPool     = sync.Pool{
+		New: func() interface{} {
+			// set size to 4M
+			return make([]byte, 4194304)
+		},
+	}
 )
 
 type API interface {
@@ -57,6 +69,11 @@ type API interface {
 	DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateRequest) (*emptypb.Empty, error)
 	DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkStateRequest) (*emptypb.Empty, error)
 	ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*emptypb.Empty, error)
+
+	// File
+	GetFile(*runtimev1pb.GetFileRequest, runtimev1pb.Runtime_GetFileServer) error
+	// Put file with stream.
+	PutFile(runtimev1pb.Runtime_PutFileServer) error
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -68,6 +85,7 @@ type api struct {
 	pubSubs                  map[string]pubsub.PubSub
 	stateStores              map[string]state.Store
 	transactionalStateStores map[string]state.TransactionalStore
+	fileOps                  map[string]file.FileService
 }
 
 func NewAPI(
@@ -654,4 +672,61 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 		return &emptypb.Empty{}, err
 	}
 	return &emptypb.Empty{}, nil
+}
+
+func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtime_GetFileServer) error {
+	if a.fileOps[req.StoreName] == nil {
+		return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
+	}
+	st := &file.GetFileStu{ObjectName: req.Name, Metadata: req.Metadata}
+	data, err := a.fileOps[req.StoreName].Get(st)
+	if err != nil {
+		return status.Errorf(codes.Internal, "get file failed,err: %+v", err)
+	}
+	buffs := bytesPool.Get()
+	defer bytesPool.Put(buffs)
+	buf := buffs.([]byte)
+	for {
+		length, err := data.Read(buf)
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return status.Errorf(codes.Internal, "get file failed,err: %+v", err)
+		}
+		resp := &runtimev1pb.GetFileResponse{Data: buf[:length]}
+		if err = stream.Send(resp); err != nil {
+			return status.Errorf(codes.Internal, "send resp failed,err: %+v", err)
+		}
+	}
+	return nil
+}
+
+func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
+	id := atomic.AddInt64(&streamId, 1)
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			if a.fileOps[req.StoreName] == nil {
+				return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
+			}
+			if err := a.fileOps[req.StoreName].CompletePut(id); err != nil {
+				return status.Errorf(codes.Internal, "complete file upload fail, err: %+v", err)
+			}
+			log.DefaultLogger.Debugf("put file finished")
+			break
+		}
+		if err != nil {
+			return status.Errorf(codes.Unknown, "cannot receive file info")
+		}
+		chunkNum++
+		if a.fileOps[req.StoreName] == nil {
+			return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
+		}
+		st := &file.PutFileStu{Data: req.Data, Metadata: req.Metadata, StreamId: id, ChunkNumber: chunkNum}
+		if err = a.fileOps[req.StoreName].Put(st); err != nil {
+			return err
+		}
+	}
+	return nil
 }

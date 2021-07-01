@@ -3,6 +3,8 @@ module mosn.io/layotto/components
 go 1.14
 
 require (
+	github.com/aliyun/aliyun-oss-go-sdk v2.1.8+incompatible
+	github.com/dapr/components-contrib v1.2.0
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.26.0
 	github.com/zouyx/agollo/v4 v4.0.7
