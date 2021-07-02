@@ -63,11 +63,11 @@ type healthIndicator struct {
 	errReason string
 }
 
-func (idc *healthIndicator) Report() (string, map[string]interface{}) {
+func (idc *healthIndicator) Report() (status string, details map[string]interface{}) {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 	statusDetail := make(map[string]interface{})
-	status := common.INIT
+	status = common.INIT
 	if idc.isErr {
 		status = common.DOWN
 		statusDetail[reasonKey] = idc.errReason

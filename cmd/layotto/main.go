@@ -19,6 +19,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"mosn.io/pkg/log"
 	"os"
 	"strconv"
 	"time"
@@ -72,8 +73,12 @@ import (
 	"github.com/dapr/components-contrib/state/rethinkdb"
 	"github.com/dapr/components-contrib/state/sqlserver"
 	"github.com/dapr/components-contrib/state/zookeeper"
-
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
+
+	// Lock
+	"mosn.io/layotto/components/lock"
+	lock_redis "mosn.io/layotto/components/lock/redis"
+	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
@@ -229,6 +234,12 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_state.NewFactory("aws.dynamodb", state_dynamodb.NewDynamoDBStateStore),
 			runtime_state.NewFactory("mysql", func() state.Store {
 				return state_mysql.NewMySQLStateStore(loggerForDaprComp)
+			}),
+		),
+		// Lock
+		runtime.WithLockFactory(
+			runtime_lock.NewFactory("redis", func() lock.LockStore {
+				return lock_redis.NewStandaloneRedisLock(log.DefaultLogger)
 			}),
 		),
 	)

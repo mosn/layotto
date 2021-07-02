@@ -88,6 +88,10 @@ type Client interface {
 	// DeleteBulkState deletes content for multiple keys from store.
 	DeleteBulkStateItems(ctx context.Context, storeName string, items []*DeleteStateItem) error
 
+	// Distributed Lock API
+	TryLock(context.Context, *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error)
+	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
+
 	// Close cleans up all resources created by the client.
 	Close()
 }
