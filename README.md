@@ -76,6 +76,8 @@ See the quick start guide [configuration demo with apollo](docs/en/start/configu
 
 [rpc-design-doc](docs/en/design/rpc/rpc-design-doc.md)
 
+[distributed-lock-api-design](docs/en/design/lock/lock-api-design.md)
+
 ## Community
 
 ### Contact Us

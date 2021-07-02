@@ -34,4 +34,10 @@ const (
 	ErrStateStoreNotSupported     = "state store %s doesn't support transaction"
 	ErrNotSupportedStateOperation = "operation type %s not supported"
 	ErrStateTransaction           = "error while executing state transaction: %s"
+	//	Lock
+	ErrLockStoresNotConfigured = "lock store is not configured"
+	ErrResourceIdEmpty         = "ResourceId is empty in lock store %s"
+	ErrLockOwnerEmpty          = "LockOwner is empty in lock store %s"
+	ErrExpireNotPositive       = "Expire is not positive in lock store %s"
+	ErrLockStoreNotFound       = "lock store %s not found"
 )
