@@ -39,13 +39,13 @@ import (
 var (
 	ErrNoInstance = errors.New("no instance found")
 	streamId      int64
-	chunkNum      int
 	bytesPool     = sync.Pool{
 		New: func() interface{} {
 			// set size to 4M
-			return make([]byte, 4194304)
+			return make([]byte, 4194304, 4194304)
 		},
 	}
+	filesMap sync.Map
 )
 
 type API interface {
@@ -70,7 +70,7 @@ type API interface {
 	DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkStateRequest) (*emptypb.Empty, error)
 	ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*emptypb.Empty, error)
 
-	// File
+	// Get File
 	GetFile(*runtimev1pb.GetFileRequest, runtimev1pb.Runtime_GetFileServer) error
 	// Put file with stream.
 	PutFile(runtimev1pb.Runtime_PutFileServer) error
@@ -85,7 +85,7 @@ type api struct {
 	pubSubs                  map[string]pubsub.PubSub
 	stateStores              map[string]state.Store
 	transactionalStateStores map[string]state.TransactionalStore
-	fileOps                  map[string]file.FileService
+	fileOps                  map[string]file.File
 }
 
 func NewAPI(
@@ -95,6 +95,7 @@ func NewAPI(
 	rpcs map[string]rpc.Invoker,
 	pubSubs map[string]pubsub.PubSub,
 	stateStores map[string]state.Store,
+	files map[string]file.File,
 ) API {
 	transactionalStateStores := map[string]state.TransactionalStore{}
 	for key, store := range stateStores {
@@ -110,6 +111,7 @@ func NewAPI(
 		pubSubs:                  pubSubs,
 		stateStores:              stateStores,
 		transactionalStateStores: transactionalStateStores,
+		fileOps:                  files,
 	}
 }
 
@@ -680,6 +682,7 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	}
 	st := &file.GetFileStu{ObjectName: req.Name, Metadata: req.Metadata}
 	data, err := a.fileOps[req.StoreName].Get(st)
+	defer data.Close()
 	if err != nil {
 		return status.Errorf(codes.Internal, "get file failed,err: %+v", err)
 	}
@@ -688,42 +691,46 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	buf := buffs.([]byte)
 	for {
 		length, err := data.Read(buf)
+		if err != nil && err != io.EOF {
+			return status.Errorf(codes.Internal, "get file failed,err: %+v", err)
+		}
+		if err == nil || (err == io.EOF && length != 0) {
+			resp := &runtimev1pb.GetFileResponse{Data: buf[:length]}
+			if err = stream.Send(resp); err != nil {
+				return status.Errorf(codes.Internal, "send resp failed,err: %+v", err)
+			}
+		}
 		if err == io.EOF {
 			return nil
 		}
-		if err != nil {
-			return status.Errorf(codes.Internal, "get file failed,err: %+v", err)
-		}
-		resp := &runtimev1pb.GetFileResponse{Data: buf[:length]}
-		if err = stream.Send(resp); err != nil {
-			return status.Errorf(codes.Internal, "send resp failed,err: %+v", err)
-		}
 	}
-	return nil
 }
 
 func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 	id := atomic.AddInt64(&streamId, 1)
+	defer filesMap.Delete(id)
+	var chunkNum int
 	for {
 		req, err := stream.Recv()
 		if err == io.EOF {
-			if a.fileOps[req.StoreName] == nil {
-				return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
-			}
-			if err := a.fileOps[req.StoreName].CompletePut(id); err != nil {
+			v, _ := filesMap.Load(id)
+			storeName := v.(string)
+			if err := a.fileOps[storeName].CompletePut(id); err != nil {
 				return status.Errorf(codes.Internal, "complete file upload fail, err: %+v", err)
 			}
 			log.DefaultLogger.Debugf("put file finished")
+			stream.SendAndClose(&emptypb.Empty{})
 			break
 		}
+		filesMap.LoadOrStore(id, req.StoreName)
 		if err != nil {
-			return status.Errorf(codes.Unknown, "cannot receive file info")
+			return status.Errorf(codes.Unknown, "read data failed: err: %+v", err)
 		}
 		chunkNum++
 		if a.fileOps[req.StoreName] == nil {
 			return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
 		}
-		st := &file.PutFileStu{Data: req.Data, Metadata: req.Metadata, StreamId: id, ChunkNumber: chunkNum}
+		st := &file.PutFileStu{FileName: req.Name, Data: req.Data, Metadata: req.Metadata, StreamId: id, ChunkNumber: chunkNum}
 		if err = a.fileOps[req.StoreName].Put(st); err != nil {
 			return err
 		}

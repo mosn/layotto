@@ -3,6 +3,7 @@ package runtime
 import (
 	"google.golang.org/grpc"
 	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/rpc"
 	rgrpc "mosn.io/layotto/pkg/grpc"
@@ -16,6 +17,7 @@ type services struct {
 	hellos       []*hello.HelloFactory
 	configStores []*configstores.StoreFactory
 	rpcs         []*rpc.Factory
+	files        []*file.FileFactory
 	pubSubs      []*pubsub.Factory
 	states       []*state.Factory
 }
@@ -71,6 +73,12 @@ func WithConfigStoresFactory(configStores ...*configstores.StoreFactory) Option 
 func WithRpcFactory(rpcs ...*rpc.Factory) Option {
 	return func(o *runtimeOptions) {
 		o.services.rpcs = append(o.services.rpcs, rpcs...)
+	}
+}
+
+func WithFileFactory(files ...*file.FileFactory) Option {
+	return func(o *runtimeOptions) {
+		o.services.files = append(o.services.files, files...)
 	}
 }
 

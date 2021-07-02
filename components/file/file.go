@@ -2,7 +2,9 @@ package file
 
 import "io"
 
-type FileService interface {
+const ServiceName = "file"
+
+type File interface {
 	Init(*FileConfig) error
 	Put(*PutFileStu) error
 	Get(*GetFileStu) (io.ReadCloser, error)

@@ -38,13 +38,18 @@ type ossMetadata struct {
 	Bucket          string `json:"bucketKey"`
 }
 
+func NewAliCloudOSS() file.File {
+	oss := &AliCloudOSS{}
+	return oss
+}
+
 // Init does metadata parsing and connection creation
 func (s *AliCloudOSS) Init(metadata *file.FileConfig) error {
 	m := &ossMetadata{}
 	m.Endpoint = metadata.Metadata[endpointKey]
-	m.Endpoint = metadata.Metadata[accessKeyIDKey]
-	m.Endpoint = metadata.Metadata[accessKeySecretKey]
-	m.Endpoint = metadata.Metadata[bucketKey]
+	m.AccessKeyID = metadata.Metadata[accessKeyIDKey]
+	m.AccessKeySecret = metadata.Metadata[accessKeySecretKey]
+	m.Bucket = metadata.Metadata[bucketKey]
 	if !s.checkMetadata(m) {
 		return fmt.Errorf("wrong configuration for oss")
 	}

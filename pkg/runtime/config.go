@@ -2,6 +2,9 @@ package runtime
 
 import (
 	"encoding/json"
+
+	"mosn.io/layotto/components/file"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/rpc"
@@ -21,6 +24,7 @@ type MosnRuntimeConfig struct {
 	RpcManagement          map[string]rpc.RpcConfig            `json:"rpcs"`
 	PubSubManagement       map[string]pubsub.Config            `json:"pub_subs"`
 	StateManagement        map[string]state.Config             `json:"state"`
+	Files                  map[string]file.FileConfig          `json:"files"`
 }
 
 func ParseRuntimeConfig(data json.RawMessage) (*MosnRuntimeConfig, error) {
