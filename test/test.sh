@@ -17,4 +17,5 @@
 go build -tags wasmer ./cmd/layotto
 nohup ./layotto start -c ./demo/wasm/config.json &
 go test -p 1 -v ./test/integrate/...
-go run ./demo/state/redis/client.go
+go build -o redisClient ./demo/state/redis/client.go
+./redisClient
