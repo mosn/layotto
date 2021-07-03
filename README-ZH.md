@@ -70,13 +70,15 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 ## 设计文档
 
-[actuator-design-doc](docs/zh/design/actuator/actuator-design-doc.md)
+[Actuator设计文档](docs/zh/design/actuator/actuator-design-doc.md)
 
-[pubsub-api-and-compability-with-dapr-component](docs/zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+[pubsub api以及与dapr component的兼容性](docs/zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
 
 [configuration-api-with-apollo(英文)](docs/en/design/configuration/configuration-api-with-apollo.md)
 
 [rpc设计文档](docs/zh/design/rpc/rpc设计文档.md)
+
+[分布式锁api设计文档](docs/zh/design/lock/lock-api-design.md)
 
 ## 社区
 

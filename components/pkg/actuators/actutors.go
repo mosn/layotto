@@ -19,7 +19,7 @@ package actuators
 import "sync"
 
 type Indicator interface {
-	Report() (string, map[string]interface{})
+	Report() (status string, details map[string]interface{})
 }
 
 type ComponentsIndicator struct {
