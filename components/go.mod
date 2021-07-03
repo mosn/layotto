@@ -6,8 +6,7 @@ require (
 	github.com/alicebob/miniredis/v2 v2.13.3
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-redis/redis/v8 v8.8.0
-	github.com/golang/protobuf v1.4.2 // indirect
-	github.com/google/go-cmp v0.5.5 // indirect
+	github.com/go-zookeeper/zk v1.0.2
 	github.com/google/uuid v1.1.1
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.26.0
