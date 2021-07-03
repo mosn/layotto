@@ -3,6 +3,12 @@
 
 ### 1. 下载对应[proto](https://github.com/protocolbuffers/protobuf/releases/tag/v3.6.1) 文件到本地
 
+my protoc version: 
+```shell
+$ protoc --version
+libprotoc 3.17.3
+```
+
 ### 2. 修改对应`proto`文件生成类名包名等信息
 
 appcallback.proto:
