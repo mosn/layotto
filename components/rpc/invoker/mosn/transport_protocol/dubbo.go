@@ -57,5 +57,5 @@ func (d *dubboProtocol) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error)
 		return nil, fmt.Errorf("dubbo error code %d", resp.GetStatusCode())
 	}
 
-	return d.FromFrame(resp)
+	return d.fromFrame.FromFrame(resp)
 }
