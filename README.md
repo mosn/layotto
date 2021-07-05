@@ -44,6 +44,10 @@ See the quick start guide [configuration demo with apollo](docs/en/start/configu
 
 [State management demo with redis](docs/en/start/state/start.md)
 
+### Use Distributed Lock API
+
+[Distributed Lock API demo with redis](docs/en/start/lock/start.md)
+
 ### Traffic intervention on the 4th layer network
 
 [Dump TCP Traffic](docs/en/start/network_filter/tcpcopy.md)
