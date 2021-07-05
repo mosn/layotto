@@ -25,7 +25,7 @@ import (
 type mockIndicator struct {
 }
 
-func (m mockIndicator) Report() (string, map[string]interface{}) {
+func (m mockIndicator) Report() (Status, map[string]interface{}) {
 	h := NewHealth(DOWN)
 	h.SetDetail("reason", "mock")
 	return h.Status, h.Details

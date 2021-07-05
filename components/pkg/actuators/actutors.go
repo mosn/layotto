@@ -16,10 +16,24 @@
 
 package actuators
 
-import "sync"
+import (
+	"sync"
+)
+
+// Status is the enumeration value of component health status.
+type Status = string
+
+var (
+	// INIT means it is starting
+	INIT = Status("INIT")
+	// UP means it is healthy
+	UP = Status("UP")
+	// DOWN means it is unhealthy
+	DOWN = Status("DOWN")
+)
 
 type Indicator interface {
-	Report() (status string, details map[string]interface{})
+	Report() (status Status, details map[string]interface{})
 }
 
 type ComponentsIndicator struct {
