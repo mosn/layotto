@@ -23,4 +23,6 @@ import (
 
 func TestPointerToString(t *testing.T) {
 	assert.Equal(t, PointerToString(nil), "")
+	s := ""
+	assert.Equal(t, PointerToString(&s), "")
 }
