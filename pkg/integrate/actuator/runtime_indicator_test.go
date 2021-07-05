@@ -45,20 +45,24 @@ func TestGetHealthInitOrSuccess(t *testing.T) {
 func TestGetHealthErrorThenRecover(t *testing.T) {
 	assert := testify.New(t)
 
+	// readiness error
 	hi := GetRuntimeReadinessIndicator()
 	hi.SetUnhealthy("sub error")
 	h, v := hi.Report()
 	assert.Equal(h, common.DOWN)
 	assert.Equal(v[reasonKey], "sub error")
 
+	// readiness indicator can recover
+	hi.SetHealthy("recover")
+	h, v = hi.Report()
+	assert.Equal(h, common.UP)
+	assert.Equal(v[reasonKey], "recover")
+
+	// liveness error
 	hi = GetRuntimeLivenessIndicator()
 	hi.SetUnhealthy("sub error")
 	h, v = hi.Report()
 	assert.Equal(h, common.DOWN)
 	assert.Equal(v[reasonKey], "sub error")
 
-	hi.SetHealthy("recover")
-	h, v = hi.Report()
-	assert.Equal(h, common.UP)
-	assert.Equal(v[reasonKey], "recover")
 }
