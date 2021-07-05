@@ -9,6 +9,7 @@ require (
 	google.golang.org/protobuf v1.26.0-rc.1
 	mosn.io/layotto/sdk/go-sdk v0.0.0-20210604030858-e880c02bcf44
 	mosn.io/layotto/spec v0.0.0-20210604023314-bb30491493a4
+	github.com/google/uuid v1.2.0
 )
 
 replace (

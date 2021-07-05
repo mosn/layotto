@@ -48,6 +48,10 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 [通过Layotto调用redis，进行状态管理](docs/zh/start/state/start.md)
 
+### 使用分布式锁API
+
+[基于redis使用分布式锁](docs/zh/start/lock/start.md)
+
 ### 在四层网络进行流量干预
 
 [Dump TCP 流量](docs/zh/start/network_filter/tcpcopy.md)
@@ -72,13 +76,15 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 ## 设计文档
 
-[actuator-design-doc](docs/zh/design/actuator/actuator-design-doc.md)
+[Actuator设计文档](docs/zh/design/actuator/actuator-design-doc.md)
 
-[pubsub-api-and-compability-with-dapr-component](docs/zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+[pubsub api以及与dapr component的兼容性](docs/zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
 
 [configuration-api-with-apollo(英文)](docs/en/design/configuration/configuration-api-with-apollo.md)
 
 [rpc设计文档](docs/zh/design/rpc/rpc设计文档.md)
+
+[分布式锁api设计文档](docs/zh/design/lock/lock-api-design.md)
 
 ## 社区
 

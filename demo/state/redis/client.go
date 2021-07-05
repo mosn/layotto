@@ -23,12 +23,12 @@ import (
 )
 
 const (
-	store = "redis"
-	key1  = "key1"
-	key2  = "key2"
-	key3  = "key3"
-	key4  = "key4"
-	key5  = "key5"
+	storeName = "redis"
+	key1      = "key1"
+	key2      = "key2"
+	key3      = "key3"
+	key4      = "key4"
+	key5      = "key5"
 )
 
 func main() {
@@ -43,19 +43,19 @@ func main() {
 
 	// Belows are CRUD examples.
 	// save state
-	testSave(ctx, cli, store, key1, value)
+	testSave(ctx, cli, storeName, key1, value)
 
 	// get state
-	testGet(ctx, cli, store, key1)
+	testGet(ctx, cli, storeName, key1)
 
 	// SaveBulkState with options and metadata
-	testSaveBulkState(ctx, cli, store, key1, value, key2)
+	testSaveBulkState(ctx, cli, storeName, key1, value, key2)
 
-	testGetBulkState(ctx, cli, store, key1, key2)
+	testGetBulkState(ctx, cli, storeName, key1, key2)
 
 	// delete state
-	testDelete(ctx, cli, store, key1)
-	testDelete(ctx, cli, store, key2)
+	testDelete(ctx, cli, storeName, key1)
+	testDelete(ctx, cli, storeName, key2)
 }
 
 func testGetBulkState(ctx context.Context, cli client.Client, store string, key1 string, key2 string) {

@@ -23,7 +23,9 @@ import (
 	"github.com/dapr/components-contrib/state"
 	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
+	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/pkg/converter"
+	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 	"strings"
 	"sync"
 
@@ -73,6 +75,9 @@ type API interface {
 	DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateRequest) (*emptypb.Empty, error)
 	DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkStateRequest) (*emptypb.Empty, error)
 	ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*emptypb.Empty, error)
+	// Distributed Lock API
+	TryLock(context.Context, *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error)
+	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -84,6 +89,7 @@ type api struct {
 	pubSubs                  map[string]pubsub.PubSub
 	stateStores              map[string]state.Store
 	transactionalStateStores map[string]state.TransactionalStore
+	lockStores               map[string]lock.LockStore
 }
 
 func NewAPI(
@@ -93,13 +99,16 @@ func NewAPI(
 	rpcs map[string]rpc.Invoker,
 	pubSubs map[string]pubsub.PubSub,
 	stateStores map[string]state.Store,
+	lockStores map[string]lock.LockStore,
 ) API {
+	// filter out transactionalStateStores
 	transactionalStateStores := map[string]state.TransactionalStore{}
 	for key, store := range stateStores {
 		if state.FeatureTransactional.IsPresent(store.Features()) {
 			transactionalStateStores[key] = store.(state.TransactionalStore)
 		}
 	}
+	// construct
 	return &api{
 		appId:                    appId,
 		hellos:                   hellos,
@@ -108,6 +117,7 @@ func NewAPI(
 		pubSubs:                  pubSubs,
 		stateStores:              stateStores,
 		transactionalStateStores: transactionalStateStores,
+		lockStores:               lockStores,
 	}
 }
 
@@ -670,4 +680,94 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 		return &emptypb.Empty{}, err
 	}
 	return &emptypb.Empty{}, nil
+}
+
+func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error) {
+	// 1. validate
+	if a.lockStores == nil || len(a.lockStores) == 0 {
+		err := status.Error(codes.FailedPrecondition, messages.ErrLockStoresNotConfigured)
+		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
+		return &runtimev1pb.TryLockResponse{}, err
+	}
+	if req.ResourceId == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrResourceIdEmpty, req.StoreName)
+		return &runtimev1pb.TryLockResponse{}, err
+	}
+	if req.LockOwner == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrLockOwnerEmpty, req.StoreName)
+		return &runtimev1pb.TryLockResponse{}, err
+	}
+	if req.Expire <= 0 {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrExpireNotPositive, req.StoreName)
+		return &runtimev1pb.TryLockResponse{}, err
+	}
+	// 2. find store component
+	store, ok := a.lockStores[req.StoreName]
+	if !ok {
+		return &runtimev1pb.TryLockResponse{}, status.Errorf(codes.InvalidArgument, messages.ErrLockStoreNotFound, req.StoreName)
+	}
+	// 3. convert request
+	compReq := converter.TryLockRequest2ComponentRequest(req)
+	// modify key
+	var err error
+	compReq.ResourceId, err = runtime_lock.GetModifiedLockKey(compReq.ResourceId, req.StoreName, a.appId)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
+		return &runtimev1pb.TryLockResponse{}, err
+	}
+	// 4. delegate to the component
+	compResp, err := store.TryLock(compReq)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
+		return &runtimev1pb.TryLockResponse{}, err
+	}
+	// 5. convert response
+	resp := converter.TryLockResponse2GrpcResponse(compResp)
+	return resp, nil
+}
+
+func (a *api) Unlock(ctx context.Context, req *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error) {
+	// 1. validate
+	if a.lockStores == nil || len(a.lockStores) == 0 {
+		err := status.Error(codes.FailedPrecondition, messages.ErrLockStoresNotConfigured)
+		log.DefaultLogger.Errorf("[runtime] [grpc.Unlock] error: %v", err)
+		return newInternalErrorUnlockResponse(), err
+	}
+	if req.ResourceId == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrResourceIdEmpty, req.StoreName)
+		return newInternalErrorUnlockResponse(), err
+	}
+	if req.LockOwner == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrResourceIdEmpty, req.StoreName)
+		return newInternalErrorUnlockResponse(), err
+	}
+	// 2. find store component
+	store, ok := a.lockStores[req.StoreName]
+	if !ok {
+		return newInternalErrorUnlockResponse(), status.Errorf(codes.InvalidArgument, messages.ErrLockStoreNotFound, req.StoreName)
+	}
+	// 3. convert request
+	compReq := converter.UnlockGrpc2ComponentRequest(req)
+	// modify key
+	var err error
+	compReq.ResourceId, err = runtime_lock.GetModifiedLockKey(compReq.ResourceId, req.StoreName, a.appId)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
+		return newInternalErrorUnlockResponse(), err
+	}
+	// 4. delegate to the component
+	compResp, err := store.Unlock(compReq)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.Unlock] error: %v", err)
+		return newInternalErrorUnlockResponse(), err
+	}
+	// 5. convert response
+	resp := converter.UnlockComp2GrpcResponse(compResp)
+	return resp, nil
+}
+
+func newInternalErrorUnlockResponse() *runtimev1pb.UnlockResponse {
+	return &runtimev1pb.UnlockResponse{
+		Status: runtimev1pb.UnlockResponse_INTERNAL_ERROR,
+	}
 }
