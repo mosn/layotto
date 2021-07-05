@@ -1,5 +1,7 @@
 # Layotto (L8):To be the next layer of OSI layer 7
 
+[![codecov](https://codecov.io/gh/mosn/layotto/branch/main/graph/badge.svg?token=10RxwSV6Sz)](https://codecov.io/gh/mosn/layotto)
+
 <img src="/img/logo/grey2-1.svg" height="120px">
 
 [English Version](README.md)
