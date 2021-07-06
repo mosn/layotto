@@ -61,19 +61,7 @@ type healthIndicator struct {
 	errReason string
 }
 
-// Status is the enumeration value of component health status.
-type Status = string
-
-var (
-	// INIT means it is starting
-	INIT = Status("INIT")
-	// UP means it is healthy
-	UP = Status("UP")
-	// DOWN means it is unhealthy
-	DOWN = Status("DOWN")
-)
-
-func (idc *healthIndicator) Report() (status Status, details map[string]interface{}) {
+func (idc *healthIndicator) Report() (status actuators.Status, details map[string]interface{}) {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 	statusDetail := make(map[string]interface{})
