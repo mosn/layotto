@@ -39,6 +39,26 @@
 
 - 因为每次有人提交代码都会自动跑单元测试、跑通过才能合并，所以在单元测试里应尽量避免sleep太久（睡太久会导致单测跑的特别慢）
 
+注：如何在单元测试中mock掉依赖的环境？（比如mock zookeeper或者mock redis)
+
+一般是把所有网络调用的代码封装成一个interface，然后在ut中mock掉这个interface。以apollo配置中心的单元测试为例，见components/configstores/apollo/configstore.go 和 components/configstores/apollo/configstore_test.go ：
+
+首先，在configstore.go里，把所有调sdk、发起网络调用调apollo的地方给封装成一个interface 
+![mock.png](../../../img/development/component/mock.png)
+![img_8.png](../../../img/development/component/img_8.png)
+
+然后，把你代码中调sdk、做网络调用的代码封装成一个struct、实现刚才的interface：
+![img_9.png](../../../img/development/component/img_9.png)
+
+做了这一步重构后，你的代码就有可测性了（这也是"测试驱动开发"思想的一种体现，为了让代码可测性好，把代码重构成可以依赖注入的形式）
+
+接下来，写ut的时候，可以mock刚才的interface：
+
+![img_10.png](../../../img/development/component/img_10.png)
+
+把mock后的东西注入到要测的struct里就行,然后测那个struct就行
+![img_11.png](../../../img/development/component/img_11.png)
+
 注：一般“集成测试”的时候，会真正做网络调用、调一个正常的zookeeper或者redis；而单测注重测局部逻辑，不会调真实环境
 
 
