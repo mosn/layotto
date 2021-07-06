@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/rpc/callback"
@@ -75,10 +76,11 @@ func (m *mosnInvoker) Init(conf rpc.RpcConfig) error {
 	return nil
 }
 
-func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
+func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rpc.RPCResponse, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.DefaultLogger.Errorf("[runtime][rpc]mosn invoker panic: %v", r)
+			err = fmt.Errorf("[runtime][rpc]mosn invoker panic: %v", r)
+			log.DefaultLogger.Errorf("%v", err)
 		}
 	}()
 
@@ -87,13 +89,13 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (*rpc.RPC
 	}
 	req.Ctx = ctx
 	log.DefaultLogger.Debugf("[runtime][rpc]request %+v", req)
-	req, err := m.cb.BeforeInvoke(req)
+	req, err = m.cb.BeforeInvoke(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]before filter error %s", err.Error())
 		return nil, err
 	}
 
-	resp, err := m.channel.Do(req)
+	resp, err = m.channel.Do(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]error %s", err.Error())
 		return nil, err
