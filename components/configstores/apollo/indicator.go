@@ -17,11 +17,9 @@
 package apollo
 
 import (
-	"sync"
-
 	"mosn.io/layotto/components/pkg/actuators"
-
 	"mosn.io/layotto/components/pkg/common"
+	"sync"
 )
 
 const (
@@ -63,7 +61,7 @@ type healthIndicator struct {
 	errReason string
 }
 
-func (idc *healthIndicator) Report() (status string, details map[string]interface{}) {
+func (idc *healthIndicator) Report() (status actuators.Status, details map[string]interface{}) {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 	statusDetail := make(map[string]interface{})

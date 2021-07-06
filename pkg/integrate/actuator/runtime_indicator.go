@@ -44,7 +44,7 @@ func init() {
 }
 
 type RuntimeIndicator interface {
-	Report() (status string, details map[string]interface{})
+	Report() (status health.Status, details map[string]interface{})
 	SetUnhealthy(reason string)
 	SetHealthy(reason string)
 	SetStarted()
@@ -73,7 +73,7 @@ func (idc *runtimeIndicatorImpl) SetStarted() {
 	idc.started = true
 }
 
-func (idc *runtimeIndicatorImpl) Report() (status string, details map[string]interface{}) {
+func (idc *runtimeIndicatorImpl) Report() (status health.Status, details map[string]interface{}) {
 	idc.mu.RLock()
 	defer idc.mu.RUnlock()
 

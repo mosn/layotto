@@ -96,7 +96,9 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 ## 如何贡献代码
 
-请参阅[贡献者指南](CONTRIBUTING_ZH.md)。
+[组件开发指南](docs/zh/development/developing-component.md)
+
+[Layotto贡献者指南](CONTRIBUTING_ZH.md)
 
 ## FAQ
 
