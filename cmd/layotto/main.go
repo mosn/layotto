@@ -78,6 +78,7 @@ import (
 	// Lock
 	"mosn.io/layotto/components/lock"
 	lock_redis "mosn.io/layotto/components/lock/redis"
+	lock_zookeeper "mosn.io/layotto/components/lock/zookeeper"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 
 	// Actuator
@@ -240,6 +241,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithLockFactory(
 			runtime_lock.NewFactory("redis", func() lock.LockStore {
 				return lock_redis.NewStandaloneRedisLock(log.DefaultLogger)
+			}),
+			runtime_lock.NewFactory("zookeeper", func() lock.LockStore {
+				return lock_zookeeper.NewZookeeperLock(log.DefaultLogger)
 			}),
 		),
 	)

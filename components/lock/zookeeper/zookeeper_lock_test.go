@@ -1,6 +1,9 @@
 package zookeeper
 
 import (
+	"context"
+	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/pkg/log"
@@ -18,15 +21,16 @@ var cfg = lock.Metadata{
 }
 
 func TestMain(m *testing.M) {
+
 	cfg.Properties["zookeeperHosts"] = "127.0.0.1;127.0.0.1"
 	cfg.Properties["zookeeperPassword"] = ""
 	m.Run()
+
 }
 
 // A lock ,A unlock
-func TestZookeeperLock_One(t *testing.T) {
+func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
 	comp := NewZookeeperLock(log.DefaultLogger)
-
 	comp.Init(cfg)
 
 	tryLock, err := comp.TryLock(&lock.TryLockRequest{
@@ -46,7 +50,7 @@ func TestZookeeperLock_One(t *testing.T) {
 }
 
 // A lock ,B unlock
-func TestZookeeperLock_Two(t *testing.T) {
+func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
 	comp := NewZookeeperLock(log.DefaultLogger)
 
 	comp.Init(cfg)
@@ -67,8 +71,8 @@ func TestZookeeperLock_Two(t *testing.T) {
 
 }
 
-// A lock , B lock ,A unlock ,A lock,B lock,B unlock
-func TestZookeeperLock_Three(t *testing.T) {
+// A lock , B lock ,A unlock ,B lock,B unlock
+func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 	comp := NewZookeeperLock(log.DefaultLogger)
 
 	comp.Init(cfg)
@@ -114,20 +118,54 @@ func TestZookeeperLock_Three(t *testing.T) {
 	assert.Equal(t, unlock.Status, lock.SUCCESS)
 }
 
-//A lock
-func TestZookeeperLock_Four(t *testing.T) {
+func Test_RedisComplete(t *testing.T) {
+
+	//mock lock competition
+	for i := 0; i < 30; i++ {
+		go redisOption(i)
+	}
+
+	time.Sleep(time.Second * 2000)
+}
+
+func redisOption(number int) {
 	comp := NewZookeeperLock(log.DefaultLogger)
 	comp.Init(cfg)
-	go func() {
-		tryLock, err := comp.TryLock(&lock.TryLockRequest{
-			ResourceId: resouseId,
-			LockOwner:  lockOwerA,
-			Expire:     expireTime,
-		})
-		assert.NoError(t, err)
-		assert.Equal(t, tryLock.Success, true)
-	}()
+	tryLock := &lock.TryLockResponse{}
 
-	time.Sleep(time.Second * 9999)
+	lockOwner := "P_" + fmt.Sprint(number)
+	//loop to get lock
+	for !tryLock.Success {
+		time.Sleep(time.Second * 2)
+		tryLock, _ = comp.TryLock(&lock.TryLockRequest{
+			ResourceId: resouseId,
+			LockOwner:  lockOwner,
+			Expire:     10,
+		})
+	}
+
+	//in critical section----
+	fmt.Println(number, "get the lock")
+	//redis option
+	opts := &redis.Options{
+		Addr: "127.0.0.1:6379",
+	}
+	client := redis.NewClient(opts)
+	//get
+	get := client.Get(context.Background(), "r1")
+	i, _ := get.Int()
+	//sleep
+	time.Sleep(time.Second * 2)
+	//set
+	client.Set(context.Background(), "r1", i+1, 0)
+
+	//out critical section----
+	//unlock
+	unlock, _ := comp.Unlock(&lock.UnlockRequest{
+		ResourceId: resouseId,
+		LockOwner:  lockOwner,
+	})
+
+	fmt.Println(number, "release the lock", unlock)
 
 }

@@ -30,9 +30,16 @@ func NewZookeeperLock(logger log.ErrorLogger) *ZookeeperLock {
 	return lock
 }
 
+type defaultLogger struct{}
+
+//silent the default logger
+func (defaultLogger) Printf(format string, a ...interface{}) {
+
+}
+
 func (p *ZookeeperLock) newConnection() (*zk.Conn, error) {
 	//make sure a lock and a connection
-	conn, _, err := zk.Connect(p.metadata.hosts, p.metadata.sessionTimeout)
+	conn, _, err := zk.Connect(p.metadata.hosts, p.metadata.sessionTimeout*time.Second, zk.WithLogger(defaultLogger{}))
 	if err != nil {
 		return nil, err
 	}
@@ -64,6 +71,8 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 
 	//2.1 create node fail ,indicates lock fail
 	if err != nil {
+		//make sure close connetion in time
+		conn.Close()
 		return &lock.TryLockResponse{
 			Success: false,
 		}, nil
@@ -71,12 +80,12 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 
 	//2.2 create node success, asyn  to make sure zkclient alive for need time
 	go func() {
-		// make sure close connecion
-		defer conn.Close()
 		//can also
 		//time.Sleep(time.Second * time.Duration(req.Expire))
 		timeAfterTrigger := time.After(time.Second * time.Duration(req.Expire))
 		<-timeAfterTrigger
+		// make sure close connecion
+		conn.Close()
 	}()
 
 	return &lock.TryLockResponse{
