@@ -2,7 +2,7 @@
 
 [![codecov](https://codecov.io/gh/mosn/layotto/branch/main/graph/badge.svg?token=10RxwSV6Sz)](https://codecov.io/gh/mosn/layotto)
 
-<img src="https://raw.githubusercontent.com/mosn/layotto/main/img/logo/grey2-1.svg" height="120px">
+<img src="https://raw.githubusercontent.com/seeflood/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
 
 Layotto 是一款使用 Golang 开发的应用运行时, 旨在帮助开发人员快速构建云原生应用，帮助应用和基础设施解耦。它为应用提供了各种分布式能力，比如状态管理，配置管理，事件发布订阅等能力，以简化应用的开发。
 
@@ -30,7 +30,7 @@ Layotto希望可以把Runtime跟Service Mesh两者的能力结合起来，无论
 Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行交互，应用开发者只需要通过 Layotto 提供的配置文件[配置文件](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json)
 来指定自己基础设施类型，而不需要进行任何编码的更改，大大提高了程序的可移植性。
 
-![系统架构图](https://raw.githubusercontent.com/mosn/layotto/main/img/runtime-architecture.png)
+![系统架构图](https://raw.githubusercontent.com/seeflood/layotto/main/docs/img/runtime-architecture.png)
 
 ## 快速开始
 
@@ -88,7 +88,7 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 | 平台  | 联系方式        |
 |:----------|:------------|
-| 💬 [钉钉](https://www.dingtalk.com/zh) (推荐) | 群号: 31912621 或者扫描下方二维码 <br> <img src="https://raw.githubusercontent.com/mosn/layotto/main/img/ding-talk-group-1.png" height="200px">
+| 💬 [钉钉](https://www.dingtalk.com/zh) (推荐) | 群号: 31912621 或者扫描下方二维码 <br> <img src="https://raw.githubusercontent.com/seeflood/layotto/main/docs/img/ding-talk-group-1.png" height="200px">
 
 [comment]: <> (| 💬 [微信]&#40;https://www.wechat.com/&#41;  | 扫描下方二维码添加好友，她会邀请您加入微信群 <br> <img src="../img/wechat-group.jpg" height="200px">)
 
