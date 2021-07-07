@@ -94,6 +94,22 @@ func Test_mosnInvoker_Invoke(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, "hello world!", string(rsp.Data))
 	})
+
+	t.Run("panic", func(t *testing.T) {
+		invoker := NewMosnInvoker()
+
+		// miss call Init(), invoker.ch will be nil
+		req := &rpc.RPCRequest{
+			Ctx:     context.Background(),
+			Id:      "1",
+			Timeout: 100,
+			Method:  "Hello",
+			Data:    []byte("hello"),
+		}
+		_, err := invoker.Invoke(context.Background(), req)
+		assert.NotNil(t, err)
+		assert.Equal(t, "[runtime][rpc]mosn invoker panic: runtime error: invalid memory address or nil pointer dereference", err.Error())
+	})
 }
 
 type fakeChannel struct {
