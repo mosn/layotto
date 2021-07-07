@@ -8,11 +8,11 @@
 
 文档统一放在docs/目录下，其中docs/en存放英文文档，docs/zh存放中文文档。
 
-![img_2.png](img_2.png)
+![img_2.png](../../img/development/doc/img_2.png)
 
 当需要新增文档时，可以按目录结构新建文件夹、新建.md文件。比如想写分布式锁API的设计文档，就新建目录：
 
-![img_1.png](img_1.png)
+![img_1.png](../../img/development/doc/img_1.png)
 
 ## 文档站点说明
 docs/目录下的文件，会被自动部署到github pages，通过[docsify](https://docsify.js.org/#/) 渲染。
@@ -25,14 +25,14 @@ docs/目录下的文件，会被自动部署到github pages，通过[docsify](ht
 
 这里说的超链接是那种点了后会跳转到其他文档的链接，比如下面这种：
 
-![img_4.png](img_4.png)
+![img_4.png](../../img/development/doc/img_4.png)
 
 ### 错误的写法
 如果你尝试用相对路径写超链接url，会发现在站点里点击他就会404：
 
-![img_6.png](img_6.png)
+![img_6.png](../../img/development/doc/img_6.png)
 
-![img_7.png](img_7.png)
+![img_7.png](../../img/development/doc/img_7.png)
 
 ### 正确的写法
 
@@ -40,7 +40,7 @@ docs/目录下的文件，会被自动部署到github pages，通过[docsify](ht
 
 a. 用相对于docs/目录的相对路径。例如：
 
-![img_5.png](img_5.png)
+![img_5.png](../../img/development/doc/img_5.png)
 
 b. 用完整的Url。例如：
 
@@ -51,8 +51,16 @@ see [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runt
 ## 图片目录与图片链接
 图片放在docs/img/ 目录下。放这里是为了能让docsify站点能访问到：
 
-![img.png](img.png)
+![img.png](../../img/development/doc/img.png)
 
-文档中引用图片的话就按相对路径引用即可。例如docs/zh/start/state/start.md 文档内引用图片：
+文档中引用图片建议就用完整路径，免得遇到一堆乱七八糟的路径问题。
 
-![img_3.png](img_3.png)
+例如，如果是引用main分支的图片，图片Url的前缀是https://raw.githubusercontent.com/mosn/layotto/main/img
+
+Markdown写法如下：
+
+```markdown
+![Architecture](https://raw.githubusercontent.com/mosn/layotto/main/img/runtime-architecture.png)
+```
+
+注：如果用相对路径的话，你会遇到特别多问题，比如`<img>`标签和markdown的相对路径逻辑不一样；比如用户可能会通过不同路径访问README，等等
