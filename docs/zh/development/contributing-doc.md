@@ -63,4 +63,4 @@ Markdown写法如下：
 ![Architecture](https://raw.githubusercontent.com/seeflood/layotto/main/docs/img/runtime-architecture.png)
 ```
 
-注：如果用相对路径的话，你可能会遇到特别多问题，比如`<img>`标签和markdown的相对路径逻辑不一样；比如用户可能会通过不同路径访问README，等等。总之很痛苦。
+注：相对路径其实也可以用，只不过你可能会遇到很多问题，比如`<img>`标签和markdown的相对路径逻辑不一样；比如用户可能会通过不同路径访问README，等等。总之很痛苦。

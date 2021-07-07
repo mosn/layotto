@@ -98,6 +98,7 @@
 
 #### a. 如果该组件有通用客户端，就不用开发啦
 如果demo目录下有common文件夹，代表这是个通用demo、能给不同的组件用，可以通过命令行传参传storeName，有这个就不用再开发demo啦
+
 ![img_6.png](../../img/development/component/img_6.png)
 
 #### b. 如果该组件没有通用客户端，或者需要定制一些metadata传参，那就复制粘贴改一改
