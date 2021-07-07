@@ -2,7 +2,7 @@
 
 [![codecov](https://codecov.io/gh/mosn/layotto/branch/main/graph/badge.svg?token=10RxwSV6Sz)](https://codecov.io/gh/mosn/layotto)
 
-<img src="https://raw.githubusercontent.com/seeflood/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
+<img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
 
 Layotto is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event pub/sub capabilities to simplify application development.
 
@@ -29,7 +29,7 @@ As shown in the architecture diagram below, Layotto uses the open source MOSN as
 
 Layotto provides sdk in various languages. The sdk interacts with Layotto through grpc. Application developers only need to specify their own infrastructure type through the configuration file [configure file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) provided by Layotto. No coding changes are required, which greatly improves the portability of the program.
 
-![Architecture](https://raw.githubusercontent.com/seeflood/layotto/main/docs/img/runtime-architecture.png)
+![Architecture](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
 
 ## Quickstarts and Samples
 
@@ -89,7 +89,7 @@ See the quick start guide [configuration demo with apollo](en/start/configuratio
 
 | Platform  | Link        |
 |:----------|:------------|
-| 💬 [DingTalk](https://www.dingtalk.com/en) (preferred) | Search the group number: 31912621 or scan the QR code below <br> <img src="https://raw.githubusercontent.com/seeflood/layotto/main/docs/img/ding-talk-group-1.png?raw=true" height="200px">
+| 💬 [DingTalk](https://www.dingtalk.com/en) (preferred) | Search the group number: 31912621 or scan the QR code below <br> <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/ding-talk-group-1.png?raw=true" height="200px">
 
 [comment]: <> (| 💬 [Wechat]&#40;https://www.wechat.com/en/&#41;  | Scan the QR code below and she will invite you into the wechat group <br> <img src="img/wechat-group.jpg" height="200px">)
 

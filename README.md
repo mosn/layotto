@@ -2,9 +2,9 @@
 
 [![codecov](https://codecov.io/gh/mosn/layotto/branch/main/graph/badge.svg?token=10RxwSV6Sz)](https://codecov.io/gh/mosn/layotto)
 
-<img src="https://raw.githubusercontent.com/seeflood/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
+<img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
 
-[查看中文版本](https://seeflood.github.io/layotto/#/zh/README)
+[查看中文版本](https://mosn.io/layotto/#/zh/README)
 
 Layotto is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event pub/sub capabilities to simplify application development.
 
@@ -31,59 +31,59 @@ As shown in the architecture diagram below, Layotto uses the open source MOSN as
 
 Layotto provides sdk in various languages. The sdk interacts with Layotto through grpc. Application developers only need to specify their own infrastructure type through the configuration file [configure file](./configs/runtime_config.json) provided by Layotto. No coding changes are required, which greatly improves the portability of the program.
 
-![Architecture](https://raw.githubusercontent.com/seeflood/layotto/main/docs/img/runtime-architecture.png)
+![Architecture](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
 
 ## Quickstarts and Samples
 
 ### Get started with Layotto
 
-See the quick start guide [configuration demo with apollo](https://seeflood.github.io/layotto/#/en/start/configuration/start-apollo) that can help you get started with Layotto.
+See the quick start guide [configuration demo with apollo](https://mosn.io/layotto/#/en/start/configuration/start-apollo) that can help you get started with Layotto.
 
 ### Use Pub/Sub API
 
-[Implementing Pub/Sub Pattern using Layotto and Redis](https://seeflood.github.io/layotto/#/en/start/pubsub/start)
+[Implementing Pub/Sub Pattern using Layotto and Redis](https://mosn.io/layotto/#/en/start/pubsub/start)
 
 ### Use State API to manage state
 
-[State management demo with redis](https://seeflood.github.io/layotto/#/en/start/state/start)
+[State management demo with redis](https://mosn.io/layotto/#/en/start/state/start)
 
 ### Use Distributed Lock API
 
-[Distributed Lock API demo with redis](https://seeflood.github.io/layotto/#/en/start/lock/start)
+[Distributed Lock API demo with redis](https://mosn.io/layotto/#/en/start/lock/start)
 
 ### Traffic intervention on the 4th layer network
 
-[Dump TCP Traffic](https://seeflood.github.io/layotto/#/en/start/network_filter/tcpcopy)
+[Dump TCP Traffic](https://mosn.io/layotto/#/en/start/network_filter/tcpcopy)
 
 ### Flow Control on the 7th layer network
 
-[Method Level Flow Control](https://seeflood.github.io/layotto/#/en/start/stream_filter/flow_control)
+[Method Level Flow Control](https://mosn.io/layotto/#/en/start/stream_filter/flow_control)
 
 ### Health check and metadata query
 
-[Use Layotto Actuator for health check and metadata query](https://seeflood.github.io/layotto/#/en/start/actuator/start)
+[Use Layotto Actuator for health check and metadata query](https://mosn.io/layotto/#/en/start/actuator/start)
 
 ### Service Invocation
 
-[Hello World](https://seeflood.github.io/layotto/#/en/start/rpc/helloworld)
+[Hello World](https://mosn.io/layotto/#/en/start/rpc/helloworld)
 
-[Dubbo JSON RPC](https://seeflood.github.io/layotto/#/en/start/rpc/dubbo_json_rpc)
+[Dubbo JSON RPC](https://mosn.io/layotto/#/en/start/rpc/dubbo_json_rpc)
 
 ### Multilingual programming based on WASM
 
-[WASM on Layotto](https://seeflood.github.io/layotto/#/en/start/wasm/start)
+[WASM on Layotto](https://mosn.io/layotto/#/en/start/wasm/start)
 
 ## Design Documents
 
-[actuator-design-doc](https://seeflood.github.io/layotto/#/en/design/actuator/actuator-design-doc)
+[actuator-design-doc](https://mosn.io/layotto/#/en/design/actuator/actuator-design-doc)
 
-[configuration-api-with-apollo](https://seeflood.github.io/layotto/#/en/design/configuration/configuration-api-with-apollo)
+[configuration-api-with-apollo](https://mosn.io/layotto/#/en/design/configuration/configuration-api-with-apollo)
 
-[pubsub-api-and-compability-with-dapr-component](https://seeflood.github.io/layotto/#/en/design/pubsub/pubsub-api-and-compability-with-dapr-component)
+[pubsub-api-and-compability-with-dapr-component](https://mosn.io/layotto/#/en/design/pubsub/pubsub-api-and-compability-with-dapr-component)
 
-[rpc-design-doc](https://seeflood.github.io/layotto/#/en/design/rpc/rpc-design-doc)
+[rpc-design-doc](https://mosn.io/layotto/#/en/design/rpc/rpc-design-doc)
 
-[distributed-lock-api-design](https://seeflood.github.io/layotto/#/en/design/lock/lock-api-design)
+[distributed-lock-api-design](https://mosn.io/layotto/#/en/design/lock/lock-api-design)
 
 ## Community
 
@@ -91,13 +91,13 @@ See the quick start guide [configuration demo with apollo](https://seeflood.gith
 
 | Platform  | Link        |
 |:----------|:------------|
-| 💬 [DingTalk](https://www.dingtalk.com/en) (preferred) | Search the group number: 31912621 or scan the QR code below <br> <img src="https://raw.githubusercontent.com/seeflood/layotto/main/docs/img/ding-talk-group-1.png" height="200px">
+| 💬 [DingTalk](https://www.dingtalk.com/en) (preferred) | Search the group number: 31912621 or scan the QR code below <br> <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/ding-talk-group-1.png" height="200px">
 
 [comment]: <> (| 💬 [Wechat]&#40;https://www.wechat.com/en/&#41;  | Scan the QR code below and she will invite you into the wechat group <br> <img src="/img/wechat-group.jpg" height="200px">)
 
 ## Contributing to Layotto
 
-See the [Development Guide](https://seeflood.github.io/layotto/#/en/development/CONTRIBUTING) to get started with building and developing.
+See the [Development Guide](https://mosn.io/layotto/#/en/development/CONTRIBUTING) to get started with building and developing.
 
 ## FAQ
 
