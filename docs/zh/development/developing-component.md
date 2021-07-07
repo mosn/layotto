@@ -18,7 +18,7 @@
 
 文件夹名用组件名就行，比如redis的组件如下图
 
-![img.png](../../../img/development/component/img.png)
+![img.png](../../img/development/component/img.png)
 
 开发过程中可能用到的工具类（不是强制一定要用哈，列在这只是供参考，希望能简化开发）：
 
@@ -44,20 +44,20 @@
 一般是把所有网络调用的代码封装成一个interface，然后在ut中mock掉这个interface。以apollo配置中心的单元测试为例，见components/configstores/apollo/configstore.go 和 components/configstores/apollo/configstore_test.go ：
 
 首先，在configstore.go里，把所有调sdk、发起网络调用调apollo的地方给封装成一个interface 
-![mock.png](../../../img/development/component/mock.png)
-![img_8.png](../../../img/development/component/img_8.png)
+![mock.png](../../img/development/component/mock.png)
+![img_8.png](../../img/development/component/img_8.png)
 
 然后，把你代码中调sdk、做网络调用的代码封装成一个struct、实现刚才的interface：
-![img_9.png](../../../img/development/component/img_9.png)
+![img_9.png](../../img/development/component/img_9.png)
 
 做了这一步重构后，你的代码就有可测性了（这也是"测试驱动开发"思想的一种体现，为了让代码可测性好，把代码重构成可以依赖注入的形式）
 
 接下来，写ut的时候，可以mock刚才的interface：
 
-![img_10.png](../../../img/development/component/img_10.png)
+![img_10.png](../../img/development/component/img_10.png)
 
 把mock后的东西注入到要测的struct里就行,然后测那个struct就行
-![img_11.png](../../../img/development/component/img_11.png)
+![img_11.png](../../img/development/component/img_11.png)
 
 注：一般“集成测试”的时候，会真正做网络调用、调一个正常的zookeeper或者redis；而单测注重测局部逻辑，不会调真实环境
 
@@ -69,10 +69,10 @@
 
 需要在cmd/layotto/main.go里集成进新的组件，包括：
 ### 3.1. 在main.go里import你的组件
-![img_1.png](../../../img/development/component/img_1.png)
+![img_1.png](../../img/development/component/img_1.png)
 
 ### 3.2. 在main.go的NewRuntimeGrpcServer函数中注册你的组件
-![img_4.png](../../../img/development/component/img_4.png)
+![img_4.png](../../img/development/component/img_4.png)
 
 之后，用户如果在Layotto配置文件中配置了"我要用zookeeper"，那么Layotto就会初始化zookeeper组件
 
@@ -89,7 +89,7 @@
 可以复制一份别的组件的json配置文件，例如开发分布式锁组件的时候，复制configs/config_lock_redis.json，粘贴成configs/config_lock_zookeeper.json
 
 之后编辑修改一下图中的配置：
-![img_3.png](../../../img/development/component/img_3.png)
+![img_3.png](../../img/development/component/img_3.png)
 
 
 
@@ -98,11 +98,11 @@
 
 #### a. 如果该组件有通用客户端，就不用开发啦
 如果demo目录下有common文件夹，代表这是个通用demo、能给不同的组件用，可以通过命令行传参传storeName，有这个就不用再开发demo啦
-![img_6.png](../../../img/development/component/img_6.png)
+![img_6.png](../../img/development/component/img_6.png)
 
 #### b. 如果该组件没有通用客户端，或者需要定制一些metadata传参，那就复制粘贴改一改
 比如zookeeper实现分布式锁，有一些定制配置，所以想自己新写个demo，那就复制粘贴redis的demo、改一改
-![img_7.png](../../../img/development/component/img_7.png)
+![img_7.png](../../img/development/component/img_7.png)
 
 注：demo的代码里如果出现不该有的错误，可以直接panic。后续我们会直接用demo跑集成测试，如果panic了代表集成测试没有通过。
 例如demo/lock/redis/client.go 里：
@@ -116,22 +116,22 @@
 ```
 
 ### 4.3. 参照quickstart文档，启动Layotto和demo看看有没有报错
-比如参考[分布式锁API的quickstart文档](../start/lock/start.md) ，启动你依赖的环境（比如zookeeper）、启动Layotto（记得用你刚才新增的配置文件！），看看有没有报错。
+比如参考[分布式锁API的quickstart文档](zh/start/lock/start.md) ，启动你依赖的环境（比如zookeeper）、启动Layotto（记得用你刚才新增的配置文件！），看看有没有报错。
 
 注：下面这个Error没事，无视就好
 
-![img_2.png](../../../img/development/component/img_2.png)
+![img_2.png](../../img/development/component/img_2.png)
 
 启动demo、调用Layotto，看看有没有报错。如果是通用客户端，可以在命令行命令里带上-s storeName传入storeName 
 
-![img_5.png](../../../img/development/component/img_5.png)
+![img_5.png](../../img/development/component/img_5.png)
 
 没有报错的话说明测试通过！
 
 ## 五、新增组件说明文档
 以上就算完成了代码工作，最好能新增组件的配置说明文档，说明一下这个组件支持哪些配置项、怎么启动该组件依赖的环境（比如用docker怎么启动zookeeper)
 
-可以参考 [lock API的redis组件说明(中文)](../component_specs/lock/redis.md)
+可以参考 [lock API的redis组件说明(中文)](zh/component_specs/lock/redis.md)
 和
-[lock API的redis组件说明(英文)](../../en/component_specs/lock/redis.md),同样可以复制粘贴改一改。
+[lock API的redis组件说明(英文)](en/component_specs/lock/redis.md),同样可以复制粘贴改一改。
 

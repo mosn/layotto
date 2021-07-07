@@ -1,11 +1,7 @@
 <h2>Layotto support configuration center</h2>
 
-[查看中文版本](../../../zh/start/configuration/start.md)
-
-## Quick start
-
 This example shows how to add, delete, modify, and watch the etcd configuration center through Layotto. Please install [Docker](https://www.docker.com/get-started) software on this machine in advance.
-[config file](../../../../configs/runtime_config.json) defines etcd in config_stores, and users can change the configuration file to the configuration center they want (currently supports etcd and apollo).
+[config file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) defines etcd in config_stores, and users can change the configuration file to the configuration center they want (currently supports etcd and apollo).
 
 ### Build docker image
 

@@ -18,7 +18,7 @@ go run demo/rpc/http/echoserver/echoserver.go
 go run demo/rpc/http/echoclient/echoclient.go -d 'hello layotto'
 ```
 
-![rpchello.png](../../../..//img/rpc/rpchello.png)
+![rpchello.png](../../../img/rpc/rpchello.png)
 
 #### 解释
 
