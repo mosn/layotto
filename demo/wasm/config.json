@@ -46,6 +46,7 @@
             {
               "type": "Layotto",
               "config": {
+                "name": "wasm_demo",
                 "instance_num": 1,
                 "vm_config": {
                   "engine": "wasmer",
