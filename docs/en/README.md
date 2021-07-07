@@ -2,7 +2,7 @@
 
 [![codecov](https://codecov.io/gh/mosn/layotto/branch/main/graph/badge.svg?token=10RxwSV6Sz)](https://codecov.io/gh/mosn/layotto)
 
-<img src="../img/logo/grey2-2.svg" height="120px">
+<img src="../img/logo/grey2-1.svg" height="120px">
 
 Layotto is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event pub/sub capabilities to simplify application development.
 

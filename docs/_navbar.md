@@ -1,2 +1,2 @@
-* [En](/)
-* [中文](/zh/)
+* [En](/en/README.md)
+* [中文](/zh/README.md)

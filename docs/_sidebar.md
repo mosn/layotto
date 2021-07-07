@@ -1,4 +1,4 @@
-- [Home](/)
+- [Home](/en/README.md)
 - Quick start
   - [Use Configuration API](en/start/configuration/start-apollo.md)
   - [Use State API](en/start/state/start.md)

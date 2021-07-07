@@ -1,4 +1,4 @@
-- [首页](/zh/)
+- [首页](/zh/README.md)
 - 快速开始
     - [使用Configuration API](zh/start/configuration/start-apollo.md)
     - [使用State API](zh/start/state/start.md)
