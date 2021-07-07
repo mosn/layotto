@@ -1,10 +1,8 @@
-[English Version](../../../en/start/stream_filter/flow_control.md)
-
 ## 方法级别流量控制
 
 ### 功能介绍
 
-在[runtime_config.json](../../../../configs/runtime_config.json)中，有一段关于限流的配置如下：
+在[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 中，有一段关于限流的配置如下：
 
 ```json
 [
@@ -26,9 +24,9 @@
 ```
 这段配置就是让`/spec.proto.runtime.v1.Runtime/SayHello`接口具备限流能力，1s只能调用5次。
 
-对应的调用端代码在[client.go](../../../../demo/flowcontrol/client.go)中，代码逻辑很简单，就是想服务端发起10次调用，调用结果如下：
+对应的调用端代码在[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go) 中，代码逻辑很简单，就是想服务端发起10次调用，调用结果如下：
 
-![img.png](../../../../img/flow_control.png)
+![img.png](../../../img/flow_control.png)
 
 可以看到前5次请求正常，后5次请求被限流。
 

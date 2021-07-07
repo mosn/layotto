@@ -6,7 +6,7 @@
 
 该示例的架构如下图，启动的进程有：redis、Layotto、客户端程程序
 
-![img.png](../../../../img/state/img.png)
+![img.png](../../../../../../img/state/img.png)
 
 ### 部署redis
 
@@ -23,7 +23,7 @@ docker pull redis:latest
 ```shell
 docker images
 ```
-![img.png](../../../../img/mq/start/img.png)
+![img.png](../../../../../../img/mq/start/img.png)
 
 3. 运行容器
 

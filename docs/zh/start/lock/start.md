@@ -6,7 +6,7 @@
 
 该示例的架构如下图，启动的进程有：redis、Layotto、一个演示用的client程序（其中包含两个协程，并发抢锁）
 
-![img.png](../../../../img/lock/img.png)
+![img.png](../../../img/lock/img.png)
 ### 部署redis
 
 1. 取最新版的 Redis 镜像。
@@ -22,7 +22,7 @@ docker pull redis:latest
 ```shell
 docker images
 ```
-![img.png](../../../../img/mq/start/img.png)
+![img.png](../../../img/mq/start/img.png)
 
 3. 运行容器
 

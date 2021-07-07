@@ -3,7 +3,7 @@
 ## Quick Start
 1. Edit config file，add `dubbo_json_rpc` filter
 
-![jsonrpc.jpg](../../../..//img/rpc/jsonrpc.jpg)
+![jsonrpc.jpg](../../../img/rpc/jsonrpc.jpg)
 
 2. Compile and start layotto
 ```sh
@@ -38,8 +38,8 @@ sh ./bin/load.sh start
 go run demo/rpc/dubbo_json_rpc/dubbo_json_client/client.go -d '{"jsonrpc":"2.0","method":"GetUser","params":["A003"],"id":9527}'
 ```
 
-![jsonrpc.jpg](../../../..//img/rpc/jsonrpcresult.jpg)
+![jsonrpc.jpg](../../../img/rpc/jsonrpcresult.jpg)
 
-### Next Step
+## Next Step
 
-If you are interested in the implementation principle, or want to extend some functions, you can read [RPC design document](../../design/rpc/rpc-design-doc.md)
+If you are interested in the implementation principle, or want to extend some functions, you can read [RPC design document](en/design/rpc/rpc-design-doc.md)

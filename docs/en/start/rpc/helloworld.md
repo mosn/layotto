@@ -18,9 +18,9 @@ go run demo/rpc/http/echoserver/echoserver.go
 go run demo/rpc/http/echoclient/echoclient.go -d 'hello layotto'
 ```
 
-![rpchello.png](../../../..//img/rpc/rpchello.png)
+![rpchello.png](../../../img/rpc/rpchello.png)
 
-#### Explanation:
+## Explanation
 
 1. configure mosn to match http request header id equals HelloService:1.0, forward to localhost:8889
 2. echoserver listen at localhost:8889
