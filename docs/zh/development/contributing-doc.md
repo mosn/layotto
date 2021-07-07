@@ -55,12 +55,12 @@ see [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runt
 
 文档中引用图片建议就用完整路径，免得遇到一堆乱七八糟的路径问题。
 
-例如，如果是引用main分支的图片，图片Url的前缀是https://raw.githubusercontent.com/seeflood/layotto/main/docs/img
+例如，如果是引用main分支的图片，图片Url的前缀是https://raw.githubusercontent.com/mosn/layotto/main/docs/img
 
 Markdown写法如下：
 
 ```markdown
-![Architecture](https://raw.githubusercontent.com/seeflood/layotto/main/docs/img/runtime-architecture.png)
+![Architecture](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
 ```
 
 注：相对路径其实也可以用，只不过你可能会遇到很多问题，比如`<img>`标签和markdown的相对路径逻辑不一样；比如用户可能会通过不同路径访问README，等等。总之很痛苦。
