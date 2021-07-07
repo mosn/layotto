@@ -1,10 +1,10 @@
-[查看中文版本](../../../zh/start/stream_filter/flow_control.md)
+[查看中文版本](zh/start/stream_filter/flow_control.md)
 
 ## Method Level Flow Control
 
 ### Introduction
 
-There is a config of flow control in [runtime_config.json](../../../../configs/runtime_config.json):
+There is a config of flow control in [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json):
 
 ```json
 [
@@ -26,9 +26,9 @@ There is a config of flow control in [runtime_config.json](../../../../configs/r
 ```
 this can help `/spec.proto.runtime.v1.Runtime/SayHello` method has a flow control feature, which means we can only access this method below 5 times in 1 second.
 
-this code of the client is here [client.go](../../../../demo/flowcontrol/client.go)，the logic is very simple, send 10 times request to the server，and the result is below:
+this code of the client is here [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go)，the logic is very simple, send 10 times request to the server，and the result is below:
 
-![img.png](../../../../img/flow_control.png)
+![img.png](../../../img/flow_control.png)
 
 the previous 5 times request access is succeed while the last 5 times request is under control.
 

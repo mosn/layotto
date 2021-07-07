@@ -13,7 +13,7 @@ in order to decoupling with pb definition，add independent RPC abstrations.
 due to Mosn do all the dirty work, a lightweight framework is enough for layotto currently.
   
 
-![img.png](../../../../img/rpc/rpc-layer.png)
+![img.png](../../../img/rpc/rpc-layer.png)
 
 ### Mosn Integration
 

@@ -1,12 +1,10 @@
-# State management demo with redis
-
-## Quick start
+## State management demo with redis
 
 This example shows how to call redis through Layotto to add, delete, modify and query status data.
 
 The architecture of this example is shown in the figure below, and the started processes are: redis, Layotto, client program
 
-![img.png](../../../../img/state/img.png)
+![img.png](../../../img/state/img.png)
 ### Deploy redis using Docker
 
 1. Get the latest version of Redis docker image
@@ -24,7 +22,7 @@ Use the following command to check if redis is installed:
 ```shell
 docker images
 ```
-![img.png](../../../../img/mq/start/img.png)
+![img.png](../../../img/mq/start/img.png)
 
 3. Run the container
 
@@ -36,7 +34,7 @@ docker run -itd --name redis-test -p 6380:6379 redis
 
 Parameter Description:
 
--p 6380:6379: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
+`-p 6380:6379`: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
 
 ### Run Layotto
 

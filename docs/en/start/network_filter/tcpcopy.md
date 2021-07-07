@@ -2,7 +2,7 @@
 
 ### Introduction
 
-When you run the demo according to the quick-start document [Configuration demo with apollo](../configuration/start-apollo.md), you may notice that there is such a configuration in the configuration file config_apollo.json:
+When you run the demo according to the quick-start document [Configuration demo with apollo](en/start/configuration/start-apollo.md), you may notice that there is such a configuration in the configuration file config_apollo.json:
 ```json
                 {
                   "type": "tcpcopy",
@@ -20,7 +20,7 @@ The meaning of this configuration is to load the tcpcopy plug-in at startup to d
 
 The dumped binary traffic data will be stored in the ${user's home directory}/logs/mosn directory, or under the /home/admin/logs/mosn directory:
 
-![img.png](../../../../img/tcp_dump.png)
+![img.png](../../../img/tcp_dump.png)
 
 You can use these data in combination with other tools and infrastructure to do something cool, such as traffic playback, bypass verification, etc.
 
