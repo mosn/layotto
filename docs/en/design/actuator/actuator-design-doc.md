@@ -62,7 +62,7 @@ Specifically, add a new listener and a new stream_filter to MOSN. This filter is
 
 Endpoint is an abstract inside Actuator. After a new request arrives at the server, Actuator will entrust the corresponding Endpoint to process it. Endpoint supports on-demand expansion and injection into Actuator:
 
-![img.png](../../../../img/actuator/abstract.png)
+![img.png](../../../img/actuator/abstract.png)
 
 ## 2.2. Http API design
 
@@ -179,13 +179,13 @@ Temporarily not mandatory
 
 ## 2.3. Schema of config data
 
-![img.png](../../../../img/actuator/actuator_config.png)
+![img.png](../../../img/actuator/actuator_config.png)
 
 A new listener is added for handling actuator requests. A new stream_filter called actuator_filter is added for http request processing(see below)
 
 ## 2.4. Internal structure and request processing flow
 
-![img.png](../../../../img/actuator/actuator_process.png)
+![img.png](../../../img/actuator/actuator_process.png)
 
 explanation:
 
@@ -265,20 +265,20 @@ info.Endpoint will collect information from all the implementation of info.Contr
 
 - SetStarted
 
-![img.png](../../../../img/actuator/set_started.png)
+![img.png](../../../img/actuator/set_started.png)
 
 - SetUnhealthy 
   
 When the startup fails:
 
-![img.png](../../../../img/actuator/img.png)
+![img.png](../../../img/actuator/img.png)
 
 When server stops:
 
-![img_1.png](../../../../img/actuator/img_1.png)
+![img_1.png](../../../img/actuator/img_1.png)
 
 ### 3.1.2. apollo's Indicator
 
 When failing in initializing the component:
 
-![img_2.png](../../../../img/actuator/img_2.png)
+![img_2.png](../../../img/actuator/img_2.png)

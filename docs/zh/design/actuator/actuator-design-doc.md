@@ -1,94 +1,94 @@
-# ActuatorÉè¼ÆÎÄµµ
-# Ò»¡¢²úÆ·Éè¼Æ
-## 1.1. ĞèÇó
+# Actuatorè®¾è®¡æ–‡æ¡£
+# ä¸€ã€äº§å“è®¾è®¡
+## 1.1. éœ€æ±‚
 
-- ½¡¿µ¼ì²é
+- å¥åº·æ£€æŸ¥
 
-Í¨¹ıActuator½Ó¿Ú¿ÉÒÔÍ³Ò»»ñÈ¡µ½LayottoÄÚ²¿ËùÓĞ×é¼şÒÔ¼°ÒµÎñÓ¦ÓÃµÄ½¡¿µ×´Ì¬
+é€šè¿‡Actuatoræ¥å£å¯ä»¥ç»Ÿä¸€è·å–åˆ°Layottoå†…éƒ¨æ‰€æœ‰ç»„ä»¶ä»¥åŠä¸šåŠ¡åº”ç”¨çš„å¥åº·çŠ¶æ€
 
-- ²é¿´ÔËĞĞÊ±ÔªÊı¾İ
+- æŸ¥çœ‹è¿è¡Œæ—¶å…ƒæ•°æ®
 
-Í¨¹ıActuator½Ó¿Ú¿ÉÒÔÍ³Ò»»ñÈ¡µ½Layotto×Ô¼ºµÄÔªÊı¾İĞÅÏ¢£¨ÀıÈç°æ±¾£¬gitĞÅÏ¢£©£¬ÒÔ¼°ÒµÎñÓ¦ÓÃµÄÔªÊı¾İĞÅÏ¢£¨ÀıÈçÍ¨¹ıÅäÖÃÖĞĞÄ¶©ÔÄµÄÅäÖÃÏîÁĞ±í£¬ÀıÈçÓ¦ÓÃ°æ±¾ĞÅÏ¢£©
+é€šè¿‡Actuatoræ¥å£å¯ä»¥ç»Ÿä¸€è·å–åˆ°Layottoè‡ªå·±çš„å…ƒæ•°æ®ä¿¡æ¯ï¼ˆä¾‹å¦‚ç‰ˆæœ¬ï¼Œgitä¿¡æ¯ï¼‰ï¼Œä»¥åŠä¸šåŠ¡åº”ç”¨çš„å…ƒæ•°æ®ä¿¡æ¯ï¼ˆä¾‹å¦‚é€šè¿‡é…ç½®ä¸­å¿ƒè®¢é˜…çš„é…ç½®é¡¹åˆ—è¡¨ï¼Œä¾‹å¦‚åº”ç”¨ç‰ˆæœ¬ä¿¡æ¯ï¼‰
 
-- Ö§³Ö¼¯³É½ø¿ªÔ´»ù´¡ÉèÊ©£¬°üÀ¨£º
-    - ¿ÉÒÔ¼¯³É½øk8s½¡¿µ¼ì²é
-    - ¿ÉÒÔ¼¯³É½ø¼à¿ØÏµÍ³£¬±ÈÈçPrometheus+Grafana
-    - ÈçÓĞĞèÒª£¬×¢²áÖĞĞÄ¿ÉÒÔ»ùÓÚ½¡¿µ¼ì²é½á¹ûÌŞ³ı½Úµã
-    - ºóĞø¿ÉÒÔ»ùÓÚ´Ë½Ó¿Ú×ödashboardÏîÄ¿»òÕßGUI¹¤¾ß,ÒÔ±ãÅÅ²éÎÊÌâ¡£
+- æ”¯æŒé›†æˆè¿›å¼€æºåŸºç¡€è®¾æ–½ï¼ŒåŒ…æ‹¬ï¼š
+    - å¯ä»¥é›†æˆè¿›k8så¥åº·æ£€æŸ¥
+    - å¯ä»¥é›†æˆè¿›ç›‘æ§ç³»ç»Ÿï¼Œæ¯”å¦‚Prometheus+Grafana
+    - å¦‚æœ‰éœ€è¦ï¼Œæ³¨å†Œä¸­å¿ƒå¯ä»¥åŸºäºå¥åº·æ£€æŸ¥ç»“æœå‰”é™¤èŠ‚ç‚¹
+    - åç»­å¯ä»¥åŸºäºæ­¤æ¥å£åšdashboardé¡¹ç›®æˆ–è€…GUIå·¥å…·,ä»¥ä¾¿æ’æŸ¥é—®é¢˜ã€‚
     
-- ÀàËÆÓÚSpring Boot ActuatorµÄ¹¦ÄÜ£¬Î´À´ÓĞ¸ü¶àµÄÏëÏó¿Õ¼ä£ºMonitoring, Metrics, Auditing, and more.
+- ç±»ä¼¼äºSpring Boot Actuatorçš„åŠŸèƒ½ï¼Œæœªæ¥æœ‰æ›´å¤šçš„æƒ³è±¡ç©ºé—´ï¼šMonitoring, Metrics, Auditing, and more.
 
-## 1.2. ½âÊÍ
+## 1.2. è§£é‡Š
 
-**Q: ¼ÛÖµÊÇÉ¶£¿½¡¿µ¼ì²é½Ó¿Ú¿ª³öÀ´¸øË­ÓÃ£¿**
+**Q: ä»·å€¼æ˜¯å•¥ï¼Ÿå¥åº·æ£€æŸ¥æ¥å£å¼€å‡ºæ¥ç»™è°ç”¨ï¼Ÿ**
 
-1. ¹©¿ª·¢ÅÅ²éÎÊÌâ£¬Ö±½Óµ÷½Ó¿Ú²éÑ¯ÔËĞĞÊ±ĞÅÏ¢£¬»òÕß×ö¸ödashboardÒ³Ãæ/GUI¹¤¾ß
+1. ä¾›å¼€å‘æ’æŸ¥é—®é¢˜ï¼Œç›´æ¥è°ƒæ¥å£æŸ¥è¯¢è¿è¡Œæ—¶ä¿¡æ¯ï¼Œæˆ–è€…åšä¸ªdashboardé¡µé¢/GUIå·¥å…·
 
-2. ¹©¼à¿ØÏµÍ³×ö¼à¿Ø£»
+2. ä¾›ç›‘æ§ç³»ç»Ÿåšç›‘æ§ï¼›
 
-3. ¹©»ù´¡ÉèÊ©×ö×Ô¶¯»¯ÔËÎ¬£¬±ÈÈç²¿ÊğÏµÍ³»ùÓÚ½¡¿µ¼ì²éÀ´ÅĞ¶Ï²¿Êğ½ø¶È£¬Í£Ö¹»ò¼ÌĞø·ÖÅú²¿Êğ£»±ÈÈç×¢²áÖĞĞÄ»ùÓÚ½¡¿µ¼ì²éÌŞ³ıÒì³£½Úµã£»±ÈÈçk8s»ùÓÚ½¡¿µ¼ì²ékillÈİÆ÷¡¢ÖØĞÂ´´½¨ÈİÆ÷
-
-
-**Q: ºÃÏñ·µ»Ø¸ö×´Ì¬Âë¾ÍĞĞ£¬Ã»±ØÒª·µ»ØÔËĞĞÊ±ĞÅÏ¢£¿²é³öÀ´µÄÔËĞĞÊ±ÏêÏ¸ĞÅÏ¢¸øË­ÓÃ£¿**
-
-1. ºóĞø¿ÉÒÔ»ùÓÚ´Ë½Ó¿Ú×ödashboardÒ³Ãæ»òÕßGUI¹¤¾ß,ÒÔ±ãÅÅ²éÎÊÌâ£»
-
-ÀàËÆÓÚspring bootÉçÇø»ùÓÚspring boot actuatorĞ´ÁË¸öspring boot adminÍøÒ³
-²Î¿¼[https://segmentfault.com/a/1190000017816452](https://segmentfault.com/a/1190000017816452)
-
-2. ¼¯³É¼à¿ØÏµÍ³:¿ÉÒÔ½ÓÈëPrometheus+Grafana
-
-ÀàËÆÓÚSpring Boot Actuator½ÓÈëPrometheus+Grafana
-²Î¿¼[Spring-Boot-Metrics¼à¿ØÖ®Prometheus-Grafana](https://bigjar.github.io/2018/08/19/Spring-Boot-Metrics¼à¿ØÖ®Prometheus-Grafana/)
+3. ä¾›åŸºç¡€è®¾æ–½åšè‡ªåŠ¨åŒ–è¿ç»´ï¼Œæ¯”å¦‚éƒ¨ç½²ç³»ç»ŸåŸºäºå¥åº·æ£€æŸ¥æ¥åˆ¤æ–­éƒ¨ç½²è¿›åº¦ï¼Œåœæ­¢æˆ–ç»§ç»­åˆ†æ‰¹éƒ¨ç½²ï¼›æ¯”å¦‚æ³¨å†Œä¸­å¿ƒåŸºäºå¥åº·æ£€æŸ¥å‰”é™¤å¼‚å¸¸èŠ‚ç‚¹ï¼›æ¯”å¦‚k8såŸºäºå¥åº·æ£€æŸ¥killå®¹å™¨ã€é‡æ–°åˆ›å»ºå®¹å™¨
 
 
-**Q: ×ö²»×ö¹Ü¿ØÄÜÁ¦£¬±ÈÈç¡°¿ª¹Ø Layotto ÄÚ²¿ÌØ¶¨×é¼şµÄÁ÷Á¿¡±**
+**Q: å¥½åƒè¿”å›ä¸ªçŠ¶æ€ç å°±è¡Œï¼Œæ²¡å¿…è¦è¿”å›è¿è¡Œæ—¶ä¿¡æ¯ï¼ŸæŸ¥å‡ºæ¥çš„è¿è¡Œæ—¶è¯¦ç»†ä¿¡æ¯ç»™è°ç”¨ï¼Ÿ**
 
-A: ²»×ö£¬¿ª¹Ø²¿·Ö×é¼ş»áÈÃapp´¦ÓÚpartial failure×´Ì¬£¬ÓĞ²»È·¶¨ĞÔ¡£
-µ«ÊÇºóĞø¿ÉÒÔ¿¼ÂÇÌí¼ÓdebugÄÜÁ¦£¬±ÈÈçmock¡¢×¥°ü¸Ä°üµÈ
+1. åç»­å¯ä»¥åŸºäºæ­¤æ¥å£åšdashboardé¡µé¢æˆ–è€…GUIå·¥å…·,ä»¥ä¾¿æ’æŸ¥é—®é¢˜ï¼›
+
+ç±»ä¼¼äºspring bootç¤¾åŒºåŸºäºspring boot actuatorå†™äº†ä¸ªspring boot adminç½‘é¡µ
+å‚è€ƒ[https://segmentfault.com/a/1190000017816452](https://segmentfault.com/a/1190000017816452)
+
+2. é›†æˆç›‘æ§ç³»ç»Ÿ:å¯ä»¥æ¥å…¥Prometheus+Grafana
+
+ç±»ä¼¼äºSpring Boot Actuatoræ¥å…¥Prometheus+Grafana
+å‚è€ƒ[Spring-Boot-Metricsç›‘æ§ä¹‹Prometheus-Grafana](https://bigjar.github.io/2018/08/19/Spring-Boot-Metricsç›‘æ§ä¹‹Prometheus-Grafana/)
 
 
-**Q: ½¡¿µ¼ì²éµÄ½Ó¿Ú×ö²»×öÈ¨ÏŞ¹Ü¿Ø**
+**Q: åšä¸åšç®¡æ§èƒ½åŠ›ï¼Œæ¯”å¦‚â€œå¼€å…³ Layotto å†…éƒ¨ç‰¹å®šç»„ä»¶çš„æµé‡â€**
 
-A: ÏÈ²»¸ã£¬ÓĞ·´À¡ĞèÇóÔÙ¼Ó¸ö¹³×Ó
+A: ä¸åšï¼Œå¼€å…³éƒ¨åˆ†ç»„ä»¶ä¼šè®©appå¤„äºpartial failureçŠ¶æ€ï¼Œæœ‰ä¸ç¡®å®šæ€§ã€‚
+ä½†æ˜¯åç»­å¯ä»¥è€ƒè™‘æ·»åŠ debugèƒ½åŠ›ï¼Œæ¯”å¦‚mockã€æŠ“åŒ…æ”¹åŒ…ç­‰
 
 
-# ¶ş¡¢¸ÅÒªÉè¼Æ
+**Q: å¥åº·æ£€æŸ¥çš„æ¥å£åšä¸åšæƒé™ç®¡æ§**
 
-## 2.1. ×ÜÌå·½°¸
+A: å…ˆä¸æï¼Œæœ‰åé¦ˆéœ€æ±‚å†åŠ ä¸ªé’©å­
 
-ÏÈ¿ª·Åhttp½Ó¿Ú£¬ÒòÎª¿ªÔ´»ù´¡ÉèÊ©µÄ½¡¿µ¼ì²é¹¦ÄÜ»ù±¾ÉÏ¶¼Ö§³Öhttp£¨±ÈÈçk8s,prometheus)£¬Ã»ÓĞÖ§³ÖgrpcµÄ¡£
 
-ÎªÁËÄÜ¹»¸´ÓÃMOSNµÄ¼øÈ¨filterµÈfilterÄÜÁ¦£¬Actuator½«×÷Îª7²ãµÄfilterÅÜÔÚMOSNÉÏ¡£
+# äºŒã€æ¦‚è¦è®¾è®¡
 
-¾ßÌåÀ´Ëµ£¬MOSNĞÂÔölistener,ĞÂĞ´¸östream_filter,Õâ¸öfilter¸ºÔğhttpÇëÇó´¦Àí¡¢µ÷ÓÃActuator.
+## 2.1. æ€»ä½“æ–¹æ¡ˆ
 
-ActuatorÄÚ²¿³éÏó³öEndpoint¸ÅÄî£¬ĞÂÇëÇóµ½´ï·şÎñÆ÷ºó£¬Actuator»áÎ¯ÍĞ¶ÔÓ¦µÄEndpoint½øĞĞ´¦Àí¡£EndpointÖ§³Ö°´ĞèÀ©Õ¹¡¢×¢Èë½øActuator£º
+å…ˆå¼€æ”¾httpæ¥å£ï¼Œå› ä¸ºå¼€æºåŸºç¡€è®¾æ–½çš„å¥åº·æ£€æŸ¥åŠŸèƒ½åŸºæœ¬ä¸Šéƒ½æ”¯æŒhttpï¼ˆæ¯”å¦‚k8s,prometheus)ï¼Œæ²¡æœ‰æ”¯æŒgrpcçš„ã€‚
 
-![img.png](../../../../img/actuator/abstract.png)
+ä¸ºäº†èƒ½å¤Ÿå¤ç”¨MOSNçš„é‰´æƒfilterç­‰filterèƒ½åŠ›ï¼ŒActuatorå°†ä½œä¸º7å±‚çš„filterè·‘åœ¨MOSNä¸Šã€‚
 
-## 2.2. Http APIÉè¼Æ
+å…·ä½“æ¥è¯´ï¼ŒMOSNæ–°å¢listener,æ–°å†™ä¸ªstream_filter,è¿™ä¸ªfilterè´Ÿè´£httpè¯·æ±‚å¤„ç†ã€è°ƒç”¨Actuator.
 
-### 2.2.1. Â·¾¶½âÊÍ
+Actuatorå†…éƒ¨æŠ½è±¡å‡ºEndpointæ¦‚å¿µï¼Œæ–°è¯·æ±‚åˆ°è¾¾æœåŠ¡å™¨åï¼ŒActuatorä¼šå§”æ‰˜å¯¹åº”çš„Endpointè¿›è¡Œå¤„ç†ã€‚Endpointæ”¯æŒæŒ‰éœ€æ‰©å±•ã€æ³¨å…¥è¿›Actuatorï¼š
 
-Â·¾¶²ÉÓÃrestful·ç¸ñ£¬²»Í¬µÄEndpoint×¢²á½øActuatorºó£¬Â·¾¶ÊÇ
+![img.png](../../../img/actuator/abstract.png)
+
+## 2.2. Http APIè®¾è®¡
+
+### 2.2.1. è·¯å¾„è§£é‡Š
+
+è·¯å¾„é‡‡ç”¨restfulé£æ ¼ï¼Œä¸åŒçš„Endpointæ³¨å†Œè¿›Actuatoråï¼Œè·¯å¾„æ˜¯
 
 ```
 /actuator/{endpoint_name}/{params}  
 ```
 
-±ÈÈç
+æ¯”å¦‚
 
 ```
 /actuator/health/liveness
 ```
 
-ÆäÖĞhealth±êÊ¶EndpointµÄÃû³ÆÊÇhealth£¬livenessÊÇ´«¸ø¸ÃEndpointµÄ²ÎÊı¡£
+å…¶ä¸­healthæ ‡è¯†Endpointçš„åç§°æ˜¯healthï¼Œlivenessæ˜¯ä¼ ç»™è¯¥Endpointçš„å‚æ•°ã€‚
 
-²ÎÊıÖ§³Ö´«¶à¸ö£¬ĞÎÈç /a/b/c/d£¬¾ßÌå´«¼¸¸ö¡¢²ÎÊıµÄÓïÒåÓÉÃ¿¸öEndpoint×Ô¼º¶¨
+å‚æ•°æ”¯æŒä¼ å¤šä¸ªï¼Œå½¢å¦‚ /a/b/c/dï¼Œå…·ä½“ä¼ å‡ ä¸ªã€å‚æ•°çš„è¯­ä¹‰ç”±æ¯ä¸ªEndpointè‡ªå·±å®š
 
 
-Ä¬ÈÏ×¢²áµÄÂ·¾¶ÓĞ£º
+é»˜è®¤æ³¨å†Œçš„è·¯å¾„æœ‰ï¼š
 
 ```
 /actuator/health/liveness
@@ -116,9 +116,9 @@ GET
   }
 }
 ```
-·µ»Ø×Ö¶ÎËµÃ÷£º
-HTTP×´Ì¬Âë200´ú±í³É¹¦£¬ÆäËû(400ÒÔÉÏµÄ×´Ì¬Âë)´ú±íÊ§°Ü
-status×Ö¶ÎÓĞÈıÖÖ£º
+è¿”å›å­—æ®µè¯´æ˜ï¼š
+HTTPçŠ¶æ€ç 200ä»£è¡¨æˆåŠŸï¼Œå…¶ä»–(400ä»¥ä¸Šçš„çŠ¶æ€ç )ä»£è¡¨å¤±è´¥
+statuså­—æ®µæœ‰ä¸‰ç§ï¼š
 ```go
 var (
 	// INIT means it is starting
@@ -166,37 +166,37 @@ GET
 
 
 
-**Q: ÔËĞĞÊ±ÔªÊı¾İÒªÄÄĞ©£¿**
+**Q: è¿è¡Œæ—¶å…ƒæ•°æ®è¦å“ªäº›ï¼Ÿ**
 
-Ò»ÆÚ£º
+ä¸€æœŸï¼š
 
-- °æ±¾ºÅ
+- ç‰ˆæœ¬å·
 
-ºóĞø¿ÉÒÔ¼ÓÉÏ£º
+åç»­å¯ä»¥åŠ ä¸Šï¼š
 
-- »Øµ÷app
-- ÔËĞĞÊ±ÅäÖÃ²ÎÊı
+- å›è°ƒapp
+- è¿è¡Œæ—¶é…ç½®å‚æ•°
 
 
-**Q: ÊÇ·ñÇ¿ÖÆÒªÇó×é¼şÊµÏÖ½¡¿µ¶È¼ì²é½Ó¿Ú£¿**
+**Q: æ˜¯å¦å¼ºåˆ¶è¦æ±‚ç»„ä»¶å®ç°å¥åº·åº¦æ£€æŸ¥æ¥å£ï¼Ÿ**
 
-ÔİÊ±²»Ç¿ÖÆ
+æš‚æ—¶ä¸å¼ºåˆ¶
 
-## 2.3. ÅäÖÃÊı¾İµÄÊı¾İÄ£ĞÍ
+## 2.3. é…ç½®æ•°æ®çš„æ•°æ®æ¨¡å‹
 
-![img.png](../../../../img/actuator/actuator_config.png)
+![img.png](../../../img/actuator/actuator_config.png)
 
-ĞÂÔölistenerÓÃÓÚ´¦Àíactuator£¬stream_filtersĞÂÔöactuator_filter£¬ÓÃÓÚ´¦ÀíactuatorµÄÇëÇó£¨¼ûÏÂ£©
+æ–°å¢listenerç”¨äºå¤„ç†actuatorï¼Œstream_filtersæ–°å¢actuator_filterï¼Œç”¨äºå¤„ç†actuatorçš„è¯·æ±‚ï¼ˆè§ä¸‹ï¼‰
 
-## 2.4. ÄÚ²¿½á¹¹ÓëÇëÇó´¦ÀíÁ÷³Ì
+## 2.4. å†…éƒ¨ç»“æ„ä¸è¯·æ±‚å¤„ç†æµç¨‹
 
-![img.png](../../../../img/actuator/actuator_process.png)
+![img.png](../../../img/actuator/actuator_process.png)
 
-½âÊÍ£º
+è§£é‡Šï¼š
 
-### 2.4.1. ÇëÇóµ½´ïmosn£¬Í¨¹ıstream filter½øÈëLayotto¡¢µ÷ÓÃActuator
+### 2.4.1. è¯·æ±‚åˆ°è¾¾mosnï¼Œé€šè¿‡stream filterè¿›å…¥Layottoã€è°ƒç”¨Actuator
 
-stream filter²ãµÄhttpĞ­ÒéÊµÏÖÀà(struct)ÎªDispatchFilter£¬¸ºÔğ°´httpÂ·¾¶·Ö·¢ÇëÇó¡¢µ÷ÓÃActuator:
+stream filterå±‚çš„httpåè®®å®ç°ç±»(struct)ä¸ºDispatchFilterï¼Œè´Ÿè´£æŒ‰httpè·¯å¾„åˆ†å‘è¯·æ±‚ã€è°ƒç”¨Actuator:
 ```go
 
 type DispatchFilter struct {
@@ -212,12 +212,12 @@ func (dis *DispatchFilter) OnDestroy() {}
 func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
 }
 ```
-Ğ­Òé²ãºÍActuator½âñî£¬Èç¹ûÎ´À´ĞèÒªÆäËûĞ­ÒéµÄ½Ó¿Ú£¬¿ÉÒÔÊµÏÖ¸ÃĞ­ÒéµÄstream filter
+åè®®å±‚å’ŒActuatorè§£è€¦ï¼Œå¦‚æœæœªæ¥éœ€è¦å…¶ä»–åè®®çš„æ¥å£ï¼Œå¯ä»¥å®ç°è¯¥åè®®çš„stream filter
 
-### 2.4.2. ÇëÇó·Ö·¢¸øActuatorÄÚ²¿µÄEndpoint
+### 2.4.2. è¯·æ±‚åˆ†å‘ç»™Actuatorå†…éƒ¨çš„Endpoint
 
-²Î¿¼spring boot actuatorµÄÉè¼Æ£º
-Actuator³éÏó³öEndpoint¸ÅÄî£¬Ö§³Ö°´ĞèÀ©Õ¹¡¢×¢ÈëEndpoint¡£ÏÈÄÚÖÃÊµÏÖhealthºÍinfo Endpoint¡£
+å‚è€ƒspring boot actuatorçš„è®¾è®¡ï¼š
+ActuatoræŠ½è±¡å‡ºEndpointæ¦‚å¿µï¼Œæ”¯æŒæŒ‰éœ€æ‰©å±•ã€æ³¨å…¥Endpointã€‚å…ˆå†…ç½®å®ç°healthå’Œinfo Endpointã€‚
 ```go
 type Actuator struct {
 	endpointRegistry map[string]Endpoint
@@ -233,52 +233,52 @@ func (act *Actuator) AddEndpoint(name string, ep Endpoint) {
 }
 
 ```
-À´ÇëÇóºó£¬¸ù¾İÂ·¾¶½«ÇëÇó·Ö·¢¸ø¶ÔÓ¦µÄEndpoint¡£±ÈÈç/actuator/health/readiness»á·Ö·¢¸øhealth.Endpoint
+æ¥è¯·æ±‚åï¼Œæ ¹æ®è·¯å¾„å°†è¯·æ±‚åˆ†å‘ç»™å¯¹åº”çš„Endpointã€‚æ¯”å¦‚/actuator/health/readinessä¼šåˆ†å‘ç»™health.Endpoint
 
-### 2.4.3. health.Endpoint½«ÇëÇó·Ö·¢¸øhealth.IndicatorµÄÊµÏÖ
+### 2.4.3. health.Endpointå°†è¯·æ±‚åˆ†å‘ç»™health.Indicatorçš„å®ç°
 
-ĞèÒªÉÏ±¨½¡¿µ¼ì²éĞÅÏ¢µÄ×é¼şÊµÏÖIndicator½Ó¿Ú¡¢×¢Èë½øhealth.Endpoint£º
+éœ€è¦ä¸ŠæŠ¥å¥åº·æ£€æŸ¥ä¿¡æ¯çš„ç»„ä»¶å®ç°Indicatoræ¥å£ã€æ³¨å…¥è¿›health.Endpointï¼š
 ```go
 type Indicator interface {
 	Report() Health
 }
 ```
-health.Endpoint½«ÇëÇó·Ö·¢¸øhealth.IndicatorµÄÊµÏÖ
+health.Endpointå°†è¯·æ±‚åˆ†å‘ç»™health.Indicatorçš„å®ç°
 
-### 2.4.4. info.Endpoint½«ÇëÇó·Ö·¢¸øinfo.ContributorµÄÊµÏÖ
+### 2.4.4. info.Endpointå°†è¯·æ±‚åˆ†å‘ç»™info.Contributorçš„å®ç°
 
-ĞèÒªÉÏ±¨ÔËĞĞÊ±ĞÅÏ¢µÄ×é¼şÊµÏÖContributor½Ó¿Ú¡¢×¢Èë½øinfo.Endpoint£º
+éœ€è¦ä¸ŠæŠ¥è¿è¡Œæ—¶ä¿¡æ¯çš„ç»„ä»¶å®ç°Contributoræ¥å£ã€æ³¨å…¥è¿›info.Endpointï¼š
 ```go
 type Contributor interface {
 	GetInfo() (info interface{}, err error)
 }
 ```
-info.Endpoint½«ÇëÇó·Ö·¢¸øinfo.ContributorµÄÊµÏÖ
+info.Endpointå°†è¯·æ±‚åˆ†å‘ç»™info.Contributorçš„å®ç°
 
-# Èı¡¢ÏêÏ¸Éè¼Æ
-## 3.1. ÂñµãÉè¼Æ
+# ä¸‰ã€è¯¦ç»†è®¾è®¡
+## 3.1. åŸ‹ç‚¹è®¾è®¡
 ### 3.1.1. runtime_startup
 
-- SetStartedÂñµã
+- SetStartedåŸ‹ç‚¹
 
-![img.png](../../../../img/actuator/set_started.png)
+![img.png](../../../img/actuator/set_started.png)
 
-- SetUnhealthyÂñµã
+- SetUnhealthyåŸ‹ç‚¹
 
-Æô¶¯Ê§°Ü:
+å¯åŠ¨å¤±è´¥:
 
-![img.png](../../../../img/actuator/img.png)
+![img.png](../../../img/actuator/img.png)
 
-StopµÄÊ±ºò£º
+Stopçš„æ—¶å€™ï¼š
 
-![img.png](../../../../img/actuator/img_1.png)
+![img.png](../../../img/actuator/img_1.png)
 
-### 3.1.2. apollo×é¼ş
+### 3.1.2. apolloç»„ä»¶
 
 init:
 
-![img_2.png](../../../../img/actuator/img_2.png)
+![img_2.png](../../../img/actuator/img_2.png)
 
-ÆäÊµÄ¿Ç°Ã»ÓĞĞèÒªÂñµãµÄµØ·½£¬ÒòÎªÕâÀïinit³õÊ¼»¯Á¬½ÓÊ§°ÜµÄ»°£¬runtime_startupµÄindicatorÒ²ÄÜ±¨unhealthy
+å…¶å®ç›®å‰æ²¡æœ‰éœ€è¦åŸ‹ç‚¹çš„åœ°æ–¹ï¼Œå› ä¸ºè¿™é‡Œinitåˆå§‹åŒ–è¿æ¥å¤±è´¥çš„è¯ï¼Œruntime_startupçš„indicatorä¹Ÿèƒ½æŠ¥unhealthy
 
 

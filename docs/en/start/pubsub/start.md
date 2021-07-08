@@ -1,12 +1,10 @@
-# Implementing Pub/Sub Pattern using Layotto and Redis
-
-## Quick start
+## Implementing Pub/Sub Pattern using Layotto and Redis
 
 This example shows how to call redis through Layotto to publish/subscribe messages.
 
 The architecture of this example is shown in the figure below. The running processes are: redis, a Subscriber program that listens to events, Layotto, and a Publisher program that publishes events.
 
-![img_1.png](../../../../img/mq/start/img_1.png)
+![img_1.png](../../../img/mq/start/img_1.png)
 
 ### Deploy and Run Redis in Docker
 
@@ -25,7 +23,7 @@ Use the following command to check whether Redis is installed:
 ```shell
 docker images
 ```
-![img.png](../../../../img/mq/start/img.png)
+![img.png](../../../img/mq/start/img.png)
 
 3. Run the container
 
@@ -37,7 +35,7 @@ docker run -itd --name redis-test -p 6380:6379 redis
 
 Parameter Description:
 
--p 6380:6379: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
+`-p 6380:6379`: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
 
 ### Start the Subscriber program and subscribe to events
 ```bash
@@ -111,4 +109,4 @@ In addition to using sdk, you can also interact with Layotto directly through gr
 
 #### Understand the principle of Pub/Sub API implementation
 
-If you are interested in the implementation principle, or want to extend some functions, you can read [Pub/Sub API design document](../../design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+If you are interested in the implementation principle, or want to extend some functions, you can read [Pub/Sub API design document](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)

@@ -30,6 +30,7 @@ import (
 	"testing"
 )
 
+// MockRepository implements Repository interface
 type MockRepository struct {
 	client  *agollo.Client
 	cfg     *RepoConfig
@@ -106,13 +107,14 @@ func (a *MockRepository) Set(namespace string, key string, value string) error {
 
 func TestConfigStore_read(t *testing.T) {
 	// 1. set up
+	// inject the MockRepository into a ConfigStore
 	store, cfg := setup(t)
 	kvRepo := store.kvRepo.(*MockRepository)
 	kvRepo.Set("application", "sofa@$prod", "sofa@$prod")
 	kvRepo.Set("application", "apollo@$prod", "apollo@$prod")
 	kvRepo.Set("dubbo", "dubbo", "dubbo")
 
-	// 2. test
+	// 2. test the ConfigStore,which has a MockRepository in it
 	// init
 	err := store.Init(cfg)
 	if err != nil {
