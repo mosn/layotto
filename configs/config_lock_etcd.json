@@ -29,7 +29,7 @@
                       "lock": {
                         "etcd": {
                           "metadata": {
-                            "endpoints": "localhost:2379;localhost:2380",
+                            "endpoints": "localhost:2379",
                             "username": "",
                             "password": "",
                             "keyPrefix": "",
