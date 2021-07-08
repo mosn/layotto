@@ -19,16 +19,18 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"mosn.io/layotto/components/configstores"
-	"mosn.io/layotto/components/configstores/apollo"
-	"mosn.io/layotto/components/hello"
-	"mosn.io/layotto/components/hello/helloworld"
-	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/rpc"
 	"mosn.io/pkg/log"
 	"os"
 	"strconv"
 	"time"
+
+	// Hello
+	"mosn.io/layotto/components/hello"
+	"mosn.io/layotto/components/hello/helloworld"
+
+	// Configuration
+	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/configstores/apollo"
 
 	// Pub/Sub
 	dapr_comp_pubsub "github.com/dapr/components-contrib/pubsub"
@@ -46,6 +48,8 @@ import (
 	"github.com/dapr/kit/logger"
 	"mosn.io/layotto/pkg/runtime/pubsub"
 
+	// RPC
+	"mosn.io/layotto/components/rpc"
 	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
 
 	// State Stores
@@ -71,6 +75,8 @@ import (
 	"github.com/dapr/components-contrib/state/zookeeper"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 
+	// Lock
+	"mosn.io/layotto/components/lock"
 	lock_etcd "mosn.io/layotto/components/lock/etcd"
 	lock_redis "mosn.io/layotto/components/lock/redis"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
