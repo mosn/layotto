@@ -1,9 +1,9 @@
 package zookeeper
 
 import (
-	"context"
-	"fmt"
-	"github.com/go-redis/redis/v8"
+	"errors"
+	"github.com/go-zookeeper/zk"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/pkg/log"
@@ -30,8 +30,20 @@ func TestMain(m *testing.M) {
 
 // A lock ,A unlock
 func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
+
 	comp := NewZookeeperLock(log.DefaultLogger)
 	comp.Init(cfg)
+
+	//mock
+	ctrl := gomock.NewController(t)
+	connection := NewMockZKConnection(ctrl)
+	path := "/" + resouseId
+	connection.EXPECT().NewConnection(time.Duration(expireTime), comp.metadata).Return(connection, nil).Times(2)
+	connection.EXPECT().Create(path, []byte(lockOwerA), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
+	connection.EXPECT().Close().Return().Times(1)
+	connection.EXPECT().Get(path).Return([]byte(lockOwerA), &zk.Stat{Version: 123}, nil).Times(1)
+	connection.EXPECT().Delete(path, int32(123)).Return(nil).Times(1)
+	comp.conn = connection
 
 	tryLock, err := comp.TryLock(&lock.TryLockRequest{
 		ResourceId: resouseId,
@@ -51,9 +63,20 @@ func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
 
 // A lock ,B unlock
 func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
-	comp := NewZookeeperLock(log.DefaultLogger)
 
+	comp := NewZookeeperLock(log.DefaultLogger)
 	comp.Init(cfg)
+
+	//mock
+	ctrl := gomock.NewController(t)
+	connection := NewMockZKConnection(ctrl)
+	path := "/" + resouseId
+	connection.EXPECT().NewConnection(time.Duration(expireTime), comp.metadata).Return(connection, nil).Times(2)
+	connection.EXPECT().Create(path, []byte(lockOwerA), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
+	connection.EXPECT().Close().Return().Times(1)
+	connection.EXPECT().Get(path).Return([]byte(lockOwerA), &zk.Stat{Version: 123}, nil).Times(1)
+	connection.EXPECT().Delete(path, int32(123)).Return(nil).Times(1)
+	comp.conn = connection
 
 	tryLock, err := comp.TryLock(&lock.TryLockRequest{
 		ResourceId: resouseId,
@@ -73,9 +96,27 @@ func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
 
 // A lock , B lock ,A unlock ,B lock,B unlock
 func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
-	comp := NewZookeeperLock(log.DefaultLogger)
 
+	comp := NewZookeeperLock(log.DefaultLogger)
 	comp.Init(cfg)
+
+	//mock
+	ctrl := gomock.NewController(t)
+	connection := NewMockZKConnection(ctrl)
+	path := "/" + resouseId
+	connection.EXPECT().NewConnection(time.Duration(expireTime), comp.metadata).Return(connection, nil).Times(5)
+	connection.EXPECT().Create(path, []byte(lockOwerA), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
+	connection.EXPECT().Create(path, []byte(lockOwerB), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", errors.New("")).Times(1)
+	connection.EXPECT().Create(path, []byte(lockOwerB), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
+
+	connection.EXPECT().Close().Return().Times(5)
+	connection.EXPECT().Get(path).Return([]byte(lockOwerA), &zk.Stat{Version: 123}, nil).Times(1)
+	connection.EXPECT().Get(path).Return([]byte(lockOwerB), &zk.Stat{Version: 124}, nil).Times(1)
+	connection.EXPECT().Delete(path, int32(123)).Return(nil).Times(2)
+	connection.EXPECT().Delete(path, int32(124)).Return(nil).Times(2)
+
+	comp.conn = connection
+
 	//A lock
 	tryLock, err := comp.TryLock(&lock.TryLockRequest{
 		ResourceId: resouseId,
@@ -118,17 +159,18 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 	assert.Equal(t, unlock.Status, lock.SUCCESS)
 }
 
-func Test_RedisComplete(t *testing.T) {
+//test redis compter
+/*func Test_RedisComplete(t *testing.T) {
 
 	//mock lock competition
 	for i := 0; i < 30; i++ {
-		go redisOption(i)
+		go redisOperate(i)
 	}
 
 	time.Sleep(time.Second * 2000)
 }
 
-func redisOption(number int) {
+func redisOperate(number int) {
 	comp := NewZookeeperLock(log.DefaultLogger)
 	comp.Init(cfg)
 	tryLock := &lock.TryLockResponse{}
@@ -169,3 +211,4 @@ func redisOption(number int) {
 	fmt.Println(number, "release the lock", unlock)
 
 }
+*/

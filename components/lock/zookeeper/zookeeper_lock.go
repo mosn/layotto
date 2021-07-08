@@ -15,10 +15,46 @@ const (
 	host                  = "zookeeperHosts"
 	password              = "zookeeperPassword"
 	sessionTimeout        = "sessionTimeout"
-	defaultSessionTimeout = time.Second * 3
+	defaultSessionTimeout = 5
 )
 
+type ZKConnection interface {
+	Get(path string) ([]byte, *zk.Stat, error)
+	Delete(path string, version int32) error
+	Create(path string, data []byte, flags int32, acl []zk.ACL) (string, error)
+	Close()
+	NewConnection(expire time.Duration, meta metadata) (ZKConnection, error)
+}
+
+type ZkConnectionImpl struct {
+	connection *zk.Conn
+}
+
+func (z *ZkConnectionImpl) Get(path string) ([]byte, *zk.Stat, error) {
+	return z.connection.Get(path)
+}
+
+func (z *ZkConnectionImpl) Delete(path string, version int32) error {
+	return z.connection.Delete(path, version)
+}
+func (z *ZkConnectionImpl) Create(path string, data []byte, flags int32, acl []zk.ACL) (string, error) {
+	return z.connection.Create(path, data, flags, acl)
+
+}
+func (z *ZkConnectionImpl) Close() {
+	z.connection.Close()
+}
+func (z *ZkConnectionImpl) NewConnection(expire time.Duration, meta metadata) (ZKConnection, error) {
+
+	conn, _, err := zk.Connect(meta.hosts, expire*time.Second, zk.WithLogger(defaultLogger{}))
+	if err != nil {
+		return nil, err
+	}
+	return &ZkConnectionImpl{connection: conn}, nil
+}
+
 type ZookeeperLock struct {
+	conn     ZKConnection
 	metadata metadata
 	logger   log.ErrorLogger
 }
@@ -37,13 +73,14 @@ func (defaultLogger) Printf(format string, a ...interface{}) {
 
 }
 
-func (p *ZookeeperLock) newConnection() (*zk.Conn, error) {
+func (p *ZookeeperLock) newConnection(expire time.Duration) (ZKConnection, error) {
 	//make sure a lock and a connection
-	conn, _, err := zk.Connect(p.metadata.hosts, p.metadata.sessionTimeout*time.Second, zk.WithLogger(defaultLogger{}))
+	connection, err := p.conn.NewConnection(expire, p.metadata)
+
 	if err != nil {
 		return nil, err
 	}
-	return conn, nil
+	return connection, nil
 }
 
 func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
@@ -51,6 +88,10 @@ func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
 	m, err := parseZookeeperMetadata(metadata)
 	if err != nil {
 		return err
+	}
+	//nil to this
+	p.conn = &ZkConnectionImpl{
+		connection: nil,
 	}
 	p.metadata = m
 
@@ -62,7 +103,7 @@ func (p *ZookeeperLock) Features() []lock.Feature {
 }
 func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 
-	conn, err := p.newConnection()
+	conn, err := p.newConnection(time.Duration(req.Expire))
 	if err != nil {
 		return &lock.TryLockResponse{}, err
 	}
@@ -95,7 +136,7 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 }
 func (p *ZookeeperLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 
-	conn, err := p.newConnection()
+	conn, err := p.newConnection(p.metadata.sessionTimeout)
 	defer conn.Close()
 
 	if err != nil {
