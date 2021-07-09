@@ -2,26 +2,33 @@ package etcd
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"fmt"
-	"mosn.io/layotto/components/lock"
-	"mosn.io/pkg/log"
+	"io/ioutil"
 	"strconv"
 	"strings"
 	"time"
 
 	"go.etcd.io/etcd/client/v3"
+
+	"mosn.io/layotto/components/lock"
+	"mosn.io/pkg/log"
 )
 
 const (
 	defaultDialTimeout = 5
 	defaultKeyPrefix   = "/layotto/"
 
-	prefixKey      = "keyPrefix"
-	usernameKey    = "username"
-	passwordKey    = "password"
-	dialTimeoutKey = "dialTimeout"
-	endpointsKey   = "endpoints"
+	prefixKey         = "keyPrefix"
+	usernameKey       = "username"
+	passwordKey       = "password"
+	dialTimeoutKey    = "dialTimeout"
+	endpointsKey      = "endpoints"
+	tlsCertPathKey    = "tlsCert"
+	tlsCertKeyPathKey = "tlsCertKey"
+	tlsCaPathKey      = "tlsCa"
 )
 
 type EtcdLock struct {
@@ -136,6 +143,28 @@ func (e *EtcdLock) newClient(meta metadata) (*clientv3.Client, error) {
 		Password:    meta.password,
 	}
 
+	if meta.tlsCa != "" || meta.tlsCert != "" || meta.tlsCertKey != "" {
+		//enable tls
+		cert, err := tls.LoadX509KeyPair(meta.tlsCert, meta.tlsCertKey)
+		if err != nil {
+			return nil, fmt.Errorf("error reading tls certificate, cert: %s, certKey: %s, err: %s", meta.tlsCert, meta.tlsCertKey, err)
+		}
+
+		caData, err := ioutil.ReadFile(meta.tlsCa)
+		if err != nil {
+			return nil, fmt.Errorf("error reading tls ca %s, err: %s", meta.tlsCa, err)
+		}
+
+		pool := x509.NewCertPool()
+		pool.AppendCertsFromPEM(caData)
+
+		tlsConfig := &tls.Config{
+			Certificates: []tls.Certificate{cert},
+			RootCAs:      pool,
+		}
+		config.TLS = tlsConfig
+	}
+
 	if client, err := clientv3.New(config); err != nil {
 		return nil, err
 	} else {
@@ -193,6 +222,18 @@ func parseEtcdMetadata(meta lock.Metadata) (metadata, error) {
 		m.password = val
 	}
 
+	if val, ok := meta.Properties[tlsCaPathKey]; ok && val != "" {
+		m.tlsCa = val
+	}
+
+	if val, ok := meta.Properties[tlsCertPathKey]; ok && val != "" {
+		m.tlsCert = val
+	}
+
+	if val, ok := meta.Properties[tlsCertKeyPathKey]; ok && val != "" {
+		m.tlsCertKey = val
+	}
+
 	return m, nil
 }
 
@@ -202,4 +243,8 @@ type metadata struct {
 	endpoints   []string
 	username    string
 	password    string
+
+	tlsCa      string
+	tlsCert    string
+	tlsCertKey string
 }

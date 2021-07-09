@@ -54,6 +54,15 @@ func TestEtcdLock_Init(t *testing.T) {
 	cfg.Properties["dialTimeout"] = "2"
 	err = comp.Init(cfg)
 	assert.NoError(t, err)
+	err = comp.Close()
+	assert.NoError(t, err)
+
+	//ca
+	cfg.Properties["tlsCa"] = "/tmp"
+	cfg.Properties["tlsCert"] = "/tmp"
+	cfg.Properties["tlsCertKey"] = "/tmp"
+	err = comp.Init(cfg)
+	assert.Error(t, err)
 }
 
 func TestEtcdLock_CreateConnTimeout(t *testing.T) {
