@@ -10,6 +10,9 @@ Example: configs/config_lock_etcd.json
 | username | N | etcd auth username |
 | password | N | etcd auth password |
 | keyPrefix | N | lock key prefix in etcd, default: `/layotto/` |
+| tlsCert | N | tls certificate path |
+| tlsCertKey | N | tls certificate key path |
+| tlsCa | N | tls ca path |
 
 ## How to start etcd
 If you want to run the etcd demo, you need to start a etcd server.

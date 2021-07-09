@@ -10,6 +10,9 @@
 | username | N | etcd 认证用户名 |
 | password | N | etcd 认证密码 |
 | keyPrefix | N | 在 etcd 建立锁 key 的前缀，默认值：`/layotto/` |
+| tlsCert | N | tls 证书路径 |
+| tlsCertKey | N | tls 证书 key 路径 |
+| tlsCa | N | tls ca 路径 |
 
 ## 怎么启动 etcd
 要先用Docker启动一个etcd
