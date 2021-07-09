@@ -6,6 +6,7 @@ import (
 	"github.com/go-zookeeper/zk"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/pkg/log"
+	"mosn.io/pkg/utils"
 	"strconv"
 	"strings"
 	"time"
@@ -18,45 +19,35 @@ const (
 	defaultSessionTimeout = 5
 )
 
+type ConnectionFactory interface {
+	NewConnection(expire time.Duration, meta metadata) (ZKConnection, error)
+}
+
+type ConnectionFactoryImpl struct {
+}
+
+func (c *ConnectionFactoryImpl) NewConnection(expire time.Duration, meta metadata) (ZKConnection, error) {
+	conn, _, err := zk.Connect(meta.hosts, expire*time.Second, zk.WithLogger(defaultLogger{}))
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
+}
+
 type ZKConnection interface {
 	Get(path string) ([]byte, *zk.Stat, error)
 	Delete(path string, version int32) error
 	Create(path string, data []byte, flags int32, acl []zk.ACL) (string, error)
 	Close()
-	NewConnection(expire time.Duration, meta metadata) (ZKConnection, error)
-}
-
-type ZkConnectionImpl struct {
-	connection *zk.Conn
-}
-
-func (z *ZkConnectionImpl) Get(path string) ([]byte, *zk.Stat, error) {
-	return z.connection.Get(path)
-}
-
-func (z *ZkConnectionImpl) Delete(path string, version int32) error {
-	return z.connection.Delete(path, version)
-}
-func (z *ZkConnectionImpl) Create(path string, data []byte, flags int32, acl []zk.ACL) (string, error) {
-	return z.connection.Create(path, data, flags, acl)
-
-}
-func (z *ZkConnectionImpl) Close() {
-	z.connection.Close()
-}
-func (z *ZkConnectionImpl) NewConnection(expire time.Duration, meta metadata) (ZKConnection, error) {
-
-	conn, _, err := zk.Connect(meta.hosts, expire*time.Second, zk.WithLogger(defaultLogger{}))
-	if err != nil {
-		return nil, err
-	}
-	return &ZkConnectionImpl{connection: conn}, nil
 }
 
 type ZookeeperLock struct {
-	conn     ZKConnection
-	metadata metadata
-	logger   log.ErrorLogger
+	//trylock reestablish connection  every time
+	factory ConnectionFactory
+	//unlock reuse this conneciton
+	unlockConn ZKConnection
+	metadata   metadata
+	logger     log.ErrorLogger
 }
 
 func NewZookeeperLock(logger log.ErrorLogger) *ZookeeperLock {
@@ -73,28 +64,22 @@ func (defaultLogger) Printf(format string, a ...interface{}) {
 
 }
 
-func (p *ZookeeperLock) newConnection(expire time.Duration) (ZKConnection, error) {
-	//make sure a lock and a connection
-	connection, err := p.conn.NewConnection(expire, p.metadata)
-
-	if err != nil {
-		return nil, err
-	}
-	return connection, nil
-}
-
 func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
 
 	m, err := parseZookeeperMetadata(metadata)
 	if err != nil {
 		return err
 	}
-	//nil to this
-	p.conn = &ZkConnectionImpl{
-		connection: nil,
-	}
-	p.metadata = m
 
+	p.metadata = m
+	p.factory = &ConnectionFactoryImpl{}
+
+	//init unlock connection
+	zkConn, err := p.factory.NewConnection(p.metadata.sessionTimeout*time.Second, p.metadata)
+	if err != nil {
+		return err
+	}
+	p.unlockConn = zkConn
 	return nil
 }
 
@@ -103,7 +88,7 @@ func (p *ZookeeperLock) Features() []lock.Feature {
 }
 func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 
-	conn, err := p.newConnection(time.Duration(req.Expire))
+	conn, err := p.factory.NewConnection(time.Duration(req.Expire)*time.Second, p.metadata)
 	if err != nil {
 		return &lock.TryLockResponse{}, err
 	}
@@ -112,22 +97,26 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 
 	//2.1 create node fail ,indicates lock fail
 	if err != nil {
-		//make sure close connetion in time
-		conn.Close()
-		return &lock.TryLockResponse{
-			Success: false,
-		}, nil
+		defer conn.Close()
+		//the node exists,lock fail
+		if err == zk.ErrNodeExists {
+			return &lock.TryLockResponse{
+				Success: false,
+			}, nil
+		}
+		//other err
+		return &lock.TryLockResponse{}, err
 	}
 
 	//2.2 create node success, asyn  to make sure zkclient alive for need time
-	go func() {
+	utils.GoWithRecover(func() {
 		//can also
 		//time.Sleep(time.Second * time.Duration(req.Expire))
 		timeAfterTrigger := time.After(time.Second * time.Duration(req.Expire))
 		<-timeAfterTrigger
 		// make sure close connecion
 		conn.Close()
-	}()
+	}, nil)
 
 	return &lock.TryLockResponse{
 		Success: true,
@@ -136,30 +125,38 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 }
 func (p *ZookeeperLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 
-	conn, err := p.newConnection(p.metadata.sessionTimeout)
-	defer conn.Close()
-
-	if err != nil {
-		return &lock.UnlockResponse{Status: lock.INTERNAL_ERROR}, err
-	}
+	conn := p.unlockConn
 
 	path := "/" + req.ResourceId
 	owner, state, err := conn.Get(path)
-	//1. node does not exist, indicates this lock has expired or wrong unlock
+
 	if err != nil {
-		return &lock.UnlockResponse{Status: lock.LOCK_UNEXIST}, nil
+		//node does not exist, indicates this lock has expired
+		if err == zk.ErrNoNode {
+			return &lock.UnlockResponse{Status: lock.LOCK_UNEXIST}, nil
+		}
+		//other err
+		return &lock.UnlockResponse{}, err
 	}
-	//2. node exist ,but owner not this, indicates this lock has expired or wrong unlock
+	//node exist ,but owner not this, indicates this lock has occupied or wrong unlock
 	if string(owner) != req.LockOwner {
 		return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
 	}
 	err = conn.Delete(path, state.Version)
-	//3.owner is this, but delete fail, indicates this lock has expired
-	//this step contains problem, the lock maybe also UNEXIST
+	//owner is this, but delete fail
 	if err != nil {
-		return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
+		// delete no node , indicates this lock has expired
+		if err == zk.ErrNoNode {
+			return &lock.UnlockResponse{Status: lock.LOCK_UNEXIST}, nil
+			// delete version error , indicates this lock has occupied by others
+		} else if err == zk.ErrBadVersion {
+			return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
+			//other error
+		} else {
+			return &lock.UnlockResponse{}, err
+		}
 	}
-	//4.delete success, unlock succes
+	//delete success, unlock success
 	return &lock.UnlockResponse{Status: lock.SUCCESS}, nil
 }
 
