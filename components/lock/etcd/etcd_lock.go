@@ -71,7 +71,7 @@ func (e *EtcdLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, err
 	var leaseId clientv3.LeaseID
 	//1.Create new lease
 	lease := clientv3.NewLease(e.client)
-	if leaseGrantResp, err := lease.Grant(context.TODO(), 10); err != nil {
+	if leaseGrantResp, err := lease.Grant(e.ctx, int64(req.Expire)); err != nil {
 		return &lock.TryLockResponse{}, fmt.Errorf("[etcdLock]: Create new lease returned error: %s.ResourceId: %s", err, req.ResourceId)
 	} else {
 		leaseId = leaseGrantResp.ID
