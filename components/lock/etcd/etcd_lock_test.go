@@ -7,6 +7,7 @@ import (
 	"os"
 	"sync"
 	"testing"
+	"time"
 
 	"mosn.io/layotto/components/lock"
 
@@ -23,6 +24,16 @@ const resourceId4 = "resource_xxx4"
 
 func TestEtcdLock_Init(t *testing.T) {
 	var err error
+	var etcdServer *embed.Etcd
+	var etcdTestDir = "init.test.etcd"
+	var etcdUrl = "localhost:2379"
+
+	etcdServer, err = startEtcdServer(etcdTestDir, 2379)
+	assert.NoError(t, err)
+	defer func() {
+		etcdServer.Server.Stop()
+		os.RemoveAll(etcdTestDir)
+	}()
 	comp := NewEtcdLock(log.DefaultLogger)
 
 	cfg := lock.Metadata{
@@ -35,14 +46,33 @@ func TestEtcdLock_Init(t *testing.T) {
 	err = comp.Init(cfg)
 	assert.Error(t, err)
 
-	cfg.Properties["endpoints"] = "localhost:2381"
+	cfg.Properties["endpoints"] = etcdUrl
 	cfg.Properties["dialTimeout"] = "a"
 	err = comp.Init(cfg)
 	assert.Error(t, err)
 
-	cfg.Properties["dialTimeout"] = "5"
+	cfg.Properties["dialTimeout"] = "2"
 	err = comp.Init(cfg)
 	assert.NoError(t, err)
+}
+
+func TestEtcdLock_CreateConnTimeout(t *testing.T) {
+	var err error
+
+	comp := NewEtcdLock(log.DefaultLogger)
+
+	cfg := lock.Metadata{
+		Properties: make(map[string]string),
+	}
+
+	cfg.Properties["endpoints"] = "localhost:18888"
+	cfg.Properties["dialTimeout"] = "3"
+	startTime := time.Now()
+	err = comp.Init(cfg)
+	endTIme := time.Now()
+	d := endTIme.Sub(startTime)
+	assert.Error(t, err)
+	assert.Equal(t, true, d.Seconds() >= 3)
 }
 
 func TestEtcdLock_TryLock(t *testing.T) {

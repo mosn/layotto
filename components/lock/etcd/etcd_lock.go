@@ -4,12 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"mosn.io/layotto/components/lock"
+	"mosn.io/pkg/log"
 	"strconv"
 	"strings"
 	"time"
-
-	"mosn.io/layotto/components/lock"
-	"mosn.io/pkg/log"
 
 	"go.etcd.io/etcd/client/v3"
 )
@@ -132,7 +131,7 @@ func (e *EtcdLock) newClient(meta metadata) (*clientv3.Client, error) {
 
 	config := clientv3.Config{
 		Endpoints:   meta.endpoints,
-		DialTimeout: time.Duration(meta.dialTimeout) * time.Second,
+		DialTimeout: time.Second * time.Duration(meta.dialTimeout),
 		Username:    meta.username,
 		Password:    meta.password,
 	}
@@ -140,6 +139,14 @@ func (e *EtcdLock) newClient(meta metadata) (*clientv3.Client, error) {
 	if client, err := clientv3.New(config); err != nil {
 		return nil, err
 	} else {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(meta.dialTimeout))
+		defer cancel()
+		//ping
+		_, err = client.Get(ctx, "ping")
+		if err != nil {
+			return nil, fmt.Errorf("etcd lock error: connect to etcd timeoout %s", meta.endpoints)
+		}
+
 		return client, nil
 	}
 }
