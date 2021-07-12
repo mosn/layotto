@@ -20,7 +20,7 @@ func TestGet() {
 	}
 
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "海贼王.jpeg"}
+	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "xxx.jpeg"}
 	cli, err := c.GetFile(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)
@@ -35,7 +35,7 @@ func TestGet() {
 		}
 		pic = append(pic, resp.Data...)
 	}
-	ioutil.WriteFile("海贼王.jpeg", pic, os.ModePerm)
+	ioutil.WriteFile("xxx.jpeg", pic, os.ModePerm)
 }
 
 func TestPut() {
@@ -47,13 +47,13 @@ func TestPut() {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "海贼王.jpeg", Metadata: meta}
+	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "xxx.jpeg", Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
 	if err != nil {
 		fmt.Printf("put file failed:%+v", err)
 		return
 	}
-	fileHandle, err := os.Open("海贼王.jpeg")
+	fileHandle, err := os.Open("xxx.jpeg")
 	defer fileHandle.Close()
 	//分片上传，片最小为100kb
 	buffer := make([]byte, 102400)
@@ -84,5 +84,5 @@ func TestPut() {
 
 func main() {
 	TestGet()
-	//TestPut()
+	TestPut()
 }
