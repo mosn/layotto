@@ -19,6 +19,11 @@
     <ItemGroup>
         <None Remove="logs\**" />
         <None Remove="*.DotSettings" />
+
+        <None Include="../../../../LICENSE">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
     </ItemGroup>
 
     <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
@@ -36,8 +41,11 @@
         <RepositoryType>git</RepositoryType>
         <PackageProjectUrl>https://github.com/mosn/layotto/</PackageProjectUrl>
         <Description>A fast and efficient cloud native application runtime - layotto .net sdk.</Description>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <Version>0.1.0-beta1</Version>
     </PropertyGroup>
+    
+    
 
     <ItemGroup>
         <PackageReference Include="Google.Protobuf" Version="3.17.3" />
