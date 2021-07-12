@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Google.Protobuf;
 using Grpc.Net.Client;
 using Layotto.Configuration;
@@ -26,10 +27,10 @@ namespace Layotto
 
         #region Hello Api
 
-        public SayHelloResponse SayHello(SayHelloRequest request)
+        public async Task<SayHelloResponse> SayHelloAsync(SayHelloRequest request)
         {
             var req = new Protocol.SayHelloRequest {ServiceName = request.ServiceName};
-            var resp = _client.SayHello(req);
+            var resp = await _client.SayHelloAsync(req);
             return new SayHelloResponse {Hello = resp.Hello};
         }
 
@@ -37,7 +38,7 @@ namespace Layotto
 
         #region Pub/Sub Api
 
-        public void PublishEvent(PublishEventRequest request)
+        public async Task PublishEventAsync(PublishEventRequest request)
         {
             var req = new Protocol.PublishEventRequest
             {
@@ -48,7 +49,7 @@ namespace Layotto
                 Metadata = {request.Metadata}
             };
 
-            _client.PublishEvent(req);
+            await _client.PublishEventAsync(req);
         }
 
         #endregion
@@ -78,7 +79,7 @@ namespace Layotto
 
         #region Configraution Api
 
-        public List<ConfigurationItem> GetConfiguration(ConfigurationRequestItem requestItem)
+        public async Task<List<ConfigurationItem>> GetConfigurationAsync(ConfigurationRequestItem requestItem)
         {
             var req = new GetConfigurationRequest
             {
@@ -91,7 +92,7 @@ namespace Layotto
             };
             req.Metadata.Add(req.Metadata);
 
-            var resp = _client.GetConfiguration(req);
+            var resp = await _client.GetConfigurationAsync(req);
 
             return resp.Items.Select(v => new ConfigurationItem
             {
@@ -108,7 +109,7 @@ namespace Layotto
         /// saves configuration into configuration store.
         /// </summary>
         /// <param name="request"></param>
-        public void SaveConfiguration(SaveConfigurationRequest request)
+        public async Task SaveConfigurationAsync(SaveConfigurationRequest request)
         {
             var req = new Protocol.SaveConfigurationRequest
             {
@@ -128,10 +129,10 @@ namespace Layotto
                     Metadata = {v.Metadata}
                 });
 
-            _client.SaveConfiguration(req);
+            await _client.SaveConfigurationAsync(req);
         }
 
-        public void DeleteConfiguration(ConfigurationRequestItem requestItem)
+        public async Task DeleteConfigurationAsync(ConfigurationRequestItem requestItem)
         {
             var req = new DeleteConfigurationRequest
             {
@@ -143,7 +144,7 @@ namespace Layotto
                 Metadata = {requestItem.Metadata}
             };
 
-            _client.DeleteConfiguration(req);
+            await _client.DeleteConfigurationAsync(req);
         }
 
         /// <summary>
@@ -151,7 +152,7 @@ namespace Layotto
         /// </summary>
         /// <param name="request"></param>
         /// <exception cref="NotImplementedException"></exception>
-        public void SubscribeConfiguration(ConfigurationRequestItem request)
+        public Task SubscribeConfigurationAsync(ConfigurationRequestItem request)
         {
             throw new NotImplementedException();
         }
@@ -160,7 +161,7 @@ namespace Layotto
 
         #region State Api
 
-        public void ExecuteStateTransaction(string storeName, Dictionary<string, string> meta, List<StateOperation> ops)
+        public async Task ExecuteStateTransactionAsync(string storeName, Dictionary<string, string> meta, List<StateOperation> ops)
         {
             if (string.IsNullOrEmpty(storeName)) throw new ArgumentNullException(nameof(storeName));
 
@@ -181,10 +182,10 @@ namespace Layotto
                 Operations = {items}
             };
 
-            _client.ExecuteStateTransaction(req);
+            await _client.ExecuteStateTransactionAsync(req);
         }
 
-        public void SaveState(string storeName, string key, Memory<byte> data, StateOptions options)
+        public async Task SaveStateAsync(string storeName, string key, Memory<byte> data, StateOptions options)
         {
             var item = new SetStateItem
             {
@@ -192,10 +193,10 @@ namespace Layotto
                 Value = data,
                 Options = options
             };
-            SaveBulkState(storeName, new List<SetStateItem> {item});
+            await SaveBulkStateAsync(storeName, new List<SetStateItem> {item});
         }
 
-        public void SaveBulkState(string storeName, List<SetStateItem> items)
+        public async Task SaveBulkStateAsync(string storeName, List<SetStateItem> items)
         {
             if (string.IsNullOrEmpty(storeName)) throw new ArgumentNullException(nameof(storeName));
 
@@ -208,10 +209,10 @@ namespace Layotto
 
             foreach (var item in items) req.States.Add(StateUtil.ToProtoSaveStateItem(item));
 
-            _client.SaveState(req);
+            await _client.SaveStateAsync(req);
         }
 
-        public List<BulkStateItem> GetBulkState(string storeName, List<string> keys, Dictionary<string, string> meta,
+        public async Task<List<BulkStateItem>> GetBulkStateAsync(string storeName, List<string> keys, Dictionary<string, string> meta,
             int parallelism)
         {
             if (string.IsNullOrEmpty(storeName)) throw new ArgumentNullException(nameof(storeName));
@@ -226,7 +227,7 @@ namespace Layotto
                 Parallelism = parallelism
             };
 
-            var resp = _client.GetBulkState(req);
+            var resp = await _client.GetBulkStateAsync(req);
 
             var result = new List<BulkStateItem>();
             if (resp.Items == null || resp.Items.Count == 0) return result;
@@ -244,12 +245,12 @@ namespace Layotto
             return result;
         }
 
-        public StateItem GetState(string storeName, string key)
+        public Task<StateItem> GetStateAsync(string storeName, string key)
         {
-            return GetStateWithConsistency(storeName, key, null, StateConsistency.Strong);
+            return GetStateWithConsistencyAsync(storeName, key, null, StateConsistency.Strong);
         }
 
-        public StateItem GetStateWithConsistency(string storeName, string key, Dictionary<string, string> meta,
+        public async Task<StateItem> GetStateWithConsistencyAsync(string storeName, string key, Dictionary<string, string> meta,
             StateConsistency sc)
         {
             if (string.IsNullOrEmpty(storeName)) throw new ArgumentNullException(nameof(storeName));
@@ -263,7 +264,7 @@ namespace Layotto
                 Metadata = {meta}
             };
 
-            var resp = _client.GetState(req);
+            var resp = await _client.GetStateAsync(req);
 
             return new StateItem
             {
@@ -274,12 +275,12 @@ namespace Layotto
             };
         }
 
-        public void DeleteState(string storeName, string key)
+        public Task DeleteStateAsync(string storeName, string key)
         {
-            DeleteStateWithETag(storeName, key, null, null, null);
+            return DeleteStateWithETagAsync(storeName, key, null, null, null);
         }
 
-        public void DeleteStateWithETag(string storeName, string key, ETag eTag, Dictionary<string, string> meta,
+        public async Task DeleteStateWithETagAsync(string storeName, string key, ETag eTag, Dictionary<string, string> meta,
             StateOptions opts)
         {
             if (string.IsNullOrEmpty(storeName)) throw new ArgumentNullException(nameof(storeName));
@@ -294,21 +295,21 @@ namespace Layotto
 
             if (eTag != null) req.Etag = new Etag {Value = eTag.Value};
 
-            _client.DeleteState(req);
+            await _client.DeleteStateAsync(req);
         }
 
-        public void DeleteBulkState(string storeName, List<string> keys)
+        public Task DeleteBulkStateAsync(string storeName, List<string> keys)
         {
             if (string.IsNullOrEmpty(storeName)) throw new ArgumentNullException(nameof(storeName));
 
-            if (keys == null || keys.Count == 0) return;
+            if (keys == null || keys.Count == 0) return Task.CompletedTask;
 
             var items = new List<DeleteStateItem>(keys.Count);
             items.AddRange(keys.Select(key => new DeleteStateItem {Key = key}));
-            DeleteBulkStateItems(storeName, items);
+            return DeleteBulkStateItemsAsync(storeName, items);
         }
 
-        public void DeleteBulkStateItems(string storeName, List<DeleteStateItem> items)
+        public async Task DeleteBulkStateItemsAsync(string storeName, List<DeleteStateItem> items)
         {
             if (string.IsNullOrEmpty(storeName)) throw new ArgumentNullException(nameof(storeName));
 
@@ -337,21 +338,21 @@ namespace Layotto
                 States = {states}
             };
 
-            _client.DeleteBulkState(req);
+            await _client.DeleteBulkStateAsync(req);
         }
 
         #endregion
 
         #region LockA pi
 
-        public TryLockResponse TryLock(TryLockRequest request)
+        public async Task<TryLockResponse> TryLockAsync(TryLockRequest request)
         {
-            return _client.TryLock(request);
+            return await _client.TryLockAsync(request);
         }
 
-        public UnlockResponse UnLock(UnlockRequest request)
+        public async Task<UnlockResponse> UnLockAsync(UnlockRequest request)
         {
-            return _client.Unlock(request);
+            return await _client.UnlockAsync(request);
         }
 
         #endregion

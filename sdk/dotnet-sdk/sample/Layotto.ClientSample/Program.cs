@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Layotto.Hello;
 
 namespace Layotto.ClientSample
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             var cli = new LayottoClientBuilder().Build();
 
-            var resp = cli.SayHello(new SayHelloRequest {ServiceName = "helloworld"});
+            var resp = await cli.SayHelloAsync(new SayHelloRequest {ServiceName = "helloworld"});
             Console.WriteLine(resp.Hello);
         }
     }
