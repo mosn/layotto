@@ -77,6 +77,7 @@ import (
 
 	// Lock
 	"mosn.io/layotto/components/lock"
+	lock_etcd "mosn.io/layotto/components/lock/etcd"
 	lock_redis "mosn.io/layotto/components/lock/redis"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 
@@ -240,6 +241,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithLockFactory(
 			runtime_lock.NewFactory("redis", func() lock.LockStore {
 				return lock_redis.NewStandaloneRedisLock(log.DefaultLogger)
+			}),
+			runtime_lock.NewFactory("etcd", func() lock.LockStore {
+				return lock_etcd.NewEtcdLock(log.DefaultLogger)
 			}),
 		),
 	)
