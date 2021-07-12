@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Google.Protobuf;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Layotto.Configuration;
 using Layotto.Protocol;
@@ -147,14 +148,23 @@ namespace Layotto
             await _client.DeleteConfigurationAsync(req);
         }
 
-        /// <summary>
-        /// TODO impl:SubscribeConfiguration
-        /// </summary>
-        /// <param name="request"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        public Task SubscribeConfigurationAsync(ConfigurationRequestItem request)
+        public async Task<IAsyncStreamReader<SubscribeConfigurationResponse>> SubscribeConfigurationAsync(ConfigurationRequestItem request)
         {
-            throw new NotImplementedException();
+            var req = new SubscribeConfigurationRequest()
+            {
+                StoreName = request.StoreName,
+                AppId = request.AppId,
+                Group = request.Group,
+                Label = request.Label,
+                Keys = { request.Keys},
+                Metadata = { request.Metadata}
+            };
+            
+            var send =_client.SubscribeConfiguration();
+            await send.RequestStream.WriteAsync(req);
+            await send.RequestStream.CompleteAsync();
+
+            return send.ResponseStream;
         }
 
         #endregion

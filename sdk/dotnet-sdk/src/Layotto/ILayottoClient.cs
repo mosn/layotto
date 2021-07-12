@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Grpc.Core;
 using Layotto.Configuration;
 using Layotto.Protocol;
 using Layotto.State;
@@ -34,10 +35,10 @@ namespace Layotto
         Task DeleteConfigurationAsync(ConfigurationRequestItem request);
 
         /// <summary>
-        /// TODO gets configuration from configuration store and subscribe the updates.
+        /// gets configuration from configuration store and subscribe the updates.
         /// </summary>
         /// <param name="request"></param>
-        Task SubscribeConfigurationAsync(ConfigurationRequestItem request);
+        Task<IAsyncStreamReader<SubscribeConfigurationResponse>> SubscribeConfigurationAsync(ConfigurationRequestItem request);
 
         /// <summary>
         /// publishes events to the specific topic.
