@@ -1,0 +1,1 @@
+../../../../cmd/layotto/layotto start -c ./hello.json

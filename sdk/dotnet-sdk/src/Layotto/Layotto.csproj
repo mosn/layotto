@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <PackageTags>layotto</PackageTags>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PackageReleaseNotes></PackageReleaseNotes>
+        <AssemblyVersion>0.1.0-beta1</AssemblyVersion>
+        <FileVersion>0.1.0-beta1</FileVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Document">
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+        <WarningsAsErrors>NU1605;NU1701</WarningsAsErrors>
+        <NoWarn>NU1701;1701;1702;1705;1591;CS1591</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Remove="logs\**" />
+        <None Remove="*.DotSettings" />
+    </ItemGroup>
+
+    <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+        <ItemGroup>
+            <ProjectIncludeFile Include="*.json;*.pfx;Dockerfile" />
+        </ItemGroup>
+        <Copy SourceFiles="@(ProjectIncludeFile)" Condition="Exists(@(ProjectIncludeFile))" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />
+    </Target>
+
+    <PropertyGroup Label="Package">
+        <Product>Layotto</Product>
+        <Authors>layotto,stulzq</Authors>
+        <Owners>layotto,stulzq</Owners>
+        <RepositoryUrl>https://github.com/mosn/layotto.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageProjectUrl>https://github.com/mosn/layotto/</PackageProjectUrl>
+        <Description>A fast and efficient cloud native application runtime - layotto .net sdk.</Description>
+        <Version>0.1.0-beta1</Version>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.17.3" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.38.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    </ItemGroup>
+
+
+</Project>

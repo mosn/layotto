@@ -12,3 +12,7 @@ logs/
 *.swp
 /cover.out
 vendor/
+.idea/
+# .net
+bin/
+obj/

@@ -1,5 +1,6 @@
-
 syntax = "proto3";
+
+option csharp_namespace = "Layotto.Protocol";
 
 package spec.proto.runtime.v1;
 
