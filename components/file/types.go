@@ -2,7 +2,7 @@ package file
 
 // FileConfig wraps configuration for a file implementation
 type FileConfig struct {
-	Metadata map[string]string `json:"metadata"`
+	Metadata []map[string]interface{} `json:"metadata"`
 }
 
 type PutFileStu struct {

@@ -23,13 +23,15 @@
                       },
                       "files": {
                         "aliOSS": {
-                          "metadata": {
-                            "endpoint": "xxx",
-                            "accessKeyID": "xxx",
-                            "accessKeySecret": "xxxx",
-                            "bucket": "xxxx",
-                            "storageType": "xxxx"
-                          }
+                          "metadata":[
+                            {
+                              "endpoint": "xxxx",
+                              "accessKeyID": "xxxx",
+                              "accessKeySecret": "xxxx",
+                              "bucket": ["xxxx"],
+                              "storageType": "Standard"
+                            }
+                          ]
                         }
                       }
                     }

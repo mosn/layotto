@@ -682,10 +682,10 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	}
 	st := &file.GetFileStu{ObjectName: req.Name, Metadata: req.Metadata}
 	data, err := a.fileOps[req.StoreName].Get(st)
-	defer data.Close()
 	if err != nil {
 		return status.Errorf(codes.Internal, "get file failed,err: %+v", err)
 	}
+	defer data.Close()
 	buffs := bytesPool.Get()
 	defer bytesPool.Put(buffs)
 	buf := buffs.([]byte)
