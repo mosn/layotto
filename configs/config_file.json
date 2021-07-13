@@ -25,10 +25,10 @@
                         "aliOSS": {
                           "metadata":[
                             {
-                              "endpoint": "xxxx",
-                              "accessKeyID": "xxxx",
-                              "accessKeySecret": "xxxx",
-                              "bucket": ["xxxx"],
+                              "endpoint": "endpoint_adress",
+                              "accessKeyID": "accessKey",
+                              "accessKeySecret": "secret",
+                              "bucket": ["bucket1", "bucket2"],
                               "storageType": "Standard"
                             }
                           ]

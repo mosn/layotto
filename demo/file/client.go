@@ -20,7 +20,7 @@ func TestGet() {
 	}
 
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "xxx.jpeg"}
+	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "fileName"}
 	cli, err := c.GetFile(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)
@@ -35,7 +35,7 @@ func TestGet() {
 		}
 		pic = append(pic, resp.Data...)
 	}
-	ioutil.WriteFile("xxx.jpeg", pic, os.ModePerm)
+	ioutil.WriteFile("fileName", pic, os.ModePerm)
 }
 
 func TestPut() {
@@ -47,13 +47,13 @@ func TestPut() {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "xxx.jpeg", Metadata: meta}
+	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "fileName", Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
 	if err != nil {
 		fmt.Printf("put file failed:%+v", err)
 		return
 	}
-	fileHandle, err := os.Open("xxx.jpeg")
+	fileHandle, err := os.Open("fileName")
 	defer fileHandle.Close()
 	//分片上传，片最小为100kb
 	buffer := make([]byte, 102400)
@@ -82,7 +82,48 @@ func TestPut() {
 	}
 }
 
+func TestList() {
+	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+	if err != nil {
+		fmt.Printf("conn build failed,err:%+v", err)
+		return
+	}
+	meta := make(map[string]string)
+	meta["storageType"] = "Standard"
+	c := runtimev1pb.NewRuntimeClient(conn)
+	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: "bucketName", Metadata: meta}
+	listReq := &runtimev1pb.ListFileRequest{Request: req}
+	resp, err := c.ListFile(context.Background(), listReq)
+	if err != nil {
+		fmt.Printf("list file fail, err: %+v", err)
+		return
+	}
+	fmt.Printf("files under bucket is: %+v", resp.FileName)
+}
+
+func TestDel() {
+	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+	if err != nil {
+		fmt.Printf("conn build failed,err:%+v", err)
+		return
+	}
+	meta := make(map[string]string)
+	meta["storageType"] = "Standard"
+	c := runtimev1pb.NewRuntimeClient(conn)
+	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: "fileName", Metadata: meta}
+	listReq := &runtimev1pb.DelFileRequest{Request: req}
+	_, err = c.DelFile(context.Background(), listReq)
+	if err != nil {
+		fmt.Printf("list file fail, err: %+v", err)
+		return
+	}
+	fmt.Printf("delete file success")
+}
+
 func main() {
 	TestGet()
 	TestPut()
+	TestList()
+	TestDel()
+	TestList()
 }

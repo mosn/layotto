@@ -121,6 +121,50 @@ func (s *AliCloudOSS) Get(st *file.GetFileStu) (io.ReadCloser, error) {
 	return bucket.GetObject(st.ObjectName)
 }
 
+func (s *AliCloudOSS) List(request *file.ListRequest) (*file.ListResp, error) {
+	if request.DirectoryName == "" {
+		return nil, fmt.Errorf("not specifc directory name")
+	}
+	if request.Metadata != nil {
+		request.Metadata = make(map[string]string)
+	}
+	request.Metadata[bucketKey] = request.DirectoryName
+	bucket, err := s.selectClientAndBucket(request.Metadata)
+	if err != nil {
+		return nil, err
+	}
+	marker := ""
+	resp := &file.ListResp{}
+	for {
+		lsRes, err := bucket.ListObjects(oss.Marker(marker))
+		if err != nil {
+			return nil, err
+		}
+		//Return 100 records by default each time
+		for _, object := range lsRes.Objects {
+			resp.FilesName = append(resp.FilesName, object.Key)
+		}
+		if lsRes.IsTruncated {
+			marker = lsRes.NextMarker
+		} else {
+			break
+		}
+	}
+	return resp, err
+}
+
+func (s *AliCloudOSS) Del(request *file.DelRequest) error {
+	bucket, err := s.selectClientAndBucket(request.Metadata)
+	if err != nil {
+		return err
+	}
+	err = bucket.DeleteObject(request.FileName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *AliCloudOSS) checkMetadata(m *ossMetadata) bool {
 	if m.AccessKeySecret == "" || m.Endpoint == "" || m.AccessKeyID == "" || len(m.Bucket) == 0 {
 		return false

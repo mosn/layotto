@@ -17,3 +17,17 @@ type GetFileStu struct {
 	ObjectName string
 	Metadata   map[string]string
 }
+
+type DelRequest struct {
+	FileName string
+	Metadata map[string]string
+}
+
+type ListRequest struct {
+	DirectoryName string
+	Metadata      map[string]string
+}
+
+type ListResp struct {
+	FilesName []string
+}

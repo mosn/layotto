@@ -91,6 +91,11 @@ type API interface {
 	GetFile(*runtimev1pb.GetFileRequest, runtimev1pb.Runtime_GetFileServer) error
 	// Put file with stream.
 	PutFile(runtimev1pb.Runtime_PutFileServer) error
+	// List all files
+	ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error)
+	//Delete specific file
+	DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error)
+
 	// Distributed Lock API
 	TryLock(context.Context, *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error)
 	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
@@ -708,7 +713,7 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	st := &file.GetFileStu{ObjectName: req.Name, Metadata: req.Metadata}
 	data, err := a.fileOps[req.StoreName].Get(st)
 	if err != nil {
-		return status.Errorf(codes.Internal, "get file failed,err: %+v", err)
+		return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
 	}
 	defer data.Close()
 	buffs := bytesPool.Get()
@@ -717,12 +722,12 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	for {
 		length, err := data.Read(buf)
 		if err != nil && err != io.EOF {
-			return status.Errorf(codes.Internal, "get file failed,err: %+v", err)
+			return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
 		}
 		if err == nil || (err == io.EOF && length != 0) {
 			resp := &runtimev1pb.GetFileResponse{Data: buf[:length]}
 			if err = stream.Send(resp); err != nil {
-				return status.Errorf(codes.Internal, "send resp failed,err: %+v", err)
+				return status.Errorf(codes.Internal, "send file data fail,err: %+v", err)
 			}
 		}
 		if err == io.EOF {
@@ -741,15 +746,15 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 			v, _ := filesMap.Load(id)
 			storeName := v.(string)
 			if err := a.fileOps[storeName].CompletePut(id); err != nil {
-				return status.Errorf(codes.Internal, "complete file upload fail, err: %+v", err)
+				return status.Errorf(codes.Internal, "put file fail, err: %+v", err)
 			}
 			log.DefaultLogger.Debugf("put file finished")
 			stream.SendAndClose(&emptypb.Empty{})
-			break
+			return nil
 		}
 		filesMap.LoadOrStore(id, req.StoreName)
 		if err != nil {
-			return status.Errorf(codes.Unknown, "read data failed: err: %+v", err)
+			return status.Errorf(codes.Unknown, "receive data fail: err: %+v", err)
 		}
 		chunkNum++
 		if a.fileOps[req.StoreName] == nil {
@@ -757,10 +762,33 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 		}
 		st := &file.PutFileStu{FileName: req.Name, Data: req.Data, Metadata: req.Metadata, StreamId: id, ChunkNumber: chunkNum}
 		if err = a.fileOps[req.StoreName].Put(st); err != nil {
-			return err
+			return status.Errorf(codes.Internal, err.Error())
 		}
 	}
-	return nil
+}
+
+// List all files
+func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error) {
+	if a.fileOps[in.Request.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "not supported store type: %+v", in.Request.StoreName)
+	}
+	resp, err := a.fileOps[in.Request.StoreName].List(&file.ListRequest{DirectoryName: in.Request.Name, Metadata: in.Request.Metadata})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &runtimev1pb.ListFileResp{FileName: resp.FilesName}, nil
+}
+
+//Delete specific file
+func (a *api) DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error) {
+	if a.fileOps[in.Request.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "not supported store type: %+v", in.Request.StoreName)
+	}
+	err := a.fileOps[in.Request.StoreName].Del(&file.DelRequest{FileName: in.Request.Name, Metadata: in.Request.Metadata})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &emptypb.Empty{}, nil
 }
 
 func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error) {

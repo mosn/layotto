@@ -65,3 +65,29 @@ func TestSelectBucket(t *testing.T) {
 	assert.Equal(t, bucketName, "test")
 	assert.Nil(t, err)
 }
+
+func TestSelectClientAndBucket(t *testing.T) {
+	ossObject := &AliCloudOSS{metadata: make(map[string]*ossMetadata), client: make(map[string]*oss.Client)}
+
+	bucket, err := ossObject.selectClientAndBucket(nil)
+	assert.Equal(t, err.Error(), "should specific endpoint in metadata")
+	assert.Nil(t, bucket)
+
+	client1 := &oss.Client{}
+	ossObject.client["127.0.0.1"] = client1
+	bucket, err = ossObject.selectClientAndBucket(nil)
+	assert.Equal(t, err.Error(), "no bucket configuration")
+	assert.Nil(t, bucket)
+
+	metaData1 := &ossMetadata{Bucket: []string{"test", "test2"}}
+	ossObject.metadata["127.0.0.1"] = metaData1
+	bucket, err = ossObject.selectClientAndBucket(nil)
+	assert.Equal(t, err.Error(), "should specific bucketKey in metadata")
+	assert.Nil(t, bucket)
+
+	metaData2 := &ossMetadata{Bucket: []string{"test"}}
+	ossObject.metadata["127.0.0.1"] = metaData2
+	bucket, err = ossObject.selectClientAndBucket(nil)
+	assert.Nil(t, err)
+	assert.NotNil(t, bucket)
+}
