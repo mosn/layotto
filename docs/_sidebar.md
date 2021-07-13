@@ -28,6 +28,6 @@
     - Distributed Lock
       - [Redis](en/component_specs/lock/redis.md)  
     - Configuration
-    - [Etcd](en/component_specs/configuration/etcd.md)
+      - [Etcd](en/component_specs/configuration/etcd.md)
 - Contributing
   - [Layotto contributor guide](en/development/CONTRIBUTING.md) 
