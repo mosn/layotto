@@ -19,6 +19,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"mosn.io/mosn/pkg/configmanager"
+	"mosn.io/mosn/pkg/log"
+	"mosn.io/mosn/pkg/types"
 	"os"
 	"strconv"
 	"time"
@@ -90,6 +93,7 @@ import (
 	_ "mosn.io/mosn/pkg/filter/network/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	_ "mosn.io/mosn/pkg/filter/network/proxy"
+	_ "mosn.io/mosn/pkg/filter/network/streamproxy"
 	_ "mosn.io/mosn/pkg/filter/stream/flowcontrol"
 	_ "mosn.io/mosn/pkg/metrics/sink"
 	_ "mosn.io/mosn/pkg/metrics/sink/prometheus"
@@ -254,6 +258,42 @@ var (
 				Name:   "feature-gates, f",
 				Usage:  "config feature gates",
 				EnvVar: "FEATURE_GATES",
+			}, cli.StringFlag{
+				Name:   "service-cluster, s",
+				Usage:  "sidecar service cluster",
+				EnvVar: "SERVICE_CLUSTER",
+			}, cli.StringFlag{
+				Name:   "service-node, n",
+				Usage:  "sidecar service node",
+				EnvVar: "SERVICE_NODE",
+			}, cli.StringFlag{
+				Name:   "service-type, p",
+				Usage:  "sidecar service type",
+				EnvVar: "SERVICE_TYPE",
+			}, cli.StringSliceFlag{
+				Name:   "service-meta, sm",
+				Usage:  "sidecar service metadata",
+				EnvVar: "SERVICE_META",
+			}, cli.StringSliceFlag{
+				Name:   "service-lables, sl",
+				Usage:  "sidecar service metadata labels",
+				EnvVar: "SERVICE_LAB",
+			}, cli.StringSliceFlag{
+				Name:   "cluster-domain, domain",
+				Usage:  "sidecar service metadata labels",
+				EnvVar: "CLUSTER_DOMAIN",
+			},  cli.StringFlag{
+				Name:   "pod-namespace, pns",
+				Usage:  "mosn pod namespaces",
+				EnvVar: "POD_NAMESPACE",
+			}, cli.StringFlag{
+				Name:   "pod-name, pn",
+				Usage:  "mosn pod name",
+				EnvVar: "POD_NAME",
+			}, cli.StringFlag{
+				Name:   "pod-ip, pi",
+				Usage:  "mosn pod ip",
+				EnvVar: "POD_IP",
 			},
 		},
 		Action: func(c *cli.Context) error {
@@ -265,6 +305,8 @@ var (
 					os.Exit(1)
 				}
 			})
+
+			stm.AppendParamsParsedStage(DefaultParamsParsed)
 
 			stm.AppendInitStage(mosn.DefaultInitStage)
 
@@ -320,4 +362,53 @@ func newRuntimeApp(startCmd *cli.Command) *cli.App {
 	}
 
 	return app
+}
+
+var flagToMosnLogLevel = map[string]string{
+	"trace":    "TRACE",
+	"debug":    "DEBUG",
+	"info":     "INFO",
+	"warning":  "WARN",
+	"error":    "ERROR",
+	"critical": "FATAL",
+	"off":      "OFF",
+}
+
+func DefaultParamsParsed(c *cli.Context) {
+	// log level control
+	flagLogLevel := c.String("log-level")
+	if mosnLogLevel, ok := flagToMosnLogLevel[flagLogLevel]; ok {
+		if mosnLogLevel == "OFF" {
+			log.GetErrorLoggerManagerInstance().Disable()
+		} else {
+			log.GetErrorLoggerManagerInstance().SetLogLevelControl(configmanager.ParseLogLevel(mosnLogLevel))
+		}
+	}
+	// set feature gates
+	err := featuregate.Set(c.String("feature-gates"))
+	if err != nil {
+		log.StartLogger.Infof("[mosn] [start] parse feature-gates flag fail : %+v", err)
+		os.Exit(1)
+	}
+	// istio parameters
+	serviceCluster := c.String("service-cluster")
+	serviceNode := c.String("service-node")
+	serviceType := c.String("service-type")
+	serviceMeta := c.StringSlice("service-meta")
+	metaLabels := c.StringSlice("service-lables")
+	clusterDomain := c.String("cluster-domain")
+	podName := c.String("pod-name")
+	podNamespace := c.String("pod-namespace")
+	podIp := c.String("pod-ip")
+	if serviceNode != "" {
+		types.InitXdsFlags(serviceCluster, serviceNode, serviceMeta, metaLabels)
+	} else {
+		if types.IsApplicationNodeType(serviceType) {
+			sn := podName + "." + podNamespace
+			serviceNode := serviceType + "~" + podIp + "~" + sn + "~" + clusterDomain
+			types.InitXdsFlags(serviceCluster, serviceNode, serviceMeta, metaLabels)
+		} else {
+			log.StartLogger.Infof("[mosn] [start] xds service type must be sidecar or router")
+		}
+	}
 }

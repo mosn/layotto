@@ -45,7 +45,7 @@ import (
 	"mosn.io/layotto/pkg/messages"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"mosn.io/pkg/log"
+	"mosn.io/mosn/pkg/log"
 )
 
 var (

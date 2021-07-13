@@ -36,7 +36,7 @@ var (
 		if lis == nil {
 			return errors.New("[rpc]invalid listener name")
 		}
-		lis.GetListenerCallbacks().OnAccept(conn, false, nil, nil, nil)
+		lis.GetListenerCallbacks().OnAccept(conn, true, nil, nil, nil)
 		return nil
 	}
 
