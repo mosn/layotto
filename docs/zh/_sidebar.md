@@ -28,7 +28,9 @@
         - Distributed Lock
             - [Redis](zh/component_specs/lock/redis.md)
         - Configuration
-            - [Etcd](zh/component_specs/configuration/etcd.md)        
+            - [Etcd](zh/component_specs/configuration/etcd.md)
+        - Files
+            - [Etcd](zh/component_specs/files/oss.md)
 - 贡献指南
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)

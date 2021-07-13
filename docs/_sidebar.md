@@ -29,5 +29,7 @@
       - [Redis](en/component_specs/lock/redis.md)  
     - Configuration
       - [Etcd](en/component_specs/configuration/etcd.md)
+    - Files
+      - [OSS](en/component_specs/files/oss.md)  
 - Contributing
   - [Layotto contributor guide](en/development/CONTRIBUTING.md) 

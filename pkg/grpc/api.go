@@ -748,17 +748,17 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 			if err := a.fileOps[storeName].CompletePut(id); err != nil {
 				return status.Errorf(codes.Internal, "put file fail, err: %+v", err)
 			}
-			log.DefaultLogger.Debugf("put file finished")
+			log.DefaultLogger.Debugf("put file success")
 			stream.SendAndClose(&emptypb.Empty{})
 			return nil
 		}
 		filesMap.LoadOrStore(id, req.StoreName)
 		if err != nil {
-			return status.Errorf(codes.Unknown, "receive data fail: err: %+v", err)
+			return status.Errorf(codes.Unknown, "receive file data fail: err: %+v", err)
 		}
 		chunkNum++
 		if a.fileOps[req.StoreName] == nil {
-			return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
+			return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
 		}
 		st := &file.PutFileStu{FileName: req.Name, Data: req.Data, Metadata: req.Metadata, StreamId: id, ChunkNumber: chunkNum}
 		if err = a.fileOps[req.StoreName].Put(st); err != nil {
@@ -770,7 +770,7 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 // List all files
 func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error) {
 	if a.fileOps[in.Request.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not supported store type: %+v", in.Request.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
 	}
 	resp, err := a.fileOps[in.Request.StoreName].List(&file.ListRequest{DirectoryName: in.Request.Name, Metadata: in.Request.Metadata})
 	if err != nil {
@@ -782,7 +782,7 @@ func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*r
 //Delete specific file
 func (a *api) DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error) {
 	if a.fileOps[in.Request.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not supported store type: %+v", in.Request.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
 	}
 	err := a.fileOps[in.Request.StoreName].Del(&file.DelRequest{FileName: in.Request.Name, Metadata: in.Request.Metadata})
 	if err != nil {
