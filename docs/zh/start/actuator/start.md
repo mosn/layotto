@@ -1,38 +1,38 @@
-# Ê¹ÓÃLayotto Actuator½øĞĞ½¡¿µ¼ì²éºÍÔªÊı¾İ²éÑ¯
+# ä½¿ç”¨Layotto Actuatorè¿›è¡Œå¥åº·æ£€æŸ¥å’Œå…ƒæ•°æ®æŸ¥è¯¢
 
-¸ÃÊ¾ÀıÕ¹Ê¾ÁËÈçºÎÍ¨¹ıLayotto ActuatorµÄHttp API½øĞĞ½¡¿µ¼ì²éºÍÔªÊı¾İ²éÑ¯
+è¯¥ç¤ºä¾‹å±•ç¤ºäº†å¦‚ä½•é€šè¿‡Layotto Actuatorçš„Http APIè¿›è¡Œå¥åº·æ£€æŸ¥å’Œå…ƒæ•°æ®æŸ¥è¯¢
 
-## Ê²Ã´ÊÇLayotto Actuator
+## ä»€ä¹ˆæ˜¯Layotto Actuator
 
-ÔÚÉú²ú»·¾³ÖĞ£¬ĞèÒª¶ÔÓ¦ÓÃ³ÌĞòµÄ×´Ì¬½øĞĞ¼à¿Ø£¬¶øLayottoÒÑ¾­ÄÚÖÃÁËÒ»¸ö¼à¿Ø¹¦ÄÜ£¬Ëü½ĞActuator¡£ Ê¹ÓÃLayotto Actuator¿ÉÒÔ°ïÖúÄã¼à¿ØºÍ¹ÜÀíLayottoºÍLayotto·şÎñµÄÓ¦ÓÃ£¬±ÈÈç½¡¿µ¼ì²é¡¢²éÑ¯ÔËĞĞÊ±ÔªÊı¾İµÈ¡£
-ËùÓĞµÄÕâĞ©ÌØĞÔ¿ÉÒÔÍ¨¹ıHTTP½Ó¿ÚÀ´·ÃÎÊ¡£
+åœ¨ç”Ÿäº§ç¯å¢ƒä¸­ï¼Œéœ€è¦å¯¹åº”ç”¨ç¨‹åºçš„çŠ¶æ€è¿›è¡Œç›‘æ§ï¼Œè€ŒLayottoå·²ç»å†…ç½®äº†ä¸€ä¸ªç›‘æ§åŠŸèƒ½ï¼Œå®ƒå«Actuatorã€‚ ä½¿ç”¨Layotto Actuatorå¯ä»¥å¸®åŠ©ä½ ç›‘æ§å’Œç®¡ç†Layottoå’ŒLayottoæœåŠ¡çš„åº”ç”¨ï¼Œæ¯”å¦‚å¥åº·æ£€æŸ¥ã€æŸ¥è¯¢è¿è¡Œæ—¶å…ƒæ•°æ®ç­‰ã€‚
+æ‰€æœ‰çš„è¿™äº›ç‰¹æ€§å¯ä»¥é€šè¿‡HTTPæ¥å£æ¥è®¿é—®ã€‚
 
-## ¿ìËÙ¿ªÊ¼
+## å¿«é€Ÿå¼€å§‹
 
-### ÔËĞĞLayotto server ¶Ë
+### è¿è¡ŒLayotto server ç«¯
 
-½«ÏîÄ¿´úÂëÏÂÔØµ½±¾µØºó£¬ÇĞ»»´úÂëÄ¿Â¼¡¢±àÒë£º
+å°†é¡¹ç›®ä»£ç ä¸‹è½½åˆ°æœ¬åœ°åï¼Œåˆ‡æ¢ä»£ç ç›®å½•ã€ç¼–è¯‘ï¼š
 
 ```bash
 cd ${projectpath}/cmd/layotto
 go build
 ```
 
-Íê³ÉºóÄ¿Â¼ÏÂ»áÉú³ÉlayottoÎÄ¼ş£¬ÔËĞĞËü£º
+å®Œæˆåç›®å½•ä¸‹ä¼šç”Ÿæˆlayottoæ–‡ä»¶ï¼Œè¿è¡Œå®ƒï¼š
 
 ```bash
 ./layotto start -c ../../configs/config_apollo_health.json
 ```
 
-### ·ÃÎÊ½¡¿µ¼ì²é½Ó¿Ú
+### è®¿é—®å¥åº·æ£€æŸ¥æ¥å£
 
-·ÃÎÊ /actuator/health/liveness
+è®¿é—® /actuator/health/liveness
 
 ```bash
 curl http://127.0.0.1:34999/actuator/health/liveness
 ```
 
-·µ»Ø£º
+è¿”å›ï¼š
 
 ```json
 {
@@ -51,17 +51,17 @@ curl http://127.0.0.1:34999/actuator/health/liveness
 }
 ```
 
-ÆäÖĞ"status": "UP"´ú±í×´Ì¬½¡¿µ¡£´ËÊ±·µ»ØµÄHttp×´Ì¬ÂëÊÇ200¡£
+å…¶ä¸­"status": "UP"ä»£è¡¨çŠ¶æ€å¥åº·ã€‚æ­¤æ—¶è¿”å›çš„HttpçŠ¶æ€ç æ˜¯200ã€‚
 
-### ²éÑ¯ÔªÊı¾İ
+### æŸ¥è¯¢å…ƒæ•°æ®
 
-·ÃÎÊ /actuator/info
+è®¿é—® /actuator/info
 
 ```shell
 curl http://127.0.0.1:34999/actuator/info
 ```
 
-·µ»Ø£º
+è¿”å›ï¼š
 
 ```json
 {
@@ -73,25 +73,25 @@ curl http://127.0.0.1:34999/actuator/info
 }
 ```
 
-### Ä£ÄâÅäÖÃ´íÎóµÄ³¡¾°
+### æ¨¡æ‹Ÿé…ç½®é”™è¯¯çš„åœºæ™¯
 
-Èç¹ûLayottoÅäÖÃ´íÎóµ¼ÖÂÆô¶¯ºó²»ÄÜÕı³£Ìá¹©·şÎñ£¬Í¨¹ı½¡¿µ¼ì²é¹¦ÄÜ¿ÉÒÔ¼°Ê±·¢ÏÖ¡£
+å¦‚æœLayottoé…ç½®é”™è¯¯å¯¼è‡´å¯åŠ¨åä¸èƒ½æ­£å¸¸æä¾›æœåŠ¡ï¼Œé€šè¿‡å¥åº·æ£€æŸ¥åŠŸèƒ½å¯ä»¥åŠæ—¶å‘ç°ã€‚
 
-ÎÒÃÇ¿ÉÒÔÄ£ÄâÒ»ÏÂÅäÖÃ´íÎóµÄ³¡¾°£¬Ê¹ÓÃÒ»¸ö´íÎóµÄÅäÖÃÎÄ¼şÆô¶¯Layotto:
+æˆ‘ä»¬å¯ä»¥æ¨¡æ‹Ÿä¸€ä¸‹é…ç½®é”™è¯¯çš„åœºæ™¯ï¼Œä½¿ç”¨ä¸€ä¸ªé”™è¯¯çš„é…ç½®æ–‡ä»¶å¯åŠ¨Layotto:
 
 ```shell
 ./layotto start -c ../../configs/wrong/config_apollo_health.json
 ```
 
-¸ÃÅäÖÃÎÄ¼şÖĞÍü¼ÇÅäÖÃÁË·ÃÎÊapolloĞèÒªµÄopen_api_token¡£
+è¯¥é…ç½®æ–‡ä»¶ä¸­å¿˜è®°é…ç½®äº†è®¿é—®apolloéœ€è¦çš„open_api_tokenã€‚
 
-·ÃÎÊ½¡¿µ¼ì²é½Ó¿Ú£¨×¢ÒâÕâÀïÅäÖÃµÄ¶Ë¿ÚÊÇ34888£¬ºÍÉÏÒ»¸öÀı×ÓÖĞ²»Ò»Ñù£©£º
+è®¿é—®å¥åº·æ£€æŸ¥æ¥å£ï¼ˆæ³¨æ„è¿™é‡Œé…ç½®çš„ç«¯å£æ˜¯34888ï¼Œå’Œä¸Šä¸€ä¸ªä¾‹å­ä¸­ä¸ä¸€æ ·ï¼‰ï¼š
 
 ```shell
 curl http://127.0.0.1:34888/actuator/health/liveness
 ```
 
-·µ»Ø£º
+è¿”å›ï¼š
 
 ```json
 {
@@ -113,21 +113,21 @@ curl http://127.0.0.1:34888/actuator/health/liveness
 }
 ```
 
-jsonÖĞ"status": "DOWN"´ú±íµ±Ç°×´Ì¬²»½¡¿µ¡£´ËÊ±·µ»ØµÄHttp×´Ì¬ÂëÊÇ503¡£
+jsonä¸­"status": "DOWN"ä»£è¡¨å½“å‰çŠ¶æ€ä¸å¥åº·ã€‚æ­¤æ—¶è¿”å›çš„HttpçŠ¶æ€ç æ˜¯503ã€‚
 
 
-## ÏÂÒ»²½
+## ä¸‹ä¸€æ­¥
 
-### ¼¯³É½øKubernetes½¡¿µ¼ì²é
+### é›†æˆè¿›Kuberneteså¥åº·æ£€æŸ¥
 
-LayottoÄÚÖÃÌá¹©ÁË/actuator/health/readinessºÍ/actuator/health/liveness Á½¸ö½¡¿µ¼ì²é½Ó¿Ú£¬¶ÔÓ¦Kubernetes½¡¿µ¼ì²é¹¦ÄÜÖĞReadinessºÍLivenessÁ½¸öÓïÒå¡£
+Layottoå†…ç½®æä¾›äº†/actuator/health/readinesså’Œ/actuator/health/liveness ä¸¤ä¸ªå¥åº·æ£€æŸ¥æ¥å£ï¼Œå¯¹åº”Kuberneteså¥åº·æ£€æŸ¥åŠŸèƒ½ä¸­Readinesså’ŒLivenessä¸¤ä¸ªè¯­ä¹‰ã€‚
 
-Òò´Ë£¬Äú¿ÉÒÔ²ÎÕÕ[KubernetesµÄÎÄµµ](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) £¬½«ÕâÁ½¸ö½Ó¿Ú¼¯³É½øKubernetes½¡¿µ¼ì²é¡£
+å› æ­¤ï¼Œæ‚¨å¯ä»¥å‚ç…§[Kubernetesçš„æ–‡æ¡£](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) ï¼Œå°†è¿™ä¸¤ä¸ªæ¥å£é›†æˆè¿›Kuberneteså¥åº·æ£€æŸ¥ã€‚
 
-### ÎªÄúµÄ×é¼şÌí¼Ó½¡¿µ¼ì²é»òÔªÊı¾İ²éÑ¯ÄÜÁ¦
+### ä¸ºæ‚¨çš„ç»„ä»¶æ·»åŠ å¥åº·æ£€æŸ¥æˆ–å…ƒæ•°æ®æŸ¥è¯¢èƒ½åŠ›
 
-Èç¹ûÄúÊµÏÖÁË×Ô¼ºµÄLayotto×é¼ş£¬¿ÉÒÔÎªÆäÌí¼Ó½¡¿µ¼ì²éÄÜÁ¦¡£¿ÉÒÔ²Î¿¼apollo×é¼şµÄÊµÏÖ£¨ÎÄ¼şÔÚcomponents/configstores/apollo/indicator.go£©£¬ÊµÏÖinfo.Indicator½Ó¿Ú£¬²¢½«Æä×¢Èë½øActuator¼´¿É¡£
+å¦‚æœæ‚¨å®ç°äº†è‡ªå·±çš„Layottoç»„ä»¶ï¼Œå¯ä»¥ä¸ºå…¶æ·»åŠ å¥åº·æ£€æŸ¥èƒ½åŠ›ã€‚å¯ä»¥å‚è€ƒapolloç»„ä»¶çš„å®ç°ï¼ˆæ–‡ä»¶åœ¨components/configstores/apollo/indicator.goï¼‰ï¼Œå®ç°info.Indicatoræ¥å£ï¼Œå¹¶å°†å…¶æ³¨å…¥è¿›Actuatorå³å¯ã€‚
 
-### ÁË½âActuatorÊµÏÖÔ­Àí
+### äº†è§£Actuatorå®ç°åŸç†
 
-Èç¹ûÄú¶ÔÊµÏÖÔ­Àí¸ĞĞËÈ¤£¬»òÕßÏëÔÚActuatorÀ©Õ¹Ò»Ğ©¹¦ÄÜ£¬¿ÉÒÔÔÄ¶Á[ActuatorµÄÉè¼ÆÎÄµµ](../../design/actuator/actuator-design-doc.md)
+å¦‚æœæ‚¨å¯¹å®ç°åŸç†æ„Ÿå…´è¶£ï¼Œæˆ–è€…æƒ³åœ¨Actuatoræ‰©å±•ä¸€äº›åŠŸèƒ½ï¼Œå¯ä»¥é˜…è¯»[Actuatorçš„è®¾è®¡æ–‡æ¡£](zh/design/actuator/actuator-design-doc.md)

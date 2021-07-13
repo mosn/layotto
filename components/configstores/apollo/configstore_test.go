@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021 Layotto Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package apollo
 
 import (
@@ -14,6 +30,7 @@ import (
 	"testing"
 )
 
+// MockRepository implements Repository interface
 type MockRepository struct {
 	client  *agollo.Client
 	cfg     *RepoConfig
@@ -90,13 +107,14 @@ func (a *MockRepository) Set(namespace string, key string, value string) error {
 
 func TestConfigStore_read(t *testing.T) {
 	// 1. set up
+	// inject the MockRepository into a ConfigStore
 	store, cfg := setup(t)
 	kvRepo := store.kvRepo.(*MockRepository)
 	kvRepo.Set("application", "sofa@$prod", "sofa@$prod")
 	kvRepo.Set("application", "apollo@$prod", "apollo@$prod")
 	kvRepo.Set("dubbo", "dubbo", "dubbo")
 
-	// 2. test
+	// 2. test the ConfigStore,which has a MockRepository in it
 	// init
 	err := store.Init(cfg)
 	if err != nil {

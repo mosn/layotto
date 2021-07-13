@@ -6,7 +6,7 @@
 
 该示例的架构如下图，启动的进程有：redis、一个监听事件的Subscriber程序、Layotto、一个发布事件的Publisher程序
 
-![img_1.png](../../../../img/mq/start/img_1.png)
+![img_1.png](../../../img/mq/start/img_1.png)
 ### 部署redis
 
 1. 取最新版的 Redis 镜像。
@@ -22,7 +22,7 @@ docker pull redis:latest
 ```shell
 docker images
 ```
-![img.png](../../../../img/mq/start/img.png)
+![img.png](../../../img/mq/start/img.png)
 
 3. 运行容器
 
@@ -108,4 +108,4 @@ Received a new event.Topic: topic1 , Data:value1
 
 #### 了解Pub/Sub API实现原理
 
-如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Pub/Sub API的设计文档](../../design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Pub/Sub API的设计文档](zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)

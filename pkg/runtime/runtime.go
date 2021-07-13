@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021 Layotto Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package runtime
 
 import (
@@ -18,12 +34,14 @@ import (
 	"google.golang.org/grpc/status"
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
+	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/info"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/pkg/actuator/health"
 	"mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/integrate/actuator"
+	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	"mosn.io/layotto/pkg/wasm"
@@ -44,7 +62,7 @@ type MosnRuntime struct {
 	pubSubRegistry      runtime_pubsub.Registry
 	stateRegistry       runtime_state.Registry
 	fileRegistry        file.Registry
-
+	lockRegistry        runtime_lock.Registry
 	// component pool
 	hellos            map[string]hello.HelloService
 	configStores      map[string]configstores.Store
@@ -53,7 +71,7 @@ type MosnRuntime struct {
 	topicPerComponent map[string]TopicSubscriptions
 	states            map[string]state.Store
 	files             map[string]file.File
-
+	locks             map[string]lock.LockStore
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
 	// extends
@@ -80,12 +98,14 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		pubSubRegistry:      runtime_pubsub.NewRegistry(info),
 		stateRegistry:       runtime_state.NewRegistry(info),
 		fileRegistry:        file.NewRegistry(info),
+		lockRegistry:        runtime_lock.NewRegistry(info),
 		hellos:              make(map[string]hello.HelloService),
 		configStores:        make(map[string]configstores.Store),
 		rpcs:                make(map[string]rpc.Invoker),
 		pubSubs:             make(map[string]pubsub.PubSub),
 		states:              make(map[string]state.Store),
 		files:               make(map[string]file.File),
+		locks:               make(map[string]lock.LockStore),
 		json:                jsoniter.ConfigFastest,
 	}
 }
@@ -122,6 +142,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		m.pubSubs,
 		m.states,
 		m.files,
+		m.locks,
 	)
 	grpcOpts = append(grpcOpts,
 		grpc.WithGrpcOptions(o.options...),
@@ -164,6 +185,9 @@ func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
 		return err
 	}
 	if err := m.initFiles(o.services.files...); err != nil {
+		return err
+	}
+	if err := m.initLocks(o.services.locks...); err != nil {
 		return err
 	}
 	return nil
@@ -307,6 +331,34 @@ func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
 			health.AddLivenessIndicator(name, v.LivenessIndicator)
 			health.AddReadinessIndicator(name, v.ReadinessIndicator)
 		}
+	}
+	return nil
+}
+
+func (m *MosnRuntime) initLocks(factorys ...*runtime_lock.Factory) error {
+	log.DefaultLogger.Infof("[runtime] start initializing lock components")
+	// 1. register all the implementation
+	m.lockRegistry.Register(factorys...)
+	// 2. loop initializing
+	for name, config := range m.runtimeConfig.LockManagement {
+		// 2.1. create the component
+		comp, err := m.lockRegistry.Create(name)
+		if err != nil {
+			m.errInt(err, "create lock component %s failed", name)
+			return err
+		}
+		// 2.2. init
+		if err := comp.Init(lock.Metadata{Properties: config.Metadata}); err != nil {
+			m.errInt(err, "init lock component %s failed", name)
+			return err
+		}
+		// 2.3. save runtime related configs
+		err = runtime_lock.SaveLockConfiguration(name, config.Metadata)
+		if err != nil {
+			m.errInt(err, "save lock configuration %s failed", name)
+			return err
+		}
+		m.locks[name] = comp
 	}
 	return nil
 }

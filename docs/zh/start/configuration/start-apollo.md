@@ -8,7 +8,7 @@
 
 您可以跳过这一步，使用本demo无需自己部署apollo服务器。本demo会使用[apollo官方](https://github.com/ctripcorp/apollo) 提供的演示环境http://106.54.227.205/
 
-如果您自己部署了apollo，可以修改Layotto的[config文件](../../../../configs/config_apollo.json)，将apollo服务器地址改成您自己的。
+如果您自己部署了apollo，可以修改Layotto的[config文件](https://github.com/mosn/layotto/blob/main/configs/config_apollo.json)，将apollo服务器地址改成您自己的。
 
 ### 运行Layotto server 端
 
@@ -17,6 +17,8 @@
 ```bash
 cd ${projectpath}/cmd/layotto
 go build
+#备注 如果发现构建失败无法下载,请进行如先设置
+go env -w GOPROXY="https://goproxy.cn,direct"
 ```
 
 完成后目录下会生成layotto文件，运行它：

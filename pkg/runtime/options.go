@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021 Layotto Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package runtime
 
 import (
@@ -7,6 +23,7 @@ import (
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/rpc"
 	rgrpc "mosn.io/layotto/pkg/grpc"
+	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 	"mosn.io/layotto/pkg/runtime/pubsub"
 	"mosn.io/layotto/pkg/runtime/state"
 	"mosn.io/pkg/log"
@@ -20,6 +37,7 @@ type services struct {
 	files        []*file.FileFactory
 	pubSubs      []*pubsub.Factory
 	states       []*state.Factory
+	locks        []*runtime_lock.Factory
 }
 
 type runtimeOptions struct {
@@ -85,6 +103,12 @@ func WithFileFactory(files ...*file.FileFactory) Option {
 func WithPubSubFactory(factorys ...*pubsub.Factory) Option {
 	return func(o *runtimeOptions) {
 		o.services.pubSubs = append(o.services.pubSubs, factorys...)
+	}
+}
+
+func WithLockFactory(factorys ...*runtime_lock.Factory) Option {
+	return func(o *runtimeOptions) {
+		o.services.locks = append(o.services.locks, factorys...)
 	}
 }
 

@@ -1,9 +1,26 @@
+/*
+ * Copyright 2021 Layotto Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package mosn
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/rpc/callback"
@@ -59,10 +76,11 @@ func (m *mosnInvoker) Init(conf rpc.RpcConfig) error {
 	return nil
 }
 
-func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
+func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rpc.RPCResponse, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.DefaultLogger.Errorf("[runtime][rpc]mosn invoker panic: %v", r)
+			err = fmt.Errorf("[runtime][rpc]mosn invoker panic: %v", r)
+			log.DefaultLogger.Errorf("%v", err)
 		}
 	}()
 
@@ -71,13 +89,13 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (*rpc.RPC
 	}
 	req.Ctx = ctx
 	log.DefaultLogger.Debugf("[runtime][rpc]request %+v", req)
-	req, err := m.cb.BeforeInvoke(req)
+	req, err = m.cb.BeforeInvoke(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]before filter error %s", err.Error())
 		return nil, err
 	}
 
-	resp, err := m.channel.Do(req)
+	resp, err = m.channel.Do(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]error %s", err.Error())
 		return nil, err

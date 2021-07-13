@@ -20,7 +20,7 @@ Hi, Layotto
 
 ### 示例介绍
 
-工程里分别用golang跟rust开发了两个功能一致的wasm模块，它们的实现思路如下：
+工程里分别用golang、rust、assemblyscript开发了功能一致的wasm模块，它们的实现思路如下：
 1. 通过`proxy_on_request_headers`接收HTTP请求
 2. 从`proxy_get_header_map_pairs`中取出header中的name字段
 3. 使用`proxy_call_foreign_function`向Layotto发起调用
@@ -36,6 +36,10 @@ rust源码路径：
 layotto/demo/wasm/code/rust/
 ```
 
+assemblyscript源码路径：
+```
+layotto/demo/wasm/code/assemblyscript/
+```
 
 ### 说明
 

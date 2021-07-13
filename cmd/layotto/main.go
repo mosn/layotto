@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021 Layotto Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package main
 
 import (
@@ -7,8 +23,13 @@ import (
 	"strconv"
 	"time"
 
+<<<<<<< HEAD
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/file/alicloud/oss"
+=======
+	"mosn.io/layotto/components/configstores/etcdv3"
+	"mosn.io/pkg/log"
+>>>>>>> main
 
 	// Hello
 	"mosn.io/layotto/components/hello"
@@ -59,8 +80,13 @@ import (
 	"github.com/dapr/components-contrib/state/rethinkdb"
 	"github.com/dapr/components-contrib/state/sqlserver"
 	"github.com/dapr/components-contrib/state/zookeeper"
-
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
+
+	// Lock
+	"mosn.io/layotto/components/lock"
+	lock_etcd "mosn.io/layotto/components/lock/etcd"
+	lock_redis "mosn.io/layotto/components/lock/redis"
+	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
@@ -119,6 +145,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// Configuration
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
+			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 		),
 
 		// RPC
@@ -223,6 +250,15 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_state.NewFactory("aws.dynamodb", state_dynamodb.NewDynamoDBStateStore),
 			runtime_state.NewFactory("mysql", func() state.Store {
 				return state_mysql.NewMySQLStateStore(loggerForDaprComp)
+			}),
+		),
+		// Lock
+		runtime.WithLockFactory(
+			runtime_lock.NewFactory("redis", func() lock.LockStore {
+				return lock_redis.NewStandaloneRedisLock(log.DefaultLogger)
+			}),
+			runtime_lock.NewFactory("etcd", func() lock.LockStore {
+				return lock_etcd.NewEtcdLock(log.DefaultLogger)
 			}),
 		),
 	)

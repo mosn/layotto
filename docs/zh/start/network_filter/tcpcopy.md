@@ -2,7 +2,7 @@
 
 ### 介绍
 
-当您按照quick start文档[通过Layotto调用apollo配置中心](../configuration/start-apollo.md)运行demo时，可能会注意到配置文件config_apollo.json中有这么一段配置：
+当您按照quick start文档[通过Layotto调用apollo配置中心](zh/configuration/start-apollo.md)运行demo时，可能会注意到配置文件config_apollo.json中有这么一段配置：
 
 ```json
                 {
@@ -21,7 +21,7 @@
 
 dump下来的二进制流量数据会存放在 ${user's home directory}/logs/mosn 目录，或/home/admin/logs/mosn 目录下:
 
-![img.png](../../../../img/tcp_dump.png)
+![img.png](../../../img/tcp_dump.png)
 
 您可以结合其他工具和基础设施使用这些数据，例如进行流量回放、旁路验证等。
 

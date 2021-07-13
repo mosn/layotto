@@ -1,0 +1,21 @@
+{
+  "name": "proxywasm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests",
+    "asbuild:untouched": "asc assembly/index.ts --use abort=abort_proc_exit --target debug",
+    "asbuild:optimized": "asc assembly/index.ts --use abort=abort_proc_exit --target release",
+    "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "assemblyscript": "^0.19.5"
+  },
+  "dependencies": {
+    "@assemblyscript/loader": "^0.19.5",
+    "@nobodyiam/proxy-runtime": "^0.1.14"
+  }
+}
