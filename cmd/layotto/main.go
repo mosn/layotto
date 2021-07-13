@@ -23,13 +23,10 @@ import (
 	"strconv"
 	"time"
 
-<<<<<<< HEAD
+	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/file/alicloud/oss"
-=======
-	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/pkg/log"
->>>>>>> main
 
 	// Hello
 	"mosn.io/layotto/components/hello"

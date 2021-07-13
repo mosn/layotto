@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/dapr/components-contrib v1.2.0
+	github.com/dapr/kit v0.0.1
 	github.com/gammazero/workerpool v1.1.2
 	github.com/golang/mock v1.4.4
 	github.com/golang/protobuf v1.5.2
@@ -13,6 +14,7 @@ require (
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
+	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.26.0
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210526223527-2de42fcbbce3 // indirect
