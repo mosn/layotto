@@ -19,10 +19,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"mosn.io/pkg/log"
 	"os"
 	"strconv"
 	"time"
+
+	"mosn.io/layotto/components/configstores/etcdv3"
+	"mosn.io/pkg/log"
 
 	// Hello
 	"mosn.io/layotto/components/hello"
@@ -138,6 +140,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// Configuration
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
+			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 		),
 		// RPC
 		runtime.WithRpcFactory(
