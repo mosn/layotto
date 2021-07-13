@@ -162,16 +162,18 @@ func TestDeleteConfiguration(t *testing.T) {
 
 func TestSubscribeConfiguration(t *testing.T) {
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
 	mockConfigStore := mock.NewMockStore(ctrl)
+	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil)
+
 	//test not support store type
 	grpcServer := &MockGrpcServer{req: &runtimev1pb.SubscribeConfigurationRequest{}, err: nil}
-	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil)
 	err := api.SubscribeConfiguration(grpcServer)
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "configure store [] don't support now")
 
 	//test
-	mockConfigStore.EXPECT().StopSubscribe().Return().Times(1)
 	grpcServer2 := &MockGrpcServer{req: &runtimev1pb.SubscribeConfigurationRequest{}, err: errors.New("exit")}
 	err = api.SubscribeConfiguration(grpcServer2)
 	assert.NotNil(t, err)
