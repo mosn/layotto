@@ -28,6 +28,7 @@
     - Distributed Lock
       - [Redis](en/component_specs/lock/redis.md)  
       - [Etcd](en/component_specs/lock/etcd.md)
+      - [Zookeeper](zh/component_specs/lock/zookeeper.md)
     - Configuration
       - [Etcd](en/component_specs/configuration/etcd.md)
 - Contributing

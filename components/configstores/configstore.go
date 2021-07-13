@@ -53,7 +53,9 @@ type Store interface {
 	//StopSubscribe stop subs
 	StopSubscribe()
 
+	// GetDefaultGroup returns default group.This method will be invoked if a request doesn't specify the group field
 	GetDefaultGroup() string
 
+	// GetDefaultLabel returns default label
 	GetDefaultLabel() string
 }

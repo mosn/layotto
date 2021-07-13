@@ -6,6 +6,8 @@ require (
 	github.com/alicebob/miniredis/v2 v2.13.3
 	github.com/apache/dubbo-go-hessian2 v1.7.0
 	github.com/go-redis/redis/v8 v8.8.0
+	github.com/go-zookeeper/zk v1.0.2
+	github.com/golang/mock v1.4.4
 	github.com/google/uuid v1.1.2
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.26.0
