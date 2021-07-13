@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: client
-        image: layotto-client:1.0
+        image: mosnio/layotto-client:1.0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9080
@@ -70,7 +70,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: layotto-server:1.0
+        image: mosnio/layotto-server-v1:1.0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9090
@@ -96,8 +96,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: layotto-server:2.0
+        image: mosnio/layotto-server-v2:1.0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9090
-
