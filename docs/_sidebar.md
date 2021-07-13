@@ -31,5 +31,6 @@
       - [Zookeeper](zh/component_specs/lock/zookeeper.md)
     - Configuration
       - [Etcd](en/component_specs/configuration/etcd.md)
+      - [Apollo](en/component_specs/configuration/apollo.md)
 - Contributing
   - [Layotto contributor guide](en/development/CONTRIBUTING.md) 

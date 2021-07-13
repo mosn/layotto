@@ -31,6 +31,7 @@
             - [Zookeeper](zh/component_specs/lock/zookeeper.md)
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)        
+            - [Apollo](zh/component_specs/configuration/apollo.md)        
 - 贡献指南
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)
