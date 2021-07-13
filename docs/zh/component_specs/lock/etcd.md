@@ -15,17 +15,10 @@
 | tlsCa | N | tls ca 路径 |
 
 ## 怎么启动 etcd
-要先用Docker启动一个etcd
-命令：
 
-访问 https://github.com/etcd-io/etcd/releases 下载对应操作系统的 etcd（也可用 docker）
+etcd的启动方式可以参考etcd的官方文档：
 
-下载完成执行命令启动：
-````shell
-./etcd
-````
-
-默认监听地址为 `localhost:2379`
+    https://etcd.io/docs/v3.5/quickstart/
 
 ## 启动 layotto
 
