@@ -27,6 +27,7 @@
             - [Redis](zh/component_specs/pubsub/redis.md)
         - Distributed Lock
             - [Redis](zh/component_specs/lock/redis.md)
+            - [Etcd](zh/component_specs/lock/etcd.md)
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)        
 - 贡献指南
