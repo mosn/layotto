@@ -16,6 +16,7 @@ const (
 	host                  = "zookeeperHosts"
 	password              = "zookeeperPassword"
 	sessionTimeout        = "sessionTimeout"
+	logInfo               = "logInfo"
 	defaultSessionTimeout = 5
 )
 
@@ -27,7 +28,7 @@ type ConnectionFactoryImpl struct {
 }
 
 func (c *ConnectionFactoryImpl) NewConnection(expire time.Duration, meta metadata) (ZKConnection, error) {
-	conn, _, err := zk.Connect(meta.hosts, expire*time.Second, zk.WithLogger(defaultLogger{}))
+	conn, _, err := zk.Connect(meta.hosts, expire, zk.WithLogInfo(meta.logInfo))
 	if err != nil {
 		return nil, err
 	}
@@ -57,13 +58,6 @@ func NewZookeeperLock(logger log.ErrorLogger) *ZookeeperLock {
 	return lock
 }
 
-type defaultLogger struct{}
-
-//silent the default logger
-func (defaultLogger) Printf(format string, a ...interface{}) {
-
-}
-
 func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
 
 	m, err := parseZookeeperMetadata(metadata)
@@ -75,7 +69,7 @@ func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
 	p.factory = &ConnectionFactoryImpl{}
 
 	//init unlock connection
-	zkConn, err := p.factory.NewConnection(p.metadata.sessionTimeout*time.Second, p.metadata)
+	zkConn, err := p.factory.NewConnection(p.metadata.sessionTimeout, p.metadata)
 	if err != nil {
 		return err
 	}
@@ -164,6 +158,7 @@ type metadata struct {
 	hosts          []string
 	password       string
 	sessionTimeout time.Duration
+	logInfo        bool
 }
 
 func parseZookeeperMetadata(meta lock.Metadata) (metadata, error) {
@@ -185,7 +180,15 @@ func parseZookeeperMetadata(meta lock.Metadata) (metadata, error) {
 		if err != nil {
 			return m, fmt.Errorf("zookeeper store error: can't parse sessionTimeout field: %s", err)
 		}
-		m.sessionTimeout = time.Duration(parsedVal)
+		m.sessionTimeout = time.Duration(parsedVal) * time.Second
+	}
+
+	if val, ok := meta.Properties[logInfo]; ok && val != "" {
+		b, err := strconv.ParseBool(val)
+		if err != nil {
+			return metadata{}, err
+		}
+		m.logInfo = b
 	}
 	return m, nil
 }

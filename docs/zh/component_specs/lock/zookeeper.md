@@ -9,8 +9,9 @@ package lock
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
 | zookeeperHosts | Y | zookeeper服务器地址,支持配置zk集群, 例如: 127.0.0.1:2181;127.0.0.2:2181 |
-| zookeeperPassword | Y | zookeeper密码 |
-| sessionTimeout | N | 会话的超时时间,同zookeeper的sessionTimeout|
+| zookeeperPassword | Y | zookeeper password|
+| sessionTimeout | N | 会话的超时时间,单位秒,同zookeeper的sessionTimeout|
+|logInfo|N|true会打印zookeeper操作的所有信息，false只会打印zookeeper的错误信息|
 
 ## 怎么启动Zookeeper
 

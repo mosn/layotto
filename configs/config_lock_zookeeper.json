@@ -31,7 +31,8 @@
                           "metadata": {
                             "zookeeperHosts": "127.0.0.1",
                             "zookeeperPassword": "",
-                            "sessionTimeout": "3"
+                            "sessionTimeout": "3",
+                            "logInfo":"false"
                           }
                         }
                       },
