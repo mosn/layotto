@@ -24,6 +24,11 @@ import (
 	"testing"
 	"time"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
+	"mosn.io/layotto/components/file"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
@@ -178,4 +183,40 @@ func TestSubscribeConfiguration(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "exit")
 
+}
+
+func TestListFile(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	mockFile := mock.NewMockFile(ctrl)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil)
+	request := &runtimev1pb.FileRequest{StoreName: "mock1"}
+	resp, err := api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
+	assert.Nil(t, resp)
+	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not support store type: mock1"))
+	request = &runtimev1pb.FileRequest{StoreName: "mock", Name: "test"}
+	mockFile.EXPECT().List(&file.ListRequest{DirectoryName: request.Name, Metadata: request.Metadata}).Return(&file.ListResp{FilesName: []string{"file1", "file2"}}, nil).Times(1)
+	resp, err = api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
+	assert.Nil(t, err)
+	assert.Equal(t, resp.FileName[0], "file1")
+	assert.Equal(t, resp.FileName[1], "file2")
+	mockFile.EXPECT().List(&file.ListRequest{DirectoryName: request.Name, Metadata: request.Metadata}).Return(&file.ListResp{FilesName: []string{"file1", "file2"}}, errors.New("test fail")).Times(1)
+	resp, err = api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
+	assert.NotNil(t, err)
+}
+
+func TestDelFile(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	mockFile := mock.NewMockFile(ctrl)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil)
+	request := &runtimev1pb.FileRequest{StoreName: "mock1"}
+	resp, err := api.DelFile(context.Background(), &runtimev1pb.DelFileRequest{Request: request})
+	assert.Nil(t, resp)
+	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not support store type: mock1"))
+	request = &runtimev1pb.FileRequest{StoreName: "mock", Name: "test"}
+	mockFile.EXPECT().Del(&file.DelRequest{FileName: request.Name, Metadata: request.Metadata}).Return(nil).Times(1)
+	_, err = api.DelFile(context.Background(), &runtimev1pb.DelFileRequest{Request: request})
+	assert.Nil(t, err)
+	mockFile.EXPECT().Del(&file.DelRequest{FileName: request.Name, Metadata: request.Metadata}).Return(errors.New("test fail")).Times(1)
+	_, err = api.DelFile(context.Background(), &runtimev1pb.DelFileRequest{Request: request})
+	assert.NotNil(t, err)
 }
