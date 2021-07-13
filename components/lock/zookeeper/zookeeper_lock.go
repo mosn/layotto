@@ -17,7 +17,7 @@ const (
 	password              = "zookeeperPassword"
 	sessionTimeout        = "sessionTimeout"
 	logInfo               = "logInfo"
-	defaultSessionTimeout = 5
+	defaultSessionTimeout = 5 * time.Second
 )
 
 type ConnectionFactory interface {
@@ -99,7 +99,7 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 			}, nil
 		}
 		//other err
-		return &lock.TryLockResponse{}, err
+		return nil, err
 	}
 
 	//2.2 create node success, asyn  to make sure zkclient alive for need time
@@ -130,7 +130,7 @@ func (p *ZookeeperLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, e
 			return &lock.UnlockResponse{Status: lock.LOCK_UNEXIST}, nil
 		}
 		//other err
-		return &lock.UnlockResponse{}, err
+		return nil, err
 	}
 	//node exist ,but owner not this, indicates this lock has occupied or wrong unlock
 	if string(owner) != req.LockOwner {
@@ -147,7 +147,7 @@ func (p *ZookeeperLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, e
 			return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
 			//other error
 		} else {
-			return &lock.UnlockResponse{}, err
+			return nil, err
 		}
 	}
 	//delete success, unlock success
