@@ -8,8 +8,10 @@ require (
 	github.com/gammazero/workerpool v1.1.2
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.0
+	github.com/golang/mock v1.4.4
+	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.2.0
-	github.com/json-iterator/go v1.1.10
+	github.com/json-iterator/go v1.1.11
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0
@@ -19,8 +21,9 @@ require (
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	golang.org/x/tools v0.1.4 // indirect
 	google.golang.org/grpc v1.37.0
+	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210526223527-2de42fcbbce3 // indirect
-	google.golang.org/protobuf v1.26.0
+	google.golang.org/protobuf v1.27.1
 	mosn.io/api v0.0.0-20210414070543-8a0686b03540
 	mosn.io/layotto/components v0.0.0-20210625065826-9c2ad8dbcf05
 	mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3
