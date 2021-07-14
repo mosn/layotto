@@ -1,6 +1,8 @@
 - [首页](/zh/README.md)
 - 快速开始
-    - [使用Configuration API](zh/start/configuration/start-apollo.md)
+    - 使用Configuration API
+        - [使用Apollo配置中心](zh/start/configuration/start-apollo.md)
+        - [使用Etcd配置中心](zh/start/configuration/start.md)
     - [使用State API](zh/start/state/start.md)
     - [使用Pub/Sub API](zh/start/pubsub/start.md)
     - [使用分布式锁 API](zh/start/lock/start.md)
@@ -13,23 +15,32 @@
         - [Hello World](zh/start/rpc/helloworld.md)
         - [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
     - [使用WASM进行多语言编程](zh/start/wasm/start.md)
+- 参考资料
+    - 接口文档
+        - [Actuator API](zh/api_reference/actuator/actuator.md)
+    - SDK文档    
+        - [go-sdk](zh/sdk_reference/go/start.md)
+        - [java-sdk](zh/sdk_reference/java/start.md)
+    - 组件文档
+        - State
+            - [Redis](zh/component_specs/state/redis.md)
+            - [其他组件](zh/component_specs/state/others.md)
+        - Pub/Sub
+            - [Redis](zh/component_specs/pubsub/redis.md)
+            - [其他组件](zh/component_specs/pubsub/others.md)
+        - Distributed Lock
+            - [Redis](zh/component_specs/lock/redis.md)
+            - [Etcd](zh/component_specs/lock/etcd.md)
+            - [Zookeeper](zh/component_specs/lock/zookeeper.md)
+        - Configuration
+            - [Etcd](zh/component_specs/configuration/etcd.md)        
+            - [Apollo](zh/component_specs/configuration/apollo.md)        
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)
     - [Pub/Sub API以及与dapr component的兼容性](zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
     - [RPC设计文档](zh/design/rpc/rpc设计文档.md)
-    - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)
-- 参考资料
-    - Component specs
-        - State
-            - [Redis](zh/component_specs/state/redis.md)
-        - Pub/Sub
-            - [Redis](zh/component_specs/pubsub/redis.md)
-        - Distributed Lock
-            - [Redis](zh/component_specs/lock/redis.md)
-            - [Zookeeper](zh/component_specs/lock/zookeeper.md)
-        - Configuration
-            - [Etcd](zh/component_specs/configuration/etcd.md)        
+    - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)    
 - 贡献指南
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)

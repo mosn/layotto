@@ -1,5 +1,3 @@
-package lock
-
 # Zookeeper
 
 ## 配置项说明

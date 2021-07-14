@@ -1,5 +1,9 @@
-## State management demo with redis
+# Use State API to manage state
+## What is State API
+Your application can use the same State API to operate different databases (or a certain storage system) to add, delete, modify and query the data of the Key/Value model.
 
+API supports batch CRUD operations and supports the declaration of requirements for concurrency safety and data consistency. Layotto will deal with complex concurrency safety and data consistency issues for you.
+## Quick start
 This example shows how to call redis through Layotto to add, delete, modify and query status data.
 
 The architecture of this example is shown in the figure below, and the started processes are: redis, Layotto, client program

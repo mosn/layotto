@@ -38,11 +38,12 @@ type Repository interface {
 }
 
 type RepoConfig struct {
-	addr           string `json:"addr"`
-	appId          string `json:"appId"`
-	env            string `json:"env"`
-	cluster        string `json:"cluster"`
-	namespaceName  string `json:"namespaceName"`
+	addr          string `json:"addr"`
+	appId         string `json:"appId"`
+	env           string `json:"env"`
+	cluster       string `json:"cluster"`
+	namespaceName string `json:"namespaceName"`
+	// whether backup config after fetch config from apollo
 	isBackupConfig bool   `default:"true" json:"isBackupConfig"`
 	secret         string `json:"secret"`
 }

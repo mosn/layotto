@@ -1,6 +1,8 @@
 - [Home](/en/README.md)
 - Quick start
-  - [Use Configuration API](en/start/configuration/start-apollo.md)
+  - Use Configuration API
+    - [Use Apollo as configuration center](en/start/configuration/start-apollo.md)
+    - [Use Etcd as configuration center](en/start/configuration/start.md)
   - [Use State API](en/start/state/start.md)
   - [Use Pub/Sub API](en/start/pubsub/start.md)
   - [Use Distributed Lock API](en/start/lock/start.md)
@@ -13,22 +15,31 @@
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)
   - [Multilingual programming based on WASM](en/start/wasm/start.md)
+- Reference
+  - API reference
+    - [Actuator API](en/api_reference/actuator/actuator.md)
+  - SDK reference
+    - [go-sdk](en/sdk_reference/go/start.md)
+    - [java-sdk](en/sdk_reference/java/start.md)
+  - Component specs
+    - State
+      - [Redis](en/component_specs/state/redis.md)
+      - [Other components](en/component_specs/state/others.md)
+    - Pub/Sub
+      - [Redis](en/component_specs/pubsub/redis.md)
+      - [Other components](en/component_specs/pubsub/others.md)
+    - Distributed Lock
+      - [Redis](en/component_specs/lock/redis.md)  
+      - [Etcd](en/component_specs/lock/etcd.md)
+      - [Zookeeper](zh/component_specs/lock/zookeeper.md)
+    - Configuration
+      - [Etcd](en/component_specs/configuration/etcd.md)
+      - [Apollo](en/component_specs/configuration/apollo.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
   - [Pub/Sub API and compability with dapr component](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
   - [RPC design doc](en/design/rpc/rpc-design-doc.md)
-  - [Distributed lock API design](en/design/lock/lock-api-design.md)
-- Reference
-  - Component specs
-    - State
-      - [Redis](en/component_specs/state/redis.md)
-    - Pub/Sub
-      - [Redis](en/component_specs/pubsub/redis.md)
-    - Distributed Lock
-      - [Redis](en/component_specs/lock/redis.md)  
-      - [Zookeeper](zh/component_specs/lock/zookeeper.md)
-    - Configuration
-      - [Etcd](en/component_specs/configuration/etcd.md)
+  - [Distributed lock API design](en/design/lock/lock-api-design.md)  
 - Contributing
   - [Layotto contributor guide](en/development/CONTRIBUTING.md) 

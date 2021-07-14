@@ -18,7 +18,9 @@ When you run the demo according to the quick-start document [Configuration demo 
 ```
 The meaning of this configuration is to load the tcpcopy plug-in at startup to dump the tcp traffic.
 
-The dumped binary traffic data will be stored in the ${user's home directory}/logs/mosn directory, or under the /home/admin/logs/mosn directory:
+After enabling this configuration, when Layotto receives a request and the conditions for traffic dump are met, it will write the binary request data to the local file system.
+
+The "dumped" binary traffic data will be stored in the ${user's home directory}/logs/mosn directory, or under the /home/admin/logs/mosn directory:
 
 ![img.png](../../../img/tcp_dump.png)
 
