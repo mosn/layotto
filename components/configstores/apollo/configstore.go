@@ -102,17 +102,18 @@ func (c *ConfigStore) doInit(config *configstores.StoreConfig) error {
 	if config == nil {
 		return ErrNoConfig
 	}
-	//Metadata
+	// Metadata,required
 	metadata := config.Metadata
 	if len(metadata) == 0 {
 		return errConfigMissingField("metadata")
 	}
-	//Address
+	// Address,required
 	if len(config.Address) == 0 || config.Address[0] == "" {
 		return errConfigMissingField("address")
 	}
 	addr := config.Address[0]
-	//is_backup_config
+	// is_backup_config,not required
+	// whether backup config after fetch config from apollo
 	s, ok := metadata["is_backup_config"]
 	var isBackupConfig = defaultIsBackupConfig
 	var err error
@@ -122,20 +123,22 @@ func (c *ConfigStore) doInit(config *configstores.StoreConfig) error {
 			return err
 		}
 	}
-	// app_id
+	// app_id,required
 	appId, ok := metadata[configKeyAppId]
 	if !ok || appId == "" {
 		return errConfigMissingField(configKeyAppId)
 	}
-	// open_api_token
+	// open_api_token,required
 	c.openAPIToken = metadata["open_api_token"]
 	if c.openAPIToken == "" {
 		return errConfigMissingField("open_api_token")
 	}
+	// open_api_address,not required
 	c.openAPIAddress = metadata["open_api_address"]
 	if c.openAPIAddress == "" {
 		return errConfigMissingField("open_api_address")
 	}
+	// open_api_user,required
 	c.openAPIUser = metadata["open_api_user"]
 	if c.openAPIUser == "" {
 		return errConfigMissingField("open_api_user")
@@ -149,7 +152,8 @@ func (c *ConfigStore) doInit(config *configstores.StoreConfig) error {
 		cluster:        metadata["cluster"],
 		namespaceName:  metadata["namespace_name"],
 		isBackupConfig: isBackupConfig,
-		secret:         metadata["secret"],
+		// secret,not required
+		secret: metadata["secret"],
 	}
 	c.kvConfig = kvRepoConfig
 	c.kvRepo.SetConfig(kvRepoConfig)

@@ -16,9 +16,18 @@
 
 ## 怎么启动 etcd
 
-etcd的启动方式可以参考etcd的官方文档：
+etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/quickstart/)
 
-    https://etcd.io/docs/v3.5/quickstart/
+简单说明：
+
+访问 https://github.com/etcd-io/etcd/releases 下载对应操作系统的 etcd（也可用 docker）
+
+下载完成执行命令启动：
+````shell
+./etcd
+````
+
+默认监听地址为 `localhost:2379`
 
 ## 启动 layotto
 

@@ -1,6 +1,5 @@
 ## Distributed Lock API demo with redis
 
-
 This example shows how to call redis through Layotto to trylock/unlock.
 
 The architecture of this example is shown in the figure below, and the started processes are: redis, Layotto, a client program with two goroutines trying the same lock concurrently.
