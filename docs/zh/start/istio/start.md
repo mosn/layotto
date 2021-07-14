@@ -33,9 +33,9 @@ MOSN作为Istio官方认可的数据面实现，这里就对Layotto如何跟Isti
    ```
 3. 执行如下命令启动demo中的client、server（所依赖的镜像已经全部上传docker hub）
    ```
-   kubectl apply -f layotto.yaml
+   kubectl apply -f layotto-injected.yaml
    ```
-   其中`layotto.yaml`文件中的内容在[这里](https://github.com/mosn/layotto/blob/istio-1.5.x/demo/istio/layotto-injected.yaml) ，复制即可。
+   其中`layotto-injected.yaml`文件中的内容在[这里](https://github.com/mosn/layotto/blob/istio-1.5.x/demo/istio/layotto-injected.yaml) ，复制即可。
 4. 执行命令`kubectl get pod`查看启动状态（首次启动需要下载依赖镜像，请耐心等待）
    ```
    NAME                         READY   STATUS    RESTARTS   AGE
@@ -72,10 +72,40 @@ MOSN作为Istio官方认可的数据面实现，这里就对Layotto如何跟Isti
    kubectl apply -f layotto-virtual-service-all-v1.yaml
    ```
    其中`layotto-virtual-service-all-v1.yaml`文件内容在[这里](https://github.com/mosn/layotto/blob/istio-1.5.x/demo/istio/layotto-virtual-service-all-v1.yaml)
+3. 上述命令执行完以后，后续请求只会拿到v1的返回结果，如下：
+   ```
+   GET /hello 
+   hello, i am layotto v1
+   ```
+
+#### B、按header信息进行路由
+1. 执行如下命令把路由规则修改为请求header中包含`name:layotto`时会访问v1服务，其他则访问v2服务
+   ```
+   kubectl apply -f layotto-header-route.yaml
+   ```
+2. 发送请求即可看到效果
+   ```
+   curl -H 'name: layotto' localhost:9080/grpc
+   ```
+   
 
 
 ## 五、注意事项
 
 1. 由于示例中使用的是`istio 1.5.2`，属于一个比较老的版本，因此该演示不会合并到主干，而是以一个独立的分支`istio-1.5.x`存在，等后面`mosn`集成了`istio 1.10.x`后再合并。
 2. 示例中使用的client、server源码可以参考[这里](https://github.com/mosn/layotto/tree/istio-1.5.x/demo/istio) 。
+3. 为了上手简单，上述使用到的`layotto-injected.yaml`文件是已经通过istio完成注入的，整个注入过程如下：
+   1. 执行如下命令指定`istio`使用`Layotto`作为数据面
+   ```
+   istioctl manifest apply  --set .values.global.proxy.image="mosnio/proxyv2:layotto"   --set meshConfig.defaultConfig.binaryPath="/usr/local/bin/mosn"
+   ```
+   2. 通过`kube-inject`的方式实现Sidecar注入
+   ```
+   istioctl kube-inject -f layotto.yaml > layotto-injected.yaml
+   ```
+   其中`layotto.yaml`文件内容在[这里](https://github.com/mosn/layotto/blob/istio-1.5.x/demo/istio/layotto.yaml)
+   3. 把`layotto-injected.yaml`中所有的`/usr/local/bin/envoy`替换为`/usr/local/bin/mosn`
+   ```
+   sed -i "s/\/usr\/local\/bin\/envoy/\/usr\/local\/bin\/mosn/g" ./layotto-injected.yaml
+   ```
 
