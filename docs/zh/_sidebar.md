@@ -12,6 +12,7 @@
     - 进行RPC调用
         - [Hello World](zh/start/rpc/helloworld.md)
         - [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
+        - [集成 Istio](zh/start/istio/start.md)
     - [使用WASM进行多语言编程](zh/start/wasm/start.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)

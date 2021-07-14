@@ -12,6 +12,7 @@
   - Service Invocation
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)
+    - [Integrate witch istio](en/start/istio/start.md)
   - [Multilingual programming based on WASM](en/start/wasm/start.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
