@@ -16,7 +16,8 @@ Example: configs/config_lock_etcd.json
 
 ## How to start etcd
 If you want to run the etcd demo, you need to start a etcd server.
-command：
+
+Steps：
 
 download etcd from `https://github.com/etcd-io/etcd/releases` （You can also use docker.）
 

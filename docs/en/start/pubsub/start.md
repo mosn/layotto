@@ -1,5 +1,12 @@
-## Implementing Pub/Sub Pattern using Layotto and Redis
+# Use Pub/Sub API to implement pub/sub pattern
+## What is Pub/Sub API
+Developers often use message queues (such as open source Rocket MQ, Kafka, such as AWS SNS/SQS provided by cloud vendors) to implement message publishing and subscription. The publish-subscribe model can help applications better decouple and cope with peak traffic.
 
+Unfortunately, the APIs of these message queue products are different. When developers want to deploy their apps across clouds, or want their apps to be portable (for example, easily moving from Alibaba Cloud to Tencent Cloud), they have to refactor their code.
+
+The design goal of Layotto Pub/Sub API is to define a unified message publish/subscribe API. The application only needs to care about the API, and does not need to care about the specific message queue product being used, so that the application can be transplanted at will, and the application is sufficiently "cloud native" .
+
+## Quick start
 This example shows how to call redis through Layotto to publish/subscribe messages.
 
 The architecture of this example is shown in the figure below. The running processes are: redis, a Subscriber program that listens to events, Layotto, and a Publisher program that publishes events.
