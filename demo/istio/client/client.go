@@ -19,6 +19,7 @@ package main
 import (
 	"context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/anypb"
 	"io/ioutil"
 	"log"
@@ -55,6 +56,11 @@ func main() {
 		defer cancel()
 
 		body, _ := ioutil.ReadAll(r.Body)
+
+		name := r.Header.Get("name")
+		if name != "" {
+			ctx = metadata.AppendToOutgoingContext(ctx, "name", name)
+		}
 
 		resp, err := cli.InvokeService(
 			ctx,

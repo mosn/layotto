@@ -64,6 +64,7 @@ func RegistChannel(proto string, f func(config ChannelConfig) (rpc.Channel, erro
 
 type fakeTcpConn struct {
 	c net.Conn
+	addr net.Addr
 }
 
 func (t *fakeTcpConn) Read(b []byte) (n int, err error) {
@@ -83,6 +84,9 @@ func (t *fakeTcpConn) LocalAddr() net.Addr {
 }
 
 func (t *fakeTcpConn) RemoteAddr() net.Addr {
+	if t.addr != nil {
+		return t.addr
+	}
 	return &net.TCPAddr{}
 }
 

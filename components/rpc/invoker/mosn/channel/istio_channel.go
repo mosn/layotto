@@ -32,6 +32,7 @@ import (
 	v2 "mosn.io/mosn/pkg/xds/v2"
 	"net"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -89,11 +90,18 @@ func ConvertAddOrUpdateRouters(routers []*envoy_api_v2.RouteConfiguration) {
 
 type istioChannel struct {
 	httpChannel
+	pool map[string]*connPool
+	connLock sync.Mutex
+	size int
+	listenerName string
 }
 
 func newIstioChannel(config ChannelConfig) (rpc.Channel, error) {
 	return &istioChannel{
-		httpChannel{},
+		httpChannel: httpChannel{},
+		pool: make(map[string]*connPool),
+		size: config.Size,
+		listenerName: config.Listener,
 	}, nil
 }
 
@@ -106,32 +114,61 @@ func (i *istioChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	if !ok {
 		return nil, errors.New("no available service found")
 	}
-	snapshot := clusterAdapter.GetClusterMngAdapterInstance().GetClusterSnapshot(ctx, clusterName)
-	if snapshot == nil || len(snapshot.HostSet().Hosts()) == 0 {
-		return nil, errors.New("no available server address")
+
+	pool, ok := i.pool[clusterName]
+	if !ok {
+		i.connLock.Lock()
+		defer i.connLock.Unlock()
+
+		snapshot := clusterAdapter.GetClusterMngAdapterInstance().GetClusterSnapshot(ctx, clusterName)
+		if snapshot == nil || len(snapshot.HostSet().Hosts()) == 0 {
+			return nil, errors.New("no available server address")
+		}
+
+		pool = newConnPool(
+			i.size,
+			func() (net.Conn, error) {
+				local, remote := net.Pipe()
+				localTcpConn := &fakeTcpConn{c: local}
+				remoteTcpConn := &fakeTcpConn{c: remote, addr: snapshot.HostSet().Hosts()[0].Address()}
+				if err := acceptFunc(remoteTcpConn, i.listenerName); err != nil {
+					return nil, err
+				}
+				return localTcpConn, nil
+			},
+			nil,
+			nil,
+		);
+		i.pool[clusterName] = pool
 	}
 
-	conn, err := net.Dial("tcp", snapshot.HostSet().Hosts()[0].AddressString())
+	conn, err := pool.Get(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	deadline, _ := ctx.Deadline()
-	conn.SetDeadline(deadline)
+	if err = conn.SetDeadline(deadline); err != nil {
+		pool.Put(conn, true)
+		return nil, err
+	}
 
 	httpReq := i.httpChannel.constructReq(req)
 	defer fasthttp.ReleaseRequest(httpReq)
 
 	if _, err = httpReq.WriteTo(conn); err != nil {
+		pool.Put(conn, true)
 		return nil, err
 	}
 
 	httpResp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(httpResp)
 	if err = httpResp.Read(bufio.NewReader(conn)); err != nil {
+		pool.Put(conn, true)
 		return nil, err
 	}
 	body := httpResp.Body()
+	pool.Put(conn, false)
 	if httpResp.StatusCode() != http.StatusOK {
 		return nil, fmt.Errorf("http response code %d, body: %s", httpResp.StatusCode(), string(body))
 	}
