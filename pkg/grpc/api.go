@@ -743,6 +743,10 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 	for {
 		req, err := stream.Recv()
 		if err == io.EOF {
+			//if client send EOF directly, return nil
+			if _, ok := filesMap.Load(id); !ok {
+				return nil
+			}
 			v, _ := filesMap.Load(id)
 			storeName := v.(string)
 			if err := a.fileOps[storeName].CompletePut(id); err != nil {
@@ -754,7 +758,7 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 		}
 		filesMap.LoadOrStore(id, req.StoreName)
 		if err != nil {
-			return status.Errorf(codes.Unknown, "receive file data fail: err: %+v", err)
+			return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
 		}
 		chunkNum++
 		if a.fileOps[req.StoreName] == nil {
