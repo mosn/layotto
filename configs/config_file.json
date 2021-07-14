@@ -42,5 +42,9 @@
         }
       ]
     }
-  ]
+  ],
+  "pprof": {
+    "debug": true,
+    "port_value": 34902
+  }
 }
