@@ -18,7 +18,8 @@ docker pull redis:latest
 ```
 
 2. 查看本地镜像
-   使用以下命令来查看是否已安装了 redis：
+   
+使用以下命令来查看是否已安装了 redis：
 
 ```shell
 docker images

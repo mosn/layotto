@@ -1,6 +1,8 @@
 - [Home](/en/README.md)
 - Quick start
-  - [Use Configuration API](en/start/configuration/start-apollo.md)
+  - Use Configuration API
+    - [Use Apollo as configuration center](en/start/configuration/start-apollo.md)
+    - [Use Etcd as configuration center](en/start/configuration/start.md)
   - [Use State API](en/start/state/start.md)
   - [Use Pub/Sub API](en/start/pubsub/start.md)
   - [Use Distributed Lock API](en/start/lock/start.md)
@@ -20,11 +22,15 @@
   - [RPC design doc](en/design/rpc/rpc-design-doc.md)
   - [Distributed lock API design](en/design/lock/lock-api-design.md)
 - Reference
+  - API reference
+    - [Actuator API](en/api_reference/actuator/actuator.md)
   - Component specs
     - State
       - [Redis](en/component_specs/state/redis.md)
+      - [Other components](en/component_specs/state/others.md)
     - Pub/Sub
       - [Redis](en/component_specs/pubsub/redis.md)
+      - [Other components](en/component_specs/pubsub/others.md)
     - Distributed Lock
       - [Redis](en/component_specs/lock/redis.md)  
       - [Etcd](en/component_specs/lock/etcd.md)

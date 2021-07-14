@@ -1,6 +1,22 @@
-<h2>Configuration demo with apollo</h2>
+<h2>Configuration API demo with apollo</h2>
+## What is Configuration API
+When the application is started and running, it will read some "configuration information", such as: database connection parameters, startup parameters, RPC timeout, application port, etc. "Configuration" basically accompanies the entire life cycle of the application.
+
+After the application evolves to the microservice architecture, it will be deployed on many machines, and the configuration will be scattered on each machine in the cluster, which is difficult to manage. So there is a "configuration center", which centrally manages the configuration, and also solves some new problems, such as: version management (in order to support rollback), authority management, etc.
+
+There are many commonly used configuration centers, such as Spring Cloud Config, Apollo, Nacos, and cloud vendors often provide their own configuration management services, such as AWS Parameter Store, Google RuntimeConfig
+
+Unfortunately, the APIs of these configuration centers are different. When an application wants to be deployed across clouds, or if it wants to be transplanted (for example, moving from Tencent Cloud to Alibaba Cloud), the application needs to refactor the code.
+
+The design goal of Layotto Configuration API is to define a unified configuration center API. Applications only need to care about the API, not which configuration center is used, so that the application can be transplanted at will, and the application is sufficiently "cloud native".
+
+## Quick start
 
 This example shows how to add, delete, modify, and watch the [apollo configuration center](https://github.com/ctripcorp/apollo) through Layotto.
+
+The architecture of this example is shown in the figure below. The processes started are: client APP, Layotto, Apollo server
+
+![img.png](../../../img/configuration/apollo/arch.png)
 
 ### Deploy apollo and modify Layotto's config (optional)
 
