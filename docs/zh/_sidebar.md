@@ -27,6 +27,7 @@
             - [Redis](zh/component_specs/pubsub/redis.md)
         - Distributed Lock
             - [Redis](zh/component_specs/lock/redis.md)
+            - [Zookeeper](zh/component_specs/lock/zookeeper.md)
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)
         - Files
