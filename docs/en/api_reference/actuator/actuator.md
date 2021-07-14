@@ -1,11 +1,11 @@
-## Actuator Http API
+# Actuator Http API
 
 Layotto Actuator API provides functions such as health check, view runtime metadata, and supports integration into open source infrastructure (for example, it can be integrated into k8s health check)
 
 Similar to Spring Boot Actuator, Actuator API has more imagination in the future: Monitoring, Metrics, Auditing, and more.
 
-### 1. Health Check
-#### /actuator/health/liveness
+## 1. Health Check
+### /actuator/health/liveness
 Used to check the health status and determine "whether restarting is needed"
 
 GET,no parameters.
@@ -41,7 +41,7 @@ var (
 )
 ```
 
-#### /actuator/health/readiness
+### /actuator/health/readiness
 Used to check the health status and determine "Do we need to temporarily cut off the traffic and make sure no user visit this machine"
 
 Q: What is the difference with the above API?
@@ -63,9 +63,9 @@ GET,no parameters.
   }
 }
 ```
-### 2. View runtime metadata
+## 2. View runtime metadata
 
-#### /actuator/info
+### /actuator/info
 
 GET,no parameters.
 ```json
@@ -91,7 +91,7 @@ We can add more information in the future:
 
 Actuator adopts a plug-in architecture, you can also add your own plug-ins as needed, and let the API return the runtime metadata you care about.
 
-### 3. Explanation for API path
+## 3. Explanation for API path
 
 Actuator API path adopts restful style. After different Endpoints are registered in Actuator, the path is:
 
@@ -119,5 +119,5 @@ The paths registered by default are:
 /actuator/info
 ```
 
-### 4. API usage example
+## 4. API usage example
 See [Quick start document](en/start/actuator/start.md)

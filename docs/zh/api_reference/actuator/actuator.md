@@ -1,11 +1,11 @@
-## Actuator Http API
+# Actuator Http API
 
 Layotto Actuator API提供健康检查、查看运行时元数据等功能，支持集成进开源基础设施（例如可以集成进k8s健康检查）
 
 类似于Spring Boot Actuator，Actuator API未来有更多的想象空间：Monitoring, Metrics, Auditing, and more.
 
-### 1. 健康检查
-#### /actuator/health/liveness
+## 1. 健康检查
+### /actuator/health/liveness
 
 用于检查健康状态，判断"是否需要重启"
 
@@ -43,7 +43,7 @@ var (
 )
 ```
 
-#### /actuator/health/readiness
+### /actuator/health/readiness
 
 用于检查健康状态，"是否需要暂时把流量切走、别访问这台机器"
 
@@ -66,9 +66,9 @@ GET,不需要传参
   }
 }
 ```
-### 2. 查询运行时元数据
+## 2. 查询运行时元数据
 
-#### /actuator/info
+### /actuator/info
 
 GET
 ```json
@@ -94,7 +94,7 @@ GET
 
 Actuator采用插件化架构，您也可以按需添加自己的插件，让API返回您关注的运行时元数据
 
-### 3. 路径解释
+## 3. 路径解释
 
 Actuator API的路径采用restful风格，不同的Endpoint注册进Actuator后，路径是
 
@@ -121,5 +121,5 @@ Actuator API的路径采用restful风格，不同的Endpoint注册进Actuator后
 /actuator/info
 ```
 
-### 4. API使用示例
+## 4. API使用示例
 您可以查看[Quick start文档](zh/start/actuator/start.md)

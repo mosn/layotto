@@ -1,6 +1,6 @@
-## Dump TCP traffic
+# Dump TCP traffic
 
-### Introduction
+## Introduction
 
 When you run the demo according to the quick-start document [Configuration demo with apollo](en/start/configuration/start-apollo.md), you may notice that there is such a configuration in the configuration file config_apollo.json:
 ```json
@@ -26,7 +26,7 @@ The "dumped" binary traffic data will be stored in the ${user's home directory}/
 
 You can use these data in combination with other tools and infrastructure to do something cool, such as traffic playback, bypass verification, etc.
 
-### Configuration description
+## Configuration description
 
 In the above config_apollo.json, the strategy configuration item is mainly used to configure the sampling strategy. The specific configuration descriptions are as follows:
 
@@ -40,7 +40,7 @@ type DumpConfig struct {
 }
 ```
 
-### Principle of work
+## Principle of work
 
 The Layotto server runs on MOSN and uses MOSN's filter expansion capabilities, so the tcpcopy above is actually a network filter plug-in of MOSN.
 
