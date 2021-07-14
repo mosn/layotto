@@ -15,15 +15,12 @@
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)
   - [Multilingual programming based on WASM](en/start/wasm/start.md)
-- Design documents
-  - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
-  - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
-  - [Pub/Sub API and compability with dapr component](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
-  - [RPC design doc](en/design/rpc/rpc-design-doc.md)
-  - [Distributed lock API design](en/design/lock/lock-api-design.md)
 - Reference
   - API reference
     - [Actuator API](en/api_reference/actuator/actuator.md)
+  - SDK reference
+    - [go-sdk](en/sdk_reference/go/start.md)
+    - [java-sdk](en/sdk_reference/java/start.md)
   - Component specs
     - State
       - [Redis](en/component_specs/state/redis.md)
@@ -38,5 +35,11 @@
     - Configuration
       - [Etcd](en/component_specs/configuration/etcd.md)
       - [Apollo](en/component_specs/configuration/apollo.md)
+- Design documents
+  - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
+  - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
+  - [Pub/Sub API and compability with dapr component](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+  - [RPC design doc](en/design/rpc/rpc-design-doc.md)
+  - [Distributed lock API design](en/design/lock/lock-api-design.md)  
 - Contributing
   - [Layotto contributor guide](en/development/CONTRIBUTING.md) 

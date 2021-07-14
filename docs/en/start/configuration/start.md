@@ -1,12 +1,13 @@
-<h2>Layotto support configuration center</h2>
+# Configuration API demo with Etcd
 ## What is Configuration API
+
 When the application is started and running, it will read some "configuration information", such as: database connection parameters, startup parameters, RPC timeout, application port, etc. "Configuration" basically accompanies the entire life cycle of the application.
 
 After the application evolves to the microservice architecture, it will be deployed on many machines, and the configuration will be scattered on each machine in the cluster, which is difficult to manage. So there is a "configuration center", which centrally manages the configuration, and also solves some new problems, such as: version management (in order to support rollback), authority management, etc.
 
 There are many commonly used configuration centers, such as Spring Cloud Config, Apollo, Nacos, and cloud vendors often provide their own configuration management services, such as AWS Parameter Store, Google RuntimeConfig
 
-Unfortunately, the APIs of these configuration centers are different. When an application wants to be deployed across clouds, or if it wants to be transplanted (for example, moving from Tencent Cloud to Alibaba Cloud), the application needs to refactor the code.
+Unfortunately, the APIs of these configuration centers are different. When developers want to deploy their apps across clouds, or want their apps to be portable (for example, easily moving from Alibaba Cloud to Tencent Cloud), they have to refactor their code.
 
 The design goal of Layotto Configuration API is to define a unified configuration center API. Applications only need to care about the API, not which configuration center is used, so that the application can be transplanted at will, and the application is sufficiently "cloud native".
 

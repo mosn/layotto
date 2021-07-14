@@ -19,6 +19,8 @@
 ```
 这段配置的含义是启动时加载tcpcopy插件，进行tcp流量dump。
 
+开启该配置后，当Layotto接到请求，如果判断满足流量dump的条件，就会把请求的二进制数据写到本地文件系统。
+
 dump下来的二进制流量数据会存放在 ${user's home directory}/logs/mosn 目录，或/home/admin/logs/mosn 目录下:
 
 ![img.png](../../../img/tcp_dump.png)

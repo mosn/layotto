@@ -18,7 +18,10 @@
 - 参考资料
     - 接口文档
         - [Actuator API](zh/api_reference/actuator/actuator.md)
-    - Component specs
+    - SDK文档    
+        - [go-sdk](zh/sdk_reference/go/start.md)
+        - [java-sdk](zh/sdk_reference/java/start.md)
+    - 组件文档
         - State
             - [Redis](zh/component_specs/state/redis.md)
             - [其他组件](zh/component_specs/state/others.md)

@@ -121,3 +121,5 @@ Actuator API的路径采用restful风格，不同的Endpoint注册进Actuator后
 /actuator/info
 ```
 
+### 4. API使用示例
+您可以查看[Quick start文档](zh/start/actuator/start.md)

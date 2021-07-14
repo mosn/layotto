@@ -119,3 +119,5 @@ The paths registered by default are:
 /actuator/info
 ```
 
+### 4. API usage example
+See [Quick start document](en/start/actuator/start.md)

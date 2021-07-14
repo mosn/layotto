@@ -7,7 +7,7 @@
 
 常用的配置中心有很多，例如Spring Cloud Config，Apollo，Nacos，而且云厂商经常会提供自己的配置管理服务，例如AWS Parameter Store,Google RuntimeConfig
 
-不幸的是，这些配置中心的API都不一样。当应用想要跨云部署，或者想要移植（比如从腾讯云搬到阿里云），应用需要重构代码。
+不幸的是，这些配置中心的API都不一样。当应用想要跨云部署，或者想要移植（比如从阿里云搬到腾讯云），应用需要重构代码。
 
 Layotto Configuration API的设计目标是定义一套统一的配置中心API，应用只需要关心API、不需要关心具体用的哪个配置中心，让应用能够随意移植，让应用足够"云原生"。
 
@@ -27,7 +27,12 @@ Layotto Configuration API的设计目标是定义一套统一的配置中心API�
 
 ### 运行Layotto server 端
 
-将项目代码下载到本地后，切换代码目录、编译：
+将Layotto代码下载到本地
+```bash
+git clone https://github.com/mosn/layotto.git
+```
+
+切换代码目录、编译：
 
 ```bash
 cd ${projectpath}/cmd/layotto
