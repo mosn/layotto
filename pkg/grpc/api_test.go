@@ -20,9 +20,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"net"
+	"sync"
 	"testing"
 	"time"
+
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -185,6 +189,54 @@ func TestSubscribeConfiguration(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "exit")
 
+}
+
+func SendData(w net.Conn) {
+	w.Write([]byte("testFile"))
+	w.Close()
+}
+func TestGetFile(t *testing.T) {
+	r, w := net.Pipe()
+	ctrl := gomock.NewController(t)
+	mockFile := mock.NewMockFile(ctrl)
+	mockStream := mock.NewMockRuntime_GetFileServer(ctrl)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil)
+	err := api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock1"}, mockStream)
+	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not supported store type: mock1"))
+	mockFile.EXPECT().Get(&file.GetFileStu{ObjectName: "", Metadata: nil}).Return(r, nil).Times(1)
+	mockStream.EXPECT().Send(&runtimev1pb.GetFileResponse{Data: []byte("testFile")}).Times(1)
+	go SendData(w)
+	api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock"}, mockStream)
+}
+
+func putFile(t *testing.T, api API, wg *sync.WaitGroup, mockStream runtimev1pb.Runtime_PutFileServer) {
+	err := api.PutFile(mockStream)
+	assert.Nil(t, err)
+	wg.Done()
+}
+func TestPutFile(t *testing.T) {
+	var wg sync.WaitGroup
+	ctrl := gomock.NewController(t)
+	mockFile := mock.NewMockFile(ctrl)
+	mockStream := mock.NewMockRuntime_PutFileServer(ctrl)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil)
+
+	mockStream.EXPECT().Recv().Return(nil, io.EOF).Times(1)
+	err := api.PutFile(mockStream)
+	assert.Nil(t, err)
+
+	mockStream.EXPECT().Recv().Return(&runtimev1pb.PutFileRequest{StoreName: "mock1"}, nil).Times(1)
+	err = api.PutFile(mockStream)
+	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not support store type: mock1"))
+
+	mockStream.EXPECT().Recv().Return(&runtimev1pb.PutFileRequest{StoreName: "mock", Name: "fileName", Data: []byte("fileContent")}, nil).Times(1)
+	mockStream.EXPECT().Recv().Return(nil, io.EOF).Times(1)
+	mockStream.EXPECT().SendAndClose(&emptypb.Empty{}).Times(1)
+	mockFile.EXPECT().CompletePut(int64(3)).Return(nil).Times(1)
+	mockFile.EXPECT().Put(&file.PutFileStu{FileName: "fileName", Data: []byte("fileContent"), Metadata: nil, StreamId: 3, ChunkNumber: 1}).Return(nil).Times(1)
+	wg.Add(1)
+	go putFile(t, api, &wg, mockStream)
+	wg.Wait()
 }
 
 func TestListFile(t *testing.T) {

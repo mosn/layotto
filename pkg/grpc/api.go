@@ -60,7 +60,7 @@ var (
 	bytesPool     = sync.Pool{
 		New: func() interface{} {
 			// set size to 4M
-			return make([]byte, 4194304, 4194304)
+			return make([]byte, 4<<20, 4<<20)
 		},
 	}
 	filesMap sync.Map
