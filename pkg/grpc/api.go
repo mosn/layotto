@@ -33,6 +33,8 @@ import (
 	"mosn.io/layotto/pkg/converter"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 
+	_ "net/http/pprof"
+
 	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
 	contrib_pubsub "github.com/dapr/components-contrib/pubsub"
@@ -59,8 +61,8 @@ var (
 	streamId      int64
 	bytesPool     = sync.Pool{
 		New: func() interface{} {
-			// set size to 4M
-			return make([]byte, 4<<20, 4<<20)
+			// set size to 1M
+			return new([]byte)
 		},
 	}
 	filesMap sync.Map
@@ -732,13 +734,22 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	if err != nil {
 		return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
 	}
-	defer data.Close()
-	buffs := bytesPool.Get()
-	defer bytesPool.Put(buffs)
-	buf := buffs.([]byte)
+
+	buffsPtr := bytesPool.Get().(*[]byte)
+	buf := *buffsPtr
+	if len(buf) == 0 {
+		buf = make([]byte, 1<<20, 1<<20)
+	}
+	defer func() {
+		data.Close()
+		*buffsPtr = buf
+		bytesPool.Put(buffsPtr)
+	}()
+
 	for {
 		length, err := data.Read(buf)
 		if err != nil && err != io.EOF {
+			log.DefaultLogger.Warnf("get file fail, err: %+v", err)
 			return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
 		}
 		if err == nil || (err == io.EOF && length != 0) {
@@ -759,6 +770,9 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 	var chunkNum int
 	for {
 		req, err := stream.Recv()
+		if err != nil && err != io.EOF {
+			return err
+		}
 		if err == io.EOF {
 			//if client send EOF directly, return nil
 			if _, ok := filesMap.Load(id); !ok {
