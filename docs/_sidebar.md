@@ -6,17 +6,22 @@
   - [Use State API](en/start/state/start.md)
   - [Use Pub/Sub API](en/start/pubsub/start.md)
   - [Use Distributed Lock API](en/start/lock/start.md)
+  - Service Invocation
+    - [Hello World](en/start/rpc/helloworld.md)
+    - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
   - Traffic intervention on the 4th layer network
     - [Dump TCP Traffic](en/start/network_filter/tcpcopy.md)
   - Flow Control on the 7th layer network
     - [Method Level Flow Control](en/start/stream_filter/flow_control.md)
   - [Health check and metadata query](en/start/actuator/start.md)
-  - Service Invocation
-    - [Hello World](en/start/rpc/helloworld.md)
-    - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)
   - [Multilingual programming based on WASM](en/start/wasm/start.md)
 - Reference
   - API reference
+    - [Configuration API](en/api_reference/configuration/reference.md)
+    - [State API](en/api_reference/state/reference.md)
+    - [Pub/Sub API](en/api_reference/pubsub/reference.md)
+    - [Distributed Lock API](en/api_reference/lock/reference.md)
+    - [RPC API](en/api_reference/rpc/reference.md)    
     - [Actuator API](en/api_reference/actuator/actuator.md)
   - SDK reference
     - [go-sdk](en/sdk_reference/go/start.md)
@@ -31,7 +36,7 @@
     - Distributed Lock
       - [Redis](en/component_specs/lock/redis.md)  
       - [Etcd](en/component_specs/lock/etcd.md)
-      - [Zookeeper](zh/component_specs/lock/zookeeper.md)
+      - [Zookeeper](en/component_specs/lock/zookeeper.md)
     - Configuration
       - [Etcd](en/component_specs/configuration/etcd.md)
       - [Apollo](en/component_specs/configuration/apollo.md)

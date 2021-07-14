@@ -1,6 +1,6 @@
-## Dump TCP流量
+# Dump TCP流量
 
-### 介绍
+## 介绍
 
 当您按照quick start文档[通过Layotto调用apollo配置中心](zh/configuration/start-apollo.md)运行demo时，可能会注意到配置文件config_apollo.json中有这么一段配置：
 
@@ -27,7 +27,7 @@ dump下来的二进制流量数据会存放在 ${user's home directory}/logs/mos
 
 您可以结合其他工具和基础设施使用这些数据，例如进行流量回放、旁路验证等。
 
-### 配置项说明
+## 配置项说明
 
 上文的json中，strategy配置项主要用来进行采样策略配置，具体配置说明如下：
 
@@ -41,7 +41,7 @@ type DumpConfig struct {
 }
 ```
 
-### 实现原理
+## 实现原理
 
 Layotto服务器运行在MOSN上，使用MOSN的filter扩展能力，因此上文的tcpcopy其实是MOSN的一个network filter插件。
 
