@@ -64,6 +64,8 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
 
+[集成 Istio](zh/start/istio/start.md)
+
 ### 健康检查、查询运行时元数据
 
 [使用 Layotto Actuator 进行健康检查和元数据查询](zh/start/actuator/start.md)

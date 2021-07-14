@@ -69,6 +69,8 @@ See the quick start guide [configuration demo with apollo](https://mosn.io/layot
 
 [Dubbo JSON RPC](https://mosn.io/layotto/#/en/start/rpc/dubbo_json_rpc)
 
+[Integrate witch istio](https://mosn.io/layotto/#/en/start/istio/start)
+
 ### Multilingual programming based on WASM
 
 [WASM on Layotto](https://mosn.io/layotto/#/en/start/wasm/start)
