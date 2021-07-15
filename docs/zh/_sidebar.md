@@ -40,7 +40,7 @@
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)
             - [Apollo](zh/component_specs/configuration/apollo.md)
-        - Files
+        - File
             - [OSS](zh/component_specs/file/oss.md)
      
 - 设计文档

@@ -40,7 +40,7 @@
     - Configuration
       - [Etcd](en/component_specs/configuration/etcd.md)
       - [Apollo](en/component_specs/configuration/apollo.md)
-    - Files
+    - File
       - [OSS](en/component_specs/file/oss.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
