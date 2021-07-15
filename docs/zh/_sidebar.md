@@ -10,6 +10,8 @@
         - [Hello World](zh/start/rpc/helloworld.md)
         - [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
         - [集成 Istio](zh/start/istio/start.md)
+    - 跟istio集成
+        - [作为 istio 的数据面](zh/start/istio/start.md)
     - 在四层网络进行流量干预
         - [Dump TCP 流量](zh/start/network_filter/tcpcopy.md)
     - 在七层网络进行流量干预

@@ -12,13 +12,14 @@ Layotto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, i
 
 ## Motivation
 
-Layotto aims to combine Runtime with Service Mesh into one sidecar. No matter which product you are using as the Service Mesh data plane (e.g. Mosn,Envoy or any other
+Layotto aims to combine Runtime with Service Mesh into one sidecar (e.g. [as a unique data plane in istio](https://mosn.io/layotto/#/en/start/istio/start)). No matter which product you are using as the Service Mesh data plane (e.g. Mosn,Envoy or any other
 product), you can always attach Layotto to it and add Multi-Runtime capabilities without adding new sidecars. 
 
 ## Features
 
 - Service Communication
 - Service Governance.Such as traffic hijacking and observation, service rate limiting, etc
+- [As a data plane in istio](https://mosn.io/layotto/#/en/start/istio/start)
 - Configuration management
 - State management
 - Event publish and subscribe
@@ -69,7 +70,9 @@ See the quick start guide [configuration demo with apollo](https://mosn.io/layot
 
 [Dubbo JSON RPC](https://mosn.io/layotto/#/en/start/rpc/dubbo_json_rpc)
 
-[Integrate witch istio](https://mosn.io/layotto/#/en/start/istio/start)
+### Integrate with istio
+
+[As a data plane in istio](https://mosn.io/layotto/#/en/start/istio/start)
 
 ### Multilingual programming based on WASM
 

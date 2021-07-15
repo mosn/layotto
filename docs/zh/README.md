@@ -10,13 +10,14 @@ Layotto 以开源的 [MOSN](https://github.com/mosn/mosn) 为底座，在提供�
 
 ## 诞生背景
 
-Layotto希望可以把Runtime跟Service Mesh两者的能力结合起来，无论你是使用mosn还是envoy或者其他产品作为Service Mesh的数据面，都可以在
+Layotto希望可以把Runtime跟Service Mesh两者的能力结合起来（[如作为一个统一的数据面存在于istio中](zh/start/istio/start.md)），无论你是使用mosn还是envoy或者其他产品作为Service Mesh的数据面，都可以在
 不增加新的sidecar的前提下，使用Layotto为这些数据面追加Runtime的能力。
 
 ## 功能
 
 - 服务通信 
 - 服务治理，例如流量的劫持和观测，服务限流等
+- [作为 istio 的数据面](zh/start/istio/start.md)  
 - 配置管理
 - 状态管理
 - 事件发布订阅
@@ -64,7 +65,9 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
 
-[集成 Istio](zh/start/istio/start.md)
+### 跟istio集成
+
+[作为 istio 的数据面](zh/start/istio/start.md)
 
 ### 健康检查、查询运行时元数据
 
