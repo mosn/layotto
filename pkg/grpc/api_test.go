@@ -203,7 +203,7 @@ func TestGetFile(t *testing.T) {
 	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil)
 	err := api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock1"}, mockStream)
 	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not supported store type: mock1"))
-	mockFile.EXPECT().Get(&file.GetFileStu{ObjectName: "", Metadata: nil}).Return(r, nil).Times(1)
+	mockFile.EXPECT().Get(&file.GetFileStu{FileName: "", Metadata: nil}).Return(r, nil).Times(1)
 	mockStream.EXPECT().Send(&runtimev1pb.GetFileResponse{Data: []byte("testFile")}).Times(1)
 	go SendData(w)
 	api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock"}, mockStream)

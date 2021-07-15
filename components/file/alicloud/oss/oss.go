@@ -118,7 +118,7 @@ func (s *AliCloudOSS) Get(st *file.GetFileStu) (io.ReadCloser, error) {
 	if err != nil {
 		return nil, err
 	}
-	return bucket.GetObject(st.ObjectName)
+	return bucket.GetObject(st.FileName)
 }
 
 func (s *AliCloudOSS) List(request *file.ListRequest) (*file.ListResp, error) {

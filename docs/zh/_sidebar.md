@@ -41,7 +41,7 @@
             - [Etcd](zh/component_specs/configuration/etcd.md)
             - [Apollo](zh/component_specs/configuration/apollo.md)
         - Files
-            - [OSS](zh/component_specs/files/oss.md)
+            - [OSS](zh/component_specs/file/oss.md)
      
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
@@ -49,6 +49,7 @@
     - [Pub/Sub API以及与dapr component的兼容性](zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
     - [RPC设计文档](zh/design/rpc/rpc设计文档.md)
     - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)
+    - [OSS设计文档](zh/design/file/oss-design.md)
 - 贡献指南
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)

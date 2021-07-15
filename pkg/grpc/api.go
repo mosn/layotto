@@ -61,7 +61,7 @@ var (
 	streamId      int64
 	bytesPool     = sync.Pool{
 		New: func() interface{} {
-			// set size to 1M
+			// set size to 100kb
 			return new([]byte)
 		},
 	}
@@ -729,7 +729,7 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	if a.fileOps[req.StoreName] == nil {
 		return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
 	}
-	st := &file.GetFileStu{ObjectName: req.Name, Metadata: req.Metadata}
+	st := &file.GetFileStu{FileName: req.Name, Metadata: req.Metadata}
 	data, err := a.fileOps[req.StoreName].Get(st)
 	if err != nil {
 		return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
@@ -738,7 +738,7 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	buffsPtr := bytesPool.Get().(*[]byte)
 	buf := *buffsPtr
 	if len(buf) == 0 {
-		buf = make([]byte, 1<<20, 1<<20)
+		buf = make([]byte, 102400, 102400)
 	}
 	defer func() {
 		data.Close()

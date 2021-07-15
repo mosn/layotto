@@ -84,6 +84,8 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 [分布式锁api设计文档](zh/design/lock/lock-api-design.md)
 
+[OSS设计文档](zh/design/file/oss-design.md)
+
 ## 社区
 
 | 平台  | 联系方式        |

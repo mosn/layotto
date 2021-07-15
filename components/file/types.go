@@ -14,8 +14,8 @@ type PutFileStu struct {
 }
 
 type GetFileStu struct {
-	ObjectName string
-	Metadata   map[string]string
+	FileName string
+	Metadata map[string]string
 }
 
 type DelRequest struct {
