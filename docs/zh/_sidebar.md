@@ -17,13 +17,13 @@
     - [使用WASM进行多语言编程](zh/start/wasm/start.md)
 - 用户手册
     - 接口文档
+        - [File API](zh/api_reference/file/file.md)
         - [Configuration API](zh/api_reference/configuration/reference.md)
         - [State API](zh/api_reference/state/reference.md)
         - [Pub/Sub API](zh/api_reference/pubsub/reference.md)
         - [Distributed Lock API](zh/api_reference/lock/reference.md)
         - [RPC API](zh/api_reference/rpc/reference.md)
         - [Actuator API](zh/api_reference/actuator/actuator.md)
-        - [File API](zh/api_reference/file/file.md)
     - SDK文档    
         - [go-sdk](zh/sdk_reference/go/start.md)
         - [java-sdk](zh/sdk_reference/java/start.md)
