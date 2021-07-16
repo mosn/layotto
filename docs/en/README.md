@@ -13,7 +13,7 @@ Layotto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, i
 Layotto aims to combine Runtime with Service Mesh into one sidecar. No matter which product you are using as the Service Mesh data plane (e.g. Mosn,Envoy or any other
 product), you can always attach Layotto to it and add Multi-Runtime capabilities without adding new sidecars. 
 
-For example, the Layotto process can both [serve as the data plane of istio](en/start/istio/start) and provide various Runtime APIs (such as Configuration API, Pub/Sub API, etc.)
+For example, Layotto can both [serve as the data plane of istio](en/start/istio/start) and provide various Runtime APIs (such as Configuration API, Pub/Sub API, etc.)
 
 ## Features
 
