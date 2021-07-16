@@ -29,7 +29,7 @@ type PutFileStu struct {
 	Data        []byte //data receive
 	FileName    string //fileName want put
 	Metadata    map[string]string //extended fields, sdk can transmit any field, and components can be implemented in detail
-	StreamId    int64 //useful in multi-case mode, such as multiple buckets or endpoints, components are used to determine which stream the received request is from.
+	StreamId    int64 //during the file upload process, grpc's client and server will establish a transmission stream, and the corresponding file handle can be found in the component through StreamId
 	ChunkNumber int //chunk number, starting from 1
 }
 
@@ -90,6 +90,21 @@ The Del interface is used to delete a file. The input types are as follows:
          FileName string //File name to delete
          Metadata map[string]string //Extension field
      }
+```
+
+#### Return value type
+
+Return error type
+
+---
+
+### CompletePut
+
+The concept of completePut is that the file transfer is complete, and the file handle is closed, corresponding to the StreamId in the input parameter of the Put interface
+#### Input type
+
+```
+int
 ```
 
 #### Return value type

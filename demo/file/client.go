@@ -55,12 +55,11 @@ func TestPut() {
 	}
 	fileHandle, err := os.Open("fileName")
 	defer fileHandle.Close()
-	//分片上传，片最小为100kb
+	//Upload in multiples, the minimum size is 100kb
 	buffer := make([]byte, 102400)
 
 	for {
 		n, err := fileHandle.Read(buffer)
-		// 控制条件,根据实际调整
 		if err != nil && err != io.EOF {
 			fmt.Printf("read file failed, err:%+v", err)
 			break
