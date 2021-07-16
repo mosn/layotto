@@ -73,7 +73,7 @@ See the quick start guide [configuration demo with apollo](https://mosn.io/layot
 
 ### Integrate with istio
 
-[As a data plane in istio](https://mosn.io/layotto/#/en/start/istio/start)
+[As the data plane of istio](https://mosn.io/layotto/#/en/start/istio/start)
 
 ### Multilingual programming based on WASM
 
