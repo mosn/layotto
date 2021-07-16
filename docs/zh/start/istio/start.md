@@ -104,6 +104,7 @@ MOSN作为Istio官方认可的数据面实现，这里就对Layotto如何跟Isti
    istioctl kube-inject -f layotto.yaml > layotto-injected.yaml
    ```
    其中`layotto.yaml`文件内容在[这里](https://github.com/mosn/layotto/blob/istio-1.5.x/demo/istio/layotto.yaml)
+   
    3. 把`layotto-injected.yaml`中所有的`/usr/local/bin/envoy`替换为`/usr/local/bin/mosn`
    ```
    sed -i "s/\/usr\/local\/bin\/envoy/\/usr\/local\/bin\/mosn/g" ./layotto-injected.yaml
