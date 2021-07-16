@@ -17,13 +17,13 @@
   - [Multilingual programming based on WASM](en/start/wasm/start.md)
 - Reference
   - API reference
+    - [File API](en/api_reference/file/file.md)
     - [Configuration API](en/api_reference/configuration/reference.md)
     - [State API](en/api_reference/state/reference.md)
     - [Pub/Sub API](en/api_reference/pubsub/reference.md)
     - [Distributed Lock API](en/api_reference/lock/reference.md)
     - [RPC API](en/api_reference/rpc/reference.md)    
     - [Actuator API](en/api_reference/actuator/actuator.md)
-    - [File API](en/api_reference/file/file.md)
   - SDK reference
     - [go-sdk](en/sdk_reference/go/start.md)
     - [java-sdk](en/sdk_reference/java/start.md)
