@@ -72,7 +72,7 @@ See the quick start guide [configuration demo with apollo](en/start/configuratio
 
 ### Integrate with istio
 
-[As a data plane in istio](en/start/istio/start)
+[As the data plane of istio](en/start/istio/start)
 
 ### Multilingual programming based on WASM
 
