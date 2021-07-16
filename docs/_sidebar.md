@@ -9,9 +9,8 @@
   - Service Invocation
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
-    - [Integrate witch istio](en/start/istio/start.md)
   - Integrate with istio
-    - [As a data plane in istio](https://mosn.io/layotto/#/en/start/istio/start)
+    - [As a data plane in istio](en/start/istio/start.md)
   - Traffic intervention on the 4th layer network
     - [Dump TCP Traffic](en/start/network_filter/tcpcopy.md)
   - Flow Control on the 7th layer network
