@@ -7,6 +7,7 @@ Put(*PutFileStu) error
 Get(*GetFileStu) (io.ReadCloser, error)
 List(*ListRequest) (*ListResp, error)
 Del(*DelRequest) error
+CompletePut(int64, bool) error
 ```
 
 ## Research
@@ -100,11 +101,14 @@ Return error type
 
 ### CompletePut
 
-The concept of completePut is that the file transfer is complete, and the file handle is closed, corresponding to the StreamId in the input parameter of the Put interface
+The concept of completePut is to close the handle of the opened file after the file transfer is complete
 #### Input type
 
 ```
-int
+
+Parameter 1, corresponds to the StreamId in the input parameters of the Put interface
+Parameter 2, represents whether EOF is received, if EOF is received, it is true, if an error occurs, it is false
+  
 ```
 
 #### Return value type

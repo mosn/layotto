@@ -232,7 +232,7 @@ func TestPutFile(t *testing.T) {
 	mockStream.EXPECT().Recv().Return(&runtimev1pb.PutFileRequest{StoreName: "mock", Name: "fileName", Data: []byte("fileContent")}, nil).Times(1)
 	mockStream.EXPECT().Recv().Return(nil, io.EOF).Times(1)
 	mockStream.EXPECT().SendAndClose(&emptypb.Empty{}).Times(1)
-	mockFile.EXPECT().CompletePut(int64(3)).Return(nil).Times(1)
+	mockFile.EXPECT().CompletePut(int64(3), true).Return(nil).Times(1)
 	mockFile.EXPECT().Put(&file.PutFileStu{FileName: "fileName", Data: []byte("fileContent"), Metadata: nil, StreamId: 3, ChunkNumber: 1}).Return(nil).Times(1)
 	wg.Add(1)
 	go putFile(t, api, &wg, mockStream)

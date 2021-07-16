@@ -69,10 +69,15 @@ func (s *AliCloudOSS) Init(metadata *file.FileConfig) error {
 	return nil
 }
 
-func (s *AliCloudOSS) CompletePut(streamId int64) error {
+func (s *AliCloudOSS) CompletePut(streamId int64, success bool) error {
+	if !success {
+		s.stream.Delete(streamId)
+		return nil
+	}
 	if v, ok := s.stream.Load(streamId); ok {
 		pu := v.(*PartUploadStu)
 		_, err := pu.bucket.CompleteMultipartUpload(pu.imur, pu.parts)
+		s.stream.Delete(streamId)
 		return err
 	}
 	return fmt.Errorf("file is not uploading")

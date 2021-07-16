@@ -7,6 +7,7 @@ Put(*PutFileStu) error
 Get(*GetFileStu) (io.ReadCloser, error)
 List(*ListRequest) (*ListResp, error)
 Del(*DelRequest) error
+CompletePut(int64, bool) error
 ```
 
 ## 调研
@@ -104,11 +105,12 @@ Del接口用于删除某个文件。其入参类型如下：
 
 ### CompletePut
 
-completePut的概念就是文件传输完毕，关闭文件的句柄，对应Put接口的入参里面的StreamId
+completePut的概念就是文件传输完毕，关闭已经打开的文件的句柄
 #### 入参类型
 
 ```
-   int
+参数1， 对应Put接口的入参里面的StreamId
+参数2， 代表是不是收到了EOF，如果收到了EOF，为true,如果发生错误则为false
   
 ```
 

@@ -65,7 +65,6 @@ var (
 			return new([]byte)
 		},
 	}
-	filesMap sync.Map
 )
 
 type API interface {
@@ -766,30 +765,33 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 
 func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 	id := atomic.AddInt64(&streamId, 1)
-	defer filesMap.Delete(id)
+	storeName := ""
 	var chunkNum int
 	for {
 		req, err := stream.Recv()
 		if err != nil && err != io.EOF {
-			return err
+			//if client occur error, return nil
+			if storeName == "" {
+				return nil
+			}
+			a.fileOps[storeName].CompletePut(id, false)
+			return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
 		}
 		if err == io.EOF {
 			//if client send EOF directly, return nil
-			if _, ok := filesMap.Load(id); !ok {
+			if storeName == "" {
 				return nil
 			}
-			v, _ := filesMap.Load(id)
-			storeName := v.(string)
-			if err := a.fileOps[storeName].CompletePut(id); err != nil {
+			if err := a.fileOps[storeName].CompletePut(id, true); err != nil {
 				return status.Errorf(codes.Internal, "put file fail, err: %+v", err)
 			}
 			log.DefaultLogger.Debugf("put file success")
 			stream.SendAndClose(&emptypb.Empty{})
 			return nil
 		}
-		filesMap.LoadOrStore(id, req.StoreName)
-		if err != nil {
-			return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
+
+		if storeName == "" {
+			storeName = req.StoreName
 		}
 		chunkNum++
 		if a.fileOps[req.StoreName] == nil {
@@ -797,6 +799,7 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 		}
 		st := &file.PutFileStu{FileName: req.Name, Data: req.Data, Metadata: req.Metadata, StreamId: id, ChunkNumber: chunkNum}
 		if err = a.fileOps[req.StoreName].Put(st); err != nil {
+			a.fileOps[storeName].CompletePut(id, false)
 			return status.Errorf(codes.Internal, err.Error())
 		}
 	}
