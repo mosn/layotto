@@ -23,6 +23,7 @@
     - [Distributed Lock API](en/api_reference/lock/reference.md)
     - [RPC API](en/api_reference/rpc/reference.md)    
     - [Actuator API](en/api_reference/actuator/actuator.md)
+    - [File API](en/api_reference/file/file.md)
   - SDK reference
     - [go-sdk](en/sdk_reference/go/start.md)
     - [java-sdk](en/sdk_reference/java/start.md)
@@ -48,6 +49,5 @@
   - [Pub/Sub API and compability with dapr component](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
   - [RPC design doc](en/design/rpc/rpc-design-doc.md)
   - [Distributed lock API design](en/design/lock/lock-api-design.md)
-  - [OSS design](en/design/file/oss-design.md)
 - Contributing
   - [Layotto contributor guide](en/development/CONTRIBUTING.md) 

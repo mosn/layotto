@@ -83,8 +83,6 @@ See the quick start guide [configuration demo with apollo](en/start/configuratio
 
 [distributed-lock-api-design](en/design/lock/lock-api-design.md)
 
-[OSS design](en/design/file/oss-design.md)
-
 ## Community
 
 ### Contact Us
