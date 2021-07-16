@@ -1,6 +1,6 @@
-OSS Design Doc
+# OSS API
 
-### API
+## grpc API
 
 ```
 Put(*PutFileStu) error
@@ -9,7 +9,7 @@ List(*ListRequest) (*ListResp, error)
 Del(*DelRequest) error
 ```
 
-### Research
+## Research
 
 Refer：
 
@@ -17,13 +17,11 @@ Refer：
 https://github.com/mosn/layotto/issues/98
 ```
 
-### Interface analysis
+## Explanation
 
----
+### Put
 
-#### Put interface
-
-##### Entry type
+#### Entry type
 The put interface is used to upload files. The input types are as follows：
 
 ```
@@ -36,15 +34,15 @@ type PutFileStu struct {
 }
 
 ```
-##### return type
+#### return type
 
 error
 
 ----
 
-#### Get interface
+### Get
 
-##### Entry type
+#### Entry type
 
 get interface used download file：
 
@@ -54,15 +52,15 @@ get interface used download file：
     Metadata   map[string]string //extended fields， eg.bucketName，endpoint
     }
 ```
-##### return type
+#### return type
 
 The return type is io.ReadCloser, error. io.ReadCloser implements the read and write interfaces and can be implemented by yourself, as long as it supports streaming, such as net.Pipe() type
 
 ---
 
-#### List interface
+### List
 
-##### Entry type
+#### Entry type
 
 The List interface is used to query files in a certain directory (bucket). The input types are as follows:
 
@@ -72,7 +70,7 @@ The List interface is used to query files in a certain directory (bucket). The i
          Metadata map[string]string //Extension field
      }
 ```
-##### Return value type
+#### Return value type
 
 ```
      type ListResp struct {
@@ -81,9 +79,9 @@ The List interface is used to query files in a certain directory (bucket). The i
 ```
 ---
 
-#### Del
+### Del
 
-##### Entry type
+#### Entry type
 
 The Del interface is used to delete a file. The input types are as follows:
 
@@ -94,7 +92,7 @@ The Del interface is used to delete a file. The input types are as follows:
      }
 ```
 
-##### Return value type
+#### Return value type
 
 Return error type
 
