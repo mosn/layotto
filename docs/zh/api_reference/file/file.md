@@ -1,6 +1,6 @@
-OSS 设计文档
+# File API
 
-### API
+## API定义
 
 ```
 Put(*PutFileStu) error
@@ -9,7 +9,7 @@ List(*ListRequest) (*ListResp, error)
 Del(*DelRequest) error
 ```
 
-### 调研
+## 调研
 
 请参照：
 
@@ -17,13 +17,13 @@ Del(*DelRequest) error
 https://github.com/mosn/layotto/issues/98
 ```
 
-### 接口解析
+## 接口解释
 
 ---
 
-#### Put接口
+### Put接口
 
-##### 入参类型
+#### 入参类型
 put接口用于上传文件。其入参类型如下：
 
 ```
@@ -36,15 +36,15 @@ type PutFileStu struct {
 }
 
 ```
-##### 返回类型
+#### 返回类型
 
 返回error类型
 
 ----
 
-#### Get接口
+### Get接口
 
-##### 入参类型
+#### 入参类型
 
 get接口用于下载文件。其入参类型如下：
 
@@ -54,15 +54,15 @@ get接口用于下载文件。其入参类型如下：
     Metadata   map[string]string //扩展字段，比如bucketName，endpoint等
     }
 ```
-##### 返回值类型
+#### 返回值类型
 
 返回类型为 io.ReadCloser, error， io.ReadCloser实现了read和write接口，可以自己实现，只要支持流式传输即可，比如net.Pipe()类型
 
 ---
 
-#### List接口
+### List接口
 
-##### 入参类型
+#### 入参类型
 
 List接口用于查询某个目录(bucket)下的文件。其入参类型如下：
 
@@ -72,7 +72,7 @@ List接口用于查询某个目录(bucket)下的文件。其入参类型如下�
         Metadata      map[string]string //扩展字段
     }
 ```
-##### 返回值类型
+#### 返回值类型
 
 ```
     type ListResp struct {
@@ -81,9 +81,9 @@ List接口用于查询某个目录(bucket)下的文件。其入参类型如下�
 ```
 ---
 
-#### Del
+### Del
 
-##### 入参类型
+#### 入参类型
 
 Del接口用于删除某个文件。其入参类型如下：
 
@@ -94,7 +94,7 @@ Del接口用于删除某个文件。其入参类型如下：
     }
 ```
 
-##### 返回值类型
+#### 返回值类型
 
 返回error类型
 
