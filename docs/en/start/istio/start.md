@@ -8,7 +8,7 @@ Mosn is officially recognized by istio as a data plane implementation. Here is h
 
 ## 2. Preparation
 
-before start the demo，you must install some components as follows：
+before starting the demo，you must install some components as follows：
 1. [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
    Download from the official website and install it. 
@@ -36,7 +36,7 @@ before start the demo，you must install some components as follows：
    kubectl apply -f layotto-injected.yaml
    ```
    The contents of `layotto-injected.yaml` is [here](https://github.com/mosn/layotto/blob/istio-1.5.x/demo/istio/layotto-injected.yaml) ，just copy it。
-4. Run the command `kubectl get pod` to check the status (the first startup needs to download the dependent image, please wait patiently)
+4. Run the command `kubectl get pod` to check the status (it needs to download the dependent images during the first startup,so please wait patiently)
    ```
    NAME                         READY   STATUS    RESTARTS   AGE
    client-665c5cc4f-tfxrk       2/2     Running   0          49m
@@ -45,7 +45,8 @@ before start the demo，you must install some components as follows：
    ```
    When you see something similar to the above, it indicates that the startup is successful. We have deployed a client and a server. The server side is divided into V1 and V2 versions.
    
-5. If you want to access the services in the `istio` cluster from the outside, you must configure the `istio ingress gateway` service, which will increase the cost of getting started. Therefore, the proxy method is used here to simplify.
+5. If you want to access the services in the `istio` cluster from the outside, you must configure the `istio ingress gateway` service, which will increase the cost of getting started. Therefore, the proxy method is used here to simplify this demo.
+
    Run the following command
    ```
    kubectl port-forward svc/client 9080:9080
@@ -92,7 +93,7 @@ before start the demo，you must install some components as follows：
 
 1. Since `istio 1.5.2` is used in this demo, which belongs to an older version, the demo will not be merged into the `main` branch. Instead, it exists as an independent branch `istio-1.5.X`. After 'mosn' integrates with `istio 1.10.X`, it will be merged.
 2. For the source code of client and server used in the example, please refer to [here](https://github.com/mosn/layotto/tree/istio-1.5.x/demo/istio).
-3. In order to get started simple, the `layotto-injected.yaml` file used above has been injected through istio. The entire injection process is as follows:
+3. In order to get started simple, the `layotto-injected.yaml` file used above has been injected through istio already. This injection process is as follows:
    1. Run the following command to specify `istio` to use `Layotto` as the data plane
    ```
    istioctl manifest apply  --set .values.global.proxy.image="mosnio/proxyv2:layotto"   --set meshConfig.defaultConfig.binaryPath="/usr/local/bin/mosn"
@@ -102,6 +103,7 @@ before start the demo，you must install some components as follows：
    istioctl kube-inject -f layotto.yaml > layotto-injected.yaml
    ```
    The contents of `layotto.yaml` is [here](https://github.com/mosn/layotto/blob/istio-1.5.x/demo/istio/layotto.yaml)
+   
    3. Run the following command to replace all `/usr/local/bin/envoy` in `layotto-injected.yaml` with `/usr/local/bin/mosn`
    ```
    sed -i "s/\/usr\/local\/bin\/envoy/\/usr\/local\/bin\/mosn/g" ./layotto-injected.yaml
