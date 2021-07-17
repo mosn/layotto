@@ -9,6 +9,8 @@ require (
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/golang/mock v1.4.4
 	github.com/google/uuid v1.1.2
+	github.com/hashicorp/consul/api v1.1.0
+	github.com/hashicorp/consul/sdk v0.1.1
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.26.0
 	github.com/zouyx/agollo/v4 v4.0.7
