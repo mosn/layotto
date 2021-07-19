@@ -18,6 +18,7 @@
   - [Health check and metadata query](en/start/actuator/start.md)
   - [Multilingual programming based on WASM](en/start/wasm/start.md)
 - Reference
+  - [Configuration reference](en/configuration/overview.md)
   - API reference
     - [Configuration API](en/api_reference/configuration/reference.md)
     - [State API](en/api_reference/state/reference.md)

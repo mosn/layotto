@@ -18,6 +18,7 @@
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - [使用WASM进行多语言编程](zh/start/wasm/start.md)
 - 用户手册
+    - [配置文档](zh/configuration/overview.md)
     - 接口文档
         - [Configuration API](zh/api_reference/configuration/reference.md)
         - [State API](zh/api_reference/state/reference.md)
