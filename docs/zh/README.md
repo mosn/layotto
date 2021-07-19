@@ -15,6 +15,8 @@ Layotto希望可以把Runtime跟Service Mesh两者的能力结合起来，无论
 
 例如，Layotto进程可以[既作为istio的数据面](zh/start/istio/start.md) 又提供各种Runtime API（例如Configuration API,Pub/Sub API等）
 
+如果您对诞生背景感兴趣，可以看下[这篇演讲](https://mosn.io/layotto/#/zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index)
+
 ## 功能
 
 - 服务通信 
