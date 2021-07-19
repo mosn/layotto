@@ -18,6 +18,7 @@
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - [使用WASM进行多语言编程](zh/start/wasm/start.md)
 - 用户手册
+    - [配置文档](zh/configuration/overview.md)
     - 接口文档
         - [Configuration API](zh/api_reference/configuration/reference.md)
         - [State API](zh/api_reference/state/reference.md)
@@ -28,7 +29,7 @@
     - SDK文档    
         - [go-sdk](zh/sdk_reference/go/start.md)
         - [java-sdk](zh/sdk_reference/java/start.md)
-    - 组件文档
+    - [组件文档](zh/component_specs/overview.md)
         - State
             - [Redis](zh/component_specs/state/redis.md)
             - [其他组件](zh/component_specs/state/others.md)
@@ -54,3 +55,4 @@
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
 - 博客
     - [蚂蚁云原生应用运行时的探索和实践 - ArchSummit 上海](zh/blog/exploration-and-practice-of-antcloud-native-application-runtime-archsummit-shanghai.md)
+    - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index.md)

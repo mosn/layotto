@@ -18,6 +18,7 @@
   - [Health check and metadata query](en/start/actuator/start.md)
   - [Multilingual programming based on WASM](en/start/wasm/start.md)
 - Reference
+  - [Configuration reference](en/configuration/overview.md)
   - API reference
     - [Configuration API](en/api_reference/configuration/reference.md)
     - [State API](en/api_reference/state/reference.md)
@@ -28,7 +29,7 @@
   - SDK reference
     - [go-sdk](en/sdk_reference/go/start.md)
     - [java-sdk](en/sdk_reference/java/start.md)
-  - Component specs
+  - [Component specs](en/component_specs/overview.md)
     - State
       - [Redis](en/component_specs/state/redis.md)
       - [Other components](en/component_specs/state/others.md)
