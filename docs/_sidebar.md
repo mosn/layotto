@@ -29,7 +29,7 @@
   - SDK reference
     - [go-sdk](en/sdk_reference/go/start.md)
     - [java-sdk](en/sdk_reference/java/start.md)
-  - Component specs
+  - [Component specs](en/component_specs/overview.md)
     - State
       - [Redis](en/component_specs/state/redis.md)
       - [Other components](en/component_specs/state/others.md)

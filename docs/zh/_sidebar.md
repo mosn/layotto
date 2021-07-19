@@ -29,7 +29,7 @@
     - SDK文档    
         - [go-sdk](zh/sdk_reference/go/start.md)
         - [java-sdk](zh/sdk_reference/java/start.md)
-    - 组件文档
+    - [组件文档](zh/component_specs/overview.md)
         - State
             - [Redis](zh/component_specs/state/redis.md)
             - [其他组件](zh/component_specs/state/others.md)
