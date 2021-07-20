@@ -32,7 +32,7 @@
                             "endpoints": "localhost:2379",
                             "username": "",
                             "password": "",
-                            "keyPrefix": "",
+                            "keyPrefixPath": "/lock",
                             "dialTimeout": "5"
                           }
                         }
