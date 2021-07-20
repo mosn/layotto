@@ -25,6 +25,8 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
@@ -36,11 +38,9 @@ var (
 
 type wrapConn struct {
 	net.Conn
-	buf   buffer.IoBuffer
-	state interface{}
-
-	closed    int32
-	closeChan chan struct{}
+	buf    buffer.IoBuffer
+	state  interface{}
+	closed int32
 }
 
 func (w *wrapConn) isClose() bool {
@@ -51,7 +51,6 @@ func (w *wrapConn) close() error {
 	var err error
 	if atomic.CompareAndSwapInt32(&w.closed, 0, 1) {
 		err = w.Conn.Close()
-		close(w.closeChan)
 	}
 	return err
 }
@@ -109,7 +108,7 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 		p.freeTurn()
 		return nil, err
 	}
-	wc := &wrapConn{Conn: c, closeChan: make(chan struct{})}
+	wc := &wrapConn{Conn: c}
 	if p.stateFunc != nil {
 		wc.state = p.stateFunc()
 	}
@@ -144,7 +143,13 @@ func (p *connPool) readloop(c *wrapConn) {
 
 	c.buf = buffer.NewIoBuffer(16 * 1024)
 	for {
-		_, err := c.buf.ReadOnce(c)
+		n, err := c.buf.ReadOnce(c)
+		if n > 0 {
+			if err = p.onDataFunc(c); err != nil {
+				log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", err.Error())
+				return
+			}
+		}
 		if err != nil {
 			if err == io.EOF {
 				log.DefaultLogger.Debugf("[runtime][rpc]connpool readloop err: %s", err.Error())
@@ -153,17 +158,13 @@ func (p *connPool) readloop(c *wrapConn) {
 			}
 			return
 		}
-		if err = p.onDataFunc(c); err != nil {
-			log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", err.Error())
-			return
-		}
 	}
 }
 
 func (p *connPool) waitTurn(ctx context.Context) error {
 	select {
 	case <-ctx.Done():
-		return connpoolTimeout
+		return status.Error(codes.DeadlineExceeded, connpoolTimeout.Error())
 	case p.sema <- struct{}{}:
 		return nil
 	}

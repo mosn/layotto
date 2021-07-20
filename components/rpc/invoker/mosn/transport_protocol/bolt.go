@@ -18,8 +18,9 @@ package transport_protocol
 
 import (
 	"errors"
-	"fmt"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"mosn.io/api"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol"
@@ -56,7 +57,7 @@ func (b *boltCommon) Init(conf map[string]interface{}) error {
 
 func (b *boltCommon) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	if resp.GetStatusCode() != uint32(bolt.ResponseStatusSuccess) {
-		return nil, fmt.Errorf("bolt error code %d", resp.GetStatusCode())
+		return nil, status.Errorf(codes.Unavailable, "bolt error code %d", resp.GetStatusCode())
 	}
 
 	return b.fromFrame.FromFrame(resp)
