@@ -12,12 +12,12 @@ Dapr's component library can be reused directly; the following discusses whether
 ### The problems we are facing
 
 1. The SDK of dapr is hard-coded to call the package name of the API, and there is 'dapr' word in the name
-   ![img.png](../../../../img/mq/design/img.png)
+   ![img.png](../../../img/mq/design/img.png)
 2. We will have differentiated requirements in the future, such as new fields and new APIs. If we use dapr.proto directly, it will be inflexible
 ### Solution
 
 #### Do not reuse sdk and proto; move the proto file to a neutral path
-![img_1.png](../../../../img/mq/design/img_1.png)
+![img_1.png](../../../img/mq/design/img_1.png)
 
 We first define an api-spec.proto, this proto is a superset of dapr API, and the path name is neutral without the word 'layotto' or 'dapr'.Based on this proto, we can develop a neutral RuntimeAPI sdk.
 
@@ -26,7 +26,7 @@ Later, try to promote the proto into an api-spec accepted by the runtime communi
 It does not matter if the proto changes during the promotion process. Layotto internally extracts an API layer under the proto to prevent proto changes;
 
 If it is not easy to push, we can write a dapr adapter in the neutral SDK in the short term, and use our SDK to adjust dapr and layotto:
-![img_2.png](../../../../img/mq/design/img_2.png)
+![img_2.png](../../../img/mq/design/img_2.png)
 
 Advantages:
 
@@ -116,7 +116,7 @@ It can be optimized into a timed polling mechanism in the future
 In the first phase, only the way of opening an API for callback is supported, and the subsequent optimization will be declarative configuration or dynamic configuration.
 
 ## 2.3. Config Design
-![img.png](../../../../img/mq/design/config.png)
+![img.png](../../../img/mq/design/config.png)
 
 # 3. Future Work
 ## A Bigger Control Plane
@@ -139,7 +139,7 @@ The current component configuration and app personality configuration (callback 
 
 1. It's not easy to distribute the configuration to the whole cluster
 1. Can't do component access control (for example, Dapr can restrict app-id1 to only access topic_id1)
-![img_4.png](../../../../img/mq/design/img_4.png)
+![img_4.png](../../../img/mq/design/img_4.png)
 
 Need to refactor the original component logic.
 

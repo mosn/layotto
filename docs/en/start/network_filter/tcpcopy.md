@@ -1,8 +1,8 @@
-## Dump TCP traffic
+# Dump TCP traffic
 
-### Introduction
+## Introduction
 
-When you run the demo according to the quick-start document [Configuration demo with apollo](../configuration/start-apollo.md), you may notice that there is such a configuration in the configuration file config_apollo.json:
+When you run the demo according to the quick-start document [Configuration demo with apollo](en/start/configuration/start-apollo.md), you may notice that there is such a configuration in the configuration file config_apollo.json:
 ```json
                 {
                   "type": "tcpcopy",
@@ -18,13 +18,15 @@ When you run the demo according to the quick-start document [Configuration demo 
 ```
 The meaning of this configuration is to load the tcpcopy plug-in at startup to dump the tcp traffic.
 
-The dumped binary traffic data will be stored in the ${user's home directory}/logs/mosn directory, or under the /home/admin/logs/mosn directory:
+After enabling this configuration, when Layotto receives a request and the conditions for traffic dump are met, it will write the binary request data to the local file system.
 
-![img.png](../../../../img/tcp_dump.png)
+The "dumped" binary traffic data will be stored in the ${user's home directory}/logs/mosn directory, or under the /home/admin/logs/mosn directory:
+
+![img.png](../../../img/tcp_dump.png)
 
 You can use these data in combination with other tools and infrastructure to do something cool, such as traffic playback, bypass verification, etc.
 
-### Configuration description
+## Configuration description
 
 In the above config_apollo.json, the strategy configuration item is mainly used to configure the sampling strategy. The specific configuration descriptions are as follows:
 
@@ -38,7 +40,7 @@ type DumpConfig struct {
 }
 ```
 
-### Principle of work
+## Principle of work
 
 The Layotto server runs on MOSN and uses MOSN's filter expansion capabilities, so the tcpcopy above is actually a network filter plug-in of MOSN.
 

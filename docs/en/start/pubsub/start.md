@@ -1,12 +1,17 @@
-# Implementing Pub/Sub Pattern using Layotto and Redis
+# Use Pub/Sub API to implement pub/sub pattern
+## What is Pub/Sub API
+Developers often use message queues (such as open source Rocket MQ, Kafka, such as AWS SNS/SQS provided by cloud vendors) to implement message publishing and subscription. The publish-subscribe model can help applications better decouple and cope with peak traffic.
+
+Unfortunately, the APIs of these message queue products are different. When developers want to deploy their apps across clouds, or want their apps to be portable (for example, easily moving from Alibaba Cloud to Tencent Cloud), they have to refactor their code.
+
+The design goal of Layotto Pub/Sub API is to define a unified message publish/subscribe API. The application only needs to care about the API, and does not need to care about the specific message queue product being used, so that the application can be transplanted at will, and the application is sufficiently "cloud native" .
 
 ## Quick start
-
 This example shows how to call redis through Layotto to publish/subscribe messages.
 
 The architecture of this example is shown in the figure below. The running processes are: redis, a Subscriber program that listens to events, Layotto, and a Publisher program that publishes events.
 
-![img_1.png](../../../../img/mq/start/img_1.png)
+![img_1.png](../../../img/mq/start/img_1.png)
 
 ### Deploy and Run Redis in Docker
 
@@ -25,7 +30,7 @@ Use the following command to check whether Redis is installed:
 ```shell
 docker images
 ```
-![img.png](../../../../img/mq/start/img.png)
+![img.png](../../../img/mq/start/img.png)
 
 3. Run the container
 
@@ -37,7 +42,7 @@ docker run -itd --name redis-test -p 6380:6379 redis
 
 Parameter Description:
 
--p 6380:6379: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
+`-p 6380:6379`: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
 
 ### Start the Subscriber program and subscribe to events
 ```bash
@@ -111,4 +116,4 @@ In addition to using sdk, you can also interact with Layotto directly through gr
 
 #### Understand the principle of Pub/Sub API implementation
 
-If you are interested in the implementation principle, or want to extend some functions, you can read [Pub/Sub API design document](../../design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+If you are interested in the implementation principle, or want to extend some functions, you can read [Pub/Sub API design document](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)

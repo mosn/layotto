@@ -20,7 +20,7 @@ Hi, Layotto
 
 ### Example description 
 
-In this project, two wasm modules with the same functions were developed with golang and rust, their process is as follows:  
+In this project, wasm modules with the same functions were developed with golang, rust and assemblyscript. Their process is as follows:
 
 1. Receive HTTP requests through `proxy_on_request_headers`
 2. Get the `name` field in the headers through `proxy_get_header_map_pairs`
@@ -37,6 +37,10 @@ rust source code path:
 layotto/demo/wasm/code/rust/
 ```
 
+assemblyscript source code path:
+```
+layotto/demo/wasm/code/assemblyscript/
+```
 
 ### Note
 

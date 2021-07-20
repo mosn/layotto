@@ -1,4 +1,10 @@
-# 通过Layotto调用redis，进行消息发布/订阅
+# 使用Pub/Sub API进行消息发布/订阅
+## 什么是Pub/Sub API
+开发者经常使用消息队列等中间件产品（比如开源的Rocket MQ,Kafka,比如云厂商提供的AWS SNS/SQS）来实现消息的发布、订阅。发布订阅模式可以帮助应用更好的解耦、应对流量洪峰。
+
+不幸的是，这些消息队列产品的API都不一样。当应用想要跨云部署，或者想要移植（比如从阿里云搬到腾讯云），应用需要重构代码。
+
+Layotto Pub/Sub API的设计目标是定义一套统一的消息发布/订阅API，应用只需要关心API、不需要关心具体用的哪个消息队列产品，让应用能够随意移植，让应用足够"云原生"。
 
 ## 快速开始
 
@@ -6,7 +12,8 @@
 
 该示例的架构如下图，启动的进程有：redis、一个监听事件的Subscriber程序、Layotto、一个发布事件的Publisher程序
 
-![img_1.png](../../../../img/mq/start/img_1.png)
+![img_1.png](../../../img/mq/start/img_1.png)
+
 ### 部署redis
 
 1. 取最新版的 Redis 镜像。
@@ -22,7 +29,7 @@ docker pull redis:latest
 ```shell
 docker images
 ```
-![img.png](../../../../img/mq/start/img.png)
+![img.png](../../../img/mq/start/img.png)
 
 3. 运行容器
 
@@ -108,4 +115,4 @@ Received a new event.Topic: topic1 , Data:value1
 
 #### 了解Pub/Sub API实现原理
 
-如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Pub/Sub API的设计文档](../../design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Pub/Sub API的设计文档](zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)

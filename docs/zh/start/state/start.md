@@ -1,4 +1,8 @@
-# 通过Layotto调用redis，进行状态管理
+# 使用State API进行状态管理
+## 什么是State API
+您的应用程序可以使用同一套State API操作不同的数据库（或某种存储系统），对Key/Value模型的数据进行增删改查。
+
+API支持批量CRUD操作，支持声明对并发安全和数据一致性的要求，由Layotto帮您处理复杂的并发安全和数据一致性问题。
 
 ## 快速开始
 
@@ -6,7 +10,7 @@
 
 该示例的架构如下图，启动的进程有：redis、Layotto、客户端程程序
 
-![img.png](../../../../img/state/img.png)
+![img.png](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/state/img.png)
 
 ### 部署redis
 
@@ -18,12 +22,13 @@ docker pull redis:latest
 ```
 
 2. 查看本地镜像
-   使用以下命令来查看是否已安装了 redis：
+   
+使用以下命令来查看是否已安装了 redis：
 
 ```shell
 docker images
 ```
-![img.png](../../../../img/mq/start/img.png)
+![img.png](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/mq/start/img.png)
 
 3. 运行容器
 

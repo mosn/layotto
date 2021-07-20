@@ -12,7 +12,7 @@ layotto rpc接口与Dapr保持一致.
 
 由于Mosn已经有了完整的RPC能力支持，layotto只提供了非常轻量的RPC框架
 
-![img.png](../../../../img/rpc/rpc-layer.png)
+![img.png](../../../img/rpc/rpc-layer.png)
 
 ### Mosn集成
 
