@@ -41,7 +41,7 @@ select * from message order by message-id limit 100
 | 单机redis | yes.[需要特殊配置redis服务器，把两种落盘策略都打开、每次写操作都写磁盘](https://redis.io/topics/persistence) ，避免丢数据  | yes | yes.前提是宕机重启不丢数据 | 有单点故障风险  |
 | redis 主从复制+sentinel | no.复制是异步的，即使用Wait命令等待同步复制还是可能在fo后丢数据,见[文档](https://redis.io/topics/replication) | yes | 取决于会不会丢数据 |   |
 | redis cluster | 同上 | yes | 同上 |   |
-| snowflake | no.(时钟回拨等情况可能导致id重复；需要依赖外部存储) | yes | no |   | good |
+| snowflake | no.(时钟回拨等情况可能导致id重复；需要依赖外部存储；或者声明必须关闭NTP或使用防止回拨的可靠NTP) | yes | no |   | good |
 | Leaf snowflake | yes | yes | no |     | good |
 | Leaf segment | yes | yes | no |     |
 | Leaf segment只部署一台Leaf服务器 | yes | yes | yes | 有单点故障风险  |
