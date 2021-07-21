@@ -229,3 +229,14 @@ func startEtcdServer(dir string, port int) (*embed.Etcd, error) {
 	<-e.Server.ReadyNotify()
 	return e, nil
 }
+
+func Test_addPathSeparator(t *testing.T) {
+	p := addPathSeparator("")
+	assert.Equal(t, p, "/")
+	p = addPathSeparator("l8")
+	assert.Equal(t, p, "/l8/")
+	p = addPathSeparator("/l8")
+	assert.Equal(t, p, "/l8/")
+	p = addPathSeparator("l8/")
+	assert.Equal(t, p, "/l8/")
+}

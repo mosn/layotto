@@ -22,6 +22,8 @@ import (
 	"net"
 	"time"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/server"
 )
@@ -34,7 +36,7 @@ var (
 		srv := server.GetServer()
 		lis := srv.Handler().FindListenerByName(listener)
 		if lis == nil {
-			return errors.New("[rpc]invalid listener name")
+			return status.Error(codes.Internal, "[rpc]invalid listener name")
 		}
 		lis.GetListenerCallbacks().OnAccept(conn, false, nil, nil, nil)
 		return nil

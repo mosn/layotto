@@ -9,7 +9,7 @@ Example: configs/config_lock_etcd.json
 | dialTimeout | N | dialTimeout is the timeout for failing to establish a connection in seconds. default: 5 |
 | username | N | etcd auth username |
 | password | N | etcd auth password |
-| keyPrefix | N | lock key prefix in etcd, default: `/layotto/` |
+| keyPrefixPath | N | lock key prefix in etcd, default: `/layotto/` |
 | tlsCert | N | tls certificate path |
 | tlsCertKey | N | tls certificate key path |
 | tlsCa | N | tls ca path |
