@@ -351,30 +351,30 @@ message GetStateResponse {
 
 // DeleteStateRequest is the message to delete key-value states in the specific state store.
 message DeleteStateRequest {
-  // The name of state store.
+  // Required. The name of state store.
   string store_name = 1;
 
-  // The key of the desired state
+  // Required. The key of the desired state
   string key = 2;
 
-  // The entity tag which represents the specific version of data.
+  // (optional) The entity tag which represents the specific version of data.
   // The exact ETag format is defined by the corresponding data store.
   Etag etag = 3;
 
-  // State operation options which includes concurrency/
+  // (optional) State operation options which includes concurrency/
   // consistency/retry_policy.
   StateOptions options = 4;
 
-  // The metadata which will be sent to state store components.
+  // (optional) The metadata which will be sent to state store components.
   map<string, string> metadata = 5;
 }
 
 // DeleteBulkStateRequest is the message to delete a list of key-value states from specific state store.
 message DeleteBulkStateRequest {
-  // The name of state store.
+  // Required. The name of state store.
   string store_name = 1;
 
-  // The array of the state key values.
+  // Required. The array of the state key values.
   repeated StateItem states = 2;
 }
 
@@ -448,10 +448,10 @@ message StateOptions {
 
 // TransactionalStateOperation is the message to execute a specified operation with a key-value pair.
 message TransactionalStateOperation {
-  // The type of operation to be executed
+  // Required. The type of operation to be executed
   string operationType = 1;
 
-  // State values to be operated on
+  // Required. State values to be operated on
   StateItem request = 2;
 }
 // ExecuteStateTransactionRequest is the message to execute multiple operations on a specified store.
@@ -462,7 +462,7 @@ message ExecuteStateTransactionRequest {
   // Required. transactional operation list.
   repeated TransactionalStateOperation operations = 2;
 
-  // The metadata used for transactional operations.
+  // (optional) The metadata used for transactional operations.
   map<string, string> metadata = 3;
 }
 
