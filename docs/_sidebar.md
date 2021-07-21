@@ -36,7 +36,7 @@
     - Pub/Sub
       - [Redis](en/component_specs/pubsub/redis.md)
       - [Other components](en/component_specs/pubsub/others.md)
-    - Distributed Lock
+    - [Distributed Lock](en/component_specs/lock/common.md)
       - [Redis](en/component_specs/lock/redis.md)  
       - [Etcd](en/component_specs/lock/etcd.md)
       - [Zookeeper](en/component_specs/lock/zookeeper.md)

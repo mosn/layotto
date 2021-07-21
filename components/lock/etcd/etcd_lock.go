@@ -21,7 +21,7 @@ const (
 	defaultDialTimeout = 5
 	defaultKeyPrefix   = "/layotto/"
 
-	prefixKey         = "keyPrefix"
+	prefixKey         = "keyPrefixPath"
 	usernameKey       = "username"
 	passwordKey       = "password"
 	dialTimeoutKey    = "dialTimeout"
@@ -209,7 +209,7 @@ func parseEtcdMetadata(meta lock.Metadata) (metadata, error) {
 	}
 
 	if val, ok := meta.Properties[prefixKey]; ok && val != "" {
-		m.keyPrefix = val
+		m.keyPrefix = addPathSeparator(val)
 	} else {
 		m.keyPrefix = defaultKeyPrefix
 	}
@@ -235,6 +235,19 @@ func parseEtcdMetadata(meta lock.Metadata) (metadata, error) {
 	}
 
 	return m, nil
+}
+
+func addPathSeparator(p string) string {
+	if p == "" {
+		return "/"
+	}
+	if p[0] != '/' {
+		p = "/" + p
+	}
+	if p[len(p)-1] != '/' {
+		p = p + "/"
+	}
+	return p
 }
 
 type metadata struct {
