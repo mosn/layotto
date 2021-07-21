@@ -18,19 +18,19 @@
   - [Health check and metadata query](en/start/actuator/start.md)
   - [Multilingual programming based on WASM](en/start/wasm/start.md)
 - Reference
-  - [Configuration reference](en/configuration/overview.md)
   - API reference
-    - [Configuration API](en/api_reference/configuration/reference.md)
+    - [Actuator API](en/api_reference/actuator/actuator.md)
     - [State API](en/api_reference/state/reference.md)
+    - [Configuration API](en/api_reference/configuration/reference.md)
     - [Pub/Sub API](en/api_reference/pubsub/reference.md)
     - [Distributed Lock API](en/api_reference/lock/reference.md)
     - [RPC API](en/api_reference/rpc/reference.md)    
-    - [Actuator API](en/api_reference/actuator/actuator.md)
   - SDK reference
     - [go-sdk](en/sdk_reference/go/start.md)
     - [java-sdk](en/sdk_reference/java/start.md)
+  - [Configuration reference](en/configuration/overview.md)  
   - [Component specs](en/component_specs/overview.md)
-    - State
+    - [State](en/component_specs/state/common.md)
       - [Redis](en/component_specs/state/redis.md)
       - [Other components](en/component_specs/state/others.md)
     - Pub/Sub

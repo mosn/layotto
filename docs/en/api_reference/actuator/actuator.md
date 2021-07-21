@@ -1,12 +1,17 @@
 # Actuator Http API
 
-Layotto Actuator API provides functions such as health check, view runtime metadata, and supports integration into open source infrastructure (for example, it can be integrated into k8s health check)
+Layotto Actuator API provides functions such as health check, view runtime metadata.It can be used to view the health status and runtime metadata of Layotto and app, and supports integration into open source infrastructure (for example, it can be integrated into k8s health check)
 
 Similar to Spring Boot Actuator, Actuator API has more imagination in the future: Monitoring, Metrics, Auditing, and more.
 
-## 1. Health Check
+## 0. When to use Actuator Http API
+Actuator API is generally used for operation and maintenance systems. For example, k8s calls Actuator API to monitor the health status of Layotto and App. If the status is not good, k8s will restart the Pod or temporarily cut off the traffic;
+
+For another example, on the Dashboard for SRE, by calling Actuator API, you can clearly see the metadata of each Layotto instance and App (for example, what is the current effective configuration), which is convenient for troubleshooting.
+
+## 1. Health Check API
 ### /actuator/health/liveness
-Used to check the health status and determine "whether restarting is needed"
+Used to check the health status of Layotto and app. The health status can be used to determine "whether restarting is needed".
 
 GET,no parameters.
 ```json
@@ -41,10 +46,12 @@ var (
 )
 ```
 
-### /actuator/health/readiness
-Used to check the health status and determine "Do we need to temporarily cut off the traffic and make sure no user visit this machine"
+Note: By default, the API will only return the health status of Layotto. If you want the API to also return the health status of the App, you need to develop a plugin that calls back the App. You can refer to [Actuator's design document](en/design/actuator/actuator-design-doc.md), or contact us directly to provide you with a detailed explanation.
 
-Q: What is the difference with the above API?
+### /actuator/health/readiness
+Used to check the health status of Layotto and app. The health status can be used to determine "Do we need to temporarily cut off the traffic and make sure no user visit this machine"
+
+**Q: What is the difference with the above API?**
 
 A: The liveness check is used to check some unrecoverable faults, "Do we need to restart it";
 Readiness is used to check some temporary and recoverable states. For example, the application is warming up the cache. It needs to tell the infrastructure "Don't lead traffic to me now". After it finishes warming up, the infrastructure will reinvoke the API and get the result "I am ready to serve customers"
@@ -63,9 +70,13 @@ GET,no parameters.
   }
 }
 ```
-## 2. View runtime metadata
+
+Note: By default, the API will only return the health status of Layotto. If you want the API to also return the health status of the App, you need to develop a plugin that calls back the App. You can refer to [Actuator's design document](en/design/actuator/actuator-design-doc.md), or contact us directly to provide you with a detailed explanation.
+
+## 2. Query runtime metadata API
 
 ### /actuator/info
+Used to view the runtime metadata of Layotto and app. 
 
 GET,no parameters.
 ```json
@@ -90,6 +101,8 @@ We can add more information in the future:
 - Runtime configuration parameters
 
 Actuator adopts a plug-in architecture, you can also add your own plug-ins as needed, and let the API return the runtime metadata you care about.
+
+Note: By default, the API will only return Layotto's runtime metadata. If you want the API to also return the App's runtime metadata, you need to develop a plugin that calls back the App. You can refer to [Actuator's design document](en/design/actuator/actuator-design-doc.md), or contact us directly to provide you with a detailed explanation.
 
 ## 3. Explanation for API path
 

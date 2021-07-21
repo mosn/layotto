@@ -1,4 +1,30 @@
 # 分布式锁组件
+**配置文件结构**
+
+json配置文件有如下结构：
+```json
+"lock": {
+  "<STORE NAME>": {
+    "metadata": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    }
+  }
+}
+```
+
+您可以在metadata里配置组件关心的key/value配置。例如[redis组件的配置](https://github.com/mosn/layotto/blob/main/configs/config_lock_redis.json) 如下：
+
+```json
+"lock": {
+  "redis": {
+    "metadata": {
+      "redisHost": "localhost:6380",
+      "redisPassword": ""
+    }
+  }
+}
+```
 
 **通用配置项说明**
 

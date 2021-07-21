@@ -1,13 +1,17 @@
 # Actuator Http API
 
-Layotto Actuator API提供健康检查、查看运行时元数据等功能，支持集成进开源基础设施（例如可以集成进k8s健康检查）
+Layotto Actuator API提供健康检查、查看运行时元数据等功能，用于查看Layotto和app的健康状况、运行时元数据，支持集成进开源基础设施（例如可以集成进k8s健康检查）
 
 类似于Spring Boot Actuator，Actuator API未来有更多的想象空间：Monitoring, Metrics, Auditing, and more.
+## 0. 什么时候使用Actuator Http API
+Actuator API一般是给运维系统用的，比如k8s调用Actuator API监控Layotto和App的状态，如果状态不佳就重启Pod或者暂时把流量切走；
 
-## 1. 健康检查
+再比如在给SRE用的Dashboard上，通过调用Actuator API可以清楚的看到每个Layotto实例和App内部的元数据（例如当前生效配置是什么），方便排查问题。
+
+## 1. 健康检查API
 ### /actuator/health/liveness
 
-用于检查健康状态，判断"是否需要重启"
+用于检查Layotto和App的健康状态，判断"是否需要重启"
 
 GET
 
@@ -43,11 +47,13 @@ var (
 )
 ```
 
+注：默认情况下，接口只会返回Layotto的健康状态，如果希望接口也返回App的健康状态，需要开发一个回调App的插件。您可以参考[Actuator的设计文档](zh/design/actuator/actuator-design-doc.md) ，或者直接联系我们，为您提供详细的解释。
+
 ### /actuator/health/readiness
 
-用于检查健康状态，"是否需要暂时把流量切走、别访问这台机器"
+用于检查Layotto和App的健康状态，"是否需要暂时把流量切走、别访问这台机器"
 
-Q: 和上面的接口的区别是?
+**Q: 和上面的接口的区别是?**
 
 A: liveness检查用于检查一些不可恢复的故障，"是否需要重启"；
 而readiness用于检查一些临时性、可恢复的状态，比如应用正在预热缓存，需要告诉基础设施"先别把流量引到我这里来"，等过会预热好了，基础设施再调readiness检查的接口，会得到结果"我准备好了，可以接客了"
@@ -66,9 +72,13 @@ GET,不需要传参
   }
 }
 ```
-## 2. 查询运行时元数据
+
+注：默认情况下，接口只会返回Layotto的健康状态，如果希望接口也返回App的健康状态，需要开发一个回调App的插件。您可以参考[Actuator的设计文档](zh/design/actuator/actuator-design-doc.md) ，或者直接联系我们，为您提供详细的解释。
+
+## 2. 查询运行时元数据API
 
 ### /actuator/info
+用于查询Layotto和App的运行时元数据
 
 GET
 ```json
@@ -94,7 +104,9 @@ GET
 
 Actuator采用插件化架构，您也可以按需添加自己的插件，让API返回您关注的运行时元数据
 
-## 3. 路径解释
+注：默认情况下，接口只会返回Layotto的运行时元数据，如果希望接口也返回App的运行时元数据，需要开发一个回调App的插件。您可以参考[Actuator的设计文档](zh/design/actuator/actuator-design-doc.md) ，或者直接联系我们，为您提供详细的解释。
+
+## 3. API路径解释
 
 Actuator API的路径采用restful风格，不同的Endpoint注册进Actuator后，路径是
 
