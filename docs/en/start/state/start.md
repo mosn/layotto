@@ -9,7 +9,7 @@ This example shows how to call redis through Layotto to add, delete, modify and 
 The architecture of this example is shown in the figure below, and the started processes are: redis, Layotto, client program
 
 ![img.png](../../../img/state/img.png)
-### Deploy redis using Docker
+### step 1. Deploy redis using Docker
 
 1. Get the latest version of Redis docker image
 
@@ -40,7 +40,7 @@ Parameter Description:
 
 `-p 6380:6379`: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
 
-### Run Layotto
+### step 2. Run Layotto
 
 After downloading the project code to the local, enter the code directory and compile:
 
@@ -55,7 +55,7 @@ The layotto file will be generated in the directory, run it:
 ./layotto start -c ../../configs/config_state_redis.json
 ```
 
-### Run the client program, call Layotto to add, delete, modify and query
+### step 3. Run the client program, call Layotto to add, delete, modify and query
 
 ```bash
  cd ${projectpath}/demo/state/redis/
