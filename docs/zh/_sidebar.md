@@ -18,19 +18,19 @@
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - [使用WASM进行多语言编程](zh/start/wasm/start.md)
 - 用户手册
-    - [配置文档](zh/configuration/overview.md)
     - 接口文档
-        - [Configuration API](zh/api_reference/configuration/reference.md)
+        - [Actuator API](zh/api_reference/actuator/actuator.md)
         - [State API](zh/api_reference/state/reference.md)
+        - [Configuration API](zh/api_reference/configuration/reference.md)
         - [Pub/Sub API](zh/api_reference/pubsub/reference.md)
         - [Distributed Lock API](zh/api_reference/lock/reference.md)
         - [RPC API](zh/api_reference/rpc/reference.md)
-        - [Actuator API](zh/api_reference/actuator/actuator.md)
     - SDK文档    
         - [go-sdk](zh/sdk_reference/go/start.md)
         - [java-sdk](zh/sdk_reference/java/start.md)
+    - [配置文档](zh/configuration/overview.md)
     - [组件文档](zh/component_specs/overview.md)
-        - State
+        - [State](zh/component_specs/state/common.md)
             - [Redis](zh/component_specs/state/redis.md)
             - [其他组件](zh/component_specs/state/others.md)
         - Pub/Sub
