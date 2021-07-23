@@ -17,7 +17,7 @@ import (
 
 const (
 	defaultDialTimeout = 5
-	defaultKeyPrefix   = "/layotto/"
+	defaultKeyPrefix   = "/layotto_sequencer/"
 	prefixKey          = "keyPrefixPath"
 	usernameKey        = "username"
 	passwordKey        = "password"

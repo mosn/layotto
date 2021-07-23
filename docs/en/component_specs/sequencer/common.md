@@ -46,7 +46,7 @@ You can configure the key/value configuration items that the component cares abo
 | segmentCacheEnable | N | Whether to enable number segment caching. The default value is true |
 | segmentStep | N | The size of each number segment cache, the default value is 50 |
 
-- What is segment mode?
+- What is segment cache?
 
 The original solution was to read and write the database every time the ID was obtained, which caused great pressure on the database. The design purpose of segment mode is to cache some ids in the sidecar in advance (cache all ids in a range) to reduce the database pressure.
 

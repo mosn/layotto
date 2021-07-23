@@ -9,7 +9,7 @@
 | dialTimeout | N | 建立连接超时，单位：秒，默认值：5 |
 | username | N | etcd 认证用户名 |
 | password | N | etcd 认证密码 |
-| keyPrefixPath | N | 在 etcd 建立锁 key 的前缀，默认值：`/layotto_sequencer/` |
+| keyPrefixPath | N | 在 etcd 实际存储的key 的前缀，默认值：`/layotto_sequencer/` |
 | tlsCert | N | tls 证书路径 |
 | tlsCertKey | N | tls 证书 key 路径 |
 | tlsCa | N | tls ca 路径 |
@@ -47,6 +47,6 @@ go build
 ````shell
 cd ${projectpath}/demo/sequencer/etcd/
  go build -o client
- ./client
+ ./client -s "etcd"
 ````
 
