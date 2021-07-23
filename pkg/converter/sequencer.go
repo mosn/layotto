@@ -9,7 +9,7 @@ import (
 func GetNextIdRequest2ComponentRequest(req *runtimev1pb.GetNextIdRequest) (*sequencer.GetNextIdRequest, error) {
 	result := &sequencer.GetNextIdRequest{}
 	if req == nil {
-		return result, nil
+		return nil, errors.New("Cannot convert it since request is nil.")
 	}
 
 	result.Key = req.Key
