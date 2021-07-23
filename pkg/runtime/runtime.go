@@ -349,17 +349,7 @@ func (m *MosnRuntime) initSequencers(factorys ...*runtime_sequencer.Factory) err
 			return err
 		}
 		// 2.2. init
-		//// parse common config `biggerThan`
-		//biggerThan := sequencer.DefaultBiggerThan
-		//if config.Metadata[sequencer.BiggerThanKey] != "" {
-		//	parseInt, err := strconv.ParseInt(config.Metadata[sequencer.BiggerThanKey], 10, 64)
-		//	if err != nil {
-		//		return err
-		//	}
-		//	biggerThan = parseInt
-		//}
-		// do init
-		if err := comp.Init(sequencer.Configuration{
+		if err = comp.Init(sequencer.Configuration{
 			Properties: config.Metadata,
 			BiggerThan: config.BiggerThan,
 		}); err != nil {
