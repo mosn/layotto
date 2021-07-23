@@ -147,7 +147,7 @@ type Store interface {
 	// If the component find that currently the storage can't guarantee this,
 	// it can do some initialization like inserting a new id equal to or bigger than this 'BiggerThan' into the storage,
 	// or just return an error
-	Init(metadata Configuration) error
+	Init(config Configuration) error
 
 	GetNextId(*GetNextIdRequest) (*GetNextIdResponse, error)
 
@@ -190,11 +190,28 @@ type GetSegmentResponse struct {
 }
 
 type Configuration struct {
-	BiggerThan int64             
-	Properties map[string]string 
+	BiggerThan map[string]int64
+	Properties map[string]string
 }
-
 ```
+
+**Q: BiggerThan字段是啥?**
+
+要求组件生成的所有id都得比"biggerThan"大。
+
+设计这个配置项是为了方便用户做移植。比如系统原先使用mysql做发号服务，id已经生成到了1000，后来迁移到PostgreSQL上，需要配置biggerThan为1000，这样PostgreSQL组件在初始化的时候会进行设置、强制id在1000以上,或者发现id没法满足要求、直接启动时报错。
+
+**Q: BiggerThan为啥是个map?**
+
+因为每个key可能有自己的biggerThan.
+
+比如原先app1做了分库分表、用某种发号服务来生成订单表和商品表的id，订单表id达到了1000，商品表id达到2000.
+
+后来app1想换个存储做sequencer，那么他要声明订单表id在1000以上，商品表id在2000以上。
+
+另一个例子是[Leaf的设计](https://tech.meituan.com/2017/04/21/mt-leaf.htm) ，也是每个biz_tag对应一个max_id（Leaf的max_id就是我们的biggerThan)
+
+![leaf_max_id.png](../../../img/sequencer/design/leaf_max_id.png)
 
 **Q: 要不要在runtime层实现缓存?**
 
