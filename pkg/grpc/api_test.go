@@ -131,7 +131,7 @@ func startTestRuntimeAPIServer(port int, testAPIServer API) *grpc.Server {
 func TestGetConfiguration(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockConfigStore := mock.NewMockStore(ctrl)
-	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil)
+	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil)
 	mockConfigStore.EXPECT().Get(gomock.Any(), gomock.Any()).Return([]*configstores.ConfigurationItem{
 		&configstores.ConfigurationItem{Key: "sofa", Content: "sofa1"},
 	}, nil).Times(1)
@@ -147,7 +147,7 @@ func TestGetConfiguration(t *testing.T) {
 func TestSaveConfiguration(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockConfigStore := mock.NewMockStore(ctrl)
-	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil)
+	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil)
 	_, err := api.SaveConfiguration(context.Background(), &runtimev1pb.SaveConfigurationRequest{StoreName: "etcd"})
 	assert.Equal(t, err.Error(), "configure store [etcd] don't support now")
 }
@@ -155,7 +155,7 @@ func TestSaveConfiguration(t *testing.T) {
 func TestDeleteConfiguration(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockConfigStore := mock.NewMockStore(ctrl)
-	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil)
+	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil)
 	_, err := api.DeleteConfiguration(context.Background(), &runtimev1pb.DeleteConfigurationRequest{StoreName: "etcd"})
 	assert.Equal(t, err.Error(), "configure store [etcd] don't support now")
 }
@@ -165,7 +165,7 @@ func TestSubscribeConfiguration(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockConfigStore := mock.NewMockStore(ctrl)
-	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil)
+	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil)
 
 	//test not support store type
 	grpcServer := &MockGrpcServer{req: &runtimev1pb.SubscribeConfigurationRequest{}, err: nil}

@@ -24,8 +24,10 @@ import (
 	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/converter"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
+	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	"strings"
 	"sync"
 
@@ -78,6 +80,8 @@ type API interface {
 	// Distributed Lock API
 	TryLock(context.Context, *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error)
 	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
+	// Sequencer API
+	GetNextId(context.Context, *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -90,6 +94,7 @@ type api struct {
 	stateStores              map[string]state.Store
 	transactionalStateStores map[string]state.TransactionalStore
 	lockStores               map[string]lock.LockStore
+	sequencers               map[string]sequencer.Store
 }
 
 func NewAPI(
@@ -100,6 +105,7 @@ func NewAPI(
 	pubSubs map[string]pubsub.PubSub,
 	stateStores map[string]state.Store,
 	lockStores map[string]lock.LockStore,
+	sequencers map[string]sequencer.Store,
 ) API {
 	// filter out transactionalStateStores
 	transactionalStateStores := map[string]state.TransactionalStore{}
@@ -118,6 +124,7 @@ func NewAPI(
 		stateStores:              stateStores,
 		transactionalStateStores: transactionalStateStores,
 		lockStores:               lockStores,
+		sequencers:               sequencers,
 	}
 }
 
@@ -787,4 +794,64 @@ func newInternalErrorUnlockResponse() *runtimev1pb.UnlockResponse {
 	return &runtimev1pb.UnlockResponse{
 		Status: runtimev1pb.UnlockResponse_INTERNAL_ERROR,
 	}
+}
+
+func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error) {
+	// 1. validate
+	if len(a.sequencers) == 0 {
+		err := status.Error(codes.FailedPrecondition, messages.ErrSequencerStoresNotConfigured)
+		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	if req.Key == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrSequencerKeyEmpty, req.StoreName)
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	// 2. convert
+	compReq, err := converter.GetNextIdRequest2ComponentRequest(req)
+	if err != nil {
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	// 3. find store component
+	store, ok := a.sequencers[req.StoreName]
+	if !ok {
+		return &runtimev1pb.GetNextIdResponse{}, status.Errorf(codes.InvalidArgument, messages.ErrSequencerStoreNotFound, req.StoreName)
+	}
+	var next int64
+	// 4. invoke component
+	if compReq.Options.AutoIncrement == sequencer.WEAK {
+		// WEAK
+		next, err = a.getNextIdWithWeakAutoIncrement(ctx, store, compReq)
+	} else {
+		// STRONG
+		next, err = a.getNextIdFromComponent(ctx, store, compReq)
+	}
+	// 5. convert response
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	return &runtimev1pb.GetNextIdResponse{
+		NextId: next,
+	}, nil
+}
+
+func (a *api) getNextIdWithWeakAutoIncrement(ctx context.Context, store sequencer.Store, compReq *sequencer.GetNextIdRequest) (int64, error) {
+	// 1. try to get from cache
+	support, next, err := runtime_sequencer.GetNextIdFromCache(ctx, store, compReq)
+
+	if !support {
+		// 2. get from component
+		return a.getNextIdFromComponent(ctx, store, compReq)
+	}
+	return next, err
+}
+
+func (a *api) getNextIdFromComponent(ctx context.Context, store sequencer.Store, compReq *sequencer.GetNextIdRequest) (int64, error) {
+	var next int64
+	resp, err := store.GetNextId(compReq)
+	if err == nil {
+		next = resp.NextId
+	}
+	return next, err
 }

@@ -8,7 +8,7 @@ type Store interface {
 	// If the component find that currently the storage can't guarantee this,
 	// it can do some initialization like inserting a new id equal to or bigger than this 'BiggerThan' into the storage,
 	// or just return an error
-	Init(metadata Configuration) error
+	Init(config Configuration) error
 
 	GetNextId(*GetNextIdRequest) (*GetNextIdResponse, error)
 
@@ -51,6 +51,6 @@ type GetSegmentResponse struct {
 }
 
 type Configuration struct {
-	BiggerThan int64             `json:"bigger_than"`
-	Properties map[string]string `json:"properties"`
+	BiggerThan map[string]int64
+	Properties map[string]string
 }

@@ -92,6 +92,10 @@ type Client interface {
 	TryLock(context.Context, *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error)
 	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
 
+	// Sequencer API
+	// Get next unique id with some auto-increment guarantee
+	GetNextId(ctx context.Context, in *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
+
 	// Close cleans up all resources created by the client.
 	Close()
 }

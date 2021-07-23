@@ -14,5 +14,5 @@ require (
 
 replace (
 	mosn.io/layotto/sdk/go-sdk v0.0.0-20210604030858-e880c02bcf44 => ../sdk/go-sdk
-	mosn.io/layotto/spec v0.0.0-20210604023314-bb30491493a4 => ../spec
+	mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3 => ../spec
 )

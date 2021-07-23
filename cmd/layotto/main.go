@@ -19,6 +19,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"mosn.io/layotto/components/sequencer"
+	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	"os"
 	"strconv"
 	"time"
@@ -83,6 +85,9 @@ import (
 	lock_redis "mosn.io/layotto/components/lock/redis"
 	lock_zookeeper "mosn.io/layotto/components/lock/zookeeper"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
+
+	// Sequencer
+	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
 
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
@@ -253,7 +258,12 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return lock_etcd.NewEtcdLock(log.DefaultLogger)
 			}),
 		),
-	)
+		// Sequencer
+		runtime.WithSequencerFactory(
+			runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
+				return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
+			}),
+		))
 	// 4. check if unhealthy
 	if err != nil {
 		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(err.Error())

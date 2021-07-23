@@ -14,18 +14,23 @@ A: db不帮你自动生成的时候。比如：
 - 不需要递增。这种情况UUID能解决，虽然缺点是比较长。**本API暂时不考虑这种情况**
 - “趋势递增”。不追求一定递增，大部分情况在递增就行。
 
+
 Q: 什么场景需要趋势递增？
 
-A: 对b+树类的db来说cache friendly。不过这种场景其实没有全局趋势递增需求，可以分表递增，用不到全局趋势递增;
+1. 对b+树类的db(例如MYSQL)来说,趋势递增的主键能更好的利用缓存（cache friendly）。
 
-拿来排序查最新数据。比如查最新消息时，不想新增个时间戳字段、建索引，想直接按id排序查最新的100条：
+2. 拿来排序查最新数据。比如需求是查最新的100条消息，开发者不想新增个时间戳字段、建索引，如果id本身是递增的，那么查最新的100条消息时直接按id排序即可：
 ```
 select * from message order by message-id limit 100
 ```
-再比如nosql之类的在时间戳字段上加索引很难，分页查最新数据的时候，只想按id查
+这在使用nosql的时候很常见，因为nosql在时间戳字段上加索引很难
 
 - sharding内单调递增。比如[Tidb的自增id](https://docs.pingcap.com/zh/tidb/stable/auto-increment) 能保证单台服务器上生成的id递增，没法保证全局（在多台服务器上）单调递增
+
 - 全局单调递增
+
+希望生成的id一定递增，没有任何倒退的情况。
+
 
 ### 1.3. 可能会有自定义id schema的需求
 比如要求id的格式为"前8位是uid，后8位是自增id"这样的需求
@@ -185,8 +190,8 @@ type GetSegmentResponse struct {
 }
 
 type Configuration struct {
-	BiggerThan int64             `json:"bigger_than"`
-	Properties map[string]string `json:"properties"`
+	BiggerThan int64             
+	Properties map[string]string 
 }
 
 ```

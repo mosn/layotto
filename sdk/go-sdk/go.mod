@@ -10,4 +10,4 @@ require (
 	mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3
 )
 
-replace mosn.io/layotto/spec v0.0.0-20210604023314-bb30491493a4 => ../../spec
+replace mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3 => ../../spec
