@@ -82,4 +82,4 @@ Demo success!
 
 #### 了解分布式锁 API的实现原理
 
-如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[分布式锁 API的设计文档](../../design/lock/lock-api-design.md)
+如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[分布式锁 API的设计文档](zh/design/lock/lock-api-design.md)

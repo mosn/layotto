@@ -6,6 +6,7 @@
     - [使用State API](zh/start/state/start.md)
     - [使用Pub/Sub API](zh/start/pubsub/start.md)
     - [使用分布式锁 API](zh/start/lock/start.md)
+    - [使用分布式自增唯一id API](zh/start/sequencer/start.md)
     - 进行RPC调用
         - [Hello World](zh/start/rpc/helloworld.md)
         - [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
@@ -21,6 +22,7 @@
     - 接口文档
         - [Actuator API](zh/api_reference/actuator/actuator.md)
         - [State API](zh/api_reference/state/reference.md)
+        - [Sequencer API](zh/api_reference/sequencer/reference.md)
         - [Configuration API](zh/api_reference/configuration/reference.md)
         - [Pub/Sub API](zh/api_reference/pubsub/reference.md)
         - [Distributed Lock API](zh/api_reference/lock/reference.md)
@@ -43,15 +45,19 @@
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)        
             - [Apollo](zh/component_specs/configuration/apollo.md)        
+        - [Sequencer](zh/component_specs/sequencer/common.md)
+            - [Etcd](zh/component_specs/sequencer/etcd.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)
     - [Pub/Sub API以及与dapr component的兼容性](zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
     - [RPC设计文档](zh/design/rpc/rpc设计文档.md)
     - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)    
+    - [Sequencer API设计文档](zh/design/sequencer/design.md)    
 - 贡献指南
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)
+    - [新增API时的开发规范](zh/development/developing-api.md)
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
 - 博客
     - [蚂蚁云原生应用运行时的探索和实践 - ArchSummit 上海](zh/blog/exploration-and-practice-of-antcloud-native-application-runtime-archsummit-shanghai.md)

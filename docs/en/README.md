@@ -1,6 +1,7 @@
 # Layotto (L8):To be the next layer of OSI layer 7
 
 [![codecov](https://codecov.io/gh/mosn/layotto/branch/main/graph/badge.svg?token=10RxwSV6Sz)](https://codecov.io/gh/mosn/layotto)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mosn/layotto.svg)](http://isitmaintained.com/project/mosn/layotto "Average time to resolve an issue")
 
 <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
 
@@ -13,7 +14,7 @@ Layotto uses the open source [MOSN](https://github.com/mosn/mosn) as the base, i
 Layotto aims to combine Runtime with Service Mesh into one sidecar. No matter which product you are using as the Service Mesh data plane (e.g. Mosn,Envoy or any other
 product), you can always attach Layotto to it and add Multi-Runtime capabilities without adding new sidecars. 
 
-For example, Layotto can both [serve as the data plane of istio](en/start/istio/start) and provide various Runtime APIs (such as Configuration API, Pub/Sub API, etc.)
+For example, by adding Runtime capabilities to MOSN, a Layotto process can both [serve as the data plane of istio](en/start/istio/start) and provide various Runtime APIs (such as Configuration API, Pub/Sub API, etc.)
 
 ## Features
 

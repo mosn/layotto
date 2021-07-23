@@ -34,11 +34,13 @@ import (
 	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/info"
 	"mosn.io/layotto/components/rpc"
+	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/actuator/health"
 	"mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/integrate/actuator"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
+	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	"mosn.io/layotto/pkg/wasm"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
@@ -59,6 +61,7 @@ type MosnRuntime struct {
 	pubSubRegistry      runtime_pubsub.Registry
 	stateRegistry       runtime_state.Registry
 	lockRegistry        runtime_lock.Registry
+	sequencerRegistry   runtime_sequencer.Registry
 	// component pool
 	hellos            map[string]hello.HelloService
 	configStores      map[string]configstores.Store
@@ -67,6 +70,7 @@ type MosnRuntime struct {
 	topicPerComponent map[string]TopicSubscriptions
 	states            map[string]state.Store
 	locks             map[string]lock.LockStore
+	sequencers        map[string]sequencer.Store
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
 	// extends
@@ -93,12 +97,14 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		pubSubRegistry:      runtime_pubsub.NewRegistry(info),
 		stateRegistry:       runtime_state.NewRegistry(info),
 		lockRegistry:        runtime_lock.NewRegistry(info),
+		sequencerRegistry:   runtime_sequencer.NewRegistry(info),
 		hellos:              make(map[string]hello.HelloService),
 		configStores:        make(map[string]configstores.Store),
 		rpcs:                make(map[string]rpc.Invoker),
 		pubSubs:             make(map[string]pubsub.PubSub),
 		states:              make(map[string]state.Store),
 		locks:               make(map[string]lock.LockStore),
+		sequencers:          make(map[string]sequencer.Store),
 		json:                jsoniter.ConfigFastest,
 	}
 }
@@ -135,6 +141,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		m.pubSubs,
 		m.states,
 		m.locks,
+		m.sequencers,
 	)
 	grpcOpts = append(grpcOpts,
 		grpc.WithGrpcOptions(o.options...),
@@ -177,6 +184,9 @@ func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
 		return err
 	}
 	if err := m.initLocks(o.services.locks...); err != nil {
+		return err
+	}
+	if err := m.initSequencers(o.services.sequencers...); err != nil {
 		return err
 	}
 	return nil
@@ -322,6 +332,31 @@ func (m *MosnRuntime) initLocks(factorys ...*runtime_lock.Factory) error {
 			return err
 		}
 		m.locks[name] = comp
+	}
+	return nil
+}
+
+func (m *MosnRuntime) initSequencers(factorys ...*runtime_sequencer.Factory) error {
+	log.DefaultLogger.Infof("[runtime] start initializing sequencer components")
+	// 1. register all the implementation
+	m.sequencerRegistry.Register(factorys...)
+	// 2. loop initializing
+	for name, config := range m.runtimeConfig.SequencerManagement {
+		// 2.1. create the component
+		comp, err := m.sequencerRegistry.Create(name)
+		if err != nil {
+			m.errInt(err, "create sequencer component %s failed", name)
+			return err
+		}
+		// 2.2. init
+		if err = comp.Init(sequencer.Configuration{
+			Properties: config.Metadata,
+			BiggerThan: config.BiggerThan,
+		}); err != nil {
+			m.errInt(err, "init sequencer component %s failed", name)
+			return err
+		}
+		m.sequencers[name] = comp
 	}
 	return nil
 }

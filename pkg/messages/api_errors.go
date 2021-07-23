@@ -40,4 +40,8 @@ const (
 	ErrLockOwnerEmpty          = "LockOwner is empty in lock store %s"
 	ErrExpireNotPositive       = "Expire is not positive in lock store %s"
 	ErrLockStoreNotFound       = "lock store %s not found"
+	//	Sequencer
+	ErrSequencerStoresNotConfigured = "Sequencer store is not configured"
+	ErrSequencerKeyEmpty            = "Key is empty in sequencer store %s"
+	ErrSequencerStoreNotFound       = "Sequencer store %s not found"
 )
