@@ -41,7 +41,7 @@ go build
 ./layotto start -c ../../configs/config_sequencer_etcd.json
 ```
 
-### 第三步：运行客户端程序，调用Layotto进行增删改查
+### 第三步：运行客户端程序，调用Layotto生成唯一id
 
 ```bash
  cd ${projectpath}/demo/sequencer/common/
@@ -67,7 +67,25 @@ Demo success!
 ```
 
 ### 下一步
-#### 使用sdk或者grpc客户端
-示例客户端程序中使用了Layotto提供的golang版本sdk，sdk位于`sdk`目录下，用户可以通过对应的sdk直接调用Layotto提供的服务。
+#### 这个客户端程序做了什么？
+示例客户端程序中使用了Layotto提供的golang版本sdk，调用Layotto Sequencer API,生成分布式唯一、自增id。
 
-除了使用sdk，您也可以用任何您喜欢的语言、通过grpc直接和Layotto交互
+sdk位于`sdk`目录下，用户可以通过sdk调用Layotto提供的API。
+
+除了使用sdk，您也可以用任何您喜欢的语言、通过grpc直接和Layotto交互。
+
+其实sdk只是对grpc很薄的封装，用sdk约等于直接用grpc调。
+
+
+#### 想要详细了解Sequencer API?
+Sequencer API是干嘛的，解决什么问题，我应该在什么场景使用它？
+
+如果您产生了这样的困惑，想要了解Sequencer API的更多使用细节，可以进一步阅读[Sequencer API使用文档](zh/api_reference/sequencer/reference)
+
+#### 细节以后再说，继续体验其他API
+通过左侧的导航栏，继续体验别的API吧！
+
+
+#### 了解Sequencer API的实现原理
+
+如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Sequencer API的设计文档](zh/design/sequencer/design.md)

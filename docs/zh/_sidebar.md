@@ -6,7 +6,7 @@
     - [使用State API](zh/start/state/start.md)
     - [使用Pub/Sub API](zh/start/pubsub/start.md)
     - [使用分布式锁 API](zh/start/lock/start.md)
-    - [使用分布式自增唯一id API](zh/start/sequencer/start.md)
+    - [使用Sequencer API生成分布式自增id](zh/start/sequencer/start.md)
     - 进行RPC调用
         - [Hello World](zh/start/rpc/helloworld.md)
         - [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)

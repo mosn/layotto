@@ -6,6 +6,7 @@
   - [Use State API](en/start/state/start.md)
   - [Use Pub/Sub API](en/start/pubsub/start.md)
   - [Use Distributed Lock API](en/start/lock/start.md)
+  - [Use Sequencer API](en/start/sequencer/start.md)
   - Service Invocation
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
@@ -21,6 +22,7 @@
   - API reference
     - [Actuator API](en/api_reference/actuator/actuator.md)
     - [State API](en/api_reference/state/reference.md)
+    - [Sequencer API](en/api_reference/sequencer/reference.md)
     - [Configuration API](en/api_reference/configuration/reference.md)
     - [Pub/Sub API](en/api_reference/pubsub/reference.md)
     - [Distributed Lock API](en/api_reference/lock/reference.md)
