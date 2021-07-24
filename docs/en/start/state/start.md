@@ -79,7 +79,19 @@ DeleteState succeeded.key:key1
 DeleteState succeeded.key:key2
 ```
 ### Next step
+#### What did this client Demo do?
+The demo client program uses the golang version SDK provided by Layotto, and calls Layotto's State API to add, delete, modify, and read status data.
 
-The client demo uses the golang version SDK provided by Layotto. The SDK is located in the `sdk` directory. Users can directly call the APIs provided by Layotto through the corresponding SDK.
+The sdk is located in the `sdk` directory, and users can call the API provided by Layotto through the sdk.
 
-Besides the SDK,you can also call Layotto server directly using grpc,which makes it easy for different language to interact with Layotto.
+In addition to using sdk, you can also interact with Layotto directly through grpc in any language you like.
+
+In fact, sdk is only a very thin package for grpc, using sdk is about equal to directly using grpc.
+
+#### Want to learn more about State API?
+What does the State API do, what problems it solves, and in what scenarios should I use it?
+
+If you have such confusion and want to know more details about State API, you can read [State API Usage Document](zh/api_reference/state/reference)
+
+#### Details later, let's continue to experience other APIs
+Explore other Quickstarts through the navigation bar on the left.
