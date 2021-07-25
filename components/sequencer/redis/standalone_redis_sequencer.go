@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/pkg/log"
 	"strconv"
@@ -41,7 +40,6 @@ func NewStandaloneRedisSequencer(logger log.ErrorLogger) *StandaloneRedisSequenc
 	s := &StandaloneRedisSequencer{
 		logger: logger,
 	}
-
 	return s
 }
 
@@ -79,10 +77,8 @@ func (s *StandaloneRedisSequencer) Init(config sequencer.Configuration) error {
 		if cur < bt {
 			return fmt.Errorf("standalone redis sequencer error: can not satisfy biggerThan guarantee.key: %s,current id:%v", k, cur)
 		}
-
 	}
 	return err
-
 }
 
 func (p *StandaloneRedisSequencer) newClient(m metadata) *redis.Client {
@@ -99,10 +95,6 @@ func (p *StandaloneRedisSequencer) newClient(m metadata) *redis.Client {
 		}
 	}
 	return redis.NewClient(opts)
-}
-
-func (s *StandaloneRedisSequencer) Features() []lock.Feature {
-	return nil
 }
 
 func (s *StandaloneRedisSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.GetNextIdResponse, error) {
