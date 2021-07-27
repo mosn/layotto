@@ -25,11 +25,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"mosn.io/api"
 	"mosn.io/layotto/components/rpc"
+	rpcerror "mosn.io/layotto/components/rpc/error"
 	"mosn.io/layotto/components/rpc/invoker/mosn/transport_protocol"
 )
 
@@ -64,6 +62,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 			return &xstate{calls: map[uint32]chan *call{}}
 		},
 		m.onData,
+		m.cleanup,
 	)
 
 	return m, nil
@@ -104,7 +103,7 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	buf, encErr := m.proto.Encode(req.Ctx, frame)
 	if encErr != nil {
 		m.pool.Put(conn, false)
-		return nil, status.Error(codes.Internal, encErr.Error())
+		return nil, rpcerror.Error(rpcerror.InternalCode, encErr.Error())
 	}
 
 	callChan := make(chan *call, 1)
@@ -112,7 +111,7 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	deadline, _ := ctx.Deadline()
 	if err := conn.SetWriteDeadline(deadline); err != nil {
 		m.pool.Put(conn, true)
-		return nil, status.Error(codes.Unavailable, err.Error())
+		return nil, rpcerror.Error(rpcerror.UnavailebleCode, err.Error())
 	}
 	// register response channel
 	xstate.mu.Lock()
@@ -123,19 +122,19 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	if _, err := conn.Write(buf.Bytes()); err != nil {
 		m.removeCall(xstate, id)
 		m.pool.Put(conn, true)
-		return nil, status.Error(codes.Unavailable, err.Error())
+		return nil, rpcerror.Error(rpcerror.UnavailebleCode, err.Error())
 	}
 	m.pool.Put(conn, false)
 
 	select {
 	case res := <-callChan:
 		if res.err != nil {
-			return nil, status.Error(codes.Unavailable, res.err.Error())
+			return nil, rpcerror.Error(rpcerror.UnavailebleCode, res.err.Error())
 		}
 		return m.proto.FromFrame(res.resp)
 	case <-ctx.Done():
 		m.removeCall(xstate, id)
-		return nil, status.Error(codes.DeadlineExceeded, ErrTimeout.Error())
+		return nil, rpcerror.Error(rpcerror.TimeoutCode, ErrTimeout.Error())
 	}
 }
 
@@ -146,15 +145,12 @@ func (m *xChannel) removeCall(xstate *xstate, id uint32) {
 }
 
 func (m *xChannel) onData(conn *wrapConn) error {
-	var (
-		err    error
-		xstate = conn.state.(*xstate)
-	)
+	xstate := conn.state.(*xstate)
 	for {
 		var iframe interface{}
-		iframe, err = m.proto.Decode(context.TODO(), conn.buf)
+		iframe, err := m.proto.Decode(context.TODO(), conn.buf)
 		if err != nil {
-			break
+			return err
 		}
 
 		if iframe == nil {
@@ -163,8 +159,7 @@ func (m *xChannel) onData(conn *wrapConn) error {
 
 		frame, ok := iframe.(api.XRespFrame)
 		if !ok {
-			err = errors.New("[runtime][rpc]xchannel type not XRespFrame")
-			break
+			return errors.New("[runtime][rpc]xchannel type not XRespFrame")
 		}
 
 		reqID := frame.GetRequestId()
@@ -179,15 +174,16 @@ func (m *xChannel) onData(conn *wrapConn) error {
 			notifyChan <- &call{resp: frame}
 		}
 	}
+	return nil
+}
 
+func (m *xChannel) cleanup(c *wrapConn, err error) {
+	xstate := c.state.(*xstate)
 	// cleanup pending calls
-	if err != nil {
-		xstate.mu.Lock()
-		for id, notifyChan := range xstate.calls {
-			notifyChan <- &call{err: err}
-			delete(xstate.calls, id)
-		}
-		xstate.mu.Unlock()
+	xstate.mu.Lock()
+	for id, notifyChan := range xstate.calls {
+		notifyChan <- &call{err: err}
+		delete(xstate.calls, id)
 	}
-	return err
+	xstate.mu.Unlock()
 }

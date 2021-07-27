@@ -17,10 +17,9 @@
 package transport_protocol
 
 import (
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"mosn.io/api"
 	"mosn.io/layotto/components/rpc"
+	rpcerror "mosn.io/layotto/components/rpc/error"
 	"mosn.io/mosn/pkg/protocol/xprotocol"
 	"mosn.io/mosn/pkg/protocol/xprotocol/dubbo"
 	"mosn.io/pkg/buffer"
@@ -54,7 +53,7 @@ func (d *dubboProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 
 func (d *dubboProtocol) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	if resp.GetStatusCode() != dubbo.RespStatusOK {
-		return nil, status.Errorf(codes.Unavailable, "dubbo error code %d", resp.GetStatusCode())
+		return nil, rpcerror.Errorf(rpcerror.UnavailebleCode, "dubbo error code %d", resp.GetStatusCode())
 	}
 
 	return d.fromFrame.FromFrame(resp)

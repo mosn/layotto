@@ -25,8 +25,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	rpcerror "mosn.io/layotto/components/rpc/error"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
@@ -60,24 +59,27 @@ func newConnPool(
 	maxActive int,
 	dialFunc func() (net.Conn, error),
 	stateFunc func() interface{},
-	onDataFunc func(*wrapConn) error) *connPool {
+	onDataFunc func(*wrapConn) error,
+	cleanupFunc func(*wrapConn, error)) *connPool {
 
 	p := &connPool{
-		maxActive:  maxActive,
-		dialFunc:   dialFunc,
-		stateFunc:  stateFunc,
-		onDataFunc: onDataFunc,
-		sema:       make(chan struct{}, maxActive),
-		free:       list.New(),
+		maxActive:   maxActive,
+		dialFunc:    dialFunc,
+		stateFunc:   stateFunc,
+		onDataFunc:  onDataFunc,
+		cleanupFunc: cleanupFunc,
+		sema:        make(chan struct{}, maxActive),
+		free:        list.New(),
 	}
 	return p
 }
 
 type connPool struct {
-	maxActive  int
-	dialFunc   func() (net.Conn, error)
-	stateFunc  func() interface{}
-	onDataFunc func(*wrapConn) error
+	maxActive   int
+	dialFunc    func() (net.Conn, error)
+	stateFunc   func() interface{}
+	onDataFunc  func(*wrapConn) error
+	cleanupFunc func(*wrapConn, error)
 
 	sema chan struct{}
 	mu   sync.Mutex
@@ -139,24 +141,33 @@ func (p *connPool) Put(c *wrapConn, close bool) {
 }
 
 func (p *connPool) readloop(c *wrapConn) {
-	defer c.close()
+	var err error
+
+	defer func() {
+		c.close()
+		if p.cleanupFunc != nil {
+			p.cleanupFunc(c, err)
+		}
+	}()
 
 	c.buf = buffer.NewIoBuffer(16 * 1024)
 	for {
-		n, err := c.buf.ReadOnce(c)
+		n, readErr := c.buf.ReadOnce(c)
 		if n > 0 {
-			if err = p.onDataFunc(c); err != nil {
-				log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", err.Error())
-				return
+			if onDataErr := p.onDataFunc(c); onDataErr != nil {
+				err = onDataErr
+				log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", onDataErr.Error())
+				break
 			}
 		}
-		if err != nil {
-			if err == io.EOF {
-				log.DefaultLogger.Debugf("[runtime][rpc]connpool readloop err: %s", err.Error())
+		if readErr != nil {
+			err = readErr
+			if readErr == io.EOF {
+				log.DefaultLogger.Debugf("[runtime][rpc]connpool readloop err: %s", readErr.Error())
 			} else {
-				log.DefaultLogger.Errorf("[runtime][rpc]connpool readloop err: %s", err.Error())
+				log.DefaultLogger.Errorf("[runtime][rpc]connpool readloop err: %s", readErr.Error())
 			}
-			return
+			break
 		}
 	}
 }
@@ -164,7 +175,7 @@ func (p *connPool) readloop(c *wrapConn) {
 func (p *connPool) waitTurn(ctx context.Context) error {
 	select {
 	case <-ctx.Done():
-		return status.Error(codes.DeadlineExceeded, connpoolTimeout.Error())
+		return rpcerror.Error(rpcerror.TimeoutCode, connpoolTimeout.Error())
 	case p.sema <- struct{}{}:
 		return nil
 	}

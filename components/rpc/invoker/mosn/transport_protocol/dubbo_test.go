@@ -52,7 +52,7 @@ func Test_dubboProtocol_FromFrame(t *testing.T) {
 
 		_, err := d.FromFrame(resp)
 		assert.NotNil(t, err)
-		assert.Equal(t, "dubbo error code 40", err.Error())
+		assert.True(t, strings.Contains(err.Error(), "dubbo error code 40"))
 	})
 }
 

@@ -19,8 +19,8 @@ package transport_protocol
 import (
 	"errors"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	rpcerror "mosn.io/layotto/components/rpc/error"
+
 	"mosn.io/api"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol"
@@ -56,12 +56,24 @@ func (b *boltCommon) Init(conf map[string]interface{}) error {
 }
 
 func (b *boltCommon) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
-	if resp.GetStatusCode() != uint32(bolt.ResponseStatusSuccess) {
-		return nil, status.Errorf(codes.Unavailable, "bolt error code %d", resp.GetStatusCode())
+	respCode := uint16(resp.GetStatusCode())
+	if uint16(resp.GetStatusCode()) == bolt.ResponseStatusSuccess {
+		return b.fromFrame.FromFrame(resp)
 	}
 
-	return b.fromFrame.FromFrame(resp)
+	switch respCode {
+	case bolt.ResponseStatusServerDeserialException:
+		return nil, rpcerror.Errorf(rpcerror.InternalCode, "bolt error code %d, ServerDeserializeException", respCode)
+	case bolt.ResponseStatusServerSerialException:
+		return nil, rpcerror.Errorf(rpcerror.InternalCode, "bolt error code %d, ServerSerializeException", respCode)
+	case bolt.ResponseStatusCodecException:
+		return nil, rpcerror.Errorf(rpcerror.InternalCode, "bolt error code %d, CodecException", respCode)
+	default:
+		return nil, rpcerror.Errorf(rpcerror.UnavailebleCode, "bolt error code %d, ServerDeserializeException", respCode)
+	}
 }
+
+var boltErrorMsgs = []string{}
 
 func newBoltProtocol() TransportProtocol {
 	return &boltProtocol{XProtocol: xprotocol.GetProtocol(bolt.ProtocolName), boltCommon: boltCommon{}}

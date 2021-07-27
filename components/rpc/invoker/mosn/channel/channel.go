@@ -22,21 +22,19 @@ import (
 	"net"
 	"time"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"mosn.io/layotto/components/rpc"
+	rpcerror "mosn.io/layotto/components/rpc/error"
 	"mosn.io/mosn/pkg/server"
 )
 
 var (
-	ErrTimeout    = errors.New("request timeout")
-	ErrConnClosed = errors.New("connection closed by mosn")
+	ErrTimeout = errors.New("request timeout")
 
 	acceptFunc = func(conn net.Conn, listener string) error {
 		srv := server.GetServer()
 		lis := srv.Handler().FindListenerByName(listener)
 		if lis == nil {
-			return status.Error(codes.Internal, "[rpc]invalid listener name")
+			return rpcerror.Error(rpcerror.InternalCode, "[rpc]invalid listener name")
 		}
 		lis.GetListenerCallbacks().OnAccept(conn, false, nil, nil, nil)
 		return nil
