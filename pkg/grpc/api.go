@@ -58,10 +58,10 @@ var (
 
 type API interface {
 	SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error)
-	// GetConfiguration gets configuration from configuration store.
-	GetConfiguration(context.Context, *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error)
 	// InvokeService do rpc calls.
 	InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error)
+	// GetConfiguration gets configuration from configuration store.
+	GetConfiguration(context.Context, *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error)
 	// SaveConfiguration saves configuration into configuration store.
 	SaveConfiguration(context.Context, *runtimev1pb.SaveConfigurationRequest) (*emptypb.Empty, error)
 	// DeleteConfiguration deletes configuration from configuration store.

@@ -4,11 +4,11 @@
 The json configuration file has the following structure:
 ```json
 "sequencer": {
-  "biggerThan": {
-    "<KEY>": "<VALUE>",
-    "<KEY>": "<VALUE>"
-  },
   "<STORE NAME>": {
+    "biggerThan": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    },
     "metadata": {
       "<KEY>": "<VALUE>",
       "<KEY>": "<VALUE>"
