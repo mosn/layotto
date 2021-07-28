@@ -25,7 +25,7 @@ import (
 
 	"github.com/valyala/fasthttp"
 	"mosn.io/layotto/components/rpc"
-	rpcerror "mosn.io/layotto/components/rpc/error"
+	common "mosn.io/layotto/components/pkg/common"
 	_ "mosn.io/mosn/pkg/stream/http"
 )
 
@@ -67,7 +67,7 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	deadline, _ := ctx.Deadline()
 	if err = conn.SetDeadline(deadline); err != nil {
 		h.pool.Put(conn, true)
-		return nil, rpcerror.Error(rpcerror.UnavailebleCode, err.Error())
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 
 	httpReq := h.constructReq(req)
@@ -75,19 +75,19 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 
 	if _, err = httpReq.WriteTo(conn); err != nil {
 		h.pool.Put(conn, true)
-		return nil, rpcerror.Error(rpcerror.UnavailebleCode, err.Error())
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 
 	httpResp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(httpResp)
 	if err = httpResp.Read(bufio.NewReader(conn)); err != nil {
 		h.pool.Put(conn, true)
-		return nil, rpcerror.Error(rpcerror.UnavailebleCode, err.Error())
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 	body := httpResp.Body()
 	h.pool.Put(conn, false)
 	if httpResp.StatusCode() != http.StatusOK {
-		return nil, rpcerror.Errorf(rpcerror.UnavailebleCode, "http response code %d, body: %s", httpResp.StatusCode(), string(body))
+		return nil, common.Errorf(common.UnavailebleCode, "http response code %d, body: %s", httpResp.StatusCode(), string(body))
 	}
 
 	data := make([]byte, len(body))

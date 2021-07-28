@@ -26,8 +26,8 @@ import (
 	"time"
 
 	"mosn.io/api"
+	common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
-	rpcerror "mosn.io/layotto/components/rpc/error"
 	"mosn.io/layotto/components/rpc/invoker/mosn/transport_protocol"
 )
 
@@ -103,7 +103,7 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	buf, encErr := m.proto.Encode(req.Ctx, frame)
 	if encErr != nil {
 		m.pool.Put(conn, false)
-		return nil, rpcerror.Error(rpcerror.InternalCode, encErr.Error())
+		return nil, common.Error(common.InternalCode, encErr.Error())
 	}
 
 	callChan := make(chan *call, 1)
@@ -111,7 +111,7 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	deadline, _ := ctx.Deadline()
 	if err := conn.SetWriteDeadline(deadline); err != nil {
 		m.pool.Put(conn, true)
-		return nil, rpcerror.Error(rpcerror.UnavailebleCode, err.Error())
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 	// register response channel
 	xstate.mu.Lock()
@@ -122,19 +122,19 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	if _, err := conn.Write(buf.Bytes()); err != nil {
 		m.removeCall(xstate, id)
 		m.pool.Put(conn, true)
-		return nil, rpcerror.Error(rpcerror.UnavailebleCode, err.Error())
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 	m.pool.Put(conn, false)
 
 	select {
 	case res := <-callChan:
 		if res.err != nil {
-			return nil, rpcerror.Error(rpcerror.UnavailebleCode, res.err.Error())
+			return nil, common.Error(common.UnavailebleCode, res.err.Error())
 		}
 		return m.proto.FromFrame(res.resp)
 	case <-ctx.Done():
 		m.removeCall(xstate, id)
-		return nil, rpcerror.Error(rpcerror.TimeoutCode, ErrTimeout.Error())
+		return nil, common.Error(common.TimeoutCode, ErrTimeout.Error())
 	}
 }
 

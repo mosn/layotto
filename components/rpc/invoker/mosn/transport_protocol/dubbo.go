@@ -19,7 +19,7 @@ package transport_protocol
 import (
 	"mosn.io/api"
 	"mosn.io/layotto/components/rpc"
-	rpcerror "mosn.io/layotto/components/rpc/error"
+	common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/mosn/pkg/protocol/xprotocol"
 	"mosn.io/mosn/pkg/protocol/xprotocol/dubbo"
 	"mosn.io/pkg/buffer"
@@ -53,7 +53,7 @@ func (d *dubboProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 
 func (d *dubboProtocol) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	if resp.GetStatusCode() != dubbo.RespStatusOK {
-		return nil, rpcerror.Errorf(rpcerror.UnavailebleCode, "dubbo error code %d", resp.GetStatusCode())
+		return nil, common.Errorf(common.UnavailebleCode, "dubbo error code %d", resp.GetStatusCode())
 	}
 
 	return d.fromFrame.FromFrame(resp)

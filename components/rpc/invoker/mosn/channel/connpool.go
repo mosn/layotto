@@ -25,7 +25,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	rpcerror "mosn.io/layotto/components/rpc/error"
+	common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
@@ -153,13 +153,6 @@ func (p *connPool) readloop(c *wrapConn) {
 	c.buf = buffer.NewIoBuffer(16 * 1024)
 	for {
 		n, readErr := c.buf.ReadOnce(c)
-		if n > 0 {
-			if onDataErr := p.onDataFunc(c); onDataErr != nil {
-				err = onDataErr
-				log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", onDataErr.Error())
-				break
-			}
-		}
 		if readErr != nil {
 			err = readErr
 			if readErr == io.EOF {
@@ -167,6 +160,16 @@ func (p *connPool) readloop(c *wrapConn) {
 			} else {
 				log.DefaultLogger.Errorf("[runtime][rpc]connpool readloop err: %s", readErr.Error())
 			}
+		}
+
+		if n > 0 {
+			if onDataErr := p.onDataFunc(c); onDataErr != nil {
+				err = onDataErr
+				log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", onDataErr.Error())
+			}
+		}
+
+		if err != nil {
 			break
 		}
 	}
@@ -175,7 +178,7 @@ func (p *connPool) readloop(c *wrapConn) {
 func (p *connPool) waitTurn(ctx context.Context) error {
 	select {
 	case <-ctx.Done():
-		return rpcerror.Error(rpcerror.TimeoutCode, connpoolTimeout.Error())
+		return common.Error(common.TimeoutCode, connpoolTimeout.Error())
 	case p.sema <- struct{}{}:
 		return nil
 	}

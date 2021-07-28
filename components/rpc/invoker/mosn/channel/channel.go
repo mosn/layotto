@@ -23,7 +23,7 @@ import (
 	"time"
 
 	"mosn.io/layotto/components/rpc"
-	rpcerror "mosn.io/layotto/components/rpc/error"
+	common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/mosn/pkg/server"
 )
 
@@ -34,7 +34,7 @@ var (
 		srv := server.GetServer()
 		lis := srv.Handler().FindListenerByName(listener)
 		if lis == nil {
-			return rpcerror.Error(rpcerror.InternalCode, "[rpc]invalid listener name")
+			return common.Error(common.InternalCode, "[rpc]invalid listener name")
 		}
 		lis.GetListenerCallbacks().OnAccept(conn, false, nil, nil, nil)
 		return nil
