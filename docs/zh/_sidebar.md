@@ -23,9 +23,9 @@
         - [Actuator API](zh/api_reference/actuator/actuator.md)
         - [State API](zh/api_reference/state/reference.md)
         - [Sequencer API](zh/api_reference/sequencer/reference.md)
+        - [Distributed Lock API](zh/api_reference/lock/reference.md)
         - [Configuration API](zh/api_reference/configuration/reference.md)
         - [Pub/Sub API](zh/api_reference/pubsub/reference.md)
-        - [Distributed Lock API](zh/api_reference/lock/reference.md)
         - [RPC API](zh/api_reference/rpc/reference.md)
     - SDK文档    
         - [go-sdk](zh/sdk_reference/go/start.md)
