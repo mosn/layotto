@@ -24,6 +24,8 @@ const (
 	defaultMaxRetries      = 3
 	defaultMaxRetryBackoff = time.Second * 2
 	defaultEnableTLS       = false
+	casSuccess             = 1
+	casFail                = 0
 )
 
 type StandaloneRedisSequencer struct {
@@ -35,13 +37,22 @@ type StandaloneRedisSequencer struct {
 	cancel context.CancelFunc
 }
 
-// EtcdSequencer returns a new etcd sequencer
+// NewStandaloneRedisSequencer returns a new redis sequencer
 func NewStandaloneRedisSequencer(logger log.ErrorLogger) *StandaloneRedisSequencer {
 	s := &StandaloneRedisSequencer{
 		logger: logger,
 	}
 	return s
 }
+
+const CASScript = `
+if redis.call('get', KEYS[1]) == ARGV[1] then
+    redis.call('set', KEYS[1], ARGV[2])
+    return 1
+else
+    return 0
+end
+`
 
 func (s *StandaloneRedisSequencer) Init(config sequencer.Configuration) error {
 	m, err := parseRedisMetadata(config)
@@ -54,8 +65,8 @@ func (s *StandaloneRedisSequencer) Init(config sequencer.Configuration) error {
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
 	//check biggerThan
-	for k, bt := range s.metadata.biggerThan {
-		if bt <= 0 {
+	for k, needV := range s.metadata.biggerThan {
+		if needV <= 0 {
 			continue
 		}
 		get := s.client.Get(s.ctx, k)
@@ -69,13 +80,29 @@ func (s *StandaloneRedisSequencer) Init(config sequencer.Configuration) error {
 			return err
 		}
 		val := get.Val()
-		cur, err := strconv.ParseInt(val, 10, 64)
-		//not int value
+		realV, err := strconv.ParseInt(val, 10, 64)
+		//parse fail
 		if err != nil {
 			return err
 		}
-		if cur < bt {
-			return fmt.Errorf("standalone redis sequencer error: can not satisfy biggerThan guarantee.key: %s,current id:%v", k, cur)
+		//if the realV < needV ,we should increase the realV to needV
+		if realV < needV {
+			// commit cas script
+			eval := s.client.Eval(s.ctx, CASScript, []string{k}, realV, needV)
+			err := eval.Err()
+			if err != nil {
+				return err
+			}
+			i, err := eval.Int()
+			// parse error
+			if err != nil {
+				return err
+			}
+			//set new val success
+			if i == casSuccess {
+				continue
+			}
+			return fmt.Errorf("standalone redis sequencer error: can not satisfy biggerThan guarantee.key: %s,current id:%v", k, realV)
 		}
 	}
 	return err
@@ -111,8 +138,17 @@ func (s *StandaloneRedisSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*
 	}, nil
 }
 
-func (s *StandaloneRedisSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support bool, result *sequencer.GetSegmentResponse, err error) {
-	return false, nil, nil
+func (s *StandaloneRedisSequencer) GetSegment(req *sequencer.GetSegmentRequest) (bool, *sequencer.GetSegmentResponse, error) {
+	by := s.client.IncrBy(s.ctx, req.Key, int64(req.Size))
+	err := by.Err()
+	if err != nil {
+		return true, nil, err
+	}
+
+	return true, &sequencer.GetSegmentResponse{
+		From: by.Val() - int64(req.Size) + 1,
+		To:   by.Val(),
+	}, nil
 }
 func (s *StandaloneRedisSequencer) Close() error {
 	s.cancel()
