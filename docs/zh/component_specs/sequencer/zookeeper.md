@@ -2,7 +2,7 @@
 
 ## 配置项说明
 
-示例：configs/config_lock_zookeeper.json
+示例：configs/config_sequencer_zookeeper.json
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
@@ -32,13 +32,13 @@ go build
 编译成功后执行:
 
 ````shell
-./layotto start -c ../../configs/config_lock_zookeeper.json
+./layotto start -c ../../configs/config_sequencer_zookeeper.json
 ````
 
 ## 运行 Demo
 
 ````shell
-cd ${projectpath}/demo/lock/zookeeper/
+cd ${projectpath}/demo/losequencerck/zookeeper/
  go build -o client
  ./client
 ````
