@@ -53,7 +53,7 @@ func GetModifiedLockKey(key, storeName, appID string) (string, error) {
 		return fmt.Sprintf("%s%s%s%s%s", apiPrefix, apiSeparator, storeName, separator, key), nil
 	case strategyAppid:
 		if appID == "" {
-			return key, nil
+			return fmt.Sprintf("%s%s%s", apiPrefix, apiSeparator, key), nil
 		}
 		return fmt.Sprintf("%s%s%s%s%s", apiPrefix, apiSeparator, appID, separator, key), nil
 	default:
