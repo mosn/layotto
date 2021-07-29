@@ -35,7 +35,7 @@
         - [State](zh/component_specs/state/common.md)
             - [Redis](zh/component_specs/state/redis.md)
             - [其他组件](zh/component_specs/state/others.md)
-        - Pub/Sub
+        - [Pub/Sub](zh/component_specs/pubsub/common.md)
             - [Redis](zh/component_specs/pubsub/redis.md)
             - [其他组件](zh/component_specs/pubsub/others.md)
         - [Distributed Lock](zh/component_specs/lock/common.md)

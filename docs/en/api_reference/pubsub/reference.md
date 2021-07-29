@@ -21,7 +21,7 @@ You can call Pub/Sub API through grpc. The API is defined in [runtime.proto](htt
 
 The component needs to be configured before use. For detailed configuration instructions, see [publish/subscribe component documentation](zh/component_specs/pubsub/common.md)
 
-### Usage example
+### Example
 Layotto client sdk encapsulates the logic of grpc call. For examples of using sdk to call Pub/Sub API, please refer to [Quick Start: Use Pub/Sub API](en/start/pubsub/start.md)
 
 ### PublishEvent
