@@ -39,6 +39,7 @@ func TestGetPut(t *testing.T) {
 		}, func(conn *wrapConn) error {
 			return nil
 		},
+		nil,
 	)
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
@@ -97,7 +98,7 @@ func TestDeadconnRenew(t *testing.T) {
 			return nil
 		}, func(conn *wrapConn) error {
 			return nil
-		},
+		}, nil,
 	)
 
 	c1, err := p.Get(context.TODO())
@@ -129,7 +130,7 @@ func TestPoolConcurrent(t *testing.T) {
 			return nil
 		}, func(conn *wrapConn) error {
 			return <-ch
-		},
+		}, nil,
 	)
 
 	actions := []string{

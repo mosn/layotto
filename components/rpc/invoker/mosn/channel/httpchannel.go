@@ -24,9 +24,8 @@ import (
 	"time"
 
 	"github.com/valyala/fasthttp"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"mosn.io/layotto/components/rpc"
+	common "mosn.io/layotto/components/pkg/common"
 	_ "mosn.io/mosn/pkg/stream/http"
 )
 
@@ -50,9 +49,7 @@ func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 					return nil, err
 				}
 				return localTcpConn, nil
-			},
-			nil,
-			nil,
+			}, nil, nil, nil,
 		),
 	}, nil
 }
@@ -70,7 +67,7 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	deadline, _ := ctx.Deadline()
 	if err = conn.SetDeadline(deadline); err != nil {
 		h.pool.Put(conn, true)
-		return nil, status.Error(codes.Unavailable, err.Error())
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 
 	httpReq := h.constructReq(req)
@@ -78,19 +75,19 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 
 	if _, err = httpReq.WriteTo(conn); err != nil {
 		h.pool.Put(conn, true)
-		return nil, status.Error(codes.Unavailable, err.Error())
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 
 	httpResp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(httpResp)
 	if err = httpResp.Read(bufio.NewReader(conn)); err != nil {
 		h.pool.Put(conn, true)
-		return nil, status.Error(codes.Unavailable, err.Error())
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 	body := httpResp.Body()
 	h.pool.Put(conn, false)
 	if httpResp.StatusCode() != http.StatusOK {
-		return nil, status.Errorf(codes.Unavailable, "http response code %d, body: %s", httpResp.StatusCode(), string(body))
+		return nil, common.Errorf(common.UnavailebleCode, "http response code %d, body: %s", httpResp.StatusCode(), string(body))
 	}
 
 	data := make([]byte, len(body))
