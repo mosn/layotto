@@ -24,8 +24,8 @@
     - [State API](en/api_reference/state/reference.md)
     - [Sequencer API](en/api_reference/sequencer/reference.md)
     - [Distributed Lock API](en/api_reference/lock/reference.md)
-    - [Configuration API](en/api_reference/configuration/reference.md)
     - [Pub/Sub API](en/api_reference/pubsub/reference.md)
+    - [Configuration API](en/api_reference/configuration/reference.md)
     - [RPC API](en/api_reference/rpc/reference.md)    
   - SDK reference
     - [go-sdk](en/sdk_reference/go/start.md)
