@@ -20,16 +20,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"sync"
+
 	"github.com/dapr/components-contrib/state"
 	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
-	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/converter"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
-	"strings"
-	"sync"
 
 	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
@@ -44,8 +43,11 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
+	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
 	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
+	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/messages"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
@@ -187,7 +189,7 @@ func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRe
 
 	resp, err := invoker.Invoke(ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, common.ToGrpcError(err)
 	}
 
 	if resp.Header != nil {
