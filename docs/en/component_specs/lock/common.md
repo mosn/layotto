@@ -34,13 +34,13 @@ You can configure the key/value configuration items that the component cares abo
 
 the `keyPrefix` field supports the following key prefix strategies:
 
-* **`appid`** - This is the default policy. The resource_id passed in by the user will eventually be saved as `current appid||resource_id`
+* **`appid`** - This is the default policy. The resource_id passed in by the user will eventually be saved as `lock|||current appid||resource_id`
 
-* **`name`** - This setting uses the name of the component as a prefix. For example, the redis component will store the resource_id passed in by the user as `redis||resource_id`
+* **`name`** - This setting uses the name of the component as a prefix. For example, the redis component will store the resource_id passed in by the user as `lock|||redis||resource_id`
 
-* **`none`** - No prefix will be added.
+* **`none`** - The resource_id passed in by the user will eventually be saved as `lock|||resource_id`.
 
-* Any other string that does not contain `||`. For example, if the keyPrefix is configured as "abc", the resource_id passed in by the user will eventually be saved as `abc||resource_id`
+* Any other string that does not contain `||`. For example, if the keyPrefix is configured as "abc", the resource_id passed in by the user will eventually be saved as `lock|||abc||resource_id`
 
 
 **Other configuration items**

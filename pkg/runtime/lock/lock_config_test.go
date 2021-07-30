@@ -63,43 +63,43 @@ func TestGetModifiedLockKey(t *testing.T) {
 
 func TestNonePrefix(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store1", "appid1")
-	require.Equal(t, key, modifiedLockKey)
+	require.Equal(t, "lock|||"+key, modifiedLockKey)
 }
 
 func TestAppidPrefix(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store2", "appid1")
-	require.Equal(t, "appid1||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||appid1||lock-key-1234567", modifiedLockKey)
 }
 
 func TestAppidPrefix_WithEnptyAppid(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store2", "")
-	require.Equal(t, "lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||lock-key-1234567", modifiedLockKey)
 }
 
 func TestDefaultPrefix(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store3", "appid1")
-	require.Equal(t, "appid1||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||appid1||lock-key-1234567", modifiedLockKey)
 }
 
 func TestStoreNamePrefix(t *testing.T) {
 	key := "lock-key-1234567"
 
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store4", "appid1")
-	require.Equal(t, "store4||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||store4||lock-key-1234567", modifiedLockKey)
 }
 
 func TestOtherFixedPrefix(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store5", "appid1")
-	require.Equal(t, "other-fixed-prefix||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||other-fixed-prefix||lock-key-1234567", modifiedLockKey)
 }
 
 func TestLegacyPrefix(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store6", "appid1")
-	require.Equal(t, "appid1||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||appid1||lock-key-1234567", modifiedLockKey)
 }
 
 func TestPrefix_StoreNotInitial(t *testing.T) {
 	// no config for store999
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store999", "appid99")
-	require.Equal(t, "appid99||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||appid99||lock-key-1234567", modifiedLockKey)
 }

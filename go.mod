@@ -16,7 +16,6 @@ require (
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.26.0
-	go.etcd.io/etcd/client/v3 v3.5.0
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210526223527-2de42fcbbce3 // indirect
 	google.golang.org/protobuf v1.27.1
