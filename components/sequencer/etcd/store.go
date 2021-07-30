@@ -2,35 +2,17 @@ package etcd
 
 import (
 	"context"
-	"crypto/tls"
-	"crypto/x509"
-	"errors"
 	"fmt"
 	clientv3 "go.etcd.io/etcd/client/v3"
-	"io/ioutil"
+	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/pkg/log"
-	"strconv"
-	"strings"
-	"time"
-)
-
-const (
-	defaultDialTimeout = 5
-	defaultKeyPrefix   = "/layotto_sequencer/"
-	prefixKey          = "keyPrefixPath"
-	usernameKey        = "username"
-	passwordKey        = "password"
-	dialTimeoutKey     = "dialTimeout"
-	endpointsKey       = "endpoints"
-	tlsCertPathKey     = "tlsCert"
-	tlsCertKeyPathKey  = "tlsCertKey"
-	tlsCaPathKey       = "tlsCa"
 )
 
 type EtcdSequencer struct {
-	client   *clientv3.Client
-	metadata metadata
+	client     *clientv3.Client
+	metadata   utils.EtcdMetadata
+	biggerThan map[string]int64
 
 	logger log.ErrorLogger
 
@@ -49,21 +31,23 @@ func NewEtcdSequencer(logger log.ErrorLogger) *EtcdSequencer {
 
 func (e *EtcdSequencer) Init(config sequencer.Configuration) error {
 	// 1. parse config
-	m, err := parseEtcdMetadata(config)
+	m, err := utils.ParseEtcdMetadata(config.Properties)
 	if err != nil {
 		return err
 	}
 	e.metadata = m
+	e.biggerThan = config.BiggerThan
+
 	// 2. construct client
-	if e.client, err = e.newClient(m); err != nil {
+	if e.client, err = utils.NewEtcdClient(m); err != nil {
 		return err
 	}
 	e.ctx, e.cancel = context.WithCancel(context.Background())
 
 	// 3. check biggerThan
-	if len(e.metadata.biggerThan) > 0 {
+	if len(e.biggerThan) > 0 {
 		kv := clientv3.NewKV(e.client)
-		for k, bt := range e.metadata.biggerThan {
+		for k, bt := range e.biggerThan {
 			if bt <= 0 {
 				continue
 			}
@@ -118,102 +102,8 @@ func (e *EtcdSequencer) Close() error {
 	return e.client.Close()
 }
 
-func (e *EtcdSequencer) newClient(meta metadata) (*clientv3.Client, error) {
-
-	config := clientv3.Config{
-		Endpoints:   meta.endpoints,
-		DialTimeout: time.Second * time.Duration(meta.dialTimeout),
-		Username:    meta.username,
-		Password:    meta.password,
-	}
-
-	if meta.tlsCa != "" || meta.tlsCert != "" || meta.tlsCertKey != "" {
-		//enable tls
-		cert, err := tls.LoadX509KeyPair(meta.tlsCert, meta.tlsCertKey)
-		if err != nil {
-			return nil, fmt.Errorf("error reading tls certificate, cert: %s, certKey: %s, err: %s", meta.tlsCert, meta.tlsCertKey, err)
-		}
-
-		caData, err := ioutil.ReadFile(meta.tlsCa)
-		if err != nil {
-			return nil, fmt.Errorf("error reading tls ca %s, err: %s", meta.tlsCa, err)
-		}
-
-		pool := x509.NewCertPool()
-		pool.AppendCertsFromPEM(caData)
-
-		tlsConfig := &tls.Config{
-			Certificates: []tls.Certificate{cert},
-			RootCAs:      pool,
-		}
-		config.TLS = tlsConfig
-	}
-
-	if client, err := clientv3.New(config); err != nil {
-		return nil, err
-	} else {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(meta.dialTimeout))
-		defer cancel()
-		//ping
-		_, err = client.Get(ctx, "ping")
-		if err != nil {
-			return nil, fmt.Errorf("etcd sequencer error: connect to etcd timeoout %s", meta.endpoints)
-		}
-
-		return client, nil
-	}
-}
-
 func (e *EtcdSequencer) getKeyInEtcd(key string) string {
-	return fmt.Sprintf("%s%s", e.metadata.keyPrefix, key)
-}
-
-func parseEtcdMetadata(config sequencer.Configuration) (metadata, error) {
-	m := metadata{}
-	var err error
-
-	m.biggerThan = config.BiggerThan
-	if val, ok := config.Properties[endpointsKey]; ok && val != "" {
-		m.endpoints = strings.Split(val, ";")
-	} else {
-		return m, errors.New("etcd sequencer error: missing endpoints address")
-	}
-
-	if val, ok := config.Properties[dialTimeoutKey]; ok && val != "" {
-		if m.dialTimeout, err = strconv.Atoi(val); err != nil {
-			return m, fmt.Errorf("etcd sequencer error: ncorrect dialTimeout value %s", val)
-		}
-	} else {
-		m.dialTimeout = defaultDialTimeout
-	}
-
-	if val, ok := config.Properties[prefixKey]; ok && val != "" {
-		m.keyPrefix = addPathSeparator(val)
-	} else {
-		m.keyPrefix = defaultKeyPrefix
-	}
-
-	if val, ok := config.Properties[usernameKey]; ok && val != "" {
-		m.username = val
-	}
-
-	if val, ok := config.Properties[passwordKey]; ok && val != "" {
-		m.password = val
-	}
-
-	if val, ok := config.Properties[tlsCaPathKey]; ok && val != "" {
-		m.tlsCa = val
-	}
-
-	if val, ok := config.Properties[tlsCertPathKey]; ok && val != "" {
-		m.tlsCert = val
-	}
-
-	if val, ok := config.Properties[tlsCertKeyPathKey]; ok && val != "" {
-		m.tlsCertKey = val
-	}
-
-	return m, nil
+	return fmt.Sprintf("%s%s", e.metadata.KeyPrefix, key)
 }
 
 func addPathSeparator(p string) string {
@@ -227,17 +117,4 @@ func addPathSeparator(p string) string {
 		p = p + "/"
 	}
 	return p
-}
-
-type metadata struct {
-	keyPrefix   string
-	dialTimeout int
-	endpoints   []string
-	username    string
-	password    string
-
-	tlsCa      string
-	tlsCert    string
-	tlsCertKey string
-	biggerThan map[string]int64
 }
