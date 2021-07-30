@@ -24,8 +24,8 @@ const (
 	defaultMaxRetries      = 3
 	defaultMaxRetryBackoff = time.Second * 2
 	defaultEnableTLS       = false
-	casSuccess             = 1
-	casFail                = 0
+	initNoOperation        = 0
+	initReset              = 1
 )
 
 type StandaloneRedisSequencer struct {
@@ -45,12 +45,17 @@ func NewStandaloneRedisSequencer(logger log.ErrorLogger) *StandaloneRedisSequenc
 	return s
 }
 
-const CASScript = `
-if redis.call('get', KEYS[1]) == ARGV[1] then
-    redis.call('set', KEYS[1], ARGV[2])
-    return 1
-else
+/*
+   1. exists and >= biggerThan, no operation required, return 0
+   2. not exists or < biggthan, reset val,return 1
+   3. lua script occur error, such as tonumer(string) return error
+*/
+const initScript = `
+if  redis.call('exists', KEYS[1])==1 and tonumber(redis.call('get', KEYS[1])) >= tonumber(ARGV[1]) then
     return 0
+else
+     redis.call('set', KEYS[1],ARGV[1])
+     return 1
 end
 `
 
@@ -64,46 +69,20 @@ func (s *StandaloneRedisSequencer) Init(config sequencer.Configuration) error {
 	s.client = s.newClient(m)
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
-	//check biggerThan
+	//check biggerThan, initialize if not satisfied
 	for k, needV := range s.metadata.biggerThan {
 		if needV <= 0 {
 			continue
 		}
-		get := s.client.Get(s.ctx, k)
-		err := get.Err()
-		if err != nil {
-			//kv not exist
-			if err == redis.Nil {
-				return fmt.Errorf("standalone redis sequencer error: can not satisfy biggerThan guarantee.key: %s,current id:%v", k, 0)
-			}
-			//other error
-			return err
-		}
-		val := get.Val()
-		realV, err := strconv.ParseInt(val, 10, 64)
-		//parse fail
+
+		eval := s.client.Eval(s.ctx, initScript, []string{k}, needV)
+		err = eval.Err()
+		//occur error,  such as value is string type
 		if err != nil {
 			return err
 		}
-		//if the realV < needV ,we should increase the realV to needV
-		if realV < needV {
-			// commit cas script
-			eval := s.client.Eval(s.ctx, CASScript, []string{k}, realV, needV)
-			err := eval.Err()
-			if err != nil {
-				return err
-			}
-			i, err := eval.Int()
-			// parse error
-			if err != nil {
-				return err
-			}
-			//set new val success
-			if i == casSuccess {
-				continue
-			}
-			return fmt.Errorf("standalone redis sequencer error: can not satisfy biggerThan guarantee.key: %s,current id:%v", k, realV)
-		}
+		//As long as there is no error, the initialization is successful
+		//It may be a reset value or it may be satisfied before
 	}
 	return err
 }
