@@ -36,45 +36,49 @@ Layotto provides sdk in various languages. The sdk interacts with Layotto throug
 
 ![Architecture](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
 
-## API
+## Quickstarts and Samples
 
-|  API            | status |                               quick start                             |                                components                                 | desc |
-|  -------------  | :----: | :--------------------------------------------------------------------:|:-------------------------------------------------------------------------:|---- |
-| State           | ✅     | [demo](https://mosn.io/layotto/#/en/start/state/start)                | [list](https://mosn.io/layotto/#/en/component_specs/state/common)         | Write/Query the data of the Key/Value model |
-| Pub/Sub         | ✅     | [demo](https://mosn.io/layotto/#/en/start/pubsub/start)               | [list](https://mosn.io/layotto/#/en/component_specs/pubsub/redis)         | Publish/Subscribe message through various Message Queue |
-| Service Invoke  | ✅     | [demo](https://mosn.io/layotto/#/en/start/rpc/helloworld)             | [list](https://mosn.io/layotto/#/en/start/rpc/helloworld)                 | Call Service through MOSN (another istio data plane)|
-| Config          | ✅     | [demo](https://mosn.io/layotto/#/en/start/configuration/start-apollo) | [list](https://mosn.io/layotto/#/en/component_specs/configuration/apollo) | Write/Query/Subscribe the config through various Config Center|
-| Lock            | ✅     | [demo](https://mosn.io/layotto/#/en/start/lock/start)                 | [list](https://mosn.io/layotto/#/en/component_specs/lock/common)          | Distribute lock implementation|
-| Sequencer       | ✅     | [demo](https://mosn.io/layotto/#/en/start/sequencer/start)            | [list](https://mosn.io/layotto/#/en/component_specs/sequencer/common)     | Distribube auto increment ID generator |
+### Get started with Layotto
 
+See the quick start guide [configuration demo with apollo](https://mosn.io/layotto/#/en/start/configuration/start-apollo) that can help you get started with Layotto.
 
-## Actuator
+### Use Pub/Sub API
 
-|  feature       | status |                         quick start                       |                         desc                         |
-|  ------------- | :----: | :--------------------------------------------------------:|------------------------------------------------------|
-| Health Check   | ✅     | [demo](https://mosn.io/layotto/#/en/start/actuator/start) | Query health state of app and components in Layotto  |
-| Metadata Query | ✅     | [demo](https://mosn.io/layotto/#/en/start/actuator/start) | Query metadata in Layotto/app                        |
+[Implementing Pub/Sub Pattern using Layotto and Redis](https://mosn.io/layotto/#/en/start/pubsub/start)
 
-## Traffic Control
+### Use State API to manage state
 
-|  feature      | status |                              quick start                              |                               desc                              |
-|  -----------  | :----: | :--------------------------------------------------------------------:|-----------------------------------------------------------------|
-| TCP Copy      | ✅     | [demo](https://mosn.io/layotto/#/en/start/network_filter/tcpcopy)     | Dump the tcp traffic received by Layotto into local file system |
-| Flow Control  | ✅     | [demo](https://mosn.io/layotto/#/en/start/stream_filter/flow_control) | limit access to the APIs provided by Layotto                    |
+[State management demo with redis](https://mosn.io/layotto/#/en/start/state/start)
 
-## WebAssembly (WASM)
+### Use Distributed Lock API
 
-|  feature       | status |                       quick start                      |                               desc                                  |
-|  ------------- | :----: | :-----------------------------------------------------:|---------------------------------------------------------------------|
-| Go (TinyGo)    | ✅     | [demo](https://mosn.io/layotto/#/en/start/wasm/start)  | Compile Code written by TinyGo to *.wasm and run in Layotto         |
-| Rust           | ✅     | [demo](https://mosn.io/layotto/#/en/start/wasm/start)  | Compile Code written by Rust to *.wasm and run in Layotto           |
-| AssemblyScript | ✅     | [demo](https://mosn.io/layotto/#/en/start/wasm/start)  | Compile Code written by AssemblyScript to *.wasm and run in Layotto |
+[Distributed Lock API demo with redis](https://mosn.io/layotto/#/en/start/lock/start)
 
-## Other features
-| feature | status |                       quick start                      |            desc            |
-| ------- | :----: | :-----------------------------------------------------:|----------------------------|
-| istio   | ✅     | [demo](https://mosn.io/layotto/#/en/start/istio/start) | As the data plane of istio |
+### Traffic intervention on the 4th layer network
 
+[Dump TCP Traffic](https://mosn.io/layotto/#/en/start/network_filter/tcpcopy)
+
+### Flow Control on the 7th layer network
+
+[Method Level Flow Control](https://mosn.io/layotto/#/en/start/stream_filter/flow_control)
+
+### Health check and metadata query
+
+[Use Layotto Actuator for health check and metadata query](https://mosn.io/layotto/#/en/start/actuator/start)
+
+### Service Invocation
+
+[Hello World](https://mosn.io/layotto/#/en/start/rpc/helloworld)
+
+[Dubbo JSON RPC](https://mosn.io/layotto/#/en/start/rpc/dubbo_json_rpc)
+
+### Integrate with istio
+
+[As the data plane of istio](https://mosn.io/layotto/#/en/start/istio/start)
+
+### Multilingual programming based on WASM
+
+[WASM on Layotto](https://mosn.io/layotto/#/en/start/wasm/start)
 
 ## Design Documents
 
