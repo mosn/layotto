@@ -46,6 +46,21 @@ type Client interface {
 
 	GetConfiguration(ctx context.Context, in *ConfigurationRequestItem) ([]*ConfigurationItem, error)
 
+	// InvokeMethod invokes service without raw data
+	InvokeMethod(ctx context.Context, appID, methodName, verb string) (out []byte, err error)
+
+	// InvokeMethodWithContent invokes service with content
+	InvokeMethodWithContent(ctx context.Context, appID, methodName, verb string, content *DataContent) (out []byte, err error)
+
+	// InvokeMethodWithCustomContent invokes app with custom content (struct + content type).
+	InvokeMethodWithCustomContent(ctx context.Context, appID, methodName, verb string, contentType string, content interface{}) (out []byte, err error)
+
+	// PublishEvent publishes data onto topic in specific pubsub component.
+	PublishEvent(ctx context.Context, pubsubName, topicName string, data []byte) error
+
+	// PublishEventfromCustomContent serializes an struct and publishes its contents as data (JSON) onto topic in specific pubsub component.
+	PublishEventfromCustomContent(ctx context.Context, pubsubName, topicName string, data interface{}) error
+
 	// SaveConfiguration saves configuration into configuration store.
 	SaveConfiguration(ctx context.Context, in *SaveConfigurationRequest) error
 
@@ -54,9 +69,6 @@ type Client interface {
 
 	// SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
 	SubscribeConfiguration(ctx context.Context, in *ConfigurationRequestItem) WatchChan
-
-	// Publishes events to the specific topic.
-	PublishEvent(ctx context.Context, in *PublishEventRequest) error
 
 	// SaveState saves the raw data into store using default state options.
 	SaveState(ctx context.Context, storeName, key string, data []byte, so ...StateOption) error
