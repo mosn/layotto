@@ -18,10 +18,13 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
+	"google.golang.org/protobuf/types/known/anypb"
 	empty "google.golang.org/protobuf/types/known/emptypb"
+	pb "mosn.io/layotto/spec/proto/runtime/v1"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"net"
 	"os"
@@ -71,7 +74,11 @@ func TestNewClient(t *testing.T) {
 
 func getTestClient(ctx context.Context) (client Client, closer func()) {
 	s := grpc.NewServer()
-	runtimev1pb.RegisterRuntimeServer(s, &testRuntimeServer{kv: make(map[string]string), subscribed: make(map[string]bool)})
+	runtimev1pb.RegisterRuntimeServer(s, &testRuntimeServer{
+		kv:         make(map[string]string),
+		subscribed: make(map[string]bool),
+		state:      make(map[string][]byte),
+	})
 
 	l := bufconn.Listen(testBufSize)
 	go func() {
@@ -102,6 +109,90 @@ type testRuntimeServer struct {
 	runtimev1pb.UnimplementedRuntimeServer
 	kv         map[string]string
 	subscribed map[string]bool
+	state      map[string][]byte
+}
+
+func (s *testRuntimeServer) InvokeService(ctx context.Context, req *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error) {
+	if req.Message == nil {
+		return &runtimev1pb.InvokeResponse{
+			ContentType: "text/plain",
+			Data: &anypb.Any{
+				Value: []byte("pong"),
+			},
+		}, nil
+	}
+	return &runtimev1pb.InvokeResponse{
+		ContentType: req.Message.ContentType,
+		Data:        req.Message.Data,
+	}, nil
+}
+
+func (s *testRuntimeServer) GetState(ctx context.Context, req *runtimev1pb.GetStateRequest) (*runtimev1pb.GetStateResponse, error) {
+	return &pb.GetStateResponse{
+		Data: s.state[req.Key],
+		Etag: "1",
+	}, nil
+}
+
+func (s *testRuntimeServer) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequest) (*runtimev1pb.GetBulkStateResponse, error) {
+	items := make([]*runtimev1pb.BulkStateItem, 0)
+	for _, k := range in.GetKeys() {
+		if v, found := s.state[k]; found {
+			item := &pb.BulkStateItem{
+				Key:  k,
+				Etag: "1",
+				Data: v,
+			}
+			items = append(items, item)
+		}
+	}
+	return &pb.GetBulkStateResponse{
+		Items: items,
+	}, nil
+}
+
+func (s *testRuntimeServer) SaveState(ctx context.Context, req *runtimev1pb.SaveStateRequest) (*empty.Empty, error) {
+	if req == nil {
+		return &empty.Empty{}, nil
+	}
+	for _, item := range req.States {
+		if item == nil {
+			continue
+		}
+		s.state[item.Key] = item.Value
+	}
+	return &empty.Empty{}, nil
+}
+
+func (s *testRuntimeServer) DeleteState(ctx context.Context, req *runtimev1pb.DeleteStateRequest) (*empty.Empty, error) {
+	delete(s.state, req.Key)
+	return &empty.Empty{}, nil
+}
+
+func (s *testRuntimeServer) DeleteBulkState(ctx context.Context, req *runtimev1pb.DeleteBulkStateRequest) (*empty.Empty, error) {
+	for _, item := range req.States {
+		delete(s.state, item.Key)
+	}
+	return &empty.Empty{}, nil
+}
+
+func (s *testRuntimeServer) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*empty.Empty, error) {
+	for _, op := range in.GetOperations() {
+		item := op.GetRequest()
+		switch opType := op.GetOperationType(); opType {
+		case "upsert":
+			s.state[item.Key] = item.Value
+		case "delete":
+			delete(s.state, item.Key)
+		default:
+			return &empty.Empty{}, fmt.Errorf("invalid operation type: %s", opType)
+		}
+	}
+	return &empty.Empty{}, nil
+}
+
+func (s *testRuntimeServer) PublishEvent(ctx context.Context, req *runtimev1pb.PublishEventRequest) (*empty.Empty, error) {
+	return &empty.Empty{}, nil
 }
 
 func (t *testRuntimeServer) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error) {
