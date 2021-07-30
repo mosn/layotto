@@ -4,15 +4,27 @@ State API is a set of APIs for adding, deleting, modifying and querying Key/Valu
 
 API supports batch CRUD operations and supports the declaration of requirements for concurrency security and data consistency. Layotto will help you deal with complex concurrency control and data consistency issues.
 
-## When to use State API
-If your application needs to do some CRUD operations on Key/Value storage, then using the State API is a good choice. It can decouple your application and the storage provider, and you can deploy it on different clouds without changing the code.
+## When to use State API and what are the benefits?
+If your application needs to do some CRUD operations on Key/Value storage, then using the State API is a good choice. It has the following benefits:
+
+- Multi (cloud) environment deployment: the same application code can be deployed in different environments
+
+A neutral API can help your application decouple from storage vendors and cloud vendors, and be able to deploy on different clouds without changing the code.
+
+- Multi-language reuse middleware: the same DB (and data middleware) can support applications in different languages
+
+If your company has applications developed in different languages (for example, both java and python applications), then the traditional approach is to develop a set of data middleware SDKs for each language(used for routing,traffic control or some other custom purposes).
+
+Using State API can help you avoid the trouble of maintaining multilingual SDKs. Applications in different languages can interact with Layotto using the same set of grpc API.
 
 ## How to use State API
 You can call the State API through grpc. The API is defined in [runtime.proto](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto).
 
+The component needs to be configured before use. For detailed configuration items, see [State Component Document](en/component_specs/state/common.md)
+
+### Example
 Layotto client sdk encapsulates the logic of grpc call. For examples of using sdk to call State API, please refer to [Quick Start: Use State API](en/start/state/start.md)
 
-The component needs to be configured before use. For detailed configuration items, see [State Component Document](en/component_specs/state/common.md)
 
 ### Save state
 Used to save a batch of status data

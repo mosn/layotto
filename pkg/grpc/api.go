@@ -60,10 +60,10 @@ var (
 
 type API interface {
 	SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error)
-	// GetConfiguration gets configuration from configuration store.
-	GetConfiguration(context.Context, *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error)
 	// InvokeService do rpc calls.
 	InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error)
+	// GetConfiguration gets configuration from configuration store.
+	GetConfiguration(context.Context, *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error)
 	// SaveConfiguration saves configuration into configuration store.
 	SaveConfiguration(context.Context, *runtimev1pb.SaveConfigurationRequest) (*emptypb.Empty, error)
 	// DeleteConfiguration deletes configuration from configuration store.
@@ -802,7 +802,7 @@ func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) 
 	// 1. validate
 	if len(a.sequencers) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrSequencerStoresNotConfigured)
-		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
 		return &runtimev1pb.GetNextIdResponse{}, err
 	}
 	if req.Key == "" {
@@ -812,6 +812,12 @@ func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) 
 	// 2. convert
 	compReq, err := converter.GetNextIdRequest2ComponentRequest(req)
 	if err != nil {
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	// modify key
+	compReq.Key, err = runtime_sequencer.GetModifiedKey(compReq.Key, req.StoreName, a.appId)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
 		return &runtimev1pb.GetNextIdResponse{}, err
 	}
 	// 3. find store component

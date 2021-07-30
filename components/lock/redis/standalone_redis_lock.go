@@ -2,34 +2,18 @@ package redis
 
 import (
 	"context"
-	"crypto/tls"
-	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/pkg/log"
-	"strconv"
 	"time"
-)
-
-const (
-	host                   = "redisHost"
-	password               = "redisPassword"
-	enableTLS              = "enableTLS"
-	maxRetries             = "maxRetries"
-	maxRetryBackoff        = "maxRetryBackoff"
-	defaultBase            = 10
-	defaultBitSize         = 0
-	defaultDB              = 0
-	defaultMaxRetries      = 3
-	defaultMaxRetryBackoff = time.Second * 2
-	defaultEnableTLS       = false
 )
 
 // Standalone Redis lock store.Any fail-over related features are not supported,such as Sentinel and Redis Cluster.
 type StandaloneRedisLock struct {
 	client   *redis.Client
-	metadata metadata
+	metadata utils.RedisMetadata
 	replicas int
 
 	features []lock.Feature
@@ -51,35 +35,19 @@ func NewStandaloneRedisLock(logger log.ErrorLogger) *StandaloneRedisLock {
 
 func (p *StandaloneRedisLock) Init(metadata lock.Metadata) error {
 	// 1. parse config
-	m, err := parseRedisMetadata(metadata)
+	m, err := utils.ParseRedisMetadata(metadata.Properties)
 	if err != nil {
 		return err
 	}
 	p.metadata = m
 	// 2. construct client
-	p.client = p.newClient(m)
+	p.client = utils.NewRedisClient(m)
 	p.ctx, p.cancel = context.WithCancel(context.Background())
 	// 3. connect to redis
 	if _, err = p.client.Ping(p.ctx).Result(); err != nil {
-		return fmt.Errorf("[standaloneRedisLock]: error connecting to redis at %s: %s", m.host, err)
+		return fmt.Errorf("[standaloneRedisLock]: error connecting to redis at %s: %s", m.Host, err)
 	}
 	return err
-}
-
-func (p *StandaloneRedisLock) newClient(m metadata) *redis.Client {
-	opts := &redis.Options{
-		Addr:            m.host,
-		Password:        m.password,
-		DB:              defaultDB,
-		MaxRetries:      m.maxRetries,
-		MaxRetryBackoff: m.maxRetryBackoff,
-	}
-	if m.enableTLS {
-		opts.TLSConfig = &tls.Config{
-			InsecureSkipVerify: m.enableTLS,
-		}
-	}
-	return redis.NewClient(opts)
 }
 
 func (p *StandaloneRedisLock) Features() []lock.Feature {
@@ -144,55 +112,4 @@ func (p *StandaloneRedisLock) Close() error {
 	p.cancel()
 
 	return p.client.Close()
-}
-
-func parseRedisMetadata(meta lock.Metadata) (metadata, error) {
-	m := metadata{}
-
-	if val, ok := meta.Properties[host]; ok && val != "" {
-		m.host = val
-	} else {
-		return m, errors.New("redis store error: missing host address")
-	}
-
-	if val, ok := meta.Properties[password]; ok && val != "" {
-		m.password = val
-	}
-
-	m.enableTLS = defaultEnableTLS
-	if val, ok := meta.Properties[enableTLS]; ok && val != "" {
-		tls, err := strconv.ParseBool(val)
-		if err != nil {
-			return m, fmt.Errorf("redis store error: can't parse enableTLS field: %s", err)
-		}
-		m.enableTLS = tls
-	}
-
-	m.maxRetries = defaultMaxRetries
-	if val, ok := meta.Properties[maxRetries]; ok && val != "" {
-		parsedVal, err := strconv.ParseInt(val, defaultBase, defaultBitSize)
-		if err != nil {
-			return m, fmt.Errorf("redis store error: can't parse maxRetries field: %s", err)
-		}
-		m.maxRetries = int(parsedVal)
-	}
-
-	m.maxRetryBackoff = defaultMaxRetryBackoff
-	if val, ok := meta.Properties[maxRetryBackoff]; ok && val != "" {
-		parsedVal, err := strconv.ParseInt(val, defaultBase, defaultBitSize)
-		if err != nil {
-			return m, fmt.Errorf("redis store error: can't parse maxRetryBackoff field: %s", err)
-		}
-		m.maxRetryBackoff = time.Duration(parsedVal)
-	}
-
-	return m, nil
-}
-
-type metadata struct {
-	host            string
-	password        string
-	maxRetries      int
-	maxRetryBackoff time.Duration
-	enableTLS       bool
 }
