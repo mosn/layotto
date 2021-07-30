@@ -55,7 +55,7 @@ func Test_boltCommon_FromFrame(t *testing.T) {
 
 		_, err = b.FromFrame(resp)
 		assert.NotNil(t, err)
-		assert.Equal(t, "bolt error code 1", err.Error())
+		assert.True(t, strings.Contains(err.Error(), "bolt error code 1"))
 	})
 }
 

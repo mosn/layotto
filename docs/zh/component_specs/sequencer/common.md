@@ -4,11 +4,11 @@
 json配置文件有如下结构：
 ```json
 "sequencer": {
-  "biggerThan": {
-    "<KEY>": "<VALUE>",
-    "<KEY>": "<VALUE>"
-  },
   "<STORE NAME>": {
+    "biggerThan": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    },
     "metadata": {
       "<KEY>": "<VALUE>",
       "<KEY>": "<VALUE>"

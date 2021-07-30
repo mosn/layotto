@@ -5,14 +5,26 @@ State API是一套对Key/Value数据进行增删改查的API。您的应用程�
 API支持批量CRUD操作，支持声明对并发安全和数据一致性的要求，由Layotto帮您处理复杂的并发安全和数据一致性问题。
 
 ## 何时使用State API
-如果您的应用需要访问Key/Value存储、进行增删改查，那么使用State API是一个不错的选择，它可以帮助您的应用和存储供应商解耦，能够不改代码部署在不同的云上。
+如果您的应用需要访问Key/Value存储、进行增删改查，那么使用State API是一个不错的选择，它有以下好处：
+
+- 多（云）环境部署：同一套业务代码部署在不同环境
+
+中立的API可以帮助您的应用和存储供应商、云厂商解耦，能够不改代码部署在不同的云上。
+
+- 多语言复用中间件：同一个DB（和数据中间件）能支持不同语言的应用
+
+如果您的公司内部有不同语言开发的应用（例如同时有java和python应用），那么传统做法是为每种语言开发一套数据中间件sdk（用于路由，容灾，流量管理等目的）。
+
+使用State API可以帮助您免去维护多语言sdk的烦恼，不同语言的应用可以用同一套grpc API和Layotto交互。
 
 ## 如何使用State API
 您可以通过grpc调用State API，接口定义在[runtime.proto](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) 中。
 
+使用前需要先对组件进行配置，详细的配置说明见[状态管理组件文档](zh/component_specs/state/common.md)
+
+### 使用示例
 Layotto client sdk封装了grpc调用的逻辑，使用sdk调用State API的示例可以参考[快速开始：使用State API](zh/start/state/start.md)
 
-使用前需要先对组件进行配置，详细的配置说明见[状态管理组件文档](zh/component_specs/state/common.md)
 
 ### Save state
 用于保存一批状态数据
