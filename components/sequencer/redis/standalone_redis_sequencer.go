@@ -47,8 +47,8 @@ func NewStandaloneRedisSequencer(logger log.ErrorLogger) *StandaloneRedisSequenc
 
 /*
    1. exists and >= biggerThan, no operation required, return 0
-   2. not exists or < biggthan, reset val,return 1
-   3. lua script occur error, such as tonumer(string) return error
+   2. not exists or < biggthan, reset val, return 1
+   3. lua script occur error, such as tonumer(string), return error
 */
 const initScript = `
 if  redis.call('exists', KEYS[1])==1 and tonumber(redis.call('get', KEYS[1])) >= tonumber(ARGV[1]) then
