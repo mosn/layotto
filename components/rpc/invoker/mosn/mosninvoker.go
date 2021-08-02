@@ -115,9 +115,9 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 		strconv.FormatInt(beforeInvokeTime.Sub(startTime).Nanoseconds()/1000000, 10),
 		strconv.FormatInt(requestTime.Sub(beforeInvokeTime).Nanoseconds()/1000000, 10),
 		strconv.FormatInt(afterInvokeTime.Sub(requestTime).Nanoseconds()/1000000, 10),
-		strconv.FormatInt(beforeInvokeTime.Sub(startTime).Nanoseconds()/1000000, 10)+
-			strconv.FormatInt(requestTime.Sub(beforeInvokeTime).Nanoseconds()/1000000, 10)+
-			strconv.FormatInt(afterInvokeTime.Sub(requestTime).Nanoseconds()/1000000, 10),
+		beforeInvokeTime.Sub(startTime).Nanoseconds()/1000000+
+			requestTime.Sub(beforeInvokeTime).Nanoseconds()/1000000+
+			afterInvokeTime.Sub(requestTime).Nanoseconds()/1000000,
 	)
 	return resp, err
 }
