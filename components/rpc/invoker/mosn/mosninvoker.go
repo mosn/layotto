@@ -21,6 +21,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
+	"time"
 
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/rpc/callback"
@@ -88,13 +90,14 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 		req.Timeout = 3000
 	}
 	req.Ctx = ctx
+	startTime := time.Now()
 	log.DefaultLogger.Debugf("[runtime][rpc]request %+v", req)
 	req, err = m.cb.BeforeInvoke(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]before filter error %s", err.Error())
 		return nil, err
 	}
-
+	beforeInvokeTime := time.Now()
 	resp, err = m.channel.Do(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]error %s", err.Error())
@@ -102,9 +105,19 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 	}
 
 	resp.Ctx = req.Ctx
+	requestTime := time.Now()
 	resp, err = m.cb.AfterInvoke(resp)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]after filter error %s", err.Error())
 	}
+	afterInvokeTime := time.Now()
+	log.DefaultLogger.Infof("[Layotto] rpc request spend time is: beforeInvokeTime: %+v, requestTime: %+v,afterInvoke: %+v, tootle:%+v",
+		strconv.FormatInt(beforeInvokeTime.Sub(startTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(requestTime.Sub(beforeInvokeTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(afterInvokeTime.Sub(requestTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(beforeInvokeTime.Sub(startTime).Nanoseconds()/1000000, 10)+
+			strconv.FormatInt(requestTime.Sub(beforeInvokeTime).Nanoseconds()/1000000, 10)+
+			strconv.FormatInt(afterInvokeTime.Sub(requestTime).Nanoseconds()/1000000, 10),
+	)
 	return resp, err
 }
