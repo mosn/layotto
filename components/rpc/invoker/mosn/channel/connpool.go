@@ -150,7 +150,7 @@ func (p *connPool) readloop(c *wrapConn) {
 		}
 	}()
 
-	c.buf = buffer.NewIoBuffer(16 * 1024)
+	c.buf = buffer.NewIoBuffer(16 * 1024 * 501)
 	for {
 		n, readErr := c.buf.ReadOnce(c)
 		if readErr != nil {
