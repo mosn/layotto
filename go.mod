@@ -20,7 +20,7 @@ require (
 	google.golang.org/grpc/examples v0.0.0-20210526223527-2de42fcbbce3 // indirect
 	google.golang.org/protobuf v1.27.1
 	mosn.io/api v0.0.0-20210414070543-8a0686b03540
-	mosn.io/layotto/components v0.0.0-20210625065826-9c2ad8dbcf05
+	mosn.io/layotto/components v0.0.0-20210803105424-ebade9ddcce0
 	mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3
 	mosn.io/mosn v0.23.0
 	mosn.io/pkg v0.0.0-20210604065522-6e8f5a087814
