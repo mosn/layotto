@@ -111,7 +111,7 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 		log.DefaultLogger.Errorf("[runtime][rpc]after filter error %s", err.Error())
 	}
 	afterInvokeTime := time.Now()
-	if afterInvokeTime.Sub(startTime) > 100 {
+	if (afterInvokeTime.Sub(startTime).Nanoseconds() / 1000000) > 100 {
 		log.DefaultLogger.Infof("[Layotto] rpc request spend time is: beforeInvokeTime: %+v, requestTime: %+v,afterInvoke: %+v, tootle:%+v",
 			strconv.FormatInt(beforeInvokeTime.Sub(startTime).Nanoseconds()/1000000, 10),
 			strconv.FormatInt(requestTime.Sub(beforeInvokeTime).Nanoseconds()/1000000, 10),
