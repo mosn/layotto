@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"strconv"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -154,6 +155,7 @@ func (m *xChannel) removeCall(xstate *xstate, id uint32) {
 
 func (m *xChannel) onData(conn *wrapConn) error {
 	xstate := conn.state.(*xstate)
+	StartTime := time.Now()
 	for {
 		var iframe interface{}
 		iframe, err := m.proto.Decode(context.TODO(), conn.buf)
@@ -182,6 +184,8 @@ func (m *xChannel) onData(conn *wrapConn) error {
 			notifyChan <- &call{resp: frame}
 		}
 	}
+	endtime := time.Now()
+	fmt.Printf("解码时间是：%+v \n", strconv.FormatInt(endtime.Sub(StartTime).Nanoseconds()/1000, 10))
 	return nil
 }
 
