@@ -35,6 +35,8 @@ const (
 	Name = "mosn"
 )
 
+var LayottoStatLogger *log.Logger
+
 type mosnInvoker struct {
 	channel rpc.Channel
 	cb      rpc.Callback
@@ -75,6 +77,11 @@ func (m *mosnInvoker) Init(conf rpc.RpcConfig) error {
 		return err
 	}
 	m.channel = channel
+	logRoot := "/home/admin/logs/tracelog/mosn/"
+	LayottoStatLogger, err = log.GetOrCreateLogger(logRoot+"layotto-client-stat.log", &log.Roller{MaxTime: 24 * 60 * 60})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -111,13 +118,29 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 		log.DefaultLogger.Errorf("[runtime][rpc]after filter error %s", err.Error())
 	}
 	afterInvokeTime := time.Now()
-	if (afterInvokeTime.Sub(startTime).Nanoseconds() / 1000000) > 100 {
-		log.DefaultLogger.Infof("[Layotto] rpc request spend time is: beforeInvokeTime: %+v, requestTime: %+v,afterInvoke: %+v, tootle:%+v",
-			strconv.FormatInt(beforeInvokeTime.Sub(startTime).Nanoseconds()/1000000, 10),
-			strconv.FormatInt(requestTime.Sub(beforeInvokeTime).Nanoseconds()/1000000, 10),
-			strconv.FormatInt(afterInvokeTime.Sub(requestTime).Nanoseconds()/1000000, 10),
-			strconv.FormatInt(afterInvokeTime.Sub(startTime).Nanoseconds()/1000000, 10),
-		)
-	}
+	beginReqTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("beginReqTime"))
+	getPoolTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("getPoolTime"))
+	frameTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("frameTime"))
+	encodeTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("encodeTime"))
+	getCallChanTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("getCallChanTime"))
+	writeTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("writeTime"))
+	receiveRespTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("receiveRespTime"))
+	rpcId := req.Header.Get("rpc_trace_context.sofaRpcId")
+	traceId := req.Header.Get("rpc_trace_context.sofaTraceId")
+	LayottoStatLogger.Printf("[Layotto] rpc request rpcId:[%+v],traceId:[%+v] ,spend time is beforeInvokeTime:%+v, requestTime:%+v,afterInvoke:%+v,"+
+		"getPoolTime:%+v,frameTime:%+v,encodeTime:%+v,getCallChanTime:%+v,writeTime:%+v,receiveRespTime:%+v, tootle:%+v,",
+		rpcId,
+		traceId,
+		strconv.FormatInt(beforeInvokeTime.Sub(startTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(requestTime.Sub(beforeInvokeTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(afterInvokeTime.Sub(requestTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(getPoolTime.Sub(beginReqTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(frameTime.Sub(getPoolTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(encodeTime.Sub(frameTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(getCallChanTime.Sub(encodeTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(writeTime.Sub(getCallChanTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(receiveRespTime.Sub(writeTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(afterInvokeTime.Sub(startTime).Nanoseconds()/1000000, 10),
+	)
 	return resp, err
 }
