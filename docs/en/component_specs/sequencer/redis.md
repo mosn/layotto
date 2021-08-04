@@ -11,6 +11,11 @@ Example: configs/config_sequencer_redis.json
 |maxRetryBackoff|N|  maximum backoff between each retry,default value is 2s |
 |enableTLS |N|  controls whether a client verifies the server's certificate chain and host name,default value is false|
 
+## How to avoid generating duplicate id
+Redis components may generate duplicate IDs in the case of data loss. 
+
+In order to avoid data loss and duplicate IDs, you need to use stand-alone redis and [use both persistence methods to get a degree of data safety comparable to what PostgreSQL can provide you.](https://redis.io/topics/persistence)
+
 ## How to start Redis
 If you want to run the redis demo, you need to start a Redis server with Docker first.
 

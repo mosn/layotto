@@ -47,6 +47,7 @@
             - [Apollo](zh/component_specs/configuration/apollo.md)        
         - [Sequencer](zh/component_specs/sequencer/common.md)
             - [Etcd](zh/component_specs/sequencer/etcd.md)
+            - [Redis](zh/component_specs/sequencer/redis.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)
