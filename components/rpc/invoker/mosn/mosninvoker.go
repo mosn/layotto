@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os/user"
 	"strconv"
 	"time"
 
@@ -77,7 +78,8 @@ func (m *mosnInvoker) Init(conf rpc.RpcConfig) error {
 		return err
 	}
 	m.channel = channel
-	logRoot := "/home/admin/logs/tracelog/mosn/"
+	usr, err := user.Current()
+	logRoot := usr.HomeDir + "/logs/tracelog/mosn/"
 	LayottoStatLogger, err = log.GetOrCreateLogger(logRoot+"layotto-client-stat.log", &log.Roller{MaxTime: 24 * 60 * 60})
 	if err != nil {
 		return err
