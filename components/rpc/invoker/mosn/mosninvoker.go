@@ -135,7 +135,7 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 	onDataEndTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("onDataEndTime"))
 
 	LayottoStatLogger.Printf("[Layotto] rpc request rpcId:[%+v],traceId:[%+v] ,spend time is beforeInvokeTime:%+v, requestTime:%+v,afterInvoke:%+v,"+
-		"getPoolTime:%+v,frameTime:%+v,encodeTime:%+v,getCallChanTime:%+v,writeTime:%+v,receiveRespTime:%+v, onDataLockTime:%+v, onDataLockTime:%+v,tootle:%+v,",
+		"getPoolTime:%+v,frameTime:%+v,encodeTime:%+v,getCallChanTime:%+v,writeTime:%+v,receiveRespTime:%+v, onDataTime:%+v, onDataLockTime:%+v,tootle:%+v,",
 		rpcId,
 		traceId,
 		strconv.FormatInt(beforeInvokeTime.Sub(startTime).Nanoseconds()/1000, 10),

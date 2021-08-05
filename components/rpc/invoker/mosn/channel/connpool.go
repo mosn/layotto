@@ -142,7 +142,6 @@ func (p *connPool) Put(c *wrapConn, close bool) {
 
 func (p *connPool) readloop(c *wrapConn) {
 	var err error
-
 	defer func() {
 		c.close()
 		if p.cleanupFunc != nil {
