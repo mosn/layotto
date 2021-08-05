@@ -25,6 +25,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"mosn.io/pkg/log"
+
 	"mosn.io/api"
 	common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
@@ -154,6 +156,7 @@ func (m *xChannel) removeCall(xstate *xstate, id uint32) {
 
 func (m *xChannel) onData(conn *wrapConn) error {
 	xstate := conn.state.(*xstate)
+	startTime := time.Now()
 	for {
 		var iframe interface{}
 		iframe, err := m.proto.Decode(context.TODO(), conn.buf)
@@ -181,6 +184,10 @@ func (m *xChannel) onData(conn *wrapConn) error {
 		if ok {
 			notifyChan <- &call{resp: frame}
 		}
+	}
+	endTime := time.Now()
+	if endTime.Sub(startTime).Nanoseconds()/1000000 > 2 {
+		log.DefaultLogger.Errorf("解码时间超过两毫秒了")
 	}
 	return nil
 }
