@@ -25,8 +25,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"mosn.io/pkg/log"
-
 	"mosn.io/api"
 	common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
@@ -52,6 +50,10 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	m.pool = newConnPool(
 		config.Size,
 		func() (net.Conn, error) {
+			if _, _, err := net.SplitHostPort(config.Listener); err == nil {
+				return net.DialTimeout("tcp", config.Listener, time.Second)
+			}
+
 			local, remote := net.Pipe()
 			localTcpConn := &fakeTcpConn{c: local}
 			remoteTcpConn := &fakeTcpConn{c: remote}
@@ -77,8 +79,11 @@ type xstate struct {
 }
 
 type call struct {
-	resp api.XRespFrame
-	err  error
+	resp      api.XRespFrame
+	startTime time.Time
+	lockTime  time.Time
+	endTime   time.Time
+	err       error
 }
 
 type xChannel struct {
@@ -138,6 +143,9 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		req.Header["getCallChanTime"] = getCallChanTime
 		req.Header["writeTime"] = writeTime
 		req.Header["receiveRespTime"] = []string{time.Now().Format(time.RFC3339Nano)}
+		req.Header["onDataStartTime"] = []string{res.startTime.Format(time.RFC3339Nano)}
+		req.Header["lockTime"] = []string{res.lockTime.Format(time.RFC3339Nano)}
+		req.Header["onDataEndTime"] = []string{res.endTime.Format(time.RFC3339Nano)}
 		if res.err != nil {
 			return nil, common.Error(common.UnavailebleCode, res.err.Error())
 		}
@@ -175,19 +183,17 @@ func (m *xChannel) onData(conn *wrapConn) error {
 
 		reqID := frame.GetRequestId()
 		reqID32 := uint32(reqID)
+		lockTime := time.Now()
 		xstate.mu.Lock()
 		notifyChan, ok := xstate.calls[reqID32]
 		if ok {
 			delete(xstate.calls, reqID32)
 		}
 		xstate.mu.Unlock()
+		endTime := time.Now()
 		if ok {
-			notifyChan <- &call{resp: frame}
+			notifyChan <- &call{resp: frame, startTime: startTime, lockTime: lockTime, endTime: endTime}
 		}
-	}
-	endTime := time.Now()
-	if endTime.Sub(startTime).Nanoseconds()/1000000 > 2 {
-		log.DefaultLogger.Errorf("解码时间超过两毫秒了")
 	}
 	return nil
 }

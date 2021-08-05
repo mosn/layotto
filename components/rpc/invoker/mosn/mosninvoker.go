@@ -129,19 +129,26 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 	receiveRespTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("receiveRespTime"))
 	rpcId := req.Header.Get("rpc_trace_context.sofaRpcId")
 	traceId := req.Header.Get("rpc_trace_context.sofaTraceId")
+
+	onDataStartTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("onDataStartTime"))
+	lockTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("lockTime"))
+	onDataEndTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("onDataEndTime"))
+
 	LayottoStatLogger.Printf("[Layotto] rpc request rpcId:[%+v],traceId:[%+v] ,spend time is beforeInvokeTime:%+v, requestTime:%+v,afterInvoke:%+v,"+
-		"getPoolTime:%+v,frameTime:%+v,encodeTime:%+v,getCallChanTime:%+v,writeTime:%+v,receiveRespTime:%+v, tootle:%+v,",
+		"getPoolTime:%+v,frameTime:%+v,encodeTime:%+v,getCallChanTime:%+v,writeTime:%+v,receiveRespTime:%+v, onDataLockTime:%+v, onDataLockTime:%+v,tootle:%+v,",
 		rpcId,
 		traceId,
-		strconv.FormatInt(beforeInvokeTime.Sub(startTime).Nanoseconds()/1000000, 10),
-		strconv.FormatInt(requestTime.Sub(beforeInvokeTime).Nanoseconds()/1000000, 10),
-		strconv.FormatInt(afterInvokeTime.Sub(requestTime).Nanoseconds()/1000000, 10),
-		strconv.FormatInt(getPoolTime.Sub(beginReqTime).Nanoseconds()/1000000, 10),
-		strconv.FormatInt(frameTime.Sub(getPoolTime).Nanoseconds()/1000000, 10),
-		strconv.FormatInt(encodeTime.Sub(frameTime).Nanoseconds()/1000000, 10),
-		strconv.FormatInt(getCallChanTime.Sub(encodeTime).Nanoseconds()/1000000, 10),
-		strconv.FormatInt(writeTime.Sub(getCallChanTime).Nanoseconds()/1000000, 10),
-		strconv.FormatInt(receiveRespTime.Sub(writeTime).Nanoseconds()/1000000, 10),
+		strconv.FormatInt(beforeInvokeTime.Sub(startTime).Nanoseconds()/1000, 10),
+		strconv.FormatInt(requestTime.Sub(beforeInvokeTime).Nanoseconds()/1000, 10),
+		strconv.FormatInt(afterInvokeTime.Sub(requestTime).Nanoseconds()/1000, 10),
+		strconv.FormatInt(getPoolTime.Sub(beginReqTime).Nanoseconds()/1000, 10),
+		strconv.FormatInt(frameTime.Sub(getPoolTime).Nanoseconds()/1000, 10),
+		strconv.FormatInt(encodeTime.Sub(frameTime).Nanoseconds()/1000, 10),
+		strconv.FormatInt(getCallChanTime.Sub(encodeTime).Nanoseconds()/1000, 10),
+		strconv.FormatInt(writeTime.Sub(getCallChanTime).Nanoseconds()/1000, 10),
+		strconv.FormatInt(receiveRespTime.Sub(writeTime).Nanoseconds()/1000, 10),
+		strconv.FormatInt(onDataEndTime.Sub(onDataStartTime).Nanoseconds()/1000, 10),
+		strconv.FormatInt(onDataEndTime.Sub(lockTime).Nanoseconds()/1000, 10),
 		strconv.FormatInt(afterInvokeTime.Sub(startTime).Nanoseconds()/1000000, 10),
 	)
 	return resp, err
