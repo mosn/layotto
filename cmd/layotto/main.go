@@ -88,7 +88,7 @@ import (
 
 	// Sequencer
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
-
+	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
 	"mosn.io/layotto/pkg/actuator/health"
@@ -262,6 +262,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithSequencerFactory(
 			runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
 				return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
+			}),
+			runtime_sequencer.NewFactory("redis", func() sequencer.Store {
+				return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
 			}),
 		))
 	// 4. check if unhealthy
