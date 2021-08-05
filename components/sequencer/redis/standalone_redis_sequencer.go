@@ -87,6 +87,12 @@ func (s *StandaloneRedisSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*
 }
 
 func (s *StandaloneRedisSequencer) GetSegment(req *sequencer.GetSegmentRequest) (bool, *sequencer.GetSegmentResponse, error) {
+
+	// size=0 only check support
+	if req.Size == 0 {
+		return true, nil, nil
+	}
+
 	by := s.client.IncrBy(s.ctx, req.Key, int64(req.Size))
 	err := by.Err()
 	if err != nil {
