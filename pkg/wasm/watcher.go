@@ -2,6 +2,7 @@ package wasm
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 
 	v2 "mosn.io/mosn/pkg/config/v2"
@@ -36,12 +37,22 @@ func runWatcher() {
 				return
 			}
 			log.DefaultLogger.Debugf("[proxywasm] [watcher] runWatcher got event, %s", event)
-			if event.Op&fsnotify.Remove == fsnotify.Remove {
-				if fileExist(event.Name) {
-					_ = watcher.Add(event.Name)
+
+			if pathIsWasmFile(event.Name) {
+				if event.Op&fsnotify.Remove == fsnotify.Remove {
+					if fileExist(event.Name) {
+						_ = watcher.Add(event.Name)
+					} else {
+						break
+					}
 				}
+				if event.Op&fsnotify.Create == fsnotify.Create {
+					if fileExist(event.Name) {
+						_ = watcher.Add(event.Name)
+					}
+				}
+				reloadWasm(event.Name)
 			}
-			reloadWasm(event.Name)
 		case err, ok := <-watcher.Errors:
 			if !ok {
 				log.DefaultLogger.Errorf("[proxywasm] [watcher] runWatcher exit")
@@ -59,9 +70,15 @@ func addWatchFile(cfg *filterConfig, pluginName string) {
 		return
 	}
 
+	dir := filepath.Dir(path)
+	if err := watcher.Add(dir); err != nil {
+		log.DefaultLogger.Errorf("[proxywasm] [watcher] addWatchFile fail to watch wasm dir, err: %v", err)
+		return
+	}
+
 	configs[path] = cfg
 	pluginNames[path] = pluginName
-	log.DefaultLogger.Infof("[proxywasm] [watcher] addWatchFile start to watch wasm file: %s", path)
+	log.DefaultLogger.Infof("[proxywasm] [watcher] addWatchFile start to watch wasm file and its dir: %s", path)
 }
 
 func reloadWasm(fullPath string) {
@@ -115,4 +132,13 @@ func fileExist(file string) bool {
 		return false
 	}
 	return true
+}
+
+func pathIsWasmFile(fullPath string) bool {
+	for path, _ := range configs {
+		if strings.HasSuffix(fullPath, path) {
+			return true
+		}
+	}
+	return false
 }
