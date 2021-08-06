@@ -1,6 +1,7 @@
 package wasm
 
 import (
+	"os"
 	"strings"
 
 	v2 "mosn.io/mosn/pkg/config/v2"
@@ -35,6 +36,11 @@ func runWatcher() {
 				return
 			}
 			log.DefaultLogger.Debugf("[proxywasm] [watcher] runWatcher got event, %s", event)
+			if event.Op&fsnotify.Remove == fsnotify.Remove {
+				if fileExist(event.Name) {
+					_ = watcher.Add(event.Name)
+				}
+			}
 			reloadWasm(event.Name)
 		case err, ok := <-watcher.Errors:
 			if !ok {
@@ -101,4 +107,12 @@ func reloadWasm(fullPath string) {
 	if !found {
 		log.DefaultLogger.Errorf("[proxywasm] [watcher] reloadWasm WasmPluginConfig not found: %s", fullPath)
 	}
+}
+
+func fileExist(file string) bool {
+	_, err := os.Stat(file)
+	if err != nil && !os.IsExist(err) {
+		return false
+	}
+	return true
 }
