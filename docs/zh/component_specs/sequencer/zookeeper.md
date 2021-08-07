@@ -11,6 +11,8 @@
 | sessionTimeout | N | 会话的超时时间,单位秒,同zookeeper的sessionTimeout|
 |logInfo|N|true会打印zookeeper操作的所有信息，false只会打印zookeeper的错误信息|
 
+## 警告
+zookeeper的自增id组件利zk的version实现, version不能超过int32,超过会重置成0,所以发生重置是会但会error且打印错误日志，除此之外不会做任何处理。
 ## 怎么启动Zookeeper
 
 如果想启动zookeeper的demo，需要先用Docker启动一个Zookeeper 命令：

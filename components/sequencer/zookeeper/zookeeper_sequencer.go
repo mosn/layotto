@@ -86,7 +86,8 @@ func (s *ZookeeperSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequen
 	// so if version=0, an overflow int32 has occurred
 	//but this time return error ,what to do next time ？
 	if stat.Version == 0 {
-		return nil, fmt.Errorf("an overflow int32 has occurred in zookeeper")
+		s.logger.Errorf("an overflow int32 has occurred in zookeeper , the key is %s", req.Key)
+		return nil, fmt.Errorf("an overflow int32 has occurred in zookeeper, the key is %s", req.Key)
 	}
 
 	return &sequencer.GetNextIdResponse{

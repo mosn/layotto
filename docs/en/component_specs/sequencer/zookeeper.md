@@ -9,6 +9,8 @@ Example: configs/config_sequencer_zookeeper.json
 | zookeeperPassword | Y | zookeeper Password |
 | sessionTimeout | N | Session timeout,Unit second, same as zookeeper's sessionTimeout|
 |logInfo|N|true if zookeeper information messages are logged; false if only zookeeper errors are logged|
+##warning 
+The auto-increment id component of zookeeper is implemented by the version of zk. The version cannot exceed int32, and it will be reset to 0 when it is reset. Therefore, an error will be returned and the error log will be printed when a reset occurs. Nothing else will be processed.
 
 ## How to start Zookeeper
 If you want to run the zookeeper demo, you need to start a Zookeeper server with Docker first.
