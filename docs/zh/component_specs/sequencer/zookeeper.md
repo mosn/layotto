@@ -12,7 +12,8 @@
 |logInfo|N|true会打印zookeeper操作的所有信息，false只会打印zookeeper的错误信息|
 
 ## 警告
-zookeeper的自增id组件利zk的version实现, version不能超过int32,超过会重置成0,所以发生重置是会但会error且打印错误日志，除此之外不会做任何处理。
+zookeeper的自增id组件使用zk的version实现, version不能超过int32(虽然我们的sequencer API设计成返回int64),超过会溢出、重置成0。当GetNextId方法发生溢出、重置成0时，会产生一次error且打印错误日志，除此之外不会做任何处理。溢出后，继续调用GetNextId会正常处理，例如返回1,2,3......不会再有报错日志。
+
 ## 怎么启动Zookeeper
 
 如果想启动zookeeper的demo，需要先用Docker启动一个Zookeeper 命令：
