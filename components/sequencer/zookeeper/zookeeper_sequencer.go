@@ -85,7 +85,7 @@ func (s *ZookeeperSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequen
 	// create node version=0, every time we set node  will result in version+1
 	// so if version=0, an overflow int32 has occurred
 	//but this time return error ,what to do next time ？
-	if stat.Version == 0 {
+	if stat.Version <= 0 {
 		s.logger.Errorf("an overflow int32 has occurred in zookeeper , the key is %s", req.Key)
 		return nil, fmt.Errorf("an overflow int32 has occurred in zookeeper, the key is %s", req.Key)
 	}
