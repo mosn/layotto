@@ -84,6 +84,7 @@ func TestMosnRuntime_Run(t *testing.T) {
 
 func TestMosnRuntime_initAppCallbackConnection(t *testing.T) {
 	t.Run("init success", func(t *testing.T) {
+		// prepare app callback grpc server
 		port := 8888
 		listener, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%v", port))
 		assert.Nil(t, err)
@@ -98,14 +99,18 @@ func TestMosnRuntime_initAppCallbackConnection(t *testing.T) {
 				GrpcCallbackPort: port,
 			},
 		}
+		// construct MosnRuntime
 		m := NewMosnRuntime(cfg)
+		// test initAppCallbackConnection
 		err = m.initAppCallbackConnection()
+		// assert
 		assert.Nil(t, err)
 	})
 }
 
 func TestMosnRuntime_initPubSubs(t *testing.T) {
 	t.Run("normal", func(t *testing.T) {
+		// mock callback response
 		subResp := &runtimev1pb.ListTopicSubscriptionsResponse{
 			Subscriptions: []*runtimev1pb.TopicSubscription{
 				{
@@ -132,6 +137,7 @@ func TestMosnRuntime_initPubSubs(t *testing.T) {
 		}))
 		assert.Nil(t, err)
 
+		// mock pubsub component
 		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
 		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
 		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).Return(nil)
@@ -148,18 +154,22 @@ func TestMosnRuntime_initPubSubs(t *testing.T) {
 				},
 			},
 		}
+		// construct MosnRuntime
 		m := NewMosnRuntime(cfg)
 		m.AppCallbackConn = callbackClient
 		m.errInt = func(err error, format string, args ...interface{}) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
+		// test initPubSubs
 		err = m.initPubSubs(mpubsub.NewFactory("mock", f))
+		// assert result
 		assert.Nil(t, err)
 	})
 }
 
 func TestMosnRuntime_initStates(t *testing.T) {
 	t.Run("init success", func(t *testing.T) {
+		// prepare mock
 		mockStateStore := mock_state.NewMockStore(gomock.NewController(t))
 		mockStateStore.EXPECT().Init(gomock.Any()).Return(nil)
 		f := func() state.Store {
@@ -175,17 +185,21 @@ func TestMosnRuntime_initStates(t *testing.T) {
 				},
 			},
 		}
+		// construct MosnRuntime
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
+		// test initStates
 		err := m.initStates(mstate.NewFactory("mock", f))
+		// assert result
 		assert.Nil(t, err)
 	})
 }
 
 func TestMosnRuntime_initRpc(t *testing.T) {
 	t.Run("init success", func(t *testing.T) {
+		// prepare mock
 		mockInvoker := mock_invoker.NewMockInvoker(gomock.NewController(t))
 		mockInvoker.EXPECT().Init(gomock.Any()).Return(nil)
 		f := func() rpc.Invoker {
@@ -197,11 +211,14 @@ func TestMosnRuntime_initRpc(t *testing.T) {
 				"mock": {},
 			},
 		}
+		// construct MosnRuntime
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
+		// test initRpcs method
 		err := m.initRpcs(rpc.NewRpcFactory("mock", f))
+		// assert
 		assert.Nil(t, err)
 	})
 }
