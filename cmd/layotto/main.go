@@ -19,13 +19,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"mosn.io/layotto/components/sequencer"
-	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	"os"
 	"strconv"
 	"time"
 
-	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/pkg/log"
 
 	// Hello
@@ -81,14 +78,10 @@ import (
 
 	// Lock
 	"mosn.io/layotto/components/lock"
-	lock_etcd "mosn.io/layotto/components/lock/etcd"
 	lock_redis "mosn.io/layotto/components/lock/redis"
 	lock_zookeeper "mosn.io/layotto/components/lock/zookeeper"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 
-	// Sequencer
-	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
-	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
 	"mosn.io/layotto/pkg/actuator/health"
@@ -146,7 +139,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// Configuration
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
-			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 		),
 		// RPC
 		runtime.WithRpcFactory(
@@ -254,19 +246,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_lock.NewFactory("zookeeper", func() lock.LockStore {
 				return lock_zookeeper.NewZookeeperLock(log.DefaultLogger)
 			}),
-			runtime_lock.NewFactory("etcd", func() lock.LockStore {
-				return lock_etcd.NewEtcdLock(log.DefaultLogger)
-			}),
 		),
-		// Sequencer
-		runtime.WithSequencerFactory(
-			runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
-				return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
-			}),
-			runtime_sequencer.NewFactory("redis", func() sequencer.Store {
-				return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
-			}),
-		))
+	)
+
 	// 4. check if unhealthy
 	if err != nil {
 		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(err.Error())
