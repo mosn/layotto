@@ -39,14 +39,17 @@ func runWatcher() {
 			log.DefaultLogger.Debugf("[proxywasm] [watcher] runWatcher got event, %s", event)
 
 			if pathIsWasmFile(event.Name) {
-				if event.Op&fsnotify.Remove == fsnotify.Remove {
+				if event.Op&fsnotify.Chmod == fsnotify.Chmod ||
+					event.Op&fsnotify.Rename == fsnotify.Rename {
+					continue
+				} else if event.Op&fsnotify.Remove == fsnotify.Remove {
+					// rewatch the file if it exists
+					// remove this file then nename other file to this name will cause this case
 					if fileExist(event.Name) {
 						_ = watcher.Add(event.Name)
-					} else {
-						break
 					}
-				}
-				if event.Op&fsnotify.Create == fsnotify.Create {
+					continue
+				} else if event.Op&fsnotify.Create == fsnotify.Create {
 					if fileExist(event.Name) {
 						_ = watcher.Add(event.Name)
 					}
