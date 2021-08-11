@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/dapr/components-contrib v1.2.0
 	github.com/dapr/kit v0.0.1
+	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gammazero/workerpool v1.1.2
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2
@@ -16,6 +17,7 @@ require (
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.26.0
+	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210526223527-2de42fcbbce3 // indirect
 	google.golang.org/protobuf v1.27.1
