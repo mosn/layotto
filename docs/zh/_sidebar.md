@@ -47,8 +47,10 @@
             - [Apollo](zh/component_specs/configuration/apollo.md)        
         - [Sequencer](zh/component_specs/sequencer/common.md)
             - [Etcd](zh/component_specs/sequencer/etcd.md)
+            - [Redis](zh/component_specs/sequencer/redis.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
+    - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
     - [Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)
     - [Pub/Sub API以及与dapr component的兼容性](zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
     - [RPC设计文档](zh/design/rpc/rpc设计文档.md)

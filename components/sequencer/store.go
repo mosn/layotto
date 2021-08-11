@@ -47,7 +47,8 @@ type GetSegmentRequest struct {
 }
 
 type GetSegmentResponse struct {
-	Segment []int64
+	From int64
+	To   int64
 }
 
 type Configuration struct {
