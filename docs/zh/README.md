@@ -11,11 +11,13 @@ Layotto 以开源的 [MOSN](https://github.com/mosn/mosn) 为底座，在提供�
 
 ## 诞生背景
 
-Layotto希望可以把Runtime跟Service Mesh两者的能力结合起来，无论你是使用MOSN还是Envoy或者其他产品作为Service Mesh的数据面，都可以在不增加新的sidecar的前提下，使用Layotto为这些数据面追加Runtime的能力。
+Layotto希望可以把 [Multi-Runtime](https://www.infoq.com/articles/multi-runtime-microservice-architecture/) 跟Service Mesh两者的能力结合起来，无论你是使用MOSN还是Envoy或者其他产品作为Service Mesh的数据面，都可以在不增加新的sidecar的前提下，使用Layotto为这些数据面追加Runtime的能力。
 
 例如，通过为MOSN添加Runtime能力，一个Layotto进程可以[既作为istio的数据面](zh/start/istio/start.md) 又提供各种Runtime API（例如Configuration API,Pub/Sub API等）
 
-如果您对诞生背景感兴趣，可以看下[这篇演讲](https://mosn.io/layotto/#/zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index)
+此外，随着探索实践，我们发现sidecar能做的事情远不止于此。 通过引入[WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) ,我们正在尝试将Layotto做成 FaaS (Function as a service) 和 [reloadable sdk](https://github.com/mosn/layotto/issues/166) 的运行时容器 。
+
+如果您对诞生背景感兴趣，可以看下[这篇演讲](https://mosn.io/layotto/#/zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index) 。
 
 ## 功能
 
