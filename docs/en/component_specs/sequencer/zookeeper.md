@@ -1,14 +1,19 @@
 # Zookeeper
 
 ## metadata fields
-Example: configs/config_lock_zookeeper.json
+Example: configs/config_sequencer_zookeeper.json
 
 | Field | Required | Description |
 | --- | --- | --- |
 | zookeeperHosts | Y | zookeeper server address, such as localhost:6380 |
 | zookeeperPassword | Y | zookeeper Password |
 | sessionTimeout | N | Session timeout,Unit second, same as zookeeper's sessionTimeout|
-|logInfo|N|true if zookeeper information messages are logged; false if only zookeeper errors are logged|
+|logInfo|N|`true` means zookeeper log messages with info level should be logged; `false` means only error messages should be logged|
+
+## Warning 
+The sequencer id component of zookeeper is implemented using the version provided by zk. The version cannot exceed int32, and when overflow happens, an error will be returned and error logs will be printed. Nothing else will be processed.
+
+It is recommended that you monitor zookeeper carefully and prevent the overflow. 
 
 ## How to start Zookeeper
 If you want to run the zookeeper demo, you need to start a Zookeeper server with Docker first.
@@ -29,13 +34,13 @@ go build
 
 Execute after the compilation is successful:
 ````shell
-./layotto start -c ../../configs/config_lock_zookeeper.json
+./layotto start -c ../../configs/config_sequencer_zookeeper.json
 ````
 
 ## Run Demo
 
 ````shell
-cd ${projectpath}/demo/lock/zookeeper/
+cd ${projectpath}/demo/sequencer/zookeeper/
  go build -o client
  ./client 
 ````
