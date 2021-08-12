@@ -22,8 +22,6 @@ import (
 	"errors"
 	"fmt"
 	"os/user"
-	"strconv"
-	"time"
 
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/rpc/callback"
@@ -99,7 +97,7 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 		req.Timeout = 3000
 	}
 	req.Ctx = ctx
-	startTime := time.Now()
+	//startTime := time.Now()
 	log.DefaultLogger.Debugf("[runtime][rpc]request %+v", req)
 	req, err = m.cb.BeforeInvoke(req)
 	if err != nil {
@@ -117,14 +115,14 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]after filter error %s", err.Error())
 	}
-	afterInvokeTime := time.Now()
-	rpcId := req.Header.Get("rpc_trace_context.sofaRpcId")
-	traceId := req.Header.Get("rpc_trace_context.sofaTraceId")
-
-	LayottoStatLogger.Printf("%+v,%v,%+v",
-		rpcId,
-		traceId,
-		strconv.FormatInt(afterInvokeTime.Sub(startTime).Nanoseconds()/1000, 10),
-	)
+	//afterInvokeTime := time.Now()
+	//rpcId := req.Header.Get("rpc_trace_context.sofaRpcId")
+	//traceId := req.Header.Get("rpc_trace_context.sofaTraceId")
+	//
+	//LayottoStatLogger.Printf("%+v,%v,%+v",
+	//	rpcId,
+	//	traceId,
+	//	strconv.FormatInt(afterInvokeTime.Sub(startTime).Nanoseconds()/1000, 10),
+	//)
 	return resp, err
 }
