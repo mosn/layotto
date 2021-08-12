@@ -79,11 +79,8 @@ type xstate struct {
 }
 
 type call struct {
-	resp      api.XRespFrame
-	startTime time.Time
-	lockTime  time.Time
-	endTime   time.Time
-	err       error
+	resp api.XRespFrame
+	err  error
 }
 
 type xChannel struct {
