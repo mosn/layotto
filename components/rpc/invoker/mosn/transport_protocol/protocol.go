@@ -19,6 +19,7 @@ package transport_protocol
 import (
 	"mosn.io/api"
 	"mosn.io/layotto/components/rpc"
+	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
 )
 
 var protocolRegistry = map[string]TransportProtocol{}
@@ -44,6 +45,9 @@ type fromFrame struct{}
 
 func (f *fromFrame) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	rpcResp := &rpc.RPCResponse{}
+	if boltResp, ok := resp.(*bolt.Response); ok {
+		rpcResp.Header = make(map[string][]string, len(boltResp.Header.Kvs))
+	}
 	resp.GetHeader().Range(func(Key, Value string) bool {
 		if rpcResp.Header == nil {
 			rpcResp.Header = make(map[string][]string)

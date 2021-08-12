@@ -63,7 +63,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 			return localTcpConn, nil
 		},
 		func() interface{} {
-			return &xstate{calls: map[uint32]chan *call{}}
+			return &xstate{calls: map[uint32]chan call{}}
 		},
 		m.onData,
 		m.cleanup,
@@ -75,7 +75,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 type xstate struct {
 	reqid uint32
 	mu    sync.Mutex
-	calls map[uint32]chan *call
+	calls map[uint32]chan call
 }
 
 type call struct {
@@ -110,7 +110,7 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		m.pool.Put(conn, false)
 		return nil, common.Error(common.InternalCode, encErr.Error())
 	}
-	callChan := make(chan *call, 1)
+	callChan := make(chan call, 1)
 	// set timeout
 	deadline, _ := ctx.Deadline()
 	if err := conn.SetWriteDeadline(deadline); err != nil {
@@ -148,7 +148,6 @@ func (m *xChannel) removeCall(xstate *xstate, id uint32) {
 
 func (m *xChannel) onData(conn *wrapConn) error {
 	xstate := conn.state.(*xstate)
-	startTime := time.Now()
 	for {
 		var iframe interface{}
 		iframe, err := m.proto.Decode(context.TODO(), conn.buf)
@@ -167,16 +166,14 @@ func (m *xChannel) onData(conn *wrapConn) error {
 
 		reqID := frame.GetRequestId()
 		reqID32 := uint32(reqID)
-		lockTime := time.Now()
 		xstate.mu.Lock()
 		notifyChan, ok := xstate.calls[reqID32]
 		if ok {
 			delete(xstate.calls, reqID32)
 		}
 		xstate.mu.Unlock()
-		endTime := time.Now()
 		if ok {
-			notifyChan <- &call{resp: frame, startTime: startTime, lockTime: lockTime, endTime: endTime}
+			notifyChan <- call{resp: frame}
 		}
 	}
 	return nil
@@ -187,7 +184,7 @@ func (m *xChannel) cleanup(c *wrapConn, err error) {
 	// cleanup pending calls
 	xstate.mu.Lock()
 	for id, notifyChan := range xstate.calls {
-		notifyChan <- &call{err: err}
+		notifyChan <- call{err: err}
 		delete(xstate.calls, id)
 	}
 	xstate.mu.Unlock()
