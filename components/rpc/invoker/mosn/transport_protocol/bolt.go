@@ -18,9 +18,10 @@ package transport_protocol
 
 import (
 	"errors"
+	"mosn.io/pkg/header"
 
 	"mosn.io/api"
-	common "mosn.io/layotto/components/pkg/common"
+	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol"
 	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
@@ -83,12 +84,21 @@ type boltProtocol struct {
 
 func (b *boltProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	buf := buffer.NewIoBufferBytes(req.Data)
+	headerrLen := len(req.Header)
 	boltreq := bolt.NewRpcRequest(0, nil, buf)
 	boltreq.Class = b.className
 	boltreq.Timeout = req.Timeout
+	boltreq.Header = header.BytesHeader{
+		Kvs:     make([]header.BytesKV, headerrLen),
+		Changed: true,
+	}
 
+	i := 0
 	req.Header.Range(func(key string, value string) bool {
-		boltreq.Header.Set(key, value)
+		kv := &boltreq.Header.Kvs[i]
+		kv.Key = []byte(key)
+		kv.Value = []byte(value)
+		i++
 		return true
 	})
 	return boltreq
