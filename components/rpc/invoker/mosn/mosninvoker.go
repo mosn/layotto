@@ -106,7 +106,6 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 		log.DefaultLogger.Errorf("[runtime][rpc]before filter error %s", err.Error())
 		return nil, err
 	}
-	beforeInvokeTime := time.Now()
 	resp, err = m.channel.Do(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]error %s", err.Error())
@@ -114,41 +113,17 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 	}
 
 	resp.Ctx = req.Ctx
-	requestTime := time.Now()
 	resp, err = m.cb.AfterInvoke(resp)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]after filter error %s", err.Error())
 	}
 	afterInvokeTime := time.Now()
-	beginReqTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("beginReqTime"))
-	getPoolTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("getPoolTime"))
-	frameTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("frameTime"))
-	encodeTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("encodeTime"))
-	getCallChanTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("getCallChanTime"))
-	writeTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("writeTime"))
-	receiveRespTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("receiveRespTime"))
 	rpcId := req.Header.Get("rpc_trace_context.sofaRpcId")
 	traceId := req.Header.Get("rpc_trace_context.sofaTraceId")
 
-	onDataStartTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("onDataStartTime"))
-	lockTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("lockTime"))
-	onDataEndTime, _ := time.Parse(time.RFC3339Nano, req.Header.Get("onDataEndTime"))
-
-	LayottoStatLogger.Printf("[Layotto] rpc request rpcId:[%+v],traceId:[%+v] ,spend time is beforeInvokeTime:%+v, requestTime:%+v,afterInvoke:%+v,"+
-		"getPoolTime:%+v,frameTime:%+v,encodeTime:%+v,getCallChanTime:%+v,writeTime:%+v,receiveRespTime:%+v, onDataTime:%+v, onDataLockTime:%+v,tootle:%+v,",
+	LayottoStatLogger.Printf("%+v,%v,%+v",
 		rpcId,
 		traceId,
-		strconv.FormatInt(beforeInvokeTime.Sub(startTime).Nanoseconds()/1000, 10),
-		strconv.FormatInt(requestTime.Sub(beforeInvokeTime).Nanoseconds()/1000, 10),
-		strconv.FormatInt(afterInvokeTime.Sub(requestTime).Nanoseconds()/1000, 10),
-		strconv.FormatInt(getPoolTime.Sub(beginReqTime).Nanoseconds()/1000, 10),
-		strconv.FormatInt(frameTime.Sub(getPoolTime).Nanoseconds()/1000, 10),
-		strconv.FormatInt(encodeTime.Sub(frameTime).Nanoseconds()/1000, 10),
-		strconv.FormatInt(getCallChanTime.Sub(encodeTime).Nanoseconds()/1000, 10),
-		strconv.FormatInt(writeTime.Sub(getCallChanTime).Nanoseconds()/1000, 10),
-		strconv.FormatInt(receiveRespTime.Sub(writeTime).Nanoseconds()/1000, 10),
-		strconv.FormatInt(onDataEndTime.Sub(onDataStartTime).Nanoseconds()/1000, 10),
-		strconv.FormatInt(onDataEndTime.Sub(lockTime).Nanoseconds()/1000, 10),
 		strconv.FormatInt(afterInvokeTime.Sub(startTime).Nanoseconds()/1000, 10),
 	)
 	return resp, err

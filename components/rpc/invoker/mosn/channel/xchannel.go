@@ -92,7 +92,6 @@ type xChannel struct {
 }
 
 func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
-	beginReqTime := []string{time.Now().Format(time.RFC3339Nano)}
 	timeout := time.Duration(req.Timeout) * time.Millisecond
 	ctx, cancel := context.WithTimeout(req.Ctx, timeout)
 	defer cancel()
@@ -101,19 +100,16 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	getPoolTime := []string{time.Now().Format(time.RFC3339Nano)}
 	xstate := conn.state.(*xstate)
 	// encode request
 	frame := m.proto.ToFrame(req)
 	id := atomic.AddUint32(&xstate.reqid, 1)
 	frame.SetRequestId(uint64(id))
-	frameTime := []string{time.Now().Format(time.RFC3339Nano)}
 	buf, encErr := m.proto.Encode(req.Ctx, frame)
 	if encErr != nil {
 		m.pool.Put(conn, false)
 		return nil, common.Error(common.InternalCode, encErr.Error())
 	}
-	encodeTime := []string{time.Now().Format(time.RFC3339Nano)}
 	callChan := make(chan *call, 1)
 	// set timeout
 	deadline, _ := ctx.Deadline()
@@ -126,26 +122,14 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	xstate.calls[id] = callChan
 	xstate.mu.Unlock()
 	// write packet
-	getCallChanTime := []string{time.Now().Format(time.RFC3339Nano)}
 	if _, err := conn.Write(buf.Bytes()); err != nil {
 		m.removeCall(xstate, id)
 		m.pool.Put(conn, true)
 		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
-	writeTime := []string{time.Now().Format(time.RFC3339Nano)}
 	m.pool.Put(conn, false)
 	select {
 	case res := <-callChan:
-		req.Header["beginReqTime"] = beginReqTime
-		req.Header["getPoolTime"] = getPoolTime
-		req.Header["frameTime"] = frameTime
-		req.Header["encodeTime"] = encodeTime
-		req.Header["getCallChanTime"] = getCallChanTime
-		req.Header["writeTime"] = writeTime
-		req.Header["receiveRespTime"] = []string{time.Now().Format(time.RFC3339Nano)}
-		req.Header["onDataStartTime"] = []string{res.startTime.Format(time.RFC3339Nano)}
-		req.Header["lockTime"] = []string{res.lockTime.Format(time.RFC3339Nano)}
-		req.Header["onDataEndTime"] = []string{res.endTime.Format(time.RFC3339Nano)}
 		if res.err != nil {
 			return nil, common.Error(common.UnavailebleCode, res.err.Error())
 		}
