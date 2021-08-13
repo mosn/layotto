@@ -101,7 +101,7 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 		// TODO: 确定这里做了什么事，调用顺序有影响吗
 		pluginABI.SetABIImports(filter)
 
-		exports := pluginABI.GetABIExports().(proxywasm.Exports)
+		exports := pluginABI.GetABIExports().(Exports)
 		if exports == nil {
 			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to get exports part from abi")
 			plugin.ReleaseInstance(instance)
@@ -133,26 +133,13 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 		plugins = append(plugins, wasmPlugin)
 
 		// TODO: 获取id，注册路由
-		{
-			exports := pluginABI.GetABIExports().(Exports)
-			if exports == nil {
-				log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to get exports part from abi")
-				plugin.ReleaseInstance(instance)
-
-				return nil
-			}
-
-			contextID := newContextID(pluginConfig.RootContextID)
-
-			id, err := exports.ProxyGetID()
-			if err != nil {
-				log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to create context id: %v, rootContextID: %v, err: %v",
-					contextID, pluginConfig.RootContextID, err)
-				return nil
-			}
-
-			RegisterRoute(id, wasmPlugin)
+		id, err := exports.ProxyGetID()
+		if err != nil {
+			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to create context id: %v, rootContextID: %v, err: %v",
+				contextID, pluginConfig.RootContextID, err)
+			return nil
 		}
+		RegisterRoute(id, wasmPlugin)
 	}
 	filter.plugins = plugins
 

@@ -71,7 +71,7 @@ func proxyOnMemoryAllocate(size uint) *byte {
 	return &buf[0]
 }
 
-//export ID
+//export proxy_get_id
 func ID() string {
 	return "id_1"
 }

@@ -43,6 +43,7 @@ github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5Cc
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/tetratelabs/proxy-wasm-go-sdk v0.1.2-0.20210520063156-d39281baed90 h1:Ze9Uyy8LL0+mcF4UWFKoL2mx3MzptgxeG9nJqSZiK8E=
 github.com/tetratelabs/proxy-wasm-go-sdk v0.1.2-0.20210520063156-d39281baed90/go.mod h1:qZ+4i6e2wHlhnhgpH0VG4QFzqd2BEvQbQFU0npt2e2k=
+github.com/wasmerio/wasmer-go v1.0.3/go.mod h1:0gzVdSfg6pysA6QVp6iVRPTagC6Wq9pOE8J86WKb2Fk=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
@@ -98,5 +99,5 @@ gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c h1:dUUwHk2QECo/6vqA44rthZ8ie
 gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
-mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3 h1:8GbrNw6AOi4+DrQGG5TbxMNPPRQJ0uXjkSCP2qeKc08=
-mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3/go.mod h1:ex31WL9Vx1PadpZmN4CZpw/57xzBeKIwqMI5fYXi7RY=
+mosn.io/proxy-wasm-go-host v0.1.0 h1:WtXMiOpuDyx3Vruf/BUAiu4bo30rSPx68E5vxEBTT6g=
+mosn.io/proxy-wasm-go-host v0.1.0/go.mod h1:wBRY9Xjf77GZhvAuEc6nQXZ6dQK39kNU2ok/+Z8mSU8=

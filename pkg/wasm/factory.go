@@ -86,7 +86,8 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 				log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to add plugin, err: %v", err)
 				return nil, err
 			}
-			addWatchFile(config, pluginName)
+			// TODO: watch file for reload
+			//addWatchFile(config, pluginName)
 		} else {
 			pluginName = config.FromWasmPlugin
 		}
@@ -100,9 +101,6 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 		config.VmConfig = pw.GetConfig().VmConfig
 
 		pw.RegisterPluginHandler(factory)
-
-		// TODO: register route
-
 	}
 
 	return factory, nil

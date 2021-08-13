@@ -39,6 +39,8 @@ type AbiV2Impl struct {
 	v1.ABIContext
 }
 
+var _ types.ABIHandler = &AbiV2Impl{}
+
 func (a *AbiV2Impl) Name() string {
 	return AbiV2
 }
@@ -48,7 +50,7 @@ func (a *AbiV2Impl) GetABIExports() interface{} {
 }
 
 func (a *AbiV2Impl) ProxyGetID() (string, error) {
-	ff, err := a.Instance.GetExportsFunc("proxy_id")
+	ff, err := a.Instance.GetExportsFunc("proxy_get_id")
 	if err != nil {
 		return "", err
 	}
