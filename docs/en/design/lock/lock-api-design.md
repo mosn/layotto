@@ -122,7 +122,9 @@ A: Try to be conservative at the beginning, wait until someone feedbacks that th
 
 A: Add feature options in the API parameters,and the component must also implement the Support() function
 
-### 2.1.2. Lock Renewal
+### 2.1.2. Lock Renewal API
+Renewal API aims to refresh the existing lock and postpone the expiration time.
+
 Lock Renewal API won't be in the first version of this API. Here are some considerations for discussion.
 
 #### Solution A: add an API "LockKeepAlive"
@@ -222,8 +224,8 @@ The application has to handle status collection, reporting, cleaning up after th
 
 4. Solution B actually make API spec rely on heartbeat logic. It relies on the heartbeat interval and the data structure returned by the heartbeat. It is equivalent to that the API spec relies on the implementation of sidecar, unless we can also standardize the heartbeat API (including interval, returned data structure, etc.)
 
-#### in conclusion
-At present, everyone has different opinions on the solution of lease renewal, and the lease renewal function will not be added in the first version.
+#### Conclusion
+At present, the Lock Renewal API might be controversial and will not be added into the first version.
 
 Personally I prefer the solution A.Let the SDK do the renewal logic. Although users have to directly deal with the lease renewal logic when using grpc, it is not hard for developers to understand.
 
