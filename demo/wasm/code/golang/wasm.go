@@ -56,7 +56,7 @@ func (ctx *myHttpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool)
 		}
 	}
 
-	result, err := proxywasm.CallForeignFunction("SayHello", []byte(`{"service_name":"helloworld","name":"`+name+`"}`))
+	result, err := proxywasm.CallForeignFunction("SayHello", []byte(`{"service_name":"helloworld","name":"`+name+`_1_2"}`))
 	if err != nil {
 		proxywasm.LogErrorf("call foreign func failed: %v", err)
 	}

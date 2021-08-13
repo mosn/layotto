@@ -101,6 +101,8 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 		config.VmConfig = pw.GetConfig().VmConfig
 
 		pw.RegisterPluginHandler(factory)
+
+		factory.config = append(factory.config, config)
 	}
 
 	return factory, nil

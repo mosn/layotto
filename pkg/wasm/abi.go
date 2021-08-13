@@ -37,16 +37,24 @@ func abiImplFactory(instance types.WasmInstance) types.ABI {
 // easy for extension
 type AbiV2Impl struct {
 	v1.ABIContext
+	abc int
 }
 
-var _ types.ABIHandler = &AbiV2Impl{}
+var (
+	_ types.ABIHandler = &AbiV2Impl{}
+	//_ proxywasm.ContextHandler = &AbiV2Impl{}
+)
 
 func (a *AbiV2Impl) Name() string {
 	return AbiV2
 }
 
 func (a *AbiV2Impl) GetABIExports() interface{} {
-	return a.ABIContext.GetABIExports()
+	return a
+}
+
+func (a *AbiV2Impl) GetExports() interface{} {
+	return a
 }
 
 func (a *AbiV2Impl) ProxyGetID() (string, error) {
