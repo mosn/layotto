@@ -70,3 +70,8 @@ func proxyOnMemoryAllocate(size uint) *byte {
 	buf := make([]byte, size)
 	return &buf[0]
 }
+
+//export ID
+func ID() string {
+	return "id_1"
+}

@@ -42,3 +42,24 @@ type AbiV2Impl struct {
 func (a *AbiV2Impl) Name() string {
 	return AbiV2
 }
+
+func (a *AbiV2Impl) GetABIExports() interface{} {
+	return a.ABIContext.GetABIExports()
+}
+
+func (a *AbiV2Impl) ProxyGetID() (string, error) {
+	ff, err := a.Instance.GetExportsFunc("proxy_id")
+	if err != nil {
+		return "", err
+	}
+
+	res, err := ff.Call()
+	if err != nil {
+		a.Instance.HandleError(err)
+		return "", err
+	}
+
+	a.Imports.Wait()
+
+	return res.(string), nil
+}

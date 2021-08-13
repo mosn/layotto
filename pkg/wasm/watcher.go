@@ -14,7 +14,7 @@ import (
 
 var (
 	watcher     *fsnotify.Watcher
-	configs     = make(map[string]*filterConfig)
+	configs     = make(map[string]*filterConfigItem)
 	pluginNames = make(map[string]string)
 )
 
@@ -66,7 +66,7 @@ func runWatcher() {
 	}
 }
 
-func addWatchFile(cfg *filterConfig, pluginName string) {
+func addWatchFile(cfg *filterConfigItem, pluginName string) {
 	path := cfg.VmConfig.Path
 	if err := watcher.Add(path); err != nil {
 		log.DefaultLogger.Errorf("[proxywasm] [watcher] addWatchFile fail to watch wasm file, err: %v", err)

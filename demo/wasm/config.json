@@ -45,14 +45,32 @@
           "stream_filters": [
             {
               "type": "Layotto",
-              "config": {
-                "name": "wasm_demo",
-                "instance_num": 1,
-                "vm_config": {
-                  "engine": "wasmer",
-                  "path": "demo/wasm/code/golang/wasm.wasm"
+              "config": [
+                {
+                  "name": "id_1",
+                  "instance_num": 1,
+                  "vm_config": {
+                    "engine": "wasmer",
+                    "path": "demo/wasm/code/golang/wasm_1_1.wasm"
+                  }
+                },
+                {
+                  "name": "id_1",
+                  "instance_num": 2,
+                  "vm_config": {
+                    "engine": "wasmer",
+                    "path": "demo/wasm/code/golang/wasm_1_2.wasm"
+                  }
+                },
+                {
+                  "name": "id_2",
+                  "instance_num": 1,
+                  "vm_config": {
+                    "engine": "wasmer",
+                    "path": "demo/wasm/code/golang/wasm_2.wasm"
+                  }
                 }
-              }
+              ]
             }
           ]
         }

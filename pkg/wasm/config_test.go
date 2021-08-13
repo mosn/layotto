@@ -29,7 +29,7 @@ func TestXProxyWasmConfigFromGlobalPlugin(t *testing.T) {
 		"user_config2":     "user_value2",
 	}
 
-	config, err := parseFilterConfig(configMap)
+	config, err := parseFilterConfigs(configMap)
 	assert.Nil(t, err)
 	assert.Nil(t, config.VmConfig)
 	assert.Equal(t, config.InstanceNum, 0)
@@ -42,7 +42,7 @@ func TestXProxyWasmConfigWithoutUserData(t *testing.T) {
 		"instance_num":     2,
 	}
 
-	config, err := parseFilterConfig(configMap)
+	config, err := parseFilterConfigs(configMap)
 	assert.Nil(t, err)
 	assert.Nil(t, config.VmConfig)
 	assert.Equal(t, config.InstanceNum, 0)
@@ -63,7 +63,7 @@ func TestXProxyWasmConfigWithVM(t *testing.T) {
 		"user_config4": "user_value4",
 	}
 
-	config, err := parseFilterConfig(configMap)
+	config, err := parseFilterConfigs(configMap)
 	assert.Nil(t, err)
 	assert.Equal(t, config.FromWasmPlugin, "")
 	assert.NotNil(t, config.VmConfig)
