@@ -135,7 +135,7 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 		// TODO: 获取id，注册路由
 		id, err := exports.ProxyGetID()
 		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to create context id: %v, rootContextID: %v, err: %v",
+			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to get id context id: %v, rootContextID: %v, err: %v",
 				contextID, pluginConfig.RootContextID, err)
 			return nil
 		}

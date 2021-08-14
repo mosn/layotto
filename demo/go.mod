@@ -10,7 +10,6 @@ require (
 	google.golang.org/protobuf v1.26.0-rc.1
 	mosn.io/layotto/sdk/go-sdk v0.0.0-20210604030858-e880c02bcf44
 	mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3
-	mosn.io/proxy-wasm-go-host v0.1.0
 )
 
 replace (

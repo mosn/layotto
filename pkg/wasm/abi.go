@@ -42,7 +42,7 @@ type AbiV2Impl struct {
 
 var (
 	_ types.ABIHandler = &AbiV2Impl{}
-	//_ proxywasm.ContextHandler = &AbiV2Impl{}
+	_ Exports          = &AbiV2Impl{}
 )
 
 func (a *AbiV2Impl) Name() string {
@@ -53,23 +53,11 @@ func (a *AbiV2Impl) GetABIExports() interface{} {
 	return a
 }
 
-func (a *AbiV2Impl) GetExports() interface{} {
-	return a
-}
-
 func (a *AbiV2Impl) ProxyGetID() (string, error) {
-	ff, err := a.Instance.GetExportsFunc("proxy_get_id")
+	mem, err := a.Instance.GetExportsMem("wasm_id")
 	if err != nil {
 		return "", err
 	}
 
-	res, err := ff.Call()
-	if err != nil {
-		a.Instance.HandleError(err)
-		return "", err
-	}
-
-	a.Imports.Wait()
-
-	return res.(string), nil
+	return string(mem), nil
 }
