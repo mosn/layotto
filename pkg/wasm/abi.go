@@ -16,6 +16,7 @@
 
 package wasm
 
+import "C"
 import (
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/mosn/pkg/wasm/abi"
@@ -37,7 +38,6 @@ func abiImplFactory(instance types.WasmInstance) types.ABI {
 // easy for extension
 type AbiV2Impl struct {
 	v1.ABIContext
-	abc int
 }
 
 var (
@@ -54,10 +54,34 @@ func (a *AbiV2Impl) GetABIExports() interface{} {
 }
 
 func (a *AbiV2Impl) ProxyGetID() (string, error) {
-	mem, err := a.Instance.GetExportsMem("wasm_id")
+	ff, err := a.Instance.GetExportsFunc("proxy_get_id_length")
+	if err != nil {
+		return "", err
+	}
+	res, err := ff.Call()
+	if err != nil {
+		a.Instance.HandleError(err)
+		return "", err
+	}
+	a.Imports.Wait()
+	length := res.(int32)
+
+	ff, err = a.Instance.GetExportsFunc("proxy_get_id")
+	if err != nil {
+		return "", err
+	}
+	res, err = ff.Call()
+	if err != nil {
+		a.Instance.HandleError(err)
+		return "", err
+	}
+	a.Imports.Wait()
+	ptr := res.(int32)
+
+	data, err := a.Instance.GetMemory(uint64(ptr), uint64(length))
 	if err != nil {
 		return "", err
 	}
 
-	return string(mem), nil
+	return string(data), nil
 }

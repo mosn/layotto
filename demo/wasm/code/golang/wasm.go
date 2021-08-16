@@ -17,6 +17,8 @@
 package main
 
 import (
+	"unsafe"
+
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm"
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
 )
@@ -56,7 +58,7 @@ func (ctx *myHttpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool)
 		}
 	}
 
-	result, err := proxywasm.CallForeignFunction("SayHello", []byte(`{"service_name":"helloworld","name":"`+name+`_1_2"}`))
+	result, err := proxywasm.CallForeignFunction("SayHello", []byte(`{"service_name":"helloworld","name":"`+name+`_2"}`))
 	if err != nil {
 		proxywasm.LogErrorf("call foreign func failed: %v", err)
 	}
@@ -71,5 +73,18 @@ func proxyOnMemoryAllocate(size uint) *byte {
 	return &buf[0]
 }
 
-//export wasm_id
-const ID = "id_1"
+const ID = "id_2"
+
+//export proxy_get_id
+func GetID() *byte {
+	_ = ID[len(ID)-1]
+
+	id := ID
+	bt := *(*[]byte)(unsafe.Pointer(&id))
+	return &bt[0]
+}
+
+//export proxy_get_id_length
+func GetIDLen() uint32 {
+	return uint32(len(ID))
+}

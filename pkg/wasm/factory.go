@@ -42,9 +42,8 @@ func init() {
 type FilterConfigFactory struct {
 	proxywasm010.DefaultImportsHandler
 
-	//pluginName string
 	config        []*filterConfigItem // contains multi wasm config
-	RootContextID int32               // TODO
+	RootContextID int32
 
 	//vmConfigBytes     buffer.IoBuffer
 	//pluginConfigBytes buffer.IoBuffer
@@ -86,7 +85,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 				log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to add plugin, err: %v", err)
 				return nil, err
 			}
-			// TODO: watch file for reload
+
 			//addWatchFile(config, pluginName)
 		} else {
 			pluginName = config.FromWasmPlugin
@@ -99,9 +98,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 		}
 
 		config.VmConfig = pw.GetConfig().VmConfig
-
 		pw.RegisterPluginHandler(factory)
-
 		factory.config = append(factory.config, config)
 	}
 
@@ -118,9 +115,9 @@ func (f *FilterConfigFactory) CreateFilterChain(context context.Context, callbac
 	callbacks.AddStreamSenderFilter(filter, api.BeforeSend)
 }
 
-//func (f *FilterConfigFactory) GetRootContextID() int32 {
-//	return f.RootContextID
-//}
+func (f *FilterConfigFactory) GetRootContextID() int32 {
+	return f.RootContextID
+}
 
 //func (f *FilterConfigFactory) GetVmConfig() common.IoBuffer {
 //	if f.vmConfigBytes != nil {

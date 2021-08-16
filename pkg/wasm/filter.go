@@ -51,11 +51,11 @@ type Filter struct {
 }
 
 type WasmPlugin struct {
-	pluginName string             // 单个wasm文件的name
-	plugin     types.WasmPlugin   // 单个wasm文件，包括多个instance
-	instance   types.WasmInstance // 一个instance
-	abi        types.ABI          // 单个wasm文件对应的abi
-	exports    proxywasm.Exports  // 单个wasm文件导出的方法
+	pluginName string
+	plugin     types.WasmPlugin
+	instance   types.WasmInstance
+	abi        types.ABI
+	exports    proxywasm.Exports
 
 	rootContextID int32
 	contextID     int32
@@ -73,13 +73,17 @@ func newContextID(rootContextID int32) int32 {
 }
 
 func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
+	configs := factory.config
+
 	filter := &Filter{
 		ctx:     ctx,
 		factory: factory,
-		buffer:  buffer.NewIoBuffer(100),
+		router: Router{
+			routes: make(map[string]Group),
+		},
+		buffer: buffer.NewIoBuffer(100),
 	}
 
-	configs := factory.config
 	plugins := make([]*WasmPlugin, 0, len(configs))
 	for _, pluginConfig := range configs {
 		pluginWrapper := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginConfig.PluginName)
@@ -105,21 +109,11 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 		if exports == nil {
 			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to get exports part from abi")
 			plugin.ReleaseInstance(instance)
-
 			return nil
 		}
 
 		contextID := newContextID(pluginConfig.RootContextID)
-
-		err := exports.ProxyOnContextCreate(contextID, pluginConfig.RootContextID)
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to create context id: %v, rootContextID: %v, err: %v",
-				contextID, pluginConfig.RootContextID, err)
-			return nil
-		}
-
-		instance.Lock(pluginABI)
-		defer instance.Unlock()
+		log.DefaultLogger.Infof("[proxywasm][filter] NewFilter pluginName: %s, contextID: %d", pluginConfig.PluginName, contextID)
 
 		wasmPlugin := &WasmPlugin{
 			pluginName:    pluginConfig.PluginName,
@@ -132,6 +126,16 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 		}
 		plugins = append(plugins, wasmPlugin)
 
+		instance.Lock(pluginABI)
+		defer instance.Unlock()
+
+		err := exports.ProxyOnContextCreate(contextID, pluginConfig.RootContextID)
+		if err != nil {
+			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to create context id: %v, rootContextID: %v, err: %v",
+				contextID, pluginConfig.RootContextID, err)
+			return nil
+		}
+
 		// TODO: 获取id，注册路由
 		id, err := exports.ProxyGetID()
 		if err != nil {
@@ -139,12 +143,14 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 				contextID, pluginConfig.RootContextID, err)
 			return nil
 		}
-		RegisterRoute(id, wasmPlugin)
+		filter.router.RegisterRoute(id, wasmPlugin)
 	}
 	filter.plugins = plugins
 
 	// TODO: 确定这个的作用
-	//filter.LayottoHandler.Instance = instance
+	if len(plugins) > 0 {
+		filter.LayottoHandler.Instance = plugins[0].instance
+	}
 
 	return filter
 }
@@ -199,7 +205,7 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 		return api.StreamFilterStop
 	}
 
-	plugin, err := GetRandomPluginByID(id)
+	plugin, err := f.router.GetRandomPluginByID(id)
 	if err != nil {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders id, err: %v", err)
 		return api.StreamFilterStop

@@ -14,13 +14,9 @@ type Router struct {
 	routes map[string]Group
 }
 
-var route = Router{
-	routes: make(map[string]Group),
-}
-
 // RegisterRoute register a group with id
 // unsafe for concurrent
-func RegisterRoute(id string, plugin *WasmPlugin) {
+func (route *Router) RegisterRoute(id string, plugin *WasmPlugin) {
 	if group, found := route.routes[id]; found {
 		group.count += 1
 		group.plugins = append(group.plugins, plugin)
@@ -33,7 +29,7 @@ func RegisterRoute(id string, plugin *WasmPlugin) {
 	}
 }
 
-func GetRandomPluginByID(id string) (*WasmPlugin, error) {
+func (route *Router) GetRandomPluginByID(id string) (*WasmPlugin, error) {
 	group, ok := route.routes[id]
 	if !ok {
 		return nil, errors.New("id is not registered")
