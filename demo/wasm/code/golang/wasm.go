@@ -56,7 +56,7 @@ func (ctx *myHttpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool)
 		}
 	}
 
-	result, err := proxywasm.CallForeignFunction("SayHello", []byte(`{"service_name":"helloworld","name":"`+name+`_2"}`))
+	result, err := proxywasm.CallForeignFunction("SayHello", []byte(`{"service_name":"helloworld","name":"`+name+`_`+ID+`"}`))
 	if err != nil {
 		proxywasm.LogErrorf("call foreign func failed: %v", err)
 	}
@@ -72,6 +72,8 @@ func proxyOnMemoryAllocate(size uint) *byte {
 
 const ID = "id_2"
 
+// DO NOT MODIFY THE FOLLOWING FUNCTIONS!
+
 //export proxy_get_id
 func GetID() *byte {
 	_ = ID[len(ID)-1]
@@ -82,6 +84,6 @@ func GetID() *byte {
 }
 
 //export proxy_get_id_length
-func GetIDLen() uint32 {
-	return uint32(len(ID))
+func GetIDLen() int32 {
+	return int32(len(ID))
 }

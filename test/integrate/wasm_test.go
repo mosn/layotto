@@ -17,18 +17,25 @@
 package integrate
 
 import (
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSayHello(t *testing.T) {
+	ids := []string{"id_1", "id_2"}
+
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", "http://localhost:2045", nil)
 	name := "Layotto"
 	req.Header.Add("name", name)
-	resp, _ := client.Do(req)
-	body, _ := ioutil.ReadAll(resp.Body)
-	assert.Equal(t, string(body), "Hi, "+name)
+
+	for _, id := range ids {
+		req.Header.Set("id", id)
+		resp, _ := client.Do(req)
+		body, _ := ioutil.ReadAll(resp.Body)
+		assert.Equal(t, string(body), "Hi, "+name+"_"+id)
+	}
 }
