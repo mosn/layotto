@@ -16,7 +16,6 @@
 
 package wasm
 
-import "C"
 import (
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/mosn/pkg/wasm/abi"

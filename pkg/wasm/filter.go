@@ -113,8 +113,6 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 		}
 
 		contextID := newContextID(pluginConfig.RootContextID)
-		log.DefaultLogger.Infof("[proxywasm][filter] NewFilter pluginName: %s, contextID: %d", pluginConfig.PluginName, contextID)
-
 		wasmPlugin := &WasmPlugin{
 			pluginName:    pluginConfig.PluginName,
 			plugin:        plugin,
