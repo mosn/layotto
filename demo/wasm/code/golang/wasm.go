@@ -48,8 +48,6 @@ type myHttpContext struct {
 
 // override
 func (ctx *myHttpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool) types.Action {
-	proxywasm.LogInfo("golang wasm receive a http request")
-
 	hs, err := proxywasm.GetHttpRequestHeaders()
 	var name string
 	for _, h := range hs {
@@ -63,7 +61,6 @@ func (ctx *myHttpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool)
 		proxywasm.LogErrorf("call foreign func failed: %v", err)
 	}
 	proxywasm.SetHttpResponseBody(result)
-
 	return types.ActionContinue
 }
 
