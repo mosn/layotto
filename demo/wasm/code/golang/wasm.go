@@ -20,6 +20,7 @@ import (
 	"unsafe"
 
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm"
+	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/rawhostcall"
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
 )
 
@@ -70,20 +71,14 @@ func proxyOnMemoryAllocate(size uint) *byte {
 	return &buf[0]
 }
 
-const ID = "id_2"
+const ID = "id_1"
 
 // DO NOT MODIFY THE FOLLOWING FUNCTIONS!
-
 //export proxy_get_id
-func GetID() *byte {
+func GetID() types.Status {
 	_ = ID[len(ID)-1]
 
 	id := ID
 	bt := *(*[]byte)(unsafe.Pointer(&id))
-	return &bt[0]
-}
-
-//export proxy_get_id_length
-func GetIDLen() int32 {
-	return int32(len(ID))
+	return rawhostcall.ProxySetBufferBytes(types.BufferTypeCallData, 0, len(ID), &bt[0], len(ID))
 }

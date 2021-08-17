@@ -17,9 +17,12 @@
 package wasm
 
 import (
+	sdkTypes "github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/mosn/pkg/wasm/abi"
 	v1 "mosn.io/mosn/pkg/wasm/abi/proxywasm010"
+	"mosn.io/proxy-wasm-go-host/common"
+	"mosn.io/proxy-wasm-go-host/proxywasm"
 )
 
 const AbiV2 = "proxy_abi_version_0_2_0"
@@ -31,12 +34,20 @@ func init() {
 func abiImplFactory(instance types.WasmInstance) types.ABI {
 	abi := &AbiV2Impl{}
 	abi.SetInstance(instance)
+	ih := &ImportsHandler{
+		DefaultImportsHandler: v1.DefaultImportsHandler{},
+		ioBuffer:              &common.CommonBuffer{},
+	}
+	abi.SetImports(ih)
+	abi.importsHandler = ih
 	return abi
 }
 
 // easy for extension
 type AbiV2Impl struct {
 	v1.ABIContext
+
+	importsHandler *ImportsHandler
 }
 
 var (
@@ -53,7 +64,7 @@ func (a *AbiV2Impl) GetABIExports() interface{} {
 }
 
 func (a *AbiV2Impl) ProxyGetID() (string, error) {
-	ff, err := a.Instance.GetExportsFunc("proxy_get_id_length")
+	ff, err := a.Instance.GetExportsFunc("proxy_get_id")
 	if err != nil {
 		return "", err
 	}
@@ -63,24 +74,25 @@ func (a *AbiV2Impl) ProxyGetID() (string, error) {
 		return "", err
 	}
 	a.Imports.Wait()
-	length := res.(int32)
 
-	ff, err = a.Instance.GetExportsFunc("proxy_get_id")
-	if err != nil {
-		return "", err
-	}
-	res, err = ff.Call()
-	if err != nil {
+	status := sdkTypes.Status(res.(int32))
+	if err := sdkTypes.StatusToError(status); err != nil {
 		a.Instance.HandleError(err)
 		return "", err
 	}
-	a.Imports.Wait()
-	ptr := res.(int32)
 
-	data, err := a.Instance.GetMemory(uint64(ptr), uint64(length))
-	if err != nil {
-		return "", err
-	}
+	return string(a.importsHandler.ioBuffer.Bytes()), nil
+}
 
-	return string(data), nil
+type ImportsHandler struct {
+	v1.DefaultImportsHandler
+
+	ioBuffer common.IoBuffer
+}
+
+var _ proxywasm.ImportsHandler = &ImportsHandler{}
+
+func (h *ImportsHandler) GetFuncCallData() common.IoBuffer {
+	h.ioBuffer = &common.CommonBuffer{}
+	return h.ioBuffer
 }
