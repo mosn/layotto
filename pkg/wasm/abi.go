@@ -36,7 +36,6 @@ func abiImplFactory(instance types.WasmInstance) types.ABI {
 	abi.SetInstance(instance)
 	ih := &ImportsHandler{
 		DefaultImportsHandler: v1.DefaultImportsHandler{},
-		ioBuffer:              &common.CommonBuffer{},
 	}
 	abi.SetImports(ih)
 	abi.importsHandler = ih
@@ -93,6 +92,6 @@ type ImportsHandler struct {
 var _ proxywasm.ImportsHandler = &ImportsHandler{}
 
 func (h *ImportsHandler) GetFuncCallData() common.IoBuffer {
-	h.ioBuffer = &common.CommonBuffer{}
+	h.ioBuffer = common.NewIoBufferBytes(make([]byte, 0))
 	return h.ioBuffer
 }
