@@ -101,8 +101,6 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 			plugin.ReleaseInstance(instance)
 			return nil
 		}
-
-		// TODO: 确定这里做了什么事，调用顺序有影响吗
 		pluginABI.SetABIImports(filter)
 
 		exports := pluginABI.GetABIExports().(Exports)

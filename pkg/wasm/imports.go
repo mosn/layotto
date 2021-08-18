@@ -19,16 +19,23 @@ package wasm
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/golang/protobuf/proto"
 	"mosn.io/layotto/pkg/grpc"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
+	"mosn.io/proxy-wasm-go-host/common"
 	"mosn.io/proxy-wasm-go-host/proxywasm"
 )
 
+// LayottoHandler implement proxywasm.ImportsHandler
 type LayottoHandler struct {
 	proxywasm010.DefaultImportsHandler
+
+	IoBuffer common.IoBuffer
 }
+
+var _ proxywasm.ImportsHandler = &LayottoHandler{}
 
 var Layotto grpc.API
 
@@ -69,4 +76,11 @@ func (d *LayottoHandler) CallForeignFunction(funcName string, param string) (str
 type helloRequest struct {
 	ServiceName string `json:"service_name"`
 	Name        string `json:"name"`
+}
+
+func (d *LayottoHandler) GetFuncCallData() common.IoBuffer {
+	if d.IoBuffer == nil {
+		d.IoBuffer = common.NewIoBufferBytes(make([]byte, 0))
+	}
+	return d.IoBuffer
 }
