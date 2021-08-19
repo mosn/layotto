@@ -24,8 +24,6 @@ import (
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/types"
-	"mosn.io/mosn/pkg/wasm"
-	"mosn.io/mosn/pkg/wasm/abi"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 	"mosn.io/pkg/buffer"
 	"mosn.io/proxy-wasm-go-host/common"
@@ -35,11 +33,10 @@ import (
 type Filter struct {
 	LayottoHandler
 
-	ctx context.Context
-
+	ctx     context.Context
 	factory *FilterConfigFactory
 
-	router  Router
+	router  *Router
 	plugins []*WasmPlugin
 
 	receiverFilterHandler api.StreamReceiverFilterHandler
@@ -55,10 +52,10 @@ type WasmPlugin struct {
 	plugin     types.WasmPlugin
 	instance   types.WasmInstance
 	abi        types.ABI
-	exports    proxywasm.Exports
+	exports    Exports
 
+	// useless for now
 	rootContextID int32
-	contextID     int32
 }
 
 var contextIDGenerator int32
@@ -72,80 +69,19 @@ func newContextID(rootContextID int32) int32 {
 	}
 }
 
+// NewFilter create the filter for a request
 func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
-	configs := factory.config
-
 	filter := &Filter{
 		ctx:     ctx,
 		factory: factory,
-		router: Router{
-			routes: make(map[string]Group),
-		},
-		buffer: buffer.NewIoBuffer(100),
+
+		router:  factory.router,
+		plugins: factory.plugins,
+		buffer:  buffer.NewIoBuffer(100),
 	}
 
-	plugins := make([]*WasmPlugin, 0, len(configs))
-	for _, pluginConfig := range configs {
-		pluginWrapper := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginConfig.PluginName)
-		if pluginWrapper == nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter wasm plugin not exists, plugin name: %v", pluginConfig.PluginName)
-			return nil
-		}
-
-		plugin := pluginWrapper.GetPlugin()
-		instance := plugin.GetInstance()
-
-		pluginABI := abi.GetABI(instance, AbiV2)
-		if pluginABI == nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter abi not found in instance")
-			plugin.ReleaseInstance(instance)
-			return nil
-		}
-		pluginABI.SetABIImports(filter)
-
-		exports := pluginABI.GetABIExports().(Exports)
-		if exports == nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to get exports part from abi")
-			plugin.ReleaseInstance(instance)
-			return nil
-		}
-
-		contextID := newContextID(pluginConfig.RootContextID)
-		wasmPlugin := &WasmPlugin{
-			pluginName:    pluginConfig.PluginName,
-			plugin:        plugin,
-			instance:      instance,
-			abi:           pluginABI,
-			exports:       exports,
-			rootContextID: pluginConfig.RootContextID,
-			contextID:     contextID,
-		}
-		plugins = append(plugins, wasmPlugin)
-
-		instance.Lock(pluginABI)
-		defer instance.Unlock()
-
-		err := exports.ProxyOnContextCreate(contextID, pluginConfig.RootContextID)
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to create context id: %v, rootContextID: %v, err: %v",
-				contextID, pluginConfig.RootContextID, err)
-			return nil
-		}
-
-		// TODO: 获取id，注册路由
-		id, err := exports.ProxyGetID()
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to get id context id: %v, rootContextID: %v, err: %v",
-				contextID, pluginConfig.RootContextID, err)
-			return nil
-		}
-		filter.router.RegisterRoute(id, wasmPlugin)
-	}
-	filter.plugins = plugins
-
-	// TODO: 确定这个的作用
-	if len(plugins) > 0 {
-		filter.LayottoHandler.Instance = plugins[0].instance
+	for _, plugin := range factory.plugins {
+		plugin.abi.SetABIImports(filter)
 	}
 
 	return filter
@@ -153,22 +89,18 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 
 func (f *Filter) OnDestroy() {
 	f.destroyOnce.Do(func() {
-		for _, plugin := range f.plugins {
-			plugin.instance.Lock(plugin.abi)
-
-			_, err := plugin.exports.ProxyOnDone(plugin.contextID)
-			if err != nil {
-				log.DefaultLogger.Errorf("[proxywasm][filter] OnDestroy fail to call ProxyOnDone, err: %v", err)
-			}
-
-			err = plugin.exports.ProxyOnDelete(plugin.contextID)
-			if err != nil {
-				log.DefaultLogger.Errorf("[proxywasm][filter] OnDestroy fail to call ProxyOnDelete, err: %v", err)
-			}
-
-			plugin.instance.Unlock()
-			plugin.plugin.ReleaseInstance(plugin.instance)
-		}
+		//plugin := f.pluginUsed
+		//plugin.instance.Lock(plugin.abi)
+		//
+		//_, err := plugin.exports.ProxyOnDone(plugin.contextID)
+		//if err != nil {
+		//	log.DefaultLogger.Errorf("[proxywasm][filter] OnDestroy fail to call ProxyOnDone, err: %v", err)
+		//}
+		//
+		//err = plugin.exports.ProxyOnDelete(plugin.contextID)
+		//if err != nil {
+		//	log.DefaultLogger.Errorf("[proxywasm][filter] OnDestroy fail to call ProxyOnDelete, err: %v", err)
+		//}
 	})
 }
 
@@ -194,28 +126,42 @@ func headerMapSize(headers api.HeaderMap) int {
 }
 
 func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
-	// TODO: should diapatch by header
 	id, ok := headers.Get("id")
 	if !ok {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders no id in headers")
 		return api.StreamFilterStop
 	}
 
-	plugin, err := f.router.GetRandomPluginByID(id)
+	wasmPlugin, err := f.router.GetRandomPluginByID(id)
 	if err != nil {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders id, err: %v", err)
 		return api.StreamFilterStop
 	}
 
-	plugin.instance.Lock(plugin.abi)
-	defer plugin.instance.Unlock()
+	plugin := wasmPlugin.plugin
+	instance := plugin.GetInstance()
+	defer plugin.ReleaseInstance(instance)
+	f.LayottoHandler.Instance = instance
+	wasmPlugin.abi.SetABIImports(f)
+	exports := wasmPlugin.exports
+	instance.Lock(wasmPlugin.abi)
+	defer instance.Unlock()
+
+	contextID := newContextID(wasmPlugin.rootContextID)
+
+	err = exports.ProxyOnContextCreate(contextID, wasmPlugin.rootContextID)
+	if err != nil {
+		log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to create context id: %v, rootContextID: %v, err: %v",
+			contextID, wasmPlugin.rootContextID, err)
+		return api.StreamFilterStop
+	}
 
 	endOfStream := 1
 	if (buf != nil && buf.Len() > 0) || trailers != nil {
 		endOfStream = 0
 	}
 
-	action, err := plugin.exports.ProxyOnRequestHeaders(plugin.contextID, int32(headerMapSize(headers)), int32(endOfStream))
+	action, err := exports.ProxyOnRequestHeaders(contextID, int32(headerMapSize(headers)), int32(endOfStream))
 	if err != nil || action != proxywasm.ActionContinue {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders err: %v", err)
 		return api.StreamFilterStop
@@ -227,7 +173,7 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 	}
 
 	if buf != nil && buf.Len() > 0 {
-		action, err = plugin.exports.ProxyOnRequestBody(plugin.contextID, int32(buf.Len()), int32(endOfStream))
+		action, err = exports.ProxyOnRequestBody(contextID, int32(buf.Len()), int32(endOfStream))
 		if err != nil || action != proxywasm.ActionContinue {
 			log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestBody err: %v", err)
 			return api.StreamFilterStop
@@ -235,7 +181,7 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 	}
 
 	if trailers != nil {
-		action, err = plugin.exports.ProxyOnRequestTrailers(plugin.contextID, int32(headerMapSize(trailers)))
+		action, err = exports.ProxyOnRequestTrailers(contextID, int32(headerMapSize(trailers)))
 		if err != nil || action != proxywasm.ActionContinue {
 			log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestTrailers err: %v", err)
 			return api.StreamFilterStop

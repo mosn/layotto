@@ -26,9 +26,7 @@ import (
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/mosn/pkg/wasm"
 	"mosn.io/mosn/pkg/wasm/abi"
-	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 	"mosn.io/pkg/utils"
-	"mosn.io/proxy-wasm-go-host/proxywasm"
 )
 
 const LayottoWasm = "Layotto"
@@ -40,21 +38,29 @@ func init() {
 // FilterConfigFactory contains multi wasm-plugin configs
 // its pointer implemente api.StreamFilterChainFactory
 type FilterConfigFactory struct {
-	proxywasm010.DefaultImportsHandler
+	LayottoHandler
 
 	config        []*filterConfigItem // contains multi wasm config
 	RootContextID int32
 
+	plugins []*WasmPlugin
+	router  *Router
 	//vmConfigBytes     buffer.IoBuffer
 	//pluginConfigBytes buffer.IoBuffer
 }
 
-var _ api.StreamFilterChainFactory = &FilterConfigFactory{}
+var (
+	_ api.StreamFilterChainFactory = &FilterConfigFactory{}
+	// TODO: useless for now
+	_ types.WasmPluginHandler = &FilterConfigFactory{}
+)
 
 func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilterChainFactory, error) {
 	factory := &FilterConfigFactory{
 		config:        make([]*filterConfigItem, 0, len(confs)),
 		RootContextID: 1,
+		plugins:       make([]*WasmPlugin, 0, len(confs)),
+		router:        &Router{routes: make(map[string]Group)},
 	}
 
 	for configID, confIf := range confs {
@@ -98,8 +104,52 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 		}
 
 		config.VmConfig = pw.GetConfig().VmConfig
-		pw.RegisterPluginHandler(factory)
 		factory.config = append(factory.config, config)
+
+		plugin := pw.GetPlugin()
+		// an instance used for sub tasks, not for user request
+		instance := plugin.GetInstance()
+		//defer instance.Release()
+		defer plugin.ReleaseInstance(instance)
+
+		// handler set instance
+		factory.LayottoHandler.Instance = instance
+		// plugin register handler
+		pw.RegisterPluginHandler(factory)
+
+		// get the ABI of instance
+		pluginABI := abi.GetABI(instance, AbiV2)
+		if pluginABI == nil {
+			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter abi not found in instance")
+			plugin.ReleaseInstance(instance)
+			return nil, errors.New("abi not found in instance")
+		}
+		// set the imports of abi
+		pluginABI.SetABIImports(factory)
+
+		// get wasm exports
+		exports := pluginABI.GetABIExports().(Exports)
+
+		instance.Lock(pluginABI)
+		defer instance.Unlock()
+
+		id, err := exports.ProxyGetID()
+		if err != nil {
+			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get wasm id, PluginName: %v, err: %v",
+				config.PluginName, err)
+			return nil, err
+		}
+
+		wasmPlugin := &WasmPlugin{
+			pluginName:    config.PluginName,
+			plugin:        plugin,
+			exports:       exports,
+			abi:           pluginABI,
+			rootContextID: config.RootContextID,
+		}
+
+		factory.router.RegisterRoute(id, wasmPlugin)
+		factory.plugins = append(factory.plugins, wasmPlugin)
 	}
 
 	return factory, nil
@@ -172,7 +222,7 @@ func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 	plugin.Exec(func(instance types.WasmInstance) bool {
 		a := abi.GetABI(instance, AbiV2)
 		a.SetABIImports(f)
-		exports := a.GetABIExports().(proxywasm.Exports)
+		exports := a.GetABIExports().(Exports)
 
 		instance.Lock(a)
 		defer instance.Unlock()
