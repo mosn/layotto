@@ -21,6 +21,8 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"mosn.io/mosn/pkg/wasm/abi"
+
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/types"
@@ -42,6 +44,8 @@ type Filter struct {
 	contextID  int32
 	pluginUsed *WasmPlugin
 	instance   types.WasmInstance
+	abi        types.ABI
+	exports    Exports
 
 	receiverFilterHandler api.StreamReceiverFilterHandler
 	senderFilterHandler   api.StreamSenderFilterHandler
@@ -54,8 +58,6 @@ type Filter struct {
 type WasmPlugin struct {
 	pluginName string
 	plugin     types.WasmPlugin
-	abi        types.ABI
-	exports    Exports
 
 	// useless for now
 	rootContextID int32
@@ -84,24 +86,20 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 		buffer:    buffer.NewIoBuffer(100),
 	}
 
-	for _, plugin := range factory.plugins {
-		plugin.abi.SetABIImports(filter)
-	}
-
 	return filter
 }
 
 func (f *Filter) OnDestroy() {
 	f.destroyOnce.Do(func() {
 		plugin := f.pluginUsed
-		f.instance.Lock(plugin.abi)
+		f.instance.Lock(f.abi)
 
-		_, err := plugin.exports.ProxyOnDone(f.contextID)
+		_, err := f.exports.ProxyOnDone(f.contextID)
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][filter] OnDestroy fail to call ProxyOnDone, err: %v", err)
 		}
 
-		err = plugin.exports.ProxyOnDelete(f.contextID)
+		err = f.exports.ProxyOnDelete(f.contextID)
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][filter] OnDestroy fail to call ProxyOnDelete, err: %v", err)
 		}
@@ -150,8 +148,18 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 	instance := plugin.GetInstance()
 	f.instance = instance
 	f.LayottoHandler.Instance = instance
-	exports := wasmPlugin.exports
-	instance.Lock(wasmPlugin.abi)
+
+	pluginABI := abi.GetABI(instance, AbiV2)
+	if pluginABI == nil {
+		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive fail to get instance abi")
+		plugin.ReleaseInstance(instance)
+		return api.StreamFilterStop
+	}
+	pluginABI.SetABIImports(f)
+	exports := pluginABI.GetABIExports().(Exports)
+	f.exports = exports
+
+	instance.Lock(pluginABI)
 	defer instance.Unlock()
 
 	err = exports.ProxyOnContextCreate(f.contextID, wasmPlugin.rootContextID)

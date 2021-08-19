@@ -142,8 +142,6 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 		wasmPlugin := &WasmPlugin{
 			pluginName:    config.PluginName,
 			plugin:        plugin,
-			exports:       exports,
-			abi:           pluginABI,
 			rootContextID: config.RootContextID,
 		}
 
