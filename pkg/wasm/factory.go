@@ -109,7 +109,6 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 		plugin := pw.GetPlugin()
 		// an instance used for sub tasks, not for user request
 		instance := plugin.GetInstance()
-		//defer instance.Release()
 		defer plugin.ReleaseInstance(instance)
 
 		// handler set instance
@@ -120,7 +119,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 		// get the ABI of instance
 		pluginABI := abi.GetABI(instance, AbiV2)
 		if pluginABI == nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter abi not found in instance")
+			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get instance abi, pluginName: %s", pluginName)
 			plugin.ReleaseInstance(instance)
 			return nil, errors.New("abi not found in instance")
 		}
