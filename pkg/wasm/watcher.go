@@ -93,9 +93,11 @@ func reloadWasm(fullPath string) {
 		if strings.HasSuffix(fullPath, path) {
 			found = true
 
+			vmConfig := *config.VmConfig
+			vmConfig.Md5 = ""
 			v2Config := v2.WasmPluginConfig{
 				PluginName:  config.PluginName,
-				VmConfig:    config.VmConfig,
+				VmConfig:    &vmConfig,
 				InstanceNum: config.InstanceNum,
 			}
 			err := wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
@@ -112,6 +114,12 @@ func reloadWasm(fullPath string) {
 
 			factory := factories[path]
 			pw.RegisterPluginHandler(factory)
+
+			for _, plugin := range factory.plugins {
+				if plugin.pluginName == config.PluginName {
+					plugin.plugin = pw.GetPlugin()
+				}
+			}
 			log.DefaultLogger.Infof("[proxywasm] [watcher] reloadWasm reload wasm success: %s", path)
 		}
 	}
