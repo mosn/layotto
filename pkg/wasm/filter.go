@@ -21,11 +21,10 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"mosn.io/mosn/pkg/wasm/abi"
-
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/types"
+	"mosn.io/mosn/pkg/wasm/abi"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 	"mosn.io/pkg/buffer"
 	"mosn.io/proxy-wasm-go-host/common"
@@ -209,7 +208,6 @@ func (f *Filter) Append(ctx context.Context, headers api.HeaderMap, buf buffer.I
 	return api.StreamFilterContinue
 }
 
-// TODO: get the plugin content ID corresponding to the caller wasm plugin
 func (f *Filter) GetRootContextID() int32 {
 	return f.factory.RootContextID
 }

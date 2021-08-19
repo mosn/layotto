@@ -45,15 +45,9 @@ type FilterConfigFactory struct {
 
 	plugins []*WasmPlugin
 	router  *Router
-	//vmConfigBytes     buffer.IoBuffer
-	//pluginConfigBytes buffer.IoBuffer
 }
 
-var (
-	_ api.StreamFilterChainFactory = &FilterConfigFactory{}
-	// TODO: useless for now
-	_ types.WasmPluginHandler = &FilterConfigFactory{}
-)
+var _ api.StreamFilterChainFactory = &FilterConfigFactory{}
 
 func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilterChainFactory, error) {
 	factory := &FilterConfigFactory{
@@ -166,53 +160,17 @@ func (f *FilterConfigFactory) GetRootContextID() int32 {
 	return f.RootContextID
 }
 
-//func (f *FilterConfigFactory) GetVmConfig() common.IoBuffer {
-//	if f.vmConfigBytes != nil {
-//		return f.vmConfigBytes
-//	}
-//
-//	vmConfig := *f.config.VmConfig
-//	typeOf := reflect.TypeOf(vmConfig)
-//	valueOf := reflect.ValueOf(&vmConfig).Elem()
-//
-//	if typeOf.Kind() != reflect.Struct || typeOf.NumField() == 0 {
-//		return nil
-//	}
-//
-//	m := make(map[string]string)
-//	for i := 0; i < typeOf.NumField(); i++ {
-//		m[typeOf.Field(i).Name] = fmt.Sprintf("%v", valueOf.Field(i).Interface())
-//	}
-//
-//	b := proxywasm.EncodeMap(m)
-//	if b == nil {
-//		return nil
-//	}
-//
-//	f.vmConfigBytes = buffer.NewIoBufferBytes(b)
-//
-//	return f.vmConfigBytes
-//}
-//
-//func (f *FilterConfigFactory) GetPluginConfig() common.IoBuffer {
-//	if f.pluginConfigBytes != nil {
-//		return f.pluginConfigBytes
-//	}
-//
-//	b := proxywasm.EncodeMap(f.config.UserData)
-//	if b == nil {
-//		return nil
-//	}
-//
-//	f.pluginConfigBytes = buffer.NewIoBufferBytes(b)
-//
-//	return f.pluginConfigBytes
-//}
+// FilterConfigFactory implement types.WasmPluginHandler
+// for `pw.RegisterPluginHandler(factory)`
+var _ types.WasmPluginHandler = &FilterConfigFactory{}
 
 func (f *FilterConfigFactory) OnConfigUpdate(config v2.WasmPluginConfig) {
-	// TODO: update the correct wasm
-	//f.config.InstanceNum = config.InstanceNum
-	//f.config.VmConfig = config.VmConfig
+	for _, plugin := range f.config {
+		if plugin.PluginName == config.PluginName {
+			plugin.InstanceNum = config.InstanceNum
+			plugin.VmConfig = config.VmConfig
+		}
+	}
 }
 
 func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
