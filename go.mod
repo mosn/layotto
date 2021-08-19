@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/dapr/components-contrib v1.2.0
 	github.com/dapr/kit v0.0.1
+	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gammazero/workerpool v1.1.2
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2
@@ -21,10 +22,10 @@ require (
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210526223527-2de42fcbbce3 // indirect
 	google.golang.org/protobuf v1.27.1
-	mosn.io/api v0.0.0-20210414070543-8a0686b03540
+	mosn.io/api v0.0.0-20210714065837-5b4c2d66e70c
 	mosn.io/layotto/components v0.0.0-20210625065826-9c2ad8dbcf05
 	mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3
-	mosn.io/mosn v0.23.0
+	mosn.io/mosn v0.24.1-0.20210817133744-f3fc4c31ddee
 	mosn.io/pkg v0.0.0-20210604065522-6e8f5a087814
 	mosn.io/proxy-wasm-go-host v0.0.0-20210312032409-2334f9cf62ec
 )

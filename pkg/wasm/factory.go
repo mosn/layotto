@@ -86,7 +86,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 				return nil, err
 			}
 
-			//addWatchFile(config, pluginName)
+			addWatchFile(config, factory)
 		} else {
 			pluginName = config.FromWasmPlugin
 		}
