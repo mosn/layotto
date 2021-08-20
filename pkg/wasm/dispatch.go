@@ -13,7 +13,7 @@ type Group struct {
 }
 
 type Router struct {
-	routes map[string]Group
+	routes map[string]*Group
 }
 
 // RegisterRoute register a group with id
@@ -23,7 +23,7 @@ func (route *Router) RegisterRoute(id string, plugin *WasmPlugin) {
 		group.count += 1
 		group.plugins = append(group.plugins, plugin)
 	} else {
-		route.routes[id] = Group{
+		route.routes[id] = &Group{
 			count:   1,
 			plugins: []*WasmPlugin{plugin},
 		}
@@ -38,5 +38,8 @@ func (route *Router) GetRandomPluginByID(id string) (*WasmPlugin, error) {
 	}
 
 	idx := rand.Intn(group.count)
-	return group.plugins[idx], nil
+	plugin := group.plugins[idx]
+	log.DefaultLogger.Infof("[proxywasm][dispatch] GetRandomPluginByID return index: %d, plugin: %s", idx, plugin.pluginName)
+	return plugin, nil
+
 }
