@@ -17,6 +17,7 @@
 package wasm
 
 import (
+	sdkTypes "github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/mosn/pkg/wasm/abi"
 	v1 "mosn.io/mosn/pkg/wasm/abi/proxywasm010"
@@ -39,6 +40,36 @@ type AbiV2Impl struct {
 	v1.ABIContext
 }
 
+var (
+	_ types.ABIHandler = &AbiV2Impl{}
+	_ Exports          = &AbiV2Impl{}
+)
+
 func (a *AbiV2Impl) Name() string {
 	return AbiV2
+}
+
+func (a *AbiV2Impl) GetABIExports() interface{} {
+	return a
+}
+
+func (a *AbiV2Impl) ProxyGetID() (string, error) {
+	ff, err := a.Instance.GetExportsFunc("proxy_get_id")
+	if err != nil {
+		return "", err
+	}
+	res, err := ff.Call()
+	if err != nil {
+		a.Instance.HandleError(err)
+		return "", err
+	}
+	a.Imports.Wait()
+
+	status := sdkTypes.Status(res.(int32))
+	if err := sdkTypes.StatusToError(status); err != nil {
+		a.Instance.HandleError(err)
+		return "", err
+	}
+
+	return string(a.Imports.GetFuncCallData().Bytes()), nil
 }
