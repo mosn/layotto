@@ -2,14 +2,14 @@ package wasm
 
 import (
 	"errors"
+	"math/rand"
 
 	"mosn.io/mosn/pkg/log"
 )
 
 type Group struct {
-	plugins       []*WasmPlugin
-	instanceCount int
-	tPool         chan int
+	count   int
+	plugins []*WasmPlugin
 }
 
 type Router struct {
@@ -20,33 +20,23 @@ type Router struct {
 // unsafe for concurrent
 func (route *Router) RegisterRoute(id string, plugin *WasmPlugin) {
 	if group, found := route.routes[id]; found {
-		group.instanceCount += plugin.config.InstanceNum
+		group.count += 1
 		group.plugins = append(group.plugins, plugin)
-		group.tPool = make(chan int, group.instanceCount)
 	} else {
 		route.routes[id] = Group{
-			plugins:       []*WasmPlugin{plugin},
-			instanceCount: plugin.config.InstanceNum,
-			tPool:         make(chan int, plugin.config.InstanceNum),
+			count:   1,
+			plugins: []*WasmPlugin{plugin},
 		}
 	}
 }
 
-func (route *Router) GetPluginByID(id string) (*WasmPlugin, error) {
+func (route *Router) GetRandomPluginByID(id string) (*WasmPlugin, error) {
 	group, ok := route.routes[id]
 	if !ok {
-		log.DefaultLogger.Errorf("[proxywasm][filter] GetPluginByID id not registered, id: %s", id)
+		log.DefaultLogger.Errorf("[proxywasm][filter] GetRandomPluginByID id not registered, id: %s", id)
 		return nil, errors.New("id is not registered")
 	}
 
-	if len(group.tPool) == 0 {
-		for idx, plugin := range group.plugins {
-			instanceNum := plugin.plugin.InstanceNum()
-			for i := 0; i < instanceNum; i++ {
-				group.tPool <- idx
-			}
-		}
-	}
-
-	return group.plugins[<-group.tPool], nil
+	idx := rand.Intn(group.count)
+	return group.plugins[idx], nil
 }
