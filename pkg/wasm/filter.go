@@ -186,7 +186,7 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 		return api.StreamFilterStop
 	}
 
-	wasmPlugin, err := f.router.GetRandomPluginByID(id)
+	wasmPlugin, err := f.router.GetPluginByID(id)
 	if err != nil {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders id, err: %v", err)
 		return api.StreamFilterStop
