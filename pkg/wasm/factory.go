@@ -36,14 +36,15 @@ func init() {
 }
 
 // FilterConfigFactory contains multi wasm-plugin configs
-// its pointer implemente api.StreamFilterChainFactory
+// its pointer implement api.StreamFilterChainFactory
 type FilterConfigFactory struct {
 	LayottoHandler
 
 	config        []*filterConfigItem // contains multi wasm config
 	RootContextID int32
 
-	plugins []*WasmPlugin
+	// map[pluginName]*WasmPlugin
+	plugins map[string]*WasmPlugin
 	router  *Router
 }
 
@@ -53,7 +54,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 	factory := &FilterConfigFactory{
 		config:        make([]*filterConfigItem, 0, len(confs)),
 		RootContextID: 1,
-		plugins:       make([]*WasmPlugin, 0, len(confs)),
+		plugins:       make(map[string]*WasmPlugin),
 		router:        &Router{routes: make(map[string]Group)},
 	}
 
@@ -100,47 +101,15 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 		config.VmConfig = pw.GetConfig().VmConfig
 		factory.config = append(factory.config, config)
 
-		plugin := pw.GetPlugin()
-		// an instance used for sub tasks, not for user request
-		instance := plugin.GetInstance()
-		defer plugin.ReleaseInstance(instance)
-
-		// handler set instance
-		factory.LayottoHandler.Instance = instance
-		// plugin register handler
-		pw.RegisterPluginHandler(factory)
-
-		// get the ABI of instance
-		pluginABI := abi.GetABI(instance, AbiV2)
-		if pluginABI == nil {
-			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get instance abi, pluginName: %s", pluginName)
-			plugin.ReleaseInstance(instance)
-			return nil, errors.New("abi not found in instance")
-		}
-		// set the imports of abi
-		pluginABI.SetABIImports(factory)
-
-		// get wasm exports
-		exports := pluginABI.GetABIExports().(Exports)
-
-		instance.Lock(pluginABI)
-		defer instance.Unlock()
-
-		id, err := exports.ProxyGetID()
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get wasm id, PluginName: %v, err: %v",
-				config.PluginName, err)
-			return nil, err
-		}
-
 		wasmPlugin := &WasmPlugin{
 			pluginName:    config.PluginName,
-			plugin:        plugin,
+			plugin:        pw.GetPlugin(),
 			rootContextID: config.RootContextID,
+			config:        config,
 		}
-
-		factory.router.RegisterRoute(id, wasmPlugin)
-		factory.plugins = append(factory.plugins, wasmPlugin)
+		factory.plugins[config.PluginName] = wasmPlugin
+		// pw.RegisterPluginHandler will call factory.OnPluginStart
+		pw.RegisterPluginHandler(factory)
 	}
 
 	return factory, nil
@@ -175,21 +144,38 @@ func (f *FilterConfigFactory) OnConfigUpdate(config v2.WasmPluginConfig) {
 
 func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 	plugin.Exec(func(instance types.WasmInstance) bool {
+		wasmPlugin, ok := f.plugins[plugin.PluginName()]
+		if !ok {
+			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get wasm plugin, PluginName: %s",
+				plugin.PluginName())
+			return true
+		}
+
 		a := abi.GetABI(instance, AbiV2)
 		a.SetABIImports(f)
 		exports := a.GetABIExports().(Exports)
+		f.LayottoHandler.Instance = instance
 
 		instance.Lock(a)
 		defer instance.Unlock()
 
-		err := exports.ProxyOnContextCreate(f.RootContextID, 0)
+		// get the ID of wasm, register route
+		id, err := exports.ProxyGetID()
+		if err != nil {
+			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get wasm id, PluginName: %s, err: %v",
+				plugin.PluginName, err)
+			return true
+		}
+		f.router.RegisterRoute(id, wasmPlugin)
+
+		err = exports.ProxyOnContextCreate(f.RootContextID, 0)
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] OnPluginStart fail to create root context id, err: %v", err)
 			return true
 		}
 
 		vmConfigSize := 0
-		if vmConfigBytes := f.GetVmConfig(); vmConfigBytes != nil {
+		if vmConfigBytes := wasmPlugin.GetVmConfig(); vmConfigBytes != nil {
 			vmConfigSize = vmConfigBytes.Len()
 		}
 
@@ -200,7 +186,7 @@ func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 		}
 
 		pluginConfigSize := 0
-		if pluginConfigBytes := f.GetPluginConfig(); pluginConfigBytes != nil {
+		if pluginConfigBytes := wasmPlugin.GetPluginConfig(); pluginConfigBytes != nil {
 			pluginConfigSize = pluginConfigBytes.Len()
 		}
 

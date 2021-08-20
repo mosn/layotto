@@ -18,6 +18,8 @@ package wasm
 
 import (
 	"context"
+	"fmt"
+	"reflect"
 	"sync"
 	"sync/atomic"
 
@@ -38,7 +40,7 @@ type Filter struct {
 	factory *FilterConfigFactory
 
 	router  *Router
-	plugins []*WasmPlugin
+	plugins map[string]*WasmPlugin
 
 	contextID  int32
 	pluginUsed *WasmPlugin
@@ -59,7 +61,51 @@ type WasmPlugin struct {
 	plugin     types.WasmPlugin
 
 	// useless for now
-	rootContextID int32
+	rootContextID     int32
+	config            *filterConfigItem
+	vmConfigBytes     buffer.IoBuffer
+	pluginConfigBytes buffer.IoBuffer
+}
+
+func (p *WasmPlugin) GetVmConfig() common.IoBuffer {
+	if p.vmConfigBytes != nil {
+		return p.vmConfigBytes
+	}
+
+	vmConfig := p.plugin.GetVmConfig()
+
+	typeOf := reflect.TypeOf(vmConfig)
+	valueOf := reflect.ValueOf(&vmConfig).Elem()
+	if typeOf.Kind() != reflect.Struct || typeOf.NumField() == 0 {
+		return nil
+	}
+
+	m := make(map[string]string)
+	for i := 0; i < typeOf.NumField(); i++ {
+		m[typeOf.Field(i).Name] = fmt.Sprintf("%v", valueOf.Field(i).Interface())
+	}
+
+	b := proxywasm.EncodeMap(m)
+	if b == nil {
+		return nil
+	}
+
+	p.vmConfigBytes = buffer.NewIoBufferBytes(b)
+	return p.vmConfigBytes
+}
+
+func (p *WasmPlugin) GetPluginConfig() common.IoBuffer {
+	if p.pluginConfigBytes != nil {
+		return p.pluginConfigBytes
+	}
+
+	b := proxywasm.EncodeMap(p.config.UserData)
+	if b == nil {
+		return nil
+	}
+
+	p.pluginConfigBytes = buffer.NewIoBufferBytes(b)
+	return p.pluginConfigBytes
 }
 
 var contextIDGenerator int32
@@ -90,6 +136,10 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 
 func (f *Filter) OnDestroy() {
 	f.destroyOnce.Do(func() {
+		if f.pluginUsed == nil || f.instance == nil {
+			return
+		}
+
 		plugin := f.pluginUsed
 		f.instance.Lock(f.abi)
 
@@ -212,14 +262,12 @@ func (f *Filter) GetRootContextID() int32 {
 	return f.factory.RootContextID
 }
 
-// TODO: get the plugin vm config corresponding to the caller wasm plugin
 func (f *Filter) GetVmConfig() common.IoBuffer {
-	return f.factory.GetVmConfig()
+	return f.pluginUsed.GetVmConfig()
 }
 
-// TODO: get the plugin config corresponding to the caller wasm plugin
 func (f *Filter) GetPluginConfig() common.IoBuffer {
-	return f.factory.GetPluginConfig()
+	return f.pluginUsed.GetPluginConfig()
 }
 
 func (f *Filter) GetHttpRequestHeader() common.HeaderMap {
