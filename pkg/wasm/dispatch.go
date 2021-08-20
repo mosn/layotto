@@ -6,34 +6,28 @@ import (
 	"mosn.io/mosn/pkg/log"
 )
 
-type Router struct {
-	routes map[string]*Group
-}
-
 type Group struct {
-	weightNodes []*WeightNode
+	plugins       []*WasmPlugin
+	instanceCount int
+	tPool         chan int
 }
 
-type WeightNode struct {
-	plugin          *WasmPlugin
-	weight          int
-	currentWeight   int
-	effectiveWeight int
+type Router struct {
+	routes map[string]Group
 }
 
 // RegisterRoute register a group with id
 // unsafe for concurrent
 func (route *Router) RegisterRoute(id string, plugin *WasmPlugin) {
-	node := &WeightNode{
-		plugin:          plugin,
-		weight:          plugin.plugin.InstanceNum(),
-		effectiveWeight: plugin.plugin.InstanceNum(),
-	}
 	if group, found := route.routes[id]; found {
-		group.weightNodes = append(group.weightNodes, node)
+		group.instanceCount += plugin.config.InstanceNum
+		group.plugins = append(group.plugins, plugin)
+		group.tPool = make(chan int, group.instanceCount)
 	} else {
-		route.routes[id] = &Group{
-			weightNodes: []*WeightNode{node},
+		route.routes[id] = Group{
+			plugins:       []*WasmPlugin{plugin},
+			instanceCount: plugin.config.InstanceNum,
+			tPool:         make(chan int, plugin.config.InstanceNum),
 		}
 	}
 }
@@ -41,36 +35,18 @@ func (route *Router) RegisterRoute(id string, plugin *WasmPlugin) {
 func (route *Router) GetPluginByID(id string) (*WasmPlugin, error) {
 	group, ok := route.routes[id]
 	if !ok {
-		log.DefaultLogger.Errorf("[proxywasm][dispatch] GetPluginByID id not registered, id: %s", id)
+		log.DefaultLogger.Errorf("[proxywasm][filter] GetPluginByID id not registered, id: %s", id)
 		return nil, errors.New("id is not registered")
 	}
 
-	if plugin := group.Next(); plugin != nil {
-		log.DefaultLogger.Infof("[proxywasm][dispatch] GetPluginByID return plugin: %s", plugin.pluginName)
-		return plugin, nil
-	}
-	return nil, errors.New("Next return nil")
-}
-
-func (g *Group) Next() *WasmPlugin {
-	var best *WeightNode
-	total := 0
-	for i := 0; i < len(g.weightNodes); i++ {
-		w := g.weightNodes[i]
-		total += w.effectiveWeight
-		w.currentWeight += w.effectiveWeight
-		if w.effectiveWeight < w.weight {
-			w.effectiveWeight++
-		}
-
-		if best == nil || w.currentWeight > best.currentWeight {
-			best = w
+	if len(group.tPool) == 0 {
+		for idx, plugin := range group.plugins {
+			instanceNum := plugin.plugin.InstanceNum()
+			for i := 0; i < instanceNum; i++ {
+				group.tPool <- idx
+			}
 		}
 	}
 
-	if best == nil {
-		return nil
-	}
-	best.currentWeight -= total
-	return best.plugin
+	return group.plugins[<-group.tPool], nil
 }

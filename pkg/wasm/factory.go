@@ -55,7 +55,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 		config:        make([]*filterConfigItem, 0, len(confs)),
 		RootContextID: 1,
 		plugins:       make(map[string]*WasmPlugin),
-		router:        &Router{routes: make(map[string]*Group)},
+		router:        &Router{routes: make(map[string]Group)},
 	}
 
 	for configID, confIf := range confs {
