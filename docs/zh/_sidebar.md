@@ -6,7 +6,7 @@
     - [使用State API](zh/start/state/start.md)
     - [使用Pub/Sub API](zh/start/pubsub/start.md)
     - [使用分布式锁 API](zh/start/lock/start.md)
-    - [使用分布式自增唯一id API](zh/start/sequencer/start.md)
+    - [使用Sequencer API生成分布式自增id](zh/start/sequencer/start.md)
     - 进行RPC调用
         - [Hello World](zh/start/rpc/helloworld.md)
         - [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
@@ -23,9 +23,9 @@
         - [Actuator API](zh/api_reference/actuator/actuator.md)
         - [State API](zh/api_reference/state/reference.md)
         - [Sequencer API](zh/api_reference/sequencer/reference.md)
-        - [Configuration API](zh/api_reference/configuration/reference.md)
-        - [Pub/Sub API](zh/api_reference/pubsub/reference.md)
         - [Distributed Lock API](zh/api_reference/lock/reference.md)
+        - [Pub/Sub API](zh/api_reference/pubsub/reference.md)
+        - [Configuration API](zh/api_reference/configuration/reference.md)
         - [RPC API](zh/api_reference/rpc/reference.md)
     - SDK文档    
         - [go-sdk](zh/sdk_reference/go/start.md)
@@ -35,7 +35,7 @@
         - [State](zh/component_specs/state/common.md)
             - [Redis](zh/component_specs/state/redis.md)
             - [其他组件](zh/component_specs/state/others.md)
-        - Pub/Sub
+        - [Pub/Sub](zh/component_specs/pubsub/common.md)
             - [Redis](zh/component_specs/pubsub/redis.md)
             - [其他组件](zh/component_specs/pubsub/others.md)
         - [Distributed Lock](zh/component_specs/lock/common.md)
@@ -47,8 +47,10 @@
             - [Apollo](zh/component_specs/configuration/apollo.md)        
         - [Sequencer](zh/component_specs/sequencer/common.md)
             - [Etcd](zh/component_specs/sequencer/etcd.md)
+            - [Redis](zh/component_specs/sequencer/redis.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
+    - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
     - [Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)
     - [Pub/Sub API以及与dapr component的兼容性](zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
     - [RPC设计文档](zh/design/rpc/rpc设计文档.md)

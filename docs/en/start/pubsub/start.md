@@ -13,7 +13,7 @@ The architecture of this example is shown in the figure below. The running proce
 
 ![img_1.png](../../../img/mq/start/img_1.png)
 
-### Deploy and Run Redis in Docker
+### Step 1. Deploy and Run Redis in Docker
 
 1. Get the latest version of Redis image.
    
@@ -44,7 +44,7 @@ Parameter Description:
 
 `-p 6380:6379`: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
 
-### Start the Subscriber program and subscribe to events
+### Step 2. Start the Subscriber program and subscribe to events
 ```bash
  cd ${projectpath}/demo/pubsub/redis/server/
  go build -o subscriber
@@ -70,7 +70,7 @@ When a new event occurs, Layotto will call this API to notify the Subscriber of 
 
 After the program receives a new event, it will print the event to the command line.
 
-### Run Layotto
+### Step 3. Run Layotto
 
 After downloading the project code to the local, switch the code directory and compile:
 
@@ -85,7 +85,7 @@ After completion, the layotto file will be generated in the directory, run it:
 ./layotto start -c ../../configs/config_apollo_health_mq.json
 ```
 
-### Run the Publisher program and call Layotto to publish events
+### Step 4. Run the Publisher program and call Layotto to publish events
 
 ```bash
  cd ${projectpath}/demo/pubsub/redis/client/
@@ -99,7 +99,7 @@ If the following information is printed, the call is successful:
 Published a new event.Topic: topic1 ,Data: value1 
 ```
 
-### Check the event message received by the subscriber
+### Step 5. Check the event message received by the subscriber
 
 Go back to the subscriber's command line and you will see that a new message has been received:
 
@@ -109,11 +109,18 @@ Received a new event.Topic: topic1 , Data:value1
 ```
 
 ### Next Step
-#### Use sdk or grpc client
-The example Publisher program uses the golang version SDK provided by Layotto. The SDK is located in the `sdk` directory. Users can directly call the services provided by Layotto through the corresponding SDK.
+#### What did this client Demo do?
+The demo client program uses the golang version SDK provided by Layotto, calls Layotto Pub/Sub API, and publishes events to redis. Later, Layotto received the new events in redis, and sent the new events back to the callback API opened by the Subscriber program to notify the Subscriber.
+
+The sdk is located in the `sdk` directory, and users can call the API provided by Layotto through the sdk.
 
 In addition to using sdk, you can also interact with Layotto directly through grpc in any language you like.
 
-#### Understand the principle of Pub/Sub API implementation
+In fact, sdk is only a very thin package for grpc, using sdk is about equal to directly using grpc.
 
+#### Details later, let's continue to experience other APIs
+Explore other Quickstarts through the navigation bar on the left.
+
+
+#### Understand the principle of Pub/Sub API implementation
 If you are interested in the implementation principle, or want to extend some functions, you can read [Pub/Sub API design document](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
