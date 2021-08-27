@@ -19,6 +19,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/sequencer"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	"os"
@@ -124,6 +125,7 @@ func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
 	// Register default actuator implementations
 	actuatorInfo.AddInfoContributor("app", actuator.GetAppContributor())
+	actuatorInfo.AddInfoContributorFunc("components", actuators.GetComponentsActiveStatus)
 	health.AddReadinessIndicator("runtime_startup", actuator.GetRuntimeReadinessIndicator())
 	health.AddLivenessIndicator("runtime_startup", actuator.GetRuntimeLivenessIndicator())
 }

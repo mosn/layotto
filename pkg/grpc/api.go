@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"mosn.io/layotto/components/pkg/actuators"
 	"strings"
 	"sync"
 
@@ -162,6 +163,7 @@ func (a *api) getHello(name string) (hello.HelloService, error) {
 	if !ok {
 		return nil, ErrNoInstance
 	}
+	actuators.SetComponentActive(common.Hello)
 	return h, nil
 }
 
@@ -209,11 +211,19 @@ func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRe
 	}, nil
 }
 
+func (a *api) getConfigStore(storeName string) (configstores.Store, bool) {
+	store, ok := a.configStores[storeName]
+	if ok {
+		actuators.SetComponentActive(common.ConfigStore)
+	}
+	return store, ok
+}
+
 // GetConfiguration gets configuration from configuration store.
 func (a *api) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error) {
 	resp := &runtimev1pb.GetConfigurationResponse{}
 	// check store type supported or not
-	store, ok := a.configStores[req.StoreName]
+	store, ok := a.getConfigStore(req.StoreName)
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
 	}
@@ -236,7 +246,7 @@ func (a *api) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigur
 
 // SaveConfiguration saves configuration into configuration store.
 func (a *api) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfigurationRequest) (*emptypb.Empty, error) {
-	store, ok := a.configStores[req.StoreName]
+	store, ok := a.getConfigStore(req.StoreName)
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
 	}
@@ -259,7 +269,7 @@ func (a *api) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfig
 
 // DeleteConfiguration deletes configuration from configuration store.
 func (a *api) DeleteConfiguration(ctx context.Context, req *runtimev1pb.DeleteConfigurationRequest) (*emptypb.Empty, error) {
-	store, ok := a.configStores[req.StoreName]
+	store, ok := a.getConfigStore(req.StoreName)
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
 	}
@@ -302,7 +312,7 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 				return
 			}
 			// 1.3. else find the component and delegate to it
-			store, ok := a.configStores[req.StoreName]
+			store, ok := a.getConfigStore(req.StoreName)
 			// 1.3.1. stop if StoreName is not supported
 			if !ok {
 				log.DefaultLogger.Errorf("configure store [%+v] don't support now", req.StoreName)

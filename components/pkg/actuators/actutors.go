@@ -32,6 +32,13 @@ var (
 	DOWN = Status("DOWN")
 )
 
+type activeComponents struct {
+	components map[string]bool
+	mux        sync.RWMutex
+}
+
+var allActiveComponents activeComponents
+
 type Indicator interface {
 	Report() (status Status, details map[string]interface{})
 }
@@ -43,6 +50,10 @@ type ComponentsIndicator struct {
 
 var componentsActutors sync.Map
 
+func init() {
+	allActiveComponents.components = make(map[string]bool)
+}
+
 func GetIndicatorWithName(name string) *ComponentsIndicator {
 	if v, ok := componentsActutors.Load(name); ok {
 		return v.(*ComponentsIndicator)
@@ -52,4 +63,20 @@ func GetIndicatorWithName(name string) *ComponentsIndicator {
 
 func SetComponentsActuators(name string, indicator *ComponentsIndicator) {
 	componentsActutors.Store(name, indicator)
+}
+
+func GetComponentsActiveStatus() (interface{}, error) {
+	return allActiveComponents.components, nil
+}
+
+func SetComponentActive(component string) {
+	allActiveComponents.mux.RLock()
+	if _, ok := allActiveComponents.components[component]; ok {
+		allActiveComponents.mux.RUnlock()
+		return
+	}
+	allActiveComponents.mux.RUnlock()
+	allActiveComponents.mux.Lock()
+	allActiveComponents.components[component] = true
+	allActiveComponents.mux.Unlock()
 }

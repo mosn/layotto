@@ -24,3 +24,15 @@ const (
 	// DOWN means it is unhealthy
 	DOWN = "DOWN"
 )
+
+type ComponentName = string
+
+const (
+	Hello       ComponentName = "hellos"
+	ConfigStore               = "config_stores"
+	Rpc                       = "rpcs"
+	PubSub                    = "pub_subs"
+	State                     = "state"
+	Lock                      = "lock"
+	Sequencer                 = "sequencer"
+)
