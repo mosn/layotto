@@ -150,6 +150,7 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 	// create response base on hello.Response
 	return &runtimev1pb.SayHelloResponse{
 		Hello: resp.HelloString,
+		Data:  in.Data,
 	}, nil
 
 }
