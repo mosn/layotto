@@ -164,10 +164,13 @@ message UnlockResponse {
 message SayHelloRequest {
   string service_name = 1;
   string name = 2;
+  // Optional. This field is used to control the packet size during load tests.
+  google.protobuf.Any data = 3;
 }
 
 message SayHelloResponse {
   string hello = 1;
+  google.protobuf.Any data = 2;
 }
 
 message InvokeServiceRequest {
