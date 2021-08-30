@@ -66,6 +66,8 @@ func SetComponentsActuators(name string, indicator *ComponentsIndicator) {
 }
 
 func GetComponentsActiveStatus() (interface{}, error) {
+	allActiveComponents.mux.RLock()
+	defer allActiveComponents.mux.RUnlock()
 	return allActiveComponents.components, nil
 }
 
