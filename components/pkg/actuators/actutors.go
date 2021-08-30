@@ -32,12 +32,8 @@ var (
 	DOWN = Status("DOWN")
 )
 
-type activeComponents struct {
-	components map[string]bool
-	mux        sync.RWMutex
-}
-
-var allActiveComponents activeComponents
+var allActiveComponents sync.Map
+var componentsActutors sync.Map
 
 type Indicator interface {
 	Report() (status Status, details map[string]interface{})
@@ -46,12 +42,6 @@ type Indicator interface {
 type ComponentsIndicator struct {
 	ReadinessIndicator Indicator
 	LivenessIndicator  Indicator
-}
-
-var componentsActutors sync.Map
-
-func init() {
-	allActiveComponents.components = make(map[string]bool)
 }
 
 func GetIndicatorWithName(name string) *ComponentsIndicator {
@@ -65,20 +55,16 @@ func SetComponentsActuators(name string, indicator *ComponentsIndicator) {
 	componentsActutors.Store(name, indicator)
 }
 
+//here return map for json marshal directly
 func GetComponentsActiveStatus() (interface{}, error) {
-	allActiveComponents.mux.RLock()
-	defer allActiveComponents.mux.RUnlock()
-	return allActiveComponents.components, nil
+	res := make(map[string]bool)
+	allActiveComponents.Range(func(key, value interface{}) bool {
+		res[key.(string)] = value.(bool)
+		return true
+	})
+	return res, nil
 }
 
 func SetComponentActive(component string) {
-	allActiveComponents.mux.RLock()
-	if _, ok := allActiveComponents.components[component]; ok {
-		allActiveComponents.mux.RUnlock()
-		return
-	}
-	allActiveComponents.mux.RUnlock()
-	allActiveComponents.mux.Lock()
-	allActiveComponents.components[component] = true
-	allActiveComponents.mux.Unlock()
+	allActiveComponents.LoadOrStore(component, true)
 }
