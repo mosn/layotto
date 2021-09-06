@@ -1,12 +1,12 @@
 # Document Contribution Guide
 
-Thanks for your support for Layotto！
+Thank you for your interest in Layotto!
 
 This document describes how to modify/add documents. Documentation for this repository is written in Markdown.
 
 ## Document Path description
 
-Documents are stored in the docs/ directory, within it, docs/en stores English documents and docs/zh stores Chinese documents.
+Documents are stored in the docs/ directory, where docs/en stores English documents and docs/zh stores Chinese documents.
 
 ![img_2.png](../../img/development/doc/img_2.png)
 
@@ -21,7 +21,7 @@ Chinese sidebar: docs/zh/_sidebar.md
 
 English sidebar: docs/_sidebar.md
 
-3. After finishing the above Markdown files, submitting pr and merging it into the main branch, new documents are now available on the official website.
+3. After writing the above Markdown files, submitting pr and merging it into the main branch, new documents are now available on the official website.
 
 ## Documentation Site Description
 Files under docs/ directory will be automatically deployed to github pages and rendered through [docsify](https://docsify.js.org/#/).
@@ -37,7 +37,7 @@ The hyperlink mentioned here is the kind of links that will jump to other docume
 ![image](https://user-images.githubusercontent.com/26001097/132220354-db2b6ad0-58e4-46ed-b005-71d8134f725b.png)
 
 ### Incorrect Syntax
-If you try to create a hyperlink with a relative path, then a 404 page will be popped out once you clicked on it:
+If you try to create a hyperlink with a relative path, then a 404 page will appear once you clicked it:
 
 ![img_6.png](../../img/development/doc/img_6.png)
 
@@ -45,7 +45,7 @@ If you try to create a hyperlink with a relative path, then a 404 page will be p
 
 ### Correct Syntax
 
-There are two suggested ways to use hyperlinks:
+There are two suggested ways to write hyperlinks:
 
 a. Use a path relative to the docs/ directory. Such as:
 
@@ -66,7 +66,7 @@ It is recommended to use the full path when referencing images in documents, to 
 
 For example, when referencing the images under the main branch, the prefix of the image Url is https://raw.githubusercontent.com/mosn/layotto/main/docs/img
 
-Markdown：
+and the Markdown phrase refering to an image will be ：
 
 ```markdown
 ![Architecture](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
