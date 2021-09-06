@@ -15,7 +15,7 @@
 - 2个Medium级别的PR
 - 1个Medium+2个Easy级别的PR
 
-注：相当于`Hard:Medium:Easy`的比例是`1:2:4`
+注：相当于`Hard:Medium:Easy`的换算关系是`1:2:4`
 ### 职责
 负责某个模块的issue review和code review,给出技术建议。有该模块相关的重大变更会request review模块Reviewer。
 
@@ -26,6 +26,6 @@
 - 4个Medium级别的PR
 - 1个Hard+2个Medium级别的PR
 
-注：相当于`Hard:Medium`的比例是`1:2`
+注：相当于`Hard:Medium`的换算关系是`1:2`
 ## 4. PMC Member
 成为PMC Member的条件：由PMC Member为某位Committer提名，然后PMC 投票，投票过半即可晋升为PMC Member
