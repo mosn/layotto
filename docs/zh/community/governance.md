@@ -27,11 +27,11 @@ Layotto是MOSN社区的一个子项目，本文介绍SOFAStack & MOSN社区角�
 
 ### 1.3. 决策社区化
 #### 评审社区化：需求和技术方案公开评审
-重要需求的评审、技术方案的评审应该在社区内**以开放的方式做评审，而不是蚂蚁员工开内部评审会**
+重要需求的评审、技术方案的评审应该在社区内**以开放的方式做评审，而不是几个人搞内部评审会**
 
 例如要做技术方案评审时，社区成员可以在自己的用户群或者 Core Team 群里组织线上会议、开直播，允许每一个感兴趣的人观看、参与。如果觉得直播太重，issue 区发 proposal 也行。
 
-否则，试想：某项目 owner 离开蚂蚁后，虽然他是 PMC member，但是方案评审都不带他，他还会有动力继续参与社区么？
+反例：张三是一位火锅店老板，同时也是某项目的Committer。他很有参与社区建设的热情，但是技术方案评审都不带他，他感到很失望，这个Committer title形同虚设。
 
 #### 晋升社区化
 晋升规则、提名由社区成员在群内协商决定
@@ -70,7 +70,7 @@ Member职责是code review以及处理issue，如果member处理issue和code rev
 #### 角色说明
 和Member一样，也是负责code review以及处理issue，算是对Member贡献的认可和感谢。长期review贡献多可以晋升Committer
 
-Reviewer要承担一定的review责任。比如某个issue/Pull request涉及某个模块，项目维护者可以request这个模块的Reviewer进行Review、负责把关。比如有人给Layotto的WASM模块提bug，可以request WASN模块的reviewer @zhenjunMa
+Reviewer要承担一定的review责任。比如某个issue/Pull request涉及某个模块，项目维护者可以request这个模块的Reviewer进行Review、负责把关。比如有人给Layotto的WASM模块提bug，可以request WASM模块的reviewer @zhenjunMa
 
 #### 成为Reviewer的条件
 每个项目自己定
@@ -87,6 +87,7 @@ b. 认为给Reviewer定目标太有KPI味了，工作背KPI就够难了别给社
 1. 希望能让MOSN和SOFAStack社区响应速度更快一些，响应pr快一些（至于如何提高issue响应速度，我还没想到啥办法，欢迎提建议
 
 2. 决策社区化，code review可以由活跃贡献者来，不想只有一两个人有review权限
+   
 3. 很多爱好者可能一段时间有空、一段时间没空（国内程序员现状.....)，没空的时候通过Review PR和issue，可以只花少量时间就能参与项目、做出贡献、知道项目这段时间发生的变化
 
 #### code review时，一票LGTM还是两票LGTM才能合并？
