@@ -1,42 +1,38 @@
 # Development specification when adding API
 Thanks for your support for Layotto!
 
-This document describes how to design and implement the new Layotto API. Layotto is written in Go , if you are not familiar with Go, you can check it out [Go Tutorial](https://tour.golang.org/welcome/1) 。
+This document describes how to design and implement a new Layotto API. Layotto is written in Go , if you are not familiar with Go, you can check it out [Go Tutorial](https://tour.golang.org/welcome/1) 。
 
 When developing a new API, you can refer to the code and documentation of other existing APIs, which will make the development much easier.
 
 **Q: Why should the specification be formulated?**
 
-A: Currently there is a lack of documentation, which makes it difficult for users to use, for example:
+A: Currently there is a lack of documentation, which makes it difficult for users to use;
 
-![img_1.png](../../img/development/api/img_1.png)
+The code lacks comments and is not easy for interested contributors to understand, such as : https://github.com/mosn/layotto/issues/112
 
-![img_2.png](../../img/development/api/img_2.png)
+Adding documents and comments for existing code is a time consuming thing. We hope that the new features developed in the future will have enough docs and comments.
 
-The code lacks comments and is not understood by interested contributors, such as : https://github.com/mosn/layotto/issues/112
+**Q: Following the specification is too much trouble, will it discourage developers who want to contribute code?**
 
-The old documents and comments are too slow to make up. I hope that the new functions developed in the future will have these.
+A: **This specification only restricts "what is needed when adding a new Layotto API" (such as a new API to generate distributed self-incrementing id)**, other prs, such as adding a new component or a new SDK, do not need to follow this specification and are free enough.
 
-**Q: Following the specification is too much trouble, will it discourage students who want to contribute code?**
+## Too long; Don't read
+Proposal before development.Make sure the proposal is detailed enough.
 
-A: **This specification only restricts "what is needed to add the pr of the Layotto API" (such as a new design of a distributed self-incrementing id API)**, other prs, such as a new component or a new SDK, do not need to follow this specification. Not so complicated, free enough
-
-## Too long to watch
-Proposal before development, the proposal should be detailed
-
-Write four documents for users to see during development
+Write four documents for users
 - Quick start
-- Using document
+- Usage document
 - API common configuration
 - Component configuration
 
-No need to write design documents, but proto API and component API need to write detailed comments, comment as doc
+No need to write design documents, but you need to write detailed comments for proto API and component API and take the comments as doc.
 
-The pr of the new API requires two people to code review, and if there is a robot in the follow-up, one can cr; others can do whatever they want
+The pr of the new API requires two people to code review.
 
 
-## 1、Publish API proposal to the community after full discussion
-### 1.1. Publish detailed proposals
+## 1、Publish API proposal to the community and have a full discussion
+### 1.1. Publish a detailed proposal
 #### 1.1.1. Why the proposal should be detailed
 If the proposal is not detailed enough, there is nothing worthy of review by others, and no problem can be found;
 
@@ -56,13 +52,14 @@ The proposal needs to include the following:
 An example of an excellent proposal：https://github.com/dapr/dapr/issues/2988
 
 ### 1.2. Proposal review
-After the simple API is issued, everyone can discuss it in text;
+After submitting the proposal, everyone can discuss it in text;
 
-Important or complex API design can organize community meetings for review.
+For important or complex API, we can hold community meetings for design review.
 
 
 ## 2、Development
 ### 2.1. Code specification
+TODO
 
 ### 2.2. Test Specification
 - have unit test
