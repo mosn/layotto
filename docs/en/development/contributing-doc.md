@@ -26,15 +26,15 @@ English sidebar: docs/_sidebar.md
 ## Documentation Site Description
 Files under docs/ directory will be automatically deployed to github pages and rendered through [docsify](https://docsify.js.org/#/).
 
-Generally speaking, after the .md file is merged into the main branch, you can see the new page on the Layotto's documentation site, and all deployment and rendering processes are down automatically.
+Generally speaking, after the .md file is merged into the main branch, you can see the new page on the Layotto's documentation site, and all deployment and rendering processes are done automatically.
 
 ## Common Pitfalls: Hyperlinks Within Documents
 
-One annoying problem with Docsify is that the use of hyperlinks are confused.
+One annoying problem with Docsify is that the use of hyperlinks are confusing.
 
 The hyperlink mentioned here is the kind of links that will jump to other documents once clicked, such as the following:
 
-![img_4.png](../../img/development/doc/img_4.png)
+![image](https://user-images.githubusercontent.com/26001097/132220354-db2b6ad0-58e4-46ed-b005-71d8134f725b.png)
 
 ### Incorrect Syntax
 If you try to create a hyperlink with a relative path, then a 404 page will be popped out once you clicked on it:
@@ -72,4 +72,4 @@ Markdown：
 ![Architecture](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
 ```
 
-Note: Relative paths can also be used, but you may encounter problems like the logical path behind <img> tag and relative path is different, users access the README file through different paths, etc. It will be painful.
+Note: Relative paths can also be used, but you may encounter many problems. For example, the relative path logic of the `<img>` tag and `![xxx](url)` tag are different; for example, users may access the README through different paths so that it's hard for you to define the relative path. To avoid these problems,it's recommended to use a full url.
