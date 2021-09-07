@@ -61,18 +61,18 @@ For important or complex API, we can hold community meetings for design review.
 ### 2.1. Code specification
 TODO
 
-### 2.2. Test Specification
-- have unit test
-- have client demo, which can be used for demonstration and integration testing
+### 2.2. Requirements for Test Specification
+- Unit test
+- Client demo, which can be used for demonstration and integration testing
 
 ### 2.3. Document specification
-Principle: Documents that need to be written for users; as for design documents for developers, they may expire after a long time and are inconsistent with the code. You don’t need to write them. Explain the design by posting a link to the proposal issue and writing comments in the code.
+Principle: A user guide is required. However, a design guide for developers is optional, since it may be expired or inconsistent after a period of time. Posting links to the proposal and having comments in the code will be sufficient.
 
 #### 2.3.1. Quick start
 need to have:
 
 - What can this API do
-- What does this quickstart do? What effect you want to achieve, it’s best to have a picture to explain
+- What does this quickstart do? What effect you want to achieve? It’s better to provide a picture for illustration
 - Steps of operation
 
 Correct example：[Dapr pub-sub quickstart](https://github.com/dapr/quickstarts/tree/v1.0.0/pub-sub) Before the operation, stickers to explain what to do
