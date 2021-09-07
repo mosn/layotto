@@ -71,8 +71,8 @@ Principle: Documents that need to be written for users; as for design documents 
 #### 2.3.1. Quick start
 need to have:
 
-- what What can this API do
-- what What does this quickstart do? What effect you want to achieve, it’s best to have a picture to explain
+- What can this API do
+- What does this quickstart do? What effect you want to achieve, it’s best to have a picture to explain
 - Steps of operation
 
 Correct example：[Dapr pub-sub quickstart](https://github.com/dapr/quickstarts/tree/v1.0.0/pub-sub) Before the operation, stickers to explain what to do
