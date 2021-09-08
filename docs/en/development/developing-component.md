@@ -1,6 +1,6 @@
 # Component Development Guide
 
-Thank you for your support for Layotto!
+Thank you for your interest in Layotto!
 
 This is a Layotto components development guide. Layotto components are written in Go. If you are unfamiliar with Go, checkout here [Go tutorial](https://tour.golang.org/welcome/1).
 

@@ -6,7 +6,7 @@ This document describes how to modify/add documents. Documentation for this repo
 
 ## Document Path description
 
-Documents are stored in the docs/ directory, where docs/en stores English documents and docs/zh stores Chinese documents.
+Documents are stored in the 'docs/' directory, where 'docs/en' stores English documents and 'docs/zh' stores Chinese documents.
 
 ![img_2.png](../../img/development/doc/img_2.png)
 
@@ -17,9 +17,9 @@ To add a document, create a folder and a .md file based on the directory structu
 
 2. Remember to update the sidebar after adding new documents or revising existing documents.
 
-Chinese sidebar: docs/zh/_sidebar.md
+Chinese sidebar: 'docs/zh/_sidebar.md'
 
-English sidebar: docs/_sidebar.md
+English sidebar: 'docs/_sidebar.md'
 
 3. After writing the above Markdown files, submitting pr and merging it into the main branch, new documents are now available on the official website.
 
@@ -47,7 +47,7 @@ If you try to create a hyperlink with a relative path, then a 404 page will appe
 
 There are two suggested ways to write hyperlinks:
 
-a. Use a path relative to the docs/ directory. Such as:
+a. Use a path relative to the 'docs/' directory. Such as:
 
 ![img_5.png](../../img/development/doc/img_5.png)
 

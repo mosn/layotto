@@ -1,5 +1,5 @@
 # Development specification when adding API
-Thanks for your support for Layotto!
+Thank you for your interest in Layotto!
 
 This document describes how to design and implement a new Layotto API. Layotto is written in Go , if you are not familiar with Go, you can check it out [Go Tutorial](https://tour.golang.org/welcome/1) 。
 
@@ -9,9 +9,9 @@ When developing a new API, you can refer to the code and documentation of other 
 
 A: Currently there is a lack of documentation, which makes it difficult for users to use;
 
-The code lacks comments and is not easy for interested contributors to understand, such as : https://github.com/mosn/layotto/issues/112
+Contributors can't understand code due to the lack of comments, such as : https://github.com/mosn/layotto/issues/112
 
-Adding documents and comments for existing code is a time consuming thing. We hope that the new features developed in the future will have enough docs and comments.
+It's time-consuming to make up comments for previous documents. We hope future development will contain these.
 
 **Q: Following the specification is too much trouble, will it discourage developers who want to contribute code?**
 
@@ -61,7 +61,7 @@ For important or complex API, we can hold community meetings for design review.
 ### 2.1. Code specification
 TODO
 
-### 2.2. Requirements for Test Specification
+### 2.2. Test Specification
 - Unit test
 - Client demo, which can be used for demonstration and integration testing
 
@@ -97,14 +97,14 @@ The documentation path is under "Reference - API reference", for example, see [S
 > Since we are in the early stages of the project, Layotto documentation can be slightly less
 
 Need to have ：
-##### what.What is this API? What is the problem to solve
-##### when.What scenarios are appropriate for using this API
-##### how.How to use this API
+##### What is this API? What is the problem to solve
+##### What scenarios are appropriate for using this API
+##### How to use this API
 - List of interfaces.For example：
 
 ![img_4.png](../../img/development/api/img_4.png)
 
-List out which interfaces are there. On the one hand, the users of the province go to the proto and don’t know which APIs are related. On the other hand, they avoid the user’s dislike of "Is there no documentation for the connection ports of this project?!"
+List out which interfaces are there. On the one hand, the users of the province go to the proto and don’t know which APIs are related. On the other hand, it can avoid the disgust of users due to the lack of interface documentation
 - About the interface`s input and output parameters: use proto comments as interface documentation
   Considering that the interface document needs to be written in Both Chinese and English and may be inconsistent with the code after a long time, it is recommended not to write the interface document but to write the proTO comment in sufficient detail as the interface document. Such as:
 ```protobuf
@@ -157,14 +157,14 @@ message StateOptions {
 }
 ```      
 
-This requires the proto comment to be clear：
-- Is it Mandatory parameter or optional parameter；
+Clear comment should to be written ：
+- Mandatory parameter or optional parameter；
 - Explain what this field means; It is not enough to just explain the literal meaning. It is necessary to explain the usage mechanism behind it. For example, the consistency and concurrency above should explain what kind of guarantee the server can provide after the user passes a certain option.
 
   (The comments on consistency and concurrency are actually pasted after simplifying the description on the Dapr document, saving the need to write bilingual documents.)
 - If the comment is not clear, explain it on the document
 
-##### why.Why is it designed this way?
+##### Why is it designed this way?
 Post a document link if there is a design document or a proposal issue link if there is no document
 
 #### 2.3.3. This document describes the general CONFIGURATION of the API
@@ -185,7 +185,7 @@ For example: https://mosn.io/layotto/#/zh/component_specs/state/redis
 
 See above
 
-### Component API comment as doc
+#### Component API comment as doc
 
 If you don't write a bilingual design document, Then the annotation of the component API should carry the role of the design document (explain to other developers). You can post the link of proposal Issue
 
@@ -208,6 +208,6 @@ StopSubscribe()
 ### 3.1. Pr that does not conform to the development specification may not be incorporated into the trunk
 
 ### 3.2. The number of cr
-The code review of the new API requires two people to review, and subsequent automatic inspection by robots will be changed to 1 person review.
+The code review of the new API requires two people to review, and the photo is automatically checked by a robot and changed to one person for review.
 
 Other people who pull the request are random and not bound.
