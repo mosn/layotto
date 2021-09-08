@@ -1,15 +1,15 @@
 # Component Development Guide
 
-Thank you for your interest in Layotto!
+Thank you for your support in Layotto!
 
-This is a Layotto components development guide. Layotto components are written in Go. If you are unfamiliar with Go, checkout here [Go tutorial](https://tour.golang.org/welcome/1).
+This is a Layotto components development guide. Layotto components are written in Go. If you are unfamiliar with Go, check out here [Go tutorial](https://tour.golang.org/welcome/1).
 
 When developing new components, you can refer to the existing components. For example, if you want to implement distributed lock API with ZooKeeper, you can refer to the realization of the redis, related demos, and design documents to make your development easier.
 ## 1、Preparation Work
 
 1. Git clone the repository to your preferred directory
 2. Use Docker to launch the environment you need. For example, if you want to develop a distributed lock API with ZooKeeper, you need to start a ZooKeeper container locally with Docker for local tests.
-   If you do not have Docker locally, you can install a Docker Desktop by following [Docker Desktop tutorial](https://www.runoob.com/docker/windows-docker-install.html). Mac and Windows are both supported, easy to use.
+   If you do not have Docker locally, you can install a Docker Desktop by following [Docker Desktop tutorial](https://www.runoob.com/docker/windows-docker-install.html). Mac and Windows are both supported which is easy to use.
    
 ## 2、Development Components and Unit Tests
 ### 2.1.Create a new folder under Components/API directory to develop your components
@@ -18,9 +18,9 @@ The folder name can use the component name, referring to the redis component bel
 
 ![img.png](../../img/development/component/img.png)
 
-Potential tools you may use in the process of development (for the purpose of reference only, hope to simplify the development) :
+Tools you may use in the process of development (for the purpose of reference only, hope to simplify the development) :
 
-- Once staring a new goroutine, panic triggered in it may lead to a panic breakdown to the entire server. Therefore, it is common to start a goroutine with recover() inside deferred functions. You can also use the encapsulated utility classes, like utils.GoWithRecover in mosn.io/pkg/utils/goroutine.go
+- When staring a new goroutine, panic triggered in it may lead to a panic breakdown to the entire server. Therefore, it is common to start a goroutine with recover() inside deferred functions. You can also use the encapsulated utility classes, like utils.GoWithRecover in mosn.io/pkg/utils/goroutine.go
 
 - log.DefaultLogger is a commonly used logging tool, and it is located in mosn.io/pkg/log/errorlog.go
 
@@ -31,22 +31,22 @@ Potential tools you may use in the process of development (for the purpose of re
 You can simply copy and paste other components for modification or development. For example, if you want to implement the distributed lock API using ZooKeeper, you can copy and paste the Redis component
 
 ### 2.3. Write Unit Tests!
-#### 2.3.1. Unit testing considerations
+#### 2.3.1. Unit testing tips
 Unit tests will be run in various environments, including the docker provided by github action and other developers' computers. Thus, following problems need to be considered to run unit tests normally:
-- Other people may not have ZooKeeper installed in their environments. So when we write a unit test, either mock out the network call code (for example, mock out the part of the ZooKeeper code in unit tests) or create a simple version of ZooKeeper in the unit test (for example, in the Redis Unit test, A mini-redis will be created) to ensure others can pass the test.
-- Since every time someone commits code, it automatically runs unit tests, and they are merged only when they are all passed. Therefore, try to avoid sleeping too long in the unit test (sleeping too long can decrease the speed for unit tests)
-#### 2.3.2. How to mock out dependencies in the environment once running unit tests? (Such as Mock ZooKeeper or Mock Redis)
+- Other people may not have ZooKeeper installed in their environments. So when we write a unit test, either mock out the network call code (for example, mock out the part of the ZooKeeper code in unit tests) or create a simplified ZooKeeper in the unit test (for example, in the Redis Unit test, A mini-redis will be created) to ensure others can pass the test.
+- When someone commits code, it automatically runs unit tests, and and they will be merged only when they are all passed. Therefore, try to avoid sleeping too long in the unit test (sleeping too long can decrease the speed of unit tests)
+#### 2.3.2. How to mock out dependencies in the environment when running unit tests? (Such as Mock ZooKeeper or Mock Redis)
 
-It is usually to encapsulate all network call code into a single interface, and then mock out that interface in ut. Taking the unit tests in Apollo configuration center as an example, and refer to components/configstores/apollo/configstore.go. and
+It is usual to encapsulate all network call code into a single interface, and then mock out that interface in ut. Take the unit tests in Apollo configuration center as an example, referring to components/configstores/apollo/configstore.go. and
 components/configstores/ apollo/configstore_test.go:
 
-First, in configstore.go, encapsulating all calls to the SDK and network calls to Apollo into a single interface.
+First, in configstore.go, encapsulate all calls to the SDK, network and Apollo into a single interface.
 
 
 ![mock.png](../../img/development/component/mock.png)
 ![img_8.png](../../img/development/component/img_8.png)
 
-Then, encapsulating your code that calls the SDK and network into a struct which achieves that interface:
+Then, encapsulate your code that calls the SDK and network into a struct which achieves that interface:
 
 ![img_9.png](../../img/development/component/img_9.png)
 

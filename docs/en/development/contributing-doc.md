@@ -1,6 +1,6 @@
 # Document Contribution Guide
 
-Thank you for your interest in Layotto!
+Thank you for your support in Layotto!
 
 This document describes how to modify/add documents. Documentation for this repository is written in Markdown.
 

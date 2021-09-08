@@ -1,5 +1,5 @@
 # Development specification when adding API
-Thank you for your interest in Layotto!
+Thank you for your support in Layotto!
 
 This document describes how to design and implement a new Layotto API. Layotto is written in Go , if you are not familiar with Go, you can check it out [Go Tutorial](https://tour.golang.org/welcome/1) 。
 
