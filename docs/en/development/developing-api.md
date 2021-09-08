@@ -66,7 +66,7 @@ TODO
 - Client demo, which can be used for demonstration and integration testing
 
 ### 2.3. Document specification
-Principle: A user guide is required. However, a design guide for developers is optional, since it may be expired or inconsistent after a period of time. Posting links to the proposal and having comments in the code will be sufficient.
+Principle: A user guide is required. However, a design doc for developers is optional, since it may be expired or inconsistent after a period of time. Posting links to the proposal issue and having comments in the code will be sufficient.
 
 #### 2.3.1. Quick start
 need to have:
@@ -75,14 +75,15 @@ need to have:
 - What does this quickstart do? What effect you want to achieve? It’s better to provide a picture for illustration
 - Steps of operation
 
-Correct example：[Dapr pub-sub quickstart](https://github.com/dapr/quickstarts/tree/v1.0.0/pub-sub) Before the operation, stickers to explain what to do
+Correct example：[Dapr pub-sub quickstart](https://github.com/dapr/quickstarts/tree/v1.0.0/pub-sub) 
+Before the operation, explain what effect this demo want to achieve with illustration
 
 ![img.png](../../img/development/api/img.png)
 
 Counter-example: The document only writes operation steps 1234, and users do not understand what they want to do.
 
 #### 2.3.2. Using document
-The documentation path is under "User Manual - Interface Documentation", for example, see State API https://mosn.io/layotto/#/zh/api_reference/state/reference
+The documentation path is under "Reference - API reference", for example, see [State API](https://mosn.io/layotto/#/en/api_reference/state/reference)
 
 >The study found that Dapr has a lot of documentation, such as the State API:
 >
@@ -93,10 +94,10 @@ The documentation path is under "User Manual - Interface Documentation", for exa
 >
 > https://docs.dapr.io/reference/components-reference/supported-state-stores/
 >
-> We are in the early stages of the project, so we can be lighter
+> Since we are in the early stages of the project, Layotto documentation can be slightly less
 
 Need to have ：
-##### what.What is this API? What is the problem
+##### what.What is this API? What is the problem to solve
 ##### when.What scenarios are appropriate for using this API
 ##### how.How to use this API
 - List of interfaces.For example：
@@ -184,7 +185,7 @@ For example: https://mosn.io/layotto/#/zh/component_specs/state/redis
 
 See above
 
-###Component API comment as doc
+### Component API comment as doc
 
 If you don't write a bilingual design document, Then the annotation of the component API should carry the role of the design document (explain to other developers). You can post the link of proposal Issue
 
