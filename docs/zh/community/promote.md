@@ -16,6 +16,11 @@
 - 1个Medium+2个Easy级别的PR
 
 注：相当于`Hard:Medium:Easy`的换算关系是`1:2:4`
+
+设计这个规则的逻辑是： Reviewer要对某个模块很懂，才能对这个模块把关。那怎么判断他很懂呢？就是看他做过的PR，1个hard级别的pr，或者2个medium级别的pr，或者1个medium+2个easy级别的pr
+
+这么设计的缺点：没有把大家做review的贡献纳入进来，没有激励参与者做review。也考虑了把review次数纳入晋升条件的话，但是仔细想想不太好统计，这方面大家有啥建议欢迎提出来。
+
 ### 职责
 负责某个模块的issue review和code review,给出技术建议。有该模块相关的重大变更会request review模块Reviewer。
 
