@@ -43,6 +43,7 @@ func TestMain(m *testing.M) {
 	ctx := context.Background()
 	c, f := getTestClient(ctx)
 	testClient = c
+	RegisterRecoverLogger(debugIgnoreLogger)
 	r := m.Run()
 	f()
 	os.Exit(r)

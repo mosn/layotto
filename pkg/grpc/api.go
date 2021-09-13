@@ -54,6 +54,7 @@ import (
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
+	"mosn.io/pkg/utils"
 )
 
 var (
@@ -284,7 +285,7 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 	subscribedStore := make([]configstores.Store, 0, 1)
 	// TODO currently this goroutine model is error-prone,and it should be refactored after new version of configuration API being accepted
 	// 1. start a reader goroutine
-	go func() {
+	utils.GoWithRecover(func() {
 		defer wg.Done()
 		for {
 			// 1.1. read stream
@@ -327,9 +328,9 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 			store.Subscribe(&configstores.SubscribeReq{AppId: req.AppId, Group: req.Group, Label: req.Label, Keys: req.Keys, Metadata: req.Metadata}, respCh)
 			subscribedStore = append(subscribedStore, store)
 		}
-	}()
+	}, nil)
 	// 2. start a writer goroutine
-	go func() {
+	utils.GoWithRecover(func() {
 		defer wg.Done()
 		for {
 			select {
@@ -349,7 +350,7 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 				return
 			}
 		}
-	}()
+	}, nil)
 	wg.Wait()
 	log.DefaultLogger.Warnf("subscribe gorountine exit")
 	return subErr
