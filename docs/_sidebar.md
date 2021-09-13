@@ -57,3 +57,6 @@
   - [Distributed lock API design](en/design/lock/lock-api-design.md)  
 - Contributing
   - [Layotto contributor guide](en/development/CONTRIBUTING.md) 
+  - [Document Contribution Guide](en/development/contributing-doc.md)
+  - [Component Development Guide](en/development/developing-component.md)
+  - [Development specification when adding API](en/development/developing-api.md)
