@@ -10,6 +10,6 @@ public interface CoreCloudRuntimes extends
         PubSubRuntimes,
         BindingRuntimes,
         StateRuntimes,
-        SecretsRuntimes,
+        //SecretsRuntimes,
         ConfigurationRuntimes {
 }
