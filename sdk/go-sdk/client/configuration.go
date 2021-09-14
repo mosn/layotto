@@ -136,7 +136,7 @@ func (c *GRPCClient) SubscribeConfiguration(ctx context.Context, in *Configurati
 		close(resCh)
 		return resCh
 	}
-	go func() {
+	GoWithRecover(func() {
 		for {
 			resp, err := cli.Recv()
 			if err != nil {
@@ -162,6 +162,6 @@ func (c *GRPCClient) SubscribeConfiguration(ctx context.Context, in *Configurati
 			res.Err = nil
 			resCh <- res
 		}
-	}()
+	}, nil)
 	return resCh
 }
