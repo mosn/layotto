@@ -30,6 +30,7 @@ func NewGrpcServer(opts ...Option) mgrpc.RegisteredServer {
 	}
 	srvMaker := NewDefaultServer
 	o.options = append(o.options, grpc.ChainUnaryInterceptor(diagnostics.UnaryInterceptorFilter))
+	o.options = append(o.options, grpc.ChainStreamInterceptor(diagnostics.StreamInterceptorFilter))
 	if o.maker != nil {
 		srvMaker = o.maker
 	}

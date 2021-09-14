@@ -3,6 +3,8 @@ package trace
 import (
 	"context"
 	"sync"
+
+	"mosn.io/api"
 )
 
 var (
@@ -12,7 +14,7 @@ var (
 type Generator interface {
 	GetTraceId(ctx context.Context) string
 	GetSpanId(ctx context.Context) string
-	GenerateNewContext(ctx context.Context, span *Span) context.Context
+	GenerateNewContext(ctx context.Context, span api.Span) context.Context
 	GetParentSpanId(ctx context.Context) string
 }
 

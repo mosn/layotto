@@ -1,7 +1,6 @@
 package trace
 
 import (
-	"context"
 	"time"
 
 	"mosn.io/api"
@@ -11,7 +10,6 @@ import (
 )
 
 type Span struct {
-	Ctx           context.Context
 	StartTime     time.Time
 	EndTime       time.Time
 	traceId       string

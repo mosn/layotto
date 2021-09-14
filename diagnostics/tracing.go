@@ -51,23 +51,30 @@ func (tracer *grpcTracer) Start(ctx context.Context, request interface{}, startT
 	return span
 }
 
-func NewSpan(ctx context.Context, startTime time.Time, config map[string]interface{}) *trace2.Span {
+func NewSpan(ctx context.Context, startTime time.Time, config map[string]interface{}) api.Span {
 	span := &trace2.Span{StartTime: startTime}
 	generator := "mosntracing"
 	if v, ok := config[Generator]; ok {
 		generator = v.(string)
 	}
-	g := trace2.GetGenerator(generator)
-	if g == nil {
+	ge := trace2.GetGenerator(generator)
+	if ge == nil {
 		log.DefaultLogger.Errorf("not support trace type: %+v", generator)
 		return nil
 	}
-	spanId := g.GetSpanId(ctx)
-	traceId := g.GetTraceId(ctx)
-	parentSpanId := g.GetParentSpanId(ctx)
+	spanId := ge.GetSpanId(ctx)
+	traceId := ge.GetTraceId(ctx)
+	parentSpanId := ge.GetParentSpanId(ctx)
 	span.SetSpanId(spanId)
 	span.SetTraceId(traceId)
 	span.SetParentSpanId(parentSpanId)
-	span.Ctx = g.GenerateNewContext(ctx, span)
+	span.SetTag(trace2.LAYOTTO_GENERATOR_TYPE, generator)
 	return span
+}
+
+func GetNewContext(ctx context.Context, span api.Span) context.Context {
+	genType := span.Tag(trace2.LAYOTTO_GENERATOR_TYPE)
+	ge := trace2.GetGenerator(genType)
+	newCtx := ge.GenerateNewContext(ctx, span)
+	return newCtx
 }
