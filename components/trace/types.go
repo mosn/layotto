@@ -1,0 +1,7 @@
+package trace
+
+const (
+	LAYOTTO_REQUEST_RESULT = 30 + iota
+	LAYOTTO_METHOD_NAME
+	LAYOTTO_COMPONENT_DETAIL
+)
