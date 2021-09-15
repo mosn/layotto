@@ -1,4 +1,4 @@
-package spec.sdk.runtime.v1.domain;
+package spec.sdk.runtime.v1.domain.state;
 
 public class TransactionalStateOperation<T> {
 

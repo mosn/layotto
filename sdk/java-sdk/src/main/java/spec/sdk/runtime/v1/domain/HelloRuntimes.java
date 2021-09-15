@@ -1,6 +1,6 @@
-package spec.sdk.runtime.v1;
+package spec.sdk.runtime.v1.domain;
 
-public interface HelloClient {
+public interface HelloRuntimes {
 
     String sayHello(String name);
 

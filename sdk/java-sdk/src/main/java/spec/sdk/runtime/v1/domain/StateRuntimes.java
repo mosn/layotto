@@ -1,15 +1,10 @@
-package spec.sdk.runtime.v1;
+package spec.sdk.runtime.v1.domain;
 
-import spec.sdk.runtime.v1.domain.DeleteStateRequest;
-import spec.sdk.runtime.v1.domain.ExecuteStateTransactionRequest;
-import spec.sdk.runtime.v1.domain.SaveStateRequest;
-import spec.sdk.runtime.v1.domain.State;
-import spec.sdk.runtime.v1.domain.StateOptions;
-import spec.sdk.runtime.v1.domain.TransactionalStateOperation;
+import spec.sdk.runtime.v1.domain.state.*;
 
 import java.util.List;
 
-public interface StateClient {
+public interface StateRuntimes {
 
     /**
      * Retrieve a State based on their key.
@@ -117,5 +112,4 @@ public interface StateClient {
      * @param request Request to delete a state.
      */
     void deleteState(DeleteStateRequest request);
-
 }
