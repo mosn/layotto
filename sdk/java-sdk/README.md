@@ -13,13 +13,13 @@ libprotoc 3.17.3
 (需先修改文件内部service名)
 appcallback.proto: 
 ```protobuf
-option java_outer_classname = "AppCallback";
-option java_package = "io.mosn.layotto.v1";
+option java_outer_classname = "AppCallbackProto";
+option java_package = "spec.proto.runtime.v1";
 ```
 runtime.proto
 ```protobuf
-option java_outer_classname = "Runtime";
-option java_package = "io.mosn.layotto.v1";
+option java_outer_classname = "RuntimeProto";
+option java_package = "spec.proto.runtime.v1";
 ```
 
 ### 3. 编译其对应`JAVA`文件
@@ -27,3 +27,5 @@ option java_package = "io.mosn.layotto.v1";
 cd ${your PROJECT path}/spec/proto/runtime/v1
 protoc -I=. --java_out=./  runtime.proto
 ```
+
+PS: 建议用maven插件`protoc-gen-grpc-java`生成protobuf和grpc的java代码

@@ -17,7 +17,10 @@
 package main
 
 import (
+	"unsafe"
+
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm"
+	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/rawhostcall"
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
 )
 
@@ -46,8 +49,6 @@ type myHttpContext struct {
 
 // override
 func (ctx *myHttpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool) types.Action {
-	proxywasm.LogInfo("golang wasm receive a http request")
-
 	hs, err := proxywasm.GetHttpRequestHeaders()
 	var name string
 	for _, h := range hs {
@@ -56,12 +57,11 @@ func (ctx *myHttpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool)
 		}
 	}
 
-	result, err := proxywasm.CallForeignFunction("SayHello", []byte(`{"service_name":"helloworld","name":"`+name+`"}`))
+	result, err := proxywasm.CallForeignFunction("SayHello", []byte(`{"service_name":"helloworld","name":"`+name+`_`+ID+`"}`))
 	if err != nil {
 		proxywasm.LogErrorf("call foreign func failed: %v", err)
 	}
 	proxywasm.SetHttpResponseBody(result)
-
 	return types.ActionContinue
 }
 
@@ -69,4 +69,16 @@ func (ctx *myHttpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool)
 func proxyOnMemoryAllocate(size uint) *byte {
 	buf := make([]byte, size)
 	return &buf[0]
+}
+
+const ID = "id_1"
+
+// DO NOT MODIFY THE FOLLOWING FUNCTIONS!
+//export proxy_get_id
+func GetID() types.Status {
+	_ = ID[len(ID)-1]
+
+	id := ID
+	bt := *(*[]byte)(unsafe.Pointer(&id))
+	return rawhostcall.ProxySetBufferBytes(types.BufferTypeCallData, 0, len(ID), &bt[0], len(ID))
 }

@@ -26,6 +26,7 @@ import (
 	"github.com/dapr/components-contrib/state"
 	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
+
 	"mosn.io/layotto/pkg/converter"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
@@ -41,6 +42,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
@@ -52,6 +54,7 @@ import (
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
+	"mosn.io/pkg/utils"
 )
 
 var (
@@ -140,7 +143,7 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 	req := &hello.HelloRequest{
 		Name: in.Name,
 	}
-	resp, err := h.Hello(req)
+	resp, err := h.Hello(ctx, req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.say_hello] request hello error: %v", err)
 		return nil, err
@@ -148,6 +151,7 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 	// create response base on hello.Response
 	return &runtimev1pb.SayHelloResponse{
 		Hello: resp.HelloString,
+		Data:  in.Data,
 	}, nil
 
 }
@@ -281,7 +285,7 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 	subscribedStore := make([]configstores.Store, 0, 1)
 	// TODO currently this goroutine model is error-prone,and it should be refactored after new version of configuration API being accepted
 	// 1. start a reader goroutine
-	go func() {
+	utils.GoWithRecover(func() {
 		defer wg.Done()
 		for {
 			// 1.1. read stream
@@ -324,9 +328,9 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 			store.Subscribe(&configstores.SubscribeReq{AppId: req.AppId, Group: req.Group, Label: req.Label, Keys: req.Keys, Metadata: req.Metadata}, respCh)
 			subscribedStore = append(subscribedStore, store)
 		}
-	}()
+	}, nil)
 	// 2. start a writer goroutine
-	go func() {
+	utils.GoWithRecover(func() {
 		defer wg.Done()
 		for {
 			select {
@@ -346,7 +350,7 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 				return
 			}
 		}
-	}()
+	}, nil)
 	wg.Wait()
 	log.DefaultLogger.Warnf("subscribe gorountine exit")
 	return subErr
@@ -764,7 +768,7 @@ func (a *api) Unlock(ctx context.Context, req *runtimev1pb.UnlockRequest) (*runt
 		return newInternalErrorUnlockResponse(), err
 	}
 	if req.LockOwner == "" {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrResourceIdEmpty, req.StoreName)
+		err := status.Errorf(codes.InvalidArgument, messages.ErrLockOwnerEmpty, req.StoreName)
 		return newInternalErrorUnlockResponse(), err
 	}
 	// 2. find store component

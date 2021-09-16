@@ -16,6 +16,7 @@
     - [Dump TCP Traffic](en/start/network_filter/tcpcopy.md)
   - Flow Control on the 7th layer network
     - [Method Level Flow Control](en/start/stream_filter/flow_control.md)
+  - [Trace management](en/start/trace/trace.md)
   - [Health check and metadata query](en/start/actuator/start.md)
   - [Multilingual programming based on WASM](en/start/wasm/start.md)
 - Reference
@@ -47,6 +48,8 @@
       - [Apollo](en/component_specs/configuration/apollo.md)
     - [Sequencer](en/component_specs/sequencer/common.md)
       - [Etcd](en/component_specs/sequencer/etcd.md)
+      - [Redis](en/component_specs/sequencer/redis.md)
+
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
@@ -55,3 +58,6 @@
   - [Distributed lock API design](en/design/lock/lock-api-design.md)  
 - Contributing
   - [Layotto contributor guide](en/development/CONTRIBUTING.md) 
+  - [Document Contribution Guide](en/development/contributing-doc.md)
+  - [Component Development Guide](en/development/developing-component.md)
+  - [Development specification when adding API](en/development/developing-api.md)
