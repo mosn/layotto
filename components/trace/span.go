@@ -62,6 +62,9 @@ func (span *Span) FinishSpan() {
 	span.EndTime = time.Now()
 	for _, name := range activeExporters {
 		exporter := GetExporter(name)
+		if exporter == nil {
+			return
+		}
 		exporter.ExportSpan(span)
 	}
 }

@@ -75,6 +75,10 @@ func NewSpan(ctx context.Context, startTime time.Time, config map[string]interfa
 func GetNewContext(ctx context.Context, span api.Span) context.Context {
 	genType := span.Tag(trace2.LAYOTTO_GENERATOR_TYPE)
 	ge := trace2.GetGenerator(genType)
+	//if no implement generator, return old ctx
+	if ge == nil {
+		return ctx
+	}
 	newCtx := ge.GenerateNewContext(ctx, span)
 	return newCtx
 }
