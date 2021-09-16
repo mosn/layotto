@@ -21,7 +21,6 @@ require (
 	github.com/valyala/fasthttp v1.26.0
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	google.golang.org/grpc v1.39.0
-	google.golang.org/grpc/examples v0.0.0-20210526223527-2de42fcbbce3 // indirect
 	google.golang.org/protobuf v1.27.1
 	mosn.io/api v0.0.0-20210714065837-5b4c2d66e70c
 	mosn.io/layotto/components v0.0.0-20210625065826-9c2ad8dbcf05

@@ -2,20 +2,16 @@ package trace
 
 import (
 	"sync"
-	"sync/atomic"
 )
 
 type Exporter interface {
 	ExportSpan(s *Span)
 }
 
-type exportersMap map[string]Exporter
-
 var activeExporters []string
 
 var (
-	exporterMu sync.RWMutex
-	exporters  atomic.Value
+	exporters sync.Map
 )
 
 func SetActiveExporters(exporter []string) {
@@ -23,38 +19,22 @@ func SetActiveExporters(exporter []string) {
 }
 
 func GetExporter(name string) Exporter {
-	exporterMu.RLock()
-	defer exporterMu.RUnlock()
-	if v, ok := exporters.Load().(exportersMap); ok {
-		if ex, ok := v[name]; ok {
-			return ex
-		}
+	if v, ok := exporters.Load(name); ok {
+		return v.(Exporter)
 	}
 	return nil
 }
 
 func RegisterExporter(name string, e Exporter) {
-	exporterMu.Lock()
-	newExporters := make(exportersMap)
-	if old, ok := exporters.Load().(exportersMap); ok {
-		for k, v := range old {
-			newExporters[k] = v
-		}
-	}
-	newExporters[name] = e
-	exporters.Store(newExporters)
-	exporterMu.Unlock()
+	exporters.Store(name, e)
 }
 
 func UnregisterExporter(name string) {
-	exporterMu.Lock()
-	newExporters := make(exportersMap)
-	if old, ok := exporters.Load().(exportersMap); ok {
-		for k, v := range old {
-			newExporters[k] = v
+	exporters.Delete(name)
+	for i, v := range activeExporters {
+		if v == name {
+			activeExporters = append(activeExporters[:i], activeExporters[i+1:]...)
+			return
 		}
 	}
-	delete(newExporters, name)
-	exporters.Store(newExporters)
-	exporterMu.Unlock()
 }
