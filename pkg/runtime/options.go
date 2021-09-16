@@ -25,6 +25,7 @@ import (
 	rgrpc "mosn.io/layotto/pkg/grpc"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 	"mosn.io/layotto/pkg/runtime/pubsub"
+	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	"mosn.io/layotto/pkg/runtime/state"
 	"mosn.io/pkg/log"
 )
@@ -38,6 +39,7 @@ type services struct {
 	pubSubs      []*pubsub.Factory
 	states       []*state.Factory
 	locks        []*runtime_lock.Factory
+	sequencers   []*runtime_sequencer.Factory
 }
 
 type runtimeOptions struct {
@@ -115,5 +117,11 @@ func WithLockFactory(factorys ...*runtime_lock.Factory) Option {
 func WithStateFactory(factorys ...*state.Factory) Option {
 	return func(o *runtimeOptions) {
 		o.services.states = append(o.services.states, factorys...)
+	}
+}
+
+func WithSequencerFactory(factorys ...*runtime_sequencer.Factory) Option {
+	return func(o *runtimeOptions) {
+		o.services.sequencers = append(o.services.sequencers, factorys...)
 	}
 }

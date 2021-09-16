@@ -21,19 +21,21 @@ import (
 	"errors"
 	"fmt"
 	"io"
+
+	"sync/atomic"
 	"strings"
 	"sync"
-	"sync/atomic"
+
 
 	"github.com/dapr/components-contrib/state"
 	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
 	"mosn.io/layotto/components/file"
-	"mosn.io/layotto/components/lock"
+	_ "net/http/pprof"
+
 	"mosn.io/layotto/pkg/converter"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
-
-	_ "net/http/pprof"
+	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 
 	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
@@ -46,14 +48,19 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
+	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
 	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
+	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/messages"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
+	"mosn.io/pkg/utils"
 )
 
 var (
@@ -69,10 +76,10 @@ var (
 
 type API interface {
 	SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error)
-	// GetConfiguration gets configuration from configuration store.
-	GetConfiguration(context.Context, *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error)
 	// InvokeService do rpc calls.
 	InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error)
+	// GetConfiguration gets configuration from configuration store.
+	GetConfiguration(context.Context, *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error)
 	// SaveConfiguration saves configuration into configuration store.
 	SaveConfiguration(context.Context, *runtimev1pb.SaveConfigurationRequest) (*emptypb.Empty, error)
 	// DeleteConfiguration deletes configuration from configuration store.
@@ -100,6 +107,8 @@ type API interface {
 	// Distributed Lock API
 	TryLock(context.Context, *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error)
 	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
+	// Sequencer API
+	GetNextId(context.Context, *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -113,6 +122,7 @@ type api struct {
 	transactionalStateStores map[string]state.TransactionalStore
 	fileOps                  map[string]file.File
 	lockStores               map[string]lock.LockStore
+	sequencers               map[string]sequencer.Store
 }
 
 func NewAPI(
@@ -124,6 +134,7 @@ func NewAPI(
 	stateStores map[string]state.Store,
 	files map[string]file.File,
 	lockStores map[string]lock.LockStore,
+	sequencers map[string]sequencer.Store,
 ) API {
 	// filter out transactionalStateStores
 	transactionalStateStores := map[string]state.TransactionalStore{}
@@ -143,6 +154,7 @@ func NewAPI(
 		transactionalStateStores: transactionalStateStores,
 		fileOps:                  files,
 		lockStores:               lockStores,
+		sequencers:               sequencers,
 	}
 }
 
@@ -156,7 +168,7 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 	req := &hello.HelloRequest{
 		Name: in.Name,
 	}
-	resp, err := h.Hello(req)
+	resp, err := h.Hello(ctx, req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.say_hello] request hello error: %v", err)
 		return nil, err
@@ -164,6 +176,7 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 	// create response base on hello.Response
 	return &runtimev1pb.SayHelloResponse{
 		Hello: resp.HelloString,
+		Data:  in.Data,
 	}, nil
 
 }
@@ -205,7 +218,7 @@ func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRe
 
 	resp, err := invoker.Invoke(ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, common.ToGrpcError(err)
 	}
 
 	if resp.Header != nil {
@@ -297,7 +310,7 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 	subscribedStore := make([]configstores.Store, 0, 1)
 	// TODO currently this goroutine model is error-prone,and it should be refactored after new version of configuration API being accepted
 	// 1. start a reader goroutine
-	go func() {
+	utils.GoWithRecover(func() {
 		defer wg.Done()
 		for {
 			// 1.1. read stream
@@ -340,9 +353,9 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 			store.Subscribe(&configstores.SubscribeReq{AppId: req.AppId, Group: req.Group, Label: req.Label, Keys: req.Keys, Metadata: req.Metadata}, respCh)
 			subscribedStore = append(subscribedStore, store)
 		}
-	}()
+	}, nil)
 	// 2. start a writer goroutine
-	go func() {
+	utils.GoWithRecover(func() {
 		defer wg.Done()
 		for {
 			select {
@@ -362,7 +375,7 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 				return
 			}
 		}
-	}()
+	}, nil)
 	wg.Wait()
 	log.DefaultLogger.Warnf("subscribe gorountine exit")
 	return subErr
@@ -885,7 +898,7 @@ func (a *api) Unlock(ctx context.Context, req *runtimev1pb.UnlockRequest) (*runt
 		return newInternalErrorUnlockResponse(), err
 	}
 	if req.LockOwner == "" {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrResourceIdEmpty, req.StoreName)
+		err := status.Errorf(codes.InvalidArgument, messages.ErrLockOwnerEmpty, req.StoreName)
 		return newInternalErrorUnlockResponse(), err
 	}
 	// 2. find store component
@@ -917,4 +930,70 @@ func newInternalErrorUnlockResponse() *runtimev1pb.UnlockResponse {
 	return &runtimev1pb.UnlockResponse{
 		Status: runtimev1pb.UnlockResponse_INTERNAL_ERROR,
 	}
+}
+
+func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error) {
+	// 1. validate
+	if len(a.sequencers) == 0 {
+		err := status.Error(codes.FailedPrecondition, messages.ErrSequencerStoresNotConfigured)
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	if req.Key == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrSequencerKeyEmpty, req.StoreName)
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	// 2. convert
+	compReq, err := converter.GetNextIdRequest2ComponentRequest(req)
+	if err != nil {
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	// modify key
+	compReq.Key, err = runtime_sequencer.GetModifiedKey(compReq.Key, req.StoreName, a.appId)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	// 3. find store component
+	store, ok := a.sequencers[req.StoreName]
+	if !ok {
+		return &runtimev1pb.GetNextIdResponse{}, status.Errorf(codes.InvalidArgument, messages.ErrSequencerStoreNotFound, req.StoreName)
+	}
+	var next int64
+	// 4. invoke component
+	if compReq.Options.AutoIncrement == sequencer.WEAK {
+		// WEAK
+		next, err = a.getNextIdWithWeakAutoIncrement(ctx, store, compReq)
+	} else {
+		// STRONG
+		next, err = a.getNextIdFromComponent(ctx, store, compReq)
+	}
+	// 5. convert response
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	return &runtimev1pb.GetNextIdResponse{
+		NextId: next,
+	}, nil
+}
+
+func (a *api) getNextIdWithWeakAutoIncrement(ctx context.Context, store sequencer.Store, compReq *sequencer.GetNextIdRequest) (int64, error) {
+	// 1. try to get from cache
+	support, next, err := runtime_sequencer.GetNextIdFromCache(ctx, store, compReq)
+
+	if !support {
+		// 2. get from component
+		return a.getNextIdFromComponent(ctx, store, compReq)
+	}
+	return next, err
+}
+
+func (a *api) getNextIdFromComponent(ctx context.Context, store sequencer.Store, compReq *sequencer.GetNextIdRequest) (int64, error) {
+	var next int64
+	resp, err := store.GetNextId(compReq)
+	if err == nil {
+		next = resp.NextId
+	}
+	return next, err
 }

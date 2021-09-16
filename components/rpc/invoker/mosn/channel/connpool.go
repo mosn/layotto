@@ -25,6 +25,7 @@ import (
 	"sync"
 	"sync/atomic"
 
+	common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
@@ -36,11 +37,9 @@ var (
 
 type wrapConn struct {
 	net.Conn
-	buf   buffer.IoBuffer
-	state interface{}
-
-	closed    int32
-	closeChan chan struct{}
+	buf    buffer.IoBuffer
+	state  interface{}
+	closed int32
 }
 
 func (w *wrapConn) isClose() bool {
@@ -51,7 +50,6 @@ func (w *wrapConn) close() error {
 	var err error
 	if atomic.CompareAndSwapInt32(&w.closed, 0, 1) {
 		err = w.Conn.Close()
-		close(w.closeChan)
 	}
 	return err
 }
@@ -61,24 +59,27 @@ func newConnPool(
 	maxActive int,
 	dialFunc func() (net.Conn, error),
 	stateFunc func() interface{},
-	onDataFunc func(*wrapConn) error) *connPool {
+	onDataFunc func(*wrapConn) error,
+	cleanupFunc func(*wrapConn, error)) *connPool {
 
 	p := &connPool{
-		maxActive:  maxActive,
-		dialFunc:   dialFunc,
-		stateFunc:  stateFunc,
-		onDataFunc: onDataFunc,
-		sema:       make(chan struct{}, maxActive),
-		free:       list.New(),
+		maxActive:   maxActive,
+		dialFunc:    dialFunc,
+		stateFunc:   stateFunc,
+		onDataFunc:  onDataFunc,
+		cleanupFunc: cleanupFunc,
+		sema:        make(chan struct{}, maxActive),
+		free:        list.New(),
 	}
 	return p
 }
 
 type connPool struct {
-	maxActive  int
-	dialFunc   func() (net.Conn, error)
-	stateFunc  func() interface{}
-	onDataFunc func(*wrapConn) error
+	maxActive   int
+	dialFunc    func() (net.Conn, error)
+	stateFunc   func() interface{}
+	onDataFunc  func(*wrapConn) error
+	cleanupFunc func(*wrapConn, error)
 
 	sema chan struct{}
 	mu   sync.Mutex
@@ -109,7 +110,7 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 		p.freeTurn()
 		return nil, err
 	}
-	wc := &wrapConn{Conn: c, closeChan: make(chan struct{})}
+	wc := &wrapConn{Conn: c}
 	if p.stateFunc != nil {
 		wc.state = p.stateFunc()
 	}
@@ -140,22 +141,36 @@ func (p *connPool) Put(c *wrapConn, close bool) {
 }
 
 func (p *connPool) readloop(c *wrapConn) {
-	defer c.close()
+	var err error
+
+	defer func() {
+		c.close()
+		if p.cleanupFunc != nil {
+			p.cleanupFunc(c, err)
+		}
+	}()
 
 	c.buf = buffer.NewIoBuffer(16 * 1024)
 	for {
-		_, err := c.buf.ReadOnce(c)
-		if err != nil {
-			if err == io.EOF {
-				log.DefaultLogger.Debugf("[runtime][rpc]connpool readloop err: %s", err.Error())
+		n, readErr := c.buf.ReadOnce(c)
+		if readErr != nil {
+			err = readErr
+			if readErr == io.EOF {
+				log.DefaultLogger.Debugf("[runtime][rpc]connpool readloop err: %s", readErr.Error())
 			} else {
-				log.DefaultLogger.Errorf("[runtime][rpc]connpool readloop err: %s", err.Error())
+				log.DefaultLogger.Errorf("[runtime][rpc]connpool readloop err: %s", readErr.Error())
 			}
-			return
 		}
-		if err = p.onDataFunc(c); err != nil {
-			log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", err.Error())
-			return
+
+		if n > 0 {
+			if onDataErr := p.onDataFunc(c); onDataErr != nil {
+				err = onDataErr
+				log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", onDataErr.Error())
+			}
+		}
+
+		if err != nil {
+			break
 		}
 	}
 }
@@ -163,7 +178,7 @@ func (p *connPool) readloop(c *wrapConn) {
 func (p *connPool) waitTurn(ctx context.Context) error {
 	select {
 	case <-ctx.Done():
-		return connpoolTimeout
+		return common.Error(common.TimeoutCode, connpoolTimeout.Error())
 	case p.sema <- struct{}{}:
 		return nil
 	}

@@ -6,35 +6,42 @@
     - [使用State API](zh/start/state/start.md)
     - [使用Pub/Sub API](zh/start/pubsub/start.md)
     - [使用分布式锁 API](zh/start/lock/start.md)
+    - [使用Sequencer API生成分布式自增id](zh/start/sequencer/start.md)
     - 进行RPC调用
         - [Hello World](zh/start/rpc/helloworld.md)
         - [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
+    - 集成 Istio
+        - [作为 Istio 的数据面](zh/start/istio/start.md)
     - 在四层网络进行流量干预
         - [Dump TCP 流量](zh/start/network_filter/tcpcopy.md)
     - 在七层网络进行流量干预
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
+    - [trace管理](zh/start/trace/trace.md)
     - [使用WASM进行多语言编程](zh/start/wasm/start.md)
 - 用户手册
     - 接口文档
         - [File API](zh/api_reference/file/file.md)
         - [Configuration API](zh/api_reference/configuration/reference.md)
-        - [State API](zh/api_reference/state/reference.md)
-        - [Pub/Sub API](zh/api_reference/pubsub/reference.md)
-        - [Distributed Lock API](zh/api_reference/lock/reference.md)
-        - [RPC API](zh/api_reference/rpc/reference.md)
         - [Actuator API](zh/api_reference/actuator/actuator.md)
+        - [State API](zh/api_reference/state/reference.md)
+        - [Sequencer API](zh/api_reference/sequencer/reference.md)
+        - [Distributed Lock API](zh/api_reference/lock/reference.md)
+        - [Pub/Sub API](zh/api_reference/pubsub/reference.md)
+        - [Configuration API](zh/api_reference/configuration/reference.md)
+        - [RPC API](zh/api_reference/rpc/reference.md)
     - SDK文档    
         - [go-sdk](zh/sdk_reference/go/start.md)
         - [java-sdk](zh/sdk_reference/java/start.md)
-    - 组件文档
-        - State
+    - [配置文档](zh/configuration/overview.md)
+    - [组件文档](zh/component_specs/overview.md)
+        - [State](zh/component_specs/state/common.md)
             - [Redis](zh/component_specs/state/redis.md)
             - [其他组件](zh/component_specs/state/others.md)
-        - Pub/Sub
+        - [Pub/Sub](zh/component_specs/pubsub/common.md)
             - [Redis](zh/component_specs/pubsub/redis.md)
             - [其他组件](zh/component_specs/pubsub/others.md)
-        - Distributed Lock
+        - [Distributed Lock](zh/component_specs/lock/common.md)
             - [Redis](zh/component_specs/lock/redis.md)
             - [Etcd](zh/component_specs/lock/etcd.md)
             - [Zookeeper](zh/component_specs/lock/zookeeper.md)
@@ -43,16 +50,24 @@
             - [Apollo](zh/component_specs/configuration/apollo.md)
         - File
             - [OSS](zh/component_specs/file/oss.md)
-     
+            - [Etcd](zh/component_specs/configuration/etcd.md)        
+            - [Apollo](zh/component_specs/configuration/apollo.md)        
+        - [Sequencer](zh/component_specs/sequencer/common.md)
+            - [Etcd](zh/component_specs/sequencer/etcd.md)
+            - [Redis](zh/component_specs/sequencer/redis.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
+    - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
     - [Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)
     - [Pub/Sub API以及与dapr component的兼容性](zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
     - [RPC设计文档](zh/design/rpc/rpc设计文档.md)
-    - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)
+    - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)    
+    - [Sequencer API设计文档](zh/design/sequencer/design.md)
 - 贡献指南
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)
+    - [新增API时的开发规范](zh/development/developing-api.md)
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
 - 博客
     - [蚂蚁云原生应用运行时的探索和实践 - ArchSummit 上海](zh/blog/exploration-and-practice-of-antcloud-native-application-runtime-archsummit-shanghai.md)
+    - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index.md)

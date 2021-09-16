@@ -23,18 +23,18 @@ import (
 	"time"
 
 	"mosn.io/layotto/components/rpc"
+	common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/mosn/pkg/server"
 )
 
 var (
-	ErrTimeout    = errors.New("request timeout")
-	ErrConnClosed = errors.New("connection closed by mosn")
+	ErrTimeout = errors.New("request timeout")
 
 	acceptFunc = func(conn net.Conn, listener string) error {
 		srv := server.GetServer()
 		lis := srv.Handler().FindListenerByName(listener)
 		if lis == nil {
-			return errors.New("[rpc]invalid listener name")
+			return common.Error(common.InternalCode, "[rpc]invalid listener name")
 		}
 		lis.GetListenerCallbacks().OnAccept(conn, false, nil, nil, nil)
 		return nil

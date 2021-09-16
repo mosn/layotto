@@ -144,7 +144,7 @@ func TestChannelTimeout(t *testing.T) {
 	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("timeout"), Timeout: 500}
 	_, err = channel.Do(req)
 	t.Log(err)
-	assert.Equal(t, ErrTimeout, err)
+	assert.True(t, strings.Contains(err.Error(), ErrTimeout.Error()))
 }
 
 func TestMemConnClosed(t *testing.T) {
@@ -156,7 +156,7 @@ func TestMemConnClosed(t *testing.T) {
 
 	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 1000}
 	_, err = channel.Do(req)
-	assert.Equal(t, err, ErrConnClosed)
+	assert.True(t, strings.Contains(err.Error(), "EOF"))
 }
 
 func TestReturnInvalidPacket(t *testing.T) {
@@ -168,7 +168,7 @@ func TestReturnInvalidPacket(t *testing.T) {
 
 	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("deformity"), Timeout: 1000}
 	_, err = channel.Do(req)
-	assert.Equal(t, err, ErrTimeout)
+	assert.True(t, strings.Contains(err.Error(), ErrTimeout.Error()))
 }
 
 func TestRenewConn(t *testing.T) {
@@ -180,7 +180,7 @@ func TestRenewConn(t *testing.T) {
 
 	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 1000}
 	_, err = channel.Do(req)
-	assert.Equal(t, err, ErrConnClosed)
+	assert.True(t, strings.Contains(err.Error(), "EOF"))
 
 	var errcount int32
 	var wg sync.WaitGroup
@@ -200,7 +200,7 @@ func TestRenewConn(t *testing.T) {
 		}(i)
 	}
 	wg.Wait()
-	assert.Equal(t, int32(1), atomic.LoadInt32(&errcount))
+	assert.Equal(t, int32(0), atomic.LoadInt32(&errcount))
 }
 
 func TestConncurrent(t *testing.T) {
@@ -265,4 +265,49 @@ func TestConncurrent(t *testing.T) {
 		}(i)
 	}
 	wg.Wait()
+}
+
+func TestReadloopError(t *testing.T) {
+	startTestServer()
+
+	config := ChannelConfig{Size: 1, Protocol: proto, Ext: map[string]interface{}{"class": "xxx"}}
+	channel, err := newXChannel(config)
+	assert.Nil(t, err)
+
+	xchannel := channel.(*xChannel)
+	conn, _ := xchannel.pool.Get(context.TODO())
+	xstate := conn.state.(*xstate)
+	xchannel.pool.Put(conn, false)
+
+	go func() {
+		time.AfterFunc(100*time.Millisecond, func() {
+			req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("close"), Timeout: 500}
+			_, err = channel.Do(req)
+			assert.True(t, strings.Contains(err.Error(), "EOF"))
+		})
+	}()
+
+	var wg sync.WaitGroup
+	total := 10
+	wg.Add(total)
+	for i := 0; i < total; i++ {
+		go func() {
+			defer wg.Done()
+			req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("timeout"), Timeout: 500}
+			_, err = channel.Do(req)
+			t.Log(err)
+			assert.True(t, strings.Contains(err.Error(), "EOF"))
+		}()
+	}
+	wg.Wait()
+
+	xstate.mu.Lock()
+	callsSize := len(xstate.calls)
+	xstate.mu.Unlock()
+	assert.Equal(t, 0, callsSize)
+
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 500}
+	resp, err := channel.Do(req)
+	assert.Nil(t, err)
+	assert.Equal(t, string(resp.Data), "ok")
 }
