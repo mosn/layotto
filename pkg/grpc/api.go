@@ -143,7 +143,7 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 	req := &hello.HelloRequest{
 		Name: in.Name,
 	}
-	resp, err := h.Hello(req)
+	resp, err := h.Hello(ctx, req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.say_hello] request hello error: %v", err)
 		return nil, err

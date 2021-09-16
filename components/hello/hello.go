@@ -16,11 +16,13 @@
 
 package hello
 
+import "context"
+
 const ServiceName = "hello"
 
 type HelloService interface {
 	Init(*HelloConfig) error
-	Hello(*HelloRequest) (*HelloReponse, error)
+	Hello(context.Context, *HelloRequest) (*HelloReponse, error)
 }
 
 type HelloConfig struct {

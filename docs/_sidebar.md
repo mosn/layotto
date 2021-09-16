@@ -16,6 +16,7 @@
     - [Dump TCP Traffic](en/start/network_filter/tcpcopy.md)
   - Flow Control on the 7th layer network
     - [Method Level Flow Control](en/start/stream_filter/flow_control.md)
+  - [Trace management](en/start/trace/trace.md)
   - [Health check and metadata query](en/start/actuator/start.md)
   - [Multilingual programming based on WASM](en/start/wasm/start.md)
 - Reference

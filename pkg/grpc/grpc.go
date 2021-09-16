@@ -18,6 +18,7 @@ package grpc
 
 import (
 	"google.golang.org/grpc"
+	"mosn.io/layotto/diagnostics"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 )
@@ -28,6 +29,8 @@ func NewGrpcServer(opts ...Option) mgrpc.RegisteredServer {
 		opt(&o)
 	}
 	srvMaker := NewDefaultServer
+	o.options = append(o.options, grpc.ChainUnaryInterceptor(diagnostics.UnaryInterceptorFilter))
+	o.options = append(o.options, grpc.ChainStreamInterceptor(diagnostics.StreamInterceptorFilter))
 	if o.maker != nil {
 		srvMaker = o.maker
 	}
