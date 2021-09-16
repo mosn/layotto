@@ -94,6 +94,7 @@ func reloadWasm(fullPath string) {
 			found = true
 
 			vmConfig := *config.VmConfig
+			vmConfig.Md5 = ""
 			v2Config := v2.WasmPluginConfig{
 				PluginName:  config.PluginName,
 				VmConfig:    &vmConfig,

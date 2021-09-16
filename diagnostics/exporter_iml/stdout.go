@@ -1,4 +1,4 @@
-package diagnostics
+package exporter_iml
 
 import (
 	"strconv"

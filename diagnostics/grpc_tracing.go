@@ -13,6 +13,10 @@ import (
 
 // UnaryInterceptorFilter is an implementation of grpc.UnaryServerInterceptor
 func UnaryInterceptorFilter(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+	if !trace.IsEnabled() {
+		resp, err = handler(ctx, req)
+		return resp, err
+	}
 	tracer := trace.Tracer("layotto")
 	span := tracer.Start(ctx, req, time.Now())
 	defer span.FinishSpan()
