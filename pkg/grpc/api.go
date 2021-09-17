@@ -21,17 +21,16 @@ import (
 	"errors"
 	"fmt"
 	"io"
-
-	"sync/atomic"
 	"strings"
 	"sync"
+	"sync/atomic"
 
+	_ "net/http/pprof"
 
 	"github.com/dapr/components-contrib/state"
 	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
 	"mosn.io/layotto/components/file"
-	_ "net/http/pprof"
 
 	"mosn.io/layotto/pkg/converter"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
