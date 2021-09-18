@@ -1,6 +1,5 @@
-package spec.sdk.runtime.v1.domain;
+package spec.sdk.runtime.v1.domain.state;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

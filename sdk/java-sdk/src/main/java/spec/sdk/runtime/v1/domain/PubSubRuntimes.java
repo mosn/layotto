@@ -1,8 +1,8 @@
-package spec.sdk.runtime.v1;
+package spec.sdk.runtime.v1.domain;
 
 import java.util.Map;
 
-public interface PubSubClient {
+public interface PubSubRuntimes {
 
     void publishEvent(String pubsubName, String topicName, byte[] data);
 
@@ -26,5 +26,4 @@ public interface PubSubClient {
     void publishEvent(String pubsubName, String topicName, Object data, Map<String, String> metadata);
 
     void publishEvent(String pubsubName, String topicName, byte[] data, Map<String, String> metadata);
-
 }
