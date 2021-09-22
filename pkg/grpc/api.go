@@ -786,7 +786,7 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 			if storeName == "" {
 				return nil
 			}
-			a.fileOps[storeName].CompletePut(id, false)
+			a.fileOps[storeName].Complete(id, false)
 			return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
 		}
 		if err == io.EOF {
@@ -794,7 +794,7 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 			if storeName == "" {
 				return nil
 			}
-			if err := a.fileOps[storeName].CompletePut(id, true); err != nil {
+			if err := a.fileOps[storeName].Complete(id, true); err != nil {
 				return status.Errorf(codes.Internal, "put file fail, err: %+v", err)
 			}
 			log.DefaultLogger.Debugf("put file success")
@@ -811,7 +811,7 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 		}
 		st := &file.PutFileStu{FileName: req.Name, Data: req.Data, Metadata: req.Metadata, StreamId: id, ChunkNumber: chunkNum}
 		if err = a.fileOps[req.StoreName].Put(st); err != nil {
-			a.fileOps[storeName].CompletePut(id, false)
+			a.fileOps[storeName].Complete(id, false)
 			return status.Errorf(codes.Internal, err.Error())
 		}
 	}

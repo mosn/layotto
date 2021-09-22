@@ -63,6 +63,7 @@
     - [RPC设计文档](zh/design/rpc/rpc设计文档.md)
     - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)    
     - [Sequencer API设计文档](zh/design/sequencer/design.md)
+    - [file API设计文档](zh/design/file/file-design.md)
 - 贡献指南
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)

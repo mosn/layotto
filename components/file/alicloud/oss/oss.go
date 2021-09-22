@@ -69,7 +69,7 @@ func (s *AliCloudOSS) Init(metadata *file.FileConfig) error {
 	return nil
 }
 
-func (s *AliCloudOSS) CompletePut(streamId int64, success bool) error {
+func (s *AliCloudOSS) Complete(streamId int64, success bool) error {
 	if !success {
 		s.stream.Delete(streamId)
 		return nil

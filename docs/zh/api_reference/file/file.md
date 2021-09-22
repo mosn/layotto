@@ -7,7 +7,7 @@ Put(*PutFileStu) error
 Get(*GetFileStu) (io.ReadCloser, error)
 List(*ListRequest) (*ListResp, error)
 Del(*DelRequest) error
-CompletePut(int64, bool) error
+Complete(int64, bool) error
 ```
 
 ## 调研
@@ -103,9 +103,9 @@ Del接口用于删除某个文件。其入参类型如下：
 
 ---
 
-### CompletePut
+### Complete
 
-completePut的概念就是文件传输完毕，关闭已经打开的文件的句柄
+complete的概念就是文件传输完毕，关闭已经打开的文件的句柄
 #### 入参类型
 
 ```

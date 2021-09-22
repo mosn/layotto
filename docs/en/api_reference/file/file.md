@@ -7,7 +7,7 @@ Put(*PutFileStu) error
 Get(*GetFileStu) (io.ReadCloser, error)
 List(*ListRequest) (*ListResp, error)
 Del(*DelRequest) error
-CompletePut(int64, bool) error
+Complete(int64, bool) error
 ```
 
 ## Research
@@ -99,9 +99,9 @@ Return error type
 
 ---
 
-### CompletePut
+### Complete
 
-The concept of completePut is to close the handle of the opened file after the file transfer is complete
+The concept of complete is to close the handle of the opened file after the file transfer is complete
 #### Input type
 
 ```
