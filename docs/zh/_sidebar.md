@@ -21,6 +21,8 @@
     - [使用WASM进行多语言编程](zh/start/wasm/start.md)
 - 用户手册
     - 接口文档
+        - [File API](zh/api_reference/file/file.md)
+        - [Configuration API](zh/api_reference/configuration/reference.md)
         - [Actuator API](zh/api_reference/actuator/actuator.md)
         - [State API](zh/api_reference/state/reference.md)
         - [Sequencer API](zh/api_reference/sequencer/reference.md)
@@ -44,6 +46,10 @@
             - [Etcd](zh/component_specs/lock/etcd.md)
             - [Zookeeper](zh/component_specs/lock/zookeeper.md)
         - Configuration
+            - [Etcd](zh/component_specs/configuration/etcd.md)
+            - [Apollo](zh/component_specs/configuration/apollo.md)
+        - File
+            - [OSS](zh/component_specs/file/oss.md)
             - [Etcd](zh/component_specs/configuration/etcd.md)        
             - [Apollo](zh/component_specs/configuration/apollo.md)        
         - [Sequencer](zh/component_specs/sequencer/common.md)
@@ -56,7 +62,8 @@
     - [Pub/Sub API以及与dapr component的兼容性](zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
     - [RPC设计文档](zh/design/rpc/rpc设计文档.md)
     - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)    
-    - [Sequencer API设计文档](zh/design/sequencer/design.md)    
+    - [Sequencer API设计文档](zh/design/sequencer/design.md)
+    - [file API设计文档](zh/design/file/file-design.md)
 - 贡献指南
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)
