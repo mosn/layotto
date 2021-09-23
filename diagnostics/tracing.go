@@ -13,8 +13,9 @@ import (
 )
 
 const (
-	Generator = "generator"
-	Exporter  = "exporter"
+	Generator        = "generator"
+	Exporter         = "exporter"
+	DefaultGenerator = "mosntracing"
 )
 
 func init() {
@@ -53,7 +54,7 @@ func (tracer *grpcTracer) Start(ctx context.Context, request interface{}, startT
 
 func NewSpan(ctx context.Context, startTime time.Time, config map[string]interface{}) api.Span {
 	span := &trace2.Span{StartTime: startTime}
-	generator := "mosntracing"
+	generator := DefaultGenerator
 	if v, ok := config[Generator]; ok {
 		generator = v.(string)
 	}
