@@ -63,6 +63,9 @@ func (o *OpenGenerator) GenerateNewContext(ctx context.Context, span api.Span) c
 	if v, ok := md[strings.ToLower(sofa.APP_NAME)]; ok {
 		span.SetTag(trace.LAYOTTO_APP_NAME, v[0])
 	}
+	if v, ok := md[strings.ToLower(sofa.SOFA_TRACE_BAGGAGE_DATA)]; ok {
+		span.SetTag(trace.LAYOTTO_ATTRS_CONTENT, v[0])
+	}
 	ctx = metadata.NewIncomingContext(ctx, newMd)
 	ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
 	return ctx
