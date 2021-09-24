@@ -19,6 +19,7 @@ require (
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.26.0
+	github.com/wasmerio/wasmer-go v1.0.4 // indirect
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210917050107-e469f0d5f5bc // indirect
