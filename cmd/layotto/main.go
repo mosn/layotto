@@ -26,6 +26,8 @@ import (
 	"time"
 
 	"mosn.io/layotto/components/configstores/etcdv3"
+	"mosn.io/layotto/components/file"
+	"mosn.io/layotto/components/file/alicloud/oss"
 	"mosn.io/pkg/log"
 
 	// Hello
@@ -149,10 +151,17 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 		),
+
 		// RPC
 		runtime.WithRpcFactory(
 			rpc.NewRpcFactory("mosn", mosninvoker.NewMosnInvoker),
 		),
+
+		// File
+		runtime.WithFileFactory(
+			file.NewFileFactory("aliOSS", oss.NewAliCloudOSS),
+		),
+
 		// PubSub
 		runtime.WithPubSubFactory(
 			pubsub.NewFactory("redis", func() dapr_comp_pubsub.PubSub {

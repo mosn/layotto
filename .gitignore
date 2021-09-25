@@ -4,6 +4,7 @@ build/bundles
 .idea
 .test
 .out
+layotto
 !./.gitignore
 IMAGEBUILD/
 coverage.txt

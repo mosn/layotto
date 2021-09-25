@@ -5,8 +5,10 @@
 package mock
 
 import (
-	"mosn.io/layotto/components/hello"
+	"context"
 	reflect "reflect"
+
+	"mosn.io/layotto/components/hello"
 
 	gomock "github.com/golang/mock/gomock"
 )
@@ -49,7 +51,7 @@ func (mr *MockHelloServiceMockRecorder) Init(arg0 interface{}) *gomock.Call {
 }
 
 // Hello mocks base method.
-func (m *MockHelloService) Hello(arg0 *hello.HelloRequest) (*hello.HelloReponse, error) {
+func (m *MockHelloService) Hello(ctx context.Context, arg0 *hello.HelloRequest) (*hello.HelloReponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Hello", arg0)
 	ret0, _ := ret[0].(*hello.HelloReponse)

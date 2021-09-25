@@ -50,5 +50,13 @@
 				}
 			]
 		}
-	]
+	],
+	"tracing": {
+		"enable": true,
+		"driver": "SOFATracer",
+		"config": {
+			"generator": "mosntracing",
+			"exporter": ["stdout"]
+		}
+	}
 }
