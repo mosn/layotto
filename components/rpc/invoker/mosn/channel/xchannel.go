@@ -59,7 +59,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 			return localTcpConn, nil
 		},
 		func() interface{} {
-			return &xstate{calls: map[uint32]chan *call{}}
+			return &xstate{calls: map[uint32]chan call{}}
 		},
 		m.onData,
 		m.cleanup,
@@ -71,7 +71,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 type xstate struct {
 	reqid uint32
 	mu    sync.Mutex
-	calls map[uint32]chan *call
+	calls map[uint32]chan call
 }
 
 type call struct {
@@ -106,7 +106,7 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		return nil, common.Error(common.InternalCode, encErr.Error())
 	}
 
-	callChan := make(chan *call, 1)
+	callChan := make(chan call, 1)
 	// set timeout
 	deadline, _ := ctx.Deadline()
 	if err := conn.SetWriteDeadline(deadline); err != nil {
@@ -171,7 +171,7 @@ func (m *xChannel) onData(conn *wrapConn) error {
 		}
 		xstate.mu.Unlock()
 		if ok {
-			notifyChan <- &call{resp: frame}
+			notifyChan <- call{resp: frame}
 		}
 	}
 	return nil
@@ -182,7 +182,7 @@ func (m *xChannel) cleanup(c *wrapConn, err error) {
 	// cleanup pending calls
 	xstate.mu.Lock()
 	for id, notifyChan := range xstate.calls {
-		notifyChan <- &call{err: err}
+		notifyChan <- call{err: err}
 		delete(xstate.calls, id)
 	}
 	xstate.mu.Unlock()

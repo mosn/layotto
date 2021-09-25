@@ -2,6 +2,7 @@ package etcdv3
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 	"sync"
@@ -10,6 +11,7 @@ import (
 	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/trace"
 	"mosn.io/pkg/log"
 )
 
@@ -118,6 +120,7 @@ func (c *EtcdV3ConfigStore) Get(ctx context.Context, req *configstores.GetReques
 		targetString[configstores.Key] = key
 		res = append(res, c.GetItemsFromAllKeys(keyValues.Kvs, targetString)...)
 	}
+	trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v, store: %+v", "Get", "etcd"))
 	return res, nil
 }
 

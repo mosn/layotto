@@ -13,9 +13,11 @@ import (
 )
 
 var (
-	watcher     *fsnotify.Watcher
-	configs     = make(map[string]*filterConfig)
-	pluginNames = make(map[string]string)
+	watcher *fsnotify.Watcher
+	// map[wasm-file-path]config
+	configs = make(map[string]*filterConfigItem)
+	// map[wasm-file-path]Factory
+	factories = make(map[string]*FilterConfigFactory)
 )
 
 func init() {
@@ -66,7 +68,7 @@ func runWatcher() {
 	}
 }
 
-func addWatchFile(cfg *filterConfig, pluginName string) {
+func addWatchFile(cfg *filterConfigItem, factory *FilterConfigFactory) {
 	path := cfg.VmConfig.Path
 	if err := watcher.Add(path); err != nil {
 		log.DefaultLogger.Errorf("[proxywasm] [watcher] addWatchFile fail to watch wasm file, err: %v", err)
@@ -80,7 +82,7 @@ func addWatchFile(cfg *filterConfig, pluginName string) {
 	}
 
 	configs[path] = cfg
-	pluginNames[path] = pluginName
+	factories[path] = factory
 	log.DefaultLogger.Infof("[proxywasm] [watcher] addWatchFile start to watch wasm file and its dir: %s", path)
 }
 
@@ -90,36 +92,34 @@ func reloadWasm(fullPath string) {
 	for path, config := range configs {
 		if strings.HasSuffix(fullPath, path) {
 			found = true
-			pluginName := pluginNames[path]
 
-			err := wasm.GetWasmManager().UninstallWasmPluginByName(pluginName)
-			if err != nil {
-				log.DefaultLogger.Errorf("[proxywasm] [watcher] reloadWasm fail to uninstall plugin, err: %v", err)
-			}
-
+			vmConfig := *config.VmConfig
+			vmConfig.Md5 = ""
 			v2Config := v2.WasmPluginConfig{
-				PluginName:  pluginName,
-				VmConfig:    config.VmConfig,
+				PluginName:  config.PluginName,
+				VmConfig:    &vmConfig,
 				InstanceNum: config.InstanceNum,
 			}
-			err = wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
+			err := wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
 			if err != nil {
 				log.DefaultLogger.Errorf("[proxywasm] [watcher] reloadWasm fail to add plugin, err: %v", err)
 				return
 			}
 
-			pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginName)
+			pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(config.PluginName)
 			if pw == nil {
 				log.DefaultLogger.Errorf("[proxywasm] [watcher] reloadWasm plugin not found")
 				return
 			}
 
-			factory := &FilterConfigFactory{
-				pluginName: pluginName,
-				config:     config,
-			}
+			factory := factories[path]
 			pw.RegisterPluginHandler(factory)
 
+			for _, plugin := range factory.plugins {
+				if plugin.pluginName == config.PluginName {
+					plugin.plugin = pw.GetPlugin()
+				}
+			}
 			log.DefaultLogger.Infof("[proxywasm] [watcher] reloadWasm reload wasm success: %s", path)
 		}
 	}
