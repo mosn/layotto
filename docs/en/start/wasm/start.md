@@ -14,8 +14,11 @@ go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
 
 2. send request
 ```
-curl -H 'name:Layotto' localhost:2045
-Hi, Layotto
+curl -H 'name:Layotto' -H 'id:id_1' localhost:2045
+Hi, Layotto_id_1
+
+curl -H 'name:Layotto' -H 'id:id_2' localhost:2045
+Hi, Layotto_id_2
 ```
 
 ### Example description 
