@@ -163,7 +163,7 @@ func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 		id, err := exports.ProxyGetID()
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get wasm id, PluginName: %s, err: %v",
-				plugin.PluginName, err)
+				plugin.PluginName(), err)
 			return true
 		}
 		f.router.RegisterRoute(id, wasmPlugin)
