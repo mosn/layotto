@@ -13,3 +13,4 @@ logs/
 *.swp
 /cover.out
 vendor/
+demo/state/redis/client
