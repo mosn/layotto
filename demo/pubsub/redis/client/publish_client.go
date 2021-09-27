@@ -19,6 +19,7 @@ package main
 import (
 	"context"
 	"fmt"
+
 	client "mosn.io/layotto/sdk/go-sdk/client"
 )
 
@@ -47,6 +48,6 @@ func testPublish(cli client.Client) error {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Published a new event.Topic: %s ,Data: %s \n", in.Topic, in.Data)
+	fmt.Printf("Published a new event.Topic: %s ,DataStream: %s \n", in.Topic, in.Data)
 	return err
 }

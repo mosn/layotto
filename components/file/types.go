@@ -1,16 +1,19 @@
 package file
 
+import (
+	"encoding/json"
+	"io"
+)
+
 // FileConfig wraps configuration for a file implementation
 type FileConfig struct {
-	Metadata []map[string]interface{} `json:"metadata"`
+	Metadata json.RawMessage
 }
 
 type PutFileStu struct {
-	Data        []byte
-	FileName    string
-	Metadata    map[string]string
-	StreamId    int64
-	ChunkNumber int
+	DataStream io.Reader
+	FileName   string
+	Metadata   map[string]string
 }
 
 type GetFileStu struct {

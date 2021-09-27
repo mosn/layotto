@@ -23,7 +23,8 @@ import (
 	"io"
 	"strings"
 	"sync"
-	"sync/atomic"
+
+	"mosn.io/pkg/utils"
 
 	_ "net/http/pprof"
 
@@ -57,14 +58,13 @@ import (
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/messages"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
+	lutils "mosn.io/layotto/pkg/utils"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
-	"mosn.io/pkg/utils"
 )
 
 var (
 	ErrNoInstance = errors.New("no instance found")
-	streamId      int64
 	bytesPool     = sync.Pool{
 		New: func() interface{} {
 			// set size to 100kb
@@ -776,48 +776,67 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 }
 
 func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
-	id := atomic.AddInt64(&streamId, 1)
-	storeName := ""
-	var chunkNum int
-	for {
-		req, err := stream.Recv()
-		if err != nil && err != io.EOF {
-			//if client occur error, return nil
-			if storeName == "" {
-				return nil
-			}
-			a.fileOps[storeName].Complete(id, false)
-			return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
-		}
+	fileReader := lutils.NewFileReader()
+	var wg sync.WaitGroup
+	startRequestWithData := false
+	req, err := stream.Recv()
+	if err != nil {
+		//if client send eof error directly, return nil
 		if err == io.EOF {
-			//if client send EOF directly, return nil
-			if storeName == "" {
-				return nil
-			}
-			if err := a.fileOps[storeName].Complete(id, true); err != nil {
-				return status.Errorf(codes.Internal, "put file fail, err: %+v", err)
-			}
-			log.DefaultLogger.Debugf("put file success")
-			stream.SendAndClose(&emptypb.Empty{})
 			return nil
 		}
-
-		if storeName == "" {
-			storeName = req.StoreName
-		}
-		chunkNum++
-		if a.fileOps[req.StoreName] == nil {
-			return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
-		}
-		st := &file.PutFileStu{FileName: req.Name, Data: req.Data, Metadata: req.Metadata, StreamId: id, ChunkNumber: chunkNum}
-		if err = a.fileOps[req.StoreName].Put(st); err != nil {
-			a.fileOps[storeName].Complete(id, false)
-			return status.Errorf(codes.Internal, err.Error())
-		}
+		return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
 	}
+	if len(req.Data) > 0 {
+		startRequestWithData = true
+	}
+	if a.fileOps[req.StoreName] == nil {
+		return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+	}
+	wg.Add(1)
+	go func() {
+		for {
+			if startRequestWithData && len(req.Data) > 0 {
+				startRequestWithData = false
+				//here write the first request data
+				_, err = fileReader.Write(req.Data)
+				if err != nil {
+					fileReader.CloseWithErr(err)
+					log.DefaultLogger.Errorf("write file fail,err: %+v", err)
+					break
+				}
+			}
+			req, err = stream.Recv()
+			if err != nil && err != io.EOF {
+				fileReader.CloseWithErr(err)
+				log.DefaultLogger.Errorf("recv error: %+v", err)
+				break
+			}
+			if err == io.EOF {
+				log.DefaultLogger.Debugf("put file success")
+				fileReader.Close()
+				stream.SendAndClose(&emptypb.Empty{})
+				break
+			}
+			_, err = fileReader.Write(req.Data)
+			if err != nil {
+				fileReader.CloseWithErr(err)
+				log.DefaultLogger.Errorf("write file fail,err: %+v", err)
+				break
+			}
+		}
+		wg.Done()
+	}()
+	st := &file.PutFileStu{DataStream: fileReader, FileName: req.Name, Metadata: req.Metadata}
+	if err = a.fileOps[req.StoreName].Put(st); err != nil {
+		fileReader.CloseWithErr(err)
+		return status.Errorf(codes.Internal, err.Error())
+	}
+	wg.Wait()
+	return nil
 }
 
-// List all files
+//ListFile list all files
 func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error) {
 	if a.fileOps[in.Request.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
@@ -829,7 +848,7 @@ func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*r
 	return &runtimev1pb.ListFileResp{FileName: resp.FilesName}, nil
 }
 
-//Delete specific file
+//DelFile delete specific file
 func (a *api) DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error) {
 	if a.fileOps[in.Request.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)

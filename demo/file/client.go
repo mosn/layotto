@@ -20,7 +20,7 @@ func TestGet() {
 	}
 
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "fileName"}
+	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "client"}
 	cli, err := c.GetFile(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)
@@ -35,7 +35,7 @@ func TestGet() {
 		}
 		pic = append(pic, resp.Data...)
 	}
-	ioutil.WriteFile("fileName", pic, os.ModePerm)
+	ioutil.WriteFile("client", pic, os.ModePerm)
 }
 
 func TestPut() {
@@ -47,13 +47,17 @@ func TestPut() {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "fileName", Metadata: meta}
+	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "client", Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
 	if err != nil {
 		fmt.Printf("put file failed:%+v", err)
 		return
 	}
-	fileHandle, err := os.Open("fileName")
+	fileHandle, err := os.Open("client")
+	if err != nil {
+		fmt.Println("open file fail")
+		return
+	}
 	defer fileHandle.Close()
 	//Upload in multiples, the minimum size is 100kb
 	buffer := make([]byte, 102400)
@@ -109,7 +113,7 @@ func TestDel() {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: "fileName", Metadata: meta}
+	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: "fileName.jpg", Metadata: meta}
 	listReq := &runtimev1pb.DelFileRequest{Request: req}
 	_, err = c.DelFile(context.Background(), listReq)
 	if err != nil {
@@ -121,8 +125,11 @@ func TestDel() {
 
 func main() {
 	TestGet()
-	TestPut()
-	TestList()
-	TestDel()
-	TestList()
+	//time.Sleep(5 * time.Second)
+	//TestDel()
+	//time.Sleep(5 * time.Second)
+	//TestPut()
+	//TestList()
+	//TestDel()
+	//TestList()
 }

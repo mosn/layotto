@@ -1,7 +1,7 @@
 package oss
 
 import (
-	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"sync"
@@ -11,11 +11,9 @@ import (
 )
 
 const (
-	endpointKey        = "endpoint"
-	accessKeyIDKey     = "accessKeyID"
-	accessKeySecretKey = "accessKeySecret"
-	bucketKey          = "bucket"
-	storageTypeKey     = "storageType"
+	endpointKey    = "endpoint"
+	bucketKey      = "bucket"
+	storageTypeKey = "storageType"
 )
 
 type PartUploadStu struct {
@@ -26,96 +24,60 @@ type PartUploadStu struct {
 
 // AliCloudOSS is a binding for an AliCloud OSS storage bucketKey
 type AliCloudOSS struct {
-	metadata map[string]*ossMetadata
+	metadata map[string]*OssMetadata
 	client   map[string]*oss.Client
 	stream   sync.Map
 }
 
-type ossMetadata struct {
+type OssMetadata struct {
 	Endpoint        string   `json:"endpoint"`
-	AccessKeyID     string   `json:"accessKeyIDKey"`
-	AccessKeySecret string   `json:"accessKeySecretKey"`
-	Bucket          []string `json:"bucketKey"`
+	AccessKeyID     string   `json:"accessKeyID"`
+	AccessKeySecret string   `json:"accessKeySecret"`
+	Bucket          []string `json:"bucket"`
 }
 
 func NewAliCloudOSS() file.File {
-	oss := &AliCloudOSS{metadata: make(map[string]*ossMetadata), client: make(map[string]*oss.Client)}
+	oss := &AliCloudOSS{metadata: make(map[string]*OssMetadata), client: make(map[string]*oss.Client)}
 	return oss
 }
 
 // Init does metadata parsing and connection creation
 func (s *AliCloudOSS) Init(metadata *file.FileConfig) error {
-	m := &ossMetadata{}
-	if len(metadata.Metadata) == 0 {
-		return fmt.Errorf("no configuration for aliCloudOSS")
+	m := make([]*OssMetadata, 0)
+	err := json.Unmarshal(metadata.Metadata, &m)
+	if err != nil {
+		return fmt.Errorf("wrong config for alicloudOss")
 	}
-	for _, v := range metadata.Metadata {
-		m.Endpoint = v[endpointKey].(string)
-		m.AccessKeyID = v[accessKeyIDKey].(string)
-		m.AccessKeySecret = v[accessKeySecretKey].(string)
-		for _, s := range v[bucketKey].([]interface{}) {
-			m.Bucket = append(m.Bucket, s.(string))
-		}
-		if !s.checkMetadata(m) {
+
+	for _, v := range m {
+		if !s.checkMetadata(v) {
 			return fmt.Errorf("wrong configurations for aliCloudOSS")
 		}
-		client, err := s.getClient(m)
+		client, err := s.getClient(v)
 		if err != nil {
 			return err
 		}
-		s.metadata[m.Endpoint] = m
-		s.client[m.Endpoint] = client
+		s.metadata[v.Endpoint] = v
+		s.client[v.Endpoint] = client
 	}
 	return nil
 }
 
-func (s *AliCloudOSS) Complete(streamId int64, success bool) error {
-	if !success {
-		s.stream.Delete(streamId)
-		return nil
-	}
-	if v, ok := s.stream.Load(streamId); ok {
-		pu := v.(*PartUploadStu)
-		_, err := pu.bucket.CompleteMultipartUpload(pu.imur, pu.parts)
-		s.stream.Delete(streamId)
-		return err
-	}
-	return fmt.Errorf("file is not uploading")
-}
-
 func (s *AliCloudOSS) Put(st *file.PutFileStu) error {
 	storageType := st.Metadata[storageTypeKey]
-	if v, ok := s.stream.Load(st.StreamId); !ok {
-		bucket, err := s.selectClientAndBucket(st.Metadata)
-		if err != nil {
-			return err
-		}
-		//initial multi part upload
-		imur, err := bucket.InitiateMultipartUpload(st.FileName, oss.ObjectStorageClass(oss.StorageClassType(storageType)))
-		if err != nil {
-			return err
-		}
-		//upload part
-		part, err := bucket.UploadPart(imur, bytes.NewReader(st.Data), int64(len(st.Data)), st.ChunkNumber)
-		if err != nil {
-			return err
-		}
-
-		pu := &PartUploadStu{imur: imur, bucket: bucket}
-		pu.parts = append(pu.parts, part)
-		s.stream.Store(st.StreamId, pu)
-		return nil
-	} else {
-		pu := v.(*PartUploadStu)
-		//upload part
-		part, err := pu.bucket.UploadPart(pu.imur, bytes.NewReader(st.Data), int64(len(st.Data)), st.ChunkNumber)
-		if err != nil {
-			return err
-		}
-		pu.parts = append(pu.parts, part)
-		s.stream.Store(st.StreamId, pu)
-		return nil
+	if storageType == "" {
+		storageType = "Standard"
 	}
+	bucket, err := s.selectClientAndBucket(st.Metadata)
+	if err != nil {
+		return fmt.Errorf("fail to find bucket for %s: %v", st.Metadata, err)
+	}
+	err = bucket.PutObject(st.FileName, st.DataStream, oss.ObjectStorageClass(oss.StorageClassType(storageType)), oss.ObjectACL(oss.ACLPublicRead))
+	if err != nil {
+		return fmt.Errorf("fail to upload object: %+v", err)
+	}
+
+	return nil
 }
 
 func (s *AliCloudOSS) Get(st *file.GetFileStu) (io.ReadCloser, error) {
@@ -170,14 +132,14 @@ func (s *AliCloudOSS) Del(request *file.DelRequest) error {
 	return nil
 }
 
-func (s *AliCloudOSS) checkMetadata(m *ossMetadata) bool {
+func (s *AliCloudOSS) checkMetadata(m *OssMetadata) bool {
 	if m.AccessKeySecret == "" || m.Endpoint == "" || m.AccessKeyID == "" || len(m.Bucket) == 0 {
 		return false
 	}
 	return true
 }
 
-func (s *AliCloudOSS) getClient(metadata *ossMetadata) (*oss.Client, error) {
+func (s *AliCloudOSS) getClient(metadata *OssMetadata) (*oss.Client, error) {
 	client, err := oss.New(metadata.Endpoint, metadata.AccessKeyID, metadata.AccessKeySecret)
 	if err != nil {
 		return nil, err
