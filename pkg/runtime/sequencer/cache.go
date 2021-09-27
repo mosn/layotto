@@ -4,12 +4,18 @@ import (
 	"context"
 	"errors"
 	"mosn.io/layotto/components/sequencer"
+	"mosn.io/pkg/log"
+	"mosn.io/pkg/utils"
 	"sync"
 )
 
 const defaultSize = 1000
-const defaultLimit = 500
+const defaultLimit = 700
 
+// DoubleBuffer is double segment id buffer.
+// There are two buffers in DoubleBuffer: InUseBuffer is in use, BackUpBuffer is a backup buffer.
+// Their default capacity is 1000. When the InUseBuffer usage exceeds 30%, the BackUpBuffer will be initialized.
+// When InUseBuffer is used up, swap them.
 type DoubleBuffer struct {
 	Key          string
 	Size         int
@@ -47,14 +53,15 @@ func (d *DoubleBuffer) init() error {
 	defer d.lock.Unlock()
 
 	d.InUseBuffer = buffer
+
 	return nil
 }
 
-//get next id
-func (d *DoubleBuffer) get() (int64, error) {
+//getId next id
+func (d *DoubleBuffer) getId() (int64, error) {
 
 	if d.InUseBuffer == nil {
-		return 0, errors.New("fail")
+		return 0, errors.New("[DoubleBuffer] Get error: InUseBuffer nil ")
 	}
 
 	d.lock.Lock()
@@ -68,14 +75,18 @@ func (d *DoubleBuffer) get() (int64, error) {
 		d.swap()
 	}
 
+	//when InUseBuffer id more than half used, initialize BackUpBuffer.
 	//equal make sure only one thread enter
 	if d.InUseBuffer.to-d.InUseBuffer.from == defaultLimit {
-		go func() {
-			//how to handle this err?
-			buffer, _ := d.getNewBuffer()
+		utils.GoWithRecover(func() {
+
+			buffer, err := d.getNewBuffer()
+			if err != nil {
+				log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
+			}
 			d.BackUpBuffer = buffer
 
-		}()
+		}, nil)
 	}
 
 	return next, nil
@@ -97,7 +108,7 @@ func (d *DoubleBuffer) getNewBuffer() (*Buffer, error) {
 		return nil, err
 	}
 	if !support {
-		return nil, nil
+		return nil, errors.New("[DoubleBuffer] unSupport Segment id")
 	}
 	return &Buffer{
 		from: result.From,
@@ -105,7 +116,7 @@ func (d *DoubleBuffer) getNewBuffer() (*Buffer, error) {
 	}, nil
 }
 
-var Catch sync.Map
+var BufferCatch sync.Map
 
 func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequencer.GetNextIdRequest) (bool, int64, error) {
 
@@ -119,8 +130,9 @@ func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequenc
 		return false, 0, nil
 	}
 
-	actual, ok := Catch.LoadOrStore(req.Key, NewDoubleBuffer(req.Key, store))
-	d := actual.(DoubleBuffer)
+	actual, ok := BufferCatch.LoadOrStore(req.Key, NewDoubleBuffer(req.Key, store))
+
+	d := actual.(*DoubleBuffer)
 	//load fail, should init buffer
 	if !ok {
 		err := d.init()
@@ -129,10 +141,11 @@ func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequenc
 		}
 	}
 
-	get, err := d.get()
+	id, err := d.getId()
 
 	if err != nil {
 		return true, 0, err
 	}
-	return true, get, nil
+
+	return true, id, nil
 }
