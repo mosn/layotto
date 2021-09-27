@@ -15,7 +15,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0
-	github.com/tetratelabs/proxy-wasm-go-sdk v0.1.2-0.20210520063156-d39281baed90
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.26.0
@@ -33,6 +32,7 @@ require (
 )
 
 replace (
+	github.com/tetratelabs/proxy-wasm-go-sdk => github.com/layotto/proxy-wasm-go-sdk v0.14.1-0.20210926122819-378cc27b0ffb
 	mosn.io/layotto/components => ./components
 	mosn.io/layotto/spec => ./spec
 )
