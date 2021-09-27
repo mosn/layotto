@@ -137,6 +137,7 @@ func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequenc
 	if !ok {
 		err := d.init()
 		if err != nil {
+
 			return true, 0, err
 		}
 	}
