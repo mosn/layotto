@@ -61,11 +61,6 @@ func PutFile(wg *sync.WaitGroup, id int) {
 	buffer := make([]byte, 102400)
 
 	for {
-		err = stream.Send(req)
-		if err != nil {
-			fmt.Printf("send request failed: err: %+v", err)
-			break
-		}
 		n, err := fileHandle.Read(buffer)
 		if err != nil && err != io.EOF {
 			fmt.Printf("read file failed, err:%+v", err)
@@ -76,6 +71,11 @@ func PutFile(wg *sync.WaitGroup, id int) {
 			break
 		}
 		req.Data = buffer[:n]
+		err = stream.Send(req)
+		if err != nil {
+			fmt.Printf("send request failed: err: %+v", err)
+			break
+		}
 	}
 	_, err = stream.CloseAndRecv()
 	if err != nil {
@@ -90,7 +90,7 @@ func main() {
 	//Test when multi routine put big file, layotto memory cost
 	for i := 0; i < 100; i++ {
 		wg.Add(1)
-		go PutFile(&wg, i)
+		PutFile(&wg, i)
 	}
 	//Test when multi routine get file, layotto memory cost
 	for {
