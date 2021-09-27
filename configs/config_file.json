@@ -1,0 +1,50 @@
+{
+  "servers": [
+    {
+      "default_log_path": "stdout",
+      "default_log_level": "DEBUG",
+      "listeners": [
+        {
+          "name": "grpc",
+          "address": "127.0.0.1:34904",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "hellos": {
+                        "helloworld": {
+                          "hello": "greeting"
+                        }
+                      },
+                      "files": {
+                        "aliOSS": {
+                          "metadata":[
+                            {
+                              "endpoint": "endpoint_address",
+                              "accessKeyID": "accessKey",
+                              "accessKeySecret": "secret",
+                              "bucket": ["bucket1", "bucket2"]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pprof": {
+    "debug": true,
+    "port_value": 34902
+  }
+}

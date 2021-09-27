@@ -26,6 +26,8 @@ import (
 	"time"
 
 	"mosn.io/layotto/components/configstores/etcdv3"
+	"mosn.io/layotto/components/file"
+	"mosn.io/layotto/components/file/alicloud/oss"
 	"mosn.io/pkg/log"
 
 	// Hello
@@ -89,6 +91,7 @@ import (
 	// Sequencer
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
+	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
 	"mosn.io/layotto/pkg/actuator/health"
@@ -148,10 +151,17 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 		),
+
 		// RPC
 		runtime.WithRpcFactory(
 			rpc.NewRpcFactory("mosn", mosninvoker.NewMosnInvoker),
 		),
+
+		// File
+		runtime.WithFileFactory(
+			file.NewFileFactory("aliOSS", oss.NewAliCloudOSS),
+		),
+
 		// PubSub
 		runtime.WithPubSubFactory(
 			pubsub.NewFactory("redis", func() dapr_comp_pubsub.PubSub {
@@ -265,6 +275,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("redis", func() sequencer.Store {
 				return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
+			}),
+			runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
+				return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
 			}),
 		))
 	// 4. check if unhealthy

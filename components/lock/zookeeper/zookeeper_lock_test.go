@@ -5,6 +5,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/pkg/log"
 	"testing"
 	"time"
@@ -35,9 +36,9 @@ func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
 
 	//mock
 	ctrl := gomock.NewController(t)
-	unlockConn := NewMockZKConnection(ctrl)
-	lockConn := NewMockZKConnection(ctrl)
-	factory := NewMockConnectionFactory(ctrl)
+	unlockConn := utils.NewMockZKConnection(ctrl)
+	lockConn := utils.NewMockZKConnection(ctrl)
+	factory := utils.NewMockConnectionFactory(ctrl)
 	path := "/" + resouseId
 	factory.EXPECT().NewConnection(time.Duration(expireTime)*time.Second, comp.metadata).Return(lockConn, nil).Times(2)
 
@@ -74,9 +75,9 @@ func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
 
 	//mock
 	ctrl := gomock.NewController(t)
-	unlockConn := NewMockZKConnection(ctrl)
-	lockConn := NewMockZKConnection(ctrl)
-	factory := NewMockConnectionFactory(ctrl)
+	unlockConn := utils.NewMockZKConnection(ctrl)
+	lockConn := utils.NewMockZKConnection(ctrl)
+	factory := utils.NewMockConnectionFactory(ctrl)
 	path := "/" + resouseId
 	factory.EXPECT().NewConnection(time.Duration(expireTime)*time.Second, comp.metadata).Return(lockConn, nil).Times(2)
 
@@ -113,9 +114,9 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 
 	//mock
 	ctrl := gomock.NewController(t)
-	unlockConn := NewMockZKConnection(ctrl)
-	lockConn := NewMockZKConnection(ctrl)
-	factory := NewMockConnectionFactory(ctrl)
+	unlockConn := utils.NewMockZKConnection(ctrl)
+	lockConn := utils.NewMockZKConnection(ctrl)
+	factory := utils.NewMockConnectionFactory(ctrl)
 	path := "/" + resouseId
 
 	factory.EXPECT().NewConnection(time.Duration(expireTime)*time.Second, comp.metadata).Return(lockConn, nil).Times(3)
