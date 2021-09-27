@@ -58,7 +58,6 @@ import (
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/messages"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
-	lutils "mosn.io/layotto/pkg/utils"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
@@ -776,7 +775,7 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 }
 
 func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
-	fileReader := lutils.NewFileReader()
+	fileReader, fileWriter := io.Pipe()
 	var wg sync.WaitGroup
 	startRequestWithData := false
 	req, err := stream.Recv()
@@ -799,28 +798,28 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 			if startRequestWithData && len(req.Data) > 0 {
 				startRequestWithData = false
 				//here write the first request data
-				_, err = fileReader.Write(req.Data)
+				_, err = fileWriter.Write(req.Data)
 				if err != nil {
-					fileReader.CloseWithErr(err)
+					fileWriter.CloseWithError(err)
 					log.DefaultLogger.Errorf("write file fail,err: %+v", err)
 					break
 				}
 			}
 			req, err = stream.Recv()
 			if err != nil && err != io.EOF {
-				fileReader.CloseWithErr(err)
+				fileWriter.CloseWithError(err)
 				log.DefaultLogger.Errorf("recv error: %+v", err)
 				break
 			}
 			if err == io.EOF {
 				log.DefaultLogger.Debugf("put file success")
-				fileReader.Close()
+				fileWriter.CloseWithError(nil)
 				stream.SendAndClose(&emptypb.Empty{})
 				break
 			}
-			_, err = fileReader.Write(req.Data)
+			_, err = fileWriter.Write(req.Data)
 			if err != nil {
-				fileReader.CloseWithErr(err)
+				fileWriter.CloseWithError(err)
 				log.DefaultLogger.Errorf("write file fail,err: %+v", err)
 				break
 			}
@@ -829,7 +828,7 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 	}()
 	st := &file.PutFileStu{DataStream: fileReader, FileName: req.Name, Metadata: req.Metadata}
 	if err = a.fileOps[req.StoreName].Put(st); err != nil {
-		fileReader.CloseWithErr(err)
+		fileWriter.CloseWithError(err)
 		return status.Errorf(codes.Internal, err.Error())
 	}
 	wg.Wait()
