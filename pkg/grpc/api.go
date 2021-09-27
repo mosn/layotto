@@ -20,12 +20,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"strings"
 	"sync"
+	"sync/atomic"
+
+	_ "net/http/pprof"
 
 	"github.com/dapr/components-contrib/state"
 	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
+	"mosn.io/layotto/components/file"
 
 	"mosn.io/layotto/pkg/converter"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
@@ -59,6 +64,13 @@ import (
 
 var (
 	ErrNoInstance = errors.New("no instance found")
+	streamId      int64
+	bytesPool     = sync.Pool{
+		New: func() interface{} {
+			// set size to 100kb
+			return new([]byte)
+		},
+	}
 )
 
 type API interface {
@@ -82,6 +94,15 @@ type API interface {
 	DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateRequest) (*emptypb.Empty, error)
 	DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkStateRequest) (*emptypb.Empty, error)
 	ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*emptypb.Empty, error)
+	// Get File
+	GetFile(*runtimev1pb.GetFileRequest, runtimev1pb.Runtime_GetFileServer) error
+	// Put file with stream.
+	PutFile(runtimev1pb.Runtime_PutFileServer) error
+	// List all files
+	ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error)
+	//Delete specific file
+	DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error)
+
 	// Distributed Lock API
 	TryLock(context.Context, *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error)
 	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
@@ -98,6 +119,7 @@ type api struct {
 	pubSubs                  map[string]pubsub.PubSub
 	stateStores              map[string]state.Store
 	transactionalStateStores map[string]state.TransactionalStore
+	fileOps                  map[string]file.File
 	lockStores               map[string]lock.LockStore
 	sequencers               map[string]sequencer.Store
 }
@@ -109,6 +131,7 @@ func NewAPI(
 	rpcs map[string]rpc.Invoker,
 	pubSubs map[string]pubsub.PubSub,
 	stateStores map[string]state.Store,
+	files map[string]file.File,
 	lockStores map[string]lock.LockStore,
 	sequencers map[string]sequencer.Store,
 ) API {
@@ -128,6 +151,7 @@ func NewAPI(
 		pubSubs:                  pubSubs,
 		stateStores:              stateStores,
 		transactionalStateStores: transactionalStateStores,
+		fileOps:                  files,
 		lockStores:               lockStores,
 		sequencers:               sequencers,
 	}
@@ -708,6 +732,111 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 		err = status.Errorf(codes.Internal, messages.ErrStateTransaction, err.Error())
 		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
 		return &emptypb.Empty{}, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtime_GetFileServer) error {
+	if a.fileOps[req.StoreName] == nil {
+		return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
+	}
+	st := &file.GetFileStu{FileName: req.Name, Metadata: req.Metadata}
+	data, err := a.fileOps[req.StoreName].Get(st)
+	if err != nil {
+		return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
+	}
+
+	buffsPtr := bytesPool.Get().(*[]byte)
+	buf := *buffsPtr
+	if len(buf) == 0 {
+		buf = make([]byte, 102400, 102400)
+	}
+	defer func() {
+		data.Close()
+		*buffsPtr = buf
+		bytesPool.Put(buffsPtr)
+	}()
+
+	for {
+		length, err := data.Read(buf)
+		if err != nil && err != io.EOF {
+			log.DefaultLogger.Warnf("get file fail, err: %+v", err)
+			return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
+		}
+		if err == nil || (err == io.EOF && length != 0) {
+			resp := &runtimev1pb.GetFileResponse{Data: buf[:length]}
+			if err = stream.Send(resp); err != nil {
+				return status.Errorf(codes.Internal, "send file data fail,err: %+v", err)
+			}
+		}
+		if err == io.EOF {
+			return nil
+		}
+	}
+}
+
+func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
+	id := atomic.AddInt64(&streamId, 1)
+	storeName := ""
+	var chunkNum int
+	for {
+		req, err := stream.Recv()
+		if err != nil && err != io.EOF {
+			//if client occur error, return nil
+			if storeName == "" {
+				return nil
+			}
+			a.fileOps[storeName].Complete(id, false)
+			return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
+		}
+		if err == io.EOF {
+			//if client send EOF directly, return nil
+			if storeName == "" {
+				return nil
+			}
+			if err := a.fileOps[storeName].Complete(id, true); err != nil {
+				return status.Errorf(codes.Internal, "put file fail, err: %+v", err)
+			}
+			log.DefaultLogger.Debugf("put file success")
+			stream.SendAndClose(&emptypb.Empty{})
+			return nil
+		}
+
+		if storeName == "" {
+			storeName = req.StoreName
+		}
+		chunkNum++
+		if a.fileOps[req.StoreName] == nil {
+			return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		}
+		st := &file.PutFileStu{FileName: req.Name, Data: req.Data, Metadata: req.Metadata, StreamId: id, ChunkNumber: chunkNum}
+		if err = a.fileOps[req.StoreName].Put(st); err != nil {
+			a.fileOps[storeName].Complete(id, false)
+			return status.Errorf(codes.Internal, err.Error())
+		}
+	}
+}
+
+// List all files
+func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error) {
+	if a.fileOps[in.Request.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
+	}
+	resp, err := a.fileOps[in.Request.StoreName].List(&file.ListRequest{DirectoryName: in.Request.Name, Metadata: in.Request.Metadata})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &runtimev1pb.ListFileResp{FileName: resp.FilesName}, nil
+}
+
+//Delete specific file
+func (a *api) DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error) {
+	if a.fileOps[in.Request.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
+	}
+	err := a.fileOps[in.Request.StoreName].Del(&file.DelRequest{FileName: in.Request.Name, Metadata: in.Request.Metadata})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	return &emptypb.Empty{}, nil
 }
