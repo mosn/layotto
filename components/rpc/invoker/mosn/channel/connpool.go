@@ -62,12 +62,18 @@ func (w *wrapConn) close() error {
 	return err
 }
 
-// NewConnPool im-memory fake conn pool
+// NewConnPool is reduced the overhead of creating connections and improve program performance
+// im-memory fake conn pool
 func NewConnPool(
+	// max active connected count
 	maxActive int,
+	// create new conn
 	dialFunc func() (net.Conn, error),
+	// state
 	stateFunc func() interface{},
+	// handle data
 	onDataFunc func(*wrapConn) error,
+	// clean connected
 	cleanupFunc func(*wrapConn, error)) *connPool {
 
 	p := &connPool{
