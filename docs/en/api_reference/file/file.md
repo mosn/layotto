@@ -7,7 +7,6 @@ Put(*PutFileStu) error
 Get(*GetFileStu) (io.ReadCloser, error)
 List(*ListRequest) (*ListResp, error)
 Del(*DelRequest) error
-Complete(int64, bool) error
 ```
 
 ## Research
@@ -27,11 +26,9 @@ The put interface is used to upload files. The input types are as follows：
 
 ```
 type PutFileStu struct {
-	Data        []byte //data receive
-	FileName    string //fileName want put
-	Metadata    map[string]string //extended fields, sdk can transmit any field, and components can be implemented in detail
-	StreamId    int64 //during the file upload process, grpc's client and server will establish a transmission stream, and the corresponding file handle can be found in the component through StreamId
-	ChunkNumber int //chunk number, starting from 1
+    DataStream io.Reader //used to read the file data transmitted by grpc stream
+    FileName string //File name
+    Metadata mapping [string]string //Find the field
 }
 
 ```
@@ -91,24 +88,6 @@ The Del interface is used to delete a file. The input types are as follows:
          FileName string //File name to delete
          Metadata map[string]string //Extension field
      }
-```
-
-#### Return value type
-
-Return error type
-
----
-
-### Complete
-
-The concept of complete is to close the handle of the opened file after the file transfer is complete
-#### Input type
-
-```
-
-Parameter 1, corresponds to the StreamId in the input parameters of the Put interface
-Parameter 2, represents whether EOF is received, if EOF is received, it is true, if an error occurs, it is false
-  
 ```
 
 #### Return value type

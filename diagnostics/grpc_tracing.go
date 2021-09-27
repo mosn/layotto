@@ -31,6 +31,10 @@ func UnaryInterceptorFilter(ctx context.Context, req interface{}, info *grpc.Una
 }
 
 func StreamInterceptorFilter(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	if !trace.IsEnabled() {
+		err := handler(srv, ss)
+		return err
+	}
 	tracer := trace.Tracer("layotto")
 	ctx := ss.Context()
 	span := tracer.Start(ctx, nil, time.Now())
@@ -44,5 +48,5 @@ func StreamInterceptorFilter(srv interface{}, ss grpc.ServerStream, info *grpc.S
 	if err != nil {
 		span.SetTag(ltrace.LAYOTTO_REQUEST_RESULT, "1")
 	}
-	return nil
+	return err
 }

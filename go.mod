@@ -24,6 +24,7 @@ require (
 	google.golang.org/protobuf v1.27.1
 	mosn.io/api v0.0.0-20210714065837-5b4c2d66e70c
 	mosn.io/layotto/components v0.0.0-20210625065826-9c2ad8dbcf05
+	mosn.io/layotto/sdk/go-sdk v0.0.0-20210926015636-a705edecedd9 // indirect
 	mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3
 	mosn.io/mosn v0.24.1-0.20210817133744-f3fc4c31ddee
 	mosn.io/pkg v0.0.0-20210604065522-6e8f5a087814
