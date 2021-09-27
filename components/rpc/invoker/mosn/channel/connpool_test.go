@@ -28,7 +28,7 @@ import (
 
 func TestGetPut(t *testing.T) {
 	active := 2
-	p := newConnPool(
+	p := NewConnPool(
 		active,
 		func() (net.Conn, error) {
 			p, _ := net.Pipe()
@@ -87,7 +87,7 @@ func (s *conns) close() {
 func TestDeadconnRenew(t *testing.T) {
 	conns := &conns{}
 	active := 1
-	p := newConnPool(
+	p := NewConnPool(
 		active,
 		func() (net.Conn, error) {
 			p1, p2 := net.Pipe()
@@ -119,7 +119,7 @@ func TestPoolConcurrent(t *testing.T) {
 	conns := &conns{}
 	active := 5
 	ch := make(chan error)
-	p := newConnPool(
+	p := NewConnPool(
 		active,
 		func() (net.Conn, error) {
 			p1, p2 := net.Pipe()

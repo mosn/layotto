@@ -31,12 +31,14 @@ import (
 	"mosn.io/layotto/components/rpc/invoker/mosn/transport_protocol"
 )
 
+// init is regist bolt、boltv2、dubbo channel
 func init() {
 	RegistChannel("bolt", newXChannel)
 	RegistChannel("boltv2", newXChannel)
 	RegistChannel("dubbo", newXChannel)
 }
 
+// newXChannel is create rpc.Channel by ChannelConfig
 func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	proto := transport_protocol.GetProtocol(config.Protocol)
 	if proto == nil {
@@ -47,7 +49,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	}
 
 	m := &xChannel{proto: proto}
-	m.pool = newConnPool(
+	m.pool = NewConnPool(
 		config.Size,
 		func() (net.Conn, error) {
 			local, remote := net.Pipe()
@@ -68,6 +70,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	return m, nil
 }
 
+// xstate is record state
 type xstate struct {
 	reqid uint32
 	mu    sync.Mutex
@@ -79,11 +82,13 @@ type call struct {
 	err  error
 }
 
+// xChannel is Channel implement
 type xChannel struct {
 	proto transport_protocol.TransportProtocol
 	pool  *connPool
 }
 
+// Do is handle RPCRequest to RPCResponse
 func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	timeout := time.Duration(req.Timeout) * time.Millisecond
 	ctx, cancel := context.WithTimeout(req.Ctx, timeout)
@@ -138,12 +143,14 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	}
 }
 
+// removeCall is delete xstate.calls by id
 func (m *xChannel) removeCall(xstate *xstate, id uint32) {
 	xstate.mu.Lock()
 	delete(xstate.calls, id)
 	xstate.mu.Unlock()
 }
 
+// onData is handle xstate data
 func (m *xChannel) onData(conn *wrapConn) error {
 	xstate := conn.state.(*xstate)
 	for {
@@ -177,6 +184,7 @@ func (m *xChannel) onData(conn *wrapConn) error {
 	return nil
 }
 
+// cleanup is clean all xstate.calls
 func (m *xChannel) cleanup(c *wrapConn, err error) {
 	xstate := c.state.(*xstate)
 	// cleanup pending calls

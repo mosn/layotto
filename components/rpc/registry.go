@@ -24,6 +24,7 @@ import (
 
 const ServiceName = "rpc"
 
+// Registry is interface for registry
 type Registry interface {
 	Register(fs ...*Factory)
 	Create(name string) (Invoker, error)
@@ -37,6 +38,7 @@ type rpcRegistry struct {
 
 type FactoryMethod func() Invoker
 
+// NewRegistry is init rpcRegistry
 func NewRegistry(info *info.RuntimeInfo) Registry {
 	info.AddService(ServiceName)
 	return &rpcRegistry{
@@ -45,6 +47,7 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 	}
 }
 
+// Register is responsible for register factory to map
 func (r rpcRegistry) Register(fs ...*Factory) {
 	for _, f := range fs {
 		r.rpc[f.Name] = f.Fm
@@ -52,6 +55,7 @@ func (r rpcRegistry) Register(fs ...*Factory) {
 	}
 }
 
+// Create is responsible for get registered factory
 func (r rpcRegistry) Create(name string) (Invoker, error) {
 	if f, ok := r.rpc[name]; ok {
 		r.info.LoadComponent(ServiceName, name)
@@ -60,11 +64,13 @@ func (r rpcRegistry) Create(name string) (Invoker, error) {
 	return nil, fmt.Errorf("service component %s is not registered", name)
 }
 
+// Factory is NewRpcFactory implement
 type Factory struct {
 	Name string
 	Fm   FactoryMethod
 }
 
+// NewRpcFactory is rpc create factory entrance
 func NewRpcFactory(name string, fm FactoryMethod) *Factory {
 	return &Factory{
 		Name: name,

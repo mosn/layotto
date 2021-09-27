@@ -29,17 +29,21 @@ import (
 	_ "mosn.io/mosn/pkg/stream/http"
 )
 
+
+// init is regist http channel
 func init() {
 	RegistChannel("http", newHttpChannel)
 }
 
+// httpChannel is Channel implement
 type httpChannel struct {
 	pool *connPool
 }
 
+// newHttpChannel is create rpc.Channel by ChannelConfig
 func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 	return &httpChannel{
-		pool: newConnPool(
+		pool: NewConnPool(
 			config.Size,
 			func() (net.Conn, error) {
 				local, remote := net.Pipe()
@@ -54,6 +58,7 @@ func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 	}, nil
 }
 
+// Do is handle RPCRequest to RPCResponse
 func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	timeout := time.Duration(req.Timeout) * time.Millisecond
 	ctx, cancel := context.WithTimeout(req.Ctx, timeout)
@@ -103,6 +108,7 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	return rpcResp, nil
 }
 
+// constructReq is handle rpc.RPCRequest to fasthttp.Request
 func (h *httpChannel) constructReq(req *rpc.RPCRequest) *fasthttp.Request {
 	httpReq := fasthttp.AcquireRequest()
 	httpReq.SetBody(req.Data)

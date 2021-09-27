@@ -40,6 +40,7 @@ var (
 	connpoolTimeout = errors.New("connection pool timeout")
 )
 
+// wrapConn is wrap connect
 type wrapConn struct {
 	net.Conn
 	buf    buffer.IoBuffer
@@ -47,10 +48,12 @@ type wrapConn struct {
 	closed int32
 }
 
+// isClose is checked wrapConn close or not
 func (w *wrapConn) isClose() bool {
 	return atomic.LoadInt32(&w.closed) == 1
 }
 
+// close is real close connect
 func (w *wrapConn) close() error {
 	var err error
 	if atomic.CompareAndSwapInt32(&w.closed, 0, 1) {
@@ -59,8 +62,8 @@ func (w *wrapConn) close() error {
 	return err
 }
 
-// im-memory fake conn pool
-func newConnPool(
+// NewConnPool im-memory fake conn pool
+func NewConnPool(
 	maxActive int,
 	dialFunc func() (net.Conn, error),
 	stateFunc func() interface{},
@@ -79,6 +82,8 @@ func newConnPool(
 	return p
 }
 
+
+// connPool is connected pool
 type connPool struct {
 	maxActive   int
 	dialFunc    func() (net.Conn, error)
@@ -91,6 +96,7 @@ type connPool struct {
 	free *list.List
 }
 
+// Get is get wrapConn by context.Context
 func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 	if err := p.waitTurn(ctx); err != nil {
 		return nil, err
@@ -127,6 +133,7 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 	return wc, nil
 }
 
+// Put when connected less than maxActive
 func (p *connPool) Put(c *wrapConn, close bool) {
 	if close {
 		c.close()
@@ -145,6 +152,7 @@ func (p *connPool) Put(c *wrapConn, close bool) {
 	p.freeTurn()
 }
 
+// readloop is loop to read connected then exec onDataFunc
 func (p *connPool) readloop(c *wrapConn) {
 	var err error
 
