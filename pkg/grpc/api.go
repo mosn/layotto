@@ -17,6 +17,7 @@
 package grpc
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -774,11 +775,57 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	}
 }
 
+type putObjectStreamReader struct {
+	currentReader io.Reader
+	server        runtimev1pb.Runtime_PutFileServer
+}
+
+func newPutObjectStreamReader(reader io.Reader, server runtimev1pb.Runtime_PutFileServer) *putObjectStreamReader {
+	return &putObjectStreamReader{currentReader: reader, server: server}
+}
+
+func (r *putObjectStreamReader) Read(p []byte) (int, error) {
+	var count int
+	total := len(p)
+	for {
+		// read from current reader if available
+		if r.currentReader != nil {
+			n, err := r.currentReader.Read(p)
+			if err != nil && err != io.EOF {
+				log.DefaultLogger.Errorf("[runtime] [grpc.PutObject] fail to read from stream buffer: %v", err)
+				return count, err
+			}
+			count += n
+			p = p[n:]
+			if err == io.EOF {
+				// done with current reader, reset it
+				r.currentReader = nil
+			} else {
+				// finish reading
+				return count, nil
+			}
+		}
+		// no reader, get one from grpc stream
+		req, err := r.server.Recv()
+		if err != nil && err != io.EOF {
+			log.DefaultLogger.Errorf("[runtime] [grpc.PutObject] fail to read from stream: %v", err)
+			return count, err
+		}
+		if err == io.EOF {
+			// finish reading
+			return count, err
+		}
+		r.currentReader = bytes.NewReader(req.Data)
+		if count == total {
+			// finish reading
+			return count, nil
+		}
+	}
+}
+
 func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
-	fileReader, fileWriter := io.Pipe()
-	var wg sync.WaitGroup
-	startRequestWithData := false
 	req, err := stream.Recv()
+	var initReader io.Reader
 	if err != nil {
 		//if client send eof error directly, return nil
 		if err == io.EOF {
@@ -786,52 +833,19 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 		}
 		return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
 	}
-	if len(req.Data) > 0 {
-		startRequestWithData = true
-	}
+
 	if a.fileOps[req.StoreName] == nil {
 		return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
 	}
-	wg.Add(1)
-	go func() {
-		for {
-			if startRequestWithData && len(req.Data) > 0 {
-				startRequestWithData = false
-				//here write the first request data
-				_, err = fileWriter.Write(req.Data)
-				if err != nil {
-					fileWriter.CloseWithError(err)
-					log.DefaultLogger.Errorf("write file fail,err: %+v", err)
-					break
-				}
-			}
-			req, err = stream.Recv()
-			if err != nil && err != io.EOF {
-				fileWriter.CloseWithError(err)
-				log.DefaultLogger.Errorf("recv error: %+v", err)
-				break
-			}
-			if err == io.EOF {
-				log.DefaultLogger.Debugf("put file success")
-				fileWriter.CloseWithError(nil)
-				stream.SendAndClose(&emptypb.Empty{})
-				break
-			}
-			_, err = fileWriter.Write(req.Data)
-			if err != nil {
-				fileWriter.CloseWithError(err)
-				log.DefaultLogger.Errorf("write file fail,err: %+v", err)
-				break
-			}
-		}
-		wg.Done()
-	}()
+	if len(req.Data) > 0 {
+		initReader = bytes.NewReader(req.Data)
+	}
+	fileReader := newPutObjectStreamReader(initReader, stream)
 	st := &file.PutFileStu{DataStream: fileReader, FileName: req.Name, Metadata: req.Metadata}
 	if err = a.fileOps[req.StoreName].Put(st); err != nil {
-		fileWriter.CloseWithError(err)
 		return status.Errorf(codes.Internal, err.Error())
 	}
-	wg.Wait()
+	stream.SendAndClose(&empty.Empty{})
 	return nil
 }
 
