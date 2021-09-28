@@ -49,7 +49,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	}
 
 	m := &xChannel{proto: proto}
-	m.pool = NewConnPool(
+	m.pool = newConnPool(
 		config.Size,
 		func() (net.Conn, error) {
 			local, remote := net.Pipe()

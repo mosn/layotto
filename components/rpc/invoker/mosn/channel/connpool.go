@@ -62,9 +62,9 @@ func (w *wrapConn) close() error {
 	return err
 }
 
-// NewConnPool is reduced the overhead of creating connections and improve program performance
+// newConnPool is reduced the overhead of creating connections and improve program performance
 // im-memory fake conn pool
-func NewConnPool(
+func newConnPool(
 	// max active connected count
 	maxActive int,
 	// create new conn
