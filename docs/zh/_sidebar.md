@@ -69,6 +69,10 @@
     - [组件开发指南](zh/development/developing-component.md)
     - [新增API时的开发规范](zh/development/developing-api.md)
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
+- 社区
+    - [SOFAStack & MOSN 社区角色说明](zh/community/governance.md)
+    - [Layotto社区晋升规则](zh/community/promote.md)
+    - [Layotto社区成员](zh/community/people.md)
 - 博客
     - [蚂蚁云原生应用运行时的探索和实践 - ArchSummit 上海](zh/blog/exploration-and-practice-of-antcloud-native-application-runtime-archsummit-shanghai.md)
     - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index.md)
