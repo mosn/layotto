@@ -19,6 +19,8 @@ package runtime
 import (
 	"encoding/json"
 
+	"mosn.io/layotto/pkg/runtime/bindings"
+
 	"mosn.io/layotto/components/file"
 
 	"mosn.io/layotto/components/configstores"
@@ -45,6 +47,7 @@ type MosnRuntimeConfig struct {
 	Files                  map[string]file.FileConfig          `json:"files"`
 	LockManagement         map[string]lock.Config              `json:"lock"`
 	SequencerManagement    map[string]sequencer.Config         `json:"sequencer"`
+	Bindings               map[string]bindings.Metadata        `json:"bindings"`
 }
 
 func ParseRuntimeConfig(data json.RawMessage) (*MosnRuntimeConfig, error) {
