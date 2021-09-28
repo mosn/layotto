@@ -27,6 +27,12 @@
                             {
                                 "url": "https://github.com/mosn/layotto"
                             }
+                        },
+                        "auth": {
+                          "metadata":
+                          {
+                            "url": "https://github.com/mosn/layotto"
+                          }
                         }
                       }
                     }

@@ -23,6 +23,8 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/bingdings/auth"
+
 	"github.com/dapr/components-contrib/bindings/http"
 
 	"mosn.io/layotto/pkg/runtime/bindings"
@@ -279,6 +281,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithOutputBindings(
 			bindings.NewOutputBindingFactory("http", func() dbindings.OutputBinding {
 				return http.NewHTTP(loggerForDaprComp)
+			}),
+			bindings.NewOutputBindingFactory("auth", func() dbindings.OutputBinding {
+				return auth.NewAuthBindings()
 			}),
 		),
 
