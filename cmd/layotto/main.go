@@ -23,17 +23,13 @@ import (
 	"strconv"
 	"time"
 
-	"mosn.io/layotto/components/bingdings/auth"
-
-	"github.com/dapr/components-contrib/bindings/http"
-
-	"mosn.io/layotto/pkg/runtime/bindings"
-
 	dbindings "github.com/dapr/components-contrib/bindings"
+	"github.com/dapr/components-contrib/bindings/http"
 	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/file/alicloud/oss"
 	"mosn.io/layotto/components/sequencer"
+	"mosn.io/layotto/pkg/runtime/bindings"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	"mosn.io/pkg/log"
 
@@ -281,9 +277,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithOutputBindings(
 			bindings.NewOutputBindingFactory("http", func() dbindings.OutputBinding {
 				return http.NewHTTP(loggerForDaprComp)
-			}),
-			bindings.NewOutputBindingFactory("auth", func() dbindings.OutputBinding {
-				return auth.NewAuthBindings()
 			}),
 		),
 
