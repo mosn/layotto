@@ -31,6 +31,11 @@ import (
 	"mosn.io/pkg/utils"
 )
 
+const (
+	defaultBufSize = 16 * 1024
+	maxBufSize     = 512 * 1024
+)
+
 var (
 	connpoolTimeout = errors.New("connection pool timeout")
 )
@@ -150,7 +155,7 @@ func (p *connPool) readloop(c *wrapConn) {
 		}
 	}()
 
-	c.buf = buffer.NewIoBuffer(16 * 1024)
+	c.buf = buffer.NewIoBuffer(defaultBufSize)
 	for {
 		n, readErr := c.buf.ReadOnce(c)
 		if readErr != nil {
@@ -171,6 +176,11 @@ func (p *connPool) readloop(c *wrapConn) {
 
 		if err != nil {
 			break
+		}
+
+		if c.buf != nil && c.buf.Len() == 0 && c.buf.Cap() > maxBufSize {
+			c.buf.Free()
+			c.buf.Alloc(defaultBufSize)
 		}
 	}
 }

@@ -21,6 +21,10 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"strings"
+
+	"mosn.io/layotto/components/file"
+
 	"github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
@@ -46,7 +50,6 @@ import (
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"mosn.io/pkg/log"
-	"strings"
 )
 
 type MosnRuntime struct {
@@ -60,6 +63,7 @@ type MosnRuntime struct {
 	rpcRegistry         rpc.Registry
 	pubSubRegistry      runtime_pubsub.Registry
 	stateRegistry       runtime_state.Registry
+	fileRegistry        file.Registry
 	lockRegistry        runtime_lock.Registry
 	sequencerRegistry   runtime_sequencer.Registry
 	// component pool
@@ -69,6 +73,7 @@ type MosnRuntime struct {
 	pubSubs           map[string]pubsub.PubSub
 	topicPerComponent map[string]TopicSubscriptions
 	states            map[string]state.Store
+	files             map[string]file.File
 	locks             map[string]lock.LockStore
 	sequencers        map[string]sequencer.Store
 	// app callback
@@ -96,6 +101,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		rpcRegistry:         rpc.NewRegistry(info),
 		pubSubRegistry:      runtime_pubsub.NewRegistry(info),
 		stateRegistry:       runtime_state.NewRegistry(info),
+		fileRegistry:        file.NewRegistry(info),
 		lockRegistry:        runtime_lock.NewRegistry(info),
 		sequencerRegistry:   runtime_sequencer.NewRegistry(info),
 		hellos:              make(map[string]hello.HelloService),
@@ -103,6 +109,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		rpcs:                make(map[string]rpc.Invoker),
 		pubSubs:             make(map[string]pubsub.PubSub),
 		states:              make(map[string]state.Store),
+		files:               make(map[string]file.File),
 		locks:               make(map[string]lock.LockStore),
 		sequencers:          make(map[string]sequencer.Store),
 		json:                jsoniter.ConfigFastest,
@@ -140,6 +147,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		m.rpcs,
 		m.pubSubs,
 		m.states,
+		m.files,
 		m.locks,
 		m.sequencers,
 	)
@@ -181,6 +189,9 @@ func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
 		return err
 	}
 	if err := m.initStates(o.services.states...); err != nil {
+		return err
+	}
+	if err := m.initFiles(o.services.files...); err != nil {
 		return err
 	}
 	if err := m.initLocks(o.services.locks...); err != nil {
@@ -303,6 +314,32 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 		if err != nil {
 			log.DefaultLogger.Errorf("error save state keyprefix: %s", err.Error())
 			return err
+		}
+	}
+	return nil
+}
+
+func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
+	log.DefaultLogger.Infof("[runtime] init file service")
+
+	// register all files store services implementation
+	m.fileRegistry.Register(files...)
+	for name, config := range m.runtimeConfig.Files {
+		c, err := m.fileRegistry.Create(name)
+		if err != nil {
+			m.errInt(err, "create files component %s failed", name)
+			return err
+		}
+		if err := c.Init(&config); err != nil {
+			m.errInt(err, "init files component %s failed", name)
+			return err
+		}
+		m.files[name] = c
+		v := actuators.GetIndicatorWithName(name)
+		//Now don't force user implement actuator of components
+		if v != nil {
+			health.AddLivenessIndicator(name, v.LivenessIndicator)
+			health.AddReadinessIndicator(name, v.ReadinessIndicator)
 		}
 	}
 	return nil
