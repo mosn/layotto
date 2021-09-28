@@ -43,7 +43,7 @@ type httpChannel struct {
 // newHttpChannel is create rpc.Channel by ChannelConfig
 func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 	return &httpChannel{
-		pool: NewConnPool(
+		pool: newConnPool(
 			config.Size,
 			func() (net.Conn, error) {
 				local, remote := net.Pipe()
