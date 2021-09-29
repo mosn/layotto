@@ -20,8 +20,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 	"io"
+	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 	"strings"
 	"sync"
 
