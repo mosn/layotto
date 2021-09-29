@@ -17,7 +17,7 @@
 package wasm
 
 import (
-	sdkTypes "github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
+	"errors"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/mosn/pkg/wasm/abi"
 	v1 "mosn.io/mosn/pkg/wasm/abi/proxywasm010"
@@ -58,18 +58,17 @@ func (a *AbiV2Impl) ProxyGetID() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	res, err := ff.Call()
+	_, err = ff.Call()
 	if err != nil {
 		a.Instance.HandleError(err)
 		return "", err
 	}
 	a.Imports.Wait()
 
-	status := sdkTypes.Status(res.(int32))
-	if err := sdkTypes.StatusToError(status); err != nil {
-		a.Instance.HandleError(err)
-		return "", err
+	functionId := string(a.Imports.GetFuncCallData().Bytes())
+	if functionId == "" {
+		return "", errors.New("")
 	}
 
-	return string(a.Imports.GetFuncCallData().Bytes()), nil
+	return functionId, nil
 }

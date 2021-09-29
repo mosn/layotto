@@ -17,38 +17,45 @@
 package main
 
 import (
-	"unsafe"
-
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm"
-	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/rawhostcall"
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
 )
 
 func main() {
-	proxywasm.SetNewRootContext(newContext)
+	proxywasm.SetVMContext(&vmContext{})
 }
 
-type rootContext struct {
-	// You'd better embed the default root context
-	// so that you don't need to reimplement all the methods by yourself.
-	proxywasm.DefaultRootContext
+type vmContext struct {
+	// Embed the default VM context here,
+	// so that we don't need to reimplement all the methods.
+	types.DefaultVMContext
 }
 
-func newContext(uint32) proxywasm.RootContext { return &rootContext{} }
-
-// Override DefaultRootContext.
-func (*rootContext) NewHttpContext(contextID uint32) proxywasm.HttpContext {
-	return &myHttpContext{contextID: contextID}
+// Override types.DefaultVMContext.
+func (*vmContext) NewPluginContext(contextID uint32) types.PluginContext {
+	return &pluginContext{}
 }
 
-type myHttpContext struct {
-	// you must embed the default context so that you need not to re-implement all the methods by yourself
-	proxywasm.DefaultHttpContext
+type pluginContext struct {
+	// Embed the default plugin context here,
+	// so that we don't need to reimplement all the methods.
+	types.DefaultPluginContext
+}
+
+// Override types.DefaultPluginContext.
+func (*pluginContext) NewHttpContext(contextID uint32) types.HttpContext {
+	return &httpHeaders{contextID: contextID}
+}
+
+type httpHeaders struct {
+	// Embed the default http context here,
+	// so that we don't need to reimplement all the methods.
+	types.DefaultHttpContext
 	contextID uint32
 }
 
-// override
-func (ctx *myHttpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool) types.Action {
+// Override types.DefaultHttpContext.
+func (ctx *httpHeaders) OnHttpRequestHeaders(numHeaders int, endOfStream bool) types.Action {
 	hs, err := proxywasm.GetHttpRequestHeaders()
 	var name string
 	for _, h := range hs {
@@ -61,24 +68,20 @@ func (ctx *myHttpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool)
 	if err != nil {
 		proxywasm.LogErrorf("call foreign func failed: %v", err)
 	}
-	proxywasm.SetHttpResponseBody(result)
+	proxywasm.AppendHttpResponseBody(result)
 	return types.ActionContinue
 }
 
-//export malloc
-func proxyOnMemoryAllocate(size uint) *byte {
-	buf := make([]byte, size)
-	return &buf[0]
+// Override types.DefaultHttpContext.
+func (ctx *httpHeaders) OnHttpStreamDone() {
+	proxywasm.LogInfof("%d finished", ctx.contextID)
 }
 
-const ID = "id_1"
+const ID = "id_2"
 
 // DO NOT MODIFY THE FOLLOWING FUNCTIONS!
 //export proxy_get_id
-func GetID() types.Status {
+func GetID() {
 	_ = ID[len(ID)-1]
-
-	id := ID
-	bt := *(*[]byte)(unsafe.Pointer(&id))
-	return rawhostcall.ProxySetBufferBytes(types.BufferTypeCallData, 0, len(ID), &bt[0], len(ID))
+	proxywasm.SetCallData([]byte(ID))
 }

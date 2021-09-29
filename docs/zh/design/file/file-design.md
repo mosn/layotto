@@ -8,7 +8,6 @@ layotto的file接口主要针对于文件系统实现文件的增删改查的能
     Get(*GetFileStu) (io.ReadCloser, error)
     List(*ListRequest) (*ListResp, error)
     Del(*DelRequest) error
-    Complete(int64, bool) error
 ```
 
 ### 核心抽象
@@ -49,7 +48,6 @@ type ReadCloser interface {
 ``` go
     Put(*PutFileStu) error
 ```
-Put接口中定义了一个自增的streamId用来关联stream和file的关系。这里的设计也可以更改为每次收到stream请求的时候直接new一个对应的file变量出来
-然后进行增/删/改/查的能力。这样的设计需要在增加新的file component的时候，在api里面也增加对应的new操作。所以这里将这个操作移动到了file component里面去。
+Put接口实现就是将stream接收到的字节传递给后段的components，后段components做各自的实现。
 
 
