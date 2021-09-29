@@ -24,6 +24,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/dapr/components-contrib/bindings"
+
 	"mosn.io/pkg/utils"
 
 	_ "net/http/pprof"
@@ -107,6 +109,8 @@ type API interface {
 	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
 	// Sequencer API
 	GetNextId(context.Context, *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
+	// InvokeBinding Binding API
+	InvokeBinding(context.Context, *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error)
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -121,6 +125,7 @@ type api struct {
 	fileOps                  map[string]file.File
 	lockStores               map[string]lock.LockStore
 	sequencers               map[string]sequencer.Store
+	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 }
 
 func NewAPI(
@@ -133,6 +138,7 @@ func NewAPI(
 	files map[string]file.File,
 	lockStores map[string]lock.LockStore,
 	sequencers map[string]sequencer.Store,
+	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
 ) API {
 	// filter out transactionalStateStores
 	transactionalStateStores := map[string]state.TransactionalStore{}
@@ -153,6 +159,7 @@ func NewAPI(
 		fileOps:                  files,
 		lockStores:               lockStores,
 		sequencers:               sequencers,
+		sendToOutputBindingFn:    sendToOutputBindingFn,
 	}
 }
 
@@ -1006,4 +1013,28 @@ func (a *api) getNextIdFromComponent(ctx context.Context, store sequencer.Store,
 		next = resp.NextId
 	}
 	return next, err
+}
+
+func (a *api) InvokeBinding(ctx context.Context, in *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error) {
+	req := &bindings.InvokeRequest{
+		Metadata:  in.Metadata,
+		Operation: bindings.OperationKind(in.Operation),
+	}
+	if in.Data != nil {
+		req.Data = in.Data
+	}
+
+	r := &runtimev1pb.InvokeBindingResponse{}
+	resp, err := a.sendToOutputBindingFn(in.Name, req)
+	if err != nil {
+		err = status.Errorf(codes.Internal, messages.ErrInvokeOutputBinding, in.Name, err.Error())
+		log.DefaultLogger.Errorf("call out binding fail, err:%+v", err)
+		return r, err
+	}
+
+	if resp != nil {
+		r.Data = resp.Data
+		r.Metadata = resp.Metadata
+	}
+	return r, nil
 }

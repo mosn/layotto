@@ -23,6 +23,10 @@ import (
 	"fmt"
 	"strings"
 
+	mbindings "mosn.io/layotto/pkg/runtime/bindings"
+
+	"github.com/dapr/components-contrib/bindings"
+
 	"mosn.io/layotto/components/file"
 
 	"github.com/dapr/components-contrib/contenttype"
@@ -66,6 +70,7 @@ type MosnRuntime struct {
 	fileRegistry        file.Registry
 	lockRegistry        runtime_lock.Registry
 	sequencerRegistry   runtime_sequencer.Registry
+	bindingsRegistry    mbindings.Registry
 	// component pool
 	hellos            map[string]hello.HelloService
 	configStores      map[string]configstores.Store
@@ -76,6 +81,7 @@ type MosnRuntime struct {
 	files             map[string]file.File
 	locks             map[string]lock.LockStore
 	sequencers        map[string]sequencer.Store
+	outputBindings    map[string]bindings.OutputBinding
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
 	// extends
@@ -101,6 +107,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		rpcRegistry:         rpc.NewRegistry(info),
 		pubSubRegistry:      runtime_pubsub.NewRegistry(info),
 		stateRegistry:       runtime_state.NewRegistry(info),
+		bindingsRegistry:    mbindings.NewRegistry(info),
 		fileRegistry:        file.NewRegistry(info),
 		lockRegistry:        runtime_lock.NewRegistry(info),
 		sequencerRegistry:   runtime_sequencer.NewRegistry(info),
@@ -112,12 +119,34 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		files:               make(map[string]file.File),
 		locks:               make(map[string]lock.LockStore),
 		sequencers:          make(map[string]sequencer.Store),
+		outputBindings:      make(map[string]bindings.OutputBinding),
 		json:                jsoniter.ConfigFastest,
 	}
 }
 
 func (m *MosnRuntime) GetInfo() *info.RuntimeInfo {
 	return m.info
+}
+
+func (m *MosnRuntime) sendToOutputBinding(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
+	if req.Operation == "" {
+		return nil, errors.New("operation field is missing from request")
+	}
+
+	if binding, ok := m.outputBindings[name]; ok {
+		ops := binding.Operations()
+		for _, o := range ops {
+			if o == req.Operation {
+				return binding.Invoke(req)
+			}
+		}
+		supported := make([]string, 0, len(ops))
+		for _, o := range ops {
+			supported = append(supported, string(o))
+		}
+		return nil, fmt.Errorf("binding %s does not support operation %s. supported operations:%s", name, req.Operation, strings.Join(supported, " "))
+	}
+	return nil, fmt.Errorf("couldn't find output binding %s", name)
 }
 
 func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
@@ -150,6 +179,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		m.files,
 		m.locks,
 		m.sequencers,
+		m.sendToOutputBinding,
 	)
 	grpcOpts = append(grpcOpts,
 		grpc.WithGrpcOptions(o.options...),
@@ -198,6 +228,12 @@ func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
 		return err
 	}
 	if err := m.initSequencers(o.services.sequencers...); err != nil {
+		return err
+	}
+	if err := m.initInputBinding(o.services.inputBinding...); err != nil {
+		return err
+	}
+	if err := m.initOutputBinding(o.services.outputBinding...); err != nil {
 		return err
 	}
 	return nil
@@ -594,5 +630,30 @@ func (m *MosnRuntime) initAppCallbackConnection() error {
 		return err
 	}
 	m.AppCallbackConn = conn
+	return nil
+}
+
+func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFactory) error {
+	// 1. init components
+	log.DefaultLogger.Infof("[runtime] start initializing OutputBinding components")
+	// register all config store services implementation
+	m.bindingsRegistry.RegisterOutputBinding(factorys...)
+	for name, config := range m.runtimeConfig.Bindings {
+		comp, err := m.bindingsRegistry.CreateOutputBinding(name)
+		if err != nil {
+			m.errInt(err, "create outbinding component %s failed", name)
+			return err
+		}
+		if err := comp.Init(bindings.Metadata{Name: name, Properties: config.Metadata}); err != nil {
+			m.errInt(err, "init outbinding component %s failed", name)
+			return err
+		}
+		m.outputBindings[name] = comp
+	}
+	return nil
+}
+
+// TODO: implement initInputBinding
+func (m *MosnRuntime) initInputBinding(factorys ...*mbindings.InputBindingFactory) error {
 	return nil
 }
