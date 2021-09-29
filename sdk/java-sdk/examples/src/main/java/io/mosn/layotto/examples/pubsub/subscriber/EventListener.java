@@ -1,4 +1,4 @@
-package io.mosn.layotto.v1.callback.component.pubsub;
+package io.mosn.layotto.examples.pubsub.subscriber;
 
 import spec.sdk.runtime.v1.domain.pubsub.TopicEventRequest;
 

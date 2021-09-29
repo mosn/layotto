@@ -10,6 +10,7 @@ import io.mosn.layotto.v1.grpc.PubsubConverter;
 import spec.proto.runtime.v1.AppCallbackGrpc;
 import spec.proto.runtime.v1.AppCallbackProto;
 
+import java.util.Collection;
 import java.util.Set;
 
 public class GrpcAppCallbackImpl extends AppCallbackGrpc.AppCallbackImplBase {
@@ -28,9 +29,21 @@ public class GrpcAppCallbackImpl extends AppCallbackGrpc.AppCallbackImplBase {
 
         final AppCallbackProto.ListTopicSubscriptionsResponse.Builder builder
                 = AppCallbackProto.ListTopicSubscriptionsResponse.newBuilder();
-        for (PubSub pubSub : pubSubRegistry.getAllPubSubCallbacks()) {
+        Collection<PubSub> pubsubs = pubSubRegistry.getAllPubSubCallbacks();
+        if (pubsubs == null) {
+            responseObserver.onNext(builder.build());
+            responseObserver.onCompleted();
+            return;
+        }
+        for (PubSub pubSub : pubsubs) {
             final Set<TopicSubscription> topicSubscriptions = pubSub.listTopicSubscriptions();
+            if (topicSubscriptions == null || topicSubscriptions.isEmpty()) {
+                continue;
+            }
             for (TopicSubscription topicSubscription : topicSubscriptions) {
+                if (topicSubscription == null) {
+                    continue;
+                }
                 builder.addSubscriptions(PubsubConverter.TopicSubscription2Grpc(topicSubscription));
             }
         }

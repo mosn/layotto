@@ -16,28 +16,29 @@ public class PubsubConverter {
         if (req == null) {
             return null;
         }
-        RuntimeProto.PublishEventRequest result = RuntimeProto.PublishEventRequest.newBuilder()
+        RuntimeProto.PublishEventRequest.Builder builder = RuntimeProto.PublishEventRequest.newBuilder()
                 .setPubsubName(req.getPubsubName())
                 .setTopic(req.getTopic())
                 .setData(ByteString.copyFrom(req.getData()))
-                .setDataContentType(req.getContentType())
-                .putAllMetadata(req.getMetadata())
-                .build();
+                .setDataContentType(req.getContentType());
+        if (req.getMetadata() != null) {
+            builder.putAllMetadata(req.getMetadata());
+        }
 
-        return result;
+        return builder.build();
     }
 
     public static AppCallbackProto.TopicSubscription TopicSubscription2Grpc(TopicSubscription sub) {
         if (sub == null) {
             return null;
         }
-        AppCallbackProto.TopicSubscription result = AppCallbackProto.TopicSubscription.newBuilder()
+        AppCallbackProto.TopicSubscription.Builder builder = AppCallbackProto.TopicSubscription.newBuilder()
                 .setPubsubName(sub.getPubsubName())
-                .setTopic(sub.getTopic())
-                .putAllMetadata(sub.getMetadata())
-                .build();
-
-        return result;
+                .setTopic(sub.getTopic());
+        if (sub.getMetadata() != null) {
+            builder.putAllMetadata(sub.getMetadata());
+        }
+        return builder.build();
     }
 
     public static AppCallbackProto.TopicEventResponse TopicEventResponse2Grpc(TopicEventResponse resp) {
@@ -59,19 +60,22 @@ public class PubsubConverter {
         if (req == null) {
             return null;
         }
-        AppCallbackProto.TopicEventRequest result = AppCallbackProto.TopicEventRequest.newBuilder()
+        AppCallbackProto.TopicEventRequest.Builder builder = AppCallbackProto.TopicEventRequest.newBuilder()
                 .setId(req.getId())
                 .setSource(req.getSource())
                 .setType(req.getType())
                 .setSpecVersion(req.getSpecVersion())
                 .setDataContentType(req.getContentType())
-                .setData(ByteString.copyFrom(req.getData()))
                 .setTopic(req.getTopic())
-                .setPubsubName(req.getPubsubName())
-                //.putAllMetadata(req.getMetadata())
-                .build();
+                .setPubsubName(req.getPubsubName());
+        //.putAllMetadata(req.getMetadata())
+        byte[] bytes = req.getData();
+        if (bytes == null) {
+            bytes = new byte[] {};
+        }
+        builder.setData(ByteString.copyFrom(bytes));
 
-        return result;
+        return builder.build();
     }
 
     public static TopicEventRequest TopicEventRequest2Domain(AppCallbackProto.TopicEventRequest req) {
@@ -81,7 +85,12 @@ public class PubsubConverter {
         result.setType(req.getType());
         result.setSpecVersion(req.getSpecVersion());
         result.setContentType(req.getDataContentType());
-        result.setData(req.getData().toByteArray());
+        ByteString byteString = req.getData();
+        if (byteString == null) {
+            result.setData(new byte[] {});
+        } else {
+            result.setData(byteString.toByteArray());
+        }
         result.setTopic(req.getTopic());
         result.setPubsubName(req.getPubsubName());
         //result.setMetadata(req.getMetadataMap());

@@ -36,17 +36,11 @@ func main() {
 }
 
 func testPublish(cli client.Client) error {
-	in := &client.PublishEventRequest{
-		PubsubName:      "redis",
-		Topic:           topicName,
-		Data:            []byte("value1"),
-		DataContentType: "",
-		Metadata:        nil,
-	}
-	err := cli.PublishEvent(context.Background(), in)
+	data := []byte("value1")
+	err := cli.PublishEvent(context.Background(), "redis",topicName, data)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Published a new event.Topic: %s ,Data: %s \n", in.Topic, in.Data)
+	fmt.Printf("Published a new event.Topic: %s ,Data: %s \n", topicName, data)
 	return err
 }

@@ -20,7 +20,7 @@ import java.util.Map;
 
 public abstract class AbstractRuntimeClient implements RuntimeClient {
 
-    protected final String DEFAULT_PUBSUB_CONTENT_TYPE = "application/json";
+    protected final String DEFAULT_PUBSUB_CONTENT_TYPE = "";
 
     protected Logger logger;
 

@@ -62,7 +62,7 @@ public class RuntimeClientBuilder {
     }
 
     public RuntimeClientBuilder withTimeout(int timeoutMillisecond) {
-        if (timeoutMillisecond < 0) {
+        if (timeoutMillisecond <= 0) {
             throw new IllegalArgumentException("Invalid timeout.");
         }
         this.timeoutMs = timeoutMillisecond;

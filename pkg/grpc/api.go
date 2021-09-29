@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 	"strings"
 	"sync"
 
@@ -396,7 +397,7 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 			return &emptypb.Empty{}, err
 		}
 	} else {
-		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), "", contrib_pubsub.DefaultCloudEventType, "", topic, pubsubName,
+		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", topic, pubsubName,
 			contentType, data, "")
 	}
 	features := component.Features()

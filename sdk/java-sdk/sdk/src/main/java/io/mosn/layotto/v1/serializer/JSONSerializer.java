@@ -11,6 +11,9 @@ public class JSONSerializer implements ObjectSerializer {
      */
     @Override
     public byte[] serialize(Object o) throws IOException {
+        if (o == null) {
+            return null;
+        }
         return JSONObject.toJSONBytes(o);
     }
 
@@ -19,6 +22,9 @@ public class JSONSerializer implements ObjectSerializer {
      */
     @Override
     public <T> T deserialize(byte[] data, Class<T> clazz) throws IOException {
+        if (data == null) {
+            return null;
+        }
         return JSONObject.parseObject(data, clazz);
     }
 

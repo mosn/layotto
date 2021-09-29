@@ -1,5 +1,6 @@
-package io.mosn.layotto.v1.callback.component.pubsub;
+package io.mosn.layotto.examples.pubsub.subscriber;
 
+import io.mosn.layotto.v1.callback.component.pubsub.PubSub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spec.sdk.runtime.v1.domain.pubsub.TopicEventRequest;
@@ -15,18 +16,22 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Raw pubsub client.
  */
-public class RawPubSubClient implements PubSub {
-    private static final Logger LOG = LoggerFactory.getLogger(RawPubSubClient.class);
+public class RawPubSub implements PubSub {
+    private static final Logger LOG = LoggerFactory.getLogger(RawPubSub.class);
 
-    private final Map<String, EventListener> listeners     = new ConcurrentHashMap<>();
-    private final String                     componentName = "raw";
+    private final Map<String, EventListener> listeners = new ConcurrentHashMap<>();
+    private final String                     componentName;
+
+    public RawPubSub(String pubsubName) {
+        componentName = pubsubName;
+    }
 
     @Override
     public String getComponentName() {
         return componentName;
     }
 
-    public void subscribe(String topic, Map<String, String> metadata, EventListener listener) {
+    public void subscribe(String topic, EventListener listener) {
         if (listeners.putIfAbsent(topic, listener) != null) {
             throw new IllegalArgumentException("Listener for topic " + topic + " already exists!");
         }

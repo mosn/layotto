@@ -40,7 +40,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
     }
 
     public String sayHello(String name, int timeoutMillisecond) {
-        RuntimeProto.SayHelloRequest req = RuntimeProto.SayHelloRequest.newBuilder().setServiceName(name).build();
+        RuntimeProto.SayHelloRequest req = RuntimeProto.SayHelloRequest.newBuilder().setServiceName(name).setName(name).build();
         RuntimeProto.SayHelloResponse response;
         try {
             response = blockingStub.withDeadlineAfter(timeoutMillisecond, TimeUnit.MILLISECONDS).sayHello(req);
