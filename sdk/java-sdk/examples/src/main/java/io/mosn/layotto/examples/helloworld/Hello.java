@@ -8,6 +8,5 @@ public class Hello {
         RuntimeClient client = new RuntimeClientBuilder().withPort(34904).build();
         String resp = client.sayHello("helloworld");
         System.out.println(resp);
-
     }
 }
