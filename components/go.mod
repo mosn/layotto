@@ -6,11 +6,11 @@ require (
 	github.com/alicebob/miniredis/v2 v2.13.3
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.8+incompatible
 	github.com/apache/dubbo-go-hessian2 v1.7.0
-	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
+	github.com/dapr/components-contrib v1.2.0
 	github.com/go-redis/redis/v8 v8.8.0
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/golang/mock v1.4.4
-	github.com/google/uuid v1.1.2
+	github.com/google/uuid v1.2.0
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.26.0
 	github.com/zouyx/agollo/v4 v4.0.7
