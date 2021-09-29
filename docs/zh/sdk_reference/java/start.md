@@ -49,7 +49,7 @@ mvn clean install
 
 ## How to generate a Java PROTO file
 
-### 1. 下载编译工具 [protoc](https://github.com/protocolbuffers/protobuf/releases)
+### 1. 下载编译工具  [protoc](https://github.com/protocolbuffers/protobuf/releases)
 my protoc version:
 ```shell
 $ protoc --version
@@ -76,3 +76,7 @@ protoc -I=. --java_out=./  runtime.proto
 ```
 
 PS: 建议用maven插件`protoc-gen-grpc-java`生成protobuf和grpc的java代码
+
+如果您在使用 [IntelliJ IDEA](https://www.jetbrains.com/help/idea/discover-intellij-idea.html) ,双击 Maven插件， IDE 会自动帮你编译 proto 文件:
+
+![img.png](../../../img/sdk/img.png)

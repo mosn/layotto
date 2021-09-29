@@ -510,6 +510,130 @@ public final class RuntimeGrpc {
     return getPublishEventMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.GetFileRequest,
+      spec.proto.runtime.v1.RuntimeProto.GetFileResponse> getGetFileMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetFile",
+      requestType = spec.proto.runtime.v1.RuntimeProto.GetFileRequest.class,
+      responseType = spec.proto.runtime.v1.RuntimeProto.GetFileResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+  public static io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.GetFileRequest,
+      spec.proto.runtime.v1.RuntimeProto.GetFileResponse> getGetFileMethod() {
+    io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.GetFileRequest, spec.proto.runtime.v1.RuntimeProto.GetFileResponse> getGetFileMethod;
+    if ((getGetFileMethod = RuntimeGrpc.getGetFileMethod) == null) {
+      synchronized (RuntimeGrpc.class) {
+        if ((getGetFileMethod = RuntimeGrpc.getGetFileMethod) == null) {
+          RuntimeGrpc.getGetFileMethod = getGetFileMethod =
+              io.grpc.MethodDescriptor.<spec.proto.runtime.v1.RuntimeProto.GetFileRequest, spec.proto.runtime.v1.RuntimeProto.GetFileResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetFile"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.GetFileRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.GetFileResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new RuntimeMethodDescriptorSupplier("GetFile"))
+              .build();
+        }
+      }
+    }
+    return getGetFileMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.PutFileRequest,
+      com.google.protobuf.Empty> getPutFileMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "PutFile",
+      requestType = spec.proto.runtime.v1.RuntimeProto.PutFileRequest.class,
+      responseType = com.google.protobuf.Empty.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING)
+  public static io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.PutFileRequest,
+      com.google.protobuf.Empty> getPutFileMethod() {
+    io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.PutFileRequest, com.google.protobuf.Empty> getPutFileMethod;
+    if ((getPutFileMethod = RuntimeGrpc.getPutFileMethod) == null) {
+      synchronized (RuntimeGrpc.class) {
+        if ((getPutFileMethod = RuntimeGrpc.getPutFileMethod) == null) {
+          RuntimeGrpc.getPutFileMethod = getPutFileMethod =
+              io.grpc.MethodDescriptor.<spec.proto.runtime.v1.RuntimeProto.PutFileRequest, com.google.protobuf.Empty>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "PutFile"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.PutFileRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.google.protobuf.Empty.getDefaultInstance()))
+              .setSchemaDescriptor(new RuntimeMethodDescriptorSupplier("PutFile"))
+              .build();
+        }
+      }
+    }
+    return getPutFileMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.ListFileRequest,
+      spec.proto.runtime.v1.RuntimeProto.ListFileResp> getListFileMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ListFile",
+      requestType = spec.proto.runtime.v1.RuntimeProto.ListFileRequest.class,
+      responseType = spec.proto.runtime.v1.RuntimeProto.ListFileResp.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.ListFileRequest,
+      spec.proto.runtime.v1.RuntimeProto.ListFileResp> getListFileMethod() {
+    io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.ListFileRequest, spec.proto.runtime.v1.RuntimeProto.ListFileResp> getListFileMethod;
+    if ((getListFileMethod = RuntimeGrpc.getListFileMethod) == null) {
+      synchronized (RuntimeGrpc.class) {
+        if ((getListFileMethod = RuntimeGrpc.getListFileMethod) == null) {
+          RuntimeGrpc.getListFileMethod = getListFileMethod =
+              io.grpc.MethodDescriptor.<spec.proto.runtime.v1.RuntimeProto.ListFileRequest, spec.proto.runtime.v1.RuntimeProto.ListFileResp>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListFile"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.ListFileRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.ListFileResp.getDefaultInstance()))
+              .setSchemaDescriptor(new RuntimeMethodDescriptorSupplier("ListFile"))
+              .build();
+        }
+      }
+    }
+    return getListFileMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.DelFileRequest,
+      com.google.protobuf.Empty> getDelFileMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DelFile",
+      requestType = spec.proto.runtime.v1.RuntimeProto.DelFileRequest.class,
+      responseType = com.google.protobuf.Empty.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.DelFileRequest,
+      com.google.protobuf.Empty> getDelFileMethod() {
+    io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.DelFileRequest, com.google.protobuf.Empty> getDelFileMethod;
+    if ((getDelFileMethod = RuntimeGrpc.getDelFileMethod) == null) {
+      synchronized (RuntimeGrpc.class) {
+        if ((getDelFileMethod = RuntimeGrpc.getDelFileMethod) == null) {
+          RuntimeGrpc.getDelFileMethod = getDelFileMethod =
+              io.grpc.MethodDescriptor.<spec.proto.runtime.v1.RuntimeProto.DelFileRequest, com.google.protobuf.Empty>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "DelFile"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.DelFileRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.google.protobuf.Empty.getDefaultInstance()))
+              .setSchemaDescriptor(new RuntimeMethodDescriptorSupplier("DelFile"))
+              .build();
+        }
+      }
+    }
+    return getDelFileMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -709,12 +833,52 @@ public final class RuntimeGrpc {
 
     /**
      * <pre>
-     * Publishes events to the specific topic.
+     * Publishes events to the specific topic
      * </pre>
      */
     public void publishEvent(spec.proto.runtime.v1.RuntimeProto.PublishEventRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getPublishEventMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Get file with stream
+     * </pre>
+     */
+    public void getFile(spec.proto.runtime.v1.RuntimeProto.GetFileRequest request,
+        io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetFileResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetFileMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Put file with stream
+     * </pre>
+     */
+    public io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.PutFileRequest> putFile(
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      return io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall(getPutFileMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * List all files
+     * </pre>
+     */
+    public void listFile(spec.proto.runtime.v1.RuntimeProto.ListFileRequest request,
+        io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.ListFileResp> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListFileMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     *Delete specific file
+     * </pre>
+     */
+    public void delFile(spec.proto.runtime.v1.RuntimeProto.DelFileRequest request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDelFileMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -831,6 +995,34 @@ public final class RuntimeGrpc {
                 spec.proto.runtime.v1.RuntimeProto.PublishEventRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_PUBLISH_EVENT)))
+          .addMethod(
+            getGetFileMethod(),
+            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
+              new MethodHandlers<
+                spec.proto.runtime.v1.RuntimeProto.GetFileRequest,
+                spec.proto.runtime.v1.RuntimeProto.GetFileResponse>(
+                  this, METHODID_GET_FILE)))
+          .addMethod(
+            getPutFileMethod(),
+            io.grpc.stub.ServerCalls.asyncClientStreamingCall(
+              new MethodHandlers<
+                spec.proto.runtime.v1.RuntimeProto.PutFileRequest,
+                com.google.protobuf.Empty>(
+                  this, METHODID_PUT_FILE)))
+          .addMethod(
+            getListFileMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                spec.proto.runtime.v1.RuntimeProto.ListFileRequest,
+                spec.proto.runtime.v1.RuntimeProto.ListFileResp>(
+                  this, METHODID_LIST_FILE)))
+          .addMethod(
+            getDelFileMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                spec.proto.runtime.v1.RuntimeProto.DelFileRequest,
+                com.google.protobuf.Empty>(
+                  this, METHODID_DEL_FILE)))
           .build();
     }
   }
@@ -1015,13 +1207,57 @@ public final class RuntimeGrpc {
 
     /**
      * <pre>
-     * Publishes events to the specific topic.
+     * Publishes events to the specific topic
      * </pre>
      */
     public void publishEvent(spec.proto.runtime.v1.RuntimeProto.PublishEventRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getPublishEventMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Get file with stream
+     * </pre>
+     */
+    public void getFile(spec.proto.runtime.v1.RuntimeProto.GetFileRequest request,
+        io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetFileResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncServerStreamingCall(
+          getChannel().newCall(getGetFileMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Put file with stream
+     * </pre>
+     */
+    public io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.PutFileRequest> putFile(
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      return io.grpc.stub.ClientCalls.asyncClientStreamingCall(
+          getChannel().newCall(getPutFileMethod(), getCallOptions()), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * List all files
+     * </pre>
+     */
+    public void listFile(spec.proto.runtime.v1.RuntimeProto.ListFileRequest request,
+        io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.ListFileResp> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getListFileMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     *Delete specific file
+     * </pre>
+     */
+    public void delFile(spec.proto.runtime.v1.RuntimeProto.DelFileRequest request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDelFileMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -1180,12 +1416,43 @@ public final class RuntimeGrpc {
 
     /**
      * <pre>
-     * Publishes events to the specific topic.
+     * Publishes events to the specific topic
      * </pre>
      */
     public com.google.protobuf.Empty publishEvent(spec.proto.runtime.v1.RuntimeProto.PublishEventRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getPublishEventMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Get file with stream
+     * </pre>
+     */
+    public java.util.Iterator<spec.proto.runtime.v1.RuntimeProto.GetFileResponse> getFile(
+        spec.proto.runtime.v1.RuntimeProto.GetFileRequest request) {
+      return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
+          getChannel(), getGetFileMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * List all files
+     * </pre>
+     */
+    public spec.proto.runtime.v1.RuntimeProto.ListFileResp listFile(spec.proto.runtime.v1.RuntimeProto.ListFileRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListFileMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     *Delete specific file
+     * </pre>
+     */
+    public com.google.protobuf.Empty delFile(spec.proto.runtime.v1.RuntimeProto.DelFileRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDelFileMethod(), getCallOptions(), request);
     }
   }
 
@@ -1358,13 +1625,35 @@ public final class RuntimeGrpc {
 
     /**
      * <pre>
-     * Publishes events to the specific topic.
+     * Publishes events to the specific topic
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> publishEvent(
         spec.proto.runtime.v1.RuntimeProto.PublishEventRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getPublishEventMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * List all files
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.ListFileResp> listFile(
+        spec.proto.runtime.v1.RuntimeProto.ListFileRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getListFileMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     *Delete specific file
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> delFile(
+        spec.proto.runtime.v1.RuntimeProto.DelFileRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDelFileMethod(), getCallOptions()), request);
     }
   }
 
@@ -1383,7 +1672,11 @@ public final class RuntimeGrpc {
   private static final int METHODID_DELETE_BULK_STATE = 12;
   private static final int METHODID_EXECUTE_STATE_TRANSACTION = 13;
   private static final int METHODID_PUBLISH_EVENT = 14;
-  private static final int METHODID_SUBSCRIBE_CONFIGURATION = 15;
+  private static final int METHODID_GET_FILE = 15;
+  private static final int METHODID_LIST_FILE = 16;
+  private static final int METHODID_DEL_FILE = 17;
+  private static final int METHODID_SUBSCRIBE_CONFIGURATION = 18;
+  private static final int METHODID_PUT_FILE = 19;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1462,6 +1755,18 @@ public final class RuntimeGrpc {
           serviceImpl.publishEvent((spec.proto.runtime.v1.RuntimeProto.PublishEventRequest) request,
               (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
           break;
+        case METHODID_GET_FILE:
+          serviceImpl.getFile((spec.proto.runtime.v1.RuntimeProto.GetFileRequest) request,
+              (io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetFileResponse>) responseObserver);
+          break;
+        case METHODID_LIST_FILE:
+          serviceImpl.listFile((spec.proto.runtime.v1.RuntimeProto.ListFileRequest) request,
+              (io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.ListFileResp>) responseObserver);
+          break;
+        case METHODID_DEL_FILE:
+          serviceImpl.delFile((spec.proto.runtime.v1.RuntimeProto.DelFileRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1475,6 +1780,9 @@ public final class RuntimeGrpc {
         case METHODID_SUBSCRIBE_CONFIGURATION:
           return (io.grpc.stub.StreamObserver<Req>) serviceImpl.subscribeConfiguration(
               (io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.SubscribeConfigurationResponse>) responseObserver);
+        case METHODID_PUT_FILE:
+          return (io.grpc.stub.StreamObserver<Req>) serviceImpl.putFile(
+              (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
         default:
           throw new AssertionError();
       }
@@ -1542,6 +1850,10 @@ public final class RuntimeGrpc {
               .addMethod(getDeleteBulkStateMethod())
               .addMethod(getExecuteStateTransactionMethod())
               .addMethod(getPublishEventMethod())
+              .addMethod(getGetFileMethod())
+              .addMethod(getPutFileMethod())
+              .addMethod(getListFileMethod())
+              .addMethod(getDelFileMethod())
               .build();
         }
       }

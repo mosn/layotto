@@ -95,7 +95,7 @@
                     <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
                     </pluginArtifact>
                     <clearOutputDirectory>false</clearOutputDirectory>
-                    <protoSourceRoot>${basedir}/spec</protoSourceRoot>
+                    <protoSourceRoot>${basedir}/../../../spec</protoSourceRoot>
                     <outputDirectory>src/main/java</outputDirectory>
                 </configuration>
                 <executions>

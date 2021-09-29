@@ -54,7 +54,7 @@ Try the following examples to learn more about this SDK:
 
 ## How to generate a Java PROTO file
 
-### 1. Download proto compiler [protoc](https://github.com/protocolbuffers/protobuf/releases)
+### 1. Download proto compiler  [protoc](https://github.com/protocolbuffers/protobuf/releases)
 
 my protoc version:
 
@@ -90,3 +90,7 @@ protoc -I=. --java_out=./  runtime.proto
 ```
 
 PS: We recommend that you use the maven plugin `protoc-gen-grpc-java` to generate these protobuf and grpc related java code.
+
+If you are using [IntelliJ IDEA](https://www.jetbrains.com/help/idea/discover-intellij-idea.html) ,just double-click the maven plugin and the IDE will compile proto files automatically:
+
+![img.png](../../../img/sdk/img.png)
