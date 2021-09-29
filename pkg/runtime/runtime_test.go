@@ -23,6 +23,9 @@ import (
 	"net"
 	"testing"
 
+	"github.com/dapr/components-contrib/bindings"
+	mbindings "mosn.io/layotto/pkg/runtime/bindings"
+
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
 	"github.com/golang/mock/gomock"
@@ -361,4 +364,37 @@ func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
 		err = m.publishMessageGRPC(context.Background(), msg)
 		assert.Nil(t, err)
 	})
+}
+
+type MockBindings struct {
+}
+
+func (h *MockBindings) Init(metadata bindings.Metadata) error {
+	//do nothing
+	return nil
+}
+
+func (h *MockBindings) Invoke(req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
+	return nil, nil
+}
+
+func (h *MockBindings) Operations() []bindings.OperationKind {
+	return nil
+}
+
+func TestMosnRuntime_initOutputBinding(t *testing.T) {
+	cfg := &MosnRuntimeConfig{}
+	m := NewMosnRuntime(cfg)
+	assert.Nil(t, m.outputBindings["mockOutbindings"])
+
+	registry := mbindings.NewOutputBindingFactory("mockOutbindings", func() bindings.OutputBinding {
+		return &MockBindings{}
+	})
+	mdata := make(map[string]string)
+	m.runtimeConfig.Bindings = make(map[string]mbindings.Metadata)
+	m.runtimeConfig.Bindings["mockOutbindings"] = mbindings.Metadata{
+		Metadata: mdata,
+	}
+	m.initOutputBinding(registry)
+	assert.NotNil(t, m.outputBindings["mockOutbindings"])
 }
