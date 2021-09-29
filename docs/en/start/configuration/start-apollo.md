@@ -1,16 +1,24 @@
-<h2>Configuration demo with apollo</h2>
-
+# Configuration API demo with apollo
 This example shows how to add, delete, modify, and watch the [apollo configuration center](https://github.com/ctripcorp/apollo) through Layotto.
 
-### Deploy apollo and modify Layotto's config (optional)
+The architecture of this example is shown in the figure below. The processes started are: client APP, Layotto, Apollo server
+
+![img.png](../../../img/configuration/apollo/arch.png)
+
+## Step 1.Deploy Apollo (optional)
 
 You can skip this step, you don't need to deploy the apollo server yourself to use this demo. This demo will use the demo environment provided by [apollo official](https://github.com/ctripcorp/apollo): http://106.54.227.205/
 
 If you have deployed apollo yourself, you can modify Layotto's config file (e.g. configs/config_apollo.json in the project) to change the apollo server address to your own.
 
-### Run Layotto server
+## Step 2. Run Layotto server
 
-After downloading the project code to the local, switch the code directory and compile:
+Download the project code to the local:
+```bash
+git clone https://github.com/mosn/layotto.git
+```
+
+Switch the code directory and compile:
 
 ```bash
 cd ${projectpath}/cmd/layotto
@@ -23,7 +31,7 @@ After success, a new layotto file will be generated in the directory. Let's run 
 ./layotto start -c ../../configs/config_apollo.json
 ```
 
-### Run the client demo 
+## Step 3. Run the client demo 
 
 The client demo calls Layotto to add, delete, modify, and query configuration
 
@@ -45,8 +53,15 @@ receive subscribe resp store_name:"apollo" app_id:"apollo" items:<key:"heihei" c
 ```
 
 ### Next step
+#### What did this client Demo do?
+The demo client program uses the golang version SDK provided by Layotto, and calls Layotto's Configuration API to add, delete, modify, and subscribe to configuration data.
 
-The client demo uses the golang version SDK provided by Layotto. The SDK is located in the `sdk` directory. Users can directly call the APIs provided by Layotto through the corresponding SDK.
+The sdk is located in the `sdk` directory, and users can call the API provided by Layotto through the sdk.
 
-Besides the SDK,you can also call Layotto server directly using grpc,which makes it easy for different language to interact with Layotto.
+In addition to using sdk, you can also interact with Layotto directly through grpc in any language you like.
 
+In fact, sdk is only a very thin package for grpc, using sdk is about equal to directly using grpc.
+
+
+#### Details later, let's continue to experience other APIs
+Explore other Quickstarts through the navigation bar on the left.

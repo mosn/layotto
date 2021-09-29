@@ -18,14 +18,16 @@ package transport_protocol
 
 import (
 	"errors"
-	"fmt"
-
 	"mosn.io/api"
+	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol"
 	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
 	"mosn.io/mosn/pkg/protocol/xprotocol/boltv2"
 	"mosn.io/pkg/buffer"
+	"mosn.io/pkg/header"
+	"reflect"
+	"unsafe"
 )
 
 func init() {
@@ -55,11 +57,21 @@ func (b *boltCommon) Init(conf map[string]interface{}) error {
 }
 
 func (b *boltCommon) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
-	if resp.GetStatusCode() != uint32(bolt.ResponseStatusSuccess) {
-		return nil, fmt.Errorf("bolt error code %d", resp.GetStatusCode())
+	respCode := uint16(resp.GetStatusCode())
+	if respCode == bolt.ResponseStatusSuccess {
+		return b.fromFrame.FromFrame(resp)
 	}
 
-	return b.fromFrame.FromFrame(resp)
+	switch respCode {
+	case bolt.ResponseStatusServerDeserialException:
+		return nil, common.Errorf(common.InternalCode, "bolt error code %d, ServerDeserializeException", respCode)
+	case bolt.ResponseStatusServerSerialException:
+		return nil, common.Errorf(common.InternalCode, "bolt error code %d, ServerSerializeException", respCode)
+	case bolt.ResponseStatusCodecException:
+		return nil, common.Errorf(common.InternalCode, "bolt error code %d, CodecException", respCode)
+	default:
+		return nil, common.Errorf(common.UnavailebleCode, "bolt error code %d", respCode)
+	}
 }
 
 func newBoltProtocol() TransportProtocol {
@@ -73,12 +85,21 @@ type boltProtocol struct {
 
 func (b *boltProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	buf := buffer.NewIoBufferBytes(req.Data)
+	headerrLen := len(req.Header)
 	boltreq := bolt.NewRpcRequest(0, nil, buf)
 	boltreq.Class = b.className
 	boltreq.Timeout = req.Timeout
+	boltreq.Header = header.BytesHeader{
+		Kvs:     make([]header.BytesKV, headerrLen),
+		Changed: true,
+	}
 
+	i := 0
 	req.Header.Range(func(key string, value string) bool {
-		boltreq.Header.Set(key, value)
+		kv := &boltreq.Header.Kvs[i]
+		kv.Key = s2b(key)
+		kv.Value = s2b(value)
+		i++
 		return true
 	})
 	return boltreq
@@ -118,4 +139,14 @@ func (b *boltv2Protocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 		return true
 	})
 	return boltv2Req
+}
+
+func s2b(s string) []byte {
+	ps := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	b := reflect.SliceHeader{
+		Data: ps.Data,
+		Len:  ps.Len,
+		Cap:  ps.Len,
+	}
+	return *(*[]byte)(unsafe.Pointer(&b))
 }

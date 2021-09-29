@@ -7,35 +7,47 @@ Layotto支持加载编译好的WASM文件，并通过`proxy_abi_version_0_2_0`�
 ### 快速开始
 
 1. 启动layotto
+
 ```
 go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
 ./layotto start -c ./demo/wasm/config.json
 ```
 
 2. 发送请求
+
 ```
-curl -H 'name:Layotto' localhost:2045
-Hi, Layotto
+curl -H 'name:Layotto' -H 'id:id_1' localhost:2045
+Hi, Layotto_id_1
+
+curl -H 'name:Layotto' -H 'id:id_2' localhost:2045
+Hi, Layotto_id_2
 ```
 
 ### 示例介绍
 
-工程里分别用golang跟rust开发了两个功能一致的wasm模块，它们的实现思路如下：
+工程里分别用golang、rust、assemblyscript开发了功能一致的wasm模块，它们的实现思路如下：
 1. 通过`proxy_on_request_headers`接收HTTP请求
 2. 从`proxy_get_header_map_pairs`中取出header中的name字段
 3. 使用`proxy_call_foreign_function`向Layotto发起调用
 4. 通过`proxy_set_buffer_bytes`把处理结果返回给调用端
 
 golang源码路径：
+
 ```
 layotto/demo/wasm/code/golang/
 ```
 
 rust源码路径：
+
 ```
 layotto/demo/wasm/code/rust/
 ```
 
+assemblyscript源码路径：
+
+```
+layotto/demo/wasm/code/assemblyscript/
+```
 
 ### 说明
 

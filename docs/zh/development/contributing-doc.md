@@ -10,9 +10,18 @@
 
 ![img_2.png](../../img/development/doc/img_2.png)
 
-当需要新增文档时，可以按目录结构新建文件夹、新建.md文件。比如想写分布式锁API的设计文档，就新建目录：
+## 新增文档需要做哪些事
+1. 当需要新增文档时，可以按目录结构新建文件夹、新建.md文件。比如想写分布式锁API的设计文档，就新建目录：
 
 ![img_1.png](../../img/development/doc/img_1.png)
+
+2. 新增文档、写完内容后，记得更新一下侧边栏哦。
+
+中文侧边栏在 docs/zh/_sidebar.md
+
+英文侧边栏在 docs/_sidebar.md
+
+3. 写完上述markdown文件，提交pr、合并入主干分支后，打开官网就能看到新的文档啦
 
 ## 文档站点说明
 docs/目录下的文件，会被自动部署到github pages，通过[docsify](https://docsify.js.org/#/) 渲染。
