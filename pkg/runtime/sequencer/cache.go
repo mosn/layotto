@@ -49,9 +49,6 @@ func (d *DoubleBuffer) init() error {
 		return err
 	}
 
-	d.lock.Lock()
-	defer d.lock.Unlock()
-
 	d.InUseBuffer = buffer
 
 	return nil
@@ -67,23 +64,35 @@ func (d *DoubleBuffer) getId() (int64, error) {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 
-	next := d.InUseBuffer.from
-	d.InUseBuffer.from++
-
 	//check swap
 	if d.InUseBuffer.from > d.InUseBuffer.to {
-		d.swap()
+		err := d.swap()
+		if err != nil {
+			return 0, err
+		}
 	}
+	next := d.InUseBuffer.from
+	d.InUseBuffer.from++
 
 	//when InUseBuffer id more than half used, initialize BackUpBuffer.
 	//equal make sure only one thread enter
 	if d.InUseBuffer.to-d.InUseBuffer.from == defaultLimit {
 		utils.GoWithRecover(func() {
 
+			//lock to avoid data race
+			d.lock.Lock()
+			defer d.lock.Unlock()
+			//one case: here and swap are performed simultaneously,
+			//swap fast,no check will cover old BackUpBuffer
+			if d.BackUpBuffer != nil {
+				return
+			}
 			buffer, err := d.getNewBuffer()
 			if err != nil {
 				log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
+				return
 			}
+
 			d.BackUpBuffer = buffer
 
 		}, nil)
@@ -93,9 +102,20 @@ func (d *DoubleBuffer) getId() (int64, error) {
 }
 
 //swap InUseBuffer and BackUpBuffer, must be locked
-func (d *DoubleBuffer) swap() {
+func (d *DoubleBuffer) swap() error {
+
+	//check again
+	if d.BackUpBuffer == nil {
+		buffer, err := d.getNewBuffer()
+		if err != nil {
+			return err
+		}
+		d.BackUpBuffer = buffer
+	}
+
 	d.InUseBuffer = d.BackUpBuffer
 	d.BackUpBuffer = nil
+	return nil
 }
 
 //getNewBuffer return a new segment
@@ -116,7 +136,10 @@ func (d *DoubleBuffer) getNewBuffer() (*Buffer, error) {
 	}, nil
 }
 
-var BufferCatch sync.Map
+var BufferCatch = map[string]*DoubleBuffer{}
+
+//common lock is enough ？
+var rwLock sync.RWMutex
 
 func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequencer.GetNextIdRequest) (bool, int64, error) {
 
@@ -130,16 +153,16 @@ func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequenc
 		return false, 0, nil
 	}
 
-	actual, ok := BufferCatch.LoadOrStore(req.Key, NewDoubleBuffer(req.Key, store))
+	var d *DoubleBuffer
+	var err error
+	if _, ok := BufferCatch[req.Key]; !ok {
+		d, err = getDoubleBufferInWL(req.Key, store)
+	} else {
+		d, err = getDoubleBufferInRL(req.Key)
+	}
 
-	d := actual.(*DoubleBuffer)
-	//load fail, should init buffer
-	if !ok {
-		err := d.init()
-		if err != nil {
-
-			return true, 0, err
-		}
+	if err != nil {
+		return true, 0, err
 	}
 
 	id, err := d.getId()
@@ -149,4 +172,28 @@ func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequenc
 	}
 
 	return true, id, nil
+}
+
+//DoubleBuffer for this key not exist
+func getDoubleBufferInWL(key string, store sequencer.Store) (*DoubleBuffer, error) {
+	d := NewDoubleBuffer(key, store)
+	rwLock.Lock()
+	defer rwLock.Unlock()
+	//double check
+	if _, ok := BufferCatch[key]; ok {
+		return BufferCatch[key], nil
+	}
+	err := d.init()
+	if err != nil {
+		return nil, err
+	}
+	BufferCatch[key] = d
+	return d, nil
+}
+
+// DoubleBuffer for this key  exist
+func getDoubleBufferInRL(key string) (*DoubleBuffer, error) {
+	/*	rwLock.RLock()
+		defer rwLock.RUnlock()*/
+	return BufferCatch[key], nil
 }
