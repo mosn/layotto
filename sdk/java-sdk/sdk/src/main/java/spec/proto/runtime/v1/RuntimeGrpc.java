@@ -634,6 +634,37 @@ public final class RuntimeGrpc {
     return getDelFileMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest,
+      spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse> getInvokeBindingMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "InvokeBinding",
+      requestType = spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest.class,
+      responseType = spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest,
+      spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse> getInvokeBindingMethod() {
+    io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest, spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse> getInvokeBindingMethod;
+    if ((getInvokeBindingMethod = RuntimeGrpc.getInvokeBindingMethod) == null) {
+      synchronized (RuntimeGrpc.class) {
+        if ((getInvokeBindingMethod = RuntimeGrpc.getInvokeBindingMethod) == null) {
+          RuntimeGrpc.getInvokeBindingMethod = getInvokeBindingMethod =
+              io.grpc.MethodDescriptor.<spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest, spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "InvokeBinding"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new RuntimeMethodDescriptorSupplier("InvokeBinding"))
+              .build();
+        }
+      }
+    }
+    return getInvokeBindingMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -873,12 +904,22 @@ public final class RuntimeGrpc {
 
     /**
      * <pre>
-     *Delete specific file
+     * Delete specific file
      * </pre>
      */
     public void delFile(spec.proto.runtime.v1.RuntimeProto.DelFileRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDelFileMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Invokes binding data to specific output bindings
+     * </pre>
+     */
+    public void invokeBinding(spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest request,
+        io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getInvokeBindingMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -1023,6 +1064,13 @@ public final class RuntimeGrpc {
                 spec.proto.runtime.v1.RuntimeProto.DelFileRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_DEL_FILE)))
+          .addMethod(
+            getInvokeBindingMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest,
+                spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse>(
+                  this, METHODID_INVOKE_BINDING)))
           .build();
     }
   }
@@ -1251,13 +1299,24 @@ public final class RuntimeGrpc {
 
     /**
      * <pre>
-     *Delete specific file
+     * Delete specific file
      * </pre>
      */
     public void delFile(spec.proto.runtime.v1.RuntimeProto.DelFileRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDelFileMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Invokes binding data to specific output bindings
+     * </pre>
+     */
+    public void invokeBinding(spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest request,
+        io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getInvokeBindingMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -1447,12 +1506,22 @@ public final class RuntimeGrpc {
 
     /**
      * <pre>
-     *Delete specific file
+     * Delete specific file
      * </pre>
      */
     public com.google.protobuf.Empty delFile(spec.proto.runtime.v1.RuntimeProto.DelFileRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDelFileMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Invokes binding data to specific output bindings
+     * </pre>
+     */
+    public spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse invokeBinding(spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getInvokeBindingMethod(), getCallOptions(), request);
     }
   }
 
@@ -1647,13 +1716,24 @@ public final class RuntimeGrpc {
 
     /**
      * <pre>
-     *Delete specific file
+     * Delete specific file
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> delFile(
         spec.proto.runtime.v1.RuntimeProto.DelFileRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDelFileMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * Invokes binding data to specific output bindings
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse> invokeBinding(
+        spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getInvokeBindingMethod(), getCallOptions()), request);
     }
   }
 
@@ -1675,8 +1755,9 @@ public final class RuntimeGrpc {
   private static final int METHODID_GET_FILE = 15;
   private static final int METHODID_LIST_FILE = 16;
   private static final int METHODID_DEL_FILE = 17;
-  private static final int METHODID_SUBSCRIBE_CONFIGURATION = 18;
-  private static final int METHODID_PUT_FILE = 19;
+  private static final int METHODID_INVOKE_BINDING = 18;
+  private static final int METHODID_SUBSCRIBE_CONFIGURATION = 19;
+  private static final int METHODID_PUT_FILE = 20;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1767,6 +1848,10 @@ public final class RuntimeGrpc {
           serviceImpl.delFile((spec.proto.runtime.v1.RuntimeProto.DelFileRequest) request,
               (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
           break;
+        case METHODID_INVOKE_BINDING:
+          serviceImpl.invokeBinding((spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest) request,
+              (io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse>) responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1854,6 +1939,7 @@ public final class RuntimeGrpc {
               .addMethod(getPutFileMethod())
               .addMethod(getListFileMethod())
               .addMethod(getDelFileMethod())
+              .addMethod(getInvokeBindingMethod())
               .build();
         }
       }

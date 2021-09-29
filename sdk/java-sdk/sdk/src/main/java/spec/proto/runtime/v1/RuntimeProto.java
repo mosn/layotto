@@ -45614,6 +45614,2266 @@ public final class RuntimeProto {
 
   }
 
+  public interface InvokeBindingRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:spec.proto.runtime.v1.InvokeBindingRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The name of the output binding to invoke.
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <pre>
+     * The name of the output binding to invoke.
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString
+        getNameBytes();
+
+    /**
+     * <pre>
+     * The data which will be sent to output binding.
+     * </pre>
+     *
+     * <code>bytes data = 2;</code>
+     * @return The data.
+     */
+    com.google.protobuf.ByteString getData();
+
+    /**
+     * <pre>
+     * The metadata passing to output binding components
+     * Common metadata property:
+     * - ttlInSeconds : the time to live in seconds for the message.
+     * If set in the binding definition will cause all messages to
+     * have a default time to live. The message ttl overrides any value
+     * in the binding definition.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 3;</code>
+     */
+    int getMetadataCount();
+    /**
+     * <pre>
+     * The metadata passing to output binding components
+     * Common metadata property:
+     * - ttlInSeconds : the time to live in seconds for the message.
+     * If set in the binding definition will cause all messages to
+     * have a default time to live. The message ttl overrides any value
+     * in the binding definition.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 3;</code>
+     */
+    boolean containsMetadata(
+        java.lang.String key);
+    /**
+     * Use {@link #getMetadataMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, java.lang.String>
+    getMetadata();
+    /**
+     * <pre>
+     * The metadata passing to output binding components
+     * Common metadata property:
+     * - ttlInSeconds : the time to live in seconds for the message.
+     * If set in the binding definition will cause all messages to
+     * have a default time to live. The message ttl overrides any value
+     * in the binding definition.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 3;</code>
+     */
+    java.util.Map<java.lang.String, java.lang.String>
+    getMetadataMap();
+    /**
+     * <pre>
+     * The metadata passing to output binding components
+     * Common metadata property:
+     * - ttlInSeconds : the time to live in seconds for the message.
+     * If set in the binding definition will cause all messages to
+     * have a default time to live. The message ttl overrides any value
+     * in the binding definition.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 3;</code>
+     */
+
+    java.lang.String getMetadataOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue);
+    /**
+     * <pre>
+     * The metadata passing to output binding components
+     * Common metadata property:
+     * - ttlInSeconds : the time to live in seconds for the message.
+     * If set in the binding definition will cause all messages to
+     * have a default time to live. The message ttl overrides any value
+     * in the binding definition.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 3;</code>
+     */
+
+    java.lang.String getMetadataOrThrow(
+        java.lang.String key);
+
+    /**
+     * <pre>
+     * The name of the operation type for the binding to invoke
+     * </pre>
+     *
+     * <code>string operation = 4;</code>
+     * @return The operation.
+     */
+    java.lang.String getOperation();
+    /**
+     * <pre>
+     * The name of the operation type for the binding to invoke
+     * </pre>
+     *
+     * <code>string operation = 4;</code>
+     * @return The bytes for operation.
+     */
+    com.google.protobuf.ByteString
+        getOperationBytes();
+  }
+  /**
+   * <pre>
+   * InvokeBindingRequest is the message to send data to output bindings
+   * </pre>
+   *
+   * Protobuf type {@code spec.proto.runtime.v1.InvokeBindingRequest}
+   */
+  public static final class InvokeBindingRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:spec.proto.runtime.v1.InvokeBindingRequest)
+      InvokeBindingRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use InvokeBindingRequest.newBuilder() to construct.
+    private InvokeBindingRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private InvokeBindingRequest() {
+      name_ = "";
+      data_ = com.google.protobuf.ByteString.EMPTY;
+      operation_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new InvokeBindingRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private InvokeBindingRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
+              break;
+            }
+            case 18: {
+
+              data_ = input.readBytes();
+              break;
+            }
+            case 26: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                metadata_ = com.google.protobuf.MapField.newMapField(
+                    MetadataDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000001;
+              }
+              com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+              metadata__ = input.readMessage(
+                  MetadataDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              metadata_.getMutableMap().put(
+                  metadata__.getKey(), metadata__.getValue());
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              operation_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingRequest_descriptor;
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 3:
+          return internalGetMetadata();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest.class, spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest.Builder.class);
+    }
+
+    public static final int NAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object name_;
+    /**
+     * <pre>
+     * The name of the output binding to invoke.
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    @java.lang.Override
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The name of the output binding to invoke.
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DATA_FIELD_NUMBER = 2;
+    private com.google.protobuf.ByteString data_;
+    /**
+     * <pre>
+     * The data which will be sent to output binding.
+     * </pre>
+     *
+     * <code>bytes data = 2;</code>
+     * @return The data.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getData() {
+      return data_;
+    }
+
+    public static final int METADATA_FIELD_NUMBER = 3;
+    private static final class MetadataDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.String, java.lang.String> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.String, java.lang.String>newDefaultInstance(
+                  spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingRequest_MetadataEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "");
+    }
+    private com.google.protobuf.MapField<
+        java.lang.String, java.lang.String> metadata_;
+    private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+    internalGetMetadata() {
+      if (metadata_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            MetadataDefaultEntryHolder.defaultEntry);
+      }
+      return metadata_;
+    }
+
+    public int getMetadataCount() {
+      return internalGetMetadata().getMap().size();
+    }
+    /**
+     * <pre>
+     * The metadata passing to output binding components
+     * Common metadata property:
+     * - ttlInSeconds : the time to live in seconds for the message.
+     * If set in the binding definition will cause all messages to
+     * have a default time to live. The message ttl overrides any value
+     * in the binding definition.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 3;</code>
+     */
+
+    @java.lang.Override
+    public boolean containsMetadata(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetMetadata().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getMetadataMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
+      return getMetadataMap();
+    }
+    /**
+     * <pre>
+     * The metadata passing to output binding components
+     * Common metadata property:
+     * - ttlInSeconds : the time to live in seconds for the message.
+     * If set in the binding definition will cause all messages to
+     * have a default time to live. The message ttl overrides any value
+     * in the binding definition.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 3;</code>
+     */
+    @java.lang.Override
+
+    public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
+      return internalGetMetadata().getMap();
+    }
+    /**
+     * <pre>
+     * The metadata passing to output binding components
+     * Common metadata property:
+     * - ttlInSeconds : the time to live in seconds for the message.
+     * If set in the binding definition will cause all messages to
+     * have a default time to live. The message ttl overrides any value
+     * in the binding definition.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 3;</code>
+     */
+    @java.lang.Override
+
+    public java.lang.String getMetadataOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetMetadata().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <pre>
+     * The metadata passing to output binding components
+     * Common metadata property:
+     * - ttlInSeconds : the time to live in seconds for the message.
+     * If set in the binding definition will cause all messages to
+     * have a default time to live. The message ttl overrides any value
+     * in the binding definition.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 3;</code>
+     */
+    @java.lang.Override
+
+    public java.lang.String getMetadataOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetMetadata().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    public static final int OPERATION_FIELD_NUMBER = 4;
+    private volatile java.lang.Object operation_;
+    /**
+     * <pre>
+     * The name of the operation type for the binding to invoke
+     * </pre>
+     *
+     * <code>string operation = 4;</code>
+     * @return The operation.
+     */
+    @java.lang.Override
+    public java.lang.String getOperation() {
+      java.lang.Object ref = operation_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        operation_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The name of the operation type for the binding to invoke
+     * </pre>
+     *
+     * <code>string operation = 4;</code>
+     * @return The bytes for operation.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getOperationBytes() {
+      java.lang.Object ref = operation_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        operation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
+      }
+      if (!data_.isEmpty()) {
+        output.writeBytes(2, data_);
+      }
+      com.google.protobuf.GeneratedMessageV3
+        .serializeStringMapTo(
+          output,
+          internalGetMetadata(),
+          MetadataDefaultEntryHolder.defaultEntry,
+          3);
+      if (!getOperationBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, operation_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
+      }
+      if (!data_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, data_);
+      }
+      for (java.util.Map.Entry<java.lang.String, java.lang.String> entry
+           : internalGetMetadata().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+        metadata__ = MetadataDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(3, metadata__);
+      }
+      if (!getOperationBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, operation_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest)) {
+        return super.equals(obj);
+      }
+      spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest other = (spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest) obj;
+
+      if (!getName()
+          .equals(other.getName())) return false;
+      if (!getData()
+          .equals(other.getData())) return false;
+      if (!internalGetMetadata().equals(
+          other.internalGetMetadata())) return false;
+      if (!getOperation()
+          .equals(other.getOperation())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + DATA_FIELD_NUMBER;
+      hash = (53 * hash) + getData().hashCode();
+      if (!internalGetMetadata().getMap().isEmpty()) {
+        hash = (37 * hash) + METADATA_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetMetadata().hashCode();
+      }
+      hash = (37 * hash) + OPERATION_FIELD_NUMBER;
+      hash = (53 * hash) + getOperation().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * InvokeBindingRequest is the message to send data to output bindings
+     * </pre>
+     *
+     * Protobuf type {@code spec.proto.runtime.v1.InvokeBindingRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:spec.proto.runtime.v1.InvokeBindingRequest)
+        spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingRequest_descriptor;
+      }
+
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 3:
+            return internalGetMetadata();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 3:
+            return internalGetMutableMetadata();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest.class, spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest.Builder.class);
+      }
+
+      // Construct using spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        name_ = "";
+
+        data_ = com.google.protobuf.ByteString.EMPTY;
+
+        internalGetMutableMetadata().clear();
+        operation_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest getDefaultInstanceForType() {
+        return spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest build() {
+        spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest buildPartial() {
+        spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest result = new spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest(this);
+        int from_bitField0_ = bitField0_;
+        result.name_ = name_;
+        result.data_ = data_;
+        result.metadata_ = internalGetMetadata();
+        result.metadata_.makeImmutable();
+        result.operation_ = operation_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest) {
+          return mergeFrom((spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest other) {
+        if (other == spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest.getDefaultInstance()) return this;
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          onChanged();
+        }
+        if (other.getData() != com.google.protobuf.ByteString.EMPTY) {
+          setData(other.getData());
+        }
+        internalGetMutableMetadata().mergeFrom(
+            other.internalGetMetadata());
+        if (!other.getOperation().isEmpty()) {
+          operation_ = other.operation_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object name_ = "";
+      /**
+       * <pre>
+       * The name of the output binding to invoke.
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The name of the output binding to invoke.
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The name of the output binding to invoke.
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The name of the output binding to invoke.
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+        
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The name of the output binding to invoke.
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        name_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <pre>
+       * The data which will be sent to output binding.
+       * </pre>
+       *
+       * <code>bytes data = 2;</code>
+       * @return The data.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getData() {
+        return data_;
+      }
+      /**
+       * <pre>
+       * The data which will be sent to output binding.
+       * </pre>
+       *
+       * <code>bytes data = 2;</code>
+       * @param value The data to set.
+       * @return This builder for chaining.
+       */
+      public Builder setData(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        data_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The data which will be sent to output binding.
+       * </pre>
+       *
+       * <code>bytes data = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearData() {
+        
+        data_ = getDefaultInstance().getData();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.MapField<
+          java.lang.String, java.lang.String> metadata_;
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetMetadata() {
+        if (metadata_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              MetadataDefaultEntryHolder.defaultEntry);
+        }
+        return metadata_;
+      }
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetMutableMetadata() {
+        onChanged();;
+        if (metadata_ == null) {
+          metadata_ = com.google.protobuf.MapField.newMapField(
+              MetadataDefaultEntryHolder.defaultEntry);
+        }
+        if (!metadata_.isMutable()) {
+          metadata_ = metadata_.copy();
+        }
+        return metadata_;
+      }
+
+      public int getMetadataCount() {
+        return internalGetMetadata().getMap().size();
+      }
+      /**
+       * <pre>
+       * The metadata passing to output binding components
+       * Common metadata property:
+       * - ttlInSeconds : the time to live in seconds for the message.
+       * If set in the binding definition will cause all messages to
+       * have a default time to live. The message ttl overrides any value
+       * in the binding definition.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 3;</code>
+       */
+
+      @java.lang.Override
+      public boolean containsMetadata(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        return internalGetMetadata().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getMetadataMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
+        return getMetadataMap();
+      }
+      /**
+       * <pre>
+       * The metadata passing to output binding components
+       * Common metadata property:
+       * - ttlInSeconds : the time to live in seconds for the message.
+       * If set in the binding definition will cause all messages to
+       * have a default time to live. The message ttl overrides any value
+       * in the binding definition.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 3;</code>
+       */
+      @java.lang.Override
+
+      public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
+        return internalGetMetadata().getMap();
+      }
+      /**
+       * <pre>
+       * The metadata passing to output binding components
+       * Common metadata property:
+       * - ttlInSeconds : the time to live in seconds for the message.
+       * If set in the binding definition will cause all messages to
+       * have a default time to live. The message ttl overrides any value
+       * in the binding definition.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 3;</code>
+       */
+      @java.lang.Override
+
+      public java.lang.String getMetadataOrDefault(
+          java.lang.String key,
+          java.lang.String defaultValue) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetMetadata().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <pre>
+       * The metadata passing to output binding components
+       * Common metadata property:
+       * - ttlInSeconds : the time to live in seconds for the message.
+       * If set in the binding definition will cause all messages to
+       * have a default time to live. The message ttl overrides any value
+       * in the binding definition.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 3;</code>
+       */
+      @java.lang.Override
+
+      public java.lang.String getMetadataOrThrow(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetMetadata().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearMetadata() {
+        internalGetMutableMetadata().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <pre>
+       * The metadata passing to output binding components
+       * Common metadata property:
+       * - ttlInSeconds : the time to live in seconds for the message.
+       * If set in the binding definition will cause all messages to
+       * have a default time to live. The message ttl overrides any value
+       * in the binding definition.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 3;</code>
+       */
+
+      public Builder removeMetadata(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableMetadata().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String>
+      getMutableMetadata() {
+        return internalGetMutableMetadata().getMutableMap();
+      }
+      /**
+       * <pre>
+       * The metadata passing to output binding components
+       * Common metadata property:
+       * - ttlInSeconds : the time to live in seconds for the message.
+       * If set in the binding definition will cause all messages to
+       * have a default time to live. The message ttl overrides any value
+       * in the binding definition.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 3;</code>
+       */
+      public Builder putMetadata(
+          java.lang.String key,
+          java.lang.String value) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        if (value == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableMetadata().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <pre>
+       * The metadata passing to output binding components
+       * Common metadata property:
+       * - ttlInSeconds : the time to live in seconds for the message.
+       * If set in the binding definition will cause all messages to
+       * have a default time to live. The message ttl overrides any value
+       * in the binding definition.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 3;</code>
+       */
+
+      public Builder putAllMetadata(
+          java.util.Map<java.lang.String, java.lang.String> values) {
+        internalGetMutableMetadata().getMutableMap()
+            .putAll(values);
+        return this;
+      }
+
+      private java.lang.Object operation_ = "";
+      /**
+       * <pre>
+       * The name of the operation type for the binding to invoke
+       * </pre>
+       *
+       * <code>string operation = 4;</code>
+       * @return The operation.
+       */
+      public java.lang.String getOperation() {
+        java.lang.Object ref = operation_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          operation_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The name of the operation type for the binding to invoke
+       * </pre>
+       *
+       * <code>string operation = 4;</code>
+       * @return The bytes for operation.
+       */
+      public com.google.protobuf.ByteString
+          getOperationBytes() {
+        java.lang.Object ref = operation_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          operation_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The name of the operation type for the binding to invoke
+       * </pre>
+       *
+       * <code>string operation = 4;</code>
+       * @param value The operation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOperation(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        operation_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The name of the operation type for the binding to invoke
+       * </pre>
+       *
+       * <code>string operation = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearOperation() {
+        
+        operation_ = getDefaultInstance().getOperation();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The name of the operation type for the binding to invoke
+       * </pre>
+       *
+       * <code>string operation = 4;</code>
+       * @param value The bytes for operation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOperationBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        operation_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:spec.proto.runtime.v1.InvokeBindingRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:spec.proto.runtime.v1.InvokeBindingRequest)
+    private static final spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest();
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<InvokeBindingRequest>
+        PARSER = new com.google.protobuf.AbstractParser<InvokeBindingRequest>() {
+      @java.lang.Override
+      public InvokeBindingRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new InvokeBindingRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<InvokeBindingRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<InvokeBindingRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface InvokeBindingResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:spec.proto.runtime.v1.InvokeBindingResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The data which will be sent to output binding.
+     * </pre>
+     *
+     * <code>bytes data = 1;</code>
+     * @return The data.
+     */
+    com.google.protobuf.ByteString getData();
+
+    /**
+     * <pre>
+     * The metadata returned from an external system
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 2;</code>
+     */
+    int getMetadataCount();
+    /**
+     * <pre>
+     * The metadata returned from an external system
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 2;</code>
+     */
+    boolean containsMetadata(
+        java.lang.String key);
+    /**
+     * Use {@link #getMetadataMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, java.lang.String>
+    getMetadata();
+    /**
+     * <pre>
+     * The metadata returned from an external system
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 2;</code>
+     */
+    java.util.Map<java.lang.String, java.lang.String>
+    getMetadataMap();
+    /**
+     * <pre>
+     * The metadata returned from an external system
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 2;</code>
+     */
+
+    java.lang.String getMetadataOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue);
+    /**
+     * <pre>
+     * The metadata returned from an external system
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 2;</code>
+     */
+
+    java.lang.String getMetadataOrThrow(
+        java.lang.String key);
+  }
+  /**
+   * <pre>
+   * InvokeBindingResponse is the message returned from an output binding invocation
+   * </pre>
+   *
+   * Protobuf type {@code spec.proto.runtime.v1.InvokeBindingResponse}
+   */
+  public static final class InvokeBindingResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:spec.proto.runtime.v1.InvokeBindingResponse)
+      InvokeBindingResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use InvokeBindingResponse.newBuilder() to construct.
+    private InvokeBindingResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private InvokeBindingResponse() {
+      data_ = com.google.protobuf.ByteString.EMPTY;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new InvokeBindingResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private InvokeBindingResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+
+              data_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                metadata_ = com.google.protobuf.MapField.newMapField(
+                    MetadataDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000001;
+              }
+              com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+              metadata__ = input.readMessage(
+                  MetadataDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              metadata_.getMutableMap().put(
+                  metadata__.getKey(), metadata__.getValue());
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingResponse_descriptor;
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 2:
+          return internalGetMetadata();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse.class, spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse.Builder.class);
+    }
+
+    public static final int DATA_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString data_;
+    /**
+     * <pre>
+     * The data which will be sent to output binding.
+     * </pre>
+     *
+     * <code>bytes data = 1;</code>
+     * @return The data.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getData() {
+      return data_;
+    }
+
+    public static final int METADATA_FIELD_NUMBER = 2;
+    private static final class MetadataDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.String, java.lang.String> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.String, java.lang.String>newDefaultInstance(
+                  spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingResponse_MetadataEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "");
+    }
+    private com.google.protobuf.MapField<
+        java.lang.String, java.lang.String> metadata_;
+    private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+    internalGetMetadata() {
+      if (metadata_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            MetadataDefaultEntryHolder.defaultEntry);
+      }
+      return metadata_;
+    }
+
+    public int getMetadataCount() {
+      return internalGetMetadata().getMap().size();
+    }
+    /**
+     * <pre>
+     * The metadata returned from an external system
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 2;</code>
+     */
+
+    @java.lang.Override
+    public boolean containsMetadata(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetMetadata().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getMetadataMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
+      return getMetadataMap();
+    }
+    /**
+     * <pre>
+     * The metadata returned from an external system
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 2;</code>
+     */
+    @java.lang.Override
+
+    public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
+      return internalGetMetadata().getMap();
+    }
+    /**
+     * <pre>
+     * The metadata returned from an external system
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 2;</code>
+     */
+    @java.lang.Override
+
+    public java.lang.String getMetadataOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetMetadata().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <pre>
+     * The metadata returned from an external system
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 2;</code>
+     */
+    @java.lang.Override
+
+    public java.lang.String getMetadataOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetMetadata().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!data_.isEmpty()) {
+        output.writeBytes(1, data_);
+      }
+      com.google.protobuf.GeneratedMessageV3
+        .serializeStringMapTo(
+          output,
+          internalGetMetadata(),
+          MetadataDefaultEntryHolder.defaultEntry,
+          2);
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!data_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, data_);
+      }
+      for (java.util.Map.Entry<java.lang.String, java.lang.String> entry
+           : internalGetMetadata().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+        metadata__ = MetadataDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, metadata__);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse)) {
+        return super.equals(obj);
+      }
+      spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse other = (spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse) obj;
+
+      if (!getData()
+          .equals(other.getData())) return false;
+      if (!internalGetMetadata().equals(
+          other.internalGetMetadata())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + DATA_FIELD_NUMBER;
+      hash = (53 * hash) + getData().hashCode();
+      if (!internalGetMetadata().getMap().isEmpty()) {
+        hash = (37 * hash) + METADATA_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetMetadata().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * InvokeBindingResponse is the message returned from an output binding invocation
+     * </pre>
+     *
+     * Protobuf type {@code spec.proto.runtime.v1.InvokeBindingResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:spec.proto.runtime.v1.InvokeBindingResponse)
+        spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingResponse_descriptor;
+      }
+
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 2:
+            return internalGetMetadata();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 2:
+            return internalGetMutableMetadata();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse.class, spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse.Builder.class);
+      }
+
+      // Construct using spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        data_ = com.google.protobuf.ByteString.EMPTY;
+
+        internalGetMutableMetadata().clear();
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_InvokeBindingResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse getDefaultInstanceForType() {
+        return spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse build() {
+        spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse buildPartial() {
+        spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse result = new spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse(this);
+        int from_bitField0_ = bitField0_;
+        result.data_ = data_;
+        result.metadata_ = internalGetMetadata();
+        result.metadata_.makeImmutable();
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse) {
+          return mergeFrom((spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse other) {
+        if (other == spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse.getDefaultInstance()) return this;
+        if (other.getData() != com.google.protobuf.ByteString.EMPTY) {
+          setData(other.getData());
+        }
+        internalGetMutableMetadata().mergeFrom(
+            other.internalGetMetadata());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <pre>
+       * The data which will be sent to output binding.
+       * </pre>
+       *
+       * <code>bytes data = 1;</code>
+       * @return The data.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getData() {
+        return data_;
+      }
+      /**
+       * <pre>
+       * The data which will be sent to output binding.
+       * </pre>
+       *
+       * <code>bytes data = 1;</code>
+       * @param value The data to set.
+       * @return This builder for chaining.
+       */
+      public Builder setData(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        data_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The data which will be sent to output binding.
+       * </pre>
+       *
+       * <code>bytes data = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearData() {
+        
+        data_ = getDefaultInstance().getData();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.MapField<
+          java.lang.String, java.lang.String> metadata_;
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetMetadata() {
+        if (metadata_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              MetadataDefaultEntryHolder.defaultEntry);
+        }
+        return metadata_;
+      }
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetMutableMetadata() {
+        onChanged();;
+        if (metadata_ == null) {
+          metadata_ = com.google.protobuf.MapField.newMapField(
+              MetadataDefaultEntryHolder.defaultEntry);
+        }
+        if (!metadata_.isMutable()) {
+          metadata_ = metadata_.copy();
+        }
+        return metadata_;
+      }
+
+      public int getMetadataCount() {
+        return internalGetMetadata().getMap().size();
+      }
+      /**
+       * <pre>
+       * The metadata returned from an external system
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 2;</code>
+       */
+
+      @java.lang.Override
+      public boolean containsMetadata(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        return internalGetMetadata().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getMetadataMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
+        return getMetadataMap();
+      }
+      /**
+       * <pre>
+       * The metadata returned from an external system
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 2;</code>
+       */
+      @java.lang.Override
+
+      public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
+        return internalGetMetadata().getMap();
+      }
+      /**
+       * <pre>
+       * The metadata returned from an external system
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 2;</code>
+       */
+      @java.lang.Override
+
+      public java.lang.String getMetadataOrDefault(
+          java.lang.String key,
+          java.lang.String defaultValue) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetMetadata().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <pre>
+       * The metadata returned from an external system
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 2;</code>
+       */
+      @java.lang.Override
+
+      public java.lang.String getMetadataOrThrow(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetMetadata().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearMetadata() {
+        internalGetMutableMetadata().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <pre>
+       * The metadata returned from an external system
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 2;</code>
+       */
+
+      public Builder removeMetadata(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableMetadata().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String>
+      getMutableMetadata() {
+        return internalGetMutableMetadata().getMutableMap();
+      }
+      /**
+       * <pre>
+       * The metadata returned from an external system
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 2;</code>
+       */
+      public Builder putMetadata(
+          java.lang.String key,
+          java.lang.String value) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        if (value == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableMetadata().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <pre>
+       * The metadata returned from an external system
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 2;</code>
+       */
+
+      public Builder putAllMetadata(
+          java.util.Map<java.lang.String, java.lang.String> values) {
+        internalGetMutableMetadata().getMutableMap()
+            .putAll(values);
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:spec.proto.runtime.v1.InvokeBindingResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:spec.proto.runtime.v1.InvokeBindingResponse)
+    private static final spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse();
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<InvokeBindingResponse>
+        PARSER = new com.google.protobuf.AbstractParser<InvokeBindingResponse>() {
+      @java.lang.Override
+      public InvokeBindingResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new InvokeBindingResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<InvokeBindingResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<InvokeBindingResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_spec_proto_runtime_v1_GetFileRequest_descriptor;
   private static final 
@@ -45909,6 +48169,26 @@ public final class RuntimeProto {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_spec_proto_runtime_v1_PublishEventRequest_MetadataEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_InvokeBindingRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_InvokeBindingRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_InvokeBindingRequest_MetadataEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_InvokeBindingRequest_MetadataEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_InvokeBindingResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_InvokeBindingResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_InvokeBindingResponse_MetadataEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_InvokeBindingResponse_MetadataEntry_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -46079,58 +48359,70 @@ public final class RuntimeProto {
       "content_type\030\004 \001(\t\022J\n\010metadata\030\005 \003(\01328.s" +
       "pec.proto.runtime.v1.PublishEventRequest" +
       ".MetadataEntry\032/\n\rMetadataEntry\022\013\n\003key\030\001" +
-      " \001(\t\022\r\n\005value\030\002 \001(\t:\0028\0012\216\017\n\007Runtime\022]\n\010S" +
-      "ayHello\022&.spec.proto.runtime.v1.SayHello" +
-      "Request\032\'.spec.proto.runtime.v1.SayHello" +
-      "Response\"\000\022e\n\rInvokeService\022+.spec.proto" +
-      ".runtime.v1.InvokeServiceRequest\032%.spec." +
-      "proto.runtime.v1.InvokeResponse\"\000\022u\n\020Get" +
-      "Configuration\022..spec.proto.runtime.v1.Ge" +
-      "tConfigurationRequest\032/.spec.proto.runti" +
-      "me.v1.GetConfigurationResponse\"\000\022^\n\021Save" +
-      "Configuration\022/.spec.proto.runtime.v1.Sa" +
-      "veConfigurationRequest\032\026.google.protobuf" +
-      ".Empty\"\000\022b\n\023DeleteConfiguration\0221.spec.p" +
-      "roto.runtime.v1.DeleteConfigurationReque" +
-      "st\032\026.google.protobuf.Empty\"\000\022\213\001\n\026Subscri" +
-      "beConfiguration\0224.spec.proto.runtime.v1." +
-      "SubscribeConfigurationRequest\0325.spec.pro" +
-      "to.runtime.v1.SubscribeConfigurationResp" +
-      "onse\"\000(\0010\001\022Z\n\007TryLock\022%.spec.proto.runti" +
-      "me.v1.TryLockRequest\032&.spec.proto.runtim" +
-      "e.v1.TryLockResponse\"\000\022W\n\006Unlock\022$.spec." +
-      "proto.runtime.v1.UnlockRequest\032%.spec.pr" +
-      "oto.runtime.v1.UnlockResponse\"\000\022`\n\tGetNe" +
-      "xtId\022\'.spec.proto.runtime.v1.GetNextIdRe" +
-      "quest\032(.spec.proto.runtime.v1.GetNextIdR" +
-      "esponse\"\000\022]\n\010GetState\022&.spec.proto.runti" +
-      "me.v1.GetStateRequest\032\'.spec.proto.runti" +
-      "me.v1.GetStateResponse\"\000\022i\n\014GetBulkState" +
-      "\022*.spec.proto.runtime.v1.GetBulkStateReq" +
-      "uest\032+.spec.proto.runtime.v1.GetBulkStat" +
-      "eResponse\"\000\022N\n\tSaveState\022\'.spec.proto.ru" +
-      "ntime.v1.SaveStateRequest\032\026.google.proto" +
-      "buf.Empty\"\000\022R\n\013DeleteState\022).spec.proto." +
-      "runtime.v1.DeleteStateRequest\032\026.google.p" +
-      "rotobuf.Empty\"\000\022Z\n\017DeleteBulkState\022-.spe" +
-      "c.proto.runtime.v1.DeleteBulkStateReques" +
-      "t\032\026.google.protobuf.Empty\"\000\022j\n\027ExecuteSt" +
-      "ateTransaction\0225.spec.proto.runtime.v1.E" +
-      "xecuteStateTransactionRequest\032\026.google.p" +
-      "rotobuf.Empty\"\000\022T\n\014PublishEvent\022*.spec.p" +
-      "roto.runtime.v1.PublishEventRequest\032\026.go" +
-      "ogle.protobuf.Empty\"\000\022\\\n\007GetFile\022%.spec." +
-      "proto.runtime.v1.GetFileRequest\032&.spec.p" +
-      "roto.runtime.v1.GetFileResponse\"\0000\001\022L\n\007P" +
-      "utFile\022%.spec.proto.runtime.v1.PutFileRe" +
-      "quest\032\026.google.protobuf.Empty\"\000(\001\022Y\n\010Lis" +
-      "tFile\022&.spec.proto.runtime.v1.ListFileRe" +
-      "quest\032#.spec.proto.runtime.v1.ListFileRe" +
-      "sp\"\000\022J\n\007DelFile\022%.spec.proto.runtime.v1." +
-      "DelFileRequest\032\026.google.protobuf.Empty\"\000" +
-      "BT\n\025spec.proto.runtime.v1B\014RuntimeProtoZ" +
-      "-mosn.io/layotto/spec/proto/runtime/v1;r" +
-      "untimeb\006proto3"
+      " \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\303\001\n\024InvokeBindin" +
+      "gRequest\022\014\n\004name\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\022K\n\010" +
+      "metadata\030\003 \003(\01329.spec.proto.runtime.v1.I" +
+      "nvokeBindingRequest.MetadataEntry\022\021\n\tope" +
+      "ration\030\004 \001(\t\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001" +
+      "(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\244\001\n\025InvokeBindingR" +
+      "esponse\022\014\n\004data\030\001 \001(\014\022L\n\010metadata\030\002 \003(\0132" +
+      ":.spec.proto.runtime.v1.InvokeBindingRes" +
+      "ponse.MetadataEntry\032/\n\rMetadataEntry\022\013\n\003" +
+      "key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\0012\374\017\n\007Runtime" +
+      "\022]\n\010SayHello\022&.spec.proto.runtime.v1.Say" +
+      "HelloRequest\032\'.spec.proto.runtime.v1.Say" +
+      "HelloResponse\"\000\022e\n\rInvokeService\022+.spec." +
+      "proto.runtime.v1.InvokeServiceRequest\032%." +
+      "spec.proto.runtime.v1.InvokeResponse\"\000\022u" +
+      "\n\020GetConfiguration\022..spec.proto.runtime." +
+      "v1.GetConfigurationRequest\032/.spec.proto." +
+      "runtime.v1.GetConfigurationResponse\"\000\022^\n" +
+      "\021SaveConfiguration\022/.spec.proto.runtime." +
+      "v1.SaveConfigurationRequest\032\026.google.pro" +
+      "tobuf.Empty\"\000\022b\n\023DeleteConfiguration\0221.s" +
+      "pec.proto.runtime.v1.DeleteConfiguration" +
+      "Request\032\026.google.protobuf.Empty\"\000\022\213\001\n\026Su" +
+      "bscribeConfiguration\0224.spec.proto.runtim" +
+      "e.v1.SubscribeConfigurationRequest\0325.spe" +
+      "c.proto.runtime.v1.SubscribeConfiguratio" +
+      "nResponse\"\000(\0010\001\022Z\n\007TryLock\022%.spec.proto." +
+      "runtime.v1.TryLockRequest\032&.spec.proto.r" +
+      "untime.v1.TryLockResponse\"\000\022W\n\006Unlock\022$." +
+      "spec.proto.runtime.v1.UnlockRequest\032%.sp" +
+      "ec.proto.runtime.v1.UnlockResponse\"\000\022`\n\t" +
+      "GetNextId\022\'.spec.proto.runtime.v1.GetNex" +
+      "tIdRequest\032(.spec.proto.runtime.v1.GetNe" +
+      "xtIdResponse\"\000\022]\n\010GetState\022&.spec.proto." +
+      "runtime.v1.GetStateRequest\032\'.spec.proto." +
+      "runtime.v1.GetStateResponse\"\000\022i\n\014GetBulk" +
+      "State\022*.spec.proto.runtime.v1.GetBulkSta" +
+      "teRequest\032+.spec.proto.runtime.v1.GetBul" +
+      "kStateResponse\"\000\022N\n\tSaveState\022\'.spec.pro" +
+      "to.runtime.v1.SaveStateRequest\032\026.google." +
+      "protobuf.Empty\"\000\022R\n\013DeleteState\022).spec.p" +
+      "roto.runtime.v1.DeleteStateRequest\032\026.goo" +
+      "gle.protobuf.Empty\"\000\022Z\n\017DeleteBulkState\022" +
+      "-.spec.proto.runtime.v1.DeleteBulkStateR" +
+      "equest\032\026.google.protobuf.Empty\"\000\022j\n\027Exec" +
+      "uteStateTransaction\0225.spec.proto.runtime" +
+      ".v1.ExecuteStateTransactionRequest\032\026.goo" +
+      "gle.protobuf.Empty\"\000\022T\n\014PublishEvent\022*.s" +
+      "pec.proto.runtime.v1.PublishEventRequest" +
+      "\032\026.google.protobuf.Empty\"\000\022\\\n\007GetFile\022%." +
+      "spec.proto.runtime.v1.GetFileRequest\032&.s" +
+      "pec.proto.runtime.v1.GetFileResponse\"\0000\001" +
+      "\022L\n\007PutFile\022%.spec.proto.runtime.v1.PutF" +
+      "ileRequest\032\026.google.protobuf.Empty\"\000(\001\022Y" +
+      "\n\010ListFile\022&.spec.proto.runtime.v1.ListF" +
+      "ileRequest\032#.spec.proto.runtime.v1.ListF" +
+      "ileResp\"\000\022J\n\007DelFile\022%.spec.proto.runtim" +
+      "e.v1.DelFileRequest\032\026.google.protobuf.Em" +
+      "pty\"\000\022l\n\rInvokeBinding\022+.spec.proto.runt" +
+      "ime.v1.InvokeBindingRequest\032,.spec.proto" +
+      ".runtime.v1.InvokeBindingResponse\"\000BT\n\025s" +
+      "pec.proto.runtime.v1B\014RuntimeProtoZ-mosn" +
+      ".io/layotto/spec/proto/runtime/v1;runtim" +
+      "eb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -46491,6 +48783,30 @@ public final class RuntimeProto {
     internal_static_spec_proto_runtime_v1_PublishEventRequest_MetadataEntry_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_PublishEventRequest_MetadataEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_spec_proto_runtime_v1_InvokeBindingRequest_descriptor =
+      getDescriptor().getMessageTypes().get(41);
+    internal_static_spec_proto_runtime_v1_InvokeBindingRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_InvokeBindingRequest_descriptor,
+        new java.lang.String[] { "Name", "Data", "Metadata", "Operation", });
+    internal_static_spec_proto_runtime_v1_InvokeBindingRequest_MetadataEntry_descriptor =
+      internal_static_spec_proto_runtime_v1_InvokeBindingRequest_descriptor.getNestedTypes().get(0);
+    internal_static_spec_proto_runtime_v1_InvokeBindingRequest_MetadataEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_InvokeBindingRequest_MetadataEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_spec_proto_runtime_v1_InvokeBindingResponse_descriptor =
+      getDescriptor().getMessageTypes().get(42);
+    internal_static_spec_proto_runtime_v1_InvokeBindingResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_InvokeBindingResponse_descriptor,
+        new java.lang.String[] { "Data", "Metadata", });
+    internal_static_spec_proto_runtime_v1_InvokeBindingResponse_MetadataEntry_descriptor =
+      internal_static_spec_proto_runtime_v1_InvokeBindingResponse_descriptor.getNestedTypes().get(0);
+    internal_static_spec_proto_runtime_v1_InvokeBindingResponse_MetadataEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_InvokeBindingResponse_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     com.google.protobuf.EmptyProto.getDescriptor();
     com.google.protobuf.AnyProto.getDescriptor();
