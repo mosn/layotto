@@ -20,10 +20,6 @@
 邀请中，欢迎感兴趣的同学联系@seeflood 加入社区
 ![img.png](../../img/community/img.png)
 
-以及：
-
-![img.png](img.png)
-
 ## Contributor
 https://github.com/mosn/layotto/graphs/contributors
 
