@@ -14,9 +14,23 @@
                 "config": {
                   "server_name":"runtime",
                   "grpc_config": {
-                    "hellos": {
-                      "helloworld": {
-                        "hello": "Hi"
+                    "rpcs": {
+                      "mosn": {
+                        "config": {
+                          "channel": [{
+                            "size": 16,
+                            "protocol": "http",
+                            "listener": "wasm"
+                          }]
+                        }
+                      }
+                    },
+                    "state": {
+                      "redis": {
+                        "metadata": {
+                          "redisHost": "localhost:6379",
+                          "redisPassword": ""
+                        }
                       }
                     }
                   }
@@ -26,6 +40,7 @@
           }]
         },
         {
+          "name": "wasm",
           "address": "0.0.0.0:2045",
           "bind_port": true,
           "filter_chains": [
@@ -36,7 +51,7 @@
                   "config": {
                     "downstream_protocol": "Http1",
                     "upstream_protocol": "Http1",
-                    "router_config_name": "server_router"
+                    "router_config_name": "function_router"
                   }
                 }
               ]
@@ -46,28 +61,20 @@
             {
               "type": "Layotto",
               "config": {
-                "id_1_1": {
-                  "name": "id_1",
+                "function1": {
+                  "name": "function1",
                   "instance_num": 1,
                   "vm_config": {
                     "engine": "wasmer",
-                    "path": "demo/wasm/code/golang/wasm_1_1.wasm"
+                    "path": "/Users/gujin/workspace/go/src/layotto/demo/wasm/code/golang/client/function_1.wasm"
                   }
                 },
-                "id_1_2": {
-                  "name": "id_1",
-                  "instance_num": 2,
-                  "vm_config": {
-                    "engine": "wasmer",
-                    "path": "demo/wasm/code/golang/wasm_1_2.wasm"
-                  }
-                },
-                "id_2": {
-                  "name": "id_2",
+                "function2": {
+                  "name": "function2",
                   "instance_num": 1,
                   "vm_config": {
                     "engine": "wasmer",
-                    "path": "demo/wasm/code/golang/wasm_2.wasm"
+                    "path": "/Users/gujin/workspace/go/src/layotto/demo/wasm/code/golang/server/function_2.wasm"
                   }
                 }
               }
@@ -77,24 +84,37 @@
       ],
       "routers": [
         {
-          "router_config_name": "server_router",
-          "virtual_hosts": [
-            {
-              "name": "serverHost",
-              "domains": [
-                "*"
-              ],
-              "routers": [
-                {
-                  "direct_response": {
-                    "status": 200
-                  }
+          "router_config_name":"function_router",
+          "virtual_hosts":[{
+            "name":"http_host",
+            "domains": ["*"],
+            "routers": [
+              {
+                "direct_response": {
+                  "status": 200
                 }
-              ]
-            }
-          ]
+              }
+            ]
+          }]
         }
       ]
     }
-  ]
+  ],
+  "cluster_manager": {
+    "tls_context": {},
+    "clusters": [
+      {
+        "name": "function_server",
+        "type": "SIMPLE",
+        "lb_type": "LB_RANDOM",
+        "hosts": [
+          {
+            "address": "127.0.0.1:2045",
+            "hostname": "downstream_machine1",
+            "weight": 1
+          }
+        ]
+      }
+    ]
+  }
 }

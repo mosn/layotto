@@ -13,7 +13,7 @@ require (
 )
 
 replace (
-	github.com/tetratelabs/proxy-wasm-go-sdk => github.com/layotto/proxy-wasm-go-sdk v0.14.1-0.20210926122819-378cc27b0ffb
+	github.com/tetratelabs/proxy-wasm-go-sdk => github.com/layotto/proxy-wasm-go-sdk v0.14.1-0.20210929091432-0e4ff35b75af
 	mosn.io/layotto/sdk/go-sdk => ../sdk/go-sdk
 	mosn.io/layotto/spec => ../spec
 )

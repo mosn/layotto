@@ -17,8 +17,10 @@
 package main
 
 import (
+	"errors"
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm"
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
+	"strings"
 )
 
 func main() {
@@ -55,22 +57,44 @@ type httpHeaders struct {
 }
 
 // Override types.DefaultHttpContext.
-func (ctx *httpHeaders) OnHttpRequestHeaders(numHeaders int, endOfStream bool) types.Action {
-	hs, err := proxywasm.GetHttpRequestHeaders()
-	var name string
-	for _, h := range hs {
-		if h[0] == "Name" {
-			name = h[1]
-		}
+func (ctx *httpHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.Action {
+	//1. get request body
+	body, err := proxywasm.GetHttpRequestBody(0, bodySize)
+	if err != nil {
+		proxywasm.LogErrorf("GetHttpRequestBody failed: %v", err)
+		return types.ActionPause
 	}
 
-	result, err := proxywasm.CallForeignFunction("SayHello", []byte(`{"service_name":"helloworld","name":"`+name+`_`+ID+`"}`))
+	//2. parse request param
+	bookName, err := getQueryParam(string(body), "name")
 	if err != nil {
-		proxywasm.LogErrorf("call foreign func failed: %v", err)
+		proxywasm.LogErrorf("param not found: %v", err)
+		return types.ActionPause
 	}
-	proxywasm.AppendHttpResponseBody(result)
+
+	//3. request function2 through ABI
+	inventories, err := proxywasm.InvokeService("id_2", "", bookName)
+	if err != nil {
+		proxywasm.LogErrorf("invoke service failed: %v", err)
+		return types.ActionPause
+	}
+
+	//4. return result
+	proxywasm.AppendHttpResponseBody([]byte("There are " + inventories + " inventories for " + bookName + "."))
 	return types.ActionContinue
 }
+
+func getQueryParam(body string, paramName string) (string, error) {
+	kvs := strings.Split(body, "&")
+	for _, kv := range kvs {
+		param := strings.Split(kv, "=")
+		if param[0] == paramName {
+			return param[1], nil
+		}
+	}
+	return "", errors.New("not found")
+}
+
 
 // Override types.DefaultHttpContext.
 func (ctx *httpHeaders) OnHttpStreamDone() {

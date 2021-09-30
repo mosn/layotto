@@ -18,7 +18,7 @@ package wasm
 
 import (
 	"github.com/stretchr/testify/assert"
-	"mosn.io/proxy-wasm-go-host/proxywasm"
+	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 	"testing"
 )
 
