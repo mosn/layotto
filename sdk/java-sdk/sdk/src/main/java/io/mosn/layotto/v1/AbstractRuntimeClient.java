@@ -46,7 +46,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
 
     @Override
     public void publishEvent(String pubsubName, String topicName, byte[] data) {
-        HashMap<String, String> metadata = new HashMap<>(2, 1);
+        Map<String, String> metadata = new HashMap<>(2, 1);
         this.publishEvent(pubsubName, topicName, data, RuntimeProperties.PUBSUB_CONTENT_TYPE.get(), metadata);
     }
 
@@ -106,7 +106,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
      */
     @Override
     public void saveState(String storeName, String key, Object value) {
-        HashMap<String, String> metadata = new HashMap<>(2, 1);
+        Map<String, String> metadata = new HashMap<>(2, 1);
         this.saveState(storeName, key, null, value, null, metadata);
     }
 
