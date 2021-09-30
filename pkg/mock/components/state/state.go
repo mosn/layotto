@@ -72,6 +72,14 @@ func (m *MockStore) BulkSet(arg0 []state.SetRequest) error {
 	return ret0
 }
 
+// BulkSet mocks base method.
+func (m *MockStore) Ping() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Ping")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
 // BulkSet indicates an expected call of BulkSet.
 func (mr *MockStoreMockRecorder) BulkSet(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()

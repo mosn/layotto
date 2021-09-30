@@ -72,8 +72,11 @@ service Runtime {
   // List all files
   rpc ListFile(ListFileRequest) returns (ListFileResp){}
 
-  //Delete specific file
+  // Delete specific file
   rpc DelFile(DelFileRequest) returns (google.protobuf.Empty){}
+
+  // Invokes binding data to specific output bindings
+  rpc InvokeBinding(InvokeBindingRequest) returns (InvokeBindingResponse) {}
 }
 
 message GetFileRequest {
@@ -596,4 +599,34 @@ message PublishEventRequest {
   // metadata property:
   // - key : the key of the message.
   map<string, string> metadata = 5;
+}
+
+// InvokeBindingRequest is the message to send data to output bindings
+message InvokeBindingRequest {
+  // The name of the output binding to invoke.
+  string name = 1;
+
+  // The data which will be sent to output binding.
+  bytes data = 2;
+
+  // The metadata passing to output binding components
+  //
+  // Common metadata property:
+  // - ttlInSeconds : the time to live in seconds for the message.
+  // If set in the binding definition will cause all messages to
+  // have a default time to live. The message ttl overrides any value
+  // in the binding definition.
+  map<string,string> metadata = 3;
+
+  // The name of the operation type for the binding to invoke
+  string operation = 4;
+}
+
+// InvokeBindingResponse is the message returned from an output binding invocation
+message InvokeBindingResponse {
+  // The data which will be sent to output binding.
+  bytes data = 1;
+
+  // The metadata returned from an external system
+  map<string,string> metadata = 2;
 }

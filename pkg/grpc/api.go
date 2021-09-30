@@ -23,7 +23,10 @@ import (
 	"io"
 	"strings"
 	"sync"
-	"sync/atomic"
+
+	"github.com/dapr/components-contrib/bindings"
+
+	"mosn.io/pkg/utils"
 
 	_ "net/http/pprof"
 
@@ -59,12 +62,10 @@ import (
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
-	"mosn.io/pkg/utils"
 )
 
 var (
 	ErrNoInstance = errors.New("no instance found")
-	streamId      int64
 	bytesPool     = sync.Pool{
 		New: func() interface{} {
 			// set size to 100kb
@@ -108,6 +109,8 @@ type API interface {
 	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
 	// Sequencer API
 	GetNextId(context.Context, *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
+	// InvokeBinding Binding API
+	InvokeBinding(context.Context, *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error)
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -122,6 +125,7 @@ type api struct {
 	fileOps                  map[string]file.File
 	lockStores               map[string]lock.LockStore
 	sequencers               map[string]sequencer.Store
+	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 }
 
 func NewAPI(
@@ -134,6 +138,7 @@ func NewAPI(
 	files map[string]file.File,
 	lockStores map[string]lock.LockStore,
 	sequencers map[string]sequencer.Store,
+	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
 ) API {
 	// filter out transactionalStateStores
 	transactionalStateStores := map[string]state.TransactionalStore{}
@@ -154,6 +159,7 @@ func NewAPI(
 		fileOps:                  files,
 		lockStores:               lockStores,
 		sequencers:               sequencers,
+		sendToOutputBindingFn:    sendToOutputBindingFn,
 	}
 }
 
@@ -775,49 +781,61 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	}
 }
 
-func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
-	id := atomic.AddInt64(&streamId, 1)
-	storeName := ""
-	var chunkNum int
-	for {
-		req, err := stream.Recv()
-		if err != nil && err != io.EOF {
-			//if client occur error, return nil
-			if storeName == "" {
-				return nil
-			}
-			a.fileOps[storeName].Complete(id, false)
-			return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
-		}
-		if err == io.EOF {
-			//if client send EOF directly, return nil
-			if storeName == "" {
-				return nil
-			}
-			if err := a.fileOps[storeName].Complete(id, true); err != nil {
-				return status.Errorf(codes.Internal, "put file fail, err: %+v", err)
-			}
-			log.DefaultLogger.Debugf("put file success")
-			stream.SendAndClose(&emptypb.Empty{})
-			return nil
-		}
+type putObjectStreamReader struct {
+	data   []byte
+	server runtimev1pb.Runtime_PutFileServer
+}
 
-		if storeName == "" {
-			storeName = req.StoreName
+func newPutObjectStreamReader(data []byte, server runtimev1pb.Runtime_PutFileServer) *putObjectStreamReader {
+	return &putObjectStreamReader{data: data, server: server}
+}
+
+func (r *putObjectStreamReader) Read(p []byte) (int, error) {
+	var count int
+	total := len(p)
+	for {
+		if len(r.data) > 0 {
+			n := copy(p[count:], r.data)
+			r.data = r.data[n:]
+			count += n
+			if count == total {
+				return count, nil
+			}
 		}
-		chunkNum++
-		if a.fileOps[req.StoreName] == nil {
-			return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		req, err := r.server.Recv()
+		if err != nil {
+			if err != io.EOF {
+				log.DefaultLogger.Errorf("recv data from grpc stream fail, err:%+v", err)
+			}
+			return count, err
 		}
-		st := &file.PutFileStu{FileName: req.Name, Data: req.Data, Metadata: req.Metadata, StreamId: id, ChunkNumber: chunkNum}
-		if err = a.fileOps[req.StoreName].Put(st); err != nil {
-			a.fileOps[storeName].Complete(id, false)
-			return status.Errorf(codes.Internal, err.Error())
-		}
+		r.data = req.Data
 	}
 }
 
-// List all files
+func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
+	req, err := stream.Recv()
+	if err != nil {
+		//if client send eof error directly, return nil
+		if err == io.EOF {
+			return nil
+		}
+		return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
+	}
+
+	if a.fileOps[req.StoreName] == nil {
+		return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+	}
+	fileReader := newPutObjectStreamReader(req.Data, stream)
+	st := &file.PutFileStu{DataStream: fileReader, FileName: req.Name, Metadata: req.Metadata}
+	if err = a.fileOps[req.StoreName].Put(st); err != nil {
+		return status.Errorf(codes.Internal, err.Error())
+	}
+	stream.SendAndClose(&empty.Empty{})
+	return nil
+}
+
+//ListFile list all files
 func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error) {
 	if a.fileOps[in.Request.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
@@ -829,7 +847,7 @@ func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*r
 	return &runtimev1pb.ListFileResp{FileName: resp.FilesName}, nil
 }
 
-//Delete specific file
+//DelFile delete specific file
 func (a *api) DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error) {
 	if a.fileOps[in.Request.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
@@ -995,4 +1013,28 @@ func (a *api) getNextIdFromComponent(ctx context.Context, store sequencer.Store,
 		next = resp.NextId
 	}
 	return next, err
+}
+
+func (a *api) InvokeBinding(ctx context.Context, in *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error) {
+	req := &bindings.InvokeRequest{
+		Metadata:  in.Metadata,
+		Operation: bindings.OperationKind(in.Operation),
+	}
+	if in.Data != nil {
+		req.Data = in.Data
+	}
+
+	r := &runtimev1pb.InvokeBindingResponse{}
+	resp, err := a.sendToOutputBindingFn(in.Name, req)
+	if err != nil {
+		err = status.Errorf(codes.Internal, messages.ErrInvokeOutputBinding, in.Name, err.Error())
+		log.DefaultLogger.Errorf("call out binding fail, err:%+v", err)
+		return r, err
+	}
+
+	if resp != nil {
+		r.Data = resp.Data
+		r.Metadata = resp.Metadata
+	}
+	return r, nil
 }

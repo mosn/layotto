@@ -10,5 +10,4 @@ type File interface {
 	Get(*GetFileStu) (io.ReadCloser, error)
 	List(*ListRequest) (*ListResp, error)
 	Del(*DelRequest) error
-	Complete(int64, bool) error
 }

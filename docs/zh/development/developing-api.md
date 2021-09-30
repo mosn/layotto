@@ -73,8 +73,8 @@ A: **本规范只限制“新增Layotto API的pr需要有哪些东西”（比�
 #### 2.3.1. Quick start
 需要有：
 
-- what 这API是干嘛的
-- what 这个quickstart是干嘛的，想实现啥效果，最好有个图解释下
+- 这API是干嘛的
+- 这个quickstart是干嘛的，想实现啥效果，最好有个图解释下
 - 操作步骤
 
 正例：[Dapr pub-sub quickstart](https://github.com/dapr/quickstarts/tree/v1.0.0/pub-sub) 在操作之前贴图解释下要做什么事情
