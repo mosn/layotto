@@ -27,7 +27,8 @@ import (
 	"github.com/dapr/components-contrib/bindings/http"
 	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/layotto/components/file"
-	"mosn.io/layotto/components/file/alicloud/oss"
+	alicloud_oss "mosn.io/layotto/components/file/alicloud/oss"
+	aws_oss "mosn.io/layotto/components/file/aws/oss"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/runtime/bindings"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
@@ -163,7 +164,8 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliOSS", oss.NewAliCloudOSS),
+			file.NewFileFactory("aliOSS", alicloud_oss.NewAliCloudOSS),
+			file.NewFileFactory("awsOSS", aws_oss.NewAwsOss)
 		),
 
 		// PubSub
