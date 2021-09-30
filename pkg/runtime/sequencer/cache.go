@@ -143,7 +143,7 @@ var rwLock sync.RWMutex
 
 func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequencer.GetNextIdRequest) (bool, int64, error) {
 
-	// 1 check support
+	// 1. check support
 	support, _, _ := store.GetSegment(&sequencer.GetSegmentRequest{
 		Key:  req.Key,
 		Size: 0,
@@ -154,7 +154,7 @@ func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequenc
 		return false, 0, nil
 	}
 
-	// 2 find the DoubleBuffer for this store and key
+	// 2. find the DoubleBuffer for this store and key
 	var d *DoubleBuffer
 	var err error
 	if _, ok := BufferCatch[req.Key]; !ok {
@@ -167,8 +167,8 @@ func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequenc
 		return true, 0, err
 	}
 
-	// 3 get the next id.
-	// The buffer should automatically load segment into cache if the cache is empty
+	// 3. get the next id.
+	// The buffer should automatically load segment into cache if the cache is (nearly) empty
 	id, err := d.getId()
 
 	if err != nil {
