@@ -18,7 +18,11 @@ func main() {
 	c := runtimev1pb.NewRuntimeClient(conn)
 	metaData := make(map[string]string)
 	metaData["token"] = "123"
+<<<<<<< HEAD
 	req := &runtimev1pb.InvokeBindingRequest{Name: "http", Operation: "get", Metadata: metaData, Data: []byte("auth data")}
+=======
+	req := &runtimev1pb.InvokeBindingRequest{Name: "hello", Operation: "get", Metadata: metaData, Data: []byte("auth data")}
+>>>>>>> upstream/main
 	resp, err := c.InvokeBinding(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)

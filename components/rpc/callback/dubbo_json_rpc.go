@@ -26,6 +26,7 @@ func init() {
 	RegisterBeforeInvoke(&beforeFactory{})
 }
 
+// beforeFactory is BeforeFactory implement
 type beforeFactory struct {
 }
 
@@ -37,6 +38,7 @@ func (b *beforeFactory) Init(json.RawMessage) error {
 	return nil
 }
 
+// Create is set some header before handle RPCRequest
 func (b *beforeFactory) Create() func(*rpc.RPCRequest) (*rpc.RPCRequest, error) {
 	return func(request *rpc.RPCRequest) (*rpc.RPCRequest, error) {
 		request.Header["x-services"] = []string{request.Id}
