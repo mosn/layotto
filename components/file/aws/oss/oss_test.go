@@ -34,7 +34,7 @@ func TestAwsOss_SelectClient(t *testing.T) {
 
 	meta := map[string]string{}
 	_, err = oss.selectClient(meta)
-	assert.Equal(t, err.Error(), "specific client not exist")
+	assert.Equal(t, err.Error(), "endpoint key not exist")
 
 	meta["endpoint"] = "protocol://service-code.region-code.amazonaws.com"
 	client, err := oss.selectClient(meta)

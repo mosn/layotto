@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	aws_config "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"io"
 	"mosn.io/layotto/components/file"
 )
 
@@ -114,9 +115,12 @@ func (a *AwsOss) Put(st *file.PutFileStu) error {
 // selectClient choose aws client from exist client-map, key is endpoint, value is client instance
 func (a *AwsOss) selectClient(meta map[string]string) (*s3.Client, error) {
 	if ep, ok := meta[endpointKey]; ok {
-		return a.client[ep], nil
+		if client, ok := a.client[ep]; ok {
+			return client, nil
+		}
+		return nil, errors.New("specific client not exist")
 	}
-	return nil, errors.New("specific client not exist")
+	return nil, errors.New("endpoint key not exist")
 }
 
 // Get object from aws oss
