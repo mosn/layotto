@@ -165,7 +165,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// File
 		runtime.WithFileFactory(
 			file.NewFileFactory("aliOSS", alicloud_oss.NewAliCloudOSS),
-			file.NewFileFactory("awsOSS", aws_oss.NewAwsOss)
+			file.NewFileFactory("awsOSS", aws_oss.NewAwsOss),
 		),
 
 		// PubSub
