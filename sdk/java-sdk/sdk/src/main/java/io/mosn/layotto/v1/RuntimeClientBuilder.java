@@ -1,7 +1,9 @@
 package io.mosn.layotto.v1;
 
+import com.google.errorprone.annotations.DoNotCall;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.domain.ApiProtocol;
 import io.mosn.layotto.v1.serializer.JSONSerializer;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
@@ -11,33 +13,21 @@ import spec.proto.runtime.v1.RuntimeGrpc;
 import spec.sdk.runtime.v1.client.RuntimeClient;
 
 import java.io.Closeable;
+import java.util.function.Supplier;
 
 /**
  * A builder for the RuntimeClient,
  */
 public class RuntimeClientBuilder {
 
-    private static final String DEFAULT_IP = "127.0.0.1";
+    private Supplier<String> ipSupplier = RuntimeProperties.IP;
+    private Supplier<Integer> portSupplier = RuntimeProperties.PORT;
+    private Supplier<Integer> timeoutMsSupplier = RuntimeProperties.TIMEOUT_MS;
 
-    private static final int DEFAULT_PORT = 34904;
+    private Supplier<ApiProtocol> protocolSupplier = RuntimeProperties.API_PROTOCOL;
 
-    private static final Logger DEFAULT_LOGGER = LoggerFactory.getLogger(RuntimeClient.class.getName());
-
-    private final static int DEFAULT_TIMEOUT_MS = 1000;
-
-    private int timeoutMs = DEFAULT_TIMEOUT_MS;
-
-    // TODO add Serializer
-
-    private String ip = DEFAULT_IP;
-
-    private int port = DEFAULT_PORT;
-
-    private ApiProtocol protocol = ApiProtocol.GRPC;
-
-    private Logger logger = DEFAULT_LOGGER;
-
-    private ObjectSerializer stateSerializer = new JSONSerializer();
+    private Supplier<Logger> loggerSupplier = () -> LoggerFactory.getLogger(RuntimeClient.class.getName());
+    private Supplier<ObjectSerializer> stateSerializerSupplier = JSONSerializer::new;
 
     /**
      * Creates a constructor for RuntimeClient.
@@ -49,7 +39,7 @@ public class RuntimeClientBuilder {
         if (ip == null || ip.isEmpty()) {
             throw new IllegalArgumentException("Invalid ip.");
         }
-        this.ip = ip;
+        this.ipSupplier = () -> ip;
         return this;
     }
 
@@ -57,7 +47,16 @@ public class RuntimeClientBuilder {
         if (port <= 0) {
             throw new IllegalArgumentException("Invalid port.");
         }
-        this.port = port;
+        this.portSupplier = () -> port;
+        return this;
+    }
+
+    @DoNotCall
+    public RuntimeClientBuilder withApiProtocol(ApiProtocol protocol) {
+        if (protocol == null) {
+            throw new IllegalArgumentException("Invalid protocol.");
+        }
+        this.protocolSupplier = () -> protocol;
         return this;
     }
 
@@ -65,7 +64,7 @@ public class RuntimeClientBuilder {
         if (timeoutMillisecond <= 0) {
             throw new IllegalArgumentException("Invalid timeout.");
         }
-        this.timeoutMs = timeoutMillisecond;
+        this.timeoutMsSupplier = () -> timeoutMillisecond;
         return this;
     }
 
@@ -73,7 +72,7 @@ public class RuntimeClientBuilder {
         if (logger == null) {
             throw new IllegalArgumentException("Invalid logger.");
         }
-        this.logger = logger;
+        this.loggerSupplier = () -> logger;
         return this;
     }
 
@@ -88,7 +87,7 @@ public class RuntimeClientBuilder {
             throw new IllegalArgumentException("State serializer is required");
         }
 
-        this.stateSerializer = stateSerializer;
+        this.stateSerializerSupplier = () -> stateSerializer;
         return this;
     }
 
@@ -99,30 +98,33 @@ public class RuntimeClientBuilder {
      * @throws IllegalStateException if any required field is missing
      */
     public RuntimeClient build() {
-        if (protocol == null) {
+        final ApiProtocol apiProtocol = protocolSupplier.get();
+        if (apiProtocol == null) {
             throw new IllegalStateException("Protocol is required.");
         }
-
-        switch (protocol) {
+        switch (apiProtocol) {
             case GRPC:
                 return buildGrpc();
             default:
-                throw new IllegalStateException("Unsupported protocol: " + protocol.name());
+                throw new IllegalStateException("Unsupported protocol: " + apiProtocol.name());
         }
     }
 
     private RuntimeClient buildGrpc() {
-        if (port <= 0) {
-            throw new IllegalArgumentException("Invalid port.");
-        }
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(ipSupplier.get(), portSupplier.get())
+                .usePlaintext()
+                .build();
         Closeable closeable = () -> {
             if (channel != null && !channel.isShutdown()) {
                 channel.shutdown();
             }
         };
         RuntimeGrpc.RuntimeBlockingStub blockingStub = RuntimeGrpc.newBlockingStub(channel);
-        return new RuntimeClientGrpc(logger, timeoutMs, stateSerializer, closeable, blockingStub);
+        return new RuntimeClientGrpc(
+                loggerSupplier.get(),
+                timeoutMsSupplier.get(),
+                stateSerializerSupplier.get(),
+                closeable,
+                blockingStub);
     }
-
 }

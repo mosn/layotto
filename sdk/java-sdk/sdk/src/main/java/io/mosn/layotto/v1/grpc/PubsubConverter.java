@@ -1,17 +1,18 @@
 package io.mosn.layotto.v1.grpc;
 
 import com.google.protobuf.ByteString;
+import spec.proto.runtime.v1.AppCallbackProto;
+import spec.proto.runtime.v1.RuntimeProto;
 import spec.sdk.runtime.v1.domain.pubsub.PublishEventRequest;
 import spec.sdk.runtime.v1.domain.pubsub.TopicEventRequest;
 import spec.sdk.runtime.v1.domain.pubsub.TopicEventResponse;
 import spec.sdk.runtime.v1.domain.pubsub.TopicSubscription;
-import spec.proto.runtime.v1.AppCallbackProto;
-import spec.proto.runtime.v1.RuntimeProto;
 
 /**
  * pubsub related converter
  */
 public class PubsubConverter {
+
     public static RuntimeProto.PublishEventRequest PublishEventRequest2Grpc(PublishEventRequest req) {
         if (req == null) {
             return null;
@@ -24,7 +25,6 @@ public class PubsubConverter {
         if (req.getMetadata() != null) {
             builder.putAllMetadata(req.getMetadata());
         }
-
         return builder.build();
     }
 
@@ -52,7 +52,6 @@ public class PubsubConverter {
         AppCallbackProto.TopicEventResponse result = AppCallbackProto.TopicEventResponse.newBuilder()
                 .setStatusValue(idx)
                 .build();
-
         return result;
     }
 
@@ -71,10 +70,9 @@ public class PubsubConverter {
         //.putAllMetadata(req.getMetadata())
         byte[] bytes = req.getData();
         if (bytes == null) {
-            bytes = new byte[] {};
+            bytes = new byte[]{};
         }
         builder.setData(ByteString.copyFrom(bytes));
-
         return builder.build();
     }
 
@@ -87,7 +85,7 @@ public class PubsubConverter {
         result.setContentType(req.getDataContentType());
         ByteString byteString = req.getData();
         if (byteString == null) {
-            result.setData(new byte[] {});
+            result.setData(new byte[]{});
         } else {
             result.setData(byteString.toByteArray());
         }
