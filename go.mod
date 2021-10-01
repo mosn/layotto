@@ -33,6 +33,7 @@ require (
 )
 
 replace (
+	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/google/cel-go => github.com/google/cel-go v0.5.1
 	github.com/tetratelabs/proxy-wasm-go-sdk => github.com/layotto/proxy-wasm-go-sdk v0.14.1-0.20210926122819-378cc27b0ffb
 	mosn.io/layotto/components => ./components
