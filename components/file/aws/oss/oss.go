@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021 Layotto Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package oss
 
 import (
@@ -17,6 +33,12 @@ const (
 	endpointKey              = "endpoint"
 	bucketKey                = "bucket"
 	defaultCredentialsSource = "provider"
+)
+
+var (
+	ErrMissingBucket    error = errors.New("missing bucket info in metadata")
+	ErrClientNotExist   error = errors.New("specific client not exist")
+	ErrEndPointNotExist error = errors.New("specific endpoing key not exist")
 )
 
 // AwsOss is a binding for aws oss storage
@@ -95,6 +117,8 @@ func (a *AwsOss) Put(st *file.PutFileStu) error {
 	)
 	if b, ok := st.Metadata[bucketKey]; ok {
 		bucket = b
+	} else {
+		return ErrMissingBucket
 	}
 	input := &s3.PutObjectInput{
 		Bucket: &bucket,
@@ -118,9 +142,9 @@ func (a *AwsOss) selectClient(meta map[string]string) (*s3.Client, error) {
 		if client, ok := a.client[ep]; ok {
 			return client, nil
 		}
-		return nil, errors.New("specific client not exist")
+		return nil, ErrClientNotExist
 	}
-	return nil, errors.New("endpoint key not exist")
+	return nil, ErrEndPointNotExist
 }
 
 // Get object from aws oss
@@ -131,6 +155,8 @@ func (a *AwsOss) Get(st *file.GetFileStu) (io.ReadCloser, error) {
 	)
 	if b, ok := st.Metadata[bucketKey]; ok {
 		bucket = b
+	} else {
+		return nil, ErrMissingBucket
 	}
 	input := &s3.GetObjectInput{
 		Bucket: &bucket,
@@ -152,6 +178,8 @@ func (a *AwsOss) List(st *file.ListRequest) (*file.ListResp, error) {
 	var bucket string
 	if b, ok := st.Metadata[bucketKey]; ok {
 		bucket = b
+	} else {
+		return nil, ErrMissingBucket
 	}
 	input := &s3.ListObjectsInput{
 		Bucket: &bucket,
@@ -179,6 +207,8 @@ func (a *AwsOss) Del(st *file.DelRequest) error {
 	)
 	if b, ok := st.Metadata[bucketKey]; ok {
 		bucket = b
+	} else {
+		return ErrMissingBucket
 	}
 	input := &s3.DeleteObjectInput{
 		Bucket: &bucket,
