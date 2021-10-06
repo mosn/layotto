@@ -32,12 +32,6 @@ const (
 	storageTypeKey = "storageType"
 )
 
-type PartUploadStu struct {
-	imur   oss.InitiateMultipartUploadResult
-	parts  []oss.UploadPart
-	bucket *oss.Bucket
-}
-
 // AliCloudOSS is a binding for an AliCloud OSS storage bucketKey
 type AliCloudOSS struct {
 	metadata map[string]*OssMetadata
@@ -171,6 +165,7 @@ func (s *AliCloudOSS) selectClientAndBucket(metaData map[string]string) (*oss.Bu
 	if _, ok := metaData[endpointKey]; ok {
 		ossClient = s.client[endpointKey]
 	} else {
+		// if user not specify endpoint, try to use default client
 		ossClient, err = s.selectClient()
 		if err != nil {
 			return nil, err
