@@ -28,7 +28,7 @@ In addition, we were surprised to find that a sidecar can do much more than that
 - State management
 - Event publish and subscribe
 - Health check, query runtime metadata
-- Multilingual programming based on WASM
+- [FaaS model based on WASM and Runtime](docs/en/start/faas/start.md)
 
 ## Project Architecture
 
@@ -78,9 +78,9 @@ See the quick start guide [configuration demo with apollo](https://mosn.io/layot
 
 [As the data plane of istio](https://mosn.io/layotto/#/en/start/istio/start)
 
-### Multilingual programming based on WASM
+### FaaS model based on WASM and Runtime
 
-[WASM on Layotto](https://mosn.io/layotto/#/en/start/wasm/start)
+[FaaS on Layotto](docs/en/start/faas/start.md)
 
 ## Design Documents
 

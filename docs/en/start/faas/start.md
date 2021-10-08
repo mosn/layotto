@@ -1,0 +1,143 @@
+## FaaS QuickStart
+
+### 一、Features
+
+Layotto supports loading and running functions in the form of wasm, and supports calling each other between functions and accessing infrastructure, such as Redis.
+
+Detailed design documents can refer to：[FaaS design](../../design/faas/faas-poc-design.md)
+
+### 二、Dependent software
+
+The following software needs to be installed to run this demo:
+
+1. [Docker Desktop](https://www.docker.com/products/docker-desktop)
+
+   Download the installation package from the official website and install it.
+
+2. [minikube](https://minikube.sigs.k8s.io/docs/start/)
+
+   Follow the instructions on the official website.
+
+3. [virtualbox](https://www.virtualbox.org/)
+   
+   Download the installation package from the official website and install it. You can also use [homebrew](https://brew.sh/) to install it on mac.
+
+
+### 三、Setup
+
+#### A、Install & run Redis
+
+The example only needs a Redis server that can be used normally. As for where it is installed, there is no special restriction. It can be a virtual machine, a local machine or a server. Here, the installation on mac is used as an example to introduce.
+
+```
+> brew install redis
+> redis-server /usr/local/etc/redis.conf
+```
+**Note: If you want external services to connect to redis, you need to modify the protected-mode in redis.conf to no.**
+
+#### B、Start minikube in virtualbox + containerd mode
+```
+> minikube start --driver=virtualbox --container-runtime=containerd
+```
+
+#### C、Compile & install Layotto
+```
+> git clone https://github.com/mosn/layotto.git
+> cd layotto
+> make build-linux-wasm-layotto
+> minikube cp ./layotto /home/docker/layotto
+> minikube cp ./demo/wasm/config.json /home/docker/config.json
+> minikube ssh
+> sudo chmod +x layotto
+> sudo mv layotto /usr/bin/
+```
+**Note: You need to modify the redis address as needed, the default address is: localhost:6379**
+
+#### D、Compile & install containerd-shim-layotto-v2
+
+```
+> git clone https://github.com/layotto/containerd-wasm.git
+> cd containerd-wasm
+> sh build.sh
+> minikube cp containerd-shim-layotto-v2 /home/docker/containerd-shim-layotto-v2
+> sudo chmod +x containerd-shim-layotto-v2
+> sudo mv containerd-shim-layotto-v2 /usr/bin/
+```
+
+#### E、Modify & restart containerd
+
+Add laytto runtime configuration.
+```
+> sudo vi /etc/containerd/config.toml
+[plugins.cri.containerd.runtimes.layotto]
+  runtime_type = "io.containerd.layotto.v2"
+```
+Restart containerd for the latest configuration to take effect
+```
+sudo systemctl restart containerd
+```
+
+#### F、Install wasmer
+```
+> curl -L -O https://github.com/wasmerio/wasmer/releases/download/2.0.0/wasmer-linux-amd64.tar.gz
+> tar zxvf wasmer-linux-amd64.tar.gz
+> sudo cp lib/libwasmer.so /usr/lib/libwasmer.so
+```
+
+### 四、Quickstart
+
+#### A、Start Layotto
+```
+> minikube ssh 
+> layotto start -c /home/docker/config.json
+```
+
+#### B、Create Layotto runtime
+```
+> kubectl apply -f ./demo/wasm/layotto-runtimeclass.yaml
+runtimeclass.node.k8s.io/layotto created
+```
+
+#### C、Create Function
+```
+> kubectl apply -f ./demo/wasm/function-1.yaml
+pod/function-1 created
+
+> kubectl apply -f ./demo/wasm/function-2.yaml
+pod/function-2 created
+```
+
+#### D、Write inventory to Redis
+```
+> redis-cli
+127.0.0.1:6379> set book1 100
+OK
+```
+
+#### E、Send request
+```
+> minikube ip
+192.168.99.117
+
+> curl -H 'id:id_1' '192.168.99.117:2045?name=book1'
+There are 100 inventories for book1.
+```
+
+### 五、Process introduction
+
+![img.png](../../../img/faas/faas-request-process.jpg)
+
+1. send http request to func1
+2. func1 calls func2 through Runtime ABI
+3. func2 calls redis through Runtime ABI
+4. Return results
+
+### 六、Note
+
+The FaaS model is currently in the POC stage, and the features are not complete. It will be improved in the following aspects in the future:
+1. Limit the maximum resources that can be used when the function is running, such as cpu, heap, stack, etc.
+2. The functions loaded and run by different Layotto can call each other.
+3. Fully integrate into the k8s ecology, such as reporting the use of resources to k8s, so that k8s can perform better scheduling. 
+4. Add more Runtime ABI.
+
+If you are interested in FaaS or have any questions or ideas, please leave a message in the issue area, we can build FaaS together!

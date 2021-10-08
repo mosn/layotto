@@ -1,11 +1,14 @@
-## FaaS概述
+## FaaS 快速开始
 
-### 功能介绍
+### 一、功能介绍
 
-Layotto支持FaaS，详细的设计文档可以参考
-[FaaS POC design](../../design/faas/faas-poc-design.md)
+Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function之间互相调用以及访问基础设施，如Redis。
 
-### 快速开始
+详细的设计文档可以参考：[FaaS design](../../design/faas/faas-poc-design.md)
+
+### 二、准备工作
+
+本机运行需要进行安装如下软件：
 
 1. [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
@@ -15,50 +18,127 @@ Layotto支持FaaS，详细的设计文档可以参考
 
    按照官网操作即可。
 
+3. [virtualbox](https://www.virtualbox.org/)
+   
+   直接官网下载安装包安装即可，mac下也可以使用 [homebrew](https://brew.sh/) 进行安装。
 
-1. 启动layotto
 
-```
-go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
-./layotto start -c ./demo/wasm/config.json
-```
+### 三、环境搭建
 
-2. 发送请求
-
-```
-curl -H 'name:Layotto' -H 'id:id_1' localhost:2045
-Hi, Layotto_id_1
-
-curl -H 'name:Layotto' -H 'id:id_2' localhost:2045
-Hi, Layotto_id_2
-```
-
-### 示例介绍
-
-工程里分别用golang、rust、assemblyscript开发了功能一致的wasm模块，它们的实现思路如下：
-1. 通过`proxy_on_request_headers`接收HTTP请求
-2. 从`proxy_get_header_map_pairs`中取出header中的name字段
-3. 使用`proxy_call_foreign_function`向Layotto发起调用
-4. 通过`proxy_set_buffer_bytes`把处理结果返回给调用端
-
-golang源码路径：
+#### A、安装&运行 Redis
+   
+这里只是需要一个可以正常使用 Redis 即可，至于 Redis 安装在哪里没有特别限制，可以是虚拟机里，也可以是本机或者服务器，这里以安装在 mac 为例进行介绍。
 
 ```
-layotto/demo/wasm/code/golang/
+> brew install redis
+> redis-server /usr/local/etc/redis.conf
+```
+注：如果想让外部服务连接 redis, 需要把 redis.conf 中的 protected-mode 修改为 no.
+
+#### B、以 virtualbox + containerd 模式启动 minikube
+```
+> minikube start --driver=virtualbox --container-runtime=containerd
 ```
 
-rust源码路径：
+#### C、安装 Layotto
+```
+> git clone https://github.com/mosn/layotto.git
+> cd layotto
+> make build-linux-wasm-layotto
+> minikube cp ./layotto /home/docker/layotto
+> minikube cp ./demo/wasm/config.json /home/docker/config.json
+> minikube ssh
+> sudo chmod +x layotto
+> sudo mv layotto /usr/bin/
+```
+注：需要按需修改 redis 地址，默认地址为：localhost:6379
+
+#### D、安装 containerd-shim-layotto-v2
 
 ```
-layotto/demo/wasm/code/rust/
+> git clone https://github.com/layotto/containerd-wasm.git
+> cd containerd-wasm
+> sh build.sh
+> minikube cp containerd-shim-layotto-v2 /home/docker/containerd-shim-layotto-v2
+> sudo chmod +x containerd-shim-layotto-v2
+> sudo mv containerd-shim-layotto-v2 /usr/bin/
 ```
 
-assemblyscript源码路径：
+#### E、修改&重启 containerd
+
+增加 laytto 运行时的配置。
+```
+> sudo vi /etc/containerd/config.toml
+[plugins.cri.containerd.runtimes.layotto]
+  runtime_type = "io.containerd.layotto.v2"
+```
+重启 containerd 让最新配置生效
+```
+sudo systemctl restart containerd
+```
+
+#### F、安装 wasmer
 
 ```
-layotto/demo/wasm/code/assemblyscript/
+> curl -L -O https://github.com/wasmerio/wasmer/releases/download/2.0.0/wasmer-linux-amd64.tar.gz
+> tar zxvf wasmer-linux-amd64.tar.gz
+> sudo cp lib/libwasmer.so /usr/lib/libwasmer.so
 ```
+
+### 四、快速开始
+
+#### A、启动 Layotto
+```
+> minikube ssh 
+> layotto start -c /home/docker/config.json
+```
+
+#### B、创建 Layotto 运行时
+```
+> kubectl apply -f ./demo/wasm/layotto-runtimeclass.yaml
+runtimeclass.node.k8s.io/layotto created
+```
+
+#### C、创建 Function
+```
+> kubectl apply -f ./demo/wasm/function-1.yaml
+pod/function-1 created
+
+> kubectl apply -f ./demo/wasm/function-2.yaml
+pod/function-2 created
+```
+
+#### D、写入库存数据到 Redis
+```
+> redis-cli
+127.0.0.1:6379> set book1 100
+OK
+```
+
+#### E、发送请求
+```
+> minikube ip
+192.168.99.117
+
+> curl -H 'id:id_1' '192.168.99.117:2045?name=book1'
+There are 100 inventories for book1.
+```
+
+### 五、示例流程介绍
+
+![img.png](../../../img/faas/faas-request-process.jpg)
+
+1. HTTP 请求 func1
+2. func1 通过 Runtime ABI 调用 func2
+3. func2 通过 Runtime ABI 调用 redis
+4. 依次返回结果
 
 ### 说明
 
-该功能目前仍处于试验阶段，社区里对于WASM跟宿主的交互API也不够统一，因此如果您有该模块的需求欢迎发表在issue区，我们一起建设WASM！
+目前整套 FaaS 模型处于 POC 阶段，功能还不够完善，后续会在以下几个方向上进一步探索完善：
+1. 对函数运行时可使用的最大资源进行限制，如cpu，heap，stack等。
+2. 由不同 Layotto 加载运行的函数之间可以互相调用。
+3. 充分融入k8s生态，比如上报使用资源给k8s，让k8s进行更好的调度。 
+4. 增加更多的 Runtime ABI。
+
+如果你对 FaaS 感兴趣或者有任何疑问或者想法，欢迎在 issue 区留言，我们一起建设 FaaS ！
