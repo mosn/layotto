@@ -54,7 +54,7 @@ type Filter struct {
 
 	destroyOnce sync.Once
 
-	requestBuffer api.IoBuffer
+	requestBuffer  api.IoBuffer
 	responseBuffer api.IoBuffer
 }
 
@@ -127,11 +127,11 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 		ctx:     ctx,
 		factory: factory,
 
-		contextID: newContextID(factory.RootContextID),
-		router:    factory.router,
-		plugins:   factory.plugins,
-		requestBuffer:    buffer.NewIoBuffer(100),
-		responseBuffer:    buffer.NewIoBuffer(100),
+		contextID:      newContextID(factory.RootContextID),
+		router:         factory.router,
+		plugins:        factory.plugins,
+		requestBuffer:  buffer.NewIoBuffer(100),
+		responseBuffer: buffer.NewIoBuffer(100),
 	}
 
 	return filter
@@ -238,8 +238,8 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 	}
 
 	if buf == nil {
-		 arg, _ := variable.GetString(ctx, types.VarHttpRequestArg)
-		 f.requestBuffer = buffer.NewIoBufferString(arg)
+		arg, _ := variable.GetString(ctx, types.VarHttpRequestArg)
+		f.requestBuffer = buffer.NewIoBufferString(arg)
 	} else {
 		f.requestBuffer = buf
 	}

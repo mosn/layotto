@@ -116,10 +116,10 @@ func reloadWasm(fullPath string) {
 			factory.config = append(factory.config, config)
 
 			wasmPlugin := &WasmPlugin{
-				pluginName: config.PluginName,
-				plugin: pw.GetPlugin(),
+				pluginName:    config.PluginName,
+				plugin:        pw.GetPlugin(),
 				rootContextID: config.RootContextID,
-				config: config,
+				config:        config,
 			}
 			factory.plugins[config.PluginName] = wasmPlugin
 

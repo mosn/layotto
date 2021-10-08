@@ -40,7 +40,7 @@ var Layotto grpc.API
 func (d *LayottoHandler) GetState(storeName string, key string) (string, proxywasm.WasmResult) {
 	req := &runtimev1pb.GetStateRequest{
 		StoreName: storeName,
-		Key: key,
+		Key:       key,
 	}
 	resp, err := Layotto.GetState(context.Background(), req)
 	if err != nil {
@@ -53,8 +53,8 @@ func (d *LayottoHandler) InvokeService(id string, method string, param string) (
 	req := &runtimev1pb.InvokeServiceRequest{
 		Id: id,
 		Message: &runtimev1pb.CommonInvokeRequest{
-			Method:      method,
-			Data:        &anypb.Any{Value: []byte(param)},
+			Method: method,
+			Data:   &anypb.Any{Value: []byte(param)},
 		},
 	}
 	resp, err := Layotto.InvokeService(context.Background(), req)
