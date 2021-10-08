@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"time"
 
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 
@@ -20,7 +21,7 @@ func TestGet() {
 	}
 
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "client"}
+	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "fileName"}
 	cli, err := c.GetFile(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)
@@ -35,7 +36,7 @@ func TestGet() {
 		}
 		pic = append(pic, resp.Data...)
 	}
-	ioutil.WriteFile("client", pic, os.ModePerm)
+	ioutil.WriteFile("fileName", pic, os.ModePerm)
 }
 
 func TestPut() {
@@ -47,13 +48,13 @@ func TestPut() {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "client", Metadata: meta}
+	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "fileName", Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
 	if err != nil {
 		fmt.Printf("put file failed:%+v", err)
 		return
 	}
-	fileHandle, err := os.Open("client")
+	fileHandle, err := os.Open("fileName")
 	if err != nil {
 		fmt.Println("open file fail")
 		return
@@ -113,7 +114,7 @@ func TestDel() {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: "fileName.jpg", Metadata: meta}
+	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: "fileName", Metadata: meta}
 	listReq := &runtimev1pb.DelFileRequest{Request: req}
 	_, err = c.DelFile(context.Background(), listReq)
 	if err != nil {
@@ -125,11 +126,11 @@ func TestDel() {
 
 func main() {
 	TestGet()
-	//time.Sleep(5 * time.Second)
-	//TestDel()
-	//time.Sleep(5 * time.Second)
-	//TestPut()
-	//TestList()
-	//TestDel()
-	//TestList()
+	time.Sleep(5 * time.Second)
+	TestDel()
+	time.Sleep(5 * time.Second)
+	TestPut()
+	TestList()
+	TestDel()
+	TestList()
 }
