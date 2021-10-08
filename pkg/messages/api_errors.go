@@ -44,4 +44,7 @@ const (
 	ErrSequencerStoresNotConfigured = "Sequencer store is not configured"
 	ErrSequencerKeyEmpty            = "Key is empty in sequencer store %s"
 	ErrSequencerStoreNotFound       = "Sequencer store %s not found"
+
+	// Binding.
+	ErrInvokeOutputBinding = "error when invoke output binding %s: %s"
 )

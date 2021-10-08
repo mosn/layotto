@@ -7,15 +7,20 @@ Layotto支持加载编译好的WASM文件，并通过`proxy_abi_version_0_2_0`�
 ### 快速开始
 
 1. 启动layotto
+
 ```
 go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
 ./layotto start -c ./demo/wasm/config.json
 ```
 
 2. 发送请求
+
 ```
-curl -H 'name:Layotto' localhost:2045
-Hi, Layotto
+curl -H 'name:Layotto' -H 'id:id_1' localhost:2045
+Hi, Layotto_id_1
+
+curl -H 'name:Layotto' -H 'id:id_2' localhost:2045
+Hi, Layotto_id_2
 ```
 
 ### 示例介绍
@@ -27,16 +32,19 @@ Hi, Layotto
 4. 通过`proxy_set_buffer_bytes`把处理结果返回给调用端
 
 golang源码路径：
+
 ```
 layotto/demo/wasm/code/golang/
 ```
 
 rust源码路径：
+
 ```
 layotto/demo/wasm/code/rust/
 ```
 
 assemblyscript源码路径：
+
 ```
 layotto/demo/wasm/code/assemblyscript/
 ```
