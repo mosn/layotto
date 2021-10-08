@@ -23,31 +23,44 @@ import (
 	"mosn.io/pkg/log"
 )
 
+// RegisterBeforeInvoke is set BeforeFactory
 func RegisterBeforeInvoke(f BeforeFactory) {
 	beforeInvokeRegistry[f.Name()] = f
 }
 
+// RegisterAfterInvoke is set AfterFactory
 func RegisterAfterInvoke(f AfterFactory) {
 	afterInvokeRegistry[f.Name()] = f
 }
 
+// BeforeFactory is handled RPCRequest
 type BeforeFactory interface {
+	// Name is create beforeFactory name
 	Name() string
+	// Init is init RawMessage
 	Init(json.RawMessage) error
+	// Create is exec specific logic
 	Create() func(*rpc.RPCRequest) (*rpc.RPCRequest, error)
 }
 
+// AfterFactory is handled RPCResponse
 type AfterFactory interface {
+	// Name is create afterFactory name
 	Name() string
+	// Init is init RawMessage
 	Init(json.RawMessage) error
+	// Create is exec specific logic
 	Create() func(*rpc.RPCResponse) (*rpc.RPCResponse, error)
 }
 
 var (
+	// to storage BeforeFactory
 	beforeInvokeRegistry = map[string]BeforeFactory{}
+	// to storage AfterFactory
 	afterInvokeRegistry  = map[string]AfterFactory{}
 )
 
+// NewCallback is created Callback
 func NewCallback() rpc.Callback {
 	return &callback{}
 }
@@ -57,6 +70,7 @@ type callback struct {
 	afterInvoke  []func(*rpc.RPCResponse) (*rpc.RPCResponse, error)
 }
 
+// AddBeforeInvoke is add beforeInvoke into callback.beforeInvoke
 func (c *callback) AddBeforeInvoke(conf rpc.CallbackFunc) {
 	f, ok := beforeInvokeRegistry[conf.Name]
 	if !ok {
@@ -70,6 +84,7 @@ func (c *callback) AddBeforeInvoke(conf rpc.CallbackFunc) {
 	c.beforeInvoke = append(c.beforeInvoke, f.Create())
 }
 
+// AddAfterInvoke is add beforeInvoke into callback.afterInvoke
 func (c *callback) AddAfterInvoke(conf rpc.CallbackFunc) {
 	f, ok := afterInvokeRegistry[conf.Name]
 	if !ok {
@@ -83,6 +98,7 @@ func (c *callback) AddAfterInvoke(conf rpc.CallbackFunc) {
 	c.afterInvoke = append(c.afterInvoke, f.Create())
 }
 
+// BeforeInvoke is get RPCRequest in callback.beforeInvoke
 func (c *callback) BeforeInvoke(request *rpc.RPCRequest) (*rpc.RPCRequest, error) {
 	var err error
 	for _, cb := range c.beforeInvoke {
@@ -93,6 +109,7 @@ func (c *callback) BeforeInvoke(request *rpc.RPCRequest) (*rpc.RPCRequest, error
 	return request, err
 }
 
+// AfterInvoke is get RPCResponse in callback.afterInvoke
 func (c *callback) AfterInvoke(response *rpc.RPCResponse) (*rpc.RPCResponse, error) {
 	var err error
 	for _, cb := range c.afterInvoke {

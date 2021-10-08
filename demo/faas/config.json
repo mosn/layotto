@@ -66,7 +66,7 @@
                   "instance_num": 1,
                   "vm_config": {
                     "engine": "wasmer",
-                    "path": "/Users/gujin/workspace/go/src/layotto/demo/wasm/code/golang/client/function_1.wasm"
+                    "path": "demo/faas/code/golang/client/function_1.wasm"
                   }
                 },
                 "function2": {
@@ -74,7 +74,7 @@
                   "instance_num": 1,
                   "vm_config": {
                     "engine": "wasmer",
-                    "path": "/Users/gujin/workspace/go/src/layotto/demo/wasm/code/golang/server/function_2.wasm"
+                    "path": "demo/faas/code/golang/server/function_2.wasm"
                   }
                 }
               }

@@ -43,6 +43,7 @@ var (
 	registry = map[string]func(config ChannelConfig) (rpc.Channel, error){}
 )
 
+// ChannelConfig is Channel config
 type ChannelConfig struct {
 	Protocol string                 `json:"protocol"`
 	Listener string                 `json:"listener"`
@@ -50,6 +51,7 @@ type ChannelConfig struct {
 	Ext      map[string]interface{} `json:"ext"`
 }
 
+// GetChannel is get rpc.Channel by config.Protocol
 func GetChannel(config ChannelConfig) (rpc.Channel, error) {
 	c, ok := registry[config.Protocol]
 	if !ok {
@@ -58,42 +60,52 @@ func GetChannel(config ChannelConfig) (rpc.Channel, error) {
 	return c(config)
 }
 
+// RegistChannel is set protocol
 func RegistChannel(proto string, f func(config ChannelConfig) (rpc.Channel, error)) {
 	registry[proto] = f
 }
 
+// simulate tcp connect
 type fakeTcpConn struct {
 	c net.Conn
 }
 
+// read data
 func (t *fakeTcpConn) Read(b []byte) (n int, err error) {
 	return t.c.Read(b)
 }
 
+// write data
 func (t *fakeTcpConn) Write(b []byte) (n int, err error) {
 	return t.c.Write(b)
 }
 
+// Close is closed connected
 func (t *fakeTcpConn) Close() error {
 	return t.c.Close()
 }
 
+// LocalAddr is get local net address
 func (t *fakeTcpConn) LocalAddr() net.Addr {
 	return &net.TCPAddr{}
 }
 
+// RemoteAddr is get remote address
 func (t *fakeTcpConn) RemoteAddr() net.Addr {
 	return &net.TCPAddr{}
 }
 
+// SetDeadline is set deadline
 func (t *fakeTcpConn) SetDeadline(time time.Time) error {
 	return t.c.SetDeadline(time)
 }
 
+// SetReadDeadline is set read deadline
 func (t *fakeTcpConn) SetReadDeadline(time time.Time) error {
 	return t.c.SetReadDeadline(time)
 }
 
+// SetWriteDeadline is set write deadline
 func (t fakeTcpConn) SetWriteDeadline(time time.Time) error {
 	return t.c.SetWriteDeadline(time)
 }
