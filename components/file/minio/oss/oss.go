@@ -28,16 +28,18 @@ import (
 )
 
 const (
+	listPrefix  = "listPrefix"
 	endpointKey = "endpoint"
 	bucketKey   = "bucket"
 	fileSize    = "fileSize"
 )
 
 var (
-	ErrMissingBucket   error = errors.New("missing bucket info in metadata")
-	ErrMissingEndPoint error = errors.New("missing endpoint info in metadata")
-	ErrClientNotExist  error = errors.New("specific client not exist")
-	ErrInvalidConfig   error = errors.New("invalid minio oss config")
+	ErrMissingBucket      error = errors.New("missing bucket info in metadata")
+	ErrMissingEndPoint    error = errors.New("missing endpoint info in metadata")
+	ErrClientNotExist     error = errors.New("specific client not exist")
+	ErrInvalidConfig      error = errors.New("invalid minio oss config")
+	ErrNotSpecifyEndPoint error = errors.New("not specify endpoint in metadata")
 )
 
 type MinioOss struct {
@@ -46,11 +48,11 @@ type MinioOss struct {
 }
 
 type MinioMetaData struct {
-	Region          string `json:"region`
+	Region          string `json:"region"`
 	EndPoint        string `json:"endpoint"`
 	AccessKeyID     string `json:"accessKeyID"`
 	AccessKeySecret string `json:"accessKeySecret"`
-	SSL             bool   `json:"SSL`
+	SSL             bool   `json:"SSL"`
 }
 
 func NewMinioOss() file.File {
@@ -93,6 +95,7 @@ func (m *MinioOss) Put(st *file.PutFileStu) error {
 	if err != nil {
 		return err
 	}
+	// specify file size from metadata, default unknown size is -1
 	if info, ok := st.Metadata[fileSize]; ok {
 		size, err = strconv.ParseInt(info, 10, 64)
 		if err != nil {
@@ -126,11 +129,49 @@ func (m *MinioOss) Get(st *file.GetFileStu) (io.ReadCloser, error) {
 }
 
 func (m *MinioOss) List(st *file.ListRequest) (*file.ListResp, error) {
-	return nil, nil
+	var (
+		bucket string
+		prefix string
+		ok     bool
+		resp   = &file.ListResp{}
+	)
+	if bucket, ok = st.Metadata[endpointKey]; !ok {
+		return nil, ErrMissingBucket
+	}
+	if p, ok1 := st.Metadata[listPrefix]; ok1 {
+		prefix = p
+	}
+	doneCh := make(chan struct{})
+	// Indicate to our routine to exit cleanly upon return.
+	defer close(doneCh)
+	isRecursive := true
+	client, err := m.selectClient(st.Metadata)
+	if err != nil {
+		return nil, err
+	}
+	objectCh := client.ListObjects(bucket, prefix, isRecursive, doneCh)
+	for object := range objectCh {
+		if object.Err != nil {
+			continue
+		}
+		resp.FilesName = append(resp.FilesName, object.Key)
+	}
+	return resp, nil
 }
 
 func (m *MinioOss) Del(st *file.DelRequest) error {
-	return nil
+	var (
+		bucket string
+		ok     bool
+	)
+	if bucket, ok = st.Metadata[endpointKey]; !ok {
+		return ErrMissingBucket
+	}
+	client, err := m.selectClient(st.Metadata)
+	if err != nil {
+		return err
+	}
+	return client.RemoveObject(bucket, st.FileName)
 }
 
 func (m *MinioOss) createOssClient(meta *MinioMetaData) (*minio.Client, error) {
@@ -146,8 +187,12 @@ func (m *MinioOss) selectClient(meta map[string]string) (client *minio.Client, e
 		ok       bool
 	)
 	if endpoint, ok = meta[endpointKey]; !ok {
-		err = ErrMissingEndPoint
-		return
+		if len(m.client) == 1 {
+			for _, client := range m.client {
+				return client, nil
+			}
+		}
+		return nil, ErrNotSpecifyEndPoint
 	}
 	if client, ok = m.client[endpoint]; !ok {
 		err = ErrClientNotExist
