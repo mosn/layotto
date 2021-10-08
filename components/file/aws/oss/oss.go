@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package oss
 
 import (
@@ -41,13 +41,13 @@ var (
 	ErrEndPointNotExist error = errors.New("specific endpoing key not exist")
 )
 
-// AwsOss is a binding for aws oss storage
+// AwsOss is a binding for aws oss storage.
 type AwsOss struct {
 	client map[string]*s3.Client
 	meta   map[string]*AwsOssMetaData
 }
 
-// AwsOssMetaData describe a aws-oss instance
+// AwsOssMetaData describe a aws-oss instance.
 type AwsOssMetaData struct {
 	Region          string `json:"region"`   // eg. us-west-2
 	EndPoint        string `json:"endpoint"` // eg. protocol://service-code.region-code.amazonaws.com
@@ -62,7 +62,7 @@ func NewAwsOss() file.File {
 	}
 }
 
-// Init instance by config
+// Init instance by config.
 func (a *AwsOss) Init(config *file.FileConfig) error {
 	m := make([]*AwsOssMetaData, 0)
 	err := json.Unmarshal(config.Metadata, &m)
@@ -83,15 +83,15 @@ func (a *AwsOss) Init(config *file.FileConfig) error {
 	return nil
 }
 
-// isAwsMetaValid check if the metadata valid
+// isAwsMetaValid check if the metadata valid.
 func (am *AwsOssMetaData) isAwsMetaValid() bool {
-	if am.AccessKeySecret == "" || am.EndPoint == "" || am.AccessKeyID == "" || am.Region == "" {
+	if am.AccessKeySecret == "" || am.EndPoint == "" || am.AccessKeyID == "" {
 		return false
 	}
 	return true
 }
 
-// createOssClient by input meta info
+// createOssClient by input meta info.
 func (a *AwsOss) createOssClient(meta *AwsOssMetaData) (*s3.Client, error) {
 	optFunc := []func(options *aws_config.LoadOptions) error{
 		aws_config.WithRegion(meta.Region),
@@ -109,7 +109,7 @@ func (a *AwsOss) createOssClient(meta *AwsOssMetaData) (*s3.Client, error) {
 	return s3.NewFromConfig(cfg), nil
 }
 
-// Put file to aws oss
+// Put file to aws oss.
 func (a *AwsOss) Put(st *file.PutFileStu) error {
 	var (
 		bucket string
@@ -136,18 +136,24 @@ func (a *AwsOss) Put(st *file.PutFileStu) error {
 	return nil
 }
 
-// selectClient choose aws client from exist client-map, key is endpoint, value is client instance
+// selectClient choose aws client from exist client-map, key is endpoint, value is client instance.
 func (a *AwsOss) selectClient(meta map[string]string) (*s3.Client, error) {
+	// exist specific client with key endpoint
 	if ep, ok := meta[endpointKey]; ok {
 		if client, ok := a.client[ep]; ok {
 			return client, nil
 		}
-		return nil, ErrClientNotExist
 	}
-	return nil, ErrEndPointNotExist
+	// if not specify endpoint, select one
+	if len(a.client) == 1 {
+		for _, client := range a.client {
+			return client, nil
+		}
+	}
+	return nil, ErrClientNotExist
 }
 
-// Get object from aws oss
+// Get object from aws oss.
 func (a *AwsOss) Get(st *file.GetFileStu) (io.ReadCloser, error) {
 	var (
 		bucket string
@@ -173,7 +179,7 @@ func (a *AwsOss) Get(st *file.GetFileStu) (io.ReadCloser, error) {
 	return ob.Body, nil
 }
 
-// List objects from aws oss
+// List objects from aws oss.
 func (a *AwsOss) List(st *file.ListRequest) (*file.ListResp, error) {
 	var bucket string
 	if b, ok := st.Metadata[bucketKey]; ok {
@@ -199,7 +205,7 @@ func (a *AwsOss) List(st *file.ListRequest) (*file.ListResp, error) {
 	return &file.ListResp{FilesName: ret}, nil
 }
 
-// Del object in aws oss
+// Del object in aws oss.
 func (a *AwsOss) Del(st *file.DelRequest) error {
 	var (
 		bucket string
