@@ -19,6 +19,7 @@
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - [trace管理](zh/start/trace/trace.md)
     - [使用WASM进行多语言编程](zh/start/wasm/start.md)
+    - [OSS访问文件](zh/start/file/start.md)
 - 用户手册
     - 接口文档
         - [File API](zh/api_reference/file/file.md)
@@ -48,10 +49,8 @@
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)
             - [Apollo](zh/component_specs/configuration/apollo.md)
-        - File
+        - [File](zh/component_specs/file/common.md)
             - [OSS](zh/component_specs/file/oss.md)
-            - [Etcd](zh/component_specs/configuration/etcd.md)        
-            - [Apollo](zh/component_specs/configuration/apollo.md)        
         - [Sequencer](zh/component_specs/sequencer/common.md)
             - [Etcd](zh/component_specs/sequencer/etcd.md)
             - [Redis](zh/component_specs/sequencer/redis.md)

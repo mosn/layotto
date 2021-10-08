@@ -6,14 +6,13 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"time"
 
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 
 	"google.golang.org/grpc"
 )
 
-func TestGet() {
+func TestGet(fileName string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
@@ -21,7 +20,7 @@ func TestGet() {
 	}
 
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "fileName"}
+	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: fileName}
 	cli, err := c.GetFile(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)
@@ -36,10 +35,10 @@ func TestGet() {
 		}
 		pic = append(pic, resp.Data...)
 	}
-	ioutil.WriteFile("fileName", pic, os.ModePerm)
+	ioutil.WriteFile(fileName, pic, os.ModePerm)
 }
 
-func TestPut() {
+func TestPut(fileName string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
@@ -48,13 +47,13 @@ func TestPut() {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "fileName", Metadata: meta}
+	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: fileName, Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
 	if err != nil {
 		fmt.Printf("put file failed:%+v", err)
 		return
 	}
-	fileHandle, err := os.Open("fileName")
+	fileHandle, err := os.Open(fileName)
 	if err != nil {
 		fmt.Println("open file fail")
 		return
@@ -86,7 +85,7 @@ func TestPut() {
 	}
 }
 
-func TestList() {
+func TestList(bucketName string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
@@ -95,7 +94,7 @@ func TestList() {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: "bucketName", Metadata: meta}
+	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: bucketName, Metadata: meta}
 	listReq := &runtimev1pb.ListFileRequest{Request: req}
 	resp, err := c.ListFile(context.Background(), listReq)
 	if err != nil {
@@ -105,7 +104,7 @@ func TestList() {
 	fmt.Printf("files under bucket is: %+v", resp.FileName)
 }
 
-func TestDel() {
+func TestDel(fileName string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
@@ -114,7 +113,7 @@ func TestDel() {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: "fileName", Metadata: meta}
+	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: fileName, Metadata: meta}
 	listReq := &runtimev1pb.DelFileRequest{Request: req}
 	_, err = c.DelFile(context.Background(), listReq)
 	if err != nil {
@@ -125,12 +124,20 @@ func TestDel() {
 }
 
 func main() {
-	TestGet()
-	time.Sleep(5 * time.Second)
-	TestDel()
-	time.Sleep(5 * time.Second)
-	TestPut()
-	TestList()
-	TestDel()
-	TestList()
+	if len(os.Args) < 3 {
+		fmt.Printf("you can use client like: client put/get/del/list fileName/directryName")
+		return
+	}
+	if os.Args[1] == "put" {
+		TestPut(os.Args[2])
+	}
+	if os.Args[1] == "get" {
+		TestGet(os.Args[2])
+	}
+	if os.Args[1] == "del" {
+		TestDel(os.Args[2])
+	}
+	if os.Args[1] == "list" {
+		TestList(os.Args[2])
+	}
 }
