@@ -88,7 +88,7 @@ func (m *MinioOss) Put(st *file.PutFileStu) error {
 		ok     bool
 		size   int64 = -1
 	)
-	if bucket, ok = st.Metadata[endpointKey]; !ok {
+	if bucket, ok = st.Metadata[bucketKey]; !ok {
 		return ErrMissingBucket
 	}
 	client, err := m.selectClient(st.Metadata)
@@ -114,7 +114,7 @@ func (m *MinioOss) Get(st *file.GetFileStu) (io.ReadCloser, error) {
 		bucket string
 		ok     bool
 	)
-	if bucket, ok = st.Metadata[endpointKey]; !ok {
+	if bucket, ok = st.Metadata[bucketKey]; !ok {
 		return nil, ErrMissingBucket
 	}
 	client, err := m.selectClient(st.Metadata)
@@ -135,7 +135,7 @@ func (m *MinioOss) List(st *file.ListRequest) (*file.ListResp, error) {
 		ok     bool
 		resp   = &file.ListResp{}
 	)
-	if bucket, ok = st.Metadata[endpointKey]; !ok {
+	if bucket, ok = st.Metadata[bucketKey]; !ok {
 		return nil, ErrMissingBucket
 	}
 	if p, ok1 := st.Metadata[listPrefix]; ok1 {
@@ -164,7 +164,7 @@ func (m *MinioOss) Del(st *file.DelRequest) error {
 		bucket string
 		ok     bool
 	)
-	if bucket, ok = st.Metadata[endpointKey]; !ok {
+	if bucket, ok = st.Metadata[bucketKey]; !ok {
 		return ErrMissingBucket
 	}
 	client, err := m.selectClient(st.Metadata)
