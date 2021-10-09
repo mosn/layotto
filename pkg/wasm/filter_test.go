@@ -24,9 +24,9 @@ import (
 
 func TestMapEncodeAndDecode(t *testing.T) {
 	m := map[string]string{
-		"a":"a",
-		"b":"b",
-		"c":"c",
+		"a": "a",
+		"b": "b",
+		"c": "c",
 	}
 	b := common.EncodeMap(m)
 	n := common.DecodeMap(b)
