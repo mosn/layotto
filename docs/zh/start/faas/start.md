@@ -46,12 +46,14 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 > cd layotto
 > make build-linux-wasm-layotto
 > minikube cp ./layotto /home/docker/layotto
-> minikube cp ./demo/wasm/config.json /home/docker/config.json
+> minikube cp ./demo/faas/config.json /home/docker/config.json
 > minikube ssh
 > sudo chmod +x layotto
 > sudo mv layotto /usr/bin/
 ```
-注：需要按需修改 redis 地址，默认地址为：localhost:6379
+**注1：需要把`./demo/faas/config.json`中的 redis 地址修改为实际地址，默认地址为：localhost:6379。**
+
+**注2：需要把`./demo/faas/config.json`中的 wasm 文件的路径修改为`/home/docker/function_1.wasm`跟`/home/docker/function_2.wasm`**
 
 #### D、安装 containerd-shim-layotto-v2
 
@@ -95,16 +97,16 @@ sudo systemctl restart containerd
 
 #### B、创建 Layotto 运行时
 ```
-> kubectl apply -f ./demo/wasm/layotto-runtimeclass.yaml
+> kubectl apply -f ./demo/faas/layotto-runtimeclass.yaml
 runtimeclass.node.k8s.io/layotto created
 ```
 
 #### C、创建 Function
 ```
-> kubectl apply -f ./demo/wasm/function-1.yaml
+> kubectl apply -f ./demo/faas/function-1.yaml
 pod/function-1 created
 
-> kubectl apply -f ./demo/wasm/function-2.yaml
+> kubectl apply -f ./demo/faas/function-2.yaml
 pod/function-2 created
 ```
 

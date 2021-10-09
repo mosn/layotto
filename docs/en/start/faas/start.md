@@ -1,12 +1,12 @@
 ## FaaS QuickStart
 
-### 一、Features
+### 1. Features
 
 Layotto supports loading and running functions in the form of wasm, and supports calling each other between functions and accessing infrastructure, such as Redis.
 
 Detailed design documents can refer to：[FaaS design](../../design/faas/faas-poc-design.md)
 
-### 二、Dependent software
+### 2. Dependent software
 
 The following software needs to be installed to run this demo:
 
@@ -23,7 +23,7 @@ The following software needs to be installed to run this demo:
    Download the installation package from the official website and install it. You can also use [homebrew](https://brew.sh/) to install it on mac.
 
 
-### 三、Setup
+### 3. Setup
 
 #### A、Install & run Redis
 
@@ -46,12 +46,14 @@ The example only needs a Redis server that can be used normally. As for where it
 > cd layotto
 > make build-linux-wasm-layotto
 > minikube cp ./layotto /home/docker/layotto
-> minikube cp ./demo/wasm/config.json /home/docker/config.json
+> minikube cp ./demo/faas/config.json /home/docker/config.json
 > minikube ssh
 > sudo chmod +x layotto
 > sudo mv layotto /usr/bin/
 ```
-**Note: You need to modify the redis address as needed, the default address is: localhost:6379**
+**Note1: You need to modify the redis address as needed, the default address is: localhost:6379**
+
+**Note2: Need to modify the path of the wasm file in `./demo/faas/config.json` to `/home/docker/function_1.wasm` and `/home/docker/function_2.wasm`**
 
 #### D、Compile & install containerd-shim-layotto-v2
 
@@ -84,7 +86,7 @@ sudo systemctl restart containerd
 > sudo cp lib/libwasmer.so /usr/lib/libwasmer.so
 ```
 
-### 四、Quickstart
+### 4. Quickstart
 
 #### A、Start Layotto
 ```
@@ -94,16 +96,16 @@ sudo systemctl restart containerd
 
 #### B、Create Layotto runtime
 ```
-> kubectl apply -f ./demo/wasm/layotto-runtimeclass.yaml
+> kubectl apply -f ./demo/faas/layotto-runtimeclass.yaml
 runtimeclass.node.k8s.io/layotto created
 ```
 
 #### C、Create Function
 ```
-> kubectl apply -f ./demo/wasm/function-1.yaml
+> kubectl apply -f ./demo/faas/function-1.yaml
 pod/function-1 created
 
-> kubectl apply -f ./demo/wasm/function-2.yaml
+> kubectl apply -f ./demo/faas/function-2.yaml
 pod/function-2 created
 ```
 
@@ -123,7 +125,7 @@ OK
 There are 100 inventories for book1.
 ```
 
-### 五、Process introduction
+### 5. Process introduction
 
 ![img.png](../../../img/faas/faas-request-process.jpg)
 
@@ -132,7 +134,7 @@ There are 100 inventories for book1.
 3. func2 calls redis through Runtime ABI
 4. Return results
 
-### 六、Note
+### 6. Note
 
 The FaaS model is currently in the POC stage, and the features are not complete. It will be improved in the following aspects in the future:
 1. Limit the maximum resources that can be used when the function is running, such as cpu, heap, stack, etc.
