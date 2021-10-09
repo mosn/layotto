@@ -85,7 +85,6 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 			if err != nil {
 				config.PluginName = pluginName
 				addWatchFile(config, factory)
-				log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to add plugin, err: %v", err)
 				continue
 			}
 
