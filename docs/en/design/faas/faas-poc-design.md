@@ -1,6 +1,6 @@
 ## FaaS design document
 
-### 一、Architecture
+### 1. Architecture
 
 ![img.png](../../../img/faas/faas-design.jpg)
 
@@ -8,7 +8,7 @@ Incorporating into the k8s life cycle management and scheduling strategy, the Co
 
 Thanks to the excellent sandbox isolation environment of WebAssembly, Layotto as a function base can load and run multiple wasm functions. Although they all run in the same process, they do not affect each other. Compared with docker, this idea of nanoprocess can make fuller use of resources.
 
-### 二、Core components
+### 2. Core components
 
 #### A、Function
 
@@ -30,7 +30,7 @@ Based on the V2 interface definition of Containerd, the runtime logic of the con
 
 The current container scheduling standards, life cycle management and scheduling strategies are excellent. Layotto chose to use the containerd in order to perfectly integrate the scheduling of functions with the k8s ecology.
 
-### 三、Runtime ABI
+### 3. Runtime ABI
 
 #### A. [proxy-wasm-go-sdk](https://github.com/layotto/proxy-wasm-go-sdk)
 
