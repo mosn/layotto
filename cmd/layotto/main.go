@@ -19,15 +19,18 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"mosn.io/layotto/components/sequencer"
-	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	"os"
 	"strconv"
 	"time"
 
+	dbindings "github.com/dapr/components-contrib/bindings"
+	"github.com/dapr/components-contrib/bindings/http"
 	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/file/alicloud/oss"
+	"mosn.io/layotto/components/sequencer"
+	"mosn.io/layotto/pkg/runtime/bindings"
+	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	"mosn.io/pkg/log"
 
 	// Hello
@@ -92,6 +95,7 @@ import (
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
+
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
 	"mosn.io/layotto/pkg/actuator/health"
@@ -268,6 +272,14 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return lock_etcd.NewEtcdLock(log.DefaultLogger)
 			}),
 		),
+
+		//bindings
+		runtime.WithOutputBindings(
+			bindings.NewOutputBindingFactory("http", func() dbindings.OutputBinding {
+				return http.NewHTTP(loggerForDaprComp)
+			}),
+		),
+
 		// Sequencer
 		runtime.WithSequencerFactory(
 			runtime_sequencer.NewFactory("etcd", func() sequencer.Store {

@@ -33,22 +33,26 @@ const (
 	Name = "mosn"
 )
 
+// mosnInvoker is Invoker implement
 type mosnInvoker struct {
 	channel rpc.Channel
 	cb      rpc.Callback
 }
 
+// mosnConfig is mosn config
 type mosnConfig struct {
 	Before  []rpc.CallbackFunc      `json:"before_invoke"`
 	After   []rpc.CallbackFunc      `json:"after_invoke"`
 	Channel []channel.ChannelConfig `json:"channel"`
 }
 
+// NewMosnInvoker is init mosnInvoker
 func NewMosnInvoker() rpc.Invoker {
 	invoker := &mosnInvoker{cb: callback.NewCallback()}
 	return invoker
 }
 
+// Init is init mosn RpcConfig
 func (m *mosnInvoker) Init(conf rpc.RpcConfig) error {
 	var config mosnConfig
 	if err := json.Unmarshal(conf.Config, &config); err != nil {
@@ -76,6 +80,7 @@ func (m *mosnInvoker) Init(conf rpc.RpcConfig) error {
 	return nil
 }
 
+// Invoke is invoke mosn RPCRequest and Context to RPCResponse
 func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rpc.RPCResponse, err error) {
 	defer func() {
 		if r := recover(); r != nil {

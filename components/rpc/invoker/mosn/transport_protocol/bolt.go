@@ -30,6 +30,7 @@ import (
 	"unsafe"
 )
 
+// init mosn bolt or boltv2 protocol
 func init() {
 	RegistProtocol("bolt", newBoltProtocol())
 	RegistProtocol("boltv2", newBoltV2Protocol())
@@ -40,6 +41,7 @@ type boltCommon struct {
 	fromFrame
 }
 
+// Init is init boltCommon info
 func (b *boltCommon) Init(conf map[string]interface{}) error {
 	if len(conf) == 0 {
 		return errors.New("missing bolt classname")
@@ -56,6 +58,7 @@ func (b *boltCommon) Init(conf map[string]interface{}) error {
 	return nil
 }
 
+// FromFrame is boltProtocol transform
 func (b *boltCommon) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	respCode := uint16(resp.GetStatusCode())
 	if respCode == bolt.ResponseStatusSuccess {
@@ -74,15 +77,18 @@ func (b *boltCommon) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	}
 }
 
+// newBoltProtocol is create boltProtocol
 func newBoltProtocol() TransportProtocol {
 	return &boltProtocol{XProtocol: xprotocol.GetProtocol(bolt.ProtocolName), boltCommon: boltCommon{}}
 }
 
+// boltProtocol is one of TransportProtocol
 type boltProtocol struct {
 	boltCommon
 	api.XProtocol
 }
 
+// ToFrame is boltProtocol transform
 func (b *boltProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	buf := buffer.NewIoBufferBytes(req.Data)
 	headerrLen := len(req.Header)
@@ -105,15 +111,18 @@ func (b *boltProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	return boltreq
 }
 
+// newBoltV2Protocol is create boltV2Protocol
 func newBoltV2Protocol() TransportProtocol {
 	return &boltv2Protocol{XProtocol: xprotocol.GetProtocol(boltv2.ProtocolName), boltCommon: boltCommon{}}
 }
 
+// boltv2Protocol is one of TransportProtocol
 type boltv2Protocol struct {
 	boltCommon
 	api.XProtocol
 }
 
+// ToFrame is boltv2Protocol transform
 func (b *boltv2Protocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	boltv2Req := &boltv2.Request{
 		RequestHeader: boltv2.RequestHeader{
@@ -141,6 +150,7 @@ func (b *boltv2Protocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	return boltv2Req
 }
 
+// s2b is convert string to byte slice
 func s2b(s string) []byte {
 	ps := (*reflect.StringHeader)(unsafe.Pointer(&s))
 	b := reflect.SliceHeader{
