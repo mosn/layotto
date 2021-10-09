@@ -6,7 +6,7 @@
 
 基于k8s的生命周期管理及调度策略，结合Containerd的v2接口定义，自定义了Containerd-shim-layotto-v2插件，把容器运行时改造为Layotto Runtime，如k8s创建容器的动作变成了加载 wasm 形态的函数并运行。
 
-得益于 WebAssembly 优秀的沙箱隔离环境，Layotto 作为基座可以加载运行多个 wasm 形态的函数，它们虽然都跑在一个进程里但互不影响，这种进程虚拟化的思路相比于 docker 可以进一步充分利用资源。
+得益于 WebAssembly 优秀的沙箱隔离环境，Layotto 作为基座可以加载运行多个 wasm 形态的函数，它们虽然都跑在一个进程里但互不影响，这种 nanoprocess 的思路相比于 docker 可以进一步充分利用资源。
 
 ### 二、核心组件
 
