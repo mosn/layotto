@@ -6,7 +6,7 @@
 
 Incorporating into the k8s life cycle management and scheduling strategy, the Containerd-shim-layotto-v2 plugin implements the v2 interface definition of Containerd, and changes the container runtime to Layotto Runtime. For example, the implementation of k8s creating a container is modified to load and run functions in form of wasm.
 
-Thanks to the excellent sandbox isolation environment of WebAssembly, Layotto as a function base can load and run multiple wasm functions. Although they all run in the same process, they do not affect each other. Compared with docker, this idea of process virtualization can make fuller use of resources.
+Thanks to the excellent sandbox isolation environment of WebAssembly, Layotto as a function base can load and run multiple wasm functions. Although they all run in the same process, they do not affect each other. Compared with docker, this idea of nanoprocess can make fuller use of resources.
 
 ### 二、Core components
 
