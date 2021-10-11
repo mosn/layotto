@@ -18,15 +18,12 @@ package wasm
 
 import (
 	"context"
-	"encoding/json"
-
-	"github.com/golang/protobuf/proto"
+	anypb "github.com/golang/protobuf/ptypes/any"
 	"mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/spec/proto/runtime/v1"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
-	"mosn.io/proxy-wasm-go-host/common"
-	"mosn.io/proxy-wasm-go-host/proxywasm"
+	"mosn.io/proxy-wasm-go-host/proxywasm/common"
+	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 )
 
 // LayottoHandler implement proxywasm.ImportsHandler
@@ -40,71 +37,31 @@ var _ proxywasm.ImportsHandler = &LayottoHandler{}
 
 var Layotto grpc.API
 
-func (d *LayottoHandler) CallForeignFunction(funcName string, param string) (string, proxywasm.WasmResult) {
-
-	switch funcName {
-	case "SayHello":
-		isJson := false
-		req := &runtimev1pb.SayHelloRequest{}
-		err := proto.Unmarshal([]byte(param), req)
-		if err != nil {
-			jsonReq := &helloRequest{}
-			err = json.Unmarshal([]byte(param), jsonReq)
-			if err != nil {
-				return "", proxywasm.WasmResultBadArgument
-			}
-			req.ServiceName = jsonReq.ServiceName
-			req.Name = jsonReq.Name
-			isJson = true
-		}
-		resp, err := Layotto.SayHello(context.Background(), req)
-		if err != nil {
-			return "", proxywasm.WasmResultInternalFailure
-		}
-		if isJson {
-			return resp.Hello, proxywasm.WasmResultOk
-		}
-
-		b, err := proto.Marshal(resp)
-		if err != nil {
-			return "", proxywasm.WasmResultSerializationFailure
-		}
-		return string(b), proxywasm.WasmResultOk
-	case "State":
-		isJson := false
-		req := &runtimev1pb.GetStateRequest{}
-		if err := proto.Unmarshal([]byte(param), req); err != nil {
-			jsonReq := &getStateRequest{}
-			err = json.Unmarshal([]byte(param), jsonReq)
-			if err != nil {
-				return "", proxywasm.WasmResultBadArgument
-			}
-			req.Key = jsonReq.Key
-			req.StoreName = jsonReq.StoreName
-			req.Metadata = jsonReq.Metadata
-			req.Consistency = jsonReq.Consistency
-			isJson = true
-		}
-		resp, err := Layotto.GetState(context.Background(), req)
-		if err != nil {
-			return "", proxywasm.WasmResultInternalFailure
-		}
-		if isJson {
-			return string(resp.Data), proxywasm.WasmResultOk
-		}
-
-		b, err := proto.Marshal(resp)
-		if err != nil {
-			return "", proxywasm.WasmResultSerializationFailure
-		}
-		return string(b), proxywasm.WasmResultOk
+func (d *LayottoHandler) GetState(storeName string, key string) (string, proxywasm.WasmResult) {
+	req := &runtimev1pb.GetStateRequest{
+		StoreName: storeName,
+		Key:       key,
 	}
-	return "", proxywasm.WasmResultOk
+	resp, err := Layotto.GetState(context.Background(), req)
+	if err != nil {
+		return "", proxywasm.WasmResultInternalFailure
+	}
+	return string(resp.Data), proxywasm.WasmResultOk
 }
 
-type helloRequest struct {
-	ServiceName string `json:"service_name"`
-	Name        string `json:"name"`
+func (d *LayottoHandler) InvokeService(id string, method string, param string) (string, proxywasm.WasmResult) {
+	req := &runtimev1pb.InvokeServiceRequest{
+		Id: id,
+		Message: &runtimev1pb.CommonInvokeRequest{
+			Method: method,
+			Data:   &anypb.Any{Value: []byte(param)},
+		},
+	}
+	resp, err := Layotto.InvokeService(context.Background(), req)
+	if err != nil {
+		return "", proxywasm.WasmResultInternalFailure
+	}
+	return string(resp.Data.Value), proxywasm.WasmResultOk
 }
 
 func (d *LayottoHandler) GetFuncCallData() common.IoBuffer {
@@ -112,15 +69,4 @@ func (d *LayottoHandler) GetFuncCallData() common.IoBuffer {
 		d.IoBuffer = common.NewIoBufferBytes(make([]byte, 0))
 	}
 	return d.IoBuffer
-}
-
-type getStateRequest struct {
-	// Required. The name of state store.
-	StoreName string `json:"store_name,omitempty"`
-	// Required. The key of the desired state
-	Key string `json:"key,omitempty"`
-	// (optional) read consistency mode
-	Consistency runtime.StateOptions_StateConsistency `json:"consistency,omitempty"`
-	// (optional) The metadata which will be sent to state store components.
-	Metadata map[string]string `json:"metadata,omitempty"`
 }

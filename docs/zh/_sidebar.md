@@ -18,7 +18,7 @@
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - [trace管理](zh/start/trace/trace.md)
-    - [使用WASM进行多语言编程](zh/start/wasm/start.md)
+    - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - 用户手册
     - 接口文档
         - [File API](zh/api_reference/file/file.md)
@@ -64,6 +64,7 @@
     - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)    
     - [Sequencer API设计文档](zh/design/sequencer/design.md)
     - [file API设计文档](zh/design/file/file-design.md)
+    - [FaaS 设计文档](zh/design/faas/faas-poc-design.md)
 - 贡献指南
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)

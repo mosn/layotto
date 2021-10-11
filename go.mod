@@ -25,15 +25,15 @@ require (
 	mosn.io/api v0.0.0-20210714065837-5b4c2d66e70c
 	mosn.io/layotto/components v0.0.0-20210625065826-9c2ad8dbcf05
 	mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3
-	mosn.io/mosn v0.24.1-0.20210928035557-38b3b922b595
+	mosn.io/mosn v0.24.1-0.20210930054637-4bc2c55b30bf
 	mosn.io/pkg v0.0.0-20210823090748-f639c3a0eb36
-	mosn.io/proxy-wasm-go-host v0.0.0-20210312032409-2334f9cf62ec
+	mosn.io/proxy-wasm-go-host v0.1.1-0.20210524020952-3fb13ba763a6
 )
 
 replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/google/cel-go => github.com/google/cel-go v0.5.1
-	github.com/tetratelabs/proxy-wasm-go-sdk => github.com/layotto/proxy-wasm-go-sdk v0.14.1-0.20210926122819-378cc27b0ffb
 	mosn.io/layotto/components => ./components
 	mosn.io/layotto/spec => ./spec
+	mosn.io/proxy-wasm-go-host => github.com/layotto/proxy-wasm-go-host v0.1.1-0.20210929091514-828451606147
 )
