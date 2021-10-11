@@ -49,19 +49,23 @@ func TestAwsOss_SelectClient(t *testing.T) {
 	err := oss.Init(&file.FileConfig{Metadata: []byte(cfg)})
 	assert.Equal(t, nil, err)
 
+	// not specify endpoint, select default client
 	meta := map[string]string{}
 	_, err = oss.selectClient(meta)
-	assert.Equal(t, err.Error(), "endpoint key not exist")
+	assert.Nil(t, err)
 
+	// specify endpoint equal config
 	meta["endpoint"] = "protocol://service-code.region-code.amazonaws.com"
-	client, err := oss.selectClient(meta)
+	client, _ := oss.selectClient(meta)
 	assert.NotNil(t, client)
 
+	// specicy not exist endpoint, select default one
 	meta["endpoint"] = "protocol://cn-northwest-1.region-code.amazonaws.com"
 	client, err = oss.selectClient(meta)
-	assert.Equal(t, err.Error(), "specific client not exist")
+	assert.Nil(t, err)
 
+	// new client with endpoint
 	oss.client["protocol://cn-northwest-1.region-code.amazonaws.com"] = &s3.Client{}
-	client, err = oss.selectClient(meta)
+	client, _ = oss.selectClient(meta)
 	assert.NotNil(t, client)
 }

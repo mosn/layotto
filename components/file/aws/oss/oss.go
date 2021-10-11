@@ -36,9 +36,10 @@ const (
 )
 
 var (
-	ErrMissingBucket    error = errors.New("missing bucket info in metadata")
-	ErrClientNotExist   error = errors.New("specific client not exist")
-	ErrEndPointNotExist error = errors.New("specific endpoing key not exist")
+	ErrMissingBucket      error = errors.New("missing bucket info in metadata")
+	ErrClientNotExist     error = errors.New("specific client not exist")
+	ErrEndPointNotExist   error = errors.New("specific endpoing key not exist")
+	ErrNotSpecifyEndpoint error = errors.New("should specific endpoint in metadata")
 )
 
 // AwsOss is a binding for aws oss storage.
@@ -144,13 +145,13 @@ func (a *AwsOss) selectClient(meta map[string]string) (*s3.Client, error) {
 			return client, nil
 		}
 	}
-	// if not specify endpoint, select one
+	// if not specify endpoint, select default one
 	if len(a.client) == 1 {
 		for _, client := range a.client {
 			return client, nil
 		}
 	}
-	return nil, ErrClientNotExist
+	return nil, ErrNotSpecifyEndpoint
 }
 
 // Get object from aws oss.

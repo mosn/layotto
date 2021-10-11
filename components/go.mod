@@ -15,15 +15,17 @@ require (
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/golang/mock v1.4.4
 	github.com/google/uuid v1.2.0
-	github.com/kr/pretty v0.2.0 // indirect
+	github.com/lyft/protoc-gen-validate v0.0.14 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
+	github.com/mosn/binding v0.0.0-20200413092018-2b47bdb20a9f // indirect
+	github.com/mosn/easygo v0.0.0-20201210062404-62796fdb3827 // indirect
+	github.com/mosn/registry v0.0.0-20210108061200-d7b63bc1904b // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
-	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
-	github.com/mitchellh/mapstructure v1.3.3 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/stretchr/testify v1.7.0
+	github.com/tetratelabs/proxy-wasm-go-sdk v0.0.13 // indirect
 	github.com/valyala/fasthttp v1.26.0
 	github.com/yuin/gopher-lua v0.0.0-20200603152657-dc2b0ca8b37e // indirect
 	github.com/zouyx/agollo/v4 v4.0.7
@@ -31,12 +33,6 @@ require (
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.etcd.io/etcd/server/v3 v3.5.0
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
-	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
-	google.golang.org/grpc v1.38.0
-	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
-	mosn.io/api v0.0.0-20210414070543-8a0686b03540
-	mosn.io/mosn v0.22.1-0.20210425073346-b6880db4669c
-	mosn.io/pkg v0.0.0-20210401090620-f0e0d1a3efce
 	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
 	google.golang.org/grpc v1.38.0
 	mosn.io/api v0.0.0-20210714065837-5b4c2d66e70c
