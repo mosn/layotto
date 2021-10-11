@@ -72,7 +72,6 @@ func addWatchFile(cfg *filterConfigItem, factory *FilterConfigFactory) {
 	path := cfg.VmConfig.Path
 	if err := watcher.Add(path); err != nil {
 		log.DefaultLogger.Errorf("[proxywasm] [watcher] addWatchFile fail to watch wasm file, err: %v", err)
-		return
 	}
 
 	dir := filepath.Dir(path)
@@ -113,6 +112,17 @@ func reloadWasm(fullPath string) {
 			}
 
 			factory := factories[path]
+			config.VmConfig = pw.GetConfig().VmConfig
+			factory.config = append(factory.config, config)
+
+			wasmPlugin := &WasmPlugin{
+				pluginName:    config.PluginName,
+				plugin:        pw.GetPlugin(),
+				rootContextID: config.RootContextID,
+				config:        config,
+			}
+			factory.plugins[config.PluginName] = wasmPlugin
+
 			pw.RegisterPluginHandler(factory)
 
 			for _, plugin := range factory.plugins {

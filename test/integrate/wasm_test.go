@@ -17,7 +17,9 @@
 package integrate
 
 import (
+	"context"
 	"io/ioutil"
+	"mosn.io/layotto/components/pkg/utils"
 	"net/http"
 	"testing"
 
@@ -25,12 +27,18 @@ import (
 )
 
 func TestSayHello(t *testing.T) {
-	ids := []string{"id_1", "id_2"}
+	cli := utils.NewRedisClient(utils.RedisMetadata{
+		Host: "localhost:6379",
+	})
+	err := cli.Set(context.Background(), "book1", "100", 0).Err()
+	if err != nil {
+		t.Fatal("set inventories error")
+	}
+
+	ids := []string{"id_1"}
 
 	client := &http.Client{}
-	req, _ := http.NewRequest("GET", "http://localhost:2045", nil)
-	name := "Layotto"
-	req.Header.Add("name", name)
+	req, _ := http.NewRequest("GET", "http://localhost:2045?name=book1", nil)
 
 	for _, id := range ids {
 		req.Header.Set("id", id)
@@ -42,6 +50,6 @@ func TestSayHello(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Read body failed, err: %s", err)
 		}
-		assert.Equal(t, "Hi, "+name+"_"+id, string(body))
+		assert.Equal(t, "There are 100 inventories for book1.", string(body))
 	}
 }

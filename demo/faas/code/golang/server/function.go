@@ -55,20 +55,24 @@ type httpHeaders struct {
 }
 
 // Override types.DefaultHttpContext.
-func (ctx *httpHeaders) OnHttpRequestHeaders(numHeaders int, endOfStream bool) types.Action {
-	hs, err := proxywasm.GetHttpRequestHeaders()
-	var name string
-	for _, h := range hs {
-		if h[0] == "Name" {
-			name = h[1]
-		}
+func (ctx *httpHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.Action {
+	//1. get request body
+	body, err := proxywasm.GetHttpRequestBody(0, bodySize)
+	if err != nil {
+		proxywasm.LogErrorf("GetHttpRequestBody failed: %v", err)
+		return types.ActionPause
+	}
+	bookName := string(body)
+
+	//2. get request state from redis by specific key through ABI
+	inventories, err := proxywasm.GetState("redis", bookName)
+	if err != nil {
+		proxywasm.LogErrorf("GetState failed: %v", err)
+		return types.ActionPause
 	}
 
-	result, err := proxywasm.CallForeignFunction("SayHello", []byte(`{"service_name":"helloworld","name":"`+name+`_`+ID+`"}`))
-	if err != nil {
-		proxywasm.LogErrorf("call foreign func failed: %v", err)
-	}
-	proxywasm.AppendHttpResponseBody(result)
+	//3. return result
+	proxywasm.AppendHttpResponseBody([]byte(inventories))
 	return types.ActionContinue
 }
 
