@@ -77,7 +77,7 @@ See the quick start guide [configuration demo with apollo](en/start/configuratio
 
 ### Multilingual programming based on WASM
 
-[WASM on Layotto](en/start/wasm/start.md)
+[FaaS model based on WASM and Runtime](en/start/faas/start.md)
 
 ## Design Documents
 
@@ -90,6 +90,8 @@ See the quick start guide [configuration demo with apollo](en/start/configuratio
 [rpc-design-doc](en/design/rpc/rpc-design-doc.md)
 
 [distributed-lock-api-design](en/design/lock/lock-api-design.md)
+
+[FaaS design](en/design/faas/faas-poc-design.md)
 
 ## Community
 
