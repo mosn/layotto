@@ -1,0 +1,5 @@
+FROM layotto
+
+ARG RUNTIME_CONFIG_DIR
+
+COPY configs/config_state_redis.json $RUNTIME_CONFIG_DIR/config_state_redis.json
