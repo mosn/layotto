@@ -4,9 +4,12 @@
 
 ![img.png](../../../img/faas/faas-design.jpg)
 
-Incorporating into the k8s life cycle management and scheduling strategy, the Containerd-shim-layotto-v2 plugin implements the v2 interface definition of Containerd, and changes the container runtime to Layotto Runtime. For example, the implementation of k8s creating a container is modified to load and run functions in form of wasm.
-
-Thanks to the excellent sandbox isolation environment of WebAssembly, Layotto as a function base can load and run multiple wasm functions. Although they all run in the same process, they do not affect each other. Compared with docker, this idea of nanoprocess can make fuller use of resources.
+In this FaaS solution, the following two problems are mainly solved:
+1. What is the relationship between the compiled wasm file and the docker image?
+    1. The target wasm file is finally built into an ordinary image and pushed to Dockerhub. The process of pulling the image is also consistent with the original image, but the target wasm file will be extracted from the image and loaded separately during actual operation.
+2. How to make k8s manage and deploy wasm files?
+    1. Incorporating into the k8s life cycle management and scheduling strategy, the Containerd-shim-layotto-v2 plugin implements the v2 interface definition of Containerd, and changes the container runtime to Layotto Runtime. For example, the implementation of k8s creating a container is modified to load and run functions in form of wasm.
+    2. Thanks to the excellent sandbox isolation environment of WebAssembly, Layotto as a function base can load and run multiple wasm functions. Although they all run in the same process, they do not affect each other. Compared with docker, this idea of nanoprocess can make fuller use of resources.
 
 ### 2. Core components
 
@@ -34,7 +37,7 @@ The current container scheduling standards, life cycle management and scheduling
 
 #### A. [proxy-wasm-go-sdk](https://github.com/layotto/proxy-wasm-go-sdk)
 
-On the basis of [proxy-wasm/spec](https://github.com/proxy-wasm/spec), refer to the definition of [Runtime API]( ../../../../spec/proto/runtime/v1/runtime.proto), add APIs for functions to access infrastructure.
+On the basis of [proxy-wasm/spec](https://github.com/proxy-wasm/spec), refer to the definition of [Runtime API](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto), add APIs for functions to access infrastructure.
 
 #### B. [proxy-wasm-go-host](https://github.com/layotto/proxy-wasm-go-host)
 
