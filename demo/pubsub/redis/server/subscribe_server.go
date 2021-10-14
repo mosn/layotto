@@ -19,11 +19,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"net"
+	"strconv"
+
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"net"
-	"strconv"
 )
 
 const topicName = "topic1"

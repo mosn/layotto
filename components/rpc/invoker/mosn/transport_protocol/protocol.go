@@ -19,8 +19,10 @@ package transport_protocol
 import (
 	"mosn.io/api"
 	"mosn.io/layotto/components/rpc"
+	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
 )
 
+// protocolRegistry is storage protocol
 var protocolRegistry = map[string]TransportProtocol{}
 
 // transport protocol support by mosn(bolt/boltv2...)
@@ -32,18 +34,24 @@ type TransportProtocol interface {
 	FromFrame(api.XRespFrame) (*rpc.RPCResponse, error)
 }
 
+// GetProtocol is get TransportProtocol
 func GetProtocol(protocol string) TransportProtocol {
 	return protocolRegistry[protocol]
 }
 
+// RegistProtocol is regist protocol
 func RegistProtocol(protocol string, proto TransportProtocol) {
 	protocolRegistry[protocol] = proto
 }
 
 type fromFrame struct{}
 
+// FromFrame is XRespFrame transform RPCResponse
 func (f *fromFrame) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	rpcResp := &rpc.RPCResponse{}
+	if boltResp, ok := resp.(*bolt.Response); ok {
+		rpcResp.Header = make(map[string][]string, len(boltResp.Header.Kvs))
+	}
 	resp.GetHeader().Range(func(Key, Value string) bool {
 		if rpcResp.Header == nil {
 			rpcResp.Header = make(map[string][]string)

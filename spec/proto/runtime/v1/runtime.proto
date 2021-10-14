@@ -8,6 +8,8 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/any.proto";
 
 option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
+option java_outer_classname = "RuntimeProto";
+option java_package = "spec.proto.runtime.v1";
 
 service Runtime {
   //SayHello used for test
@@ -29,9 +31,14 @@ service Runtime {
   rpc SubscribeConfiguration(stream SubscribeConfigurationRequest) returns (stream SubscribeConfigurationResponse) {}
 
   // Distributed Lock API
+  // A non-blocking method trying to get a lock with ttl.
   rpc TryLock(TryLockRequest)returns (TryLockResponse) {}
 
   rpc Unlock(UnlockRequest)returns (UnlockResponse) {}
+
+  // Sequencer API
+  // Get next unique id with some auto-increment guarantee
+  rpc GetNextId(GetNextIdRequest)returns (GetNextIdResponse) {}
 
   //  Below are the APIs compatible with Dapr.
   //  We try to keep them same as Dapr's because we want to work with Dapr to build an API spec for cloud native runtime
@@ -43,7 +50,7 @@ service Runtime {
   // Gets a bulk of state items for a list of keys
   rpc GetBulkState(GetBulkStateRequest) returns (GetBulkStateResponse) {}
 
-  // Saves the state for a specific key.
+  // Saves an array of state objects
   rpc SaveState(SaveStateRequest) returns (google.protobuf.Empty) {}
 
   // Deletes the state for a specific key.
@@ -55,17 +62,122 @@ service Runtime {
   // Executes transactions for a specified store
   rpc ExecuteStateTransaction(ExecuteStateTransactionRequest) returns (google.protobuf.Empty) {}
 
-  // Publishes events to the specific topic.
+  // Publishes events to the specific topic
   rpc PublishEvent(PublishEventRequest) returns (google.protobuf.Empty) {}
 
+  // Get file with stream
+  rpc GetFile(GetFileRequest) returns (stream GetFileResponse) {}
+
+  // Put file with stream
+  rpc PutFile(stream PutFileRequest) returns (google.protobuf.Empty) {}
+
+  // List all files
+  rpc ListFile(ListFileRequest) returns (ListFileResp){}
+
+  // Delete specific file
+  rpc DelFile(DelFileRequest) returns (google.protobuf.Empty){}
+
+  // Invokes binding data to specific output bindings
+  rpc InvokeBinding(InvokeBindingRequest) returns (InvokeBindingResponse) {}
+}
+
+message GetFileRequest {
+  //
+  string store_name = 1;
+  // The name of the file or object want to get.
+  string name = 2;
+  // The metadata for user extension.
+  map<string,string> metadata = 3;
+}
+
+message GetFileResponse {
+  bytes data = 1;
+}
+
+message PutFileRequest {
+  string store_name = 1;
+  // The name of the file or object want to put.
+  string name = 2;
+  // The data will be store.
+  bytes data = 3;
+  // The metadata for user extension.
+  map<string,string> metadata = 4;
+}
+
+message FileRequest {
+  string store_name = 1;
+  // The name of the directory
+  string name = 2;
+  // The metadata for user extension.
+  map<string,string> metadata = 3;
+}
+
+message ListFileRequest {
+  FileRequest request = 1;
+}
+
+message ListFileResp {
+  repeated string file_name = 1;
+}
+
+message DelFileRequest {
+  FileRequest request = 1;
+}
+
+message GetNextIdRequest {
+  // Required. Name of sequencer storage
+  string store_name = 1;
+  // Required. key is the identifier of a sequencer namespace,e.g. "order_table".
+  string key = 2;
+  // (optional) SequencerOptions configures requirements for auto-increment guarantee
+  SequencerOptions options = 3;
+  // (optional) The metadata which will be sent to the component.
+  map<string, string> metadata = 4;
+}
+
+// SequencerOptions configures requirements for auto-increment guarantee
+message SequencerOptions {
+  // requirements for auto-increment guarantee
+  enum AutoIncrement {
+    // (default) WEAK means a "best effort" incrementing service.But there is no strict guarantee of global monotonically increasing.
+    //The next id is "probably" greater than current id.
+    WEAK = 0;
+    // STRONG means a strict guarantee of global monotonically increasing.
+    //The next id "must" be greater than current id.
+    STRONG = 1;
+  }
+
+  AutoIncrement increment = 1;
+
+  //  We removed Uniqueness enum to make it simple.
+  // Currently this API will give a "STRONG" guarantee:all the ID returned by this API will be globally unique under the specific key.
+  //
+  //  enum Uniqueness{
+  //    // WEAK means a "best effort" unqueness guarantee.
+  //    // But it might duplicate in some corner cases.
+  //    WEAK = 0;
+  //    // STRONG means a strict guarantee of global uniqueness
+  //    STRONG = 1;
+  //  }
+
+  //  Uniqueness uniqueness=2;
+}
+
+message GetNextIdResponse{
+  // The next unique id
+  int64 next_id = 1;
 }
 
 message TryLockRequest {
+  // Required. The lock store name,e.g. `redis`.
   string store_name = 1;
-  // resource_id is the lock key.
+
+  // Required. resource_id is the lock key. e.g. `order_id_111`
+  // It stands for "which resource I want to protect"
   string resource_id = 2;
-  // lock_owner indicate the identifier of lock owner.
-  // This field is required.You can generate a uuid as lock_owner.For example,in golang:
+
+  // Required. lock_owner indicate the identifier of lock owner.
+  // You can generate a uuid as lock_owner.For example,in golang:
   //
   // req.LockOwner = uuid.New().String()
   //
@@ -80,12 +192,12 @@ message TryLockRequest {
   // 3. When reentrant lock is needed,the existing lock_owner is required to identify client and check "whether this client can reenter this lock".
   // So this field in the request shouldn't be removed.
   string lock_owner = 3;
-  // expire is the time before expire.The time unit is second.
+
+  // Required. expire is the time before expire.The time unit is second.
   int32 expire = 4;
 }
 
 message TryLockResponse {
-
   bool success = 1;
 }
 
@@ -111,10 +223,13 @@ message UnlockResponse {
 message SayHelloRequest {
   string service_name = 1;
   string name = 2;
+  // Optional. This field is used to control the packet size during load tests.
+  google.protobuf.Any data = 3;
 }
 
 message SayHelloResponse {
   string hello = 1;
+  google.protobuf.Any data = 2;
 }
 
 message InvokeServiceRequest {
@@ -283,31 +398,31 @@ message DeleteConfigurationRequest {
 
 // GetStateRequest is the message to get key-value states from specific state store.
 message GetStateRequest {
-  // The name of state store.
+  // Required. The name of state store.
   string store_name = 1;
 
-  // The key of the desired state
+  // Required. The key of the desired state
   string key = 2;
 
-  // The read consistency of the state store.
+  // (optional) read consistency mode
   StateOptions.StateConsistency consistency = 3;
 
-  // The metadata which will be sent to state store components.
+  // (optional) The metadata which will be sent to state store components.
   map<string, string> metadata = 4;
 }
 
 // GetBulkStateRequest is the message to get a list of key-value states from specific state store.
 message GetBulkStateRequest {
-  // The name of state store.
+  // Required. The name of state store.
   string store_name = 1;
 
-  // The keys to get.
+  // Required. The keys to get.
   repeated string keys = 2;
 
-  // The number of parallel operations executed on the state store for a get operation.
+  // (optional) The number of parallel operations executed on the state store for a get operation.
   int32 parallelism = 3;
 
-  // The metadata which will be sent to state store components.
+  // (optional) The metadata which will be sent to state store components.
   map<string, string> metadata = 4;
 }
 
@@ -352,39 +467,39 @@ message GetStateResponse {
 
 // DeleteStateRequest is the message to delete key-value states in the specific state store.
 message DeleteStateRequest {
-  // The name of state store.
+  // Required. The name of state store.
   string store_name = 1;
 
-  // The key of the desired state
+  // Required. The key of the desired state
   string key = 2;
 
-  // The entity tag which represents the specific version of data.
+  // (optional) The entity tag which represents the specific version of data.
   // The exact ETag format is defined by the corresponding data store.
   Etag etag = 3;
 
-  // State operation options which includes concurrency/
+  // (optional) State operation options which includes concurrency/
   // consistency/retry_policy.
   StateOptions options = 4;
 
-  // The metadata which will be sent to state store components.
+  // (optional) The metadata which will be sent to state store components.
   map<string, string> metadata = 5;
 }
 
 // DeleteBulkStateRequest is the message to delete a list of key-value states from specific state store.
 message DeleteBulkStateRequest {
-  // The name of state store.
+  // Required. The name of state store.
   string store_name = 1;
 
-  // The array of the state key values.
+  // Required. The array of the state key values.
   repeated StateItem states = 2;
 }
 
 // SaveStateRequest is the message to save multiple states into state store.
 message SaveStateRequest {
-  // The name of state store.
+  // Required. The name of state store.
   string store_name = 1;
 
-  // The array of the state key values.
+  // Required. The array of the state key values.
   repeated StateItem states = 2;
 }
 
@@ -396,14 +511,14 @@ message StateItem {
   // Required. The state data for key
   bytes value = 2;
 
-  // The entity tag which represents the specific version of data.
-  // The exact ETag format is defined by the corresponding data store.
+  // (optional) The entity tag which represents the specific version of data.
+  // The exact ETag format is defined by the corresponding data store. Layotto runtime only treats ETags as opaque strings.
   Etag etag = 3;
 
-  // The metadata which will be passed to state store component.
+  // (optional) additional key-value pairs to be passed to the state store.
   map<string, string> metadata = 4;
 
-  // Options for concurrency and consistency to save the state.
+  // (optional) Options for concurrency and consistency to save the state.
   StateOptions options = 5;
 }
 
@@ -416,16 +531,30 @@ message Etag {
 // StateOptions configures concurrency and consistency for state operations
 message StateOptions {
   // Enum describing the supported concurrency for state.
+  // The API server uses Optimized Concurrency Control (OCC) with ETags.
+  // When an ETag is associated with an save or delete request, the store shall allow the update only if the attached ETag matches with the latest ETag in the database.
+  // But when ETag is missing in the write requests, the state store shall handle the requests in the specified strategy(e.g. a last-write-wins fashion).
   enum StateConcurrency {
     CONCURRENCY_UNSPECIFIED = 0;
+    // First write wins
     CONCURRENCY_FIRST_WRITE = 1;
+    // Last write wins
     CONCURRENCY_LAST_WRITE = 2;
   }
 
   // Enum describing the supported consistency for state.
   enum StateConsistency {
     CONSISTENCY_UNSPECIFIED = 0;
+    //  The API server assumes data stores are eventually consistent by default.A state store should:
+    //
+    // - For read requests, the state store can return data from any of the replicas
+    // - For write request, the state store should asynchronously replicate updates to configured quorum after acknowledging the update request.
     CONSISTENCY_EVENTUAL = 1;
+
+    // When a strong consistency hint is attached, a state store should:
+    //
+    // - For read requests, the state store should return the most up-to-date data consistently across replicas.
+    // - For write/delete requests, the state store should synchronisely replicate updated data to configured quorum before completing the write request.
     CONSISTENCY_STRONG = 2;
   }
 
@@ -435,10 +564,10 @@ message StateOptions {
 
 // TransactionalStateOperation is the message to execute a specified operation with a key-value pair.
 message TransactionalStateOperation {
-  // The type of operation to be executed
+  // Required. The type of operation to be executed
   string operationType = 1;
 
-  // State values to be operated on
+  // Required. State values to be operated on
   StateItem request = 2;
 }
 // ExecuteStateTransactionRequest is the message to execute multiple operations on a specified store.
@@ -449,7 +578,7 @@ message ExecuteStateTransactionRequest {
   // Required. transactional operation list.
   repeated TransactionalStateOperation operations = 2;
 
-  // The metadata used for transactional operations.
+  // (optional) The metadata used for transactional operations.
   map<string, string> metadata = 3;
 }
 
@@ -472,4 +601,34 @@ message PublishEventRequest {
   // metadata property:
   // - key : the key of the message.
   map<string, string> metadata = 5;
+}
+
+// InvokeBindingRequest is the message to send data to output bindings
+message InvokeBindingRequest {
+  // The name of the output binding to invoke.
+  string name = 1;
+
+  // The data which will be sent to output binding.
+  bytes data = 2;
+
+  // The metadata passing to output binding components
+  //
+  // Common metadata property:
+  // - ttlInSeconds : the time to live in seconds for the message.
+  // If set in the binding definition will cause all messages to
+  // have a default time to live. The message ttl overrides any value
+  // in the binding definition.
+  map<string,string> metadata = 3;
+
+  // The name of the operation type for the binding to invoke
+  string operation = 4;
+}
+
+// InvokeBindingResponse is the message returned from an output binding invocation
+message InvokeBindingResponse {
+  // The data which will be sent to output binding.
+  bytes data = 1;
+
+  // The metadata returned from an external system
+  map<string,string> metadata = 2;
 }

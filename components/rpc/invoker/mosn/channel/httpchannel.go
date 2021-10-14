@@ -19,24 +19,28 @@ package channel
 import (
 	"bufio"
 	"context"
-	"fmt"
 	"net"
 	"net/http"
 	"time"
 
 	"github.com/valyala/fasthttp"
 	"mosn.io/layotto/components/rpc"
+	common "mosn.io/layotto/components/pkg/common"
 	_ "mosn.io/mosn/pkg/stream/http"
 )
 
+
+// init is regist http channel
 func init() {
 	RegistChannel("http", newHttpChannel)
 }
 
+// httpChannel is Channel implement
 type httpChannel struct {
 	pool *connPool
 }
 
+// newHttpChannel is create rpc.Channel by ChannelConfig
 func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 	return &httpChannel{
 		pool: newConnPool(
@@ -49,13 +53,12 @@ func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 					return nil, err
 				}
 				return localTcpConn, nil
-			},
-			nil,
-			nil,
+			}, nil, nil, nil,
 		),
 	}, nil
 }
 
+// Do is handle RPCRequest to RPCResponse
 func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	timeout := time.Duration(req.Timeout) * time.Millisecond
 	ctx, cancel := context.WithTimeout(req.Ctx, timeout)
@@ -69,7 +72,7 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	deadline, _ := ctx.Deadline()
 	if err = conn.SetDeadline(deadline); err != nil {
 		h.pool.Put(conn, true)
-		return nil, err
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 
 	httpReq := h.constructReq(req)
@@ -77,19 +80,19 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 
 	if _, err = httpReq.WriteTo(conn); err != nil {
 		h.pool.Put(conn, true)
-		return nil, err
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 
 	httpResp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(httpResp)
 	if err = httpResp.Read(bufio.NewReader(conn)); err != nil {
 		h.pool.Put(conn, true)
-		return nil, err
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 	body := httpResp.Body()
 	h.pool.Put(conn, false)
 	if httpResp.StatusCode() != http.StatusOK {
-		return nil, fmt.Errorf("http response code %d, body: %s", httpResp.StatusCode(), string(body))
+		return nil, common.Errorf(common.UnavailebleCode, "http response code %d, body: %s", httpResp.StatusCode(), string(body))
 	}
 
 	data := make([]byte, len(body))
@@ -105,6 +108,7 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	return rpcResp, nil
 }
 
+// constructReq is handle rpc.RPCRequest to fasthttp.Request
 func (h *httpChannel) constructReq(req *rpc.RPCRequest) *fasthttp.Request {
 	httpReq := fasthttp.AcquireRequest()
 	httpReq.SetBody(req.Data)

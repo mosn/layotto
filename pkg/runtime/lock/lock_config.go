@@ -15,7 +15,9 @@ const (
 	strategyNone      = "none"
 	strategyDefault   = strategyAppid
 
-	separator = "||"
+	apiPrefix    = "lock"
+	apiSeparator = "|||"
+	separator    = "||"
 )
 
 var lockConfiguration = map[string]*StoreConfiguration{}
@@ -46,16 +48,16 @@ func GetModifiedLockKey(key, storeName, appID string) (string, error) {
 	config := getConfiguration(storeName)
 	switch config.keyPrefixStrategy {
 	case strategyNone:
-		return key, nil
+		return fmt.Sprintf("%s%s%s", apiPrefix, apiSeparator, key), nil
 	case strategyStoreName:
-		return fmt.Sprintf("%s%s%s", storeName, separator, key), nil
+		return fmt.Sprintf("%s%s%s%s%s", apiPrefix, apiSeparator, storeName, separator, key), nil
 	case strategyAppid:
 		if appID == "" {
-			return key, nil
+			return fmt.Sprintf("%s%s%s", apiPrefix, apiSeparator, key), nil
 		}
-		return fmt.Sprintf("%s%s%s", appID, separator, key), nil
+		return fmt.Sprintf("%s%s%s%s%s", apiPrefix, apiSeparator, appID, separator, key), nil
 	default:
-		return fmt.Sprintf("%s%s%s", config.keyPrefixStrategy, separator, key), nil
+		return fmt.Sprintf("%s%s%s%s%s", apiPrefix, apiSeparator, config.keyPrefixStrategy, separator, key), nil
 	}
 }
 

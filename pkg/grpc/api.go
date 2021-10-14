@@ -20,14 +20,24 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"strings"
+	"sync"
+
+	"github.com/dapr/components-contrib/bindings"
+
+	"mosn.io/pkg/utils"
+
+	_ "net/http/pprof"
+
 	"github.com/dapr/components-contrib/state"
 	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
-	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/file"
+
 	"mosn.io/layotto/pkg/converter"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
-	"strings"
-	"sync"
+	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 
 	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
@@ -40,10 +50,14 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
+	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
 	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
+	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/messages"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
@@ -52,14 +66,20 @@ import (
 
 var (
 	ErrNoInstance = errors.New("no instance found")
+	bytesPool     = sync.Pool{
+		New: func() interface{} {
+			// set size to 100kb
+			return new([]byte)
+		},
+	}
 )
 
 type API interface {
 	SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error)
-	// GetConfiguration gets configuration from configuration store.
-	GetConfiguration(context.Context, *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error)
 	// InvokeService do rpc calls.
 	InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error)
+	// GetConfiguration gets configuration from configuration store.
+	GetConfiguration(context.Context, *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error)
 	// SaveConfiguration saves configuration into configuration store.
 	SaveConfiguration(context.Context, *runtimev1pb.SaveConfigurationRequest) (*emptypb.Empty, error)
 	// DeleteConfiguration deletes configuration from configuration store.
@@ -75,9 +95,22 @@ type API interface {
 	DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateRequest) (*emptypb.Empty, error)
 	DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkStateRequest) (*emptypb.Empty, error)
 	ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*emptypb.Empty, error)
+	// Get File
+	GetFile(*runtimev1pb.GetFileRequest, runtimev1pb.Runtime_GetFileServer) error
+	// Put file with stream.
+	PutFile(runtimev1pb.Runtime_PutFileServer) error
+	// List all files
+	ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error)
+	//Delete specific file
+	DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error)
+
 	// Distributed Lock API
 	TryLock(context.Context, *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error)
 	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
+	// Sequencer API
+	GetNextId(context.Context, *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
+	// InvokeBinding Binding API
+	InvokeBinding(context.Context, *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error)
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -89,7 +122,10 @@ type api struct {
 	pubSubs                  map[string]pubsub.PubSub
 	stateStores              map[string]state.Store
 	transactionalStateStores map[string]state.TransactionalStore
+	fileOps                  map[string]file.File
 	lockStores               map[string]lock.LockStore
+	sequencers               map[string]sequencer.Store
+	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 }
 
 func NewAPI(
@@ -99,7 +135,10 @@ func NewAPI(
 	rpcs map[string]rpc.Invoker,
 	pubSubs map[string]pubsub.PubSub,
 	stateStores map[string]state.Store,
+	files map[string]file.File,
 	lockStores map[string]lock.LockStore,
+	sequencers map[string]sequencer.Store,
+	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
 ) API {
 	// filter out transactionalStateStores
 	transactionalStateStores := map[string]state.TransactionalStore{}
@@ -117,7 +156,10 @@ func NewAPI(
 		pubSubs:                  pubSubs,
 		stateStores:              stateStores,
 		transactionalStateStores: transactionalStateStores,
+		fileOps:                  files,
 		lockStores:               lockStores,
+		sequencers:               sequencers,
+		sendToOutputBindingFn:    sendToOutputBindingFn,
 	}
 }
 
@@ -131,7 +173,7 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 	req := &hello.HelloRequest{
 		Name: in.Name,
 	}
-	resp, err := h.Hello(req)
+	resp, err := h.Hello(ctx, req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.say_hello] request hello error: %v", err)
 		return nil, err
@@ -139,6 +181,7 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 	// create response base on hello.Response
 	return &runtimev1pb.SayHelloResponse{
 		Hello: resp.HelloString,
+		Data:  in.Data,
 	}, nil
 
 }
@@ -180,7 +223,7 @@ func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRe
 
 	resp, err := invoker.Invoke(ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, common.ToGrpcError(err)
 	}
 
 	if resp.Header != nil {
@@ -270,43 +313,58 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 	respCh := make(chan *configstores.SubscribeResp)
 	recvExitCh := make(chan struct{})
 	subscribedStore := make([]configstores.Store, 0, 1)
-	go func() {
+	// TODO currently this goroutine model is error-prone,and it should be refactored after new version of configuration API being accepted
+	// 1. start a reader goroutine
+	utils.GoWithRecover(func() {
 		defer wg.Done()
 		for {
+			// 1.1. read stream
 			req, err := sub.Recv()
+			// 1.2. if an error happens,stop all the subscribers
 			if err != nil {
 				log.DefaultLogger.Errorf("occur error in subscribe, err: %+v", err)
+				// stop all the subscribers
 				for _, store := range subscribedStore {
+					// TODO this method will stop subscribers created by other connections.Should be refactored
 					store.StopSubscribe()
 				}
 				subErr = err
-				if len(subscribedStore) == 0 {
-					close(recvExitCh)
-				}
-				return
-			}
-			store, ok := a.configStores[req.StoreName]
-			if !ok {
-				log.DefaultLogger.Errorf("configure store [%+v] don't support now", req.StoreName)
-				subErr = errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
+				// stop writer goroutine
 				close(recvExitCh)
 				return
 			}
+			// 1.3. else find the component and delegate to it
+			store, ok := a.configStores[req.StoreName]
+			// 1.3.1. stop if StoreName is not supported
+			if !ok {
+				log.DefaultLogger.Errorf("configure store [%+v] don't support now", req.StoreName)
+				// stop all the subscribers
+				for _, store := range subscribedStore {
+					store.StopSubscribe()
+				}
+				subErr = errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
+				// stop writer goroutine
+				close(recvExitCh)
+				return
+			}
+			// 1.3.2. use default settings if blank
 			if strings.ReplaceAll(req.Group, " ", "") == "" {
 				req.Group = store.GetDefaultGroup()
 			}
 			if strings.ReplaceAll(req.Label, " ", "") == "" {
 				req.Label = store.GetDefaultLabel()
 			}
+			// 1.3.3. delegate to the component
 			store.Subscribe(&configstores.SubscribeReq{AppId: req.AppId, Group: req.Group, Label: req.Label, Keys: req.Keys, Metadata: req.Metadata}, respCh)
 			subscribedStore = append(subscribedStore, store)
 		}
-	}()
-
-	go func() {
+	}, nil)
+	// 2. start a writer goroutine
+	utils.GoWithRecover(func() {
 		defer wg.Done()
 		for {
 			select {
+			// read response from components
 			case resp, ok := <-respCh:
 				if !ok {
 					return
@@ -315,12 +373,14 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 				for _, item := range resp.Items {
 					items = append(items, &runtimev1pb.ConfigurationItem{Group: item.Group, Label: item.Label, Key: item.Key, Content: item.Content, Tags: item.Tags, Metadata: item.Metadata})
 				}
+				// write to response stream
 				sub.Send(&runtimev1pb.SubscribeConfigurationResponse{StoreName: resp.StoreName, AppId: resp.StoreName, Items: items})
+			//	read exit signal
 			case <-recvExitCh:
 				return
 			}
 		}
-	}()
+	}, nil)
 	wg.Wait()
 	log.DefaultLogger.Warnf("subscribe gorountine exit")
 	return subErr
@@ -682,6 +742,123 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 	return &emptypb.Empty{}, nil
 }
 
+func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtime_GetFileServer) error {
+	if a.fileOps[req.StoreName] == nil {
+		return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
+	}
+	st := &file.GetFileStu{FileName: req.Name, Metadata: req.Metadata}
+	data, err := a.fileOps[req.StoreName].Get(st)
+	if err != nil {
+		return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
+	}
+
+	buffsPtr := bytesPool.Get().(*[]byte)
+	buf := *buffsPtr
+	if len(buf) == 0 {
+		buf = make([]byte, 102400, 102400)
+	}
+	defer func() {
+		data.Close()
+		*buffsPtr = buf
+		bytesPool.Put(buffsPtr)
+	}()
+
+	for {
+		length, err := data.Read(buf)
+		if err != nil && err != io.EOF {
+			log.DefaultLogger.Warnf("get file fail, err: %+v", err)
+			return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
+		}
+		if err == nil || (err == io.EOF && length != 0) {
+			resp := &runtimev1pb.GetFileResponse{Data: buf[:length]}
+			if err = stream.Send(resp); err != nil {
+				return status.Errorf(codes.Internal, "send file data fail,err: %+v", err)
+			}
+		}
+		if err == io.EOF {
+			return nil
+		}
+	}
+}
+
+type putObjectStreamReader struct {
+	data   []byte
+	server runtimev1pb.Runtime_PutFileServer
+}
+
+func newPutObjectStreamReader(data []byte, server runtimev1pb.Runtime_PutFileServer) *putObjectStreamReader {
+	return &putObjectStreamReader{data: data, server: server}
+}
+
+func (r *putObjectStreamReader) Read(p []byte) (int, error) {
+	var count int
+	total := len(p)
+	for {
+		if len(r.data) > 0 {
+			n := copy(p[count:], r.data)
+			r.data = r.data[n:]
+			count += n
+			if count == total {
+				return count, nil
+			}
+		}
+		req, err := r.server.Recv()
+		if err != nil {
+			if err != io.EOF {
+				log.DefaultLogger.Errorf("recv data from grpc stream fail, err:%+v", err)
+			}
+			return count, err
+		}
+		r.data = req.Data
+	}
+}
+
+func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
+	req, err := stream.Recv()
+	if err != nil {
+		//if client send eof error directly, return nil
+		if err == io.EOF {
+			return nil
+		}
+		return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
+	}
+
+	if a.fileOps[req.StoreName] == nil {
+		return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+	}
+	fileReader := newPutObjectStreamReader(req.Data, stream)
+	st := &file.PutFileStu{DataStream: fileReader, FileName: req.Name, Metadata: req.Metadata}
+	if err = a.fileOps[req.StoreName].Put(st); err != nil {
+		return status.Errorf(codes.Internal, err.Error())
+	}
+	stream.SendAndClose(&empty.Empty{})
+	return nil
+}
+
+//ListFile list all files
+func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error) {
+	if a.fileOps[in.Request.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
+	}
+	resp, err := a.fileOps[in.Request.StoreName].List(&file.ListRequest{DirectoryName: in.Request.Name, Metadata: in.Request.Metadata})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &runtimev1pb.ListFileResp{FileName: resp.FilesName}, nil
+}
+
+//DelFile delete specific file
+func (a *api) DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error) {
+	if a.fileOps[in.Request.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
+	}
+	err := a.fileOps[in.Request.StoreName].Del(&file.DelRequest{FileName: in.Request.Name, Metadata: in.Request.Metadata})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &emptypb.Empty{}, nil
+}
+
 func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error) {
 	// 1. validate
 	if a.lockStores == nil || len(a.lockStores) == 0 {
@@ -738,7 +915,7 @@ func (a *api) Unlock(ctx context.Context, req *runtimev1pb.UnlockRequest) (*runt
 		return newInternalErrorUnlockResponse(), err
 	}
 	if req.LockOwner == "" {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrResourceIdEmpty, req.StoreName)
+		err := status.Errorf(codes.InvalidArgument, messages.ErrLockOwnerEmpty, req.StoreName)
 		return newInternalErrorUnlockResponse(), err
 	}
 	// 2. find store component
@@ -770,4 +947,94 @@ func newInternalErrorUnlockResponse() *runtimev1pb.UnlockResponse {
 	return &runtimev1pb.UnlockResponse{
 		Status: runtimev1pb.UnlockResponse_INTERNAL_ERROR,
 	}
+}
+
+func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error) {
+	// 1. validate
+	if len(a.sequencers) == 0 {
+		err := status.Error(codes.FailedPrecondition, messages.ErrSequencerStoresNotConfigured)
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	if req.Key == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrSequencerKeyEmpty, req.StoreName)
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	// 2. convert
+	compReq, err := converter.GetNextIdRequest2ComponentRequest(req)
+	if err != nil {
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	// modify key
+	compReq.Key, err = runtime_sequencer.GetModifiedKey(compReq.Key, req.StoreName, a.appId)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	// 3. find store component
+	store, ok := a.sequencers[req.StoreName]
+	if !ok {
+		return &runtimev1pb.GetNextIdResponse{}, status.Errorf(codes.InvalidArgument, messages.ErrSequencerStoreNotFound, req.StoreName)
+	}
+	var next int64
+	// 4. invoke component
+	if compReq.Options.AutoIncrement == sequencer.WEAK {
+		// WEAK
+		next, err = a.getNextIdWithWeakAutoIncrement(ctx, store, compReq)
+	} else {
+		// STRONG
+		next, err = a.getNextIdFromComponent(ctx, store, compReq)
+	}
+	// 5. convert response
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
+		return &runtimev1pb.GetNextIdResponse{}, err
+	}
+	return &runtimev1pb.GetNextIdResponse{
+		NextId: next,
+	}, nil
+}
+
+func (a *api) getNextIdWithWeakAutoIncrement(ctx context.Context, store sequencer.Store, compReq *sequencer.GetNextIdRequest) (int64, error) {
+	// 1. try to get from cache
+	support, next, err := runtime_sequencer.GetNextIdFromCache(ctx, store, compReq)
+
+	if !support {
+		// 2. get from component
+		return a.getNextIdFromComponent(ctx, store, compReq)
+	}
+	return next, err
+}
+
+func (a *api) getNextIdFromComponent(ctx context.Context, store sequencer.Store, compReq *sequencer.GetNextIdRequest) (int64, error) {
+	var next int64
+	resp, err := store.GetNextId(compReq)
+	if err == nil {
+		next = resp.NextId
+	}
+	return next, err
+}
+
+func (a *api) InvokeBinding(ctx context.Context, in *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error) {
+	req := &bindings.InvokeRequest{
+		Metadata:  in.Metadata,
+		Operation: bindings.OperationKind(in.Operation),
+	}
+	if in.Data != nil {
+		req.Data = in.Data
+	}
+
+	r := &runtimev1pb.InvokeBindingResponse{}
+	resp, err := a.sendToOutputBindingFn(in.Name, req)
+	if err != nil {
+		err = status.Errorf(codes.Internal, messages.ErrInvokeOutputBinding, in.Name, err.Error())
+		log.DefaultLogger.Errorf("call out binding fail, err:%+v", err)
+		return r, err
+	}
+
+	if resp != nil {
+		r.Data = resp.Data
+		r.Metadata = resp.Metadata
+	}
+	return r, nil
 }

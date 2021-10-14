@@ -26,16 +26,19 @@ import (
 	"time"
 
 	"mosn.io/api"
+	common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/rpc/invoker/mosn/transport_protocol"
 )
 
+// init is regist bolt、boltv2、dubbo channel
 func init() {
 	RegistChannel("bolt", newXChannel)
 	RegistChannel("boltv2", newXChannel)
 	RegistChannel("dubbo", newXChannel)
 }
 
+// newXChannel is create rpc.Channel by ChannelConfig
 func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	proto := transport_protocol.GetProtocol(config.Protocol)
 	if proto == nil {
@@ -58,25 +61,34 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 			return localTcpConn, nil
 		},
 		func() interface{} {
-			return &xstate{respChans: map[uint64]chan api.XRespFrame{}}
+			return &xstate{calls: map[uint32]chan call{}}
 		},
 		m.onData,
+		m.cleanup,
 	)
 
 	return m, nil
 }
 
+// xstate is record state
 type xstate struct {
-	reqid     uint64
-	mu        sync.Mutex
-	respChans map[uint64]chan api.XRespFrame
+	reqid uint32
+	mu    sync.Mutex
+	calls map[uint32]chan call
 }
 
+type call struct {
+	resp api.XRespFrame
+	err  error
+}
+
+// xChannel is Channel implement
 type xChannel struct {
 	proto transport_protocol.TransportProtocol
 	pool  *connPool
 }
 
+// Do is handle RPCRequest to RPCResponse
 func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	timeout := time.Duration(req.Timeout) * time.Millisecond
 	ctx, cancel := context.WithTimeout(req.Ctx, timeout)
@@ -91,54 +103,58 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 
 	// encode request
 	frame := m.proto.ToFrame(req)
-	id := atomic.AddUint64(&xstate.reqid, 1)
-	frame.SetRequestId(id)
+	id := atomic.AddUint32(&xstate.reqid, 1)
+	frame.SetRequestId(uint64(id))
 	buf, encErr := m.proto.Encode(req.Ctx, frame)
 	if encErr != nil {
 		m.pool.Put(conn, false)
-		return nil, encErr
+		return nil, common.Error(common.InternalCode, encErr.Error())
 	}
 
-	respChan := make(chan api.XRespFrame, 1)
+	callChan := make(chan call, 1)
 	// set timeout
 	deadline, _ := ctx.Deadline()
 	if err := conn.SetWriteDeadline(deadline); err != nil {
 		m.pool.Put(conn, true)
-		return nil, err
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 	// register response channel
 	xstate.mu.Lock()
-	xstate.respChans[id] = respChan
+	xstate.calls[id] = callChan
 	xstate.mu.Unlock()
 
 	// write packet
 	if _, err := conn.Write(buf.Bytes()); err != nil {
-		m.removeRespChan(xstate, id)
+		m.removeCall(xstate, id)
 		m.pool.Put(conn, true)
-		return nil, err
+		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 	m.pool.Put(conn, false)
 
 	select {
-	case resp := <-respChan:
-		return m.proto.FromFrame(resp)
+	case res := <-callChan:
+		if res.err != nil {
+			return nil, common.Error(common.UnavailebleCode, res.err.Error())
+		}
+		return m.proto.FromFrame(res.resp)
 	case <-ctx.Done():
-		m.removeRespChan(xstate, id)
-		return nil, ErrTimeout
-	case <-conn.closeChan:
-		m.removeRespChan(xstate, id)
-		return nil, ErrConnClosed
+		m.removeCall(xstate, id)
+		return nil, common.Error(common.TimeoutCode, ErrTimeout.Error())
 	}
 }
 
-func (m *xChannel) removeRespChan(xstate *xstate, id uint64) {
+// removeCall is delete xstate.calls by id
+func (m *xChannel) removeCall(xstate *xstate, id uint32) {
 	xstate.mu.Lock()
-	delete(xstate.respChans, id)
+	delete(xstate.calls, id)
 	xstate.mu.Unlock()
 }
 
+// onData is handle xstate data
 func (m *xChannel) onData(conn *wrapConn) error {
+	xstate := conn.state.(*xstate)
 	for {
+		var iframe interface{}
 		iframe, err := m.proto.Decode(context.TODO(), conn.buf)
 		if err != nil {
 			return err
@@ -154,16 +170,28 @@ func (m *xChannel) onData(conn *wrapConn) error {
 		}
 
 		reqID := frame.GetRequestId()
-		xstate := conn.state.(*xstate)
+		reqID32 := uint32(reqID)
 		xstate.mu.Lock()
-		notifyChan, ok := xstate.respChans[reqID]
+		notifyChan, ok := xstate.calls[reqID32]
 		if ok {
-			delete(xstate.respChans, reqID)
+			delete(xstate.calls, reqID32)
 		}
 		xstate.mu.Unlock()
 		if ok {
-			notifyChan <- frame
+			notifyChan <- call{resp: frame}
 		}
 	}
 	return nil
+}
+
+// cleanup is clean all xstate.calls
+func (m *xChannel) cleanup(c *wrapConn, err error) {
+	xstate := c.state.(*xstate)
+	// cleanup pending calls
+	xstate.mu.Lock()
+	for id, notifyChan := range xstate.calls {
+		notifyChan <- call{err: err}
+		delete(xstate.calls, id)
+	}
+	xstate.mu.Unlock()
 }

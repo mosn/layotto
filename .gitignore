@@ -4,6 +4,7 @@ build/bundles
 .idea
 .test
 .out
+layotto
 !./.gitignore
 IMAGEBUILD/
 coverage.txt
@@ -16,3 +17,4 @@ vendor/
 # .net
 bin/
 obj/
+demo/state/redis/client

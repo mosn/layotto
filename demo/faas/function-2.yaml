@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: function-2
+spec:
+  runtimeClassName: layotto
+  containers:
+    - name: function-2
+      image: lingfenglangshao/function_2
