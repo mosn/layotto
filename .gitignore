@@ -4,6 +4,7 @@ build/bundles
 .idea
 .test
 .out
+layotto
 !./.gitignore
 IMAGEBUILD/
 coverage.txt
@@ -12,3 +13,4 @@ logs/
 *.swp
 /cover.out
 vendor/
+demo/state/redis/client

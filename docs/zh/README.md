@@ -81,7 +81,7 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 ### 使用WASM进行多语言编程
 
-[WASM概述](zh/start/wasm/start.md)
+[基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 
 ## 设计文档
 
@@ -94,6 +94,9 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 [rpc设计文档](zh/design/rpc/rpc设计文档.md)
 
 [分布式锁api设计文档](zh/design/lock/lock-api-design.md)
+
+[FaaS 设计文档](zh/design/faas/faas-poc-design.md)
+
 
 ## 社区
 

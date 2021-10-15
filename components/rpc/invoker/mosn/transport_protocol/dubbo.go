@@ -25,10 +25,12 @@ import (
 	"mosn.io/pkg/buffer"
 )
 
+// init dubbo protocol
 func init() {
 	RegistProtocol("dubbo", newDubboProtocol())
 }
 
+// newDubboProtocol is create dubbo TransportProtocol
 func newDubboProtocol() TransportProtocol {
 	return &dubboProtocol{XProtocol: xprotocol.GetProtocol(dubbo.ProtocolName)}
 }
@@ -42,6 +44,7 @@ func (d *dubboProtocol) Init(map[string]interface{}) error {
 	return nil
 }
 
+// ToFrame is dubboProtocol transform
 func (d *dubboProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	dubboReq := dubbo.NewRpcRequest(nil, buffer.NewIoBufferBytes(req.Data))
 	req.Header.Range(func(key string, value string) bool {
@@ -51,6 +54,7 @@ func (d *dubboProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	return dubboReq
 }
 
+// FromFrame is dubboProtocol transform
 func (d *dubboProtocol) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	if resp.GetStatusCode() != dubbo.RespStatusOK {
 		return nil, common.Errorf(common.UnavailebleCode, "dubbo error code %d", resp.GetStatusCode())
