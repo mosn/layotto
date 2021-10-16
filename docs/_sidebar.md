@@ -18,7 +18,7 @@
     - [Method Level Flow Control](en/start/stream_filter/flow_control.md)
   - [Trace management](en/start/trace/trace.md)
   - [Health check and metadata query](en/start/actuator/start.md)
-  - [Multilingual programming based on WASM](en/start/wasm/start.md)
+  - [FaaS model based on WASM and Runtime](en/start/faas/start.md)
 - Reference
   - API reference
     - [File API](en/api_reference/file/file.md)
@@ -59,6 +59,7 @@
   - [Pub/Sub API and compability with dapr component](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
   - [RPC design doc](en/design/rpc/rpc-design-doc.md)
   - [Distributed lock API design](en/design/lock/lock-api-design.md)
+  - [FaaS design](en/design/faas/faas-poc-design.md)
 - Contributing
   - [Layotto contributor guide](en/development/CONTRIBUTING.md)
   - [Document Contribution Guide](en/development/contributing-doc.md)

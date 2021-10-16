@@ -34,8 +34,8 @@ github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
 github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-github.com/layotto/proxy-wasm-go-sdk v0.14.1-0.20210926122819-378cc27b0ffb h1:HLojXxen2zykZVlOG8vdkUiQcPhYN48KkncCPUTeU0o=
-github.com/layotto/proxy-wasm-go-sdk v0.14.1-0.20210926122819-378cc27b0ffb/go.mod h1:qZ+4i6e2wHlhnhgpH0VG4QFzqd2BEvQbQFU0npt2e2k=
+github.com/layotto/proxy-wasm-go-sdk v0.14.1-0.20210929091432-0e4ff35b75af h1:47gHlqE7EQXW2qRXWiAnogq8U7H+2VJUYxRLmCnVfsQ=
+github.com/layotto/proxy-wasm-go-sdk v0.14.1-0.20210929091432-0e4ff35b75af/go.mod h1:qZ+4i6e2wHlhnhgpH0VG4QFzqd2BEvQbQFU0npt2e2k=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
