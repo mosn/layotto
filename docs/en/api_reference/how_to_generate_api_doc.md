@@ -1,6 +1,6 @@
-# how to generate api documents
+# How to generate api documents
 
-we can use [protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc) and docker to generate api documents,the command is as follows:  
+We can use [protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc) and docker to generate api documents,the command is as follows:  
 (Run in layotto directory)
 ```
 docker run --rm \
