@@ -176,12 +176,9 @@ message TryLockRequest {
 
   // Required. lock_owner indicate the identifier of lock owner.
   // You can generate a uuid as lock_owner.For example,in golang:
-  //
   // req.LockOwner = uuid.New().String()
-  //
   // This field is per request,not per process,so it is different for each request,
   // which aims to prevent multi-thread in the same process trying the same lock concurrently.
-  //
   // The reason why we don't make it automatically generated is:
   // 1. If it is automatically generated,there must be a 'my_lock_owner_id' field in the response.
   // This name is so weird that we think it is inappropriate to put it into the api spec
