@@ -1,0 +1,12 @@
+{
+  "name": "layotto-demo",
+  "version": "0.0.0",
+  "description": "Layotto Node.js SDK Demo",
+  "private": true,
+  "scripts": {
+    "test:all": "npm run test:cjs && npm run test:esm && npm run test:ts",
+    "test:cjs": "node ./state.js",
+    "test:esm": "node ./state.mjs",
+    "test:ts": "ts-node ./state.ts"
+  }
+}
