@@ -19,3 +19,4 @@ ignore:
   # and https://github.com/crate/crate/issues/10824
   # and https://docs.codecov.com/docs/unexpected-coverage-changes
   - "pkg/filter/network/tcpcopy/persistence"
+  - "pkg/filter/network/tcpcopy/strategy"
