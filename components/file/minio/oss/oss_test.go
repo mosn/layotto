@@ -26,6 +26,7 @@ import (
 	"mosn.io/layotto/components/file"
 )
 
+// cfg is the raw json data of component's Metadata configuration
 const cfg = `[
 				{
 					"endpoint": "endpoint",
