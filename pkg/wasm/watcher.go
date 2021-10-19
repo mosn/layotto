@@ -1,6 +1,7 @@
 package wasm
 
 import (
+	"mosn.io/pkg/utils"
 	"os"
 	"path/filepath"
 	"strings"
@@ -27,7 +28,7 @@ func init() {
 		log.DefaultLogger.Errorf("[proxywasm] [watcher] init fail to create watcher: %v", err)
 		return
 	}
-	go runWatcher()
+	utils.GoWithRecover(runWatcher, nil)
 }
 
 func runWatcher() {
