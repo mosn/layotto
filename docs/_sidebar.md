@@ -29,7 +29,7 @@
     - [Distributed Lock API](en/building_blocks/lock/reference.md)
     - [Pub/Sub API](en/building_blocks/pubsub/reference.md)
     - [RPC API](en/building_blocks/rpc/reference.md)    
-  - [API reference](en/api_reference/api_reference_v1.md)
+  - [API reference](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
   - SDK reference
     - [go-sdk](en/sdk_reference/go/start.md)
     - [java-sdk](en/sdk_reference/java/start.md)
