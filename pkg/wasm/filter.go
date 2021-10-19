@@ -19,6 +19,7 @@ package wasm
 import (
 	"context"
 	"fmt"
+	"mosn.io/mosn/pkg/variable"
 	"reflect"
 	"sync"
 	"sync/atomic"
@@ -29,8 +30,8 @@ import (
 	"mosn.io/mosn/pkg/wasm/abi"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 	"mosn.io/pkg/buffer"
-	"mosn.io/proxy-wasm-go-host/common"
-	"mosn.io/proxy-wasm-go-host/proxywasm"
+	"mosn.io/proxy-wasm-go-host/proxywasm/common"
+	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 )
 
 type Filter struct {
@@ -53,7 +54,8 @@ type Filter struct {
 
 	destroyOnce sync.Once
 
-	buffer api.IoBuffer
+	requestBuffer  api.IoBuffer
+	responseBuffer api.IoBuffer
 }
 
 type WasmPlugin struct {
@@ -85,7 +87,7 @@ func (p *WasmPlugin) GetVmConfig() common.IoBuffer {
 		m[typeOf.Field(i).Name] = fmt.Sprintf("%v", valueOf.Field(i).Interface())
 	}
 
-	b := proxywasm.EncodeMap(m)
+	b := common.EncodeMap(m)
 	if b == nil {
 		return nil
 	}
@@ -99,7 +101,7 @@ func (p *WasmPlugin) GetPluginConfig() common.IoBuffer {
 		return p.pluginConfigBytes
 	}
 
-	b := proxywasm.EncodeMap(p.config.UserData)
+	b := common.EncodeMap(p.config.UserData)
 	if b == nil {
 		return nil
 	}
@@ -125,10 +127,11 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 		ctx:     ctx,
 		factory: factory,
 
-		contextID: newContextID(factory.RootContextID),
-		router:    factory.router,
-		plugins:   factory.plugins,
-		buffer:    buffer.NewIoBuffer(100),
+		contextID:      newContextID(factory.RootContextID),
+		router:         factory.router,
+		plugins:        factory.plugins,
+		requestBuffer:  buffer.NewIoBuffer(100),
+		responseBuffer: buffer.NewIoBuffer(100),
 	}
 
 	return filter
@@ -234,8 +237,15 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 		endOfStream = 0
 	}
 
-	if buf != nil && buf.Len() > 0 {
-		action, err = exports.ProxyOnRequestBody(f.contextID, int32(buf.Len()), int32(endOfStream))
+	if buf == nil {
+		arg, _ := variable.GetString(ctx, types.VarHttpRequestArg)
+		f.requestBuffer = buffer.NewIoBufferString(arg)
+	} else {
+		f.requestBuffer = buf
+	}
+
+	if f.requestBuffer != nil && f.requestBuffer.Len() > 0 {
+		action, err = exports.ProxyOnRequestBody(f.contextID, int32(f.requestBuffer.Len()), int32(endOfStream))
 		if err != nil || action != proxywasm.ActionContinue {
 			log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestBody err: %v", err)
 			return api.StreamFilterStop
@@ -254,7 +264,7 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 }
 
 func (f *Filter) Append(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
-	f.senderFilterHandler.SetResponseData(f.buffer)
+	f.senderFilterHandler.SetResponseData(f.responseBuffer)
 	return api.StreamFilterContinue
 }
 
@@ -283,7 +293,7 @@ func (f *Filter) GetHttpRequestBody() common.IoBuffer {
 		return nil
 	}
 
-	return &proxywasm010.IoBufferWrapper{IoBuffer: f.receiverFilterHandler.GetRequestData()}
+	return &proxywasm010.IoBufferWrapper{IoBuffer: f.requestBuffer}
 }
 
 func (f *Filter) GetHttpRequestTrailer() common.HeaderMap {
@@ -307,7 +317,7 @@ func (f *Filter) GetHttpResponseBody() common.IoBuffer {
 		return nil
 	}
 
-	return &proxywasm010.IoBufferWrapper{IoBuffer: f.buffer}
+	return &proxywasm010.IoBufferWrapper{IoBuffer: f.responseBuffer}
 }
 
 func (f *Filter) GetHttpResponseTrailer() common.HeaderMap {

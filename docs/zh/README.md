@@ -5,7 +5,7 @@
 
 <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
 
-Layotto 是一款使用 Golang 开发的应用运行时, 旨在帮助开发人员快速构建云原生应用，帮助应用和基础设施解耦。它为应用提供了各种分布式能力，比如状态管理，配置管理，事件发布订阅等能力，以简化应用的开发。
+Layotto(/leɪˈɒtəʊ/) 是一款使用 Golang 开发的应用运行时, 旨在帮助开发人员快速构建云原生应用，帮助应用和基础设施解耦。它为应用提供了各种分布式能力，比如状态管理，配置管理，事件发布订阅等能力，以简化应用的开发。
 
 Layotto 以开源的 [MOSN](https://github.com/mosn/mosn) 为底座，在提供分布式能力以外，提供了 Service Mesh 对于流量的管控能力。
 
@@ -81,7 +81,7 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 ### 使用WASM进行多语言编程
 
-[WASM概述](zh/start/wasm/start.md)
+[基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 
 ## 设计文档
 
@@ -94,6 +94,8 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 [rpc设计文档](zh/design/rpc/rpc设计文档.md)
 
 [分布式锁api设计文档](zh/design/lock/lock-api-design.md)
+
+[FaaS 设计文档](zh/design/faas/faas-poc-design.md)
 
 
 ## 社区
