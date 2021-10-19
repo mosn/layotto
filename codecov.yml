@@ -13,3 +13,10 @@ coverage:
 ignore:
   # Configure what to ignore.
   - "pkg/mock"         # - Testing mock.
+  # Ignore non-deterministic methods and tests
+  # codecov might report unexpected changes even if no code has been changed.
+  # see https://community.codecov.com/t/reported-change-in-coverage-when-no-code-changes-made/1346
+  # and https://github.com/crate/crate/issues/10824
+  # and https://docs.codecov.com/docs/unexpected-coverage-changes
+  - "pkg/filter/network/tcpcopy/persistence"
+  - "pkg/filter/network/tcpcopy/strategy"
