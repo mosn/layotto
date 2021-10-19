@@ -30,7 +30,7 @@
         - [Pub/Sub API](zh/building_blocks/pubsub/reference.md)
         - [Configuration API](zh/building_blocks/configuration/reference.md)
         - [RPC API](zh/building_blocks/rpc/reference.md)
-    - [grpc API文档](zh/api_reference/api_reference_v1.md)
+    - [grpc API 文档](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
     - SDK文档    
         - [go-sdk](zh/sdk_reference/go/start.md)
         - [java-sdk](zh/sdk_reference/java/start.md)
