@@ -3,6 +3,7 @@ package etcdv3
 import (
 	"context"
 	"fmt"
+	"mosn.io/pkg/utils"
 	"strconv"
 	"strings"
 	"sync"
@@ -195,7 +196,9 @@ func (c *EtcdV3ConfigStore) Subscribe(req *configstores.SubscribeReq, ch chan *c
 		c.subscribeKey[s] = key
 	}
 	if !c.watchStarted {
-		go c.watch()
+		utils.GoWithRecover(func() {
+			c.watch()
+		}, nil)
 		c.watchStarted = true
 	}
 	return nil

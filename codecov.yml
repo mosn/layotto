@@ -20,3 +20,4 @@ ignore:
   # and https://docs.codecov.com/docs/unexpected-coverage-changes
   - "pkg/filter/network/tcpcopy/persistence"
   - "pkg/filter/network/tcpcopy/strategy"
+  - "pkg/wasm/watcher.go"
