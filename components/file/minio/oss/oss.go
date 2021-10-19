@@ -201,7 +201,7 @@ func (m *MinioOss) selectClient(meta map[string]string) (client *minio.Client, e
 	return
 }
 
-// isMinioMetaValid check if the metadata valid
+// isMinioMetaValid check if the metadata is valid
 func (mm *MinioMetaData) isMinioMetaValid() bool {
 	if mm.AccessKeySecret == "" || mm.EndPoint == "" || mm.AccessKeyID == "" {
 		return false
