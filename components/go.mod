@@ -14,9 +14,11 @@ require (
 	github.com/go-redis/redis/v8 v8.8.0
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/golang/mock v1.4.4
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.2.0
 	github.com/lyft/protoc-gen-validate v0.0.14 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
+	github.com/minio/minio-go/v6 v6.0.57
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
 	github.com/mosn/binding v0.0.0-20200413092018-2b47bdb20a9f // indirect
 	github.com/mosn/easygo v0.0.0-20201210062404-62796fdb3827 // indirect
