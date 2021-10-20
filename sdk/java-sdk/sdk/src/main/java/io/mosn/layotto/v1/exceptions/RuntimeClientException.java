@@ -8,7 +8,7 @@ public class RuntimeClientException extends RuntimeException {
     /**
      * Runtime's error code for this exception.
      */
-    private String errorCode;
+    private final String errorCode;
 
     /**
      * New exception from a server-side generated error code and message.

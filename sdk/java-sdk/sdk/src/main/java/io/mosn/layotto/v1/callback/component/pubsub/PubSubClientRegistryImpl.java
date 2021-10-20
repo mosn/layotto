@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PubSubClientRegistryImpl implements PubSubRegistry {
+
     public final Map<String, PubSub> pubSubClients = new ConcurrentHashMap<>();
 
     @Override

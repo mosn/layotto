@@ -1,17 +1,11 @@
 package io.mosn.layotto.v1;
 
+import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
 import org.slf4j.Logger;
 import spec.sdk.runtime.v1.client.RuntimeClient;
 import spec.sdk.runtime.v1.domain.invocation.InvokeResponse;
-import spec.sdk.runtime.v1.domain.state.DeleteStateRequest;
-import spec.sdk.runtime.v1.domain.state.ExecuteStateTransactionRequest;
-import spec.sdk.runtime.v1.domain.state.GetBulkStateRequest;
-import spec.sdk.runtime.v1.domain.state.GetStateRequest;
-import spec.sdk.runtime.v1.domain.state.SaveStateRequest;
-import spec.sdk.runtime.v1.domain.state.State;
-import spec.sdk.runtime.v1.domain.state.StateOptions;
-import spec.sdk.runtime.v1.domain.state.TransactionalStateOperation;
+import spec.sdk.runtime.v1.domain.state.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,13 +14,18 @@ import java.util.Map;
 
 public abstract class AbstractRuntimeClient implements RuntimeClient {
 
-    protected final String DEFAULT_PUBSUB_CONTENT_TYPE = "";
-
-    protected Logger logger;
-
-    private int timeoutMs;
-
-    protected ObjectSerializer stateSerializer;
+    /**
+     * Runtime client logger.
+     */
+    protected final Logger           logger;
+    /**
+     * Serializer used for state objects.
+     */
+    protected final ObjectSerializer stateSerializer;
+    /**
+     * Runtime invocation timeout ms.
+     */
+    private final   int              timeoutMs;
 
     AbstractRuntimeClient(Logger logger, int timeoutMs, ObjectSerializer stateSerializer) {
         this.logger = logger;
@@ -34,22 +33,26 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
         this.stateSerializer = stateSerializer;
     }
 
+    @Override
     public String sayHello(String name) {
-        return sayHello(name, getTimeoutMs());
+        return this.sayHello(name, this.getTimeoutMs());
     }
 
+    @Override
     public InvokeResponse<byte[]> invokeMethod(String appId, String methodName, byte[] data, Map<String, String> header) {
-        return invokeMethod(appId, methodName, data, header, getTimeoutMs());
+        return this.invokeMethod(appId, methodName, data, header, this.getTimeoutMs());
     }
     // TODO add some methods that serialize data before invoking method
 
+    @Override
     public void publishEvent(String pubsubName, String topicName, byte[] data) {
-        publishEvent(pubsubName, topicName, data, DEFAULT_PUBSUB_CONTENT_TYPE, new HashMap<>());
+        Map<String, String> metadata = new HashMap<>(2, 1);
+        this.publishEvent(pubsubName, topicName, data, RuntimeProperties.DEFAULT_PUBSUB_CONTENT_TYPE, metadata);
     }
 
     @Override
     public void publishEvent(String pubsubName, String topicName, byte[] data, Map<String, String> metadata) {
-        publishEvent(pubsubName, topicName, data, DEFAULT_PUBSUB_CONTENT_TYPE, metadata);
+        this.publishEvent(pubsubName, topicName, data, RuntimeProperties.DEFAULT_PUBSUB_CONTENT_TYPE, metadata);
     }
 
     /**
@@ -61,7 +64,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
      */
     @Override
     public <T> State<T> getState(String storeName, String key, Class<T> clazz) {
-        return getState(storeName, key, null, clazz);
+        return this.getState(storeName, key, null, clazz);
     }
 
     /**
@@ -95,7 +98,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
         DeleteStateRequest request = new DeleteStateRequest(storeName, key);
         request.setEtag(etag);
         request.setStateOptions(options);
-        deleteState(request);
+        this.deleteState(request);
     }
 
     /**
@@ -103,7 +106,8 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
      */
     @Override
     public void saveState(String storeName, String key, Object value) {
-        this.saveState(storeName, key, null, value, null, new HashMap<>());
+        Map<String, String> metadata = new HashMap<>(2, 1);
+        this.saveState(storeName, key, null, value, null, metadata);
     }
 
     /**
@@ -112,7 +116,8 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     @Override
     public void saveState(String storeName, String key, String etag, Object value, StateOptions options, Map<String, String> metadata) {
         State<?> state = new State<>(key, value, etag, metadata, options);
-        this.saveBulkState(storeName, Collections.singletonList(state));
+        List<State<?>> states = Collections.singletonList(state);
+        this.saveBulkState(storeName, states);
     }
 
     /**
@@ -129,11 +134,10 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
      * {@inheritDoc}
      */
     @Override
-    public void executeStateTransaction(String storeName,
-                                        List<TransactionalStateOperation<?>> operations) {
+    public void executeStateTransaction(String storeName, List<TransactionalStateOperation<?>> operations) {
         ExecuteStateTransactionRequest request = new ExecuteStateTransactionRequest(storeName);
         request.setOperations(operations);
-        executeStateTransaction(request);
+        this.executeStateTransaction(request);
     }
 
     /**
@@ -141,7 +145,8 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
      */
     @Override
     public <T> List<State<T>> getBulkState(String storeName, List<String> keys, Class<T> clazz) {
-        return this.getBulkState(new GetBulkStateRequest(storeName, keys), clazz);
+        GetBulkStateRequest request = new GetBulkStateRequest(storeName, keys);
+        return this.getBulkState(request, clazz);
     }
 
     /**
@@ -150,6 +155,6 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
      * @return property value of timeoutMs
      */
     public int getTimeoutMs() {
-        return timeoutMs;
+        return this.timeoutMs;
     }
 }

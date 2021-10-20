@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Raw pubsub client.
  */
 public class RawPubSub implements PubSub {
+
     private static final Logger LOG = LoggerFactory.getLogger(RawPubSub.class);
 
     private final Map<String, EventListener> listeners = new ConcurrentHashMap<>();

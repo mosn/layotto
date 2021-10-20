@@ -1,7 +1,9 @@
 package io.mosn.layotto.v1;
 
+import com.google.errorprone.annotations.DoNotCall;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.domain.ApiProtocol;
 import io.mosn.layotto.v1.serializer.JSONSerializer;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
@@ -11,33 +13,28 @@ import spec.proto.runtime.v1.RuntimeGrpc;
 import spec.sdk.runtime.v1.client.RuntimeClient;
 
 import java.io.Closeable;
+import java.util.function.Supplier;
 
 /**
  * A builder for the RuntimeClient,
  */
 public class RuntimeClientBuilder {
 
-    private static final String DEFAULT_IP = "127.0.0.1";
-
-    private static final int DEFAULT_PORT = 34904;
-
     private static final Logger DEFAULT_LOGGER = LoggerFactory.getLogger(RuntimeClient.class.getName());
 
-    private final static int DEFAULT_TIMEOUT_MS = 1000;
+    private int timeoutMs = RuntimeProperties.DEFAULT_TIMEOUT_MS;
 
-    private int timeoutMs = DEFAULT_TIMEOUT_MS;
+    private String ip = RuntimeProperties.DEFAULT_IP;
 
-    // TODO add Serializer
+    private int port = RuntimeProperties.DEFAULT_PORT;
 
-    private String ip = DEFAULT_IP;
-
-    private int port = DEFAULT_PORT;
-
-    private ApiProtocol protocol = ApiProtocol.GRPC;
+    private ApiProtocol protocol = RuntimeProperties.DEFAULT_API_PROTOCOL;
 
     private Logger logger = DEFAULT_LOGGER;
 
     private ObjectSerializer stateSerializer = new JSONSerializer();
+
+    // TODO add rpc serializer
 
     /**
      * Creates a constructor for RuntimeClient.
@@ -58,6 +55,15 @@ public class RuntimeClientBuilder {
             throw new IllegalArgumentException("Invalid port.");
         }
         this.port = port;
+        return this;
+    }
+
+    @DoNotCall
+    public RuntimeClientBuilder withApiProtocol(ApiProtocol protocol) {
+        if (protocol == null) {
+            throw new IllegalArgumentException("Invalid protocol.");
+        }
+        this.protocol = protocol;
         return this;
     }
 
@@ -115,14 +121,20 @@ public class RuntimeClientBuilder {
         if (port <= 0) {
             throw new IllegalArgumentException("Invalid port.");
         }
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port)
+                .usePlaintext()
+                .build();
         Closeable closeable = () -> {
             if (channel != null && !channel.isShutdown()) {
                 channel.shutdown();
             }
         };
         RuntimeGrpc.RuntimeBlockingStub blockingStub = RuntimeGrpc.newBlockingStub(channel);
-        return new RuntimeClientGrpc(logger, timeoutMs, stateSerializer, closeable, blockingStub);
+        return new RuntimeClientGrpc(
+                logger,
+                timeoutMs,
+                stateSerializer,
+                closeable,
+                blockingStub);
     }
-
 }

@@ -19,13 +19,13 @@ public interface ObjectSerializer {
     /**
      * Deserializes the given byte[] into a object.
      *
-     * @param data Data to be deserialized.
+     * @param data  Data to be deserialized.
      * @param clazz Class of object to be deserialized.
-     * @param <T>  Type of object to be deserialized.
+     * @param <T>   Type of object to be deserialized.
      * @return Deserialized object.
      * @throws IOException If cannot deserialize object.
      */
-    public <T> T deserialize(byte[] data, Class<T> clazz) throws IOException;
+    <T> T deserialize(byte[] data, Class<T> clazz) throws IOException;
 
     /**
      * Returns the content type of the request.

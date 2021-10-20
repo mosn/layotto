@@ -5,20 +5,14 @@ import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
+import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.exceptions.RuntimeClientException;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
 import org.slf4j.Logger;
 import spec.proto.runtime.v1.RuntimeGrpc;
 import spec.proto.runtime.v1.RuntimeProto;
 import spec.sdk.runtime.v1.domain.invocation.InvokeResponse;
-import spec.sdk.runtime.v1.domain.state.DeleteStateRequest;
-import spec.sdk.runtime.v1.domain.state.ExecuteStateTransactionRequest;
-import spec.sdk.runtime.v1.domain.state.GetBulkStateRequest;
-import spec.sdk.runtime.v1.domain.state.GetStateRequest;
-import spec.sdk.runtime.v1.domain.state.SaveStateRequest;
-import spec.sdk.runtime.v1.domain.state.State;
-import spec.sdk.runtime.v1.domain.state.StateOptions;
-import spec.sdk.runtime.v1.domain.state.TransactionalStateOperation;
+import spec.sdk.runtime.v1.domain.state.*;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -28,88 +22,128 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class RuntimeClientGrpc extends AbstractRuntimeClient {
-    private static final String                          TIMEOUT_KEY = "timeout";
-    protected final      RuntimeGrpc.RuntimeBlockingStub blockingStub;
-    private final        Closeable                       closeable;
 
-    RuntimeClientGrpc(Logger logger, int timeoutMs, ObjectSerializer stateSerializer
-            , Closeable closeable, RuntimeGrpc.RuntimeBlockingStub blockingStub) {
+    private static final String TIMEOUT_KEY = "timeout";
+    protected final RuntimeGrpc.RuntimeBlockingStub blockingStub;
+    private final Closeable closeable;
+
+    RuntimeClientGrpc(Logger logger,
+                      int timeoutMs,
+                      ObjectSerializer stateSerializer,
+                      Closeable closeable,
+                      RuntimeGrpc.RuntimeBlockingStub blockingStub) {
         super(logger, timeoutMs, stateSerializer);
         this.closeable = closeable;
         this.blockingStub = blockingStub;
     }
 
+    @Override
     public String sayHello(String name, int timeoutMillisecond) {
-        RuntimeProto.SayHelloRequest req = RuntimeProto.SayHelloRequest.newBuilder().setServiceName(name).setName(name).build();
-        RuntimeProto.SayHelloResponse response;
         try {
-            response = blockingStub.withDeadlineAfter(timeoutMillisecond, TimeUnit.MILLISECONDS).sayHello(req);
+            // 1. prepare request
+            RuntimeProto.SayHelloRequest req = RuntimeProto.SayHelloRequest.newBuilder()
+                    .setServiceName(name)
+                    .setName(name)
+                    .build();
+
+            // 2. invoke
+            RuntimeProto.SayHelloResponse response = blockingStub.withDeadlineAfter(timeoutMillisecond, TimeUnit.MILLISECONDS)
+                    .sayHello(req);
+
+            // 3. parse result
+            return response.getHello();
         } catch (Exception e) {
-            logger.error("sayHello error", e);
-            return null;
+            logger.error("sayHello error ", e);
+            throw new RuntimeClientException(e);
         }
-        return response.getHello();
     }
 
+    @Override
     public InvokeResponse<byte[]> invokeMethod(String appId, String methodName, byte[] data, Map<String, String> header, int timeoutMs) {
-        // prepare request
-        Any anyData = Any.newBuilder().setValue(ByteString.copyFrom(data)).build();
-        RuntimeProto.CommonInvokeRequest commonReq = RuntimeProto.CommonInvokeRequest.newBuilder().setMethod(methodName).setData(anyData)
-                .build();
-        RuntimeProto.InvokeServiceRequest invokeReq = RuntimeProto.InvokeServiceRequest.newBuilder().setId(appId).setMessage(commonReq)
-                .build();
-        // metadata
-        Metadata metadata = new Metadata();
-        for (Map.Entry<String, String> entry : header.entrySet()) {
-            if (entry.getKey() != null && entry.getValue() != null) {
-                metadata.put(Metadata.Key.of(entry.getKey(), Metadata.ASCII_STRING_MARSHALLER), entry.getValue());
+        try {
+            // 1. prepare request
+            final ByteString byteString = ByteString.copyFrom(data);
+            Any anyData = Any.newBuilder()
+                    .setValue(byteString)
+                    .build();
+            RuntimeProto.CommonInvokeRequest commonReq = RuntimeProto.CommonInvokeRequest.newBuilder()
+                    .setMethod(methodName)
+                    .setData(anyData)
+                    .build();
+            RuntimeProto.InvokeServiceRequest invokeReq = RuntimeProto.InvokeServiceRequest.newBuilder()
+                    .setId(appId)
+                    .setMessage(commonReq)
+                    .build();
+            // metadata
+            Metadata metadata = new Metadata();
+            for (Map.Entry<String, String> entry : header.entrySet()) {
+                if (entry.getKey() != null && entry.getValue() != null) {
+                    Metadata.Key<String> key = Metadata.Key.of(entry.getKey(), Metadata.ASCII_STRING_MARSHALLER);
+                    metadata.put(key, entry.getValue());
+                }
             }
-        }
-        metadata.put(Metadata.Key.of(TIMEOUT_KEY, Metadata.ASCII_STRING_MARSHALLER), Integer.toString(timeoutMs));
-        // invoke
-        RuntimeProto.InvokeResponse resp = blockingStub.withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS).withInterceptors(
-                MetadataUtils.newAttachHeadersInterceptor(metadata)).invokeService(invokeReq);
-        // parse result
-        InvokeResponse<byte[]> result = new InvokeResponse<byte[]>();
-        result.setContentType(resp.getContentType());
-        byte[] bytes = new byte[] {};
-        result.setData(bytes);
-        if (resp.getData() == null) {
+            Metadata.Key<String> key = Metadata.Key.of(TIMEOUT_KEY, Metadata.ASCII_STRING_MARSHALLER);
+            metadata.put(key, Integer.toString(timeoutMs));
+
+            // 2. invoke
+            RuntimeProto.InvokeResponse resp = blockingStub.withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS)
+                    .withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata))
+                    .invokeService(invokeReq);
+
+            // 3. parse result
+            InvokeResponse<byte[]> result = new InvokeResponse<>();
+            result.setContentType(resp.getContentType());
+            byte[] bytes = new byte[]{};
+            result.setData(bytes);
+            if (resp.getData() == null) {
+                return result;
+            }
+            if (resp.getData().getValue() == null) {
+                return result;
+            }
+            if (resp.getData().getValue().toByteArray() == null) {
+                return result;
+            }
+            result.setData(resp.getData().getValue().toByteArray());
             return result;
+        } catch (Exception e) {
+            logger.error("invokeMethod error ", e);
+            throw new RuntimeClientException(e);
         }
-        if (resp.getData().getValue() == null) {
-            return result;
-        }
-        if (resp.getData().getValue().toByteArray() == null) {
-            return result;
-        }
-        result.setData(resp.getData().getValue().toByteArray());
-        return result;
     }
 
+    @Override
     public void publishEvent(String pubsubName, String topicName, byte[] data, String contentType, Map<String, String> metadata) {
-        if (data == null) {
-            data = new byte[] {};
-        }
-        RuntimeProto.PublishEventRequest.Builder envelopeBuilder = RuntimeProto.PublishEventRequest.newBuilder()
-                .setTopic(topicName)
-                .setPubsubName(pubsubName)
-                .setData(ByteString.copyFrom(data));
+        try {
+            // 1. prepare data
+            if (data == null) {
+                data = new byte[]{};
+            }
+            final ByteString byteString = ByteString.copyFrom(data);
+            // Content-type can be overwritten on a per-request basis.
+            // It allows CloudEvents to be handled differently, for example.
+            if (contentType == null || contentType.isEmpty()) {
+                contentType = RuntimeProperties.DEFAULT_PUBSUB_CONTENT_TYPE;
+            }
 
-        // Content-type can be overwritten on a per-request basis.
-        // It allows CloudEvents to be handled differently, for example.
-        if (contentType == null || contentType.isEmpty()) {
-            contentType = DEFAULT_PUBSUB_CONTENT_TYPE;
-        }
-        envelopeBuilder.setDataContentType(contentType);
+            // 2. prepare request
+            RuntimeProto.PublishEventRequest.Builder envelopeBuilder = RuntimeProto.PublishEventRequest.newBuilder()
+                    .setTopic(topicName)
+                    .setPubsubName(pubsubName)
+                    .setData(byteString)
+                    .setDataContentType(contentType);
+            // metadata
+            if (metadata != null) {
+                envelopeBuilder.putAllMetadata(metadata);
+            }
+            RuntimeProto.PublishEventRequest req = envelopeBuilder.build();
 
-        // metadata
-        if (metadata != null) {
-            envelopeBuilder.putAllMetadata(metadata);
+            // 3. invoke
+            blockingStub.publishEvent(req);
+        } catch (Exception e) {
+            logger.error("publishEvent error ", e);
+            throw new RuntimeClientException(e);
         }
-        RuntimeProto.PublishEventRequest req = envelopeBuilder.build();
-        // publish
-        blockingStub.publishEvent(req);
     }
 
     /**
@@ -120,20 +154,25 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
         try {
             final String stateStoreName = request.getStoreName();
             final List<State<?>> states = request.getStates();
+
             // 1. validate
             if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
                 throw new IllegalArgumentException("State store name cannot be null or empty.");
             }
+
             // 2. prepare request
             RuntimeProto.SaveStateRequest.Builder builder = RuntimeProto.SaveStateRequest.newBuilder();
             builder.setStoreName(stateStoreName);
             for (State<?> state : states) {
-                builder.addStates(buildStateRequest(state).build());
+                RuntimeProto.StateItem stateItem = buildStateRequest(state)
+                        .build();
+                builder.addStates(stateItem);
             }
             RuntimeProto.SaveStateRequest req = builder.build();
 
             // 3. invoke
-            blockingStub.withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS).saveState(req);
+            blockingStub.withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS)
+                    .saveState(req);
         } catch (Exception e) {
             logger.error("saveBulkState error ", e);
             throw new RuntimeClientException(e);
@@ -156,7 +195,10 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
 
         // 2. etag
         if (state.getEtag() != null) {
-            stateBuilder.setEtag(RuntimeProto.Etag.newBuilder().setValue(state.getEtag()).build());
+            RuntimeProto.Etag etag = RuntimeProto.Etag.newBuilder()
+                    .setValue(state.getEtag())
+                    .build();
+            stateBuilder.setEtag(etag);
         }
         // 3. metadata
         if (state.getMetadata() != null) {
@@ -170,14 +212,17 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             StateOptions options = state.getOptions();
             optionBuilder = RuntimeProto.StateOptions.newBuilder();
             if (options.getConcurrency() != null) {
-                optionBuilder.setConcurrency(getGrpcStateConcurrency(options));
+                RuntimeProto.StateOptions.StateConcurrency concurrency = getGrpcStateConcurrency(options);
+                optionBuilder.setConcurrency(concurrency);
             }
             if (options.getConsistency() != null) {
-                optionBuilder.setConsistency(getGrpcStateConsistency(options));
+                RuntimeProto.StateOptions.StateConsistency consistency = getGrpcStateConsistency(options);
+                optionBuilder.setConsistency(consistency);
             }
         }
         if (optionBuilder != null) {
-            stateBuilder.setOptions(optionBuilder.build());
+            RuntimeProto.StateOptions stateOptions = optionBuilder.build();
+            stateBuilder.setOptions(stateOptions);
         }
 
         return stateBuilder;
@@ -210,10 +255,12 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             if (options != null) {
                 optionBuilder = RuntimeProto.StateOptions.newBuilder();
                 if (options.getConcurrency() != null) {
-                    optionBuilder.setConcurrency(getGrpcStateConcurrency(options));
+                    RuntimeProto.StateOptions.StateConcurrency concurrency = getGrpcStateConcurrency(options);
+                    optionBuilder.setConcurrency(concurrency);
                 }
                 if (options.getConsistency() != null) {
-                    optionBuilder.setConsistency(getGrpcStateConsistency(options));
+                    RuntimeProto.StateOptions.StateConsistency consistency = getGrpcStateConsistency(options);
+                    optionBuilder.setConsistency(consistency);
                 }
             }
             RuntimeProto.DeleteStateRequest.Builder builder = RuntimeProto.DeleteStateRequest.newBuilder()
@@ -223,15 +270,20 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
                 builder.putAllMetadata(metadata);
             }
             if (etag != null) {
-                builder.setEtag(RuntimeProto.Etag.newBuilder().setValue(etag).build());
+                RuntimeProto.Etag value = RuntimeProto.Etag.newBuilder()
+                        .setValue(etag)
+                        .build();
+                builder.setEtag(value);
             }
             if (optionBuilder != null) {
-                builder.setOptions(optionBuilder.build());
+                RuntimeProto.StateOptions stateOptions = optionBuilder.build();
+                builder.setOptions(stateOptions);
             }
             RuntimeProto.DeleteStateRequest req = builder.build();
 
             // 3. invoke
-            blockingStub.withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS).deleteState(req);
+            blockingStub.withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS)
+                    .deleteState(req);
         } catch (Exception e) {
             logger.error("deleteState error ", e);
             throw new RuntimeClientException(e);
@@ -271,22 +323,28 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             final String stateStoreName = request.getStateStoreName();
             final List<TransactionalStateOperation<?>> operations = request.getOperations();
             final Map<String, String> metadata = request.getMetadata();
+
             // 1. validate
             if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
                 throw new IllegalArgumentException("State store name cannot be null or empty.");
             }
-            // 2. construct request ojbect
-            RuntimeProto.ExecuteStateTransactionRequest.Builder builder = RuntimeProto.ExecuteStateTransactionRequest
-                    .newBuilder();
+
+            // 2. construct request object
+            RuntimeProto.ExecuteStateTransactionRequest.Builder builder = RuntimeProto.ExecuteStateTransactionRequest.newBuilder();
             builder.setStoreName(stateStoreName);
             if (metadata != null) {
                 builder.putAllMetadata(metadata);
             }
             for (TransactionalStateOperation<?> operation : operations) {
-                RuntimeProto.TransactionalStateOperation.Builder operationBuilder = RuntimeProto.TransactionalStateOperation
-                        .newBuilder();
-                operationBuilder.setOperationType(operation.getOperation().toString().toLowerCase());
-                operationBuilder.setRequest(buildStateRequest(operation.getRequest()).build());
+                RuntimeProto.TransactionalStateOperation.Builder operationBuilder = RuntimeProto.TransactionalStateOperation.newBuilder();
+
+                String operationType = operation.getOperation().toString().toLowerCase();
+                operationBuilder.setOperationType(operationType);
+
+                RuntimeProto.StateItem stateItem = buildStateRequest(operation.getRequest())
+                        .build();
+                operationBuilder.setRequest(stateItem);
+
                 builder.addOperations(operationBuilder.build());
             }
             RuntimeProto.ExecuteStateTransactionRequest req = builder.build();
@@ -321,6 +379,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             if ((key == null) || (key.trim().isEmpty())) {
                 throw new IllegalArgumentException("Key cannot be null or empty.");
             }
+
             // 2. construct request object
             RuntimeProto.GetStateRequest.Builder builder = RuntimeProto.GetStateRequest.newBuilder()
                     .setStoreName(stateStoreName)
@@ -329,15 +388,16 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
                 builder.putAllMetadata(metadata);
             }
             if (options != null && options.getConsistency() != null) {
-                builder.setConsistency(getGrpcStateConsistency(options));
+                RuntimeProto.StateOptions.StateConsistency consistency = getGrpcStateConsistency(options);
+                builder.setConsistency(consistency);
             }
             RuntimeProto.GetStateRequest envelope = builder.build();
 
             // 3. invoke grpc api
             RuntimeProto.GetStateResponse resp = blockingStub.getState(envelope);
+
             // 4. parse result
             return parseGetStateResult(resp, key, options, clazz);
-
         } catch (Exception e) {
             logger.error("getState error ", e);
             throw new RuntimeClientException(e);
@@ -351,6 +411,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             final List<String> keys = request.getKeys();
             final int parallelism = request.getParallelism();
             final Map<String, String> metadata = request.getMetadata();
+
             // 1. validate
             if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
                 throw new IllegalArgumentException("State store name cannot be null or empty.");
@@ -361,6 +422,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             if (parallelism < 0) {
                 throw new IllegalArgumentException("Parallelism cannot be negative.");
             }
+
             // 2. construct request object
             RuntimeProto.GetBulkStateRequest.Builder builder = RuntimeProto.GetBulkStateRequest.newBuilder()
                     .setStoreName(stateStoreName)
@@ -369,16 +431,17 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             if (metadata != null) {
                 builder.putAllMetadata(metadata);
             }
-
             RuntimeProto.GetBulkStateRequest envelope = builder.build();
 
             // 3. invoke grpc API
             RuntimeProto.GetBulkStateResponse resp = blockingStub.getBulkState(envelope);
+
             // 4. parse result
-            List<State<T>> result = new ArrayList<>();
-            List<RuntimeProto.BulkStateItem> list = resp.getItemsList();
-            for (RuntimeProto.BulkStateItem itm : list) {
-                result.add(parseGetStateResult(itm, clazz));
+            List<RuntimeProto.BulkStateItem> itemsList = resp.getItemsList();
+            List<State<T>> result = new ArrayList<>(itemsList.size());
+            for (RuntimeProto.BulkStateItem itm : itemsList) {
+                State<T> tState = parseGetStateResult(itm, clazz);
+                result.add(tState);
             }
             return result;
         } catch (Exception e) {
@@ -388,36 +451,36 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
     }
 
     private <T> State<T> parseGetStateResult(
-            RuntimeProto.GetStateResponse response,
+            RuntimeProto.GetStateResponse getStateResponse,
             String requestedKey,
             StateOptions stateOptions,
             Class<T> clazz) throws IOException {
-        ByteString payload = response.getData();
+        final ByteString payload = getStateResponse.getData();
         byte[] data = payload == null ? null : payload.toByteArray();
         T value = stateSerializer.deserialize(data, clazz);
-        String etag = response.getEtag();
+        String etag = getStateResponse.getEtag();
         if (etag != null && etag.isEmpty()) {
             etag = null;
         }
-        return new State<>(requestedKey, value, etag, response.getMetadataMap(), stateOptions);
+        return new State<>(requestedKey, value, etag, getStateResponse.getMetadataMap(), stateOptions);
     }
 
     private <T> State<T> parseGetStateResult(
-            RuntimeProto.BulkStateItem item,
+            RuntimeProto.BulkStateItem bulkStateItem,
             Class<T> clazz) throws IOException {
-        String key = item.getKey();
-        String error = item.getError();
+        final String key = bulkStateItem.getKey();
+        final String error = bulkStateItem.getError();
         if (!Strings.isNullOrEmpty(error)) {
             return new State<>(key, error);
         }
 
-        ByteString payload = item.getData();
+        final ByteString payload = bulkStateItem.getData();
         byte[] data = payload == null ? null : payload.toByteArray();
         T value = stateSerializer.deserialize(data, clazz);
-        String etag = item.getEtag();
+        String etag = bulkStateItem.getEtag();
         if (etag != null && etag.isEmpty()) {
             etag = null;
         }
-        return new State<>(key, value, etag, item.getMetadataMap(), null);
+        return new State<>(key, value, etag, bulkStateItem.getMetadataMap(), null);
     }
 }

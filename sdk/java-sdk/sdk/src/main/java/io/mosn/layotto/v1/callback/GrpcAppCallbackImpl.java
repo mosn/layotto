@@ -4,16 +4,17 @@ import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import io.mosn.layotto.v1.callback.component.pubsub.PubSub;
 import io.mosn.layotto.v1.callback.component.pubsub.PubSubRegistry;
-import spec.sdk.runtime.v1.domain.pubsub.TopicEventResponse;
-import spec.sdk.runtime.v1.domain.pubsub.TopicSubscription;
 import io.mosn.layotto.v1.grpc.PubsubConverter;
 import spec.proto.runtime.v1.AppCallbackGrpc;
 import spec.proto.runtime.v1.AppCallbackProto;
+import spec.sdk.runtime.v1.domain.pubsub.TopicEventResponse;
+import spec.sdk.runtime.v1.domain.pubsub.TopicSubscription;
 
 import java.util.Collection;
 import java.util.Set;
 
 public class GrpcAppCallbackImpl extends AppCallbackGrpc.AppCallbackImplBase {
+
     private final PubSubRegistry pubSubRegistry;
 
     public GrpcAppCallbackImpl(PubSubRegistry pubSubRegistry) {
@@ -26,7 +27,6 @@ public class GrpcAppCallbackImpl extends AppCallbackGrpc.AppCallbackImplBase {
     @Override
     public void listTopicSubscriptions(Empty request,
                                        StreamObserver<AppCallbackProto.ListTopicSubscriptionsResponse> responseObserver) {
-
         final AppCallbackProto.ListTopicSubscriptionsResponse.Builder builder
                 = AppCallbackProto.ListTopicSubscriptionsResponse.newBuilder();
         Collection<PubSub> pubsubs = pubSubRegistry.getAllPubSubCallbacks();
