@@ -9,7 +9,7 @@ public class RedisCRUD {
 
     public static void main(String[] args) {
         RuntimeClient client = new RuntimeClientBuilder()
-                .withPort(RuntimeProperties.PORT.get())
+                .withPort(RuntimeProperties.DEFAULT_PORT)
                 .build();
 
         client.saveState("redis", "key1", "v11");

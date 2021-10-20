@@ -8,7 +8,7 @@ public class Publisher {
 
     public static void main(String[] args) {
         RuntimeClient client = new RuntimeClientBuilder()
-                .withPort(RuntimeProperties.PORT.get())
+                .withPort(RuntimeProperties.DEFAULT_PORT)
                 .build();
 
         client.publishEvent("redis", "hello", "world".getBytes());

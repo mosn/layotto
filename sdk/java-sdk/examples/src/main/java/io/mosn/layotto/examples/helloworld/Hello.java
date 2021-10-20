@@ -8,7 +8,7 @@ public class Hello {
 
     public static void main(String[] args) {
         RuntimeClient client = new RuntimeClientBuilder()
-                .withPort(RuntimeProperties.PORT.get())
+                .withPort(RuntimeProperties.DEFAULT_PORT)
                 .build();
 
         String resp = client.sayHello("helloworld");
