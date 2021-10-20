@@ -23,5 +23,5 @@ import开源Layotto之后，panic风险巨大,因为依赖了Dapr所有组件;�
 在生产环境落地Service Mesh会导致排查问题变难，而 Multi-Runtime 下沉的功能多了，排查起来更难。
 要建设Layotto可观测性，避免让生产用户查问题难上加难。
 
-### 3.4. 新研发模式
+## 4. 新研发模式
 支持serverless落地；
