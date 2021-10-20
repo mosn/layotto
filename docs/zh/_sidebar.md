@@ -20,16 +20,17 @@
     - [trace管理](zh/start/trace/trace.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - 用户手册
-    - 接口文档
-        - [File API](zh/api_reference/file/file.md)
-        - [Configuration API](zh/api_reference/configuration/reference.md)
-        - [Actuator API](zh/api_reference/actuator/actuator.md)
-        - [State API](zh/api_reference/state/reference.md)
-        - [Sequencer API](zh/api_reference/sequencer/reference.md)
-        - [Distributed Lock API](zh/api_reference/lock/reference.md)
-        - [Pub/Sub API](zh/api_reference/pubsub/reference.md)
-        - [Configuration API](zh/api_reference/configuration/reference.md)
-        - [RPC API](zh/api_reference/rpc/reference.md)
+    - 功能介绍
+        - [File API](zh/building_blocks/file/file.md)
+        - [Configuration API](zh/building_blocks/configuration/reference.md)
+        - [Actuator API](zh/building_blocks/actuator/actuator.md)
+        - [State API](zh/building_blocks/state/reference.md)
+        - [Sequencer API](zh/building_blocks/sequencer/reference.md)
+        - [Distributed Lock API](zh/building_blocks/lock/reference.md)
+        - [Pub/Sub API](zh/building_blocks/pubsub/reference.md)
+        - [Configuration API](zh/building_blocks/configuration/reference.md)
+        - [RPC API](zh/building_blocks/rpc/reference.md)
+    - [grpc API 文档](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
     - SDK文档    
         - [go-sdk](zh/sdk_reference/go/start.md)
         - [java-sdk](zh/sdk_reference/java/start.md)
@@ -69,6 +70,7 @@
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)
     - [新增API时的开发规范](zh/development/developing-api.md)
+    - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
 - 社区
     - [SOFAStack & MOSN 社区角色说明](zh/community/governance.md)
