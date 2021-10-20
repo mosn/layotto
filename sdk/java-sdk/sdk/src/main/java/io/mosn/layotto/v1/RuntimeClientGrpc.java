@@ -123,7 +123,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             // Content-type can be overwritten on a per-request basis.
             // It allows CloudEvents to be handled differently, for example.
             if (contentType == null || contentType.isEmpty()) {
-                contentType = RuntimeProperties.PUBSUB_CONTENT_TYPE.get();
+                contentType = RuntimeProperties.DEFAULT_PUBSUB_CONTENT_TYPE;
             }
 
             // 2. prepare request

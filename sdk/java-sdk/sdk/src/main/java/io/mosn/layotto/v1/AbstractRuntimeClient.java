@@ -17,7 +17,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     /**
      * Runtime client logger.
      */
-    protected final Logger logger;
+    protected final Logger           logger;
     /**
      * Serializer used for state objects.
      */
@@ -25,7 +25,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     /**
      * Runtime invocation timeout ms.
      */
-    private final int timeoutMs;
+    private final   int              timeoutMs;
 
     AbstractRuntimeClient(Logger logger, int timeoutMs, ObjectSerializer stateSerializer) {
         this.logger = logger;
@@ -47,12 +47,12 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     @Override
     public void publishEvent(String pubsubName, String topicName, byte[] data) {
         Map<String, String> metadata = new HashMap<>(2, 1);
-        this.publishEvent(pubsubName, topicName, data, RuntimeProperties.PUBSUB_CONTENT_TYPE.get(), metadata);
+        this.publishEvent(pubsubName, topicName, data, RuntimeProperties.DEFAULT_PUBSUB_CONTENT_TYPE, metadata);
     }
 
     @Override
     public void publishEvent(String pubsubName, String topicName, byte[] data, Map<String, String> metadata) {
-        this.publishEvent(pubsubName, topicName, data, RuntimeProperties.PUBSUB_CONTENT_TYPE.get(), metadata);
+        this.publishEvent(pubsubName, topicName, data, RuntimeProperties.DEFAULT_PUBSUB_CONTENT_TYPE, metadata);
     }
 
     /**

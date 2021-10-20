@@ -20,14 +20,21 @@ import java.util.function.Supplier;
  */
 public class RuntimeClientBuilder {
 
-    private Supplier<String> ipSupplier = RuntimeProperties.IP;
-    private Supplier<Integer> portSupplier = RuntimeProperties.PORT;
-    private Supplier<Integer> timeoutMsSupplier = RuntimeProperties.TIMEOUT_MS;
+    private static final Logger DEFAULT_LOGGER = LoggerFactory.getLogger(RuntimeClient.class.getName());
 
-    private Supplier<ApiProtocol> protocolSupplier = RuntimeProperties.API_PROTOCOL;
+    private int timeoutMs = RuntimeProperties.DEFAULT_TIMEOUT_MS;
 
-    private Supplier<Logger> loggerSupplier = () -> LoggerFactory.getLogger(RuntimeClient.class.getName());
-    private Supplier<ObjectSerializer> stateSerializerSupplier = JSONSerializer::new;
+    private String ip = RuntimeProperties.DEFAULT_IP;
+
+    private int port = RuntimeProperties.DEFAULT_PORT;
+
+    private ApiProtocol protocol = RuntimeProperties.DEFAULT_API_PROTOCOL;
+
+    private Logger logger = DEFAULT_LOGGER;
+
+    private ObjectSerializer stateSerializer = new JSONSerializer();
+
+    // TODO add rpc serializer
 
     /**
      * Creates a constructor for RuntimeClient.
@@ -39,7 +46,7 @@ public class RuntimeClientBuilder {
         if (ip == null || ip.isEmpty()) {
             throw new IllegalArgumentException("Invalid ip.");
         }
-        this.ipSupplier = () -> ip;
+        this.ip = ip;
         return this;
     }
 
@@ -47,7 +54,7 @@ public class RuntimeClientBuilder {
         if (port <= 0) {
             throw new IllegalArgumentException("Invalid port.");
         }
-        this.portSupplier = () -> port;
+        this.port = port;
         return this;
     }
 
@@ -56,7 +63,7 @@ public class RuntimeClientBuilder {
         if (protocol == null) {
             throw new IllegalArgumentException("Invalid protocol.");
         }
-        this.protocolSupplier = () -> protocol;
+        this.protocol = protocol;
         return this;
     }
 
@@ -64,7 +71,7 @@ public class RuntimeClientBuilder {
         if (timeoutMillisecond <= 0) {
             throw new IllegalArgumentException("Invalid timeout.");
         }
-        this.timeoutMsSupplier = () -> timeoutMillisecond;
+        this.timeoutMs = timeoutMillisecond;
         return this;
     }
 
@@ -72,7 +79,7 @@ public class RuntimeClientBuilder {
         if (logger == null) {
             throw new IllegalArgumentException("Invalid logger.");
         }
-        this.loggerSupplier = () -> logger;
+        this.logger = logger;
         return this;
     }
 
@@ -87,7 +94,7 @@ public class RuntimeClientBuilder {
             throw new IllegalArgumentException("State serializer is required");
         }
 
-        this.stateSerializerSupplier = () -> stateSerializer;
+        this.stateSerializer = stateSerializer;
         return this;
     }
 
@@ -98,20 +105,23 @@ public class RuntimeClientBuilder {
      * @throws IllegalStateException if any required field is missing
      */
     public RuntimeClient build() {
-        final ApiProtocol apiProtocol = protocolSupplier.get();
-        if (apiProtocol == null) {
+        if (protocol == null) {
             throw new IllegalStateException("Protocol is required.");
         }
-        switch (apiProtocol) {
+
+        switch (protocol) {
             case GRPC:
                 return buildGrpc();
             default:
-                throw new IllegalStateException("Unsupported protocol: " + apiProtocol.name());
+                throw new IllegalStateException("Unsupported protocol: " + protocol.name());
         }
     }
 
     private RuntimeClient buildGrpc() {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(ipSupplier.get(), portSupplier.get())
+        if (port <= 0) {
+            throw new IllegalArgumentException("Invalid port.");
+        }
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port)
                 .usePlaintext()
                 .build();
         Closeable closeable = () -> {
@@ -121,9 +131,9 @@ public class RuntimeClientBuilder {
         };
         RuntimeGrpc.RuntimeBlockingStub blockingStub = RuntimeGrpc.newBlockingStub(channel);
         return new RuntimeClientGrpc(
-                loggerSupplier.get(),
-                timeoutMsSupplier.get(),
-                stateSerializerSupplier.get(),
+                logger,
+                timeoutMs,
+                stateSerializer,
                 closeable,
                 blockingStub);
     }
