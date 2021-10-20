@@ -66,3 +66,4 @@
   - [Component Development Guide](en/development/developing-component.md)
   - [Development specification when adding API](en/development/developing-api.md)
   - [How to generate API document](en/api_reference/how_to_generate_api_doc.md)
+  - [Explanation for github workflow](en/development/explanation-for-github-workflow.md)
