@@ -141,11 +141,12 @@ There are 100 inventories for book1.
 ### 常见问题说明
 
 1.Virtualbox 启动失败，"The host-only adapter we just created is not visible"：
-[The host-only adapter we just created is not visible](https://github.com/kubernetes/minikube/issues/3614)
+
+参考：[The host-only adapter we just created is not visible](https://github.com/kubernetes/minikube/issues/3614)
 
 2.启动Layotto时，redis连接失败,打印 "occurs an error: redis store: error connecting to redis at"：
 
-检查redis的配置，看是否redis配置错误造成的。
+   检查redis的配置，看是否redis配置错误造成的。
    
 
 
