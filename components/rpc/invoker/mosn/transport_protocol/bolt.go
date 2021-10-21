@@ -18,16 +18,19 @@ package transport_protocol
 
 import (
 	"errors"
-
 	"mosn.io/api"
-	common "mosn.io/layotto/components/pkg/common"
+	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol"
 	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
 	"mosn.io/mosn/pkg/protocol/xprotocol/boltv2"
 	"mosn.io/pkg/buffer"
+	"mosn.io/pkg/header"
+	"reflect"
+	"unsafe"
 )
 
+// init mosn bolt or boltv2 protocol
 func init() {
 	RegistProtocol("bolt", newBoltProtocol())
 	RegistProtocol("boltv2", newBoltV2Protocol())
@@ -38,6 +41,7 @@ type boltCommon struct {
 	fromFrame
 }
 
+// Init is init boltCommon info
 func (b *boltCommon) Init(conf map[string]interface{}) error {
 	if len(conf) == 0 {
 		return errors.New("missing bolt classname")
@@ -54,6 +58,7 @@ func (b *boltCommon) Init(conf map[string]interface{}) error {
 	return nil
 }
 
+// FromFrame is boltProtocol transform
 func (b *boltCommon) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	respCode := uint16(resp.GetStatusCode())
 	if respCode == bolt.ResponseStatusSuccess {
@@ -72,37 +77,52 @@ func (b *boltCommon) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	}
 }
 
+// newBoltProtocol is create boltProtocol
 func newBoltProtocol() TransportProtocol {
 	return &boltProtocol{XProtocol: xprotocol.GetProtocol(bolt.ProtocolName), boltCommon: boltCommon{}}
 }
 
+// boltProtocol is one of TransportProtocol
 type boltProtocol struct {
 	boltCommon
 	api.XProtocol
 }
 
+// ToFrame is boltProtocol transform
 func (b *boltProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	buf := buffer.NewIoBufferBytes(req.Data)
+	headerrLen := len(req.Header)
 	boltreq := bolt.NewRpcRequest(0, nil, buf)
 	boltreq.Class = b.className
 	boltreq.Timeout = req.Timeout
+	boltreq.Header = header.BytesHeader{
+		Kvs:     make([]header.BytesKV, headerrLen),
+		Changed: true,
+	}
 
+	i := 0
 	req.Header.Range(func(key string, value string) bool {
-		boltreq.Header.Set(key, value)
+		kv := &boltreq.Header.Kvs[i]
+		kv.Key = s2b(key)
+		kv.Value = s2b(value)
+		i++
 		return true
 	})
 	return boltreq
 }
 
+// newBoltV2Protocol is create boltV2Protocol
 func newBoltV2Protocol() TransportProtocol {
 	return &boltv2Protocol{XProtocol: xprotocol.GetProtocol(boltv2.ProtocolName), boltCommon: boltCommon{}}
 }
 
+// boltv2Protocol is one of TransportProtocol
 type boltv2Protocol struct {
 	boltCommon
 	api.XProtocol
 }
 
+// ToFrame is boltv2Protocol transform
 func (b *boltv2Protocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	boltv2Req := &boltv2.Request{
 		RequestHeader: boltv2.RequestHeader{
@@ -128,4 +148,15 @@ func (b *boltv2Protocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 		return true
 	})
 	return boltv2Req
+}
+
+// s2b is convert string to byte slice
+func s2b(s string) []byte {
+	ps := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	b := reflect.SliceHeader{
+		Data: ps.Data,
+		Len:  ps.Len,
+		Cap:  ps.Len,
+	}
+	return *(*[]byte)(unsafe.Pointer(&b))
 }

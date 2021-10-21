@@ -19,8 +19,6 @@ package wasm
 import (
 	"context"
 	"errors"
-	"fmt"
-	"reflect"
 
 	"mosn.io/api"
 	v2 "mosn.io/mosn/pkg/config/v2"
@@ -28,11 +26,7 @@ import (
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/mosn/pkg/wasm"
 	"mosn.io/mosn/pkg/wasm/abi"
-	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
-	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/utils"
-	"mosn.io/proxy-wasm-go-host/common"
-	"mosn.io/proxy-wasm-go-host/proxywasm"
 )
 
 const LayottoWasm = "Layotto"
@@ -41,62 +35,89 @@ func init() {
 	api.RegisterStream(LayottoWasm, createProxyWasmFilterFactory)
 }
 
+// FilterConfigFactory contains multi wasm-plugin configs
+// its pointer implement api.StreamFilterChainFactory
 type FilterConfigFactory struct {
-	proxywasm010.DefaultImportsHandler
+	LayottoHandler
 
-	pluginName string
-	config     *filterConfig
+	config        []*filterConfigItem // contains multi wasm config
+	RootContextID int32
 
-	vmConfigBytes     buffer.IoBuffer
-	pluginConfigBytes buffer.IoBuffer
+	// map[pluginName]*WasmPlugin
+	plugins map[string]*WasmPlugin
+	router  *Router
 }
 
-func createProxyWasmFilterFactory(conf map[string]interface{}) (api.StreamFilterChainFactory, error) {
-	config, err := parseFilterConfig(conf)
-	if err != nil {
-		log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to parse config, err: %v", err)
-		return nil, err
+var _ api.StreamFilterChainFactory = &FilterConfigFactory{}
+
+func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilterChainFactory, error) {
+	factory := &FilterConfigFactory{
+		config:        make([]*filterConfigItem, 0, len(confs)),
+		RootContextID: 1,
+		plugins:       make(map[string]*WasmPlugin),
+		router:        &Router{routes: make(map[string]*Group)},
 	}
 
-	var pluginName string
-
-	if config.FromWasmPlugin == "" {
-		pluginName = utils.GenerateUUID()
-
-		v2Config := v2.WasmPluginConfig{
-			PluginName:  pluginName,
-			VmConfig:    config.VmConfig,
-			InstanceNum: config.InstanceNum,
+	for configID, confIf := range confs {
+		conf, ok := confIf.(map[string]interface{})
+		if !ok {
+			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory config not a map, configID: %s", configID)
+			return nil, errors.New("config not a map")
 		}
 
-		err = wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
+		config, err := parseFilterConfigItem(conf)
 		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to add plugin, err: %v", err)
+			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to parse config, configID: %s, err: %v", configID, err)
 			return nil, err
 		}
-	} else {
-		pluginName = config.FromWasmPlugin
+
+		var pluginName string
+		if config.FromWasmPlugin == "" {
+			pluginName = utils.GenerateUUID()
+
+			v2Config := v2.WasmPluginConfig{
+				PluginName:  pluginName,
+				VmConfig:    config.VmConfig,
+				InstanceNum: config.InstanceNum,
+			}
+
+			err = wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
+			if err != nil {
+				config.PluginName = pluginName
+				addWatchFile(config, factory)
+				continue
+			}
+
+			addWatchFile(config, factory)
+		} else {
+			pluginName = config.FromWasmPlugin
+		}
+		config.PluginName = pluginName
+
+		pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginName)
+		if pw == nil {
+			return nil, errors.New("plugin not found")
+		}
+
+		config.VmConfig = pw.GetConfig().VmConfig
+		factory.config = append(factory.config, config)
+
+		wasmPlugin := &WasmPlugin{
+			pluginName:    config.PluginName,
+			plugin:        pw.GetPlugin(),
+			rootContextID: config.RootContextID,
+			config:        config,
+		}
+		factory.plugins[config.PluginName] = wasmPlugin
+		// pw.RegisterPluginHandler will call factory.OnPluginStart
+		pw.RegisterPluginHandler(factory)
 	}
-
-	pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginName)
-	if pw == nil {
-		return nil, errors.New("plugin not found")
-	}
-
-	config.VmConfig = pw.GetConfig().VmConfig
-
-	factory := &FilterConfigFactory{
-		pluginName: pluginName,
-		config:     config,
-	}
-
-	pw.RegisterPluginHandler(factory)
 
 	return factory, nil
 }
 
 func (f *FilterConfigFactory) CreateFilterChain(context context.Context, callbacks api.StreamFilterChainFactoryCallbacks) {
-	filter := NewFilter(context, f.pluginName, f.config.RootContextID, f)
+	filter := NewFilter(context, f)
 	if filter == nil {
 		return
 	}
@@ -106,89 +127,71 @@ func (f *FilterConfigFactory) CreateFilterChain(context context.Context, callbac
 }
 
 func (f *FilterConfigFactory) GetRootContextID() int32 {
-	return f.config.RootContextID
+	return f.RootContextID
 }
 
-func (f *FilterConfigFactory) GetVmConfig() common.IoBuffer {
-	if f.vmConfigBytes != nil {
-		return f.vmConfigBytes
-	}
-
-	vmConfig := *f.config.VmConfig
-	typeOf := reflect.TypeOf(vmConfig)
-	valueOf := reflect.ValueOf(&vmConfig).Elem()
-
-	if typeOf.Kind() != reflect.Struct || typeOf.NumField() == 0 {
-		return nil
-	}
-
-	m := make(map[string]string)
-	for i := 0; i < typeOf.NumField(); i++ {
-		m[typeOf.Field(i).Name] = fmt.Sprintf("%v", valueOf.Field(i).Interface())
-	}
-
-	b := proxywasm.EncodeMap(m)
-	if b == nil {
-		return nil
-	}
-
-	f.vmConfigBytes = buffer.NewIoBufferBytes(b)
-
-	return f.vmConfigBytes
-}
-
-func (f *FilterConfigFactory) GetPluginConfig() common.IoBuffer {
-	if f.pluginConfigBytes != nil {
-		return f.pluginConfigBytes
-	}
-
-	b := proxywasm.EncodeMap(f.config.UserData)
-	if b == nil {
-		return nil
-	}
-
-	f.pluginConfigBytes = buffer.NewIoBufferBytes(b)
-
-	return f.pluginConfigBytes
-}
+// FilterConfigFactory implement types.WasmPluginHandler
+// for `pw.RegisterPluginHandler(factory)`
+var _ types.WasmPluginHandler = &FilterConfigFactory{}
 
 func (f *FilterConfigFactory) OnConfigUpdate(config v2.WasmPluginConfig) {
-	f.config.InstanceNum = config.InstanceNum
-	f.config.VmConfig = config.VmConfig
+	for _, plugin := range f.config {
+		if plugin.PluginName == config.PluginName {
+			plugin.InstanceNum = config.InstanceNum
+			plugin.VmConfig = config.VmConfig
+		}
+	}
 }
 
 func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 	plugin.Exec(func(instance types.WasmInstance) bool {
+		wasmPlugin, ok := f.plugins[plugin.PluginName()]
+		if !ok {
+			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get wasm plugin, PluginName: %s",
+				plugin.PluginName())
+			return true
+		}
+
 		a := abi.GetABI(instance, AbiV2)
 		a.SetABIImports(f)
-		exports := a.GetABIExports().(proxywasm.Exports)
+		exports := a.GetABIExports().(Exports)
+		f.LayottoHandler.Instance = instance
 
 		instance.Lock(a)
 		defer instance.Unlock()
 
-		err := exports.ProxyOnContextCreate(f.config.RootContextID, 0)
+		// get the ID of wasm, register route
+		id, err := exports.ProxyGetID()
+		if err != nil {
+			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get wasm id, PluginName: %s, err: %v",
+				plugin.PluginName(), err)
+			return true
+		}
+		f.router.RegisterRoute(id, wasmPlugin)
+
+		err = exports.ProxyOnContextCreate(f.RootContextID, 0)
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] OnPluginStart fail to create root context id, err: %v", err)
 			return true
 		}
 
 		vmConfigSize := 0
-		if vmConfigBytes := f.GetVmConfig(); vmConfigBytes != nil {
+		if vmConfigBytes := wasmPlugin.GetVmConfig(); vmConfigBytes != nil {
 			vmConfigSize = vmConfigBytes.Len()
 		}
 
-		_, err = exports.ProxyOnVmStart(f.config.RootContextID, int32(vmConfigSize))
+		_, err = exports.ProxyOnVmStart(f.RootContextID, int32(vmConfigSize))
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] OnPluginStart fail to create root context id, err: %v", err)
 			return true
 		}
 
 		pluginConfigSize := 0
-		if pluginConfigBytes := f.GetPluginConfig(); pluginConfigBytes != nil {
+		if pluginConfigBytes := wasmPlugin.GetPluginConfig(); pluginConfigBytes != nil {
 			pluginConfigSize = pluginConfigBytes.Len()
 		}
 
-		_, err = exports.ProxyOnConfigure(f.config.RootContextID, int32(pluginConfigSize))
+		_, err = exports.ProxyOnConfigure(f.RootContextID, int32(pluginConfigSize))
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] OnPluginStart fail to create root context id, err: %v", err)
 			return true

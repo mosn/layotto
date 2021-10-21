@@ -18,42 +18,96 @@ package wasm
 
 import (
 	"context"
+	"fmt"
+	"mosn.io/mosn/pkg/variable"
+	"reflect"
 	"sync"
 	"sync/atomic"
 
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/types"
-	"mosn.io/mosn/pkg/wasm"
 	"mosn.io/mosn/pkg/wasm/abi"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 	"mosn.io/pkg/buffer"
-	"mosn.io/proxy-wasm-go-host/common"
-	"mosn.io/proxy-wasm-go-host/proxywasm"
+	"mosn.io/proxy-wasm-go-host/proxywasm/common"
+	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 )
 
 type Filter struct {
 	LayottoHandler
 
-	ctx context.Context
-
+	ctx     context.Context
 	factory *FilterConfigFactory
 
-	pluginName string
-	plugin     types.WasmPlugin
+	router  *Router
+	plugins map[string]*WasmPlugin
+
+	contextID  int32
+	pluginUsed *WasmPlugin
 	instance   types.WasmInstance
 	abi        types.ABI
-	exports    proxywasm.Exports
-
-	rootContextID int32
-	contextID     int32
+	exports    Exports
 
 	receiverFilterHandler api.StreamReceiverFilterHandler
 	senderFilterHandler   api.StreamSenderFilterHandler
 
 	destroyOnce sync.Once
 
-	buffer api.IoBuffer
+	requestBuffer  api.IoBuffer
+	responseBuffer api.IoBuffer
+}
+
+type WasmPlugin struct {
+	pluginName string
+	plugin     types.WasmPlugin
+
+	// useless for now
+	rootContextID     int32
+	config            *filterConfigItem
+	vmConfigBytes     buffer.IoBuffer
+	pluginConfigBytes buffer.IoBuffer
+}
+
+func (p *WasmPlugin) GetVmConfig() common.IoBuffer {
+	if p.vmConfigBytes != nil {
+		return p.vmConfigBytes
+	}
+
+	vmConfig := p.plugin.GetVmConfig()
+
+	typeOf := reflect.TypeOf(vmConfig)
+	valueOf := reflect.ValueOf(&vmConfig).Elem()
+	if typeOf.Kind() != reflect.Struct || typeOf.NumField() == 0 {
+		return nil
+	}
+
+	m := make(map[string]string)
+	for i := 0; i < typeOf.NumField(); i++ {
+		m[typeOf.Field(i).Name] = fmt.Sprintf("%v", valueOf.Field(i).Interface())
+	}
+
+	b := common.EncodeMap(m)
+	if b == nil {
+		return nil
+	}
+
+	p.vmConfigBytes = buffer.NewIoBufferBytes(b)
+	return p.vmConfigBytes
+}
+
+func (p *WasmPlugin) GetPluginConfig() common.IoBuffer {
+	if p.pluginConfigBytes != nil {
+		return p.pluginConfigBytes
+	}
+
+	b := common.EncodeMap(p.config.UserData)
+	if b == nil {
+		return nil
+	}
+
+	p.pluginConfigBytes = buffer.NewIoBufferBytes(b)
+	return p.pluginConfigBytes
 }
 
 var contextIDGenerator int32
@@ -67,55 +121,17 @@ func newContextID(rootContextID int32) int32 {
 	}
 }
 
-func NewFilter(ctx context.Context, pluginName string, rootContextID int32, factory *FilterConfigFactory) *Filter {
-	pluginWrapper := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginName)
-	if pluginWrapper == nil {
-		log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter wasm plugin not exists, plugin name: %v", pluginName)
-		return nil
-	}
-
-	plugin := pluginWrapper.GetPlugin()
-	instance := plugin.GetInstance()
-
+// NewFilter create the filter for a request
+func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 	filter := &Filter{
-		ctx:           ctx,
-		factory:       factory,
-		pluginName:    pluginName,
-		plugin:        plugin,
-		instance:      instance,
-		rootContextID: rootContextID,
-		contextID:     newContextID(rootContextID),
-		buffer:        buffer.NewIoBuffer(100),
-	}
+		ctx:     ctx,
+		factory: factory,
 
-	filter.LayottoHandler.Instance = instance
-
-	filter.abi = abi.GetABI(instance, AbiV2)
-	if filter.abi == nil {
-		log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter abi not found in instance")
-		plugin.ReleaseInstance(instance)
-
-		return nil
-	}
-
-	filter.abi.SetABIImports(filter)
-
-	filter.exports = filter.abi.GetABIExports().(proxywasm.Exports)
-	if filter.exports == nil {
-		log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to get exports part from abi")
-		plugin.ReleaseInstance(instance)
-
-		return nil
-	}
-
-	filter.instance.Lock(filter.abi)
-	defer filter.instance.Unlock()
-
-	err := filter.exports.ProxyOnContextCreate(filter.contextID, filter.rootContextID)
-	if err != nil {
-		log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to create context id: %v, rootContextID: %v, err: %v",
-			filter.contextID, filter.rootContextID, err)
-		return nil
+		contextID:      newContextID(factory.RootContextID),
+		router:         factory.router,
+		plugins:        factory.plugins,
+		requestBuffer:  buffer.NewIoBuffer(100),
+		responseBuffer: buffer.NewIoBuffer(100),
 	}
 
 	return filter
@@ -123,6 +139,11 @@ func NewFilter(ctx context.Context, pluginName string, rootContextID int32, fact
 
 func (f *Filter) OnDestroy() {
 	f.destroyOnce.Do(func() {
+		if f.pluginUsed == nil || f.instance == nil {
+			return
+		}
+
+		plugin := f.pluginUsed
 		f.instance.Lock(f.abi)
 
 		_, err := f.exports.ProxyOnDone(f.contextID)
@@ -136,7 +157,7 @@ func (f *Filter) OnDestroy() {
 		}
 
 		f.instance.Unlock()
-		f.plugin.ReleaseInstance(f.instance)
+		plugin.plugin.ReleaseInstance(f.instance)
 	})
 }
 
@@ -162,15 +183,50 @@ func headerMapSize(headers api.HeaderMap) int {
 }
 
 func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
-	f.instance.Lock(f.abi)
-	defer f.instance.Unlock()
+	id, ok := headers.Get("id")
+	if !ok {
+		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders no id in headers")
+		return api.StreamFilterStop
+	}
+
+	wasmPlugin, err := f.router.GetRandomPluginByID(id)
+	if err != nil {
+		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders id, err: %v", err)
+		return api.StreamFilterStop
+	}
+	f.pluginUsed = wasmPlugin
+
+	plugin := wasmPlugin.plugin
+	instance := plugin.GetInstance()
+	f.instance = instance
+	f.LayottoHandler.Instance = instance
+
+	pluginABI := abi.GetABI(instance, AbiV2)
+	if pluginABI == nil {
+		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive fail to get instance abi")
+		plugin.ReleaseInstance(instance)
+		return api.StreamFilterStop
+	}
+	pluginABI.SetABIImports(f)
+	exports := pluginABI.GetABIExports().(Exports)
+	f.exports = exports
+
+	instance.Lock(pluginABI)
+	defer instance.Unlock()
+
+	err = exports.ProxyOnContextCreate(f.contextID, wasmPlugin.rootContextID)
+	if err != nil {
+		log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to create context id: %v, rootContextID: %v, err: %v",
+			f.contextID, wasmPlugin.rootContextID, err)
+		return api.StreamFilterStop
+	}
 
 	endOfStream := 1
 	if (buf != nil && buf.Len() > 0) || trailers != nil {
 		endOfStream = 0
 	}
 
-	action, err := f.exports.ProxyOnRequestHeaders(f.contextID, int32(headerMapSize(headers)), int32(endOfStream))
+	action, err := exports.ProxyOnRequestHeaders(f.contextID, int32(headerMapSize(headers)), int32(endOfStream))
 	if err != nil || action != proxywasm.ActionContinue {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders err: %v", err)
 		return api.StreamFilterStop
@@ -181,8 +237,15 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 		endOfStream = 0
 	}
 
-	if buf != nil && buf.Len() > 0 {
-		action, err = f.exports.ProxyOnRequestBody(f.contextID, int32(buf.Len()), int32(endOfStream))
+	if buf == nil {
+		arg, _ := variable.GetString(ctx, types.VarHttpRequestArg)
+		f.requestBuffer = buffer.NewIoBufferString(arg)
+	} else {
+		f.requestBuffer = buf
+	}
+
+	if f.requestBuffer != nil && f.requestBuffer.Len() > 0 {
+		action, err = exports.ProxyOnRequestBody(f.contextID, int32(f.requestBuffer.Len()), int32(endOfStream))
 		if err != nil || action != proxywasm.ActionContinue {
 			log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestBody err: %v", err)
 			return api.StreamFilterStop
@@ -190,7 +253,7 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 	}
 
 	if trailers != nil {
-		action, err = f.exports.ProxyOnRequestTrailers(f.contextID, int32(headerMapSize(trailers)))
+		action, err = exports.ProxyOnRequestTrailers(f.contextID, int32(headerMapSize(trailers)))
 		if err != nil || action != proxywasm.ActionContinue {
 			log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestTrailers err: %v", err)
 			return api.StreamFilterStop
@@ -201,20 +264,20 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 }
 
 func (f *Filter) Append(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
-	f.senderFilterHandler.SetResponseData(f.buffer)
+	f.senderFilterHandler.SetResponseData(f.responseBuffer)
 	return api.StreamFilterContinue
 }
 
 func (f *Filter) GetRootContextID() int32 {
-	return f.rootContextID
+	return f.factory.RootContextID
 }
 
 func (f *Filter) GetVmConfig() common.IoBuffer {
-	return f.factory.GetVmConfig()
+	return f.pluginUsed.GetVmConfig()
 }
 
 func (f *Filter) GetPluginConfig() common.IoBuffer {
-	return f.factory.GetPluginConfig()
+	return f.pluginUsed.GetPluginConfig()
 }
 
 func (f *Filter) GetHttpRequestHeader() common.HeaderMap {
@@ -230,7 +293,7 @@ func (f *Filter) GetHttpRequestBody() common.IoBuffer {
 		return nil
 	}
 
-	return &proxywasm010.IoBufferWrapper{IoBuffer: f.receiverFilterHandler.GetRequestData()}
+	return &proxywasm010.IoBufferWrapper{IoBuffer: f.requestBuffer}
 }
 
 func (f *Filter) GetHttpRequestTrailer() common.HeaderMap {
@@ -254,7 +317,7 @@ func (f *Filter) GetHttpResponseBody() common.IoBuffer {
 		return nil
 	}
 
-	return &proxywasm010.IoBufferWrapper{IoBuffer: f.buffer}
+	return &proxywasm010.IoBufferWrapper{IoBuffer: f.responseBuffer}
 }
 
 func (f *Filter) GetHttpResponseTrailer() common.HeaderMap {

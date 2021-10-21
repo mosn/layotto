@@ -17,18 +17,39 @@
 package integrate
 
 import (
-	"github.com/stretchr/testify/assert"
+	"context"
 	"io/ioutil"
+	"mosn.io/layotto/components/pkg/utils"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSayHello(t *testing.T) {
+	cli := utils.NewRedisClient(utils.RedisMetadata{
+		Host: "localhost:6379",
+	})
+	err := cli.Set(context.Background(), "book1", "100", 0).Err()
+	if err != nil {
+		t.Fatal("set inventories error")
+	}
+
+	ids := []string{"id_1"}
+
 	client := &http.Client{}
-	req, _ := http.NewRequest("GET", "http://localhost:2045", nil)
-	name := "Layotto"
-	req.Header.Add("name", name)
-	resp, _ := client.Do(req)
-	body, _ := ioutil.ReadAll(resp.Body)
-	assert.Equal(t, string(body), "Hi, "+name)
+	req, _ := http.NewRequest("GET", "http://localhost:2045?name=book1", nil)
+
+	for _, id := range ids {
+		req.Header.Set("id", id)
+		resp, err := client.Do(req)
+		if err != nil {
+			t.Fatalf("Request failed, err: %s", err)
+		}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			t.Fatalf("Read body failed, err: %s", err)
+		}
+		assert.Equal(t, "There are 100 inventories for book1.", string(body))
+	}
 }
