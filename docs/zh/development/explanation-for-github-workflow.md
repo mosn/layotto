@@ -52,12 +52,15 @@ In Layotto directory:
 docker run -it --rm -v $(pwd):/github/workspace apache/skywalking-eyes header fix
 ```
 
+It will add license headers for code files recursively.
+
 See https://github.com/marketplace/actions/license-eye#docker-image for details
 
 #### TODO: PR title lint
-#### TODO: PR body lint?
+~~#### TODO: PR body lint?~~
 #### TODO: Code style lint
-for example,find out `go xxx()` without `recover`
-  
+For example,find out `go xxx()` without `recover`
+We can use go lint and refer to MOSN's configuration  
+
 ####  ~~- Commit message lint~~ (reverted)
 see https://github.com/mosn/layotto/issues/243
