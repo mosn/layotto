@@ -56,6 +56,7 @@
         - [Sequencer](zh/component_specs/sequencer/common.md)
             - [Etcd](zh/component_specs/sequencer/etcd.md)
             - [Redis](zh/component_specs/sequencer/redis.md)
+            - [Zookeeper](zh/component_specs/sequencer/zookeeper.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
