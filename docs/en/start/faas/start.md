@@ -20,7 +20,7 @@ The following software needs to be installed to run this demo:
 
 3. [virtualbox](https://www.virtualbox.org/)
    
-   Download the installation package from the official website and install it. You can also use [homebrew](https://brew.sh/) to install it on mac.
+   Download the installation package from the official website and install it. You can also use [homebrew](https://brew.sh/) to install it on mac.If the startup fails after installation, please refer to [The host-only adapter we just created is not visible](https://github.com/kubernetes/minikube/issues/3614).
 
 
 ### 3. Setup
@@ -33,7 +33,7 @@ The example only needs a Redis server that can be used normally. As for where it
 > brew install redis
 > redis-server /usr/local/etc/redis.conf
 ```
-**Note: If you want external services to connect to redis, you need to modify the protected-mode in redis.conf to no.**
+**Note: If you want external services to connect to redis, you need to modify the protected-mode in redis.conf to no,At the same time, add bind * -::* to let it monitor all interfaces.**
 
 #### B、Start minikube in virtualbox + containerd mode
 ```
