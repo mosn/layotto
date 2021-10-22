@@ -9,7 +9,7 @@ require (
 	github.com/gammazero/workerpool v1.1.2
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2
-	github.com/google/uuid v1.2.0
+	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/json-iterator/go v1.1.11
 	github.com/pkg/errors v0.9.1
@@ -17,6 +17,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.28.0
+	go.beyondstorage.io/services/hdfs v0.0.0-20211022091653-9aa9a15f09f5 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20211005001312-d4b1ae081e3b // indirect
 	golang.org/x/sys v0.0.0-20211004093028-2c5d950f24ef // indirect
