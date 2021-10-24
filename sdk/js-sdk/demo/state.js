@@ -14,8 +14,9 @@ async function main() {
   ]);
   console.log('saveState success, key: %j, value: %j', key, value);
 
-  const resValue = await client.state.get(storeName, key);
-  console.log('getState success, key: %j, value: %j, toString: %j', key, resValue, Buffer.from(resValue).toString('utf8'));
+  const state = await client.state.get(storeName, key);
+  console.log('getState success, key: %j, value: %j, toString: %j',
+    key, state.value, Buffer.from(state.value).toString('utf8'));
 }
 
 main();

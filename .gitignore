@@ -14,5 +14,5 @@ logs/
 /cover.out
 vendor/
 demo/state/redis/client
-sdk/js-sdk/node_modules
+node_modules/
 sdk/js-sdk/dist

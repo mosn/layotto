@@ -1,10 +1,10 @@
 import { 
   SayHelloRequest
 } from '../proto/runtime_pb';
-import API from './API';
+import { API, RequestMetadata } from './API';
 
 export default class Hello extends API {
-  async sayHello(serviceName = 'helloworld', name = ''): Promise<string> {
+  async sayHello(serviceName = 'helloworld', name = '', meta?: RequestMetadata): Promise<string> {
     const req = new SayHelloRequest();
     req.setServiceName(serviceName);
     if (name) {
@@ -12,7 +12,7 @@ export default class Hello extends API {
     }
     
     return new Promise((resolve, reject) => {
-      this.runtime.sayHello(req, (err, res) => {
+      this.runtime.sayHello(req, this.createMetadata(meta), (err, res) => {
         if (err) return reject(err);
         resolve(res.getHello());
       });

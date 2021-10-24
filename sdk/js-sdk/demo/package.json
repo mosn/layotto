@@ -8,5 +8,8 @@
     "test:cjs": "node ./state.js",
     "test:esm": "node ./state.mjs",
     "test:ts": "ts-node ./state.ts"
+  },
+  "dependencies": {
+    "layotto": "^0.0.1"
   }
 }

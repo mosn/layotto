@@ -11,14 +11,16 @@ async function main() {
 
   await client.state.save(storeName, [
     { key, value },
-  ]);
+  ], { traceid: 'mock-tracerid-123123' });
   console.log('saveState success, key: %j, value: %j', key, value);
 
-  await client.state.save(storeName, { key, value });
-  console.log('saveState success, key: %j, value: %j', key, value);
+  // await client.state.save(storeName, { key, value });
+  // console.log('saveState success, key: %j, value: %j', key, value);
 
-  const resValue = await client.state.get(storeName, key);
-  console.log('getState success, key: %j, value: %j, toString: %j', key, resValue, Buffer.from(resValue).toString('utf8'));
+  const state = await client.state.get(storeName, key);
+  assert(state);
+  console.log('getState success, key: %j, value: %j, toString: %j',
+    key, state.value, Buffer.from(state.value).toString('utf8'));
 }
 
 main();
