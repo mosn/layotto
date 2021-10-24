@@ -2,7 +2,7 @@ import { strict as assert } from 'assert';
 import { Client } from '../../src';
 import { HTTPExtensionVerb } from '../../src/types/Invoker';
 
-describe.skip('Invoker.test.ts', () => {
+describe('Invoker.test.ts', () => {
   let client: Client;
 
   beforeAll(() => {

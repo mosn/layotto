@@ -163,7 +163,8 @@ message SequencerOptions {
 
 message GetNextIdResponse{
   // The next unique id
-  int64 next_id = 1;
+  // Fixed int64 overflow problems on JavaScript https://github.com/improbable-eng/ts-protoc-gen#gotchas
+  int64 next_id = 1 [jstype = JS_STRING];
 }
 
 message TryLockRequest {

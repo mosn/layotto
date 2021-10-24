@@ -2629,7 +2629,7 @@ proto.spec.proto.runtime.v1.GetNextIdResponse.prototype.toObject = function(opt_
  */
 proto.spec.proto.runtime.v1.GetNextIdResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    nextId: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    nextId: jspb.Message.getFieldWithDefault(msg, 1, "0")
   };
 
   if (includeInstance) {
@@ -2667,7 +2667,7 @@ proto.spec.proto.runtime.v1.GetNextIdResponse.deserializeBinaryFromReader = func
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {string} */ (reader.readInt64String());
       msg.setNextId(value);
       break;
     default:
@@ -2700,8 +2700,8 @@ proto.spec.proto.runtime.v1.GetNextIdResponse.prototype.serializeBinary = functi
 proto.spec.proto.runtime.v1.GetNextIdResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getNextId();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (parseInt(f, 10) !== 0) {
+    writer.writeInt64String(
       1,
       f
     );
@@ -2711,19 +2711,19 @@ proto.spec.proto.runtime.v1.GetNextIdResponse.serializeBinaryToWriter = function
 
 /**
  * optional int64 next_id = 1;
- * @return {number}
+ * @return {string}
  */
 proto.spec.proto.runtime.v1.GetNextIdResponse.prototype.getNextId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, "0"));
 };
 
 
 /**
- * @param {number} value
+ * @param {string} value
  * @return {!proto.spec.proto.runtime.v1.GetNextIdResponse} returns this
  */
 proto.spec.proto.runtime.v1.GetNextIdResponse.prototype.setNextId = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setProto3StringIntField(this, 1, value);
 };
 
 

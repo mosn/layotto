@@ -248,8 +248,8 @@ export namespace SequencerOptions {
 }
 
 export class GetNextIdResponse extends jspb.Message { 
-    getNextId(): number;
-    setNextId(value: number): GetNextIdResponse;
+    getNextId(): string;
+    setNextId(value: string): GetNextIdResponse;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): GetNextIdResponse.AsObject;
@@ -263,7 +263,7 @@ export class GetNextIdResponse extends jspb.Message {
 
 export namespace GetNextIdResponse {
     export type AsObject = {
-        nextId: number,
+        nextId: string,
     }
 }
 
