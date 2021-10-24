@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.4.1",
-    "google-protobuf": "^3.19.0-rc.1"
+    "google-protobuf": "^3.19.0"
   },
   "engines": {
     "node": ">=14.0.0"

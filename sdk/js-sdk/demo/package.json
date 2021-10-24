@@ -10,6 +10,7 @@
     "test:ts": "ts-node ./state.ts"
   },
   "dependencies": {
+    "koa": "^2.13.4",
     "layotto": "^0.0.1"
   }
 }
