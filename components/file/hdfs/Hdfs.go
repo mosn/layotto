@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package HdfsOss
+package hdfs
 
 import (
 	"bytes"
