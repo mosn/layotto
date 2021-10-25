@@ -41,7 +41,7 @@ var (
 	ErrMissingEndPoint    error = errors.New("missing endpoint info in metadata")
 	ErrClientNotExist     error = errors.New("specific client not exist")
 	ErrEndPointNotExist   error = errors.New("specific endpoing key not exist")
-	ErrInvalidConfig      error = errors.New("invalid hdfs oss config")
+	ErrInvalidConfig      error = errors.New("invalid hdfs config")
 	ErrNotSpecifyEndpoint error = errors.New("other error happend in metadata")
 	ErrHdfsListFail       error = errors.New("hdfs List opt failed")
 )
@@ -73,7 +73,7 @@ func (h *hdfs) Init(config *file.FileConfig) error {
 		if !data.isHdfsMetaValid() {
 			return ErrInvalidConfig
 		}
-		client, err := h.createOssClient(data)
+		client, err := h.createHdfsClient(data)
 
 		if err != nil {
 			continue
@@ -168,10 +168,10 @@ func (h *hdfs) List(request *file.ListRequest) (*file.ListResp, error) {
 }
 
 func (h *hdfs) Del(request *file.DelRequest) error {
-
 	if _, ok := request.Metadata[endpointKey]; !ok {
 		return ErrMissingEndPoint
 	}
+
 	client, err := h.selectClient(request.Metadata)
 	if err != nil {
 		return err
@@ -203,7 +203,7 @@ func (h *hdfs) selectClient(meta map[string]string) (client types.Storager, err 
 	return client, err
 }
 
-func (h *hdfs) createOssClient(meta *HdfsMetaData) (types.Storager, error) {
+func (h *hdfs) createHdfsClient(meta *HdfsMetaData) (types.Storager, error) {
 	client, err := store.NewStorager(pairs.WithEndpoint(meta.EndPoint))
 
 	if err != nil {
