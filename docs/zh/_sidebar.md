@@ -69,8 +69,9 @@
 - 贡献指南
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)
-    - [新增API时的开发规范](zh/development/developing-api.md)
-    - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
+    - 想要修改proto文件或API定义？
+        - [新增API时的开发规范](zh/development/developing-api.md)
+        - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
 - 社区
     - [SOFAStack & MOSN 社区角色说明](zh/community/governance.md)
