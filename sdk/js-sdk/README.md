@@ -38,19 +38,40 @@ npm run build:grpc
 ```
 
 ### Run Tests
+### step 1. Set up the environment
 
-run the unit tests in your local env:
+- Running redis under Docker
 
-- Start Layotto first, see [How to run layotto](https://mosn.io/layotto/#/zh/start/state/start?id=%e7%ac%ac%e4%ba%8c%e6%ad%a5%ef%bc%9a%e8%bf%90%e8%a1%8clayotto)
+```bash
+docker pull redis:latest
+docker run -itd --name redis-test -p 6380:6379 redis
+```
+
+- Running etcd under Docker
+
+```bash
+docker pull quay.io/coreos/etcd
+docker run -itd -p 2379:2379 --name etcd quay.io/coreos/etcd /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:2379 -listen-client-urls http://0.0.0.0:2379
+```
+
+- Start a echoserver for testing the rpc api
+```shell
+go run demo/rpc/http/echoserver/echoserver.go
+```
+
+If you want to know more about this,check https://mosn.io/layotto/#/zh/start/rpc/helloworld
+
+- Start Layotto, see [How to run layotto](https://mosn.io/layotto/#/zh/start/state/start?id=%e7%ac%ac%e4%ba%8c%e6%ad%a5%ef%bc%9a%e8%bf%90%e8%a1%8clayotto)
 
 ```bash
 cd ${projectpath}/cmd/layotto
 go build
 
-./layotto start -c ../../configs/config_state_redis.json
+./layotto start -c ../../configs/config_integration_redis_etcd.json
 ```
 
-- Then, run unit tests script by npm
+### step 2: Run the tests
+- Then, run the test script by npm
 
 ```bash
 npm run test:unit
@@ -62,20 +83,7 @@ Enable trace debug log for grpc-js:
 GRPC_TRACE=compression GRPC_VERBOSITY=debug GRPC_TRACE=all npm run test test/unit/Invoker.test.ts
 ```
 
-### Running redis under Docker
-
-```bash
-docker pull redis:latest
-docker run -itd --name redis-test -p 6380:6379 redis
-```
-
-### Running etcd under Docker
-
-```bash
-docker pull quay.io/coreos/etcd
-docker run -itd -p 2379:2379 --name etcd quay.io/coreos/etcd /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:2379 -listen-client-urls http://0.0.0.0:2379
-```
-
-## Get Start with gRPC on Node.js
+## Reference
+### Get Start with gRPC on Node.js
 
 See https://grpc.io/docs/languages/node/quickstart/
