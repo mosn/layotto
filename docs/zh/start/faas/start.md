@@ -4,7 +4,7 @@
 
 Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function之间互相调用以及访问基础设施，如Redis。
 
-详细的设计文档可以参考：[FaaS design](../../design/faas/faas-poc-design.md)
+详细的设计文档可以参考：[FaaS design](zh/design/faas/faas-poc-design.md)
 
 ### 二、准备工作
 

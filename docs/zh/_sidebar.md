@@ -56,6 +56,7 @@
         - [Sequencer](zh/component_specs/sequencer/common.md)
             - [Etcd](zh/component_specs/sequencer/etcd.md)
             - [Redis](zh/component_specs/sequencer/redis.md)
+            - [Zookeeper](zh/component_specs/sequencer/zookeeper.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
@@ -73,6 +74,8 @@
         - [新增API时的开发规范](zh/development/developing-api.md)
         - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
+    - [解释一下Layotto的github workflow](zh/development/explanation-for-github-workflow.md)
+    - [待解决的问题](zh/development/problems-to-solve.md)
 - 社区
     - [SOFAStack & MOSN 社区角色说明](zh/community/governance.md)
     - [Layotto社区晋升规则](zh/community/promote.md)

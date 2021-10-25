@@ -4,7 +4,7 @@
 
 Layotto supports loading and running functions in the form of wasm, and supports calling each other between functions and accessing infrastructure, such as Redis.
 
-Detailed design documents can refer to：[FaaS design](../../design/faas/faas-poc-design.md)
+Detailed design documents can refer to：[FaaS design](en/design/faas/faas-poc-design.md)
 
 ### 2. Dependent software
 
