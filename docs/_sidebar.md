@@ -62,9 +62,11 @@
   - [Distributed lock API design](en/design/lock/lock-api-design.md)
   - [FaaS design](en/design/faas/faas-poc-design.md)
 - Contributing
-  - [Layotto contributor guide](en/development/CONTRIBUTING.md)
   - [Document Contribution Guide](en/development/contributing-doc.md)
   - [Component Development Guide](en/development/developing-component.md)
-  - [Development specification when adding API](en/development/developing-api.md)
-  - [How to generate API document](en/api_reference/how_to_generate_api_doc.md)
+  - You wanna modify proto files or API definition?
+    - [Development specification when adding API](en/development/developing-api.md)
+    - [How to generate API document based on the proto files](en/api_reference/how_to_generate_api_doc.md)
   - [Explanation for github workflow](en/development/explanation-for-github-workflow.md)
+  - [Layotto contributor guide](en/development/CONTRIBUTING.md)
+
