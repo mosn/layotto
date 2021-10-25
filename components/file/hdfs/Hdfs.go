@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package oss
+package HdfsOss
 
 import (
 	"bytes"
@@ -43,7 +43,7 @@ var (
 	ErrEndPointNotExist   error = errors.New("specific endpoing key not exist")
 	ErrInvalidConfig      error = errors.New("invalid hdfs oss config")
 	ErrNotSpecifyEndpoint error = errors.New("other error happend in metadata")
-	ErrHdfsListFail       error = errors.New("Hdfs List opt failed")
+	ErrHdfsListFail       error = errors.New("hdfs List opt failed")
 )
 
 type HdfsOss struct {

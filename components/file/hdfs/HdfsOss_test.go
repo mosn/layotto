@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package oss
+package HdfsOss
 
 import (
 	"encoding/json"
