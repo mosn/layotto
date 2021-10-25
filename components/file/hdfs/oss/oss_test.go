@@ -11,7 +11,7 @@ import (
 	"go.beyondstorage.io/v5/types"
 )
 
-// cfg is the raw json data of component's Metadata configuration
+// config is the raw json data of component's Metadata configuration
 const config = `[
 				{
 					"endpoint": "tcp:127.0.0.1:9000"

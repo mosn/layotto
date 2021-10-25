@@ -23,7 +23,7 @@ require (
 	github.com/valyala/fasthttp v1.26.0
 	github.com/yuin/gopher-lua v0.0.0-20200603152657-dc2b0ca8b37e // indirect
 	github.com/zouyx/agollo/v4 v4.0.7
-	go.beyondstorage.io/services/hdfs v0.0.0-20211022091653-9aa9a15f09f5
+	go.beyondstorage.io/services/hdfs v0.3.0
 	go.beyondstorage.io/v5 v5.0.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.0
 	go.etcd.io/etcd/client/v3 v3.5.0

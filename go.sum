@@ -1348,6 +1348,8 @@ go.beyondstorage.io/endpoint v1.2.0 h1:/7mgKquTykeqJ9op82hso2+WQfECeywGd/Lda1N3t
 go.beyondstorage.io/endpoint v1.2.0/go.mod h1:oZ7Z7HZ7mAo337JBLjuCF/DM66HVEUu6+hw68c3UcLs=
 go.beyondstorage.io/services/hdfs v0.0.0-20211022091653-9aa9a15f09f5 h1:vAU4CeIGNRuhfuuIaDKDUhWDIbfCzhI5t6me4+neFyQ=
 go.beyondstorage.io/services/hdfs v0.0.0-20211022091653-9aa9a15f09f5/go.mod h1:yU0eL80JczPPuR5hoK21Dck0H9gXDBu3WN51Od7wtlo=
+go.beyondstorage.io/services/hdfs v0.3.0 h1:DvPxjEpUIkqyW1aMoj9C5/TDzhosxLMSqF7wUMXCE7E=
+go.beyondstorage.io/services/hdfs v0.3.0/go.mod h1:yU0eL80JczPPuR5hoK21Dck0H9gXDBu3WN51Od7wtlo=
 go.beyondstorage.io/v5 v5.0.0 h1:k9Axfgbt+oZXoDwSBVCl1XANHSL4rkNTGP2Lz9YdJe0=
 go.beyondstorage.io/v5 v5.0.0/go.mod h1:3wV9gCQnqu7tD/3LMeo2yimUKIeTSHpTc6wHSb0yY20=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
