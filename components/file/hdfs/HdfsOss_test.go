@@ -35,7 +35,7 @@ const config = `[
 			]`
 
 func TestHdfsOss_Init(t *testing.T) {
-	oss := NewHdfsOss()
+	oss := NewHdfs()
 
 	c := &file.FileConfig{}
 	err := oss.Init(c)
@@ -49,7 +49,7 @@ func TestHdfsOss_Init(t *testing.T) {
 }
 
 func TestHdfsOss_selectClient(t *testing.T) {
-	HdfsOss := &HdfsOss{
+	HdfsOss := &hdfs{
 		client: make(map[string]types.Storager),
 		meta:   make(map[string]*HdfsMetaData),
 	}
@@ -79,7 +79,7 @@ func TestHdfsOss_selectClient(t *testing.T) {
 }
 
 func TestHdfsOss_Put(t *testing.T) {
-	oss := NewHdfsOss()
+	oss := NewHdfs()
 
 	c := &file.FileConfig{
 		Metadata: json.RawMessage(config),
@@ -118,7 +118,7 @@ func TestHdfsOss_Put(t *testing.T) {
 }
 
 func TestMinioOss_Get(t *testing.T) {
-	oss := NewHdfsOss()
+	oss := NewHdfs()
 
 	c := &file.FileConfig{
 		Metadata: json.RawMessage(config),
@@ -149,7 +149,7 @@ func TestMinioOss_Get(t *testing.T) {
 }
 
 func TestHdfsOss_List(t *testing.T) {
-	oss := NewHdfsOss()
+	oss := NewHdfs()
 
 	c := &file.FileConfig{
 		Metadata: json.RawMessage(config),
@@ -181,7 +181,7 @@ func TestHdfsOss_List(t *testing.T) {
 }
 
 func TestHdfsOss_Del(t *testing.T) {
-	oss := NewHdfsOss()
+	oss := NewHdfs()
 
 	c := &file.FileConfig{
 		Metadata: json.RawMessage(config),

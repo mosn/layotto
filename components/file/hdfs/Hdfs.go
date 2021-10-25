@@ -27,7 +27,7 @@ import (
 
 	"mosn.io/layotto/components/file"
 
-	"go.beyondstorage.io/services/hdfs"
+	store "go.beyondstorage.io/services/hdfs"
 	"go.beyondstorage.io/v5/pairs"
 	"go.beyondstorage.io/v5/types"
 )
@@ -46,7 +46,7 @@ var (
 	ErrHdfsListFail       error = errors.New("hdfs List opt failed")
 )
 
-type HdfsOss struct {
+type hdfs struct {
 	client map[string]types.Storager
 	meta   map[string]*HdfsMetaData
 }
@@ -55,14 +55,14 @@ type HdfsMetaData struct {
 	EndPoint string `json:"endpoint"`
 }
 
-func NewHdfsOss() file.File {
-	return &HdfsOss{
+func NewHdfs() file.File {
+	return &hdfs{
 		client: make(map[string]types.Storager),
 		meta:   make(map[string]*HdfsMetaData),
 	}
 }
 
-func (h *HdfsOss) Init(config *file.FileConfig) error {
+func (h *hdfs) Init(config *file.FileConfig) error {
 	hd := make([]*HdfsMetaData, 0)
 	err := json.Unmarshal(config.Metadata, &hd)
 
@@ -86,7 +86,7 @@ func (h *HdfsOss) Init(config *file.FileConfig) error {
 	return nil
 }
 
-func (h *HdfsOss) Put(stu *file.PutFileStu) error {
+func (h *hdfs) Put(stu *file.PutFileStu) error {
 	endpoint := stu.Metadata[endpointKey]
 
 	//It depends on OS HDFS XML ???
@@ -116,7 +116,7 @@ func (h *HdfsOss) Put(stu *file.PutFileStu) error {
 	return nil
 }
 
-func (h *HdfsOss) Get(stu *file.GetFileStu) (io.ReadCloser, error) {
+func (h *hdfs) Get(stu *file.GetFileStu) (io.ReadCloser, error) {
 	if _, ok := stu.Metadata[endpointKey]; !ok {
 		return nil, ErrMissingEndPoint
 	}
@@ -135,7 +135,7 @@ func (h *HdfsOss) Get(stu *file.GetFileStu) (io.ReadCloser, error) {
 	return r, nil
 }
 
-func (h *HdfsOss) List(request *file.ListRequest) (*file.ListResp, error) {
+func (h *hdfs) List(request *file.ListRequest) (*file.ListResp, error) {
 	if _, ok := request.Metadata[endpointKey]; !ok {
 		return nil, ErrMissingEndPoint
 	}
@@ -167,7 +167,7 @@ func (h *HdfsOss) List(request *file.ListRequest) (*file.ListResp, error) {
 	return resp, nil
 }
 
-func (h *HdfsOss) Del(request *file.DelRequest) error {
+func (h *hdfs) Del(request *file.DelRequest) error {
 
 	if _, ok := request.Metadata[endpointKey]; !ok {
 		return ErrMissingEndPoint
@@ -179,7 +179,7 @@ func (h *HdfsOss) Del(request *file.DelRequest) error {
 	return client.Delete(request.FileName)
 }
 
-func (h *HdfsOss) selectClient(meta map[string]string) (client types.Storager, err error) {
+func (h *hdfs) selectClient(meta map[string]string) (client types.Storager, err error) {
 	var endpoint string
 	var ok bool
 
@@ -203,8 +203,8 @@ func (h *HdfsOss) selectClient(meta map[string]string) (client types.Storager, e
 	return client, err
 }
 
-func (h *HdfsOss) createOssClient(meta *HdfsMetaData) (types.Storager, error) {
-	client, err := hdfs.NewStorager(pairs.WithEndpoint(meta.EndPoint))
+func (h *hdfs) createOssClient(meta *HdfsMetaData) (types.Storager, error) {
+	client, err := store.NewStorager(pairs.WithEndpoint(meta.EndPoint))
 
 	if err != nil {
 		return nil, err
