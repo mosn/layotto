@@ -4,7 +4,7 @@
 
 Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function之间互相调用以及访问基础设施，如Redis。
 
-详细的设计文档可以参考：[FaaS design](../../design/faas/faas-poc-design.md)
+详细的设计文档可以参考：[FaaS design](zh/design/faas/faas-poc-design.md)
 
 ### 二、准备工作
 
@@ -20,7 +20,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 
 3. [virtualbox](https://www.virtualbox.org/)
    
-   直接官网下载安装包安装即可，mac下也可以使用 [homebrew](https://brew.sh/) 进行安装。
+   直接官网下载安装包安装即可，mac下也可以使用 [homebrew](https://brew.sh/) 进行安装。安装完以后如果启动失败，请参考[The host-only adapter we just created is not visible](https://github.com/kubernetes/minikube/issues/3614)
 
 
 ### 三、环境搭建
@@ -33,7 +33,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 > brew install redis
 > redis-server /usr/local/etc/redis.conf
 ```
-注：如果想让外部服务连接 redis, 需要把 redis.conf 中的 protected-mode 修改为 no.
+注：如果redis安装在本机器，Virtualbox内的虚拟机是无法访问到redis的, 需要把 redis.conf 中的 protected-mode 修改为 no.同时增加 bind * -::*， 让其监听所有接口。
 
 #### B、以 virtualbox + containerd 模式启动 minikube
 ```
@@ -51,9 +51,9 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 > sudo chmod +x layotto
 > sudo mv layotto /usr/bin/
 ```
-**注1：需要把`./demo/faas/config.json`中的 redis 地址修改为实际地址，默认地址为：localhost:6379。**
+**注1：需要把`./demo/faas/config.json`中的 redis 地址修改为实际地址（安装redis的宿主机ip），默认地址为：localhost:6379。**
 
-**注2：需要把`./demo/faas/config.json`中的 wasm 文件的路径修改为`/home/docker/function_1.wasm`跟`/home/docker/function_2.wasm`**
+**注2：需要把`./demo/faas/config.json`中的 wasm 文件的路径修改为`/home/docker/function_1.wasm`跟`/home/docker/function_2.wasm`， 两个wasm文件在后面会被自动注入。**
 
 #### D、安装 containerd-shim-layotto-v2
 
@@ -62,6 +62,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 > cd containerd-wasm
 > sh build.sh
 > minikube cp containerd-shim-layotto-v2 /home/docker/containerd-shim-layotto-v2
+> minikube ssh
 > sudo chmod +x containerd-shim-layotto-v2
 > sudo mv containerd-shim-layotto-v2 /usr/bin/
 ```
@@ -70,6 +71,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 
 增加 laytto 运行时的配置。
 ```
+> minikube ssh
 > sudo vi /etc/containerd/config.toml
 [plugins.cri.containerd.runtimes.layotto]
   runtime_type = "io.containerd.layotto.v2"
@@ -102,6 +104,7 @@ runtimeclass.node.k8s.io/layotto created
 ```
 
 #### C、创建 Function
+该操作会将function_1.wasm和function_2.wasm自动注入到Virtualbox虚拟机中。
 ```
 > kubectl apply -f ./demo/faas/function-1.yaml
 pod/function-1 created
@@ -134,6 +137,18 @@ There are 100 inventories for book1.
 2. func1 通过 Runtime ABI 调用 func2
 3. func2 通过 Runtime ABI 调用 redis
 4. 依次返回结果
+
+### 常见问题说明
+
+1.Virtualbox 启动失败，"The host-only adapter we just created is not visible"：
+
+参考：[The host-only adapter we just created is not visible](https://github.com/kubernetes/minikube/issues/3614)
+
+2.启动Layotto时，redis连接失败,打印 "occurs an error: redis store: error connecting to redis at"：
+
+   检查redis的配置，看是否redis配置错误造成的。
+   
+
 
 ### 说明
 
