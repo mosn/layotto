@@ -83,8 +83,9 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 
 			err = wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
 			if err != nil {
-				log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to add plugin, err: %v", err)
-				return nil, err
+				config.PluginName = pluginName
+				addWatchFile(config, factory)
+				continue
 			}
 
 			addWatchFile(config, factory)
