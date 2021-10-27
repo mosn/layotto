@@ -115,6 +115,22 @@
             <organization>MOSN</organization>
             <organizationUrl>https://mosn.io/</organizationUrl>
         </developer>
+        <developer>
+            <name>MentosL</name>
+            <email>1367654518@qq.com</email>
+            <organization>MOSN</organization>
+            <organizationUrl>https://mosn.io/</organizationUrl>
+        </developer>
+        <developer>
+            <name>ZLBer</name>
+            <email>1098294815@qq.com</email>
+            <organization>MOSN</organization>
+            <organizationUrl>https://mosn.io/</organizationUrl>
+        </developer>
+        <developer>
+            <name>kevinten10</name>
+            <organizationUrl>http://www.kevinten.com/</organizationUrl>
+        </developer>
     </developers>
 
     <scm>
