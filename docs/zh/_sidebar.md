@@ -72,6 +72,7 @@
     - [组件开发指南](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
         - [新增API时的开发规范](zh/development/developing-api.md)
+        - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
         - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
     - [解释一下Layotto的github workflow](zh/development/explanation-for-github-workflow.md)
