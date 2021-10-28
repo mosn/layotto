@@ -54,6 +54,10 @@ docker run -it --rm -v $(pwd):/github/workspace apache/skywalking-eyes header fi
 
 It will add license headers for code files recursively.
 
+##### How to configurate the License checker to ignore files of specified types?
+The ignore list is in `.licenserc.yaml`. You can add new types into it.
+
+##### For more details of this tool
 See https://github.com/marketplace/actions/license-eye#docker-image for details
 
 #### TODO: PR title lint
