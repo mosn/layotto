@@ -87,3 +87,7 @@ GRPC_TRACE=compression GRPC_VERBOSITY=debug GRPC_TRACE=all npm run test test/uni
 ### Get Start with gRPC on Node.js
 
 See https://grpc.io/docs/languages/node/quickstart/
+
+### Go Proxy in China
+
+See https://learnku.com/go/wikis/38122

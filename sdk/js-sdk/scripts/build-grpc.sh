@@ -16,6 +16,7 @@ OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
 
 # Proto buf generation
+# https://medium.com/blokur/how-to-implement-a-grpc-client-and-server-in-typescript-fa3ac807855e
 PATH_ROOT=$(pwd)
 PATH_PROTO_ROOT="${PATH_ROOT}/../../spec/proto/runtime/v1"
 PATH_PROTO_OUTPUT="${PATH_ROOT}/proto"

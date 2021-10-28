@@ -12,10 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Client from './Client';
-import * as utils from './utils';
 
-export {
-  Client,
-  utils
-}
+export type KV<Type> = {
+  [key: string]: Type;
+};
+
+export type KVString = KV<String>;
+
+export function convertArrayToKVString(items: [string, string][]) {
+  const kv: KVString = {};
+  for (const item of items) {
+    kv[item[0]] = item[1];
+  }
+  return kv;
+};
