@@ -12,6 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { UnlockResponse } from '../../proto/runtime_pb';
+import { RequestWithMeta } from './common';
 
-export const UnlockResponseStatus = UnlockResponse.Status;
+export type TryLockRequest = {
+  storeName: string;
+  resourceId: string;
+  lockOwner: string;
+  expire: number;
+} & RequestWithMeta;
+
+export type UnlockRequest = {
+  storeName: string;
+  resourceId: string;
+  lockOwner: string;
+} & RequestWithMeta;

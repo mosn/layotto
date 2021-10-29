@@ -13,27 +13,27 @@
  * limitations under the License.
  */
 import {
-  GetNextIdRequest,
-  GetNextIdResponse,
+  GetNextIdRequest as GetNextIdRequestPB,
+  GetNextIdResponse as GetNextIdResponsePB,
   SequencerOptions as SequencerOptionsPB,
 } from '../proto/runtime_pb';
-import { API, RequestMetadata } from './API';
-import { SequencerOptions } from './types/Sequencer';
+import { API } from './API';
+import { GetNextIdRequest } from './types/Sequencer';
 
 export default class Sequencer extends API {
   // Get next unique id with some auto-increment guarantee
-  async getNextId(storeName: string, key: string, options?: SequencerOptions, meta?: RequestMetadata): Promise<string> {
-    const req = new GetNextIdRequest();
-    req.setStoreName(storeName);
-    req.setKey(key);
-    if (options) {
+  async getNextId(request: GetNextIdRequest): Promise<string> {
+    const req = new GetNextIdRequestPB();
+    req.setStoreName(request.storeName);
+    req.setKey(request.key);
+    if (request.options) {
       const sequencerOptions = new SequencerOptionsPB();
-      sequencerOptions.setIncrement(options.increment);
+      sequencerOptions.setIncrement(request.options.increment);
       req.setOptions(sequencerOptions);
     }
 
     return new Promise((resolve, reject) => {
-      this.runtime.getNextId(req, this.createMetadata(meta), (err, res: GetNextIdResponse) => {
+      this.runtime.getNextId(req, this.createMetadata(request), (err, res: GetNextIdResponsePB) => {
         if (err) return reject(err);
         resolve(res.getNextId());
       });

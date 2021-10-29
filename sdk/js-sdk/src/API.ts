@@ -14,11 +14,7 @@
  */
 import { Metadata } from '@grpc/grpc-js';
 import { RuntimeClient } from '../proto/runtime_grpc_pb';
-
-// gRPC meta data
-export type RequestMetadata = {
-  [key: string]: string;
-};
+import { RequestWithMeta } from './types/common';
 
 export class API {
   readonly runtime: RuntimeClient;
@@ -26,10 +22,10 @@ export class API {
     this.runtime = runtime;
   }
 
-  createMetadata(meta?: RequestMetadata) {
+  createMetadata(request: RequestWithMeta): Metadata {
     const metadata = new Metadata();
-    for (const key in meta) {
-      metadata.add(key, meta[key]);
+    for (const key in request.requestMeta) {
+      metadata.add(key, request.requestMeta[key]);
     }
     return metadata;
   }

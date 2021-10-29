@@ -13,20 +13,21 @@
  * limitations under the License.
  */
 import { 
-  SayHelloRequest
+  SayHelloRequest as SayHelloRequestPB,
+  SayHelloResponse as SayHelloResponsePB,
 } from '../proto/runtime_pb';
-import { API, RequestMetadata } from './API';
+import { API } from './API';
+import { SayHelloRequest } from './types/Hello';
 
 export default class Hello extends API {
-  async sayHello(serviceName = 'helloworld', name = '', meta?: RequestMetadata): Promise<string> {
-    const req = new SayHelloRequest();
-    req.setServiceName(serviceName);
-    if (name) {
-      req.setName(name);
-    }
+  async sayHello(request?: SayHelloRequest): Promise<string> {
+    const req = new SayHelloRequestPB();
+    if (!request) request = {};
+    req.setServiceName(request.serviceName || 'helloworld');
+    if (request.name) req.setName(request.name);
     
     return new Promise((resolve, reject) => {
-      this.runtime.sayHello(req, this.createMetadata(meta), (err, res) => {
+      this.runtime.sayHello(req, this.createMetadata(request as SayHelloRequest), (err, res: SayHelloResponsePB) => {
         if (err) return reject(err);
         resolve(res.getHello());
       });

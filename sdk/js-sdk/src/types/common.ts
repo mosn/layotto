@@ -17,7 +17,11 @@ export type KV<Type> = {
   [key: string]: Type;
 };
 
-export type KVString = KV<String>;
+export type KVString = KV<string>;
+
+export type RequestWithMeta = {
+  requestMeta?: KVString;
+};
 
 export function convertArrayToKVString(items: [string, string][]) {
   const kv: KVString = {};

@@ -7,7 +7,7 @@
     "test:all": "npm run test:cjs && npm run test:esm && npm run test:ts",
     "test:cjs": "node ./state.js",
     "test:esm": "node ./state.mjs",
-    "test:ts": "ts-node ./state.ts"
+    "test:ts": "ts-node ./state.ts && ts-node ./configuration/subscribe.ts"
   },
   "dependencies": {
     "koa": "^2.13.4",

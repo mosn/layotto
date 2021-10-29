@@ -17,3 +17,31 @@ import { setTimeout } from 'timers/promises';
 export async function sleep(ms: number) {
   await setTimeout(ms);
 }
+
+// jspb.Message
+// https://github.com/protocolbuffers/protobuf/blob/master/js/message.js#L233
+//
+// use array to detect not exists or empty
+// console.log(res)
+// not exists
+// {
+//   wrappers_: null,
+//   messageId_: undefined,
+//   arrayIndexOffset_: -1,
+//   array: [],
+//   pivot_: 1.7976931348623157e+308,
+//   convertedPrimitiveFields_: {}
+// }
+// empty data
+// {
+//   wrappers_: null,
+//   messageId_: undefined,
+//   arrayIndexOffset_: -1,
+//   array: [ <1 empty item>, '1' ],
+//   pivot_: 1.7976931348623157e+308,
+//   convertedPrimitiveFields_: {}
+// }
+export function isEmptyPBMessage(item, emptyLength = 0) {
+  if (item.array.length === emptyLength) return true;
+  return false;
+}

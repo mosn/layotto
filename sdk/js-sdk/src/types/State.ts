@@ -15,13 +15,11 @@
 import { 
   StateOptions as StateOptionsPB,
 } from '../../proto/runtime_pb';
-
-export type StateConcurrency = StateOptionsPB.StateConcurrency;
-export type StateConsistency = StateOptionsPB.StateConsistency;
+import { RequestWithMeta } from './common';
 
 export type StateOptions = {
-  concurrency: StateConcurrency;
-  consistency: StateConsistency;
+  concurrency: StateOptionsPB.StateConcurrency;
+  consistency: StateOptionsPB.StateConsistency;
 };
 
 export type StateItem = {
@@ -54,3 +52,35 @@ export type StateOperation = {
   request: StateItem | DeleteStateItem;
 };
 
+export type SaveStateRequest = {
+  storeName: string;
+  states: StateItem[] | StateItem;
+} & RequestWithMeta;
+
+export type GetStateRequest = {
+  storeName: string;
+  key: string;
+} & RequestWithMeta;
+
+export type GetBulkStateRequest = {
+  storeName: string;
+  keys: string[];
+  parallelism?: number;
+} & RequestWithMeta;
+
+export type DeleteStateRequest = {
+  storeName: string;
+  key: string;
+  etag?: string;
+  options?: StateOptions
+} & RequestWithMeta;
+
+export type DeleteBulkStateRequest = {
+  storeName: string;
+  states: DeleteStateItem[];
+} & RequestWithMeta;
+
+export type ExecuteStateTransactionRequest = {
+  storeName: string;
+  operations: StateOperation[];
+} & RequestWithMeta;

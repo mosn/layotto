@@ -13,8 +13,7 @@
  * limitations under the License.
  */
 import { strict as assert } from 'assert';
-import { Client } from '../../src';
-import { sleep } from '../../src/utils';
+import { Client, utils } from '../../src';
 
 describe('Configuration.test.ts', () => {
   let client: Client;
@@ -114,7 +113,7 @@ describe('Configuration.test.ts', () => {
       },
     });
     console.log('call send', call.destroyed);
-    await sleep(500);
+    await utils.sleep(500);
     await client.configuration.save({
       storeName,
       appId,
@@ -129,7 +128,7 @@ describe('Configuration.test.ts', () => {
         },
       ],
     });
-    await sleep(500);
+    await utils.sleep(500);
     assert.equal(lastConfig[key1], 'world1111 哈哈，😄');
     assert.equal(lastConfig[key2], 'world2222 哈哈，😄');
 
@@ -144,12 +143,12 @@ describe('Configuration.test.ts', () => {
       ],
     });
 
-    await sleep(500);
+    await utils.sleep(500);
     assert.equal(lastConfig[key1], 'world1111 哈哈，😄');
     assert.equal(lastConfig[key2], 'world2222-update2 哈哈，😄');
 
     call.end();
     call.destroy();
-    await sleep(500);
+    await utils.sleep(500);
   });
 });

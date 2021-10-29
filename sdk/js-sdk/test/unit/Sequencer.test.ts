@@ -13,8 +13,7 @@
  * limitations under the License.
  */
 import { strict as assert } from 'assert';
-import { Client } from '../../src';
-// import { SequencerOptionsAutoIncrement } from '../../src/types/Sequencer';
+import { Client, RumtimeTypes } from '../../src';
 
 describe('Sequencer.test.ts', () => {
   let client: Client;
@@ -30,7 +29,30 @@ describe('Sequencer.test.ts', () => {
     const ids: string[] = [];
     for (let i = 0; i < 20; i++) {
       lastId = currentId;
-      currentId = await client.sequencer.getNextId(storeName, 'user_info');
+      currentId = await client.sequencer.getNextId({
+        storeName, 
+        key: 'user_info',
+      });
+      assert(BigInt(currentId) > BigInt(lastId));
+      ids.push(currentId);
+    }
+    assert.equal(ids.length, 20);
+    console.log('ids: %j', ids);
+  });
+
+  it('should get next id with options increment:WEAK success', async () => {
+    let lastId = '0';
+    let currentId = '0';
+    const ids: string[] = [];
+    for (let i = 0; i < 20; i++) {
+      lastId = currentId;
+      currentId = await client.sequencer.getNextId({
+        storeName, 
+        key: 'user_info',
+        options: {
+          increment: RumtimeTypes.SequencerOptions.AutoIncrement.WEAK,
+        },
+      });
       assert(BigInt(currentId) > BigInt(lastId));
       ids.push(currentId);
     }

@@ -12,8 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { KVString } from './common';
+import { KVString, RequestWithMeta } from './common';
 
 export type GetConfigurationRequest = {
   storeName: string;
@@ -23,7 +22,7 @@ export type GetConfigurationRequest = {
   label?: string;
   subscribeUpdate?: boolean;
   metadata?: KVString;
-};
+} & RequestWithMeta;
 
 export type GetConfigurationItem = {
   key: string;
@@ -48,7 +47,7 @@ export type SaveConfigurationRequest = {
   appId: string;
   items: SaveConfigurationItem[];
   metadata?: KVString;
-};
+} & RequestWithMeta;
 
 export type DeleteConfigurationRequest = {
   storeName: string;
@@ -57,7 +56,7 @@ export type DeleteConfigurationRequest = {
   group?: string;
   label?: string;
   metadata?: KVString;
-};
+} & RequestWithMeta;
 
 export type SubscribeConfigurationRequest = {
   storeName: string;
@@ -68,4 +67,4 @@ export type SubscribeConfigurationRequest = {
   metadata?: KVString;
   onData(items: GetConfigurationItem[]): void;
   onClose(err?: Error): void;
-};
+} & RequestWithMeta;

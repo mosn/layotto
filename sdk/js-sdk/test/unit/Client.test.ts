@@ -21,6 +21,8 @@ describe('Client.test.ts', () => {
     client = new Client();
     const hello = await client.hello.sayHello();
     assert.equal(hello, 'greeting, ');
+    const hello2 = await client.hello.sayHello({ name: 'js-sdk' });
+    assert.equal(hello2, 'greeting, js-sdk');
   });
 
   it('should create a Client with default port', () => {

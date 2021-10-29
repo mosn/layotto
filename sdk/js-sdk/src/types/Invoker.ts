@@ -13,5 +13,16 @@
  * limitations under the License.
  */
 import { HTTPExtension } from '../../proto/runtime_pb';
+import { RequestWithMeta } from './common';
 
-export const HTTPExtensionVerb = HTTPExtension.Verb;
+export type InvokeServiceRequest = {
+  id: string;
+  method: string;
+  httpVerb?: HTTPExtension.Verb;
+  data?: string | object;
+} & RequestWithMeta;
+
+export type InvokeResponse = {
+  contentType: string;
+  content: string | Buffer | object;
+};

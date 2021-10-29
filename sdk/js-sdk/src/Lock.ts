@@ -13,37 +13,43 @@
  * limitations under the License.
  */
 import * as crypto from 'crypto';
-import { TryLockRequest, TryLockResponse, UnlockRequest, UnlockResponse } from '../proto/runtime_pb';
-import { API, RequestMetadata } from './API';
+import {
+  TryLockRequest as TryLockRequestPB,
+  TryLockResponse as TryLockResponsePB,
+  UnlockRequest as UnlockRequestPB,
+  UnlockResponse as UnlockResponsePB,
+} from '../proto/runtime_pb';
+import { API } from './API';
+import { TryLockRequest, UnlockRequest } from './types/Lock';
 
 export default class Lock extends API {
   // A non-blocking method trying to get a lock with ttl
   // expire is the time before expire. The time unit is second.
-  async tryLock(storeName: string, resourceId: string, lockOwner: string, expire: number, meta?: RequestMetadata): Promise<boolean> {
-    const req = new TryLockRequest();
-    req.setStoreName(storeName);
-    req.setResourceId(resourceId);
-    req.setLockOwner(lockOwner);
-    req.setExpire(expire);
+  async tryLock(request: TryLockRequest): Promise<boolean> {
+    const req = new TryLockRequestPB();
+    req.setStoreName(request.storeName);
+    req.setResourceId(request.resourceId);
+    req.setLockOwner(request.lockOwner);
+    req.setExpire(request.expire);
 
     return new Promise((resolve, reject) => {
-      this.runtime.tryLock(req, this.createMetadata(meta), (err, res: TryLockResponse) => {
+      this.runtime.tryLock(req, this.createMetadata(request), (err, res: TryLockResponsePB) => {
         if (err) return reject(err);
         resolve(res.getSuccess());
       });
     });
   }
 
-  async unLock(storeName: string, resourceId: string, lockOwner: string, meta?: RequestMetadata): Promise<UnlockResponse.Status> {
-    const req = new UnlockRequest();
-    req.setStoreName(storeName);
-    req.setResourceId(resourceId);
-    req.setLockOwner(lockOwner);
+  async unLock(request: UnlockRequest): Promise<UnlockResponsePB.AsObject> {
+    const req = new UnlockRequestPB();
+    req.setStoreName(request.storeName);
+    req.setResourceId(request.resourceId);
+    req.setLockOwner(request.lockOwner);
 
     return new Promise((resolve, reject) => {
-      this.runtime.unlock(req, this.createMetadata(meta), (err, res: UnlockResponse) => {
+      this.runtime.unlock(req, this.createMetadata(request), (err, res: UnlockResponsePB) => {
         if (err) return reject(err);
-        resolve(res.getStatus());
+        resolve(res.toObject());
       });
     });
   }

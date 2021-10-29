@@ -14,8 +14,10 @@
  */
 import Client from './Client';
 import * as utils from './utils';
+import * as RumtimeTypes from '../proto/runtime_pb';
 
 export {
   Client,
-  utils
+  utils,
+  RumtimeTypes,
 }

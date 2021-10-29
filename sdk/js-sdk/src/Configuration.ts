@@ -22,7 +22,7 @@ import {
   SubscribeConfigurationRequest as SubscribeConfigurationRequestPB,
   SubscribeConfigurationResponse as SubscribeConfigurationResponsePB,
 } from '../proto/runtime_pb';
-import { API, RequestMetadata } from './API';
+import { API } from './API';
 import {
   GetConfigurationRequest,
   GetConfigurationItem,
@@ -36,7 +36,7 @@ const debug = debuglog('layotto:configuration');
 
 export default class Configuration extends API {
   // GetConfiguration gets configuration from configuration store.
-  async get(request: GetConfigurationRequest, grpcMeta?: RequestMetadata): Promise<GetConfigurationItem[]> {
+  async get(request: GetConfigurationRequest): Promise<GetConfigurationItem[]> {
     const req = new GetConfigurationRequestPB();
     req.setStoreName(request.storeName);
     req.setAppId(request.appId);
@@ -48,7 +48,7 @@ export default class Configuration extends API {
     }
     // TODO: support set metadataMap
     return new Promise((resolve, reject) => {
-      this.runtime.getConfiguration(req, this.createMetadata(grpcMeta), (err, res: GetConfigurationResponsePB) => {
+      this.runtime.getConfiguration(req, this.createMetadata(request), (err, res: GetConfigurationResponsePB) => {
         if (err) return reject(err);
         resolve(res.getItemsList().map(item => this.createGetConfigurationItem(item)));
       });
@@ -56,7 +56,7 @@ export default class Configuration extends API {
   }
 
   // SaveConfiguration saves configuration into configuration store.
-  async save(request: SaveConfigurationRequest, grpcMeta?: RequestMetadata): Promise<void> {
+  async save(request: SaveConfigurationRequest): Promise<void> {
     const req = new SaveConfigurationRequestPB();
     req.setStoreName(request.storeName);
     req.setAppId(request.appId);
@@ -70,7 +70,7 @@ export default class Configuration extends API {
     }));
 
     return new Promise((resolve, reject) => {
-      this.runtime.saveConfiguration(req, this.createMetadata(grpcMeta), (err) => {
+      this.runtime.saveConfiguration(req, this.createMetadata(request), (err) => {
         if (err) return reject(err);
         resolve();
       });
@@ -78,7 +78,7 @@ export default class Configuration extends API {
   }
 
   // DeleteConfiguration deletes configuration from configuration store.
-  async delete(request: DeleteConfigurationRequest, grpcMeta?: RequestMetadata): Promise<void> {
+  async delete(request: DeleteConfigurationRequest): Promise<void> {
     const req = new DeleteConfigurationRequestPB();
     req.setStoreName(request.storeName);
     req.setAppId(request.appId);
@@ -87,7 +87,7 @@ export default class Configuration extends API {
     if (request.label) req.setLabel(request.label);
 
     return new Promise((resolve, reject) => {
-      this.runtime.deleteConfiguration(req, this.createMetadata(grpcMeta), (err) => {
+      this.runtime.deleteConfiguration(req, this.createMetadata(request), (err) => {
         if (err) return reject(err);
         resolve();
       });
@@ -95,7 +95,7 @@ export default class Configuration extends API {
   }
 
   // SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
-  subscribe(request: SubscribeConfigurationRequest, grpcMeta?: RequestMetadata) {
+  subscribe(request: SubscribeConfigurationRequest) {
     const req = new SubscribeConfigurationRequestPB();
     req.setStoreName(request.storeName);
     req.setAppId(request.appId);
@@ -105,7 +105,7 @@ export default class Configuration extends API {
 
     let lastError: Error;
     let isCloseOrEnd = false;
-    const call = this.runtime.subscribeConfiguration(this.createMetadata(grpcMeta));
+    const call = this.runtime.subscribeConfiguration(this.createMetadata(request));
     call.on('readable', () => {
       const res: SubscribeConfigurationResponsePB = call.read();
       debug('readable emit, has res: %s', !!res);

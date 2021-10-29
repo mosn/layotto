@@ -19,7 +19,9 @@ const client = new Client();
 assert(client);
 
 async function main() {
-  const hello = await client.hello.sayHello('helloworld', 'js-sdk');
+  const hello = await client.hello.sayHello({
+    name: 'js-sdk',
+  });
   console.log('%s', hello);
 
   await client.configuration.save({

@@ -19,7 +19,10 @@ const client = new Client();
 assert(client);
 
 async function main() {
-  const hello = await client.hello.sayHello('helloworld', 'js-sdk');
+  const hello = await client.hello.sayHello({
+    serviceName: 'helloworld',
+    name: 'js-sdk',
+  });
   console.log('%s', hello);
 }
 

@@ -12,43 +12,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Any } from "google-protobuf/google/protobuf/any_pb";
+import { Any } from 'google-protobuf/google/protobuf/any_pb';
 import {
-  InvokeServiceRequest,
-  CommonInvokeRequest,
+  InvokeServiceRequest as InvokeServiceRequestPB,
+  CommonInvokeRequest as CommonInvokeRequestPB,
   HTTPExtension,
-  InvokeResponse,
+  InvokeResponse as InvokeResponsePB,
 } from '../proto/runtime_pb';
-import { API, RequestMetadata } from './API';
+import { API } from './API';
+import { InvokeServiceRequest, InvokeResponse } from './types/Invoker';
 
 export default class Invoker extends API {
-  async invoke(id: string, methodName: string, httpVerb = HTTPExtension.Verb.GET, data: string | object = {}, meta?: RequestMetadata): Promise<object> {
-    const message = new CommonInvokeRequest();
-    message.setMethod(methodName);
+  async invoke(request: InvokeServiceRequest): Promise<InvokeResponse> {
+    const message = new CommonInvokeRequestPB();
+    message.setMethod(request.method);
 
+    const httpVerb = request.httpVerb || HTTPExtension.Verb.GET;
     const httpExtension = new HTTPExtension();
     httpExtension.setVerb(httpVerb);
     message.setHttpExtension(httpExtension);
 
-    const dataSerialized = new Any();
-    if (typeof data === 'string') {
-      message.setContentType('');
-      dataSerialized.setValue(Buffer.from(data, 'utf8'));
-    } else {
-      message.setContentType('application/json');
-      dataSerialized.setValue(Buffer.from(JSON.stringify(data), 'utf8'));
+    if (request.data) {
+      const dataSerialized = new Any();
+      if (typeof request.data === 'string') {
+        message.setContentType('text/plain; charset=UTF-8');
+        dataSerialized.setValue(Buffer.from(request.data, 'utf8'));
+      } else {
+        message.setContentType('application/json');
+        dataSerialized.setValue(Buffer.from(JSON.stringify(request.data), 'utf8'));
+      }
+      message.setData(dataSerialized);
     }
-    message.setData(dataSerialized);
 
-    const req = new InvokeServiceRequest();
-    req.setId(id);
+    const req = new InvokeServiceRequestPB();
+    req.setId(request.id);
     req.setMessage(message);
 
     return new Promise((resolve, reject) => {
-      this.runtime.invokeService(req, this.createMetadata(meta), (err, res: InvokeResponse) => {
+      this.runtime.invokeService(req, this.createMetadata(request), (err, res: InvokeResponsePB) => {
         if (err) return reject(err);
-        const data = JSON.parse(res.getData());
-        resolve(data);
+        const contentType = res.getContentType().split(';', 1)[0].toLowerCase();
+        const content = res.getData() as Buffer;
+        const response: InvokeResponse = { contentType, content };
+        if (contentType === 'application/json') {
+          response.content = JSON.parse(content.toString());
+        }
+        if (contentType === 'text/plain') {
+          response.content = content.toString();
+        }
+        resolve(response);
       });
     });
   }

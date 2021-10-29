@@ -27,14 +27,20 @@ describe('State.test.ts', () => {
   describe('get(), getBulk()', () => {
     it('should get not exists key', async () => {
       const key = 'js-sdk-unit-notexists-' + Date.now();
-      const state = await client.state.get(storeName, key);
+      const state = await client.state.get({ storeName, key });
       assert.equal(state, null);
     });
 
     it('should get empty value', async () => {
       const key = 'js-sdk-unit-empty-' + Date.now();
-      await client.state.save(storeName, { key, value: '' });
-      const state = await client.state.get(storeName, key);
+      await client.state.save({
+        storeName, 
+        states: {
+          key,
+          value: '',
+        },
+      });
+      const state = await client.state.get({ storeName, key });
       assert(state);
       assert.equal(state.value.length, 0);
       assert.equal(state.key, key);
@@ -44,13 +50,20 @@ describe('State.test.ts', () => {
     it('should save one item and get key success', async () => {
       const key = 'js-sdk-unit-' + Date.now();
       const value = `hello js-sdk, with 中文, 😄, at ${Date()}`;
-      await client.state.save(storeName, { key, value }, { traceid: `mock-traceid-unittest-${Date.now()}` });
-      const state = await client.state.get(storeName, key);
+      await client.state.save({
+        storeName, 
+        states: { key, value }, 
+        requestMeta: { traceid: `mock-traceid-unittest-${Date.now()}` },
+      });
+      const state = await client.state.get({ storeName, key });
       assert(state);
       assert.equal(Buffer.from(state.value).toString(), value);
   
-      await client.state.save(storeName, { key, value });
-      const state2 = await client.state.get(storeName, key);
+      await client.state.save({
+        storeName, 
+        states: { key, value },
+      });
+      const state2 = await client.state.get({ storeName, key });
       assert(state2);
       assert.equal(Buffer.from(state2.value).toString(), value);
     });
@@ -62,16 +75,19 @@ describe('State.test.ts', () => {
         const value = `key${i}:hello js-sdk, with 中文, 😄, at ${Date()}`;
         items.push({ key, value });
       }
-      await client.state.save(storeName, items);
+      await client.state.save({
+        storeName, 
+        states: items,
+      });
   
       for (const { key, value } of items) {
-        const state = await client.state.get(storeName, key);
+        const state = await client.state.get({ storeName, key });
         assert(state);
         assert.equal(Buffer.from(state.value).toString(), value);
       }
   
       const keys = items.map(i => i.key);
-      const states = await client.state.getBulk(storeName, keys);
+      const states = await client.state.getBulk({ storeName, keys });
       assert.equal(states.length, items.length);
       for (let i = 0; i < states.length; i++) {
         const state = states[i];
@@ -81,7 +97,9 @@ describe('State.test.ts', () => {
         assert.equal(Buffer.from(state.value).toString(), item.value);
       }
 
-      const states2 = await client.state.getBulk(storeName, keys, undefined, { foo: 'bar' });
+      const states2 = await client.state.getBulk({
+        storeName, keys, requestMeta: { foo: 'bar' },
+      });
       assert.equal(states2.length, items.length);
     });
   });
@@ -90,15 +108,15 @@ describe('State.test.ts', () => {
     it('should delete one key success', async () => {
       const key = 'js-sdk-unit-delete-' + Date.now();
       // delete not exists
-      await client.state.delete(storeName, key);
+      await client.state.delete({ storeName, key });
 
       const value = `hello js-sdk, with 中文, 😄, at ${Date()}`;
-      await client.state.save(storeName, { key, value });
+      await client.state.save({ storeName, states: { key, value } });
 
       // delete exists
-      await client.state.delete(storeName, key);
+      await client.state.delete({ storeName, key });
 
-      const state = await client.state.get(storeName, key);
+      const state = await client.state.get({ storeName, key });
       assert.equal(state, null);
     });
 
@@ -112,14 +130,36 @@ describe('State.test.ts', () => {
         keys.push({ key });
       }
       // delete not exists
-      await client.state.deleteBulk(storeName, keys);
+      await client.state.deleteBulk({ storeName, states: keys });
+      let states = await client.state.getBulk({
+        storeName, 
+        keys: keys.map(i => i.key),
+      });
+      assert.equal(states.length, 0);
 
-      await client.state.save(storeName, items);
+      await client.state.save({ storeName, states: items });
+      states = await client.state.getBulk({
+        storeName, 
+        keys: keys.map(i => i.key),
+      });
+      assert.equal(states.length, 20);
 
-      // delete exists
-      await client.state.deleteBulk(storeName, keys);
+      // delete 5 keys
+      await client.state.deleteBulk({ storeName, states: keys.slice(0, 5) });
 
-      const states = await client.state.getBulk(storeName, keys.map(i => i.key));
+      states = await client.state.getBulk({
+        storeName, 
+        keys: keys.map(i => i.key),
+      });
+      assert.equal(states.length, 15);
+
+      // delete all exists
+      await client.state.deleteBulk({ storeName, states: keys });
+
+      states = await client.state.getBulk({
+        storeName, 
+        keys: keys.map(i => i.key),
+      });
       assert.equal(states.length, 0);
     });
   });
@@ -139,7 +179,7 @@ describe('State.test.ts', () => {
       }
       // not work now: mosn error
       // 2021-10-24 14:06:52,590 [ERROR] [mosn.proxy.panic] [grpc] [unary] grpc unary handle panic: interface conversion: interface {} is *state.SetRequest, not state.SetRequest, method: /spec.proto.runtime.v1.Runtime/ExecuteStateTransaction, stack:goroutine 8213 [running]:
-      await client.state.executeTransaction(storeName, operations);
+      await client.state.executeTransaction({ storeName, operations });
       // const states = await client.state.getBulk(storeName, keys.map(i => i.key));
       // assert.equal(states.length, 20);
     });

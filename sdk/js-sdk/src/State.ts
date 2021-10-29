@@ -13,39 +13,45 @@
  * limitations under the License.
  */
 import { 
-  SaveStateRequest,
+  SaveStateRequest as SaveStateRequestPB,
   StateItem as StateItemPB,
-  Etag,
+  Etag as EtagPB,
   StateOptions as StateOptionsPB,
-  GetStateRequest,
-  GetBulkStateRequest,
-  DeleteStateRequest,
-  DeleteBulkStateRequest,
-  ExecuteStateTransactionRequest,
-  TransactionalStateOperation,
+  GetStateRequest as GetStateRequestPB,
+  GetBulkStateRequest as GetBulkStateRequestPB,
+  DeleteStateRequest as DeleteStateRequestPB,
+  DeleteBulkStateRequest as DeleteBulkStateRequestPB,
+  ExecuteStateTransactionRequest as ExecuteStateTransactionRequestPB,
+  TransactionalStateOperation as TransactionalStateOperationPB,
 } from '../proto/runtime_pb';
-import { API, RequestMetadata } from './API';
+import { API } from './API';
 import {
+  DeleteBulkStateRequest,
   DeleteStateItem,
+  DeleteStateRequest,
+  ExecuteStateTransactionRequest,
+  GetBulkStateRequest,
+  GetStateRequest,
   ResponseStateItem,
+  SaveStateRequest,
   StateItem,
-  StateOperation,
-  StateOptions,
 } from './types/State';
+import { isEmptyPBMessage } from './utils';
 
 export default class State extends API {
   // Saves an array of state objects
-  async save(storeName: string, states: StateItem[] | StateItem, meta?: RequestMetadata): Promise<void> {
+  async save(request: SaveStateRequest): Promise<void> {
+    let states = request.states;
     if (!Array.isArray(states)) {
       states = [states];
     }
     const stateList = this.createStateItemPBList(states);
-    const req = new SaveStateRequest();
-    req.setStoreName(storeName);
+    const req = new SaveStateRequestPB();
+    req.setStoreName(request.storeName);
     req.setStatesList(stateList);
 
     return new Promise((resolve, reject) => {
-      this.runtime.saveState(req, this.createMetadata(meta), (err) => {
+      this.runtime.saveState(req, this.createMetadata(request), (err) => {
         if (err) return reject(err);
         resolve();
       });
@@ -53,19 +59,19 @@ export default class State extends API {
   }
 
   // Gets the state for a specific key
-  async get(storeName: string, key: string, meta?: RequestMetadata): Promise<ResponseStateItem | null> {
-    const req = new GetStateRequest();
-    req.setStoreName(storeName);
-    req.setKey(key);
+  async get(request: GetStateRequest): Promise<ResponseStateItem | null> {
+    const req = new GetStateRequestPB();
+    req.setStoreName(request.storeName);
+    req.setKey(request.key);
 
     return new Promise((resolve, reject) => {
-      this.runtime.getState(req, this.createMetadata(meta), (err, res) => {
+      this.runtime.getState(req, this.createMetadata(request), (err, res) => {
         if (err) return reject(err);
-        if (this.isEmpty(res)) {
+        if (isEmptyPBMessage(res)) {
           return resolve(null);
         }
         resolve({
-          key,
+          key: request.key,
           value: res.getData_asU8(),
           etag: res.getEtag(),
         });
@@ -74,19 +80,20 @@ export default class State extends API {
   }
 
   // Gets a bulk of state items for a list of keys
-  async getBulk(storeName: string, keys: string[], parallelism = 10, meta?: RequestMetadata): Promise<ResponseStateItem[]> {
-    const req = new GetBulkStateRequest();
-    req.setStoreName(storeName);
-    req.setKeysList(keys);
-    req.setParallelism(parallelism);
+  async getBulk(request: GetBulkStateRequest): Promise<ResponseStateItem[]> {
+    const req = new GetBulkStateRequestPB();
+    req.setStoreName(request.storeName);
+    req.setKeysList(request.keys);
+    if (request.parallelism) req.setParallelism(request.parallelism);
 
     return new Promise((resolve, reject) => {
-      this.runtime.getBulkState(req, this.createMetadata(meta), (err, res) => {
+      this.runtime.getBulkState(req, this.createMetadata(request), (err, res) => {
         if (err) return reject(err);
         const states: ResponseStateItem[] = [];
         const itemsList = res.getItemsList();
         for (const item of itemsList) {
-          if (this.isEmpty(item)) {
+          // pb.message.array[0] is key, pb.message.array[1] is value
+          if (isEmptyPBMessage(item, 1)) {
             continue;
           }
           states.push({
@@ -102,24 +109,24 @@ export default class State extends API {
   }
 
   // Deletes the state for a specific key
-  async delete(storeName: string, key: string, etag = '', options?: StateOptions, meta?: RequestMetadata): Promise<void> {
-    const req = new DeleteStateRequest();
-    req.setStoreName(storeName);
-    req.setKey(key);
-    if (etag) {
-      const etagInstance = new Etag();
-      etagInstance.setValue(etag);
+  async delete(request: DeleteStateRequest): Promise<void> {
+    const req = new DeleteStateRequestPB();
+    req.setStoreName(request.storeName);
+    req.setKey(request.key);
+    if (request.etag) {
+      const etagInstance = new EtagPB();
+      etagInstance.setValue(request.etag);
       req.setEtag(etagInstance);
     }
-    if (options) {
+    if (request.options) {
       const optionsInstance = new StateOptionsPB();
-      optionsInstance.setConcurrency(options.concurrency);
-      optionsInstance.setConsistency(options.consistency);
+      optionsInstance.setConcurrency(request.options.concurrency);
+      optionsInstance.setConsistency(request.options.consistency);
       req.setOptions(optionsInstance);
     }
 
     return new Promise((resolve, reject) => {
-      this.runtime.deleteState(req, this.createMetadata(meta), (err) => {
+      this.runtime.deleteState(req, this.createMetadata(request), (err) => {
         if (err) return reject(err);
         resolve();
       });
@@ -127,14 +134,14 @@ export default class State extends API {
   }
 
   // Deletes a bulk of state items for a list of keys
-  async deleteBulk(storeName: string, states: DeleteStateItem[], meta?: RequestMetadata): Promise<void> {
-    const req = new DeleteBulkStateRequest();
-    req.setStoreName(storeName);
-    const stateList = this.createStateItemPBList(states);
+  async deleteBulk(request: DeleteBulkStateRequest): Promise<void> {
+    const req = new DeleteBulkStateRequestPB();
+    req.setStoreName(request.storeName);
+    const stateList = this.createStateItemPBList(request.states);
     req.setStatesList(stateList);
 
     return new Promise((resolve, reject) => {
-      this.runtime.deleteBulkState(req, this.createMetadata(meta), (err) => {
+      this.runtime.deleteBulkState(req, this.createMetadata(request), (err) => {
         if (err) return reject(err);
         resolve();
       });
@@ -142,12 +149,12 @@ export default class State extends API {
   }
 
   // Executes transactions for a specified store
-  async executeTransaction(storeName: string, operations: StateOperation[], meta?: RequestMetadata): Promise<void> {
-    const req = new ExecuteStateTransactionRequest();
-    req.setStorename(storeName);
-    const operationsList: TransactionalStateOperation[] = [];
-    for (const operation of operations) {
-      const ops = new TransactionalStateOperation();
+  async executeTransaction(request: ExecuteStateTransactionRequest): Promise<void> {
+    const req = new ExecuteStateTransactionRequestPB();
+    req.setStorename(request.storeName);
+    const operationsList: TransactionalStateOperationPB[] = [];
+    for (const operation of request.operations) {
+      const ops = new TransactionalStateOperationPB();
       ops.setOperationtype(operation.operationType);
       const stateItem = this.createStateItemPB(operation.request);
       ops.setRequest(stateItem);
@@ -156,7 +163,7 @@ export default class State extends API {
     req.setOperationsList(operationsList);
 
     return new Promise((resolve, reject) => {
-      this.runtime.executeStateTransaction(req, this.createMetadata(meta), (err, _res) => {
+      this.runtime.executeStateTransaction(req, this.createMetadata(request), (err, _res) => {
         if (err) return reject(err);
         resolve();
       });
@@ -174,7 +181,7 @@ export default class State extends API {
       }
     }
     if (item.etag !== undefined) {
-      const etag = new Etag();
+      const etag = new EtagPB();
       etag.setValue(item.etag);
       stateItem.setEtag(etag);
     }
@@ -193,9 +200,5 @@ export default class State extends API {
       list.push(this.createStateItemPB(item));
     }
     return list;
-  }
-
-  private isEmpty(obj: { getEtag(): string }) {
-    return obj.getEtag() === '';
   }
 }

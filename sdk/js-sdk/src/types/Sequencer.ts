@@ -15,9 +15,14 @@
 import {
   SequencerOptions as SequencerOptionsPB,
 } from '../../proto/runtime_pb';
-
-export const SequencerOptionsAutoIncrement = SequencerOptionsPB.AutoIncrement;
+import { RequestWithMeta } from './common';
 
 export type SequencerOptions = {
   increment: SequencerOptionsPB.AutoIncrement;
 };
+
+export type GetNextIdRequest = {
+  storeName: string;
+  key: string;
+  options?: SequencerOptions;
+} & RequestWithMeta;
