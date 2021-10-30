@@ -15,7 +15,7 @@
 import { strict as assert } from 'assert';
 import { Client, utils } from '../../../src';
 
-describe('Configuration.test.ts', () => {
+describe('client/Configuration.test.ts', () => {
   let client: Client;
   const storeName = 'etcd';
   const appId = 'js-sdk-unittest';

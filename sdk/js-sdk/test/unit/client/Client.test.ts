@@ -15,7 +15,7 @@
 import { strict as assert } from 'assert';
 import { Client } from '../../../src';
 
-describe('Client.test.ts', () => {
+describe('client/Client.test.ts', () => {
   let client: Client;
   beforeAll(async () => {
     client = new Client();

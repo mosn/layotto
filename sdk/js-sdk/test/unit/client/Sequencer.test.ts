@@ -15,7 +15,7 @@
 import { strict as assert } from 'assert';
 import { Client, RumtimeTypes } from '../../../src';
 
-describe('Sequencer.test.ts', () => {
+describe('client/Sequencer.test.ts', () => {
   let client: Client;
   const storeName = 'etcd';
 

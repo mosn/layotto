@@ -52,14 +52,24 @@ export default class Invoker extends API {
       this.runtime.invokeService(req, this.createMetadata(request), (err, res: InvokeResponsePB) => {
         if (err) return reject(err);
         const contentType = res.getContentType().split(';', 1)[0].toLowerCase();
-        const content = res.getData() as Buffer;
-        const response: InvokeResponse = { contentType, content };
+        const rawData = res.getData();
+        let content;
         if (contentType === 'application/json') {
-          response.content = JSON.parse(content.toString());
+          if (rawData) {
+            content = JSON.parse(Buffer.from(rawData.getValue_asU8()).toString());
+          } else {
+            content = {}; 
+          }
+        } else if (contentType === 'text/plain') {
+          if (rawData) {
+            content = Buffer.from(rawData.getValue_asU8()).toString();
+          } else {
+            content = '';
+          }
+        } else {
+          content = rawData ? rawData.getValue_asU8() : [];
         }
-        if (contentType === 'text/plain') {
-          response.content = content.toString();
-        }
+        const response: InvokeResponse = { contentType, content };
         resolve(response);
       });
     });

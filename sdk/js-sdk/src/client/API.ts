@@ -24,7 +24,8 @@ export class API {
 
   createMetadata(request: RequestWithMeta): Metadata {
     const metadata = new Metadata();
-    for (const key in request.requestMeta) {
+    if (!request.requestMeta) return metadata;
+    for (const key of Object.keys(request.requestMeta)) {
       metadata.add(key, request.requestMeta[key]);
     }
     return metadata;

@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "no-console": false,
+    "no-shadowed-variable": false
+  },
+  "extends": ["tslint:recommended", "tslint-config-prettier"]
+}

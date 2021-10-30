@@ -16,7 +16,7 @@ import { strict as assert } from 'assert';
 import { Client } from '../../../src';
 import { RumtimeTypes } from '../../../src';
 
-describe.skip('Invoker.test.ts', () => {
+describe.skip('client/Invoker.test.ts', () => {
   let client: Client;
 
   beforeAll(() => {

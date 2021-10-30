@@ -32,7 +32,7 @@ import {
 } from '../types/Configuration';
 import { convertArrayToKVString } from '../types/common';
 
-const debug = debuglog('layotto:configuration');
+const debug = debuglog('layotto:client:configuration');
 
 export default class Configuration extends API {
   // GetConfiguration gets configuration from configuration store.

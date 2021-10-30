@@ -12,14 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Client from './client/Client';
-import Server from './server/Server';
-import * as utils from './utils';
-import * as RumtimeTypes from '../proto/runtime_pb';
+import { Client } from '../../../src';
 
-export {
-  Client,
-  Server,
-  utils,
-  RumtimeTypes,
-}
+describe('client/PubSub.test.ts', () => {
+  let client: Client;
+  beforeAll(async () => {
+    client = new Client();
+    await client.hello.sayHello();
+  });
+
+  it('should publish a topic work', async () => {
+    const pubsubName = 'redis';
+    const topic = 'topic1-client-unit';
+    const value = `bar, from js-sdk, ${Date()}`;
+
+    await client.pubsub.publish({
+      pubsubName, topic, data: { value },
+    });
+  });
+});

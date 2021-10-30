@@ -116,6 +116,14 @@
                           }
                         }
                       },
+                      "pub_subs": {
+                        "redis": {
+                          "metadata": {
+                            "redisHost": "localhost:6380",
+                            "redisPassword": ""
+                          }
+                        }
+                      },
                       "app": {
                         "app_id": "app1",
                         "grpc_callback_port": 9999

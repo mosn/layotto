@@ -21,8 +21,9 @@ import Invoker from './Invoker';
 import Lock from './Lock';
 import Sequencer from './Sequencer';
 import Configuration from './Configuration';
+import PubSub from './PubSub';
 
-const debug = debuglog('layotto:client');
+const debug = debuglog('layotto:client:main');
 
 export default class Client {
   readonly host: string;
@@ -34,6 +35,7 @@ export default class Client {
   private _lock: Lock;
   private _sequencer: Sequencer;
   private _configuration: Configuration;
+  private _pubsub: PubSub;
 
   constructor(port: string = process.env.runtime_GRPC_PORT || '34904',
               host: string = process.env.runtime_GRPC_HOST || '127.0.0.1') {
@@ -72,5 +74,10 @@ export default class Client {
   get configuration() {
     if (!this._configuration) this._configuration = new Configuration(this._runtime);
     return this._configuration;
+  }
+
+  get pubsub() {
+    if (!this._pubsub) this._pubsub = new PubSub(this._runtime);
+    return this._pubsub;
   }
 }
