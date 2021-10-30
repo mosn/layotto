@@ -16,9 +16,9 @@ import {
   GetNextIdRequest as GetNextIdRequestPB,
   GetNextIdResponse as GetNextIdResponsePB,
   SequencerOptions as SequencerOptionsPB,
-} from '../proto/runtime_pb';
+} from '../../proto/runtime_pb';
 import { API } from './API';
-import { GetNextIdRequest } from './types/Sequencer';
+import { GetNextIdRequest } from '../types/Sequencer';
 
 export default class Sequencer extends API {
   // Get next unique id with some auto-increment guarantee

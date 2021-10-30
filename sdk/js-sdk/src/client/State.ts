@@ -23,7 +23,7 @@ import {
   DeleteBulkStateRequest as DeleteBulkStateRequestPB,
   ExecuteStateTransactionRequest as ExecuteStateTransactionRequestPB,
   TransactionalStateOperation as TransactionalStateOperationPB,
-} from '../proto/runtime_pb';
+} from '../../proto/runtime_pb';
 import { API } from './API';
 import {
   DeleteBulkStateRequest,
@@ -35,8 +35,8 @@ import {
   ResponseStateItem,
   SaveStateRequest,
   StateItem,
-} from './types/State';
-import { isEmptyPBMessage } from './utils';
+} from '../types/State';
+import { isEmptyPBMessage } from '../utils';
 
 export default class State extends API {
   // Saves an array of state objects

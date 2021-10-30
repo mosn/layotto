@@ -21,7 +21,7 @@ import {
   DeleteConfigurationRequest as DeleteConfigurationRequestPB,
   SubscribeConfigurationRequest as SubscribeConfigurationRequestPB,
   SubscribeConfigurationResponse as SubscribeConfigurationResponsePB,
-} from '../proto/runtime_pb';
+} from '../../proto/runtime_pb';
 import { API } from './API';
 import {
   GetConfigurationRequest,
@@ -29,8 +29,8 @@ import {
   SaveConfigurationRequest,
   DeleteConfigurationRequest,
   SubscribeConfigurationRequest,
-} from './types/Configuration';
-import { convertArrayToKVString } from './types/common';
+} from '../types/Configuration';
+import { convertArrayToKVString } from '../types/common';
 
 const debug = debuglog('layotto:configuration');
 

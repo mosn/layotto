@@ -18,9 +18,9 @@ import {
   CommonInvokeRequest as CommonInvokeRequestPB,
   HTTPExtension,
   InvokeResponse as InvokeResponsePB,
-} from '../proto/runtime_pb';
+} from '../../proto/runtime_pb';
 import { API } from './API';
-import { InvokeServiceRequest, InvokeResponse } from './types/Invoker';
+import { InvokeServiceRequest, InvokeResponse } from '../types/Invoker';
 
 export default class Invoker extends API {
   async invoke(request: InvokeServiceRequest): Promise<InvokeResponse> {

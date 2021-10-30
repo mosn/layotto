@@ -12,22 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { strict as assert } from 'assert';
-import { Client } from '../../src';
+import { Metadata } from '@grpc/grpc-js';
+import { RuntimeClient } from '../../proto/runtime_grpc_pb';
+import { RequestWithMeta } from '../types/common';
 
-describe('Client.test.ts', () => {
-  let client: Client;
-  beforeAll(async () => {
-    client = new Client();
-    const hello = await client.hello.sayHello();
-    assert.equal(hello, 'greeting, ');
-    const hello2 = await client.hello.sayHello({ name: 'js-sdk' });
-    assert.equal(hello2, 'greeting, js-sdk');
-  });
+export class API {
+  readonly runtime: RuntimeClient;
+  constructor(runtime: RuntimeClient) {
+    this.runtime = runtime;
+  }
 
-  it('should create a Client with default port', () => {
-    assert.equal(client.port, '34904');
-    assert(client.runtime);
-    assert(client.state);
-  });
-});
+  createMetadata(request: RequestWithMeta): Metadata {
+    const metadata = new Metadata();
+    for (const key in request.requestMeta) {
+      metadata.add(key, request.requestMeta[key]);
+    }
+    return metadata;
+  }
+}

@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 import { strict as assert } from 'assert';
-import { Client } from '../../src';
-import { StateOperation, StateOperationType } from '../../src/types/State';
+import { Client } from '../../../src';
+import { StateOperation, StateOperationType } from '../../../src/types/State';
 
 describe('State.test.ts', () => {
   let client: Client;

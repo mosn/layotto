@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { strict as assert } from 'assert';
-import { Client, RumtimeTypes, utils } from '../../src';
+import { Client, RumtimeTypes, utils } from '../../../src';
 
 describe('Lock.test.ts', () => {
   let client: Client;

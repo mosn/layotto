@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 import { strict as assert } from 'assert';
-import { Client } from '../../src';
-import { RumtimeTypes } from '../../src';
+import { Client } from '../../../src';
+import { RumtimeTypes } from '../../../src';
 
 describe.skip('Invoker.test.ts', () => {
   let client: Client;

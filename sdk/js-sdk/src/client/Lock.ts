@@ -18,9 +18,9 @@ import {
   TryLockResponse as TryLockResponsePB,
   UnlockRequest as UnlockRequestPB,
   UnlockResponse as UnlockResponsePB,
-} from '../proto/runtime_pb';
+} from '../../proto/runtime_pb';
 import { API } from './API';
-import { TryLockRequest, UnlockRequest } from './types/Lock';
+import { TryLockRequest, UnlockRequest } from '../types/Lock';
 
 export default class Lock extends API {
   // A non-blocking method trying to get a lock with ttl

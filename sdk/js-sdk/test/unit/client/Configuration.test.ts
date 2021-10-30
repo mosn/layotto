@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { strict as assert } from 'assert';
-import { Client, utils } from '../../src';
+import { Client, utils } from '../../../src';
 
 describe('Configuration.test.ts', () => {
   let client: Client;

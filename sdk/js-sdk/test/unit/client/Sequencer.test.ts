@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { strict as assert } from 'assert';
-import { Client, RumtimeTypes } from '../../src';
+import { Client, RumtimeTypes } from '../../../src';
 
 describe('Sequencer.test.ts', () => {
   let client: Client;

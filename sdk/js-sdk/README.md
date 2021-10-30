@@ -83,7 +83,7 @@ npm run test:unit
 Enable trace debug log for grpc-js:
 
 ```bash
-GRPC_TRACE=compression GRPC_VERBOSITY=debug GRPC_TRACE=all npm run test test/unit/Invoker.test.ts
+GRPC_TRACE=compression GRPC_VERBOSITY=debug GRPC_TRACE=all npm run test test/unit/client/Invoker.test.ts
 ```
 
 ## Reference

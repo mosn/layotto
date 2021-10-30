@@ -14,7 +14,7 @@
  */
 import { debuglog } from 'node:util';
 import { ChannelCredentials } from '@grpc/grpc-js';
-import { RuntimeClient } from '../proto/runtime_grpc_pb';
+import { RuntimeClient } from '../../proto/runtime_grpc_pb';
 import State from './State';
 import Hello from './Hello';
 import Invoker from './Invoker';
@@ -27,26 +27,50 @@ const debug = debuglog('layotto:client');
 export default class Client {
   readonly host: string;
   readonly port: string;
-  readonly runtime: RuntimeClient;
-  readonly hello: Hello;
-  readonly state: State;
-  readonly invoker: Invoker;
-  readonly lock: Lock;
-  readonly sequencer: Sequencer;
-  readonly configuration: Configuration;
+  private _runtime: RuntimeClient;
+  private _hello: Hello;
+  private _state: State;
+  private _invoker: Invoker;
+  private _lock: Lock;
+  private _sequencer: Sequencer;
+  private _configuration: Configuration;
 
   constructor(port: string = process.env.runtime_GRPC_PORT || '34904',
               host: string = process.env.runtime_GRPC_HOST || '127.0.0.1') {
     this.host = host;
     this.port = port;
     const clientCredentials = ChannelCredentials.createInsecure();
-    this.runtime = new RuntimeClient(`${this.host}:${this.port}`, clientCredentials);
-    this.hello = new Hello(this.runtime);
-    this.state = new State(this.runtime);
-    this.invoker = new Invoker(this.runtime);
-    this.lock = new Lock(this.runtime);
-    this.sequencer = new Sequencer(this.runtime);
-    this.configuration = new Configuration(this.runtime);
-    debug('Start connection to %s:%s', this.host, this.port);
+    this._runtime = new RuntimeClient(`${this.host}:${this.port}`, clientCredentials);
+    debug('Start connection to %s:%s', this.host, this.port);    
+  }
+
+  get hello() {
+    if (!this._hello) this._hello = new Hello(this._runtime);
+    return this._hello;
+  }
+
+  get state() {
+    if (!this._state) this._state = new State(this._runtime);
+    return this._state;
+  }
+
+  get invoker() {
+    if (!this._invoker) this._invoker = new Invoker(this._runtime);
+    return this._invoker;
+  }
+
+  get lock() {
+    if (!this._lock) this._lock = new Lock(this._runtime);
+    return this._lock;
+  }
+
+  get sequencer() {
+    if (!this._sequencer) this._sequencer = new Sequencer(this._runtime);
+    return this._sequencer;
+  }
+
+  get configuration() {
+    if (!this._configuration) this._configuration = new Configuration(this._runtime);
+    return this._configuration;
   }
 }

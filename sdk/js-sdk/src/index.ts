@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Client from './Client';
+import Client from './client/Client';
 import * as utils from './utils';
 import * as RumtimeTypes from '../proto/runtime_pb';
 
