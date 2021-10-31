@@ -27,7 +27,7 @@ export default class PubSub extends API {
     // PublishRequest.Data 和 NewMessage.Data 里面放符合 CloudEvent 1.0 规范的 json 数据（能反序列化放进 map[string]interface{}）
     req.setData(Buffer.from(JSON.stringify(request.data)));
     req.setDataContentType('application/json');
-    // FIXME: metadata
+    this.mergeMetadataToMap(req.getMetadataMap(), request.metadata);
 
     return new Promise((resolve, reject) => {
       this.runtime.publishEvent(req, this.createMetadata(request), (err) => {

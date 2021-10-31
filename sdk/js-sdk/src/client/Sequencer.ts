@@ -31,6 +31,7 @@ export default class Sequencer extends API {
       sequencerOptions.setIncrement(request.options.increment);
       req.setOptions(sequencerOptions);
     }
+    this.mergeMetadataToMap(req.getMetadataMap(), request.metadata);
 
     return new Promise((resolve, reject) => {
       this.runtime.getNextId(req, this.createMetadata(request), (err, res: GetNextIdResponsePB) => {

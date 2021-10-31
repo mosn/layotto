@@ -65,7 +65,7 @@ export default class GRPCServerImpl implements IAppCallbackServer {
     // PublishRequest.Data 和 NewMessage.Data 里面放符合 CloudEvent 1.0 规范的 json 数据（能反序列化放进 map[string]interface{}）
     const rawData = Buffer.from(req.getData_asU8()).toString();
     debug('PubSub Event from topic: "%s" raw data: %j, typeof %s', handlerKey, rawData, typeof rawData);
-    let data;
+    let data: string | object;
     try {
       data = JSON.parse(rawData);
     } catch {

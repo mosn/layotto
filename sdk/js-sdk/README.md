@@ -87,10 +87,10 @@ GRPC_TRACE=compression GRPC_VERBOSITY=debug GRPC_TRACE=all npm run test test/uni
 ```
 
 ## Reference
-### Get Start with gRPC on Node.js
 
-See https://grpc.io/docs/languages/node/quickstart/
-
-### Go Proxy in China
-
-See https://learnku.com/go/wikis/38122
+- [Core concepts, architecture and lifecycle](https://grpc.io/docs/what-is-grpc/core-concepts/)
+- [Get Start with gRPC on Node.js](https://grpc.io/docs/languages/node/quickstart/)
+- [Node.js gRPC Library](https://grpc.github.io/grpc/node/)
+- [Understanding Streams in Node.js](https://nodesource.com/blog/understanding-streams-in-nodejs/)
+- [Go Proxy in China](https://learnku.com/go/wikis/38122)
+- [How to build a bi-directional streaming gRPC service with Node.js and Java](https://medium.com/@Mark.io/bi-directional-streaming-grpc-with-node-js-and-java-7cbe0f1e0693)

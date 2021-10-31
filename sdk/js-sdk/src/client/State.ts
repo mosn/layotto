@@ -63,6 +63,7 @@ export default class State extends API {
     const req = new GetStateRequestPB();
     req.setStoreName(request.storeName);
     req.setKey(request.key);
+    this.mergeMetadataToMap(req.getMetadataMap(), request.metadata);
 
     return new Promise((resolve, reject) => {
       this.runtime.getState(req, this.createMetadata(request), (err, res) => {
@@ -85,6 +86,7 @@ export default class State extends API {
     req.setStoreName(request.storeName);
     req.setKeysList(request.keys);
     if (request.parallelism) req.setParallelism(request.parallelism);
+    this.mergeMetadataToMap(req.getMetadataMap(), request.metadata);
 
     return new Promise((resolve, reject) => {
       this.runtime.getBulkState(req, this.createMetadata(request), (err, res) => {
@@ -124,6 +126,7 @@ export default class State extends API {
       optionsInstance.setConsistency(request.options.consistency);
       req.setOptions(optionsInstance);
     }
+    this.mergeMetadataToMap(req.getMetadataMap(), request.metadata);
 
     return new Promise((resolve, reject) => {
       this.runtime.deleteState(req, this.createMetadata(request), (err) => {
@@ -161,6 +164,7 @@ export default class State extends API {
       operationsList.push(ops);
     }
     req.setOperationsList(operationsList);
+    this.mergeMetadataToMap(req.getMetadataMap(), request.metadata);
 
     return new Promise((resolve, reject) => {
       this.runtime.executeStateTransaction(req, this.createMetadata(request), (err, _res) => {

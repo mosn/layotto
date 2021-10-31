@@ -24,5 +24,5 @@ export type InvokeServiceRequest = {
 
 export type InvokeResponse = {
   contentType: string;
-  content: string | Buffer | object;
+  content: string | Uint8Array | object;
 };

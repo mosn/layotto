@@ -15,7 +15,7 @@
 import {
   SequencerOptions as SequencerOptionsPB,
 } from '../../proto/runtime_pb';
-import { RequestWithMeta } from './common';
+import { KVString, RequestWithMeta } from './common';
 
 export type SequencerOptions = {
   increment: SequencerOptionsPB.AutoIncrement;
@@ -25,4 +25,5 @@ export type GetNextIdRequest = {
   storeName: string;
   key: string;
   options?: SequencerOptions;
+  metadata?: KVString;
 } & RequestWithMeta;

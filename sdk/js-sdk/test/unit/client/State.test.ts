@@ -25,6 +25,20 @@ describe('client/State.test.ts', () => {
   });
 
   describe('get(), getBulk()', () => {
+    it('should throw error when storeName not exists', async () => {
+      await assert.rejects(
+        async () => {
+          await client.state.get({ storeName: 'notexists-store', key: 'foo' });
+        },
+        (err: any) => {
+          // console.error(err);
+          assert.equal(err.code, 3);
+          assert.equal(err.details, 'state store notexists-store is not found');
+          return true;
+        }
+      );
+    });
+
     it('should get not exists key', async () => {
       const key = 'js-sdk-unit-notexists-' + Date.now();
       const state = await client.state.get({ storeName, key });

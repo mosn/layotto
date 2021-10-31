@@ -14,7 +14,7 @@
  */
 import { Metadata } from '@grpc/grpc-js';
 import { RuntimeClient } from '../../proto/runtime_grpc_pb';
-import { RequestWithMeta } from '../types/common';
+import { KVString, RequestWithMeta, Map } from '../types/common';
 
 export class API {
   readonly runtime: RuntimeClient;
@@ -29,5 +29,14 @@ export class API {
       metadata.add(key, request.requestMeta[key]);
     }
     return metadata;
+  }
+
+  mergeMetadataToMap(map: Map<string>, ...metadatas: (KVString | undefined)[]) {
+    for (const metadata of metadatas) {
+      if (!metadata) continue;
+      for (const key of Object.keys(metadata)) {
+        map.set(key, metadata[key]);
+      }
+    }
   }
 }

@@ -22,6 +22,7 @@ import Lock from './Lock';
 import Sequencer from './Sequencer';
 import Configuration from './Configuration';
 import PubSub from './PubSub';
+import File from './File';
 
 const debug = debuglog('layotto:client:main');
 
@@ -36,6 +37,7 @@ export default class Client {
   private _sequencer: Sequencer;
   private _configuration: Configuration;
   private _pubsub: PubSub;
+  private _file: File;
 
   constructor(port: string = process.env.runtime_GRPC_PORT || '34904',
               host: string = process.env.runtime_GRPC_HOST || '127.0.0.1') {
@@ -79,5 +81,10 @@ export default class Client {
   get pubsub() {
     if (!this._pubsub) this._pubsub = new PubSub(this._runtime);
     return this._pubsub;
+  }
+
+  get file() {
+    if (!this._file) this._file = new File(this._runtime);
+    return this._file;
   }
 }

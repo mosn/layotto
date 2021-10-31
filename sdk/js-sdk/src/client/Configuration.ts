@@ -46,7 +46,8 @@ export default class Configuration extends API {
     if (request.subscribeUpdate !== undefined) {
       req.setSubscribeUpdate(request.subscribeUpdate);
     }
-    // TODO: support set metadataMap
+    this.mergeMetadataToMap(req.getMetadataMap(), request.metadata);
+
     return new Promise((resolve, reject) => {
       this.runtime.getConfiguration(req, this.createMetadata(request), (err, res: GetConfigurationResponsePB) => {
         if (err) return reject(err);
@@ -68,6 +69,7 @@ export default class Configuration extends API {
       if (item.label) configurationItem.setLabel(item.label);
       return configurationItem;
     }));
+    this.mergeMetadataToMap(req.getMetadataMap(), request.metadata);
 
     return new Promise((resolve, reject) => {
       this.runtime.saveConfiguration(req, this.createMetadata(request), (err) => {
@@ -85,6 +87,7 @@ export default class Configuration extends API {
     req.setKeysList(request.keys);
     if (request.group) req.setGroup(request.group);
     if (request.label) req.setLabel(request.label);
+    this.mergeMetadataToMap(req.getMetadataMap(), request.metadata);
 
     return new Promise((resolve, reject) => {
       this.runtime.deleteConfiguration(req, this.createMetadata(request), (err) => {
@@ -102,6 +105,7 @@ export default class Configuration extends API {
     req.setKeysList(request.keys);
     if (request.group) req.setGroup(request.group);
     if (request.label) req.setLabel(request.label);
+    this.mergeMetadataToMap(req.getMetadataMap(), request.metadata);
 
     let lastError: Error;
     let isCloseOrEnd = false;

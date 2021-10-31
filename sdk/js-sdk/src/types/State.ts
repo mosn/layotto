@@ -15,7 +15,7 @@
 import { 
   StateOptions as StateOptionsPB,
 } from '../../proto/runtime_pb';
-import { RequestWithMeta } from './common';
+import { KVString, RequestWithMeta } from './common';
 
 export type StateOptions = {
   concurrency: StateOptionsPB.StateConcurrency;
@@ -60,12 +60,14 @@ export type SaveStateRequest = {
 export type GetStateRequest = {
   storeName: string;
   key: string;
+  metadata?: KVString;
 } & RequestWithMeta;
 
 export type GetBulkStateRequest = {
   storeName: string;
   keys: string[];
   parallelism?: number;
+  metadata?: KVString;
 } & RequestWithMeta;
 
 export type DeleteStateRequest = {
@@ -73,6 +75,7 @@ export type DeleteStateRequest = {
   key: string;
   etag?: string;
   options?: StateOptions
+  metadata?: KVString;
 } & RequestWithMeta;
 
 export type DeleteBulkStateRequest = {
@@ -83,4 +86,5 @@ export type DeleteBulkStateRequest = {
 export type ExecuteStateTransactionRequest = {
   storeName: string;
   operations: StateOperation[];
+  metadata?: KVString;
 } & RequestWithMeta;
