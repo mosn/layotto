@@ -29,9 +29,9 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
     private final        StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager;
 
     public RuntimeClientGrpc(Logger logger,
-                      int timeoutMs,
-                      ObjectSerializer stateSerializer,
-                      StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager) {
+                             int timeoutMs,
+                             ObjectSerializer stateSerializer,
+                             StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager) {
         super(logger, timeoutMs, stateSerializer);
         this.stubManager = stubManager;
     }
@@ -370,6 +370,11 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
      */
     @Override
     public <T> State<T> getState(GetStateRequest request, Class<T> clazz) {
+        return getState(request, clazz, 0);
+    }
+
+    @Override
+    public <T> State<T> getState(GetStateRequest request, Class<T> clazz, int timeoutMs) {
         try {
             final String stateStoreName = request.getStoreName();
             final String key = request.getKey();
@@ -398,7 +403,11 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
             RuntimeProto.GetStateRequest envelope = builder.build();
 
             // 3. invoke grpc api
-            RuntimeProto.GetStateResponse resp = this.stubManager.getBlockingStub().getState(envelope);
+            RuntimeGrpc.RuntimeBlockingStub stub = this.stubManager.getBlockingStub();
+            if (timeoutMs > 0) {
+                stub = stub.withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS);
+            }
+            RuntimeProto.GetStateResponse resp = stub.getState(envelope);
 
             // 4. parse result
             return parseGetStateResult(resp, key, options, clazz);
@@ -461,7 +470,12 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
             Class<T> clazz) throws IOException {
         final ByteString payload = getStateResponse.getData();
         byte[] data = payload == null ? null : payload.toByteArray();
-        T value = stateSerializer.deserialize(data, clazz);
+        // deserialize
+        T value = null;
+        if (data != null && clazz != null && clazz != byte[].class) {
+            value = stateSerializer.deserialize(data, clazz);
+        }
+        // etag
         String etag = getStateResponse.getEtag();
         if (etag != null && etag.isEmpty()) {
             etag = null;

@@ -54,6 +54,17 @@ public interface StateRuntime {
     <T> State<T> getState(GetStateRequest request, Class<T> clazz);
 
     /**
+     * Retrieve a State based on their key.
+     *
+     * @param request   The request to get state.
+     * @param clazz     The Class of State needed as return.
+     * @param timeoutMs
+     * @param <T>       The Type of the return.
+     * @return
+     */
+    <T> State<T> getState(GetStateRequest request, Class<T> clazz, int timeoutMs);
+
+    /**
      * Retrieve bulk States based on their keys.
      *
      * @param storeName The name of the state store.
