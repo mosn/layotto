@@ -18,7 +18,13 @@
 ```
 这段配置可以开启layotto的trace能力。用户可以通过配置来指定trace上报的方式，以及spanId,traceId的生成方式。
 
-对应的调用端代码在[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go) 中，layotto的trace打印如下：
+可以按照如下方式启动一个layotto的server：
+
+```
+./layotto start -c ../../configs/runtime_config.json
+```
+
+对应的调用端代码在[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go) 中，运行之后layotto的trace打印如下：
 
 ![img.png](../../../img/trace/trace.png)
 
