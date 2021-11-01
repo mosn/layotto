@@ -23,6 +23,8 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/file/local"
+
 	dbindings "github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/bindings/http"
 	"mosn.io/layotto/components/configstores/etcdv3"
@@ -164,6 +166,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithFileFactory(
 			file.NewFileFactory("aliOSS", alicloud_oss.NewAliCloudOSS),
 			file.NewFileFactory("minioOSS", minio_oss.NewMinioOss),
+			file.NewFileFactory("localStore", local.NewLocalStore),
 		),
 
 		// PubSub
