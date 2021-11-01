@@ -6,6 +6,7 @@ import io.grpc.stub.AbstractAsyncStub;
 import io.grpc.stub.AbstractBlockingStub;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -92,5 +93,10 @@ public class PooledStubManager<A extends AbstractAsyncStub, B extends AbstractBl
     @Override
     public B getBlockingStub() {
         return runtimePool.next();
+    }
+
+    @Override
+    public ManagedChannel[] getChannels() {
+        return Arrays.copyOf(channels, channels.length);
     }
 }

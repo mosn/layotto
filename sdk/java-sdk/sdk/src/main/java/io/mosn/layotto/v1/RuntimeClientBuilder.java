@@ -20,6 +20,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.domain.ApiProtocol;
+import io.mosn.layotto.v1.grpc.GrpcRuntimeClient;
 import io.mosn.layotto.v1.grpc.stub.PooledStubManager;
 import io.mosn.layotto.v1.grpc.stub.SingleStubManager;
 import io.mosn.layotto.v1.grpc.stub.StubCreator;
@@ -149,11 +150,12 @@ public class RuntimeClientBuilder {
         }
     }
 
-    private RuntimeClient buildGrpc() {
+    public GrpcRuntimeClient buildGrpc() {
+        // 1. validate
         if (port <= 0) {
             throw new IllegalArgumentException("Invalid port.");
         }
-        // construct stubManager
+        // 2. construct stubManager
         StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager;
         if (useConnectionPool) {
             stubManager = new PooledStubManager<>(ip, port, poolSize, new StubCreatorImpl());
@@ -163,6 +165,7 @@ public class RuntimeClientBuilder {
                     .build();
             stubManager = new SingleStubManager(channel, new StubCreatorImpl());
         }
+        // 3. construct client
         return new RuntimeClientGrpc(
                 logger,
                 timeoutMs,

@@ -3,10 +3,12 @@ package io.mosn.layotto.v1;
 import com.google.common.base.Strings;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
+import io.grpc.ManagedChannel;
 import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
 import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.exceptions.RuntimeClientException;
+import io.mosn.layotto.v1.grpc.GrpcRuntimeClient;
 import io.mosn.layotto.v1.grpc.stub.StubManager;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
 import org.slf4j.Logger;
@@ -21,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class RuntimeClientGrpc extends AbstractRuntimeClient {
+public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRuntimeClient {
 
     private static final String                                                                TIMEOUT_KEY = "timeout";
     private final        StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager;
@@ -484,5 +486,10 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             etag = null;
         }
         return new State<>(key, value, etag, bulkStateItem.getMetadataMap(), null);
+    }
+
+    @Override
+    public ManagedChannel[] getChannels() {
+        return stubManager.getChannels();
     }
 }
