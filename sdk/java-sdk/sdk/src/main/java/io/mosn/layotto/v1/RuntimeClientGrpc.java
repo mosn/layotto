@@ -7,6 +7,7 @@ import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
 import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.exceptions.RuntimeClientException;
+import io.mosn.layotto.v1.grpc.stub.StubFactory;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
 import org.slf4j.Logger;
 import spec.proto.runtime.v1.RuntimeGrpc;
@@ -14,7 +15,6 @@ import spec.proto.runtime.v1.RuntimeProto;
 import spec.sdk.runtime.v1.domain.invocation.InvokeResponse;
 import spec.sdk.runtime.v1.domain.state.*;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +23,15 @@ import java.util.concurrent.TimeUnit;
 
 public class RuntimeClientGrpc extends AbstractRuntimeClient {
 
-    private static final String TIMEOUT_KEY = "timeout";
-    protected final RuntimeGrpc.RuntimeBlockingStub blockingStub;
-    private final Closeable closeable;
+    private static final String                                                                TIMEOUT_KEY = "timeout";
+    private final        StubFactory<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubFactory;
 
     RuntimeClientGrpc(Logger logger,
                       int timeoutMs,
                       ObjectSerializer stateSerializer,
-                      Closeable closeable,
-                      RuntimeGrpc.RuntimeBlockingStub blockingStub) {
+                      StubFactory<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubFactory) {
         super(logger, timeoutMs, stateSerializer);
-        this.closeable = closeable;
-        this.blockingStub = blockingStub;
+        this.stubFactory = stubFactory;
     }
 
     @Override
@@ -47,7 +44,9 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
                     .build();
 
             // 2. invoke
-            RuntimeProto.SayHelloResponse response = blockingStub.withDeadlineAfter(timeoutMillisecond, TimeUnit.MILLISECONDS)
+            RuntimeProto.SayHelloResponse response = stubFactory.getBlockingStub()
+                    .withDeadlineAfter(timeoutMillisecond,
+                            TimeUnit.MILLISECONDS)
                     .sayHello(req);
 
             // 3. parse result
@@ -86,14 +85,15 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             metadata.put(key, Integer.toString(timeoutMs));
 
             // 2. invoke
-            RuntimeProto.InvokeResponse resp = blockingStub.withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS)
+            RuntimeProto.InvokeResponse resp = this.stubFactory.getBlockingStub()
+                    .withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS)
                     .withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata))
                     .invokeService(invokeReq);
 
             // 3. parse result
             InvokeResponse<byte[]> result = new InvokeResponse<>();
             result.setContentType(resp.getContentType());
-            byte[] bytes = new byte[]{};
+            byte[] bytes = new byte[] {};
             result.setData(bytes);
             if (resp.getData() == null) {
                 return result;
@@ -117,7 +117,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
         try {
             // 1. prepare data
             if (data == null) {
-                data = new byte[]{};
+                data = new byte[] {};
             }
             final ByteString byteString = ByteString.copyFrom(data);
             // Content-type can be overwritten on a per-request basis.
@@ -139,7 +139,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.PublishEventRequest req = envelopeBuilder.build();
 
             // 3. invoke
-            blockingStub.publishEvent(req);
+            this.stubFactory.getBlockingStub().publishEvent(req);
         } catch (Exception e) {
             logger.error("publishEvent error ", e);
             throw new RuntimeClientException(e);
@@ -171,7 +171,8 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.SaveStateRequest req = builder.build();
 
             // 3. invoke
-            blockingStub.withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS)
+            this.stubFactory.getBlockingStub()
+                    .withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS)
                     .saveState(req);
         } catch (Exception e) {
             logger.error("saveBulkState error ", e);
@@ -282,7 +283,8 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.DeleteStateRequest req = builder.build();
 
             // 3. invoke
-            blockingStub.withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS)
+            this.stubFactory.getBlockingStub()
+                    .withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS)
                     .deleteState(req);
         } catch (Exception e) {
             logger.error("deleteState error ", e);
@@ -350,7 +352,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.ExecuteStateTransactionRequest req = builder.build();
 
             // 3. invoke grpc api
-            blockingStub.executeStateTransaction(req);
+            this.stubFactory.getBlockingStub().executeStateTransaction(req);
         } catch (Exception e) {
             logger.error("executeStateTransaction error ", e);
             throw new RuntimeClientException(e);
@@ -394,7 +396,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.GetStateRequest envelope = builder.build();
 
             // 3. invoke grpc api
-            RuntimeProto.GetStateResponse resp = blockingStub.getState(envelope);
+            RuntimeProto.GetStateResponse resp = this.stubFactory.getBlockingStub().getState(envelope);
 
             // 4. parse result
             return parseGetStateResult(resp, key, options, clazz);
@@ -434,7 +436,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.GetBulkStateRequest envelope = builder.build();
 
             // 3. invoke grpc API
-            RuntimeProto.GetBulkStateResponse resp = blockingStub.getBulkState(envelope);
+            RuntimeProto.GetBulkStateResponse resp = this.stubFactory.getBlockingStub().getBulkState(envelope);
 
             // 4. parse result
             List<RuntimeProto.BulkStateItem> itemsList = resp.getItemsList();

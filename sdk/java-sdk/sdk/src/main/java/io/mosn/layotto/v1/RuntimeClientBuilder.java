@@ -20,15 +20,16 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.domain.ApiProtocol;
+import io.mosn.layotto.v1.grpc.stub.PooledStubFactory;
+import io.mosn.layotto.v1.grpc.stub.SingleStubFactory;
+import io.mosn.layotto.v1.grpc.stub.StubCreator;
+import io.mosn.layotto.v1.grpc.stub.StubFactory;
 import io.mosn.layotto.v1.serializer.JSONSerializer;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spec.proto.runtime.v1.RuntimeGrpc;
 import spec.sdk.runtime.v1.client.RuntimeClient;
-
-import java.io.Closeable;
-import java.util.function.Supplier;
 
 /**
  * A builder for the RuntimeClient,
@@ -49,12 +50,28 @@ public class RuntimeClientBuilder {
 
     private ObjectSerializer stateSerializer = new JSONSerializer();
 
+    private boolean useConnectionPool = false;
+    private int     poolSize;
+
     // TODO add rpc serializer
 
     /**
      * Creates a constructor for RuntimeClient.
      */
     public RuntimeClientBuilder() {
+    }
+
+    /**
+     * Setter method for property <tt>useConnectionPool</tt> and <tt>poolSize</tt>.
+     *
+     * @param useConnectionPool value to be assigned to property useConnectionPool
+     */
+    public void setUseConnectionPool(boolean useConnectionPool, int poolSize) {
+        this.useConnectionPool = useConnectionPool;
+        if (useConnectionPool && poolSize <= 0) {
+            throw new IllegalArgumentException("Invalid poolSize.");
+        }
+        this.poolSize = poolSize;
     }
 
     public RuntimeClientBuilder withIp(String ip) {
@@ -136,20 +153,33 @@ public class RuntimeClientBuilder {
         if (port <= 0) {
             throw new IllegalArgumentException("Invalid port.");
         }
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port)
-                .usePlaintext()
-                .build();
-        Closeable closeable = () -> {
-            if (channel != null && !channel.isShutdown()) {
-                channel.shutdown();
-            }
-        };
-        RuntimeGrpc.RuntimeBlockingStub blockingStub = RuntimeGrpc.newBlockingStub(channel);
+        // construct stubFactory
+        StubFactory<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubFactory;
+        if (useConnectionPool) {
+            stubFactory = new PooledStubFactory<>(ip, port, poolSize, new StubCreatorImpl());
+        } else {
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port)
+                    .usePlaintext()
+                    .build();
+            stubFactory = new SingleStubFactory(channel, new StubCreatorImpl());
+        }
         return new RuntimeClientGrpc(
                 logger,
                 timeoutMs,
                 stateSerializer,
-                closeable,
-                blockingStub);
+                stubFactory);
+    }
+
+    public static class StubCreatorImpl implements StubCreator<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> {
+
+        @Override
+        public RuntimeGrpc.RuntimeStub createAsyncStub(ManagedChannel channel) {
+            return RuntimeGrpc.newStub(channel);
+        }
+
+        @Override
+        public RuntimeGrpc.RuntimeBlockingStub createBlockingStub(ManagedChannel channel) {
+            return RuntimeGrpc.newBlockingStub(channel);
+        }
     }
 }
