@@ -14,8 +14,12 @@
 package lock
 
 type LockStore interface {
+	// Init lock
 	Init(metadata Metadata) error
+	// Get lock's features
 	Features() []Feature
+	// Node tries to acquire a lock
 	TryLock(req *TryLockRequest) (*TryLockResponse, error)
+	// Node tries to release a lock
 	Unlock(req *UnlockRequest) (*UnlockResponse, error)
 }
