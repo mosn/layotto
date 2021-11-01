@@ -36,7 +36,7 @@ public class PooledStubManager<A extends AbstractAsyncStub, B extends AbstractBl
         this.asyncRuntimePool = result.asyncPool;
         this.runtimePool = result.blockingPool;
         // 3. init connections
-        init();
+        init(result.asyncStubs, result.blockingStubs);
     }
 
     public PooledStubManager(ManagedChannel[] channels,
@@ -53,14 +53,18 @@ public class PooledStubManager<A extends AbstractAsyncStub, B extends AbstractBl
         this.asyncRuntimePool = result.asyncPool;
         this.runtimePool = result.blockingPool;
         // 3. init
-        init();
+        init(result.asyncStubs, result.blockingStubs);
     }
 
     private static class ConstructResult<A, B> {
+        List<A>   asyncStubs;
+        List<B>   blockingStubs;
         RRPool<A> asyncPool;
         RRPool<B> blockingPool;
 
-        public ConstructResult(RRPool<A> asyncPool, RRPool<B> blockingPool) {
+        public ConstructResult(List<A> asyncStubs, List<B> blockingStubs, RRPool<A> asyncPool, RRPool<B> blockingPool) {
+            this.asyncStubs = asyncStubs;
+            this.blockingStubs = blockingStubs;
             this.asyncPool = asyncPool;
             this.blockingPool = blockingPool;
         }
@@ -82,7 +86,7 @@ public class PooledStubManager<A extends AbstractAsyncStub, B extends AbstractBl
         RRPool<A> asyncPool = new RRPool<>(new CopyOnWriteArrayList<>(asyncStubs));
         RRPool<B> blockingPool = new RRPool<>(new CopyOnWriteArrayList<>(blockingStubs));
         // 3. return
-        return new ConstructResult<>(asyncPool, blockingPool);
+        return new ConstructResult<>(asyncStubs, blockingStubs, asyncPool, blockingPool);
     }
 
     public PooledStubManager(String host, int port, int size,
@@ -101,10 +105,10 @@ public class PooledStubManager<A extends AbstractAsyncStub, B extends AbstractBl
         runtimePool = new RRPool<>(new CopyOnWriteArrayList<>(blockingStubs));
 
         // init connections
-        init();
+        init(asyncStubs, blockingStubs);
     }
 
-    protected void init() {
+    protected void init(List<A> asyncStubs, List<B> blockingStubs) {
         // TODO establish connection
     }
 
