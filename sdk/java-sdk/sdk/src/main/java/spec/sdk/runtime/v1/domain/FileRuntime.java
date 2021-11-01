@@ -13,17 +13,7 @@
  * limitations under the License.
  *
  */
-package spec.sdk.runtime.v1.client;
+package spec.sdk.runtime.v1.domain;
 
-import spec.sdk.runtime.v1.domain.*;
-
-public interface RuntimeClient extends
-        HelloRuntime,
-        ConfigurationRuntime,
-        InvocationRuntime,
-        PubSubRuntime,
-        StateRuntime,
-        LockRuntime,
-        SequencerRuntime,
-        FileRuntime {
+public interface FileRuntime {
 }

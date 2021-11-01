@@ -488,8 +488,13 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
         return new State<>(key, value, etag, bulkStateItem.getMetadataMap(), null);
     }
 
+    /**
+     * Getter method for property <tt>stubManager</tt>.
+     *
+     * @return property value of stubManager
+     */
     @Override
-    public ManagedChannel[] getChannels() {
-        return stubManager.getChannels();
+    public StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> getStubManager() {
+        return stubManager;
     }
 }
