@@ -16,12 +16,14 @@
 package io.mosn.layotto.v1;
 
 import io.mosn.layotto.v1.config.RuntimeProperties;
+import io.mosn.layotto.v1.exceptions.RuntimeClientException;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
 import org.slf4j.Logger;
 import spec.sdk.runtime.v1.client.RuntimeClient;
 import spec.sdk.runtime.v1.domain.invocation.InvokeResponse;
 import spec.sdk.runtime.v1.domain.state.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -98,6 +100,40 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     }
 
     /**
+     * Retrieve a State based on their key.
+     *
+     * @param request The request to get state.
+     * @param clazz   The Class of State needed as return.
+     * @return The requested State.
+     */
+    @Override
+    public <T> State<T> getState(GetStateRequest request, Class<T> clazz) {
+        return getState(request, clazz, getTimeoutMs());
+    }
+
+    @Override
+    public <T> State<T> getState(GetStateRequest request, Class<T> clazz, int timeoutMs) {
+        // 1. validate
+        if (clazz == null) {
+            throw new IllegalArgumentException("clazz cannot be null.");
+        }
+        // 2. invoke
+        State<byte[]> state = getState(request, timeoutMs);
+        try {
+            // 3. deserialize
+            T value = null;
+            byte[] data = state.getValue();
+            if (data != null) {
+                value = stateSerializer.deserialize(data, clazz);
+            }
+            return new State<>(state.getKey(), value, state.getEtag(), state.getMetadata(), state.getOptions());
+        } catch (Exception e) {
+            logger.error("getState error ", e);
+            throw new RuntimeClientException(e);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -114,6 +150,16 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
         request.setEtag(etag);
         request.setStateOptions(options);
         this.deleteState(request);
+    }
+
+    /**
+     * Delete a state.
+     *
+     * @param request Request to delete a state.
+     */
+    @Override
+    public void deleteState(DeleteStateRequest request) {
+        deleteState(request, getTimeoutMs());
     }
 
     /**
@@ -149,6 +195,14 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
      * {@inheritDoc}
      */
     @Override
+    public void saveBulkState(SaveStateRequest request) {
+        saveBulkState(request, getTimeoutMs());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void executeStateTransaction(String storeName, List<TransactionalStateOperation<?>> operations) {
         ExecuteStateTransactionRequest request = new ExecuteStateTransactionRequest(storeName);
         request.setOperations(operations);
@@ -162,6 +216,33 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     public <T> List<State<T>> getBulkState(String storeName, List<String> keys, Class<T> clazz) {
         GetBulkStateRequest request = new GetBulkStateRequest(storeName, keys);
         return this.getBulkState(request, clazz);
+    }
+
+    @Override
+    public <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz) {
+        // 1. validate
+        if (clazz == null) {
+            throw new IllegalArgumentException("clazz cannot be null.");
+        }
+        try {
+            // 2. invoke
+            List<State<byte[]>> bulkState = getBulkState(request, getTimeoutMs());
+            // 3. deserialize
+            List<State<T>> result = new ArrayList<>(bulkState.size());
+            for (State<byte[]> state : bulkState) {
+                byte[] value = state.getValue();
+                T deValue = null;
+                if (value != null) {
+                    deValue = stateSerializer.deserialize(value, clazz);
+                }
+                State<T> tState = new State<>(state.getKey(), deValue, state.getEtag(), state.getMetadata(), state.getOptions());
+                result.add(tState);
+            }
+            return result;
+        } catch (Exception e) {
+            logger.error("getBulkState error ", e);
+            throw new RuntimeClientException(e);
+        }
     }
 
     /**

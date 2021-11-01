@@ -64,6 +64,8 @@ public interface StateRuntime {
      */
     <T> State<T> getState(GetStateRequest request, Class<T> clazz, int timeoutMs);
 
+    State<byte[]> getState(GetStateRequest request, int timeoutMs);
+
     /**
      * Retrieve bulk States based on their keys.
      *
@@ -83,6 +85,15 @@ public interface StateRuntime {
      * @return The requested State.
      */
     <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz);
+
+    /**
+     * Retrieve bulk States based on their keys with a timeout limit and without deserialization
+     *
+     * @param request
+     * @param timeoutMs
+     * @return
+     */
+    List<State<byte[]>> getBulkState(GetBulkStateRequest request, int timeoutMs);
 
     /**
      * Execute a transaction.
@@ -114,6 +125,14 @@ public interface StateRuntime {
      * @param request Request to save states.
      */
     void saveBulkState(SaveStateRequest request);
+
+    /**
+     * Save/Update a list of states.
+     *
+     * @param request
+     * @param timeoutMs
+     */
+    void saveBulkState(SaveStateRequest request, int timeoutMs);
 
     /**
      * Save/Update a state.
@@ -159,4 +178,12 @@ public interface StateRuntime {
      * @param request Request to delete a state.
      */
     void deleteState(DeleteStateRequest request);
+
+    /**
+     * Delete a state.
+     *
+     * @param request   Request to delete a state.
+     * @param timeoutMs
+     */
+    void deleteState(DeleteStateRequest request, int timeoutMs);
 }

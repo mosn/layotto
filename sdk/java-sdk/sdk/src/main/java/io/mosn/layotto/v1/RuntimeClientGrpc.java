@@ -3,7 +3,6 @@ package io.mosn.layotto.v1;
 import com.google.common.base.Strings;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
-import io.grpc.ManagedChannel;
 import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
 import io.mosn.layotto.v1.config.RuntimeProperties;
@@ -148,21 +147,17 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void saveBulkState(SaveStateRequest request) {
+    public void saveBulkState(SaveStateRequest request, int timeoutMs) {
+        final String stateStoreName = request.getStoreName();
+        final List<State<?>> states = request.getStates();
+        // 1. validate
+        if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
+            throw new IllegalArgumentException("State store name cannot be null or empty.");
+        }
         try {
-            final String stateStoreName = request.getStoreName();
-            final List<State<?>> states = request.getStates();
-
-            // 1. validate
-            if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
-                throw new IllegalArgumentException("State store name cannot be null or empty.");
-            }
-
             // 2. prepare request
+            // TODO serialization
             RuntimeProto.SaveStateRequest.Builder builder = RuntimeProto.SaveStateRequest.newBuilder();
             builder.setStoreName(stateStoreName);
             for (State<?> state : states) {
@@ -171,10 +166,9 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
                 builder.addStates(stateItem);
             }
             RuntimeProto.SaveStateRequest req = builder.build();
-
             // 3. invoke
             this.stubManager.getBlockingStub()
-                    .withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS)
+                    .withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS)
                     .saveState(req);
         } catch (Exception e) {
             logger.error("saveBulkState error ", e);
@@ -231,28 +225,22 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
         return stateBuilder;
     }
 
-    /**
-     * Delete a state.
-     *
-     * @param request Request to delete a state.
-     */
     @Override
-    public void deleteState(DeleteStateRequest request) {
+    public void deleteState(DeleteStateRequest request, int timeoutMs) {
+        final String stateStoreName = request.getStateStoreName();
+        final String key = request.getKey();
+        final StateOptions options = request.getStateOptions();
+        final String etag = request.getEtag();
+        final Map<String, String> metadata = request.getMetadata();
+
+        // 1. validate
+        if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
+            throw new IllegalArgumentException("State store name cannot be null or empty.");
+        }
+        if ((key == null) || (key.trim().isEmpty())) {
+            throw new IllegalArgumentException("Key cannot be null or empty.");
+        }
         try {
-            final String stateStoreName = request.getStateStoreName();
-            final String key = request.getKey();
-            final StateOptions options = request.getStateOptions();
-            final String etag = request.getEtag();
-            final Map<String, String> metadata = request.getMetadata();
-
-            // 1. validate
-            if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
-                throw new IllegalArgumentException("State store name cannot be null or empty.");
-            }
-            if ((key == null) || (key.trim().isEmpty())) {
-                throw new IllegalArgumentException("Key cannot be null or empty.");
-            }
-
             // 2. prepare request
             RuntimeProto.StateOptions.Builder optionBuilder = null;
             if (options != null) {
@@ -286,7 +274,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
 
             // 3. invoke
             this.stubManager.getBlockingStub()
-                    .withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS)
+                    .withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS)
                     .deleteState(req);
         } catch (Exception e) {
             logger.error("deleteState error ", e);
@@ -361,34 +349,20 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
         }
     }
 
-    /**
-     * Retrieve a State based on their key.
-     *
-     * @param request The request to get state.
-     * @param clazz   The Class of State needed as return.
-     * @return The requested State.
-     */
     @Override
-    public <T> State<T> getState(GetStateRequest request, Class<T> clazz) {
-        return getState(request, clazz, 0);
-    }
-
-    @Override
-    public <T> State<T> getState(GetStateRequest request, Class<T> clazz, int timeoutMs) {
+    public State<byte[]> getState(GetStateRequest request, int timeoutMs) {
+        final String stateStoreName = request.getStoreName();
+        final String key = request.getKey();
+        final StateOptions options = request.getStateOptions();
+        final Map<String, String> metadata = request.getMetadata();
+        // 1. validate
+        if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
+            throw new IllegalArgumentException("State store name cannot be null or empty.");
+        }
+        if ((key == null) || (key.trim().isEmpty())) {
+            throw new IllegalArgumentException("Key cannot be null or empty.");
+        }
         try {
-            final String stateStoreName = request.getStoreName();
-            final String key = request.getKey();
-            final StateOptions options = request.getStateOptions();
-            final Map<String, String> metadata = request.getMetadata();
-
-            // 1. validate
-            if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
-                throw new IllegalArgumentException("State store name cannot be null or empty.");
-            }
-            if ((key == null) || (key.trim().isEmpty())) {
-                throw new IllegalArgumentException("Key cannot be null or empty.");
-            }
-
             // 2. construct request object
             RuntimeProto.GetStateRequest.Builder builder = RuntimeProto.GetStateRequest.newBuilder()
                     .setStoreName(stateStoreName)
@@ -407,10 +381,18 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
             if (timeoutMs > 0) {
                 stub = stub.withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS);
             }
-            RuntimeProto.GetStateResponse resp = stub.getState(envelope);
+            RuntimeProto.GetStateResponse getStateResponse = stub.getState(envelope);
 
             // 4. parse result
-            return parseGetStateResult(resp, key, options, clazz);
+            // value
+            final ByteString payload = getStateResponse.getData();
+            byte[] value = payload == null ? null : payload.toByteArray();
+            // etag
+            String etag = getStateResponse.getEtag();
+            if (etag != null && etag.isEmpty()) {
+                etag = null;
+            }
+            return new State<>(key, value, etag, getStateResponse.getMetadataMap(), options);
         } catch (Exception e) {
             logger.error("getState error ", e);
             throw new RuntimeClientException(e);
@@ -418,24 +400,23 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
     }
 
     @Override
-    public <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz) {
+    public List<State<byte[]>> getBulkState(GetBulkStateRequest request, int timeoutMs) {
+        final String stateStoreName = request.getStoreName();
+        final List<String> keys = request.getKeys();
+        final int parallelism = request.getParallelism();
+        final Map<String, String> metadata = request.getMetadata();
+
+        // 1. validate
+        if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
+            throw new IllegalArgumentException("State store name cannot be null or empty.");
+        }
+        if (keys == null || keys.isEmpty()) {
+            throw new IllegalArgumentException("Key cannot be null or empty.");
+        }
+        if (parallelism < 0) {
+            throw new IllegalArgumentException("Parallelism cannot be negative.");
+        }
         try {
-            final String stateStoreName = request.getStoreName();
-            final List<String> keys = request.getKeys();
-            final int parallelism = request.getParallelism();
-            final Map<String, String> metadata = request.getMetadata();
-
-            // 1. validate
-            if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
-                throw new IllegalArgumentException("State store name cannot be null or empty.");
-            }
-            if (keys == null || keys.isEmpty()) {
-                throw new IllegalArgumentException("Key cannot be null or empty.");
-            }
-            if (parallelism < 0) {
-                throw new IllegalArgumentException("Parallelism cannot be negative.");
-            }
-
             // 2. construct request object
             RuntimeProto.GetBulkStateRequest.Builder builder = RuntimeProto.GetBulkStateRequest.newBuilder()
                     .setStoreName(stateStoreName)
@@ -447,13 +428,17 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
             RuntimeProto.GetBulkStateRequest envelope = builder.build();
 
             // 3. invoke grpc API
-            RuntimeProto.GetBulkStateResponse resp = this.stubManager.getBlockingStub().getBulkState(envelope);
+            RuntimeGrpc.RuntimeBlockingStub stub = this.stubManager.getBlockingStub();
+            if (timeoutMs > 0) {
+                stub = stub.withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS);
+            }
+            RuntimeProto.GetBulkStateResponse resp = stub.getBulkState(envelope);
 
             // 4. parse result
             List<RuntimeProto.BulkStateItem> itemsList = resp.getItemsList();
-            List<State<T>> result = new ArrayList<>(itemsList.size());
+            List<State<byte[]>> result = new ArrayList<>(itemsList.size());
             for (RuntimeProto.BulkStateItem itm : itemsList) {
-                State<T> tState = parseGetStateResult(itm, clazz);
+                State<byte[]> tState = parseGetStateResult(itm);
                 result.add(tState);
             }
             return result;
@@ -463,38 +448,17 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
         }
     }
 
-    private <T> State<T> parseGetStateResult(
-            RuntimeProto.GetStateResponse getStateResponse,
-            String requestedKey,
-            StateOptions stateOptions,
-            Class<T> clazz) throws IOException {
-        final ByteString payload = getStateResponse.getData();
-        byte[] data = payload == null ? null : payload.toByteArray();
-        // deserialize
-        T value = null;
-        if (data != null && clazz != null && clazz != byte[].class) {
-            value = stateSerializer.deserialize(data, clazz);
-        }
-        // etag
-        String etag = getStateResponse.getEtag();
-        if (etag != null && etag.isEmpty()) {
-            etag = null;
-        }
-        return new State<>(requestedKey, value, etag, getStateResponse.getMetadataMap(), stateOptions);
-    }
-
-    private <T> State<T> parseGetStateResult(
-            RuntimeProto.BulkStateItem bulkStateItem,
-            Class<T> clazz) throws IOException {
+    private State<byte[]> parseGetStateResult(RuntimeProto.BulkStateItem bulkStateItem) throws IOException {
         final String key = bulkStateItem.getKey();
+        // check error
         final String error = bulkStateItem.getError();
         if (!Strings.isNullOrEmpty(error)) {
             return new State<>(key, error);
         }
-
+        // value
         final ByteString payload = bulkStateItem.getData();
-        byte[] data = payload == null ? null : payload.toByteArray();
-        T value = stateSerializer.deserialize(data, clazz);
+        byte[] value = payload == null ? null : payload.toByteArray();
+        // etag
         String etag = bulkStateItem.getEtag();
         if (etag != null && etag.isEmpty()) {
             etag = null;
