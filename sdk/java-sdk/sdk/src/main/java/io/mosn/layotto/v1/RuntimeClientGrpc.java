@@ -7,7 +7,7 @@ import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
 import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.exceptions.RuntimeClientException;
-import io.mosn.layotto.v1.grpc.stub.StubFactory;
+import io.mosn.layotto.v1.grpc.stub.StubManager;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
 import org.slf4j.Logger;
 import spec.proto.runtime.v1.RuntimeGrpc;
@@ -24,14 +24,14 @@ import java.util.concurrent.TimeUnit;
 public class RuntimeClientGrpc extends AbstractRuntimeClient {
 
     private static final String                                                                TIMEOUT_KEY = "timeout";
-    private final        StubFactory<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubFactory;
+    private final        StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager;
 
     RuntimeClientGrpc(Logger logger,
                       int timeoutMs,
                       ObjectSerializer stateSerializer,
-                      StubFactory<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubFactory) {
+                      StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager) {
         super(logger, timeoutMs, stateSerializer);
-        this.stubFactory = stubFactory;
+        this.stubManager = stubManager;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
                     .build();
 
             // 2. invoke
-            RuntimeProto.SayHelloResponse response = stubFactory.getBlockingStub()
+            RuntimeProto.SayHelloResponse response = stubManager.getBlockingStub()
                     .withDeadlineAfter(timeoutMillisecond,
                             TimeUnit.MILLISECONDS)
                     .sayHello(req);
@@ -85,7 +85,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             metadata.put(key, Integer.toString(timeoutMs));
 
             // 2. invoke
-            RuntimeProto.InvokeResponse resp = this.stubFactory.getBlockingStub()
+            RuntimeProto.InvokeResponse resp = this.stubManager.getBlockingStub()
                     .withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS)
                     .withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata))
                     .invokeService(invokeReq);
@@ -139,7 +139,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.PublishEventRequest req = envelopeBuilder.build();
 
             // 3. invoke
-            this.stubFactory.getBlockingStub().publishEvent(req);
+            this.stubManager.getBlockingStub().publishEvent(req);
         } catch (Exception e) {
             logger.error("publishEvent error ", e);
             throw new RuntimeClientException(e);
@@ -171,7 +171,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.SaveStateRequest req = builder.build();
 
             // 3. invoke
-            this.stubFactory.getBlockingStub()
+            this.stubManager.getBlockingStub()
                     .withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS)
                     .saveState(req);
         } catch (Exception e) {
@@ -283,7 +283,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.DeleteStateRequest req = builder.build();
 
             // 3. invoke
-            this.stubFactory.getBlockingStub()
+            this.stubManager.getBlockingStub()
                     .withDeadlineAfter(getTimeoutMs(), TimeUnit.MILLISECONDS)
                     .deleteState(req);
         } catch (Exception e) {
@@ -352,7 +352,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.ExecuteStateTransactionRequest req = builder.build();
 
             // 3. invoke grpc api
-            this.stubFactory.getBlockingStub().executeStateTransaction(req);
+            this.stubManager.getBlockingStub().executeStateTransaction(req);
         } catch (Exception e) {
             logger.error("executeStateTransaction error ", e);
             throw new RuntimeClientException(e);
@@ -396,7 +396,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.GetStateRequest envelope = builder.build();
 
             // 3. invoke grpc api
-            RuntimeProto.GetStateResponse resp = this.stubFactory.getBlockingStub().getState(envelope);
+            RuntimeProto.GetStateResponse resp = this.stubManager.getBlockingStub().getState(envelope);
 
             // 4. parse result
             return parseGetStateResult(resp, key, options, clazz);
@@ -436,7 +436,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient {
             RuntimeProto.GetBulkStateRequest envelope = builder.build();
 
             // 3. invoke grpc API
-            RuntimeProto.GetBulkStateResponse resp = this.stubFactory.getBlockingStub().getBulkState(envelope);
+            RuntimeProto.GetBulkStateResponse resp = this.stubManager.getBlockingStub().getBulkState(envelope);
 
             // 4. parse result
             List<RuntimeProto.BulkStateItem> itemsList = resp.getItemsList();

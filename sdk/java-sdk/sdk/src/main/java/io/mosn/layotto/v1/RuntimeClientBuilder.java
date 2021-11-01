@@ -20,10 +20,10 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.domain.ApiProtocol;
-import io.mosn.layotto.v1.grpc.stub.PooledStubFactory;
-import io.mosn.layotto.v1.grpc.stub.SingleStubFactory;
+import io.mosn.layotto.v1.grpc.stub.PooledStubManager;
+import io.mosn.layotto.v1.grpc.stub.SingleStubManager;
 import io.mosn.layotto.v1.grpc.stub.StubCreator;
-import io.mosn.layotto.v1.grpc.stub.StubFactory;
+import io.mosn.layotto.v1.grpc.stub.StubManager;
 import io.mosn.layotto.v1.serializer.JSONSerializer;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
 import org.slf4j.Logger;
@@ -153,21 +153,21 @@ public class RuntimeClientBuilder {
         if (port <= 0) {
             throw new IllegalArgumentException("Invalid port.");
         }
-        // construct stubFactory
-        StubFactory<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubFactory;
+        // construct stubManager
+        StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager;
         if (useConnectionPool) {
-            stubFactory = new PooledStubFactory<>(ip, port, poolSize, new StubCreatorImpl());
+            stubManager = new PooledStubManager<>(ip, port, poolSize, new StubCreatorImpl());
         } else {
             ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port)
                     .usePlaintext()
                     .build();
-            stubFactory = new SingleStubFactory(channel, new StubCreatorImpl());
+            stubManager = new SingleStubManager(channel, new StubCreatorImpl());
         }
         return new RuntimeClientGrpc(
                 logger,
                 timeoutMs,
                 stateSerializer,
-                stubFactory);
+                stubManager);
     }
 
     public static class StubCreatorImpl implements StubCreator<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> {
