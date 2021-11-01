@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -17,6 +18,7 @@ const (
 	password               = "redisPassword"
 	enableTLS              = "enableTLS"
 	maxRetries             = "maxRetries"
+	concurrency            = "concurrency"
 	maxRetryBackoff        = "maxRetryBackoff"
 	defaultBase            = 10
 	defaultBitSize         = 0
@@ -125,6 +127,7 @@ func NewClusterRedisClient(m RedisClusterMetadata) []*redis.Client {
 
 type RedisClusterMetadata struct {
 	Hosts           []string
+	Concurrency     int
 	Password        string
 	MaxRetries      int
 	MaxRetryBackoff time.Duration
@@ -183,6 +186,15 @@ func ParseRedisClusterMetadata(properties map[string]string) (RedisClusterMetada
 		m.DB = parsedVal
 	} else {
 		m.DB = defaultDB
+	}
+	if val, ok := properties[concurrency]; ok && val != "" {
+		con, err := strconv.Atoi(val)
+		if err != nil {
+			return m, fmt.Errorf("redis store error: can't parse concurrency field: %s", err)
+		}
+		m.Concurrency = con
+	} else {
+		m.Concurrency = runtime.NumCPU()
 	}
 	return m, nil
 }

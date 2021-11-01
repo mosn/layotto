@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/utils"
+	msync "mosn.io/mosn/pkg/sync"
 	"mosn.io/pkg/log"
 	"strings"
 	"sync"
@@ -17,6 +18,7 @@ import (
 type ClusterRedisLock struct {
 	clients  []*redis.Client
 	metadata utils.RedisClusterMetadata
+	workpool msync.WorkerPool
 	replicas int
 
 	features []lock.Feature
@@ -44,6 +46,7 @@ type resultMsg struct {
 }
 
 func (c *ClusterRedisLock) Init(metadata lock.Metadata) error {
+
 	m, err := utils.ParseRedisClusterMetadata(metadata.Properties)
 	if err != nil {
 		return err
@@ -51,7 +54,7 @@ func (c *ClusterRedisLock) Init(metadata lock.Metadata) error {
 	c.metadata = m
 	c.clients = utils.NewClusterRedisClient(m)
 	c.ctx, c.cancel = context.WithCancel(context.Background())
-
+	c.workpool = msync.NewWorkerPool(m.Concurrency)
 	for i, client := range c.clients {
 		if _, err = client.Ping(c.ctx).Result(); err != nil {
 			return fmt.Errorf("[ClusterRedisLock]: error connecting to redis at %s: %s", c.metadata.Hosts[i], err)
@@ -76,7 +79,10 @@ func (c *ClusterRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockRespo
 
 	//getting lock concurrently
 	for i := range c.clients {
-		go c.LockSingleRedis(i, req, &wg, resultChan)
+		clientIndex := i
+		c.workpool.Schedule(func() {
+			c.LockSingleRedis(clientIndex, req, &wg, resultChan)
+		})
 	}
 	wg.Wait()
 	intervalEnd := time.Now().UnixNano() / 1e6
@@ -146,7 +152,10 @@ func (c *ClusterRedisLock) UnlockAllRedis(req *lock.UnlockRequest, wg *sync.Wait
 
 	//unlock concurrently
 	for i := range c.clients {
-		go c.UnlockSingleRedis(i, req, wg, ch)
+		clientIndex := i
+		c.workpool.Schedule(func() {
+			c.UnlockSingleRedis(clientIndex, req, wg, ch)
+		})
 	}
 	wg.Wait()
 	close(ch)
