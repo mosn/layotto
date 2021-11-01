@@ -54,6 +54,12 @@ func (lf *LocalStore) Put(f *file.PutFileStu) error {
 		n, err := f.DataStream.Read(data)
 		if err != nil {
 			if err == io.EOF {
+				if n > 0{
+					_, err = fileObj.Write(data[:n])
+					if err != nil {
+						return err
+					}
+				}
 				break
 			}
 			return err
