@@ -49,4 +49,11 @@ public class TransactionalStateRequest<T> {
     public Map<String, String> getMetadata() {
         return metadata;
     }
+
+    public void putMetadata(String key, String value) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        if (value == null) { throw new java.lang.NullPointerException(); }
+        metadata.put(key, value);
+    }
+
 }

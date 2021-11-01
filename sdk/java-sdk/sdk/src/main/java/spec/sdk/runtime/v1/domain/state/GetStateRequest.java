@@ -65,6 +65,9 @@ public class GetStateRequest {
     public void putMetadata(String key, String value) {
         if (key == null) { throw new java.lang.NullPointerException(); }
         if (value == null) { throw new java.lang.NullPointerException(); }
+        if (metadata == null) {
+            metadata = new HashMap<>();
+        }
         metadata.put(key, value);
     }
 
