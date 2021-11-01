@@ -22,7 +22,7 @@
                         }
                       },
                       "files": {
-                        "aliOSS": {
+                        "minio": {
                           "metadata":[
                             {
                               "endpoint": "endpoint_address",
