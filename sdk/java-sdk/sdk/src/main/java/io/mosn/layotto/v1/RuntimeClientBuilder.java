@@ -51,8 +51,7 @@ public class RuntimeClientBuilder {
 
     private ObjectSerializer stateSerializer = new JSONSerializer();
 
-    private boolean useConnectionPool = false;
-    private int     poolSize;
+    private int poolSize;
 
     // TODO add rpc serializer
 
@@ -62,17 +61,12 @@ public class RuntimeClientBuilder {
     public RuntimeClientBuilder() {
     }
 
-    /**
-     * Setter method for property <tt>useConnectionPool</tt> and <tt>poolSize</tt>.
-     *
-     * @param useConnectionPool value to be assigned to property useConnectionPool
-     */
-    public void setUseConnectionPool(boolean useConnectionPool, int poolSize) {
-        this.useConnectionPool = useConnectionPool;
-        if (useConnectionPool && poolSize <= 0) {
+    public RuntimeClientBuilder withConnectionPoolSize(int poolSize) {
+        if (poolSize <= 0) {
             throw new IllegalArgumentException("Invalid poolSize.");
         }
         this.poolSize = poolSize;
+        return this;
     }
 
     public RuntimeClientBuilder withIp(String ip) {
@@ -157,7 +151,7 @@ public class RuntimeClientBuilder {
         }
         // 2. construct stubManager
         StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager;
-        if (useConnectionPool) {
+        if (poolSize > 1) {
             stubManager = new PooledStubManager<>(ip, port, poolSize, new StubCreatorImpl());
         } else {
             ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port)
