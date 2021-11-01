@@ -44,6 +44,8 @@ trace拓展配置：
 
 
 ### Trace设计和拓展
+整体结构图:
+![img.png](../../../img/trace/structure.png)
 
 #### Span结构：
 
@@ -61,7 +63,7 @@ type Span struct {
 Span结构定义了layotto和其component之间传递的数据结构，如下图所示，component可以通过tags将自己的信息传递到layotto，layotto做
 统一的trace上报：
 
-#### generator接口：
+#### Generator接口：
 
 ```go
 type Generator interface {
@@ -113,3 +115,9 @@ ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
 trace打印的结果如下：
 
 ![img.png](../../../img/trace/trace.png)
+
+### Trace原理
+
+Layotto中的tracing主要是对grpc调用进行记录，依赖于在grpc里添加的两个拦截器： [UnaryInterceptorFilter](../../../../diagnostics/grpc_tracing.go)、 [StreamInterceptorFilter](../../../../diagnostics/grpc_tracing.go)
+
+拦截器在每次grpc方法调用时都会开启一次tracing，生成traceId spanId、新的context，记录方法名、时间，并且会将tracing信息通过context透传下去，方法返回时将span信息导出。
