@@ -31,22 +31,58 @@ public class PooledStubManager<A extends AbstractAsyncStub, B extends AbstractBl
         if (sc == null) {
             throw new IllegalArgumentException("Invalid StubCreator");
         }
-        int size = other.channels.length;
+        // 2. construct
+        ConstructResult<A, B> result = constructPools(channels, sc);
+        this.asyncRuntimePool = result.asyncPool;
+        this.runtimePool = result.blockingPool;
+        // 3. init connections
+        init();
+    }
+
+    public PooledStubManager(ManagedChannel[] channels,
+                             StubCreator<A, B> sc) {
+        // 1. validate
+        if (channels.length == 0) {
+            throw new IllegalArgumentException("Invalid other");
+        }
+        if (sc == null) {
+            throw new IllegalArgumentException("Invalid StubCreator");
+        }
+        // 2. construct
+        ConstructResult<A, B> result = constructPools(channels, sc);
+        this.asyncRuntimePool = result.asyncPool;
+        this.runtimePool = result.blockingPool;
+        // 3. init
+        init();
+    }
+
+    private static class ConstructResult<A, B> {
+        RRPool<A> asyncPool;
+        RRPool<B> blockingPool;
+
+        public ConstructResult(RRPool<A> asyncPool, RRPool<B> blockingPool) {
+            this.asyncPool = asyncPool;
+            this.blockingPool = blockingPool;
+        }
+    }
+
+    private ConstructResult<A, B> constructPools(ManagedChannel[] channels, StubCreator<A, B> sc) {
+        int size = channels.length;
         this.channels = new ManagedChannel[size];
         List<A> asyncStubs = new ArrayList<>();
         List<B> blockingStubs = new ArrayList<>();
-        // 2. construct channels and stubs
+        // 1. construct channels and stubs
         for (int i = 0; i < size; i++) {
             // change the order of channels to avoid unbalanced load
-            this.channels[i] = other.channels[size - 1 - i];
+            this.channels[i] = channels[size - 1 - i];
             asyncStubs.add(sc.createAsyncStub(channels[i]));
             blockingStubs.add(sc.createBlockingStub(channels[i]));
         }
-        // 3. construct pools
-        asyncRuntimePool = new RRPool<>(new CopyOnWriteArrayList<>(asyncStubs));
-        runtimePool = new RRPool<>(new CopyOnWriteArrayList<>(blockingStubs));
-        // 4. init connections
-        init();
+        // 2. construct pools
+        RRPool<A> asyncPool = new RRPool<>(new CopyOnWriteArrayList<>(asyncStubs));
+        RRPool<B> blockingPool = new RRPool<>(new CopyOnWriteArrayList<>(blockingStubs));
+        // 3. return
+        return new ConstructResult<>(asyncPool, blockingPool);
     }
 
     public PooledStubManager(String host, int port, int size,
