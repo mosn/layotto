@@ -28,7 +28,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
     private static final String                                                                TIMEOUT_KEY = "timeout";
     private final        StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager;
 
-    RuntimeClientGrpc(Logger logger,
+    public RuntimeClientGrpc(Logger logger,
                       int timeoutMs,
                       ObjectSerializer stateSerializer,
                       StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager) {
