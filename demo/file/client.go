@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"os"
+
+	"google.golang.org/grpc/codes"
+
+	"google.golang.org/grpc/status"
 
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 
@@ -35,10 +37,10 @@ func TestGet(fileName string) {
 		}
 		pic = append(pic, resp.Data...)
 	}
-	ioutil.WriteFile(fileName, pic, os.ModePerm)
+	fmt.Println(string(pic))
 }
 
-func TestPut(fileName string) {
+func TestPut(fileName string, value string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
@@ -53,32 +55,8 @@ func TestPut(fileName string) {
 		fmt.Printf("put file failed:%+v", err)
 		return
 	}
-	fileHandle, err := os.Open(fileName)
-	if err != nil {
-		fmt.Println("open file fail")
-		return
-	}
-	defer fileHandle.Close()
-	//Upload in multiples, the minimum size is 100kb
-	buffer := make([]byte, 102400)
-
-	for {
-		n, err := fileHandle.Read(buffer)
-		if err != nil && err != io.EOF {
-			fmt.Printf("read file failed, err:%+v", err)
-			break
-		}
-		if n == 0 {
-			//stream.CloseSend()
-			break
-		}
-		req.Data = buffer[:n]
-		err = stream.Send(req)
-		if err != nil {
-			fmt.Printf("send request failed: err: %+v", err)
-			break
-		}
-	}
+	req.Data = []byte(value)
+	stream.Send(req)
 	_, err = stream.CloseAndRecv()
 	if err != nil {
 		fmt.Printf("cannot receive response: %+v", err)
@@ -94,14 +72,24 @@ func TestList(bucketName string) {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: bucketName, Metadata: meta}
-	listReq := &runtimev1pb.ListFileRequest{Request: req}
-	resp, err := c.ListFile(context.Background(), listReq)
-	if err != nil {
-		fmt.Printf("list file fail, err: %+v", err)
-		return
+	marker := ""
+	for {
+		req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: bucketName, Metadata: meta}
+		listReq := &runtimev1pb.ListFileRequest{Request: req, PageSize: 1, Marker: marker}
+		resp, err := c.ListFile(context.Background(), listReq)
+		if err != nil {
+			fmt.Printf("list file fail, err: %+v", err)
+			return
+		}
+		marker = resp.Marker
+		if !resp.IsTruncated {
+			fmt.Printf("files under bucket is: %+v, %+v \n", resp.Files, marker)
+			fmt.Printf("finish list")
+			return
+		}
+		fmt.Printf("files under bucket is: %+v, %+v \n", resp.Files, marker)
 	}
-	fmt.Printf("files under bucket is: %+v", resp.FileName)
+
 }
 
 func TestDel(fileName string) {
@@ -123,13 +111,36 @@ func TestDel(fileName string) {
 	fmt.Printf("delete file success")
 }
 
+func TestStat(fileName string) {
+	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+	if err != nil {
+		fmt.Printf("conn build failed,err:%+v", err)
+		return
+	}
+	meta := make(map[string]string)
+	meta["storageType"] = "Standard"
+	c := runtimev1pb.NewRuntimeClient(conn)
+	req := &runtimev1pb.FileRequest{StoreName: "aliOSS", Name: fileName, Metadata: meta}
+	statReq := &runtimev1pb.GetFileMetaRequest{Request: req}
+	data, err := c.GetFileMeta(context.Background(), statReq)
+
+	//here use grpc error code check file exist or not.
+	if m, ok := status.FromError(err); ok {
+		if m.Code() == codes.NotFound {
+			fmt.Println("file not exist")
+			return
+		}
+	}
+	fmt.Println("get meta data of file", data)
+}
+
 func main() {
 	if len(os.Args) < 3 {
 		fmt.Printf("you can use client like: client put/get/del/list fileName/directryName")
 		return
 	}
 	if os.Args[1] == "put" {
-		TestPut(os.Args[2])
+		TestPut(os.Args[2], os.Args[3])
 	}
 	if os.Args[1] == "get" {
 		TestGet(os.Args[2])
@@ -139,5 +150,8 @@ func main() {
 	}
 	if os.Args[1] == "list" {
 		TestList(os.Args[2])
+	}
+	if os.Args[1] == "stat" {
+		TestStat(os.Args[2])
 	}
 }
