@@ -33,6 +33,7 @@ const cfg = `[
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
 					"region": "us-west-2",
+					"bucket":["demo"],
 					"SSL":true
 				}
 			]`
@@ -100,7 +101,7 @@ func TestMinioOss_Put(t *testing.T) {
 	assert.Equal(t, ErrMissingBucket, err)
 
 	// client not exist
-	putReq.Metadata["bucket"] = "bucket"
+	putReq.Metadata["bucket"] = "bucket1"
 	putReq.Metadata["endpoint"] = "demo-endpoint"
 	err = oss.Put(putReq)
 	assert.Equal(t, ErrClientNotExist, err)
@@ -129,7 +130,7 @@ func TestMinioOss_Get(t *testing.T) {
 	assert.Equal(t, ErrMissingBucket, err)
 
 	// client not exist
-	getReq.Metadata["bucket"] = "bucket"
+	getReq.Metadata["bucket"] = "bucket1"
 	getReq.Metadata["endpoint"] = "demo-endpoint"
 	_, err = oss.Get(getReq)
 	assert.Equal(t, ErrClientNotExist, err)
