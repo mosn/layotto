@@ -1,20 +1,31 @@
-# 基于阿里云OSS实现文件的增删改查
+# 基于MinIO OSS实现文件的增删改查
 
 ## 快速开始
 
-Layotto提供了访问文件的示例 [demo](../../../../demo/file/client.go),该示例实现了文件的增删改查操作。
+Layotto提供了访问文件的示例 [demo](../../../../demo/file/minio/client.go),该示例实现了文件的增删改查操作。
 
 ### 第一步：启动layotto
 
-layotto提供了file的配置文件[oss配置](../../../../configs/config_file.json)，如下图所示
+layotto提供了minio的配置文件[oss配置](../../../../configs/config_file.json)，如下图所示
 
-![img.png](../../../img/file/img.png)
+![img.png](../../../img/file/minio.png)
 
-上述配置信息需要开通[阿里云OSS](https://www.aliyun.com/product/oss) 服务。
+### 第二步：启动MinIO服务
+访问[MinIO示例服务](play.min.io)
 
-### 第二步：启动测试demo
+创建bucket，包含配置文件中的bucket
 
-Layotto提供了访问文件的示例 [demo](../../../../demo/file/client.go)
+或者启动本地MinIO服务
+
+参考[官方文档](http://docs.minio.org.cn/docs/master/minio-docker-quickstart-guide)
+```
+docker pull minio/minio
+docker run -p 9000:9000 minio/minio server /data --console-address ":9000" --address ":9090"
+```
+
+### 第三步：启动测试demo
+
+Layotto提供了访问文件的示例 [demo](../../../../demo/file/minio/client.go)
 
 ```go
 
@@ -26,7 +37,6 @@ go build client.go //编译生成client可执行文件
 ./client list fileName //查看文件
 
 ```
-
 #### 细节以后再说，继续体验其他API
 通过左侧的导航栏，继续体验别的API吧！
 
