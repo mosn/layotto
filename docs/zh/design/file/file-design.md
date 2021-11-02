@@ -1,53 +1,136 @@
-File 设计文档
+# File API 设计文档
 
 ### API
-layotto的file接口主要针对于文件系统实现文件的增删改查的能力。在protobuf文件中增加新的接口定义：
 
-```json
-    Put(*PutFileStu) error
-    Get(*GetFileStu) (io.ReadCloser, error)
-    List(*ListRequest) (*ListResp, error)
-    Del(*DelRequest) error
+API定义主要依据常用的文件操作来定义的，分为增删改查四个接口，对于Get/Put接口来说，文件的上传和下载需要支持流传输。因此接口定义如下：
+
+```protobuf
+  // Get file with stream
+  rpc GetFile(GetFileRequest) returns (stream GetFileResponse) {}
+
+  // Put file with stream
+  rpc PutFile(stream PutFileRequest) returns (google.protobuf.Empty) {}
+
+  // List all files
+  rpc ListFile(ListFileRequest) returns (ListFileResp){}
+
+  // Delete specific file
+  rpc DelFile(DelFileRequest) returns (google.protobuf.Empty){}
 ```
 
-### 核心抽象
+关于接口的定义的讨论可以参照[issue98](https://github.com/mosn/layotto/issues/98)
 
-文件接口的抽象是按照平常文件的操作来定义的，代码中对于文件的操作往往分为几步：
 
-``` go
-    handler := open("file_name",option) //打开文件获取文件句柄
-    handler.Put(data[]) //写文件
-    handler.Close()//关闭文件句bing
+### 参数定义
+
+
+```protobuf
+message GetFileRequest {
+  //
+  string store_name = 1;
+  // The name of the file or object want to get.
+  string name = 2;
+  // The metadata for user extension.
+  map<string,string> metadata = 3;
+}
+
+message GetFileResponse {
+  bytes data = 1;
+}
+
+message PutFileRequest {
+  string store_name = 1;
+  // The name of the file or object want to put.
+  string name = 2;
+  // The data will be store.
+  bytes data = 3;
+  // The metadata for user extension.
+  map<string,string> metadata = 4;
+}
+
+message FileRequest {
+  string store_name = 1;
+  // The name of the directory
+  string name = 2;
+  // The metadata for user extension.
+  map<string,string> metadata = 3;
+}
+
+message ListFileRequest {
+  FileRequest request = 1;
+}
+
+message ListFileResp {
+  repeated string file_name = 1;
+}
+
+message DelFileRequest {
+  FileRequest request = 1;
+}
 ```
-
-### 代码实现
-
-Put和Get对于文件操作来说，都是属于流式操作，List和Del都是属于Unary的操作，本身不会太复杂，着重说一下文件的Put和Get的操作：
 
 #### Get接口
-``` go
-Get(*GetFileStu) (io.ReadCloser, error)
-``` 
 
-Get操作在读取文件流的时候，只需要将数据流返回给Api层即可，在api.go里面会分批的读取数据流里面的数据，然后将数据通过stream返回给应用测：
+Get的入参主要有三个：
 
-
-![img.png](../../../img/file/put.png)
-
-这个地方的stream是一个包含了读写的interface,可以自行实现：
-
-``` go
-type ReadCloser interface {
-	Reader
-	Closer
-}
-``` 
+| **参数名** | **意义** | **是否必传** |
+| --- | --- | --- | --- | --- | --- | --- |
+| store_name | 后端对应的components（eg: aliOSS, awsOSS） | yes |
+| name | 文件名字 | yes|
+| metadata | 元数据，该字段用户可以用来指定component需要的一些字段，（eg:权限，用户名等） | yes|
 
 #### Put接口
 
-``` go
-    Put(*PutFileStu) error
+Put接口入参主要有三个，多了一个data字段用来传输文件内容：
+
+| **参数名** | **意义** | **是否必传** |
+| --- | --- | --- | --- | --- | --- | --- |
+| store_name | 后端对应的components（eg: aliOSS, awsOSS） | yes |
+| name | 文件名字 | yes|
+| data | 文件内容 | no（允许用户上传空数据，每个component可以做具体实现）|
+| metadata | 元数据，该字段用户可以用来指定component需要的一些字段，（eg:权限，用户名等） | yes|
+
+#### Put接口
+
+Put接口入参主要有三个，多了一个data字段用来传输文件内容：
+
+| **参数名** | **意义** | **是否必传** |
+| --- | --- | --- | --- | --- | --- | --- |
+| store_name | 后端对应的components（eg: aliOSS, awsOSS） | yes |
+| name | 文件名字 | yes|
+| data | 文件内容 | no（允许用户上传空数据，每个component可以做具体实现）|
+| metadata | 元数据，该字段用户可以用来指定component需要的一些字段，（eg:权限，用户名等） | yes|
+
+
+#### List和Del接口
+
+两个接口的参数是一样的：
+
+| **参数名** | **意义** | **是否必传** |
+| --- | --- | --- | --- | --- | --- | --- |
+| store_name | 后端对应的components（eg: aliOSS, awsOSS） | yes |
+| name | 文件名字 | yes|
+| metadata | 元数据，该字段用户可以用来指定component需要的一些字段，（eg:权限，用户名等） | yes|
+
+#### 配置参数
+
+配置参数，不同的component可以配置不同格式，比如aliOSS的配置如下：
+
+```protobuf
+
+{
+    "files": {
+      "aliOSS": {
+        "metadata":[
+          {
+            "endpoint": "endpoint_address",
+            "accessKeyID": "accessKey",
+            "accessKeySecret": "secret",
+            "bucket": ["bucket1", "bucket2"]
+          }
+        ]
+      }
+    }
+}
+
 ```
-Put接口实现就是将stream接收到的字节传递给后段的components，后段components做各自的实现。
-
-
