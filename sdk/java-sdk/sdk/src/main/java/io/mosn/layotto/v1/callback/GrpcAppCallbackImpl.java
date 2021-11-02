@@ -44,12 +44,14 @@ public class GrpcAppCallbackImpl extends AppCallbackGrpc.AppCallbackImplBase {
                                        StreamObserver<AppCallbackProto.ListTopicSubscriptionsResponse> responseObserver) {
         final AppCallbackProto.ListTopicSubscriptionsResponse.Builder builder
                 = AppCallbackProto.ListTopicSubscriptionsResponse.newBuilder();
+        // get all PubSub callbacks
         Collection<PubSub> pubsubs = pubSubRegistry.getAllPubSubCallbacks();
         if (pubsubs == null) {
             responseObserver.onNext(builder.build());
             responseObserver.onCompleted();
             return;
         }
+        // Iterates them and get all topic subscriptions.
         for (PubSub pubSub : pubsubs) {
             final Set<TopicSubscription> topicSubscriptions = pubSub.listTopicSubscriptions();
             if (topicSubscriptions == null || topicSubscriptions.isEmpty()) {
@@ -63,6 +65,7 @@ public class GrpcAppCallbackImpl extends AppCallbackGrpc.AppCallbackImplBase {
             }
         }
 
+        // ack
         responseObserver.onNext(builder.build());
         responseObserver.onCompleted();
     }

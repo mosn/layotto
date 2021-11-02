@@ -55,5 +55,4 @@ public class TransactionalStateRequest<T> {
         if (value == null) { throw new java.lang.NullPointerException(); }
         metadata.put(key, value);
     }
-
 }
