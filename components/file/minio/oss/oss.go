@@ -19,6 +19,7 @@ package oss
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"strconv"
 
@@ -48,11 +49,12 @@ type MinioOss struct {
 }
 
 type MinioMetaData struct {
-	Region          string `json:"region"`
-	EndPoint        string `json:"endpoint"`
-	AccessKeyID     string `json:"accessKeyID"`
-	AccessKeySecret string `json:"accessKeySecret"`
-	SSL             bool   `json:"SSL"`
+	Region          string   `json:"region"`
+	EndPoint        string   `json:"endpoint"`
+	AccessKeyID     string   `json:"accessKeyID"`
+	AccessKeySecret string   `json:"accessKeySecret"`
+	SSL             bool     `json:"SSL"`
+	Buckets         []string `json:"bucket"`
 }
 
 func NewMinioOss() file.File {
@@ -89,7 +91,11 @@ func (m *MinioOss) Put(st *file.PutFileStu) error {
 		size   int64 = -1
 	)
 	if bucket, ok = st.Metadata[bucketKey]; !ok {
-		return ErrMissingBucket
+		b, err := m.selectBucket()
+		if err != nil {
+			return err
+		}
+		bucket = b
 	}
 	client, err := m.selectClient(st.Metadata)
 	if err != nil {
@@ -115,7 +121,11 @@ func (m *MinioOss) Get(st *file.GetFileStu) (io.ReadCloser, error) {
 		ok     bool
 	)
 	if bucket, ok = st.Metadata[bucketKey]; !ok {
-		return nil, ErrMissingBucket
+		b, err := m.selectBucket()
+		if err != nil {
+			return nil, err
+		}
+		bucket = b
 	}
 	client, err := m.selectClient(st.Metadata)
 	if err != nil {
@@ -136,7 +146,11 @@ func (m *MinioOss) List(st *file.ListRequest) (*file.ListResp, error) {
 		resp   = &file.ListResp{}
 	)
 	if bucket, ok = st.Metadata[bucketKey]; !ok {
-		return nil, ErrMissingBucket
+		b, err := m.selectBucket()
+		if err != nil {
+			return nil, err
+		}
+		bucket = b
 	}
 	if p, ok1 := st.Metadata[listPrefix]; ok1 {
 		prefix = p
@@ -165,7 +179,11 @@ func (m *MinioOss) Del(st *file.DelRequest) error {
 		ok     bool
 	)
 	if bucket, ok = st.Metadata[bucketKey]; !ok {
-		return ErrMissingBucket
+		b, err := m.selectBucket()
+		if err != nil {
+			return err
+		}
+		bucket = b
 	}
 	client, err := m.selectClient(st.Metadata)
 	if err != nil {
@@ -199,6 +217,16 @@ func (m *MinioOss) selectClient(meta map[string]string) (client *minio.Client, e
 		return
 	}
 	return
+}
+
+func (m *MinioOss) selectBucket() (string, error) {
+	for _, metaData := range m.meta {
+		if len(metaData.Buckets) == 1 {
+			return metaData.Buckets[0], nil
+		}
+		return "", fmt.Errorf("should specific bucketKey in metadata")
+	}
+	return "", fmt.Errorf("no bucket configuration")
 }
 
 // isMinioMetaValid check if the metadata is valid

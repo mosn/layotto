@@ -111,6 +111,13 @@ func TestMinioOss_Put(t *testing.T) {
 	putReq.Metadata["fileSize"] = "a2"
 	err = oss.Put(putReq)
 	assert.NotNil(t, err)
+
+	meta := map[string]string{
+		"bucket": "layotto",
+	}
+	putReq.Metadata = meta
+	err = oss.Put(putReq)
+	assert.Nil(t, err)
 }
 
 func TestMinioOss_Get(t *testing.T) {

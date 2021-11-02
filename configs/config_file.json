@@ -22,13 +22,14 @@
                         }
                       },
                       "files": {
-                        "minio": {
+                        "minioOSS": {
                           "metadata":[
                             {
-                              "endpoint": "endpoint_address",
-                              "accessKeyID": "accessKey",
-                              "accessKeySecret": "secret",
-                              "bucket": ["bucket1", "bucket2"]
+                              "endpoint": "play.min.io",
+                              "accessKeyID": "minioadmin",
+                              "accessKeySecret": "minioadmin",
+                              "SSL": true,
+                              "bucket": ["layotto"]
                             }
                           ]
                         }
