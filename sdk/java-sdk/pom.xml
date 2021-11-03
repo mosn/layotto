@@ -19,7 +19,7 @@
 
     <properties>
         <protobuf.version>3.17.2</protobuf.version>
-        <grpc.version>1.37.0</grpc.version>
+        <grpc.version>1.34.1</grpc.version>
         <slf4j.version>1.7.30</slf4j.version>
         <fastjson.version>1.2.76</fastjson.version>
         <junit.version>4.13.1</junit.version>
@@ -57,17 +57,7 @@
             <!-- grpc -->
             <dependency>
                 <groupId>io.grpc</groupId>
-                <artifactId>grpc-netty</artifactId>
-                <version>${grpc.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.grpc</groupId>
-                <artifactId>grpc-protobuf</artifactId>
-                <version>${grpc.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.grpc</groupId>
-                <artifactId>grpc-stub</artifactId>
+                <artifactId>grpc-all</artifactId>
                 <version>${grpc.version}</version>
             </dependency>
 
