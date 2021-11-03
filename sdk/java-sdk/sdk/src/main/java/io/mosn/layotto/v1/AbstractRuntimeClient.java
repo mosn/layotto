@@ -45,6 +45,12 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     private final   int              timeoutMs;
 
     AbstractRuntimeClient(Logger logger, int timeoutMs, ObjectSerializer stateSerializer) {
+        if (logger == null) {
+            throw new IllegalArgumentException("logger shouldn't be null");
+        }
+        if (stateSerializer == null) {
+            throw new IllegalArgumentException("stateSerializer shouldn't be null");
+        }
         this.logger = logger;
         this.timeoutMs = timeoutMs;
         this.stateSerializer = stateSerializer;
@@ -131,6 +137,11 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
             logger.error("getState error ", e);
             throw new RuntimeClientException(e);
         }
+    }
+
+    @Override
+    public State<byte[]> getState(GetStateRequest request) {
+        return getState(request, getTimeoutMs());
     }
 
     /**
@@ -243,6 +254,11 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
             logger.error("getBulkState error ", e);
             throw new RuntimeClientException(e);
         }
+    }
+
+    @Override
+    public List<State<byte[]>> getBulkState(GetBulkStateRequest request) {
+        return getBulkState(request, getTimeoutMs());
     }
 
     /**

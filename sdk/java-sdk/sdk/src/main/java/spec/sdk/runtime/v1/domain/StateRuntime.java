@@ -64,6 +64,8 @@ public interface StateRuntime {
      */
     <T> State<T> getState(GetStateRequest request, Class<T> clazz, int timeoutMs);
 
+    State<byte[]> getState(GetStateRequest request);
+
     State<byte[]> getState(GetStateRequest request, int timeoutMs);
 
     /**
@@ -85,6 +87,8 @@ public interface StateRuntime {
      * @return The requested State.
      */
     <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz);
+
+    List<State<byte[]>> getBulkState(GetBulkStateRequest request);
 
     /**
      * Retrieve bulk States based on their keys with a timeout limit and without deserialization

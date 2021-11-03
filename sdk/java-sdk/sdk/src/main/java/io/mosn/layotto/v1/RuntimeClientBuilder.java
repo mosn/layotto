@@ -167,6 +167,22 @@ public class RuntimeClientBuilder {
                 stubManager);
     }
 
+    public GrpcRuntimeClient buildGrpcWithExistingChannel(ManagedChannel channel) {
+        // 1. validate
+        if (port <= 0) {
+            throw new IllegalArgumentException("Invalid port.");
+        }
+        // 2. construct stubManager
+        StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager
+                = new SingleStubManager(channel, new StubCreatorImpl());
+        // 3. construct client
+        return new RuntimeClientGrpc(
+                logger,
+                timeoutMs,
+                stateSerializer,
+                stubManager);
+    }
+
     public static class StubCreatorImpl implements StubCreator<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> {
 
         @Override
