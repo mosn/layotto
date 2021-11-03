@@ -26,19 +26,27 @@ public class PubSubClientRegistryImpl implements PubSubRegistry {
 
     @Override
     public void registerPubSubCallback(String pubsubName, PubSub callback) {
+        if (pubsubName == null) {
+            throw new IllegalArgumentException("pubSubName shouldn't be null");
+        }
+        if (callback == null) {
+            throw new IllegalArgumentException("callback shouldn't be null");
+        }
         if (pubSubClients.putIfAbsent(pubsubName, callback) != null) {
             throw new IllegalArgumentException("Pub/sub callback with name " + pubsubName + " already exists!");
         }
     }
 
     @Override
-    public PubSub getCallbackByPubSubName(String pubSubName) {
-        final PubSub pubSub = pubSubClients.get(pubSubName);
-        if (pubSub != null) {
-            return pubSub;
+    public PubSub getCallbackByPubSubName(String pubsubName) {
+        if (pubsubName == null) {
+            throw new IllegalArgumentException("pubsubName shouldn't be null");
         }
-
-        throw new IllegalArgumentException("Cannot find pubsub callback by name " + pubSubName);
+        final PubSub pubSub = pubSubClients.get(pubsubName);
+        if (pubSub == null) {
+            throw new IllegalArgumentException("Cannot find pubsub callback by name " + pubsubName);
+        }
+        return pubSub;
     }
 
     @Override

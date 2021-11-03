@@ -16,7 +16,7 @@
 package io.mosn.layotto.examples.pubsub.subscriber;
 
 import com.alibaba.fastjson.JSON;
-import io.mosn.layotto.v1.RuntimeServer;
+import io.mosn.layotto.v1.RuntimeServerGrpc;
 
 import java.util.concurrent.Semaphore;
 
@@ -28,7 +28,7 @@ public class Subscriber {
      * @throws Exception An Exception on startup.
      */
     public static void main(String[] args) throws Exception {
-        RuntimeServer srv = new RuntimeServer(9999);
+        RuntimeServerGrpc srv = new RuntimeServerGrpc(9999);
         RawPubSub pubsub = new RawPubSub("redis");
         pubsub.subscribe("hello", request -> {
             System.out.println(JSON.toJSONString(request));

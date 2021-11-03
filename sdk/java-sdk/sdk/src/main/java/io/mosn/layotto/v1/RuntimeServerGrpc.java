@@ -21,6 +21,7 @@ import io.mosn.layotto.v1.callback.GrpcAppCallbackImpl;
 import io.mosn.layotto.v1.callback.component.pubsub.PubSub;
 import io.mosn.layotto.v1.callback.component.pubsub.PubSubClientRegistryImpl;
 import io.mosn.layotto.v1.callback.component.pubsub.PubSubRegistry;
+import io.mosn.layotto.v1.grpc.ExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,15 +29,15 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class RuntimeServer {
+public class RuntimeServerGrpc {
 
-    private static final Logger logger = LoggerFactory.getLogger(RuntimeServer.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(RuntimeServerGrpc.class.getName());
 
     private final    int           port;
     private volatile Server        server;
     private final    AtomicBoolean started = new AtomicBoolean(false);
 
-    public RuntimeServer(int port) {
+    public RuntimeServerGrpc(int port) {
         this.port = port;
     }
 
@@ -52,6 +53,7 @@ public class RuntimeServer {
             /* The port on which the server should run */
             server = ServerBuilder.forPort(port)
                     .addService(new GrpcAppCallbackImpl(pubSubRegistry))
+                    .intercept(new ExceptionHandler())
                     .build()
                     .start();
         } catch (Exception e) {
@@ -69,7 +71,7 @@ public class RuntimeServer {
                 // Use stderr here since the logger may have been reset by its JVM shutdown hook.
                 logger.info("*** shutting down gRPC server since JVM is shutting down");
                 try {
-                    RuntimeServer.this.stop();
+                    RuntimeServerGrpc.this.stop();
                 } catch (Exception e) {
                     logger.error("*** server shut down error", e);
                 }
