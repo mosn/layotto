@@ -27,7 +27,7 @@ export default class Invoker extends API {
     const message = new CommonInvokeRequestPB();
     message.setMethod(request.method);
 
-    const httpVerb = request.httpVerb || HTTPExtension.Verb.GET;
+    const httpVerb = request.httpVerb ?? HTTPExtension.Verb.GET;
     const httpExtension = new HTTPExtension();
     httpExtension.setVerb(httpVerb);
     message.setHttpExtension(httpExtension);
@@ -35,14 +35,16 @@ export default class Invoker extends API {
     if (request.data) {
       const dataSerialized = new Any();
       if (typeof request.data === 'string') {
-        message.setContentType('text/plain; charset=UTF-8');
+        message.setContentType(request.contentType ?? 'text/plain; charset=UTF-8');
         dataSerialized.setValue(Buffer.from(request.data, 'utf8'));
       } else {
-        message.setContentType('application/json');
+        message.setContentType(request.contentType ?? 'application/json');
         dataSerialized.setValue(Buffer.from(JSON.stringify(request.data), 'utf8'));
       }
       message.setData(dataSerialized);
     }
+
+    console.log(message);
 
     const req = new InvokeServiceRequestPB();
     req.setId(request.id);

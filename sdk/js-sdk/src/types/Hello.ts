@@ -15,7 +15,7 @@
  */
 import { RequestWithMeta } from './common';
 
-export type SayHelloRequest = {
+export type SayHelloRequest = RequestWithMeta<{
   serviceName?: string;
   name?: string;
-} & RequestWithMeta;
+}>;

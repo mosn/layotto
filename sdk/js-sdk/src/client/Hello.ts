@@ -23,7 +23,7 @@ export default class Hello extends API {
   async sayHello(request?: SayHelloRequest): Promise<string> {
     const req = new SayHelloRequestPB();
     if (!request) request = {};
-    req.setServiceName(request.serviceName || 'helloworld');
+    req.setServiceName(request.serviceName ?? 'helloworld');
     if (request.name) req.setName(request.name);
     
     return new Promise((resolve, reject) => {

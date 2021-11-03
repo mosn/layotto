@@ -12,25 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { KVString, RequestWithMeta } from './common';
+import { KV, RequestWithMeta } from './common';
 
-export type GetConfigurationRequest = {
+export type GetConfigurationRequest = RequestWithMeta<{
   storeName: string;
   appId: string;
   keys: string[];
   group?: string;
   label?: string;
   subscribeUpdate?: boolean;
-  metadata?: KVString;
-} & RequestWithMeta;
+  metadata?: KV<string>;
+}>;
 
 export type GetConfigurationItem = {
   key: string;
   content: string;
   group: string;
   label: string;
-  tags: KVString;
-  metadata: KVString;
+  tags: KV<string>;
+  metadata: KV<string>;
 };
 
 export type SaveConfigurationItem = {
@@ -38,33 +38,33 @@ export type SaveConfigurationItem = {
   content: string,
   group?: string,
   label?: string,
-  tags?: KVString,
-  metadata?: KVString,
+  tags?: KV<string>,
+  metadata?: KV<string>,
 };
 
-export type SaveConfigurationRequest = {
+export type SaveConfigurationRequest = RequestWithMeta<{
   storeName: string;
   appId: string;
   items: SaveConfigurationItem[];
-  metadata?: KVString;
-} & RequestWithMeta;
+  metadata?: KV<string>;
+}>;
 
-export type DeleteConfigurationRequest = {
+export type DeleteConfigurationRequest = RequestWithMeta<{
   storeName: string;
   appId: string;
   keys: string[];
   group?: string;
   label?: string;
-  metadata?: KVString;
-} & RequestWithMeta;
+  metadata?: KV<string>;
+}>;
 
-export type SubscribeConfigurationRequest = {
+export type SubscribeConfigurationRequest = RequestWithMeta<{
   storeName: string;
   appId: string;
   keys: string[];
   group?: string;
   label?: string;
-  metadata?: KVString;
+  metadata?: KV<string>;
   onData(items: GetConfigurationItem[]): void;
   onClose(err?: Error): void;
-} & RequestWithMeta;
+}>;

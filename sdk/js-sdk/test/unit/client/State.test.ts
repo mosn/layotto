@@ -66,7 +66,7 @@ describe('client/State.test.ts', () => {
       const value = `hello js-sdk, with 中文, 😄, at ${Date()}`;
       await client.state.save({
         storeName, 
-        states: { key, value }, 
+        states: { key, value },
         requestMeta: { traceid: `mock-traceid-unittest-${Date.now()}` },
       });
       const state = await client.state.get({ storeName, key });

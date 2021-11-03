@@ -65,6 +65,13 @@
                           "hello": "greeting"
                         }
                       },
+                      "bindings": {
+                        "http": {
+                          "metadata": {
+                            "url": "https://registry.npmmirror.com/layotto/0.0.0"
+                          }
+                        }
+                      },
                       "config_stores": {
                         "etcd": {
                           "address": [

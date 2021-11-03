@@ -23,6 +23,7 @@ import Sequencer from './Sequencer';
 import Configuration from './Configuration';
 import PubSub from './PubSub';
 import File from './File';
+import Binding from './Binding';
 
 const debug = debuglog('layotto:client:main');
 
@@ -38,9 +39,10 @@ export default class Client {
   private _configuration: Configuration;
   private _pubsub: PubSub;
   private _file: File;
+  private _binding: Binding;
 
-  constructor(port: string = process.env.runtime_GRPC_PORT || '34904',
-              host: string = process.env.runtime_GRPC_HOST || '127.0.0.1') {
+  constructor(port: string = process.env.runtime_GRPC_PORT ?? '34904',
+              host: string = process.env.runtime_GRPC_HOST ?? '127.0.0.1') {
     this.host = host;
     this.port = port;
     const clientCredentials = ChannelCredentials.createInsecure();
@@ -86,5 +88,10 @@ export default class Client {
   get file() {
     if (!this._file) this._file = new File(this._runtime);
     return this._file;
+  }
+
+  get binding() {
+    if (!this._binding) this._binding = new Binding(this._runtime);
+    return this._binding;
   }
 }

@@ -44,6 +44,23 @@ describe.skip('client/Invoker.test.ts', () => {
       });
       assert.equal(state, null);
     });
+
+    it.skip('should invoke rpc success', async () => {
+      const res = await client.invoker.invoke({
+        id: 'com.alipay.rpc.common.service.facade.SampleService:1.0', 
+        method: 'echoStr',
+        // contentType: 'json',
+        data: {
+          signatures: ['java.lang.String'],
+          arguments: ['abc'],
+        },
+        requestMeta: {
+          content_type: 'json',
+          upstream_content_type: 'hessian',
+        },
+      });
+      console.log(res);
+    });
   });
 });
 

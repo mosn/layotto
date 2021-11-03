@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { strict as assert } from 'assert';
 import { debuglog } from 'node:util';
 import { Transform, Readable } from 'stream';
 import { pipeline as pipelinePromise } from 'stream/promises';
@@ -51,8 +50,7 @@ export default class File extends API {
   }
 
   async put(request: PutFileRequest): Promise<void> {
-    assert(request.stream || request.data, 'Parameters "stream" or "data" was required at least one');
-    const stream = request.stream || Readable.from(request.data);
+    const stream = request.stream ?? Readable.from(request.data);
 
     const ac = new AbortController();
     const signal = ac.signal;

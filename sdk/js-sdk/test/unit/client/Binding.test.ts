@@ -12,25 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { strict as assert } from 'assert';
+import { Client } from '../../../src';
 
-import { Simplify } from 'type-fest';
+describe('client/Binding.test.ts', () => {
+  let client: Client;
+  beforeAll(async () => {
+    client = new Client();
+  });
 
-export type KV<Type> = {
-  [key: string]: Type;
-};
-
-export type RequestWithMeta<T> = Simplify<T & {
-  requestMeta?: KV<string>;
-}>;
-
-export type Map<Type> = {
-  set(k: Type, v: Type): unknown;
-};
-
-export function convertArrayToKVString(items: [string, string][]) {
-  const kv: KV<string> = {};
-  for (const item of items) {
-    kv[item[0]] = item[1];
-  }
-  return kv;
-};
+  it('should invoke success', async () => {
+    const res = await client.binding.invoke({
+      name: 'http',
+      operation: 'get',
+      data: '😄ok，你好',
+      metadata: { token: '123' },
+    });
+    assert.match(Buffer.from(res.data).toString(), /{"name":"layotto",/)
+    assert.equal(res.metadata.statusCode, '200');
+  });
+});

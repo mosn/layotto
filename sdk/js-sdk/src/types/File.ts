@@ -1,19 +1,20 @@
 import { Readable } from 'stream';
-import { KVString, RequestWithMeta, RequireOnlyOne } from './common';
+import { RequireExactlyOne } from 'type-fest';
+import { KV, RequestWithMeta } from './common';
 
-export type GetFileRequest = {
+export type GetFileRequest = RequestWithMeta<{
   storeName: string;
   name: string;
-  metadata?: KVString;
-} & RequestWithMeta;
+  metadata?: KV<string>;
+}>;
 
-export type PutFileRequest = RequireOnlyOne<{
+export type PutFileRequest = RequestWithMeta<RequireExactlyOne<{
   storeName: string;
   name: string;
   stream?: Readable,
   data?: Uint8Array,
-  metadata?: KVString;
-}, 'stream' | 'data'> & RequestWithMeta;
+  metadata?: KV<string>;
+}, 'stream' | 'data'>>;
 
 export type ListFileResponse = {
   names: string[];

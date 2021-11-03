@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 import { setTimeout } from 'timers/promises';
+import { Map as MapPB } from 'google-protobuf';
+import { KV } from './types/common';
 
 export async function sleep(ms: number) {
   await setTimeout(ms);
@@ -45,3 +47,11 @@ export function isEmptyPBMessage(item, emptyLength = 0) {
   if (item.array.length === emptyLength) return true;
   return false;
 }
+
+export function convertMapToKVString(map: MapPB<string, string>) {
+  const kv: KV<string> = {};
+  for (const [k, v] of map.entries()) {
+    kv[k] = v;
+  }
+  return kv;
+};

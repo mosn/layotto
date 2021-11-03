@@ -13,13 +13,13 @@
  * limitations under the License.
  *
  */
-import { RequestWithMeta, KVString } from './common';
+import { RequestWithMeta, KV } from './common';
 
 export type PubSubCallback = (data: any) => Promise<any | void>;
 
-export type PublishEventRequest = {
+export type PublishEventRequest = RequestWithMeta<{
   pubsubName: string;
   topic: string;
   data: object;
-  metadata?: KVString;
-} & RequestWithMeta;
+  metadata?: KV<string>;
+}>;

@@ -14,15 +14,15 @@
  */
 import { RequestWithMeta } from './common';
 
-export type TryLockRequest = {
+export type TryLockRequest = RequestWithMeta<{
   storeName: string;
   resourceId: string;
   lockOwner: string;
   expire: number;
-} & RequestWithMeta;
+}>;
 
-export type UnlockRequest = {
+export type UnlockRequest = RequestWithMeta<{
   storeName: string;
   resourceId: string;
   lockOwner: string;
-} & RequestWithMeta;
+}>;

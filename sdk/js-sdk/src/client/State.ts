@@ -18,6 +18,7 @@ import {
   Etag as EtagPB,
   StateOptions as StateOptionsPB,
   GetStateRequest as GetStateRequestPB,
+  GetStateResponse as GetStateResponsePB,
   GetBulkStateRequest as GetBulkStateRequestPB,
   DeleteStateRequest as DeleteStateRequestPB,
   DeleteBulkStateRequest as DeleteBulkStateRequestPB,
@@ -36,7 +37,7 @@ import {
   SaveStateRequest,
   StateItem,
 } from '../types/State';
-import { isEmptyPBMessage } from '../utils';
+import { isEmptyPBMessage, convertMapToKVString } from '../utils';
 
 export default class State extends API {
   // Saves an array of state objects
@@ -66,7 +67,7 @@ export default class State extends API {
     this.mergeMetadataToMap(req.getMetadataMap(), request.metadata);
 
     return new Promise((resolve, reject) => {
-      this.runtime.getState(req, this.createMetadata(request), (err, res) => {
+      this.runtime.getState(req, this.createMetadata(request), (err, res: GetStateResponsePB) => {
         if (err) return reject(err);
         if (isEmptyPBMessage(res)) {
           return resolve(null);
@@ -75,6 +76,7 @@ export default class State extends API {
           key: request.key,
           value: res.getData_asU8(),
           etag: res.getEtag(),
+          metadata: convertMapToKVString(res.getMetadataMap()),
         });
       });
     });
@@ -102,7 +104,7 @@ export default class State extends API {
             key: item.getKey(),
             value: item.getData_asU8(),
             etag: item.getEtag(),
-            // metadata: item.getMetadataMap(),
+            metadata: convertMapToKVString(item.getMetadataMap()),
           });
         }
         resolve(states);

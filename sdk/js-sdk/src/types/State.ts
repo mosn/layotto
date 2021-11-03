@@ -12,34 +12,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Except, SetOptional } from 'type-fest';
 import { 
   StateOptions as StateOptionsPB,
 } from '../../proto/runtime_pb';
-import { KVString, RequestWithMeta } from './common';
+import { KV, RequestWithMeta } from './common';
+
+export type StateConcurrency = StateOptionsPB.StateConcurrency;
+export type StateConsistency = StateOptionsPB.StateConsistency;
 
 export type StateOptions = {
-  concurrency: StateOptionsPB.StateConcurrency;
-  consistency: StateOptionsPB.StateConsistency;
+  concurrency: StateConcurrency;
+  consistency: StateConsistency;
 };
 
 export type StateItem = {
   key: string;
   value: Uint8Array | string;
-  etag?: string;
-  options?: StateOptions;
+  etag: string;
+  options: StateOptions;
 }
 
-export type DeleteStateItem = {
-  key: string;
-  etag?: string;
-  options?: StateOptions;
-};
+// etag and options is optional on Save State Request
+export type SaveStateItem = SetOptional<StateItem, 'etag' | 'options'>;
+export type DeleteStateItem = Except<SaveStateItem, 'value'>;
 
 export type ResponseStateItem = {
   key: string;
   value: Uint8Array;
   etag: string;
-  // metadata;
+  metadata: KV<string>;
 }
 
 export enum StateOperationType {
@@ -52,39 +54,39 @@ export type StateOperation = {
   request: StateItem | DeleteStateItem;
 };
 
-export type SaveStateRequest = {
+export type SaveStateRequest = RequestWithMeta<{
   storeName: string;
-  states: StateItem[] | StateItem;
-} & RequestWithMeta;
+  states: SaveStateItem[] | SaveStateItem;
+}>;
 
-export type GetStateRequest = {
+export type GetStateRequest = RequestWithMeta<{
   storeName: string;
   key: string;
-  metadata?: KVString;
-} & RequestWithMeta;
+  metadata?: KV<string>;
+}>;
 
-export type GetBulkStateRequest = {
+export type GetBulkStateRequest = RequestWithMeta<{
   storeName: string;
   keys: string[];
   parallelism?: number;
-  metadata?: KVString;
-} & RequestWithMeta;
+  metadata?: KV<string>;
+}>;
 
-export type DeleteStateRequest = {
+export type DeleteStateRequest = RequestWithMeta<{
   storeName: string;
   key: string;
   etag?: string;
   options?: StateOptions
-  metadata?: KVString;
-} & RequestWithMeta;
+  metadata?: KV<string>;
+}>;
 
-export type DeleteBulkStateRequest = {
+export type DeleteBulkStateRequest = RequestWithMeta<{
   storeName: string;
   states: DeleteStateItem[];
-} & RequestWithMeta;
+}>;
 
-export type ExecuteStateTransactionRequest = {
+export type ExecuteStateTransactionRequest = RequestWithMeta<{
   storeName: string;
   operations: StateOperation[];
-  metadata?: KVString;
-} & RequestWithMeta;
+  metadata?: KV<string>;
+}>;

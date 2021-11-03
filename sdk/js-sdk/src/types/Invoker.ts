@@ -15,12 +15,13 @@
 import { HTTPExtension } from '../../proto/runtime_pb';
 import { RequestWithMeta } from './common';
 
-export type InvokeServiceRequest = {
+export type InvokeServiceRequest = RequestWithMeta<{
   id: string;
   method: string;
   httpVerb?: HTTPExtension.Verb;
   data?: string | object;
-} & RequestWithMeta;
+  contentType?: string,
+}>;
 
 export type InvokeResponse = {
   contentType: string;

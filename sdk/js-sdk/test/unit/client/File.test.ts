@@ -24,7 +24,7 @@ describe('client/File.test.ts', () => {
   let client: Client;
   let tmpfileDir: string;
   const storeName = 'aliOSS';
-  // const bucket = 'layotto-js-sdk-local-test';
+  const bucket = 'layotto-js-sdk-local-test';
 
   beforeAll(async () => {
     client = new Client();
@@ -60,8 +60,12 @@ describe('client/File.test.ts', () => {
       assert(!existsSync(filepath));
 
       const stream = await client.file.get({
-        storeName: 'minio',
+        storeName: 'minioOSS',
         name: '1.jpg',
+        metadata: {
+          bucket,
+          endpoint: 'http://127.0.0.1:9000',
+        },
       });
       assert(stream);
       await pipeline(
@@ -125,6 +129,9 @@ describe('client/File.test.ts', () => {
       const { names } = await client.file.list({
         storeName,
         name: 'layotto-js-sdk-local-test',
+        metadata: {
+          Prefix: 'foo/',
+        },
       });
       console.log(names);
       assert(names.length > 0);
