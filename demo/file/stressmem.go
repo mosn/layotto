@@ -20,7 +20,7 @@ func GetFile(wg *sync.WaitGroup, id int) {
 		return
 	}
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "img.png"}
+	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "fileName"}
 	cli, err := c.GetFile(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)
@@ -35,7 +35,7 @@ func GetFile(wg *sync.WaitGroup, id int) {
 		}
 		pic = append(pic, resp.Data...)
 	}
-	ioutil.WriteFile("img2.png", pic, os.ModePerm)
+	ioutil.WriteFile("fileName", pic, os.ModePerm)
 	fmt.Printf("goroutine[%+v] finish get \n", id)
 }
 
@@ -49,13 +49,13 @@ func PutFile(wg *sync.WaitGroup, id int) {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "img.png", Metadata: meta}
+	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "fileName", Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
 	if err != nil {
 		fmt.Printf("put file failed:%+v", err)
 		return
 	}
-	fileHandle, err := os.Open("img.png")
+	fileHandle, err := os.Open("fileName")
 	defer fileHandle.Close()
 	//Upload in multiples, the minimum size is 100kb
 	buffer := make([]byte, 102400)
