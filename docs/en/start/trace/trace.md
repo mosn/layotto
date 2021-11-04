@@ -16,7 +16,7 @@ In [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runti
   }
 ]
 ```
-This configuration can turn on the trace capability of layotto, allowing layotto to print the  tracing log after receiving the request. The user can specify the method of exporting the trace log and the generation method of fields such as spanId and traceId through configuration.
+This configuration can turn on the trace capability of layotto, allowing layotto to print the tracing log after receiving the request. The user can specify the way of exporting the trace log and generating fields such as spanId and traceId through configuration.
 
 You can start a layotto server as follows:  
 ```
@@ -24,13 +24,13 @@ You can start a layotto server as follows:
 ```
 
 
-The corresponding caller code is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), running it will call the SayHello interface of layotto: 
+The corresponding client code is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), running it will call the SayHello API of layotto: 
 ```
  cd ${projectpath}/demo/flowcontrol/
  go build -o client
  ./client
 ``` 
-Check the log of layotto, you will see the detailed  tracking log printed out: 
+Check the log of layotto, you will see the detailed tracking log printed out: 
 ![img.png](../../../img/trace/trace.png)
 
 
