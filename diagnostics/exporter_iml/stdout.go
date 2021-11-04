@@ -12,6 +12,7 @@ func init() {
 	trace.RegisterExporter("stdout", &StdoutExporter{})
 }
 
+//StdoutExporter is the implementation of Exporter, export span information to log
 type StdoutExporter struct{}
 
 var _ trace.Exporter = &StdoutExporter{}

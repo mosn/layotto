@@ -8,7 +8,7 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/api"
-	trace2 "mosn.io/layotto/components/trace"
+	ltrace "mosn.io/layotto/components/trace"
 	"mosn.io/mosn/pkg/trace"
 )
 
@@ -19,16 +19,18 @@ const (
 )
 
 func init() {
+	//register with mosn
 	trace.RegisterTracerBuilder("SOFATracer", "layotto", NewTracer)
 }
 
+//grpcTracer  is used to start a new Span
 type grpcTracer struct {
 	config map[string]interface{}
 }
 
 func NewTracer(config map[string]interface{}) (api.Tracer, error) {
 	v := getActiveExportersFromConfig(config)
-	trace2.SetActiveExporters(v)
+	ltrace.SetActiveExporters(v)
 	return &grpcTracer{config: config}, nil
 }
 
@@ -53,12 +55,12 @@ func (tracer *grpcTracer) Start(ctx context.Context, request interface{}, startT
 }
 
 func NewSpan(ctx context.Context, startTime time.Time, config map[string]interface{}) api.Span {
-	span := &trace2.Span{StartTime: startTime}
+	span := &ltrace.Span{StartTime: startTime}
 	generator := DefaultGenerator
 	if v, ok := config[Generator]; ok {
 		generator = v.(string)
 	}
-	ge := trace2.GetGenerator(generator)
+	ge := ltrace.GetGenerator(generator)
 	if ge == nil {
 		log.DefaultLogger.Errorf("not support trace type: %+v", generator)
 		return nil
@@ -69,13 +71,13 @@ func NewSpan(ctx context.Context, startTime time.Time, config map[string]interfa
 	span.SetSpanId(spanId)
 	span.SetTraceId(traceId)
 	span.SetParentSpanId(parentSpanId)
-	span.SetTag(trace2.LAYOTTO_GENERATOR_TYPE, generator)
+	span.SetTag(ltrace.LAYOTTO_GENERATOR_TYPE, generator)
 	return span
 }
 
 func GetNewContext(ctx context.Context, span api.Span) context.Context {
-	genType := span.Tag(trace2.LAYOTTO_GENERATOR_TYPE)
-	ge := trace2.GetGenerator(genType)
+	genType := span.Tag(ltrace.LAYOTTO_GENERATOR_TYPE)
+	ge := ltrace.GetGenerator(genType)
 	//if no implement generator, return old ctx
 	if ge == nil {
 		return ctx
