@@ -27,11 +27,8 @@ require (
 	go.etcd.io/etcd/api/v3 v3.5.0
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.etcd.io/etcd/server/v3 v3.5.0
-	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
-	golang.org/x/sys v0.0.0-20211025201205-69cdffdb9359 // indirect
-	golang.org/x/tools v0.1.7 // indirect
 	google.golang.org/grpc v1.38.0
 	mosn.io/api v0.0.0-20210714065837-5b4c2d66e70c
 	mosn.io/mosn v0.24.1-0.20210928035557-38b3b922b595
