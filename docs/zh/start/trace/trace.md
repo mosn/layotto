@@ -104,7 +104,7 @@ exporter接口定了如何将Span的信息上报给远端，对应配置中的ex
 
 #### Span的上下文传递：
 
-##### Layotto测
+##### Layotto侧
 ```go
 GenerateNewContext(ctx context.Context, span api.Span) context.Context
 ```
@@ -116,9 +116,9 @@ ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
 ```
 可以参考代码中的[OpenGenerator](../../../../diagnostics/genetator.go)的实现
 
-##### Component测
+##### Component侧
 
-在Component测可以通过[SetExtraComponentInfo](../../../../components/trace/utils.go)塞入component的信息，
+在Component侧可以通过[SetExtraComponentInfo](../../../../components/trace/utils.go)塞入component的信息，
 比如在接口[Hello](../../../../components/hello/helloworld/helloworld.go)执行了以下操作：
 
 ```go
