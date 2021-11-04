@@ -96,6 +96,10 @@ See the quick start guide [configuration demo with apollo](https://mosn.io/layot
 
 [FaaS design](https://mosn.io/layotto/#/en/design/faas/faas-poc-design.md)
 
+## Presentations
+  * [Layotto - A new chapter of Service Mesh and Application Runtime](https://www.youtube.com/watch?v=5v8gTrFUDk8)
+  * [WebAssembly + Application Runtime = A New Era of FaaS?](https://www.youtube.com/watch?v=g01CJ4S9Qao)
+
 ## Community
 
 ### Contact Us
