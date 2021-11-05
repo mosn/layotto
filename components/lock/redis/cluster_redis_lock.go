@@ -27,7 +27,7 @@ import (
 )
 
 //RedLock
-//at least 5 hosts
+//it will be best to use at least 5 hosts
 type ClusterRedisLock struct {
 	clients  []*redis.Client
 	metadata utils.RedisClusterMetadata
@@ -82,7 +82,7 @@ func (c *ClusterRedisLock) Features() []lock.Feature {
 
 func (c *ClusterRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	//try to get lock on all redis nodes
-	intervalStart := time.Now().UnixNano() / 1e6
+	intervalStart := utils.GetMiliTimestamp(time.Now().UnixNano())
 	intervalLimit := int64(req.Expire) * 1000 / 10
 	wg := sync.WaitGroup{}
 	wg.Add(len(c.clients))
@@ -98,7 +98,7 @@ func (c *ClusterRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockRespo
 		})
 	}
 	wg.Wait()
-	intervalEnd := time.Now().UnixNano() / 1e6
+	intervalEnd := utils.GetMiliTimestamp(time.Now().UnixNano())
 
 	//make sure time interval of locking far less than expire time
 	if intervalLimit < intervalEnd-intervalStart {
@@ -150,12 +150,12 @@ func (c *ClusterRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockRespo
 
 func (c *ClusterRedisLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	wg := sync.WaitGroup{}
-	status, err := c.UnlockAllRedis(req, &wg)
+	_, err := c.UnlockAllRedis(req, &wg)
 	if err != nil {
 		return newInternalErrorUnlockResponse(), err
 	}
 	return &lock.UnlockResponse{
-		Status: status,
+		Status: lock.SUCCESS,
 	}, nil
 }
 

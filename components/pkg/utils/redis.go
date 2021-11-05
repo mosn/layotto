@@ -152,9 +152,6 @@ func ParseRedisClusterMetadata(properties map[string]string) (RedisClusterMetada
 	m := RedisClusterMetadata{}
 	if val, ok := properties[hosts]; ok && val != "" {
 		hosts := strings.Split(val, ",")
-		if len(hosts) < 5 {
-			return m, errors.New("redis store error: lack of hosts(at least 5 hosts)")
-		}
 		m.Hosts = hosts
 	} else {
 		return m, errors.New("redis store error: missing hosts address")
@@ -210,4 +207,8 @@ func ParseRedisClusterMetadata(properties map[string]string) (RedisClusterMetada
 		m.Concurrency = runtime.NumCPU()
 	}
 	return m, nil
+}
+
+func GetMiliTimestamp(i int64) int64 {
+	return i / 1e6
 }
