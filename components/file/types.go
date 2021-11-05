@@ -44,9 +44,29 @@ type DelRequest struct {
 
 type ListRequest struct {
 	DirectoryName string
+	Marker        string
+	PageSize      int32
 	Metadata      map[string]string
 }
 
+type FilesInfo struct {
+	FileName     string
+	Size         int64
+	LastModified string
+	Meta         map[string]string
+}
+
 type ListResp struct {
-	FilesName []string
+	Files       []*FilesInfo
+	Marker      string
+	IsTruncated bool
+}
+
+type FileMetaRequest struct {
+	FileName string
+	Metadata map[string]string
+}
+
+type FileMetaResp struct {
+	Metadata map[string][]string
 }
