@@ -19,3 +19,26 @@
 docker pull zookeeper
 docker run --privileged=true -d --name zookeeper --publish 2181:2181  -d zookeeper:latest
 ```
+
+## 启动 layotto
+
+````shell
+cd ${projectpath}/cmd/layotto
+go build
+````
+
+> 如果 build 报错，可以在项目根目录执行 `go mod vendor`
+
+编译成功后执行:
+
+````shell
+./layotto start -c ../../configs/config_lock_zookeeper.json
+````
+
+## 运行 Demo
+
+````shell
+cd ${projectpath}/demo/lock/zookeeper/
+ go build -o client
+ ./client
+````

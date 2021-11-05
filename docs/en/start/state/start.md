@@ -9,7 +9,7 @@ This example shows how to call redis through Layotto to add, delete, modify and 
 The architecture of this example is shown in the figure below, and the started processes are: redis, Layotto, client program
 
 ![img.png](../../../img/state/img.png)
-### Deploy redis using Docker
+### step 1. Deploy redis using Docker
 
 1. Get the latest version of Redis docker image
 
@@ -40,7 +40,7 @@ Parameter Description:
 
 `-p 6380:6379`: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
 
-### Run Layotto
+### step 2. Run Layotto
 
 After downloading the project code to the local, enter the code directory and compile:
 
@@ -55,7 +55,7 @@ The layotto file will be generated in the directory, run it:
 ./layotto start -c ../../configs/config_state_redis.json
 ```
 
-### Run the client program, call Layotto to add, delete, modify and query
+### step 3. Run the client program, call Layotto to add, delete, modify and query
 
 ```bash
  cd ${projectpath}/demo/state/redis/
@@ -79,7 +79,19 @@ DeleteState succeeded.key:key1
 DeleteState succeeded.key:key2
 ```
 ### Next step
+#### What did this client Demo do?
+The demo client program uses the golang version SDK provided by Layotto, and calls Layotto's State API to add, delete, modify, and read status data.
 
-The client demo uses the golang version SDK provided by Layotto. The SDK is located in the `sdk` directory. Users can directly call the APIs provided by Layotto through the corresponding SDK.
+The sdk is located in the `sdk` directory, and users can call the API provided by Layotto through the sdk.
 
-Besides the SDK,you can also call Layotto server directly using grpc,which makes it easy for different language to interact with Layotto.
+In addition to using sdk, you can also interact with Layotto directly through grpc in any language you like.
+
+In fact, sdk is only a very thin package for grpc, using sdk is about equal to directly using grpc.
+
+#### Want to learn more about State API?
+What does the State API do, what problems it solves, and in what scenarios should I use it?
+
+If you have such confusion and want to know more details about State API, you can read [State API Usage Document](zh/api_reference/state/reference)
+
+#### Details later, let's continue to experience other APIs
+Explore other Quickstarts through the navigation bar on the left.

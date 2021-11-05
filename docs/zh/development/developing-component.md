@@ -33,21 +33,23 @@
 简单起见，可以直接复制粘贴别的组件过来，修改开发。比如想用zookeeper实现分布式锁API的话，可以把redis组件复制粘贴过来改
 
 ### 2.3. 记得编写单元测试哦！
-
-注：单测会在各种环境跑（比如每次有人提交代码后就会在github action提供的docker容器里跑，比如在别的开发者的电脑里跑），所以得保证他们能正常跑通过。需要考虑以下问题：
+#### 2.3.1. 单元测试的注意事项
+单测会在各种环境跑（比如每次有人提交代码后就会在github action提供的docker容器里跑，比如在别的开发者的电脑里跑），所以得保证他们能正常跑通过。需要考虑以下问题：
 - 别人的环境里可能没提前装zookeeper，所以大家在写单测的时候，要么把网络调用的代码给mock掉（比如把调zookeeper的那部分代码在单测里mock掉），要么就会在单测里起一个简易版的zookeeper（比如redis的单测里，会起一个mini-redis)这样来保证别人跑单测的时候都能跑通过~
 
 - 因为每次有人提交代码都会自动跑单元测试、跑通过才能合并，所以在单元测试里应尽量避免sleep太久（睡太久会导致单测跑的特别慢）
 
-注：如何在单元测试中mock掉依赖的环境？（比如mock zookeeper或者mock redis)
+#### 2.3.2. 如何在单元测试中mock掉依赖的环境？（比如mock zookeeper或者mock redis)
 
 一般是把所有网络调用的代码封装成一个interface，然后在ut中mock掉这个interface。以apollo配置中心的单元测试为例，见components/configstores/apollo/configstore.go 和 components/configstores/apollo/configstore_test.go ：
 
 首先，在configstore.go里，把所有调sdk、发起网络调用调apollo的地方给封装成一个interface 
+
 ![mock.png](../../img/development/component/mock.png)
 ![img_8.png](../../img/development/component/img_8.png)
 
 然后，把你代码中调sdk、做网络调用的代码封装成一个struct、实现刚才的interface：
+
 ![img_9.png](../../img/development/component/img_9.png)
 
 做了这一步重构后，你的代码就有可测性了（这也是"测试驱动开发"思想的一种体现，为了让代码可测性好，把代码重构成可以依赖注入的形式）
@@ -57,6 +59,7 @@
 ![img_10.png](../../img/development/component/img_10.png)
 
 把mock后的东西注入到要测的struct里就行,然后测那个struct就行
+
 ![img_11.png](../../img/development/component/img_11.png)
 
 注：一般“集成测试”的时候，会真正做网络调用、调一个正常的zookeeper或者redis；而单测注重测局部逻辑，不会调真实环境
@@ -89,6 +92,7 @@
 可以复制一份别的组件的json配置文件，例如开发分布式锁组件的时候，复制configs/config_lock_redis.json，粘贴成configs/config_lock_zookeeper.json
 
 之后编辑修改一下图中的配置：
+
 ![img_3.png](../../img/development/component/img_3.png)
 
 
@@ -103,6 +107,7 @@
 
 #### b. 如果该组件没有通用客户端，或者需要定制一些metadata传参，那就复制粘贴改一改
 比如zookeeper实现分布式锁，有一些定制配置，所以想自己新写个demo，那就复制粘贴redis的demo、改一改
+
 ![img_7.png](../../img/development/component/img_7.png)
 
 注：demo的代码里如果出现不该有的错误，可以直接panic。后续我们会直接用demo跑集成测试，如果panic了代表集成测试没有通过。

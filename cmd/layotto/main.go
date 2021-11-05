@@ -23,7 +23,15 @@ import (
 	"strconv"
 	"time"
 
+	dbindings "github.com/dapr/components-contrib/bindings"
+	"github.com/dapr/components-contrib/bindings/http"
 	"mosn.io/layotto/components/configstores/etcdv3"
+	"mosn.io/layotto/components/file"
+	alicloud_oss "mosn.io/layotto/components/file/alicloud/oss"
+	minio_oss "mosn.io/layotto/components/file/minio/oss"
+	"mosn.io/layotto/components/sequencer"
+	"mosn.io/layotto/pkg/runtime/bindings"
+	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	"mosn.io/pkg/log"
 
 	// Hello
@@ -84,6 +92,11 @@ import (
 	lock_zookeeper "mosn.io/layotto/components/lock/zookeeper"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 
+	// Sequencer
+	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
+	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
+	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
+
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
 	"mosn.io/layotto/pkg/actuator/health"
@@ -109,10 +122,8 @@ import (
 	_ "mosn.io/pkg/buffer"
 )
 
-var (
-	// loggerForDaprComp is constructed for reusing dapr's components.
-	loggerForDaprComp = logger.NewLogger("reuse.dapr.component")
-)
+// loggerForDaprComp is constructed for reusing dapr's components.
+var loggerForDaprComp = logger.NewLogger("reuse.dapr.component")
 
 func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
@@ -143,10 +154,18 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 		),
+
 		// RPC
 		runtime.WithRpcFactory(
 			rpc.NewRpcFactory("mosn", mosninvoker.NewMosnInvoker),
 		),
+
+		// File
+		runtime.WithFileFactory(
+			file.NewFileFactory("aliOSS", alicloud_oss.NewAliCloudOSS),
+			file.NewFileFactory("minioOSS", minio_oss.NewMinioOss),
+		),
+
 		// PubSub
 		runtime.WithPubSubFactory(
 			pubsub.NewFactory("redis", func() dapr_comp_pubsub.PubSub {
@@ -253,7 +272,26 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return lock_etcd.NewEtcdLock(log.DefaultLogger)
 			}),
 		),
-	)
+
+		// bindings
+		runtime.WithOutputBindings(
+			bindings.NewOutputBindingFactory("http", func() dbindings.OutputBinding {
+				return http.NewHTTP(loggerForDaprComp)
+			}),
+		),
+
+		// Sequencer
+		runtime.WithSequencerFactory(
+			runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
+				return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
+			}),
+			runtime_sequencer.NewFactory("redis", func() sequencer.Store {
+				return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
+			}),
+			runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
+				return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+			}),
+		))
 	// 4. check if unhealthy
 	if err != nil {
 		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(err.Error())
@@ -262,48 +300,46 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	return server, err
 }
 
-var (
-	cmdStart = cli.Command{
-		Name:  "start",
-		Usage: "start runtime",
-		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name:   "config, c",
-				Usage:  "Load configuration from `FILE`",
-				EnvVar: "RUNTIME_CONFIG",
-				Value:  "configs/config.json",
-			}, cli.StringFlag{
-				Name:   "feature-gates, f",
-				Usage:  "config feature gates",
-				EnvVar: "FEATURE_GATES",
-			},
+var cmdStart = cli.Command{
+	Name:  "start",
+	Usage: "start runtime",
+	Flags: []cli.Flag{
+		cli.StringFlag{
+			Name:   "config, c",
+			Usage:  "Load configuration from `FILE`",
+			EnvVar: "RUNTIME_CONFIG",
+			Value:  "configs/config.json",
+		}, cli.StringFlag{
+			Name:   "feature-gates, f",
+			Usage:  "config feature gates",
+			EnvVar: "FEATURE_GATES",
 		},
-		Action: func(c *cli.Context) error {
-			stm := mosn.NewStageManager(c, c.String("config"))
+	},
+	Action: func(c *cli.Context) error {
+		stm := mosn.NewStageManager(c, c.String("config"))
 
-			stm.AppendParamsParsedStage(func(c *cli.Context) {
-				err := featuregate.Set(c.String("feature-gates"))
-				if err != nil {
-					os.Exit(1)
-				}
-			})
+		stm.AppendParamsParsedStage(func(c *cli.Context) {
+			err := featuregate.Set(c.String("feature-gates"))
+			if err != nil {
+				os.Exit(1)
+			}
+		})
 
-			stm.AppendInitStage(mosn.DefaultInitStage)
+		stm.AppendInitStage(mosn.DefaultInitStage)
 
-			stm.AppendPreStartStage(mosn.DefaultPreStartStage) // called finally stage by default
+		stm.AppendPreStartStage(mosn.DefaultPreStartStage) // called finally stage by default
 
-			stm.AppendStartStage(mosn.DefaultStartStage)
+		stm.AppendStartStage(mosn.DefaultStartStage)
 
-			stm.Run()
+		stm.Run()
 
-			actuator.GetRuntimeReadinessIndicator().SetStarted()
-			actuator.GetRuntimeLivenessIndicator().SetStarted()
-			// wait mosn finished
-			stm.WaitFinish()
-			return nil
-		},
-	}
-)
+		actuator.GetRuntimeReadinessIndicator().SetStarted()
+		actuator.GetRuntimeLivenessIndicator().SetStarted()
+		// wait mosn finished
+		stm.WaitFinish()
+		return nil
+	},
+}
 
 func main() {
 	app := newRuntimeApp(&cmdStart)
@@ -328,11 +364,11 @@ func newRuntimeApp(startCmd *cli.Command) *cli.App {
 	app.Usage = "A fast and efficient cloud native application runtime based on MOSN."
 	app.Flags = cmdStart.Flags
 
-	//commands
+	// commands
 	app.Commands = []cli.Command{
 		cmdStart,
 	}
-	//action
+	// action
 	app.Action = func(c *cli.Context) error {
 		if c.NumFlags() == 0 {
 			return cli.ShowAppHelp(c)

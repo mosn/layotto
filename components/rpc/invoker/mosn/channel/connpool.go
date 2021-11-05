@@ -25,66 +25,84 @@ import (
 	"sync"
 	"sync/atomic"
 
+	common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
+)
+
+const (
+	defaultBufSize = 16 * 1024
+	maxBufSize     = 512 * 1024
 )
 
 var (
 	connpoolTimeout = errors.New("connection pool timeout")
 )
 
+// wrapConn is wrap connect
 type wrapConn struct {
 	net.Conn
-	buf   buffer.IoBuffer
-	state interface{}
-
-	closed    int32
-	closeChan chan struct{}
+	buf    buffer.IoBuffer
+	state  interface{}
+	closed int32
 }
 
+// isClose is checked wrapConn close or not
 func (w *wrapConn) isClose() bool {
 	return atomic.LoadInt32(&w.closed) == 1
 }
 
+// close is real close connect
 func (w *wrapConn) close() error {
 	var err error
 	if atomic.CompareAndSwapInt32(&w.closed, 0, 1) {
 		err = w.Conn.Close()
-		close(w.closeChan)
 	}
 	return err
 }
 
+// newConnPool is reduced the overhead of creating connections and improve program performance
 // im-memory fake conn pool
 func newConnPool(
+	// max active connected count
 	maxActive int,
+	// create new conn
 	dialFunc func() (net.Conn, error),
+	// state
 	stateFunc func() interface{},
-	onDataFunc func(*wrapConn) error) *connPool {
+	// handle data
+	onDataFunc func(*wrapConn) error,
+	// clean connected
+	cleanupFunc func(*wrapConn, error)) *connPool {
 
 	p := &connPool{
-		maxActive:  maxActive,
-		dialFunc:   dialFunc,
-		stateFunc:  stateFunc,
-		onDataFunc: onDataFunc,
-		sema:       make(chan struct{}, maxActive),
-		free:       list.New(),
+		maxActive:   maxActive,
+		dialFunc:    dialFunc,
+		stateFunc:   stateFunc,
+		onDataFunc:  onDataFunc,
+		cleanupFunc: cleanupFunc,
+		sema:        make(chan struct{}, maxActive),
+		free:        list.New(),
 	}
 	return p
 }
 
+
+// connPool is connected pool
 type connPool struct {
-	maxActive  int
-	dialFunc   func() (net.Conn, error)
-	stateFunc  func() interface{}
-	onDataFunc func(*wrapConn) error
+	maxActive   int
+	dialFunc    func() (net.Conn, error)
+	stateFunc   func() interface{}
+	onDataFunc  func(*wrapConn) error
+	cleanupFunc func(*wrapConn, error)
 
 	sema chan struct{}
 	mu   sync.Mutex
 	free *list.List
 }
 
+// Get is get wrapConn by context.Context
 func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 	if err := p.waitTurn(ctx); err != nil {
 		return nil, err
@@ -109,7 +127,7 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 		p.freeTurn()
 		return nil, err
 	}
-	wc := &wrapConn{Conn: c, closeChan: make(chan struct{})}
+	wc := &wrapConn{Conn: c}
 	if p.stateFunc != nil {
 		wc.state = p.stateFunc()
 	}
@@ -121,6 +139,7 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 	return wc, nil
 }
 
+// Put when connected less than maxActive
 func (p *connPool) Put(c *wrapConn, close bool) {
 	if close {
 		c.close()
@@ -139,23 +158,43 @@ func (p *connPool) Put(c *wrapConn, close bool) {
 	p.freeTurn()
 }
 
+// readloop is loop to read connected then exec onDataFunc
 func (p *connPool) readloop(c *wrapConn) {
-	defer c.close()
+	var err error
 
-	c.buf = buffer.NewIoBuffer(16 * 1024)
-	for {
-		_, err := c.buf.ReadOnce(c)
-		if err != nil {
-			if err == io.EOF {
-				log.DefaultLogger.Debugf("[runtime][rpc]connpool readloop err: %s", err.Error())
-			} else {
-				log.DefaultLogger.Errorf("[runtime][rpc]connpool readloop err: %s", err.Error())
-			}
-			return
+	defer func() {
+		c.close()
+		if p.cleanupFunc != nil {
+			p.cleanupFunc(c, err)
 		}
-		if err = p.onDataFunc(c); err != nil {
-			log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", err.Error())
-			return
+	}()
+
+	c.buf = buffer.NewIoBuffer(defaultBufSize)
+	for {
+		n, readErr := c.buf.ReadOnce(c)
+		if readErr != nil {
+			err = readErr
+			if readErr == io.EOF {
+				log.DefaultLogger.Debugf("[runtime][rpc]connpool readloop err: %s", readErr.Error())
+			} else {
+				log.DefaultLogger.Errorf("[runtime][rpc]connpool readloop err: %s", readErr.Error())
+			}
+		}
+
+		if n > 0 {
+			if onDataErr := p.onDataFunc(c); onDataErr != nil {
+				err = onDataErr
+				log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", onDataErr.Error())
+			}
+		}
+
+		if err != nil {
+			break
+		}
+
+		if c.buf != nil && c.buf.Len() == 0 && c.buf.Cap() > maxBufSize {
+			c.buf.Free()
+			c.buf.Alloc(defaultBufSize)
 		}
 	}
 }
@@ -163,7 +202,7 @@ func (p *connPool) readloop(c *wrapConn) {
 func (p *connPool) waitTurn(ctx context.Context) error {
 	select {
 	case <-ctx.Done():
-		return connpoolTimeout
+		return common.Error(common.TimeoutCode, connpoolTimeout.Error())
 	case p.sema <- struct{}{}:
 		return nil
 	}

@@ -1,0 +1,2 @@
+# Component specs
+This document includes descriptions of the configuration options of each component of Layotto (such as what are the configuration options of the redis Lock API component and what they mean), and how to start the environment that these components depend on (such as how to start redis)

@@ -4,48 +4,194 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.mosn.layotto</groupId>
-    <artifactId>java-sdk</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
+    <artifactId>runtime-sdk-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
+    <name>runtime-sdk-parent</name>
+    <description>SDK for Runtime</description>
+    <url>https://github.com/mosn/layotto</url>
+
+    <modules>
+        <module>sdk</module>
+        <module>examples</module>
+    </modules>
 
     <properties>
-        <protobuf-java.version>3.17.2</protobuf-java.version>
+        <protobuf.version>3.17.2</protobuf.version>
+        <grpc.version>1.37.0</grpc.version>
+        <slf4j.version>1.7.30</slf4j.version>
+        <fastjson.version>1.2.76</fastjson.version>
+        <junit.version>4.13.1</junit.version>
+        <mockito.version>3.11.2</mockito.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>${protobuf-java.version}</version>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <!-- module -->
+            <dependency>
+                <groupId>io.mosn.layotto</groupId>
+                <artifactId>runtime-sdk</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.mosn.layotto</groupId>
+                <artifactId>examples</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
+            <!-- json -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <!-- slf4j -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- grpc -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-netty</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-protobuf</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-stub</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+
+            <!-- unit test -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.0</version>
                 <configuration>
-                    <source>6</source>
-                    <target>6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>seeflood</name>
+            <email>349895584@qq.com</email>
+            <organization>MOSN</organization>
+            <organizationUrl>https://mosn.io/</organizationUrl>
+        </developer>
+        <developer>
+            <name>MentosL</name>
+            <email>1367654518@qq.com</email>
+            <organization>MOSN</organization>
+            <organizationUrl>https://mosn.io/</organizationUrl>
+        </developer>
+        <developer>
+            <name>ZLBer</name>
+            <email>1098294815@qq.com</email>
+            <organization>MOSN</organization>
+            <organizationUrl>https://mosn.io/</organizationUrl>
+        </developer>
+        <developer>
+            <name>kevinten10</name>
+            <organizationUrl>http://www.kevinten.com/</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>http://github.com/mosn/layotto</url>
+        <connection>scm:git:https://github.com/mosn/layotto.git</connection>
+    </scm>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.4</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.7</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>

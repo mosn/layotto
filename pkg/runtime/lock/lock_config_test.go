@@ -1,3 +1,16 @@
+//
+// Copyright 2021 Layotto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package lock
 
 import (
@@ -63,43 +76,43 @@ func TestGetModifiedLockKey(t *testing.T) {
 
 func TestNonePrefix(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store1", "appid1")
-	require.Equal(t, key, modifiedLockKey)
+	require.Equal(t, "lock|||"+key, modifiedLockKey)
 }
 
 func TestAppidPrefix(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store2", "appid1")
-	require.Equal(t, "appid1||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||appid1||lock-key-1234567", modifiedLockKey)
 }
 
 func TestAppidPrefix_WithEnptyAppid(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store2", "")
-	require.Equal(t, "lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||lock-key-1234567", modifiedLockKey)
 }
 
 func TestDefaultPrefix(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store3", "appid1")
-	require.Equal(t, "appid1||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||appid1||lock-key-1234567", modifiedLockKey)
 }
 
 func TestStoreNamePrefix(t *testing.T) {
 	key := "lock-key-1234567"
 
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store4", "appid1")
-	require.Equal(t, "store4||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||store4||lock-key-1234567", modifiedLockKey)
 }
 
 func TestOtherFixedPrefix(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store5", "appid1")
-	require.Equal(t, "other-fixed-prefix||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||other-fixed-prefix||lock-key-1234567", modifiedLockKey)
 }
 
 func TestLegacyPrefix(t *testing.T) {
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store6", "appid1")
-	require.Equal(t, "appid1||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||appid1||lock-key-1234567", modifiedLockKey)
 }
 
 func TestPrefix_StoreNotInitial(t *testing.T) {
 	// no config for store999
 	modifiedLockKey, _ := GetModifiedLockKey(key, "store999", "appid99")
-	require.Equal(t, "appid99||lock-key-1234567", modifiedLockKey)
+	require.Equal(t, "lock|||appid99||lock-key-1234567", modifiedLockKey)
 }

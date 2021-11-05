@@ -1,7 +1,22 @@
+//
+// Copyright 2021 Layotto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package etcdv3
 
 import (
 	"context"
+	"fmt"
+	"mosn.io/pkg/utils"
 	"strconv"
 	"strings"
 	"sync"
@@ -10,6 +25,7 @@ import (
 	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/trace"
 	"mosn.io/pkg/log"
 )
 
@@ -118,6 +134,7 @@ func (c *EtcdV3ConfigStore) Get(ctx context.Context, req *configstores.GetReques
 		targetString[configstores.Key] = key
 		res = append(res, c.GetItemsFromAllKeys(keyValues.Kvs, targetString)...)
 	}
+	trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v, store: %+v", "Get", "etcd"))
 	return res, nil
 }
 
@@ -192,7 +209,9 @@ func (c *EtcdV3ConfigStore) Subscribe(req *configstores.SubscribeReq, ch chan *c
 		c.subscribeKey[s] = key
 	}
 	if !c.watchStarted {
-		go c.watch()
+		utils.GoWithRecover(func() {
+			c.watch()
+		}, nil)
 		c.watchStarted = true
 	}
 	return nil

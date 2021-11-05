@@ -1,39 +1,32 @@
+//
+// Copyright 2021 Layotto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package etcd
 
 import (
 	"context"
-	"crypto/tls"
-	"crypto/x509"
-	"errors"
 	"fmt"
-	"io/ioutil"
-	"strconv"
-	"strings"
-	"time"
-
 	"go.etcd.io/etcd/client/v3"
+	"mosn.io/layotto/components/pkg/utils"
 
 	"mosn.io/layotto/components/lock"
 	"mosn.io/pkg/log"
 )
 
-const (
-	defaultDialTimeout = 5
-	defaultKeyPrefix   = "/layotto/"
-
-	prefixKey         = "keyPrefix"
-	usernameKey       = "username"
-	passwordKey       = "password"
-	dialTimeoutKey    = "dialTimeout"
-	endpointsKey      = "endpoints"
-	tlsCertPathKey    = "tlsCert"
-	tlsCertKeyPathKey = "tlsCertKey"
-	tlsCaPathKey      = "tlsCa"
-)
-
+// Etcd lock store
 type EtcdLock struct {
 	client   *clientv3.Client
-	metadata metadata
+	metadata utils.EtcdMetadata
 
 	features []lock.Feature
 	logger   log.ErrorLogger
@@ -52,15 +45,16 @@ func NewEtcdLock(logger log.ErrorLogger) *EtcdLock {
 	return s
 }
 
+// Init EtcdLock
 func (e *EtcdLock) Init(metadata lock.Metadata) error {
 	// 1. parse config
-	m, err := parseEtcdMetadata(metadata)
+	m, err := utils.ParseEtcdMetadata(metadata.Properties)
 	if err != nil {
 		return err
 	}
 	e.metadata = m
 	// 2. construct client
-	if e.client, err = e.newClient(m); err != nil {
+	if e.client, err = utils.NewEtcdClient(m); err != nil {
 		return err
 	}
 
@@ -69,10 +63,12 @@ func (e *EtcdLock) Init(metadata lock.Metadata) error {
 	return err
 }
 
+// Features is to get EtcdLock's features
 func (e *EtcdLock) Features() []lock.Feature {
 	return e.features
 }
 
+// Node tries to acquire a etcd lock
 func (e *EtcdLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	var leaseId clientv3.LeaseID
 	//1.Create new lease
@@ -103,14 +99,18 @@ func (e *EtcdLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, err
 	}, nil
 }
 
+// Node tries to release a etcd lock
 func (e *EtcdLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	key := e.getKey(req.ResourceId)
 
+	// 1.Create new KV
 	kv := clientv3.NewKV(e.client)
+	// 2.Create txn
 	txn := kv.Txn(e.ctx)
 	txn.If(clientv3.Compare(clientv3.Value(key), "=", req.LockOwner)).Then(
 		clientv3.OpDelete(key)).Else(
 		clientv3.OpGet(key))
+	// 3.Commit and try release lock
 	txnResponse, err := txn.Commit()
 	if err != nil {
 		return newInternalErrorUnlockResponse(), fmt.Errorf("[etcdLock]: Unlock returned error: %s.ResourceId: %s", err, req.ResourceId)
@@ -128,123 +128,21 @@ func (e *EtcdLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error)
 	}
 }
 
+// Close shuts down the client's etcd connections.
 func (e *EtcdLock) Close() error {
 	e.cancel()
 
 	return e.client.Close()
 }
 
-func (e *EtcdLock) newClient(meta metadata) (*clientv3.Client, error) {
-
-	config := clientv3.Config{
-		Endpoints:   meta.endpoints,
-		DialTimeout: time.Second * time.Duration(meta.dialTimeout),
-		Username:    meta.username,
-		Password:    meta.password,
-	}
-
-	if meta.tlsCa != "" || meta.tlsCert != "" || meta.tlsCertKey != "" {
-		//enable tls
-		cert, err := tls.LoadX509KeyPair(meta.tlsCert, meta.tlsCertKey)
-		if err != nil {
-			return nil, fmt.Errorf("error reading tls certificate, cert: %s, certKey: %s, err: %s", meta.tlsCert, meta.tlsCertKey, err)
-		}
-
-		caData, err := ioutil.ReadFile(meta.tlsCa)
-		if err != nil {
-			return nil, fmt.Errorf("error reading tls ca %s, err: %s", meta.tlsCa, err)
-		}
-
-		pool := x509.NewCertPool()
-		pool.AppendCertsFromPEM(caData)
-
-		tlsConfig := &tls.Config{
-			Certificates: []tls.Certificate{cert},
-			RootCAs:      pool,
-		}
-		config.TLS = tlsConfig
-	}
-
-	if client, err := clientv3.New(config); err != nil {
-		return nil, err
-	} else {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(meta.dialTimeout))
-		defer cancel()
-		//ping
-		_, err = client.Get(ctx, "ping")
-		if err != nil {
-			return nil, fmt.Errorf("etcd lock error: connect to etcd timeoout %s", meta.endpoints)
-		}
-
-		return client, nil
-	}
-}
-
+// getkey is to return string of type KeyPrefix + resourceId
 func (e *EtcdLock) getKey(resourceId string) string {
-	return fmt.Sprintf("%s%s", e.metadata.keyPrefix, resourceId)
+	return fmt.Sprintf("%s%s", e.metadata.KeyPrefix, resourceId)
 }
 
+// newInternalErrorUnlockResponse is to return lock release error
 func newInternalErrorUnlockResponse() *lock.UnlockResponse {
 	return &lock.UnlockResponse{
 		Status: lock.INTERNAL_ERROR,
 	}
-}
-
-func parseEtcdMetadata(meta lock.Metadata) (metadata, error) {
-	m := metadata{}
-	var err error
-
-	if val, ok := meta.Properties[endpointsKey]; ok && val != "" {
-		m.endpoints = strings.Split(val, ";")
-	} else {
-		return m, errors.New("etcd lock error: missing endpoints address")
-	}
-
-	if val, ok := meta.Properties[dialTimeoutKey]; ok && val != "" {
-		if m.dialTimeout, err = strconv.Atoi(val); err != nil {
-			return m, fmt.Errorf("etcd lock error: ncorrect dialTimeout value %s", val)
-		}
-	} else {
-		m.dialTimeout = defaultDialTimeout
-	}
-
-	if val, ok := meta.Properties[prefixKey]; ok && val != "" {
-		m.keyPrefix = val
-	} else {
-		m.keyPrefix = defaultKeyPrefix
-	}
-
-	if val, ok := meta.Properties[usernameKey]; ok && val != "" {
-		m.username = val
-	}
-
-	if val, ok := meta.Properties[passwordKey]; ok && val != "" {
-		m.password = val
-	}
-
-	if val, ok := meta.Properties[tlsCaPathKey]; ok && val != "" {
-		m.tlsCa = val
-	}
-
-	if val, ok := meta.Properties[tlsCertPathKey]; ok && val != "" {
-		m.tlsCert = val
-	}
-
-	if val, ok := meta.Properties[tlsCertKeyPathKey]; ok && val != "" {
-		m.tlsCertKey = val
-	}
-
-	return m, nil
-}
-
-type metadata struct {
-	keyPrefix   string
-	dialTimeout int
-	endpoints   []string
-	username    string
-	password    string
-
-	tlsCa      string
-	tlsCert    string
-	tlsCertKey string
 }

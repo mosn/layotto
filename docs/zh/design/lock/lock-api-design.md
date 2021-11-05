@@ -4,7 +4,7 @@
 续租API有争议，第一版不加入续租API
 
 # 1. 调研
-| **系统** | **能否实现分布式锁** | **阻塞锁(基于watch)** | **可用性** | **写操作线性一致** | **sequencer([chubby论文里提出的feature]([https://static.googleusercontent.com/media/research.google.com/zh-TW//archive/chubby-osdi06.pdf](https://static.googleusercontent.com/media/research.google.com/zh-TW//archive/chubby-osdi06.pdf)))** | **续租** |
+| **系统** | **能否实现分布式锁** | **阻塞锁(基于watch)** | **可用性** | **写操作线性一致** | **sequencer([chubby论文里提出的feature](https://static.googleusercontent.com/media/research.google.com/zh-TW//archive/chubby-osdi06.pdf))** | **续租** |
 | --- | --- | --- | --- | --- | --- | --- |
 | 单机redis | yes | x | 单点失效时，锁服务不可用 | yes | yes(need poc) | yes |
 | redis集群 | yes | x | yes | no. 故障转移可能导致丢锁 | yes(need poc) | yes |
