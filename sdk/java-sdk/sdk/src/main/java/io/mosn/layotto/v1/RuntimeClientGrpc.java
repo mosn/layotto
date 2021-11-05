@@ -157,10 +157,10 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
         }
         try {
             // 2. prepare request
-            // TODO serialization
             RuntimeProto.SaveStateRequest.Builder builder = RuntimeProto.SaveStateRequest.newBuilder();
             builder.setStoreName(stateStoreName);
             for (State<?> state : states) {
+                // convert request and do serialization
                 RuntimeProto.StateItem stateItem = buildStateRequest(state)
                         .build();
                 builder.addStates(stateItem);

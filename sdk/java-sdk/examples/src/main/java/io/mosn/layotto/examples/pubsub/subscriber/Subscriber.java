@@ -31,14 +31,23 @@ public class Subscriber {
         RuntimeServerGrpc srv = new RuntimeServerGrpc(9999);
         RawPubSub pubsub = new RawPubSub("redis");
         pubsub.subscribe("hello", request -> {
+            assertEquals(request.getData(), "world".getBytes());
             System.out.println(JSON.toJSONString(request));
         });
         pubsub.subscribe("topic1", request -> {
+            assertEquals(request.getData(), "message1".getBytes());
             System.out.println(JSON.toJSONString(request));
         });
         srv.registerPubSubCallback(pubsub.getComponentName(), pubsub);
         Semaphore sm = new Semaphore(0);
         srv.start();
         sm.acquire();
+    }
+
+    private static void assertEquals(Object actualResult, Object expected) {
+        if (actualResult == expected || actualResult.equals(expected)) {
+            return;
+        }
+        throw new RuntimeException("Unexpected result:" + actualResult);
     }
 }
