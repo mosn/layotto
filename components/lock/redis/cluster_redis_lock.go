@@ -83,6 +83,7 @@ func (c *ClusterRedisLock) Features() []lock.Feature {
 func (c *ClusterRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	//try to get lock on all redis nodes
 	intervalStart := utils.GetMiliTimestamp(time.Now().UnixNano())
+	//intervalLimit must be 1/10 of expire time to make sure time of lock far less than expire time
 	intervalLimit := int64(req.Expire) * 1000 / 10
 	wg := sync.WaitGroup{}
 	wg.Add(len(c.clients))
@@ -150,6 +151,10 @@ func (c *ClusterRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockRespo
 
 func (c *ClusterRedisLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	wg := sync.WaitGroup{}
+	//err means there were some internal errors,then the status must be INTERNAL_ERROR
+	//the LOCK_UNEXIST and LOCK_BELONG_TO_OTHERS status codes can be ignore
+	//becauce they means the lock of the current redis
+	//returned the status code don't need to be unlocked by current invoking
 	_, err := c.UnlockAllRedis(req, &wg)
 	if err != nil {
 		return newInternalErrorUnlockResponse(), err

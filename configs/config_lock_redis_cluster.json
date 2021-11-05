@@ -29,6 +29,7 @@
                       "lock": {
                         "redis_cluster": {
                           "metadata": {
+                            "concurrency": "0",
                             "redisHosts": "localhost:6381,localhost:6382,localhost:6383,localhost:6384,localhost:6385",
                             "redisPassword": ""
                           }
