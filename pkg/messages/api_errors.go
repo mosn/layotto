@@ -47,4 +47,10 @@ const (
 
 	// Binding.
 	ErrInvokeOutputBinding = "error when invoke output binding %s: %s"
+
+	// Secret
+	ErrSecretStoreNotConfigured = "error when get secret but not find configured : %s"
+	ErrSecretStoreNotFound = "error when get secret but not find : %s"
+	ErrSecretGet = "error when get secret : %s"
+	ErrBulkSecretGet = "error when bulk get secret %s: %s"
 )
