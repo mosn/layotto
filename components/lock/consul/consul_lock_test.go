@@ -1,10 +1,13 @@
 package consul
 
 import (
+	"fmt"
+	"github.com/hashicorp/consul/api"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/pkg/log"
 	"testing"
+	"time"
 )
 
 const resouseId = "resoure_1"
@@ -66,7 +69,15 @@ func TestConsulLock_ALock_BUnlock(t *testing.T) {
 	})
 
 	assert.NoError(t, err)
-	assert.Equal(t, lock.LOCK_BELONG_TO_OTHERS, unlock.Status)
+	assert.Equal(t, lock.LOCK_UNEXIST, unlock.Status)
+
+	unlock2, err := comp.Unlock(&lock.UnlockRequest{
+		ResourceId: resouseId,
+		LockOwner:  lockOwerA,
+	})
+
+	assert.NoError(t, err)
+	assert.Equal(t, lock.SUCCESS, unlock2.Status)
 }
 
 //func Test_RedisComplete(t *testing.T) {
@@ -124,28 +135,48 @@ func TestConsulLock_ALock_BUnlock(t *testing.T) {
 //
 //}
 //
-//func TestConsul(t *testing.T) {
-//	// Get a new client
-//	client, err := api.NewClient(api.DefaultConfig())
-//
-//	// Get a handle to the KV API
-//	kv := client.KV()
-//	// PUT a new KV pair
-//	p := &api.KVPair{Key: "REDIS_MAXCLIENTS", Value: []byte("1000")}
-//	_, err = kv.Put(p, nil)
-//
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	// Lookup the pair
-//	pair, _, err := kv.Get("REDIS_MAXCLIENTS", nil)
-//	if err != nil {
-//		panic(err)
-//	}
-//	fmt.Printf("KV: %v %s\n", pair.Key, pair.Value)
-//
-//}
+func TestConsul(t *testing.T) {
+	// Get a new client
+	client, err := api.NewClient(api.DefaultConfig())
+
+	session, _, _ := client.Session().Create(&api.SessionEntry{
+		TTL:       getTTL(5),
+		LockDelay: 0,
+		Name:      lockOwerA,
+	}, nil)
+	info, _, _ := client.Session().Info(session, nil)
+	fmt.Println(info.Name)
+
+	// Get a handle to the KV API
+	kv := client.KV()
+	// PUT a new KV pair
+	p := &api.KVPair{Key: "REDIS_MAXCLIENTS", Value: []byte("1000"), Session: session}
+
+	kv.Acquire(p, nil)
+
+	time.Sleep(time.Second * 10)
+	if err != nil {
+		panic(err)
+	}
+
+	session2, _, _ := client.Session().Create(&api.SessionEntry{
+		TTL:       getTTL(5),
+		LockDelay: 0,
+	}, nil)
+	p2 := &api.KVPair{Key: "REDIS_MAXCLIENTS", Value: []byte("1000"), Session: session2}
+	acquire, _, err := kv.Acquire(p2, nil)
+	fmt.Println(acquire)
+	// Lookup the pair
+	pair, _, err := kv.Release(p, nil)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(pair)
+	fmt.Println(err)
+	//fmt.Printf("KV: %v %s %s %v\n", pair.Key, pair.Value,pair.Session,pair.LockIndex)
+
+}
+
 //
 //func TestConsulLock(t *testing.T) {
 //

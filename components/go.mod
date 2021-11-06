@@ -15,13 +15,12 @@ require (
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/golang/mock v1.4.4
 	github.com/google/uuid v1.2.0
+	github.com/hashicorp/consul/api v1.3.0
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/minio/minio-go/v6 v6.0.57
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
-	github.com/hashicorp/consul/api v1.1.0
-	github.com/hashicorp/consul/sdk v0.1.1
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.26.0
 	github.com/yuin/gopher-lua v0.0.0-20200603152657-dc2b0ca8b37e // indirect

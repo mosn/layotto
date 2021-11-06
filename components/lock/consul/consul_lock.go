@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/hashicorp/consul/api"
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/pkg/log"
 	"strconv"
 	"sync"
@@ -17,40 +18,22 @@ const (
 	defaultScheme = "http"
 )
 
-type ConsulTxn interface {
-	Txn(txn api.TxnOps, q *api.QueryOptions) (bool, *api.TxnResponse, *api.QueryMeta, error)
-}
-type SessionFactory interface {
-	Create(se *api.SessionEntry, q *api.WriteOptions) (string, *api.WriteMeta, error)
-}
-
 type ConsulLock struct {
 	metadata       metadata
 	logger         log.ErrorLogger
-	client         *api.Client
-	sessionFactory SessionFactory
-	txn            ConsulTxn
-	mMap           map[string]lockMessage
-	mutex          sync.Mutex
-}
-
-type lockMessage struct {
-	LockOwner string
-	Session   string
-	Index     uint64
+	client         utils.ConsulClient
+	sessionFactory utils.SessionFactory
+	kv             utils.ConsulKV
+	sMap           sync.Map
 }
 
 func NewConsulLock(logger log.ErrorLogger) *ConsulLock {
-	consulLock := &ConsulLock{
-		mMap: make(map[string]lockMessage, 0),
-	}
+	consulLock := &ConsulLock{}
 	return consulLock
-
 }
 
 func (c *ConsulLock) Init(metadata lock.Metadata) error {
 	consulMetadata, err := parseConsulMetadata(metadata)
-
 	if err != nil {
 		return err
 	}
@@ -61,7 +44,7 @@ func (c *ConsulLock) Init(metadata lock.Metadata) error {
 	})
 	c.client = client
 	c.sessionFactory = client.Session()
-	c.txn = client.Txn()
+	c.kv = client.KV()
 	return nil
 }
 func (c *ConsulLock) Features() []lock.Feature {
@@ -82,81 +65,56 @@ func (c *ConsulLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, e
 	session, _, err := c.sessionFactory.Create(&api.SessionEntry{
 		TTL:       getTTL(req.Expire),
 		LockDelay: 0,
+		Behavior:  "delete", //Controls the behavior to delete when a session is invalidated.
 	}, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	//use transaction to lock
-	_, response, _, err := c.txn.Txn(api.TxnOps{
-		&api.TxnOp{
-			KV: &api.KVTxnOp{
-				Verb:    api.KVLock,
-				Key:     req.ResourceId,
-				Value:   []byte(req.LockOwner),
-				Session: session,
-			},
-		},
-	}, nil)
+	// put a new KV pair with ttl session
+	p := &api.KVPair{Key: req.ResourceId, Value: []byte(req.LockOwner), Session: session}
+	//acquire lock
+	acquire, _, err := c.kv.Acquire(p, nil)
 
-	//lock successs
-	if len(response.Errors) == 0 {
-		c.mutex.Lock()
-		defer c.mutex.Unlock()
-		//renew map
-		c.mMap[req.ResourceId] = lockMessage{
-			LockOwner: req.LockOwner,
-			Session:   session,
-			Index:     response.Results[0].KV.ModifyIndex,
-		}
+	if err != nil {
+		return nil, err
+	}
+
+	if acquire {
+		//bind lockOwner+resourceId and session
+		c.sMap.Store(req.LockOwner+"-"+req.ResourceId, session)
 		return &lock.TryLockResponse{
 			Success: true,
 		}, nil
-		//lock fail
 	} else {
 		return &lock.TryLockResponse{
 			Success: false,
 		}, nil
 	}
+
 }
 func (c *ConsulLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
+	session, ok := c.sMap.Load(req.LockOwner + "-" + req.ResourceId)
 
-	lockMes, ok := c.mMap[req.ResourceId]
-	//lockMes exits but owner not this
-	if ok {
-		if lockMes.LockOwner != req.LockOwner {
-			return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
-		}
-		//lockMes not exits
-	} else {
+	if !ok {
 		return &lock.UnlockResponse{Status: lock.LOCK_UNEXIST}, nil
 	}
-
-	_, response, _, err := c.txn.Txn(api.TxnOps{
-		&api.TxnOp{
-			KV: &api.KVTxnOp{
-				Verb:    api.KVDeleteCAS,
-				Key:     req.ResourceId,
-				Index:   lockMes.Index,
-				Session: lockMes.Session,
-			},
-		},
-	}, nil)
+	// put a new KV pair with ttl session
+	p := &api.KVPair{Key: req.ResourceId, Value: []byte(req.LockOwner), Session: session.(string)}
+	//release lock
+	release, _, err := c.kv.Release(p, nil)
 
 	if err != nil {
 		return &lock.UnlockResponse{Status: lock.INTERNAL_ERROR}, nil
 	}
 
-	if len(response.Errors) == 0 {
-		delete(c.mMap, req.ResourceId)
+	if release {
+		c.sMap.Delete(req.LockOwner + "-" + req.ResourceId)
 		return &lock.UnlockResponse{Status: lock.SUCCESS}, nil
-		// this step contains preblem,consul cant distinct lock isn't held, or is held by another session
 	} else {
-		return &lock.UnlockResponse{Status: lock.LOCK_UNEXIST}, nil
+		return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
 	}
 }
 
