@@ -32,8 +32,13 @@ import spec.sdk.runtime.v1.client.RuntimeClient;
 import spec.sdk.runtime.v1.domain.state.GetBulkStateRequest;
 import spec.sdk.runtime.v1.domain.state.GetStateRequest;
 import spec.sdk.runtime.v1.domain.state.State;
+import spec.sdk.runtime.v1.domain.state.StateOptions;
+import spec.sdk.runtime.v1.domain.state.TransactionalStateOperation;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,8 +121,27 @@ public class StateTest {
                         @Override
                         public void executeStateTransaction(RuntimeProto.ExecuteStateTransactionRequest request,
                                                             StreamObserver<Empty> responseObserver) {
-                            responseObserver.onError(new Exception("not support"));
-                            responseObserver.onCompleted();
+                            List<RuntimeProto.TransactionalStateOperation> list = request.getOperationsList();
+                            Map<String, RuntimeProto.StateItem> newStore = new HashMap<>(store);
+                            try {
+                                for (RuntimeProto.TransactionalStateOperation tso : list) {
+                                    String type = tso.getOperationType();
+                                    RuntimeProto.StateItem req = tso.getRequest();
+                                    if ("upsert".equals(type)) {
+                                        newStore.put(req.getKey(), req);
+                                    } else if ("delete".equals(type)) {
+                                        newStore.remove(req.getKey());
+                                    } else {
+                                        throw new RuntimeException("illegal type" + type);
+                                    }
+                                }
+                                store = newStore;
+                                responseObserver.onNext(null);
+                                responseObserver.onCompleted();
+                            } catch (Exception e) {
+                                responseObserver.onError(e);
+                                responseObserver.onCompleted();
+                            }
                         }
                     }));
 
@@ -140,17 +164,23 @@ public class StateTest {
     public void testStateCrud() {
         String storeName = "redis";
 
+        // saveState
         client.saveState(storeName, "foo", "bar".getBytes());
         GetStateRequest req = new GetStateRequest(storeName, "foo");
-        State<String> resp = client.getState(req, String.class);
-        Assert.assertEquals(new String(resp.getValue()), "bar");
 
+        // getState
+        State<String> resp = client.getState(req, String.class);
+        Assert.assertEquals(resp.getValue(), "bar");
+
+        // delete
         client.deleteState(storeName, "foo");
 
+        // getState
         req = new GetStateRequest(storeName, "foo");
         resp = client.getState(req, String.class);
         Assert.assertEquals(resp.getValue().length(), 0);
 
+        // saveState
         client.saveState(storeName, "key1", "bar1".getBytes());
         client.saveState(storeName, "key2", "bar2".getBytes());
 
@@ -159,8 +189,11 @@ public class StateTest {
         Assert.assertEquals(bulkResp.get(0).getValue(), "bar1");
         Assert.assertEquals(bulkResp.get(1).getValue(), "bar2");
 
-        client.deleteState(storeName, "key1");
-        client.deleteState(storeName, "key2");
+        // deleteState
+        client.deleteState(storeName, "key1", null
+                , new StateOptions(StateOptions.Consistency.STRONG, StateOptions.Concurrency.FIRST_WRITE));
+        client.deleteState(storeName, "key2", null
+                , new StateOptions(null, null));
 
         br = new GetBulkStateRequest(storeName, Arrays.asList("key1", "key2"));
         bulkResp = client.getBulkState(br, String.class);
@@ -168,4 +201,115 @@ public class StateTest {
         Assert.assertEquals(bulkResp.get(1).getValue().length(), 0);
     }
 
+    @Test
+    public void testTransaction() {
+        String storeName = "redis";
+        String key1 = "key11";
+        String key2 = "key22";
+        String key3 = "key33";
+
+        // execute transaction
+        List<TransactionalStateOperation<?>> operationList = new ArrayList<>();
+        operationList.add(new TransactionalStateOperation<>(TransactionalStateOperation.OperationType.UPSERT,
+                new State<>(key1, new TestClass(key1), "")));
+        operationList.add(new TransactionalStateOperation<>(TransactionalStateOperation.OperationType.UPSERT,
+                new State<>(key2, new TestClass(key2), "")));
+        client.executeStateTransaction(storeName, operationList);
+
+        //    getBulkState
+        List<String> keys = new ArrayList<>();
+        keys.add(key2);
+        keys.add(key1);
+        GetBulkStateRequest bulkReq = new GetBulkStateRequest(storeName, keys);
+        List<State<TestClass>> bulkState = client.getBulkState(bulkReq, TestClass.class);
+        Assert.assertTrue(bulkState.size() == 2);
+        for (State<TestClass> st : bulkState) {
+            String key = st.getKey();
+            if (key.equals(key1)) {
+                Assert.assertEquals(st.getValue().getName(), key1);
+            } else if (key.equals(key2)) {
+                Assert.assertEquals(st.getValue().getName(), key2);
+            } else {
+                throw new RuntimeException("Unexpected key:" + key);
+            }
+        }
+
+        // execute transaction,update key3 and delete key1
+        operationList = new ArrayList<>();
+        operationList.add(new TransactionalStateOperation<>(TransactionalStateOperation.OperationType.UPSERT,
+                new State<>(key3, new TestClass(key3), "", null
+                        , new StateOptions(StateOptions.Consistency.STRONG, StateOptions.Concurrency.LAST_WRITE))));
+        operationList.add(new TransactionalStateOperation<>(TransactionalStateOperation.OperationType.DELETE,
+                new State<>(key2, new TestClass(key2), "")));
+        client.executeStateTransaction(storeName, operationList);
+
+        //    getBulkState
+        keys = new ArrayList<>();
+        keys.add(key2);
+        keys.add(key1);
+        keys.add(key3);
+        bulkReq = new GetBulkStateRequest(storeName, keys);
+        bulkState = client.getBulkState(bulkReq, TestClass.class);
+        Assert.assertTrue(bulkState.size() == 3);
+        for (State<TestClass> st : bulkState) {
+            String key = st.getKey();
+            if (key.equals(key1)) {
+                Assert.assertEquals(st.getValue().getName(), key1);
+            } else if (key.equals(key2)) {
+                Assert.assertEquals(st.getValue(), null);
+            } else if (key.equals(key3)) {
+                Assert.assertEquals(st.getValue().getName(), key3);
+            } else {
+                throw new RuntimeException("Unexpected key:" + key);
+            }
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testTransactionNullOperation_thenIllegal() {
+        String storeName = "redis";
+        String key1 = "key11";
+        String key2 = "key22";
+
+        // execute transaction
+        List<TransactionalStateOperation<?>> operationList = new ArrayList<>();
+        operationList.add(new TransactionalStateOperation<>(TransactionalStateOperation.OperationType.UPSERT,
+                new State<>(key1, new TestClass(key1), "")));
+        // null
+        operationList.add(new TransactionalStateOperation<>(null,
+                new State<>(key2, new TestClass(key2), "")));
+        client.executeStateTransaction(storeName, operationList);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testTransactionEmptyKey_thenIllegal() {
+        String storeName = "redis";
+        String key1 = "";
+        String key2 = "key22";
+
+        // execute transaction
+        List<TransactionalStateOperation<?>> operationList = new ArrayList<>();
+        operationList.add(new TransactionalStateOperation<>(TransactionalStateOperation.OperationType.UPSERT,
+                new State<>(key1, new TestClass(key1), "")));
+        operationList.add(new TransactionalStateOperation<>(TransactionalStateOperation.OperationType.UPSERT,
+                new State<>(key2, new TestClass(key2), "")));
+        client.executeStateTransaction(storeName, operationList);
+    }
+
+    public static class TestClass {
+        String name;
+
+        public TestClass(String name) {
+            this.name = name;
+        }
+
+        /**
+         * Getter method for property <tt>name</tt>.
+         *
+         * @return property value of name
+         */
+        public String getName() {
+            return name;
+        }
+    }
 }

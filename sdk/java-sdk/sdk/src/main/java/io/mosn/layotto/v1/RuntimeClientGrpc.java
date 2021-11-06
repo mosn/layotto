@@ -309,30 +309,35 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
      */
     @Override
     public void executeStateTransaction(ExecuteStateTransactionRequest request) {
+        final String stateStoreName = request.getStateStoreName();
+        final List<TransactionalStateOperation<?>> operations = request.getOperations();
+        final Map<String, String> metadata = request.getMetadata();
+
+        // 1. validate
+        assertTrue(stateStoreName != null && !stateStoreName.trim().isEmpty(), "stateStoreName cannot be null or empty.");
+        assertTrue(operations != null && !operations.isEmpty(), "operations cannot be null or empty.");
         try {
-            final String stateStoreName = request.getStateStoreName();
-            final List<TransactionalStateOperation<?>> operations = request.getOperations();
-            final Map<String, String> metadata = request.getMetadata();
-
-            // 1. validate
-            if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
-                throw new IllegalArgumentException("State store name cannot be null or empty.");
-            }
-
             // 2. construct request object
             RuntimeProto.ExecuteStateTransactionRequest.Builder builder = RuntimeProto.ExecuteStateTransactionRequest.newBuilder();
             builder.setStoreName(stateStoreName);
             if (metadata != null) {
                 builder.putAllMetadata(metadata);
             }
-            for (TransactionalStateOperation<?> operation : operations) {
-                RuntimeProto.TransactionalStateOperation.Builder operationBuilder = RuntimeProto.TransactionalStateOperation.newBuilder();
+            for (TransactionalStateOperation<?> op : operations) {
+                // validate each operation
+                assertTrue(op.getOperation() != null, "operation cannot be null.");
+                State<?> req = op.getRequest();
+                assertTrue(req != null, "request cannot be null.");
+                String k = req.getKey();
+                assertTrue(k != null && !k.isEmpty(), "request cannot be null.");
 
-                String operationType = operation.getOperation().toString().toLowerCase();
+                // build grpc request
+                RuntimeProto.TransactionalStateOperation.Builder operationBuilder = RuntimeProto.TransactionalStateOperation.newBuilder();
+                String operationType = op.getOperation().toString().toLowerCase();
                 operationBuilder.setOperationType(operationType);
 
                 // convert request and do serialization
-                RuntimeProto.StateItem stateItem = buildStateRequest(operation.getRequest())
+                RuntimeProto.StateItem stateItem = buildStateRequest(req)
                         .build();
                 operationBuilder.setRequest(stateItem);
 
@@ -342,9 +347,18 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
 
             // 3. invoke grpc api
             this.stubManager.getBlockingStub().executeStateTransaction(req);
+        } catch (IllegalArgumentException e) {
+            logger.error("executeStateTransaction error ", e);
+            throw e;
         } catch (Exception e) {
             logger.error("executeStateTransaction error ", e);
             throw new RuntimeClientException(e);
+        }
+    }
+
+    private void assertTrue(boolean argumentAssertion, String errMsg) {
+        if (!argumentAssertion) {
+            throw new IllegalArgumentException(errMsg);
         }
     }
 
