@@ -123,8 +123,16 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
         if (clazz == null) {
             throw new IllegalArgumentException("clazz cannot be null.");
         }
+        final String stateStoreName = request.getStoreName();
+        if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
+            throw new IllegalArgumentException("State store name cannot be null or empty.");
+        }
+        final String key = request.getKey();
+        if ((key == null) || (key.trim().isEmpty())) {
+            throw new IllegalArgumentException("Key cannot be null or empty.");
+        }
         // 2. invoke
-        State<byte[]> state = getState(request, timeoutMs);
+        State<byte[]> state = doGetState(request, timeoutMs);
         try {
             // 3. deserialize
             T value = null;
@@ -139,10 +147,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
         }
     }
 
-    @Override
-    public State<byte[]> getState(GetStateRequest request) {
-        return getState(request, getTimeoutMs());
-    }
+    protected abstract State<byte[]> doGetState(GetStateRequest request, int timeoutMs);
 
     /**
      * {@inheritDoc}

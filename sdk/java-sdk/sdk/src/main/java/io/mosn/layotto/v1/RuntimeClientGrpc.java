@@ -350,18 +350,12 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
     }
 
     @Override
-    public State<byte[]> getState(GetStateRequest request, int timeoutMs) {
+    protected State<byte[]> doGetState(GetStateRequest request, int timeoutMs) {
+        // 1. extract fields.
         final String stateStoreName = request.getStoreName();
         final String key = request.getKey();
         final StateOptions options = request.getStateOptions();
         final Map<String, String> metadata = request.getMetadata();
-        // 1. validate
-        if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
-            throw new IllegalArgumentException("State store name cannot be null or empty.");
-        }
-        if ((key == null) || (key.trim().isEmpty())) {
-            throw new IllegalArgumentException("Key cannot be null or empty.");
-        }
         try {
             // 2. construct request object
             RuntimeProto.GetStateRequest.Builder builder = RuntimeProto.GetStateRequest.newBuilder()
