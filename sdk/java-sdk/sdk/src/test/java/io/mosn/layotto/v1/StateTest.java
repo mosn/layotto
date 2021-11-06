@@ -142,14 +142,14 @@ public class StateTest {
 
         client.saveState(storeName, "foo", "bar".getBytes());
         GetStateRequest req = new GetStateRequest(storeName, "foo");
-        State<byte[]> resp = client.getState(req);
+        State<String> resp = client.getState(req, String.class);
         Assert.assertEquals(new String(resp.getValue()), "bar");
 
         client.deleteState(storeName, "foo");
 
         req = new GetStateRequest(storeName, "foo");
-        resp = client.getState(req);
-        Assert.assertEquals(resp.getValue().length, 0);
+        resp = client.getState(req, String.class);
+        Assert.assertEquals(resp.getValue().length(), 0);
 
         client.saveState(storeName, "key1", "bar1".getBytes());
         client.saveState(storeName, "key2", "bar2".getBytes());
