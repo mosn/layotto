@@ -33,6 +33,11 @@ public class JSONSerializerTest {
 
     private static final ObjectSerializer SERIALIZER = new JSONSerializer();
 
+    @Test
+    public void getContentType() {
+        assertEquals(new JSONSerializer().getContentType(), "application/json");
+    }
+
     public static class MyObjectTestToSerialize implements Serializable {
         private String  stringValue;
         private int     intValue;
