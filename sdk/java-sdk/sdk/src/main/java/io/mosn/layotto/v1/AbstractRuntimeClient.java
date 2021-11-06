@@ -236,6 +236,11 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
 
     @Override
     public <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz) {
+        return getBulkState(request, clazz, getTimeoutMs());
+    }
+
+    @Override
+    public <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz, int timeoutMs) {
         // 1. validate
         if (clazz == null) {
             throw new IllegalArgumentException("clazz cannot be null.");
@@ -256,7 +261,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
 
         try {
             // 2. invoke
-            List<State<byte[]>> bulkState = doGetBulkState(request, getTimeoutMs());
+            List<State<byte[]>> bulkState = doGetBulkState(request, timeoutMs);
             // 3. deserialize
             List<State<T>> result = new ArrayList<>(bulkState.size());
             for (State<byte[]> state : bulkState) {
