@@ -85,23 +85,6 @@ public interface StateRuntime {
     <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz);
 
     /**
-     * Retrieve bulk States based on their keys.
-     *
-     * @param request The request to get state.
-     * @return
-     */
-    List<State<byte[]>> getBulkState(GetBulkStateRequest request);
-
-    /**
-     * Retrieve bulk States based on their keys with a timeout limit and without deserialization
-     *
-     * @param request
-     * @param timeoutMs
-     * @return
-     */
-    List<State<byte[]>> getBulkState(GetBulkStateRequest request, int timeoutMs);
-
-    /**
      * Execute a transaction.
      *
      * @param storeName  The name of the state store.

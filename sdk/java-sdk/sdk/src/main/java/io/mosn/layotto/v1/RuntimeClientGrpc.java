@@ -180,10 +180,8 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
         RuntimeProto.StateItem.Builder stateBuilder = RuntimeProto.StateItem.newBuilder();
         T value = state.getValue();
         // 1. serialize value
-        byte[] bytes;
-        if (value == null || value instanceof byte[]) {
-            bytes = (byte[]) value;
-        } else {
+        byte[] bytes = null;
+        if (value != null) {
             bytes = stateSerializer.serialize(value);
         }
         if (bytes != null) {
@@ -333,6 +331,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
                 String operationType = operation.getOperation().toString().toLowerCase();
                 operationBuilder.setOperationType(operationType);
 
+                // convert request and do serialization
                 RuntimeProto.StateItem stateItem = buildStateRequest(operation.getRequest())
                         .build();
                 operationBuilder.setRequest(stateItem);
@@ -394,22 +393,13 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
     }
 
     @Override
-    public List<State<byte[]>> getBulkState(GetBulkStateRequest request, int timeoutMs) {
+    protected List<State<byte[]>> doGetBulkState(GetBulkStateRequest request, int timeoutMs) {
+        // 1. extract fields
         final String stateStoreName = request.getStoreName();
         final List<String> keys = request.getKeys();
         final int parallelism = request.getParallelism();
         final Map<String, String> metadata = request.getMetadata();
 
-        // 1. validate
-        if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
-            throw new IllegalArgumentException("State store name cannot be null or empty.");
-        }
-        if (keys == null || keys.isEmpty()) {
-            throw new IllegalArgumentException("Key cannot be null or empty.");
-        }
-        if (parallelism < 0) {
-            throw new IllegalArgumentException("Parallelism cannot be negative.");
-        }
         try {
             // 2. construct request object
             RuntimeProto.GetBulkStateRequest.Builder builder = RuntimeProto.GetBulkStateRequest.newBuilder()

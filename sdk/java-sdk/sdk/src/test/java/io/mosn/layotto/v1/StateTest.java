@@ -155,17 +155,17 @@ public class StateTest {
         client.saveState(storeName, "key2", "bar2".getBytes());
 
         GetBulkStateRequest br = new GetBulkStateRequest(storeName, Arrays.asList("key1", "key2"));
-        List<State<byte[]>> bulkResp = client.getBulkState(br);
-        Assert.assertEquals(new String(bulkResp.get(0).getValue()), "bar1");
-        Assert.assertEquals(new String(bulkResp.get(1).getValue()), "bar2");
+        List<State<String>> bulkResp = client.getBulkState(br, String.class);
+        Assert.assertEquals(bulkResp.get(0).getValue(), "bar1");
+        Assert.assertEquals(bulkResp.get(1).getValue(), "bar2");
 
         client.deleteState(storeName, "key1");
         client.deleteState(storeName, "key2");
 
         br = new GetBulkStateRequest(storeName, Arrays.asList("key1", "key2"));
-        bulkResp = client.getBulkState(br);
-        Assert.assertEquals(bulkResp.get(0).getValue().length, 0);
-        Assert.assertEquals(bulkResp.get(1).getValue().length, 0);
+        bulkResp = client.getBulkState(br, String.class);
+        Assert.assertEquals(bulkResp.get(0).getValue().length(), 0);
+        Assert.assertEquals(bulkResp.get(1).getValue().length(), 0);
     }
 
 }

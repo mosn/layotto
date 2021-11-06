@@ -240,9 +240,23 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
         if (clazz == null) {
             throw new IllegalArgumentException("clazz cannot be null.");
         }
+        final String stateStoreName = request.getStoreName();
+        final List<String> keys = request.getKeys();
+        final int parallelism = request.getParallelism();
+
+        if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
+            throw new IllegalArgumentException("State store name cannot be null or empty.");
+        }
+        if (keys == null || keys.isEmpty()) {
+            throw new IllegalArgumentException("Key cannot be null or empty.");
+        }
+        if (parallelism < 0) {
+            throw new IllegalArgumentException("Parallelism cannot be negative.");
+        }
+
         try {
             // 2. invoke
-            List<State<byte[]>> bulkState = getBulkState(request, getTimeoutMs());
+            List<State<byte[]>> bulkState = doGetBulkState(request, getTimeoutMs());
             // 3. deserialize
             List<State<T>> result = new ArrayList<>(bulkState.size());
             for (State<byte[]> state : bulkState) {
@@ -261,10 +275,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
         }
     }
 
-    @Override
-    public List<State<byte[]>> getBulkState(GetBulkStateRequest request) {
-        return getBulkState(request, getTimeoutMs());
-    }
+    protected abstract List<State<byte[]>> doGetBulkState(GetBulkStateRequest request, int timeoutMs);
 
     /**
      * Getter method for property <tt>timeoutMs</tt>.
