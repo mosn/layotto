@@ -262,25 +262,25 @@ public class JSONSerializerTest {
             fail(exception.getMessage());
         }
     }
-
-    @Test
-    public void serializeStringTest() {
-        String valueToSerialize = "A String";
-        String expectedSerializedValue = "\"A String\"";
-
-        String serializedValue;
-        byte[] byteValue;
-        try {
-            serializedValue = new String(SERIALIZER.serialize(valueToSerialize));
-            assertEquals(expectedSerializedValue, serializedValue);
-            byteValue = SERIALIZER.serialize(valueToSerialize);
-            Assert.assertNotNull(byteValue);
-            String deserializedValue = SERIALIZER.deserialize(byteValue, String.class);
-            assertEquals(valueToSerialize, deserializedValue);
-        } catch (IOException exception) {
-            fail(exception.getMessage());
-        }
-    }
+    //
+    //@Test
+    //public void serializeStringTest() {
+    //    String valueToSerialize = "A String";
+    //    String expectedSerializedValue = "\"A String\"";
+    //
+    //    String serializedValue;
+    //    byte[] byteValue;
+    //    try {
+    //        serializedValue = new String(SERIALIZER.serialize(valueToSerialize));
+    //        assertEquals(expectedSerializedValue, serializedValue);
+    //        byteValue = SERIALIZER.serialize(valueToSerialize);
+    //        Assert.assertNotNull(byteValue);
+    //        String deserializedValue = SERIALIZER.deserialize(byteValue, String.class);
+    //        assertEquals(valueToSerialize, deserializedValue);
+    //    } catch (IOException exception) {
+    //        fail(exception.getMessage());
+    //    }
+    //}
 
     @Test
     public void serializeIntTest() {
