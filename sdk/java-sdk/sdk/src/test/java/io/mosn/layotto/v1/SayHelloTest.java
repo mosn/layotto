@@ -40,18 +40,6 @@ import static org.mockito.Mockito.mock;
 @RunWith(JUnit4.class)
 public class SayHelloTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(RuntimeClient.class.getName());
-
-    private int timeoutMs = RuntimeProperties.DEFAULT_TIMEOUT_MS;
-
-    private String ip = RuntimeProperties.DEFAULT_IP;
-
-    private int port = RuntimeProperties.DEFAULT_PORT;
-
-    private ApiProtocol protocol = RuntimeProperties.DEFAULT_API_PROTOCOL;
-
-    private ObjectSerializer stateSerializer = new JSONSerializer();
-
     @Rule
     public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
 
