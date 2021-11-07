@@ -37,7 +37,7 @@ describe('client/Sequencer.test.ts', () => {
       ids.push(currentId);
     }
     assert.equal(ids.length, 20);
-    console.log('ids: %j', ids);
+    // console.log('ids: %j', ids);
   });
 
   it('should get next id with options increment:WEAK success', async () => {
@@ -57,6 +57,6 @@ describe('client/Sequencer.test.ts', () => {
       ids.push(currentId);
     }
     assert.equal(ids.length, 20);
-    console.log('ids: %j', ids);
+    // console.log('ids: %j', ids);
   });
 });

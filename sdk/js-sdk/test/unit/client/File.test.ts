@@ -20,7 +20,7 @@ import { pipeline } from 'stream/promises';
 import { join } from 'path';
 import { Client, utils } from '../../../src';
 
-describe('client/File.test.ts', () => {
+describe.skip('client/File.test.ts', () => {
   let client: Client;
   let tmpfileDir: string;
   const storeName = 'aliOSS';

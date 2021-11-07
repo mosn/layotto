@@ -103,16 +103,17 @@ describe('client/Configuration.test.ts', () => {
       appId,
       keys: [key1, key2],
       onData(items) {
-        console.log('get items', items);
+        // console.log('get items', items);
         for (const item of items) {
           lastConfig[item.key] = item.content;
         }
       },
       onClose(err) {
-        console.log('close, error: %s', err);
+        assert(!err);
+        // console.log('close, error: %s', err);
       },
     });
-    console.log('call send', call.destroyed);
+    // console.log('call send', call.destroyed);
     await utils.sleep(500);
     await client.configuration.save({
       storeName,
