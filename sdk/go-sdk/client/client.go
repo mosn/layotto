@@ -119,7 +119,6 @@ type Client interface {
 // use one of the parameterized factory functions:
 //   NewClientWithPort(port string) (client Client, err error)
 //   NewClientWithAddress(address string) (client Client, err error)
-//   NewClientWithConnection(conn *grpc.ClientConn) Client
 func NewClient() (client Client, err error) {
 	port := os.Getenv(runtimePortEnvVarName)
 	if port == "" {
@@ -149,20 +148,14 @@ func NewClientWithAddress(address string) (client Client, err error) {
 		return nil, errors.New("nil address")
 	}
 	logger.Printf("runtime client initializing for: %s", address)
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, cli, err := factory.NewClientWithAddress(address)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error creating connection to '%s': %v", address, err)
+		return nil, err
 	}
-
-	return NewClientWithConnection(conn), nil
-}
-
-// NewClientWithConnection instantiates runtime client using specific connection.
-func NewClientWithConnection(conn *grpc.ClientConn) Client {
 	return &GRPCClient{
 		connection:  conn,
-		protoClient: runtimev1pb.NewRuntimeClient(conn),
-	}
+		protoClient: cli,
+	}, nil
 }
 
 // GRPCClient is the gRPC implementation of runtime client.

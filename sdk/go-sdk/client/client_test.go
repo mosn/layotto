@@ -18,6 +18,7 @@ package client
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
@@ -102,8 +103,20 @@ func getTestClient(ctx context.Context) (client Client, closer func()) {
 		s.Stop()
 	}
 
-	client = NewClientWithConnection(c)
+	client, _ = newClientWithConnection(c)
 	return
+}
+
+// NewClientWithConnection instantiates runtime client using specific connection.
+func newClientWithConnection(conn *grpc.ClientConn) (Client, error) {
+	if conn == nil {
+		return nil, errors.New("conn shouldn't be nil")
+	}
+	cli := runtimev1pb.NewRuntimeClient(conn)
+	return &GRPCClient{
+		connection:  conn,
+		protoClient: cli,
+	}, nil
 }
 
 type testRuntimeServer struct {
