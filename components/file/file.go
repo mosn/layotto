@@ -24,7 +24,7 @@ import (
 const ServiceName = "file"
 
 type File interface {
-	Init(*FileConfig) error
+	Init(context.Context, *FileConfig) error
 	Put(context.Context, *PutFileStu) error
 	Get(context.Context, *GetFileStu) (io.ReadCloser, error)
 	List(context.Context, *ListRequest) (*ListResp, error)

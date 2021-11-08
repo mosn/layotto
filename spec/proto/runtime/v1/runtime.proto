@@ -87,7 +87,11 @@ message GetFileMetaRequest{
 }
 
 message GetFileMetaResponse{
-	FileMeta response = 1;
+    // The size of file
+    int64 size = 1;
+    // The modified time of file
+    string last_modified = 2;
+	FileMeta response = 3;
 }
 
 message FileMetaValue{

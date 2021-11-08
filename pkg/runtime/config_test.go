@@ -17,7 +17,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"mosn.io/layotto/components/file/alicloud/oss"
+	"mosn.io/layotto/components/file/oss/alicloud/oss"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -23,11 +23,14 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/file/s3/minio"
+
+	"mosn.io/layotto/components/file/s3/alicloud"
+
 	dbindings "github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/bindings/http"
 	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/layotto/components/file"
-	alicloud_oss "mosn.io/layotto/components/file/alicloud/oss"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/runtime/bindings"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
@@ -161,8 +164,8 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliOSS", alicloud_oss.NewAliCloudOSS),
-			//file.NewFileFactory("minioOSS", minio_oss.NewMinioOss),
+			file.NewFileFactory("aliOSS", alicloud.NewAliCloudOSS),
+			file.NewFileFactory("minioOSS", minio.NewMinioOss),
 		),
 
 		// PubSub

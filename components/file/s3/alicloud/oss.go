@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package oss
+package alicloud
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
-	"strings"
+	"strconv"
 	"sync"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"mosn.io/layotto/components/file"
+	loss "mosn.io/layotto/components/file/s3"
 )
 
 const (
@@ -42,10 +43,9 @@ type AliCloudOSS struct {
 }
 
 type OssMetadata struct {
-	Endpoint        string   `json:"endpoint"`
-	AccessKeyID     string   `json:"accessKeyID"`
-	AccessKeySecret string   `json:"accessKeySecret"`
-	Bucket          []string `json:"bucket"`
+	Endpoint        string `json:"endpoint"`
+	AccessKeyID     string `json:"accessKeyID"`
+	AccessKeySecret string `json:"accessKeySecret"`
 }
 
 func NewAliCloudOSS() file.File {
@@ -54,7 +54,7 @@ func NewAliCloudOSS() file.File {
 }
 
 // Init does metadata parsing and connection creation
-func (s *AliCloudOSS) Init(metadata *file.FileConfig) error {
+func (s *AliCloudOSS) Init(ctx context.Context, metadata *file.FileConfig) error {
 	m := make([]*OssMetadata, 0)
 	err := json.Unmarshal(metadata.Metadata, &m)
 	if err != nil {
@@ -81,13 +81,16 @@ func (s *AliCloudOSS) Put(ctx context.Context, st *file.PutFileStu) error {
 		storageType = "Standard"
 	}
 	bucket, err := s.getBucket(st.FileName, st.Metadata)
-	fileNameWithoutBucket := s.getFile(st.FileName)
 	if err != nil {
-		return fmt.Errorf("fail to find bucket for %s: %v", st.Metadata, err)
+		return fmt.Errorf("put file[%s] fail,err: %s", st.FileName, err.Error())
+	}
+	fileNameWithoutBucket, err := loss.GetFileName(st.FileName)
+	if err != nil {
+		return fmt.Errorf("put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	err = bucket.PutObject(fileNameWithoutBucket, st.DataStream, oss.ObjectStorageClass(oss.StorageClassType(storageType)), oss.ObjectACL(oss.ACLPublicRead))
 	if err != nil {
-		return fmt.Errorf("fail to upload object: %+v", err)
+		return fmt.Errorf("put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 
 	return nil
@@ -96,25 +99,26 @@ func (s *AliCloudOSS) Put(ctx context.Context, st *file.PutFileStu) error {
 func (s *AliCloudOSS) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, error) {
 	bucket, err := s.getBucket(st.FileName, st.Metadata)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get file[%s] fail, err: %s", st.FileName, err.Error())
 	}
-	fileNameWithoutBucket := s.getFile(st.FileName)
+	fileNameWithoutBucket, err := loss.GetFileName(st.FileName)
+	if err != nil {
+		return nil, fmt.Errorf("get file[%s] fail, err: %s", st.FileName, err.Error())
+	}
+
 	return bucket.GetObject(fileNameWithoutBucket)
 }
 
 func (s *AliCloudOSS) List(ctx context.Context, request *file.ListRequest) (*file.ListResp, error) {
-	if request.DirectoryName == "" {
-		return nil, fmt.Errorf("not specifc directory name")
-	}
 	bucket, err := s.getBucket(request.DirectoryName, request.Metadata)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("list directory[%s] fail, err: %s", request.DirectoryName, err.Error())
 	}
 	resp := &file.ListResp{}
-	prefix := s.getFile(request.DirectoryName)
+	prefix := loss.GetFilePrefixName(request.DirectoryName)
 	object, err := bucket.ListObjectsV2(oss.StartAfter(request.Marker), oss.MaxKeys(int(request.PageSize)), oss.Prefix(prefix))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("list directory[%s] fail, err: %s", request.DirectoryName, err.Error())
 	}
 	resp.IsTruncated = object.IsTruncated
 	l := len(object.Objects)
@@ -135,12 +139,15 @@ func (s *AliCloudOSS) List(ctx context.Context, request *file.ListRequest) (*fil
 func (s *AliCloudOSS) Del(ctx context.Context, request *file.DelRequest) error {
 	bucket, err := s.getBucket(request.FileName, request.Metadata)
 	if err != nil {
-		return err
+		return fmt.Errorf("del file[%s] fail, err: %s", request.FileName, err.Error())
 	}
-	fileNameWithoutBucket := s.getFile(request.FileName)
+	fileNameWithoutBucket, err := loss.GetFileName(request.FileName)
+	if err != nil {
+		return fmt.Errorf("del file[%s] fail, err: %s", request.FileName, err.Error())
+	}
 	err = bucket.DeleteObject(fileNameWithoutBucket)
 	if err != nil {
-		return err
+		return fmt.Errorf("del file[%s] fail, err: %s", request.FileName, err.Error())
 	}
 	return nil
 }
@@ -150,9 +157,12 @@ func (s *AliCloudOSS) Stat(ctx context.Context, request *file.FileMetaRequest) (
 	resp.Metadata = make(map[string][]string)
 	bucket, err := s.getBucket(request.FileName, request.Metadata)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("stat file[%s] fail, err: %s", request.FileName, err.Error())
 	}
-	fileNameWithoutBucket := s.getFile(request.FileName)
+	fileNameWithoutBucket, err := loss.GetFileName(request.FileName)
+	if err != nil {
+		return nil, fmt.Errorf("stat file[%s] fail, err: %s", request.FileName, err.Error())
+	}
 	meta, err := bucket.GetObjectMeta(fileNameWithoutBucket)
 	if err != nil {
 		if err.(oss.ServiceError).StatusCode == 404 {
@@ -160,7 +170,23 @@ func (s *AliCloudOSS) Stat(ctx context.Context, request *file.FileMetaRequest) (
 		}
 		return nil, err
 	}
+
 	for k, v := range meta {
+		if k == "Content-Length" {
+			if len(v) > 0 {
+				l, err := strconv.Atoi(v[0])
+				if err == nil {
+					resp.Size = int64(l)
+				}
+			}
+			continue
+		}
+		if k == "Last-Modified" {
+			if len(v) > 0 {
+				resp.LastModified = v[0]
+			}
+			continue
+		}
 		resp.Metadata[k] = append(resp.Metadata[k], v...)
 	}
 	return resp, nil
@@ -197,7 +223,7 @@ func (s *AliCloudOSS) getBucket(fileName string, metaData map[string]string) (*o
 	}
 
 	// get oss bucket
-	bucketName, err := s.getBucketName(fileName)
+	bucketName, err := loss.GetBucketName(fileName)
 	if err != nil {
 		return nil, err
 	}
@@ -217,20 +243,4 @@ func (s *AliCloudOSS) selectClient() (*oss.Client, error) {
 		return nil, fmt.Errorf("should specific endpoint in metadata")
 	}
 	return nil, nil
-}
-
-func (s *AliCloudOSS) getBucketName(fileName string) (string, error) {
-	bucketName := strings.Split(fileName, "/")
-	if len(bucketName) == 0 || bucketName[0] == "" {
-		return "", fmt.Errorf("invalid fileName format")
-	}
-	return bucketName[0], nil
-}
-
-func (s *AliCloudOSS) getFile(fileName string) string {
-	index := strings.Index(fileName, "/")
-	if index == -1 {
-		return ""
-	}
-	return fileName[index+1:]
 }

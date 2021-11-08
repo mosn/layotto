@@ -919,7 +919,7 @@ func (a *api) GetFileMeta(ctx context.Context, in *runtimev1pb.GetFileMetaReques
 		meta.Metadata[k] = &runtimev1pb.FileMetaValue{}
 		meta.Metadata[k].Value = append(meta.Metadata[k].Value, v...)
 	}
-	return &runtimev1pb.GetFileMetaResponse{Response: meta}, nil
+	return &runtimev1pb.GetFileMetaResponse{Size: resp.Size, LastModified: resp.LastModified, Response: meta}, nil
 }
 
 func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error) {

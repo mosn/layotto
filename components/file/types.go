@@ -68,5 +68,7 @@ type FileMetaRequest struct {
 }
 
 type FileMetaResp struct {
-	Metadata map[string][]string
+	Size         int64
+	LastModified string
+	Metadata     map[string][]string
 }
