@@ -17,6 +17,7 @@ import (
 	"sync"
 )
 
+//Exporter  is used to export Span
 type Exporter interface {
 	ExportSpan(s *Span)
 }
