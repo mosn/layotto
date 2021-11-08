@@ -991,8 +991,10 @@ func TestGetFile(t *testing.T) {
 	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil)
 	err := api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock1"}, mockStream)
 	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not supported store type: mock1"))
-	mockFile.EXPECT().Get(&file.GetFileStu{FileName: "", Metadata: nil}).Return(r, nil).Times(1)
+	metadata := make(map[string]string)
+	mockFile.EXPECT().Get(context.Background(), &file.GetFileStu{FileName: "", Metadata: metadata}).Return(r, nil).Times(1)
 	mockStream.EXPECT().Send(&runtimev1pb.GetFileResponse{Data: []byte("testFile")}).Times(1)
+	mockStream.EXPECT().Context().Return(context.Background())
 	go SendData(w)
 	api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock"}, mockStream)
 }
@@ -1017,16 +1019,18 @@ func TestListFile(t *testing.T) {
 	mockFile := mock.NewMockFile(ctrl)
 	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil)
 	request := &runtimev1pb.FileRequest{StoreName: "mock1"}
+	request.Metadata = make(map[string]string)
 	resp, err := api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
 	assert.Nil(t, resp)
 	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not support store type: mock1"))
 	request = &runtimev1pb.FileRequest{StoreName: "mock", Name: "test"}
-	mockFile.EXPECT().List(&file.ListRequest{DirectoryName: request.Name, Metadata: request.Metadata}).Return(&file.ListResp{FilesName: []string{"file1", "file2"}}, nil).Times(1)
+	request.Metadata = make(map[string]string)
+	mockFile.EXPECT().List(context.Background(), &file.ListRequest{DirectoryName: request.Name, Metadata: request.Metadata}).Return(&file.ListResp{Files: nil, Marker: "hello", IsTruncated: true}, nil).Times(1)
 	resp, err = api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
 	assert.Nil(t, err)
-	assert.Equal(t, resp.FileName[0], "file1")
-	assert.Equal(t, resp.FileName[1], "file2")
-	mockFile.EXPECT().List(&file.ListRequest{DirectoryName: request.Name, Metadata: request.Metadata}).Return(&file.ListResp{FilesName: []string{"file1", "file2"}}, errors.New("test fail")).Times(1)
+	assert.Equal(t, resp.Marker, "hello")
+	assert.Equal(t, resp.IsTruncated, true)
+	mockFile.EXPECT().List(context.Background(), &file.ListRequest{DirectoryName: request.Name, Metadata: request.Metadata}).Return(&file.ListResp{}, errors.New("test fail")).Times(1)
 	resp, err = api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
 	assert.NotNil(t, err)
 }
@@ -1036,14 +1040,16 @@ func TestDelFile(t *testing.T) {
 	mockFile := mock.NewMockFile(ctrl)
 	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil)
 	request := &runtimev1pb.FileRequest{StoreName: "mock1"}
+	request.Metadata = make(map[string]string)
 	resp, err := api.DelFile(context.Background(), &runtimev1pb.DelFileRequest{Request: request})
 	assert.Nil(t, resp)
 	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not support store type: mock1"))
 	request = &runtimev1pb.FileRequest{StoreName: "mock", Name: "test"}
-	mockFile.EXPECT().Del(&file.DelRequest{FileName: request.Name, Metadata: request.Metadata}).Return(nil).Times(1)
+	request.Metadata = make(map[string]string)
+	mockFile.EXPECT().Del(context.Background(), &file.DelRequest{FileName: request.Name, Metadata: request.Metadata}).Return(nil).Times(1)
 	_, err = api.DelFile(context.Background(), &runtimev1pb.DelFileRequest{Request: request})
 	assert.Nil(t, err)
-	mockFile.EXPECT().Del(&file.DelRequest{FileName: request.Name, Metadata: request.Metadata}).Return(errors.New("test fail")).Times(1)
+	mockFile.EXPECT().Del(context.Background(), &file.DelRequest{FileName: request.Name, Metadata: request.Metadata}).Return(errors.New("test fail")).Times(1)
 	_, err = api.DelFile(context.Background(), &runtimev1pb.DelFileRequest{Request: request})
 	assert.NotNil(t, err)
 }
