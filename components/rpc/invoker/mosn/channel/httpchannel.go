@@ -23,16 +23,36 @@ import (
 	"net/http"
 	"time"
 
+	"mosn.io/pkg/buffer"
+
 	"github.com/valyala/fasthttp"
+	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
-	common "mosn.io/layotto/components/pkg/common"
 	_ "mosn.io/mosn/pkg/stream/http"
 )
-
 
 // init is regist http channel
 func init() {
 	RegistChannel("http", newHttpChannel)
+}
+
+type hstate struct {
+	reader net.Conn
+	writer net.Conn
+}
+
+func (h *hstate) onData(b buffer.IoBuffer) error {
+	data := b.Bytes()
+	if _, err := h.writer.Write(data); err != nil {
+		return err
+	}
+	b.Drain(len(data))
+	return nil
+}
+
+func (h *hstate) close() {
+	h.reader.Close()
+	h.writer.Close()
 }
 
 // httpChannel is Channel implement
@@ -42,20 +62,26 @@ type httpChannel struct {
 
 // newHttpChannel is create rpc.Channel by ChannelConfig
 func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
-	return &httpChannel{
-		pool: newConnPool(
-			config.Size,
-			func() (net.Conn, error) {
-				local, remote := net.Pipe()
-				localTcpConn := &fakeTcpConn{c: local}
-				remoteTcpConn := &fakeTcpConn{c: remote}
-				if err := acceptFunc(remoteTcpConn, config.Listener); err != nil {
-					return nil, err
-				}
-				return localTcpConn, nil
-			}, nil, nil, nil,
-		),
-	}, nil
+	hc := &httpChannel{}
+	hc.pool = newConnPool(
+		config.Size,
+		func() (net.Conn, error) {
+			local, remote := net.Pipe()
+			localTcpConn := &fakeTcpConn{c: local}
+			remoteTcpConn := &fakeTcpConn{c: remote}
+			if err := acceptFunc(remoteTcpConn, config.Listener); err != nil {
+				return nil, err
+			}
+			return localTcpConn, nil
+		}, func() interface{} {
+			s := &hstate{}
+			s.reader, s.writer = net.Pipe()
+			return s
+		},
+		hc.onData,
+		hc.cleanup,
+	)
+	return hc, nil
 }
 
 // Do is handle RPCRequest to RPCResponse
@@ -69,8 +95,10 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		return nil, err
 	}
 
+	hstate := conn.state.(*hstate)
 	deadline, _ := ctx.Deadline()
-	if err = conn.SetDeadline(deadline); err != nil {
+	if err = conn.SetWriteDeadline(deadline); err != nil {
+		hstate.close()
 		h.pool.Put(conn, true)
 		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
@@ -79,27 +107,28 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	defer fasthttp.ReleaseRequest(httpReq)
 
 	if _, err = httpReq.WriteTo(conn); err != nil {
+		hstate.close()
 		h.pool.Put(conn, true)
 		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 
-	httpResp := fasthttp.AcquireResponse()
-	defer fasthttp.ReleaseResponse(httpResp)
-	if err = httpResp.Read(bufio.NewReader(conn)); err != nil {
+	httpResp := &fasthttp.Response{}
+	hstate.reader.SetReadDeadline(deadline)
+
+	if err = httpResp.Read(bufio.NewReader(hstate.reader)); err != nil {
+		hstate.close()
 		h.pool.Put(conn, true)
 		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
-	body := httpResp.Body()
 	h.pool.Put(conn, false)
+	body := httpResp.Body()
 	if httpResp.StatusCode() != http.StatusOK {
 		return nil, common.Errorf(common.UnavailebleCode, "http response code %d, body: %s", httpResp.StatusCode(), string(body))
 	}
 
-	data := make([]byte, len(body))
-	copy(data, body)
 	rpcResp := &rpc.RPCResponse{
 		ContentType: string(httpResp.Header.ContentType()),
-		Data:        data,
+		Data:        body,
 		Header:      map[string][]string{},
 	}
 	httpResp.Header.VisitAll(func(key, value []byte) {
@@ -130,4 +159,14 @@ func (h *httpChannel) constructReq(req *rpc.RPCRequest) *fasthttp.Request {
 	httpReq.SetHost("localhost")
 	httpReq.Header.Set("id", req.Id)
 	return httpReq
+}
+
+func (h *httpChannel) onData(conn *wrapConn) error {
+	hstate := conn.state.(*hstate)
+	return hstate.onData(conn.buf)
+}
+
+func (h *httpChannel) cleanup(conn *wrapConn, err error) {
+	hstate := conn.state.(*hstate)
+	hstate.close()
 }

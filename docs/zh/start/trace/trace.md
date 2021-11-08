@@ -16,9 +16,22 @@
   }
 ]
 ```
-这段配置可以开启layotto的trace能力。用户可以通过配置来指定trace上报的方式，以及spanId,traceId的生成方式。
+这段配置可以开启layotto的trace能力，让layotto在接到请求后打印链路追踪日志。用户可以通过配置来指定trace日志上报的方式，以及spanId,traceId等字段的生成方式。
 
-对应的调用端代码在[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go) 中，layotto的trace打印如下：
+可以按照如下方式启动一个layotto的server：
+
+```
+./layotto start -c ../../configs/runtime_config.json
+```
+
+对应的调用端代码在[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go) 中，运行它会调用layotto的SayHello接口：
+```
+ cd ${projectpath}/demo/flowcontrol/
+ go build -o client
+ ./client
+```
+
+查看layotto的日志，会看到打印出详细的链路追踪日志：
 
 ![img.png](../../../img/trace/trace.png)
 
@@ -44,6 +57,8 @@ trace拓展配置：
 
 
 ### Trace设计和拓展
+整体结构图:
+![img.png](../../../img/trace/structure.png)
 
 #### Span结构：
 
@@ -61,7 +76,7 @@ type Span struct {
 Span结构定义了layotto和其component之间传递的数据结构，如下图所示，component可以通过tags将自己的信息传递到layotto，layotto做
 统一的trace上报：
 
-#### generator接口：
+#### Generator接口：
 
 ```go
 type Generator interface {
@@ -89,7 +104,7 @@ exporter接口定了如何将Span的信息上报给远端，对应配置中的ex
 
 #### Span的上下文传递：
 
-##### Layotto测
+##### Layotto侧
 ```go
 GenerateNewContext(ctx context.Context, span api.Span) context.Context
 ```
@@ -101,9 +116,9 @@ ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
 ```
 可以参考代码中的[OpenGenerator](../../../../diagnostics/genetator.go)的实现
 
-##### Component测
+##### Component侧
 
-在Component测可以通过[SetExtraComponentInfo](../../../../components/trace/utils.go)塞入component的信息，
+在Component侧可以通过[SetExtraComponentInfo](../../../../components/trace/utils.go)塞入component的信息，
 比如在接口[Hello](../../../../components/hello/helloworld/helloworld.go)执行了以下操作：
 
 ```go
@@ -113,3 +128,9 @@ ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
 trace打印的结果如下：
 
 ![img.png](../../../img/trace/trace.png)
+
+### Trace原理
+
+Layotto中的tracing主要是对grpc调用进行记录，依赖于在grpc里添加的两个拦截器： [UnaryInterceptorFilter](../../../../diagnostics/grpc_tracing.go)、 [StreamInterceptorFilter](../../../../diagnostics/grpc_tracing.go)
+
+拦截器在每次grpc方法调用时都会开启一次tracing，生成traceId spanId、新的context，记录方法名、时间，并且会将tracing信息通过context透传下去，方法返回时将span信息导出。
