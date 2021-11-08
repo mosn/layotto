@@ -44,6 +44,8 @@ public class SingleStubManager<A extends AbstractAsyncStub, B extends AbstractBl
         this.channel = other.channel;
         asyncStub = sc.createAsyncStub(channel);
         blockingStub = sc.createBlockingStub(channel);
+        // 3. init connections
+        init(asyncStub, blockingStub);
     }
 
     public SingleStubManager(ManagedChannel channel,
@@ -59,6 +61,12 @@ public class SingleStubManager<A extends AbstractAsyncStub, B extends AbstractBl
         this.channel = channel;
         asyncStub = sc.createAsyncStub(channel);
         blockingStub = sc.createBlockingStub(channel);
+        // 3. init connections
+        init(asyncStub, blockingStub);
+    }
+
+    protected void init(A newAsyncStub, B newBlockingStub) {
+        // TODO establish connection
     }
 
     @Override
