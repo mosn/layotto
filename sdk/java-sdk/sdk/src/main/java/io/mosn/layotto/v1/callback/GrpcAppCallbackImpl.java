@@ -17,8 +17,8 @@ package io.mosn.layotto.v1.callback;
 
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
-import io.mosn.layotto.v1.callback.component.pubsub.PubSub;
-import io.mosn.layotto.v1.callback.component.pubsub.PubSubRegistry;
+import io.mosn.layotto.v1.callback.component.pubsub.Subscriber;
+import io.mosn.layotto.v1.callback.component.pubsub.SubscriberRegistry;
 import io.mosn.layotto.v1.grpc.PubsubConverter;
 import spec.proto.runtime.v1.AppCallbackGrpc;
 import spec.proto.runtime.v1.AppCallbackProto;
@@ -30,10 +30,10 @@ import java.util.Set;
 
 public class GrpcAppCallbackImpl extends AppCallbackGrpc.AppCallbackImplBase {
 
-    private final PubSubRegistry pubSubRegistry;
+    private final SubscriberRegistry subscriberRegistry;
 
-    public GrpcAppCallbackImpl(PubSubRegistry pubSubRegistry) {
-        this.pubSubRegistry = pubSubRegistry;
+    public GrpcAppCallbackImpl(SubscriberRegistry subscriberRegistry) {
+        this.subscriberRegistry = subscriberRegistry;
     }
 
     /**
@@ -45,15 +45,15 @@ public class GrpcAppCallbackImpl extends AppCallbackGrpc.AppCallbackImplBase {
         final AppCallbackProto.ListTopicSubscriptionsResponse.Builder builder
                 = AppCallbackProto.ListTopicSubscriptionsResponse.newBuilder();
         // get all PubSub callbacks
-        Collection<PubSub> pubsubs = pubSubRegistry.getAllPubSubCallbacks();
+        Collection<Subscriber> pubsubs = subscriberRegistry.getAllPubSubCallbacks();
         if (pubsubs == null) {
             responseObserver.onNext(builder.build());
             responseObserver.onCompleted();
             return;
         }
         // Iterates them and get all topic subscriptions.
-        for (PubSub pubSub : pubsubs) {
-            final Set<TopicSubscription> topicSubscriptions = pubSub.listTopicSubscriptions();
+        for (Subscriber subscriber : pubsubs) {
+            final Set<TopicSubscription> topicSubscriptions = subscriber.listTopicSubscriptions();
             if (topicSubscriptions == null || topicSubscriptions.isEmpty()) {
                 continue;
             }
@@ -78,7 +78,7 @@ public class GrpcAppCallbackImpl extends AppCallbackGrpc.AppCallbackImplBase {
                              StreamObserver<AppCallbackProto.TopicEventResponse> responseObserver) {
         final String pubsubName = request.getPubsubName();
         // dispatch by pub sub name
-        final PubSub pubsub = pubSubRegistry.getCallbackByPubSubName(pubsubName);
+        final Subscriber pubsub = subscriberRegistry.getCallbackByPubSubName(pubsubName);
 
         // invoke callback
         final TopicEventResponse response = pubsub.onTopicEvent(PubsubConverter.TopicEventRequest2Domain(request));

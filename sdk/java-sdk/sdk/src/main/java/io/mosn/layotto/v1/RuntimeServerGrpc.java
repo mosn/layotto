@@ -18,9 +18,9 @@ package io.mosn.layotto.v1;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.mosn.layotto.v1.callback.GrpcAppCallbackImpl;
-import io.mosn.layotto.v1.callback.component.pubsub.PubSub;
-import io.mosn.layotto.v1.callback.component.pubsub.PubSubClientRegistryImpl;
-import io.mosn.layotto.v1.callback.component.pubsub.PubSubRegistry;
+import io.mosn.layotto.v1.callback.component.pubsub.Subscriber;
+import io.mosn.layotto.v1.callback.component.pubsub.SubscriberRegistryImpl;
+import io.mosn.layotto.v1.callback.component.pubsub.SubscriberRegistry;
 import io.mosn.layotto.v1.grpc.ExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public class RuntimeServerGrpc {
         this.port = port;
     }
 
-    private final PubSubRegistry pubSubRegistry = new PubSubClientRegistryImpl();
+    private final SubscriberRegistry subscriberRegistry = new SubscriberRegistryImpl();
 
     public void start() throws IOException {
         // 1 make sure at most once
@@ -52,7 +52,7 @@ public class RuntimeServerGrpc {
         try {
             /* The port on which the server should run */
             server = ServerBuilder.forPort(port)
-                    .addService(new GrpcAppCallbackImpl(pubSubRegistry))
+                    .addService(new GrpcAppCallbackImpl(subscriberRegistry))
                     .intercept(new ExceptionHandler())
                     .build()
                     .start();
@@ -96,11 +96,11 @@ public class RuntimeServerGrpc {
         }
     }
 
-    public PubSubRegistry getPubSubRegistry() {
-        return pubSubRegistry;
+    public SubscriberRegistry getPubSubRegistry() {
+        return subscriberRegistry;
     }
 
-    public void registerPubSubCallback(String pubsubName, PubSub callback) {
-        pubSubRegistry.registerPubSubCallback(pubsubName, callback);
+    public void registerPubSubCallback(String pubsubName, Subscriber callback) {
+        subscriberRegistry.registerPubSubCallback(pubsubName, callback);
     }
 }

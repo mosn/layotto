@@ -15,7 +15,8 @@
  */
 package io.mosn.layotto.examples.pubsub.subscriber;
 
-import io.mosn.layotto.examples.pubsub.subscriber.impl.RawPubSub;
+import com.alibaba.fastjson.JSON;
+import io.mosn.layotto.examples.pubsub.subscriber.impl.RawSubscriber;
 import io.mosn.layotto.v1.RuntimeServerGrpc;
 
 import java.util.concurrent.Semaphore;
@@ -29,16 +30,16 @@ public class Subscriber {
      */
     public static void main(String[] args) throws Exception {
         RuntimeServerGrpc srv = new RuntimeServerGrpc(9999);
-        RawPubSub pubsub = new RawPubSub("redis");
+        RawSubscriber pubsub = new RawSubscriber("redis");
         pubsub.subscribe("hello", request -> {
             String value = new String(request.getData());
             assertEquals(value, "world");
-            System.out.println(value);
+            System.out.println(JSON.toJSONString(request));
         });
         pubsub.subscribe("topic1", request -> {
             String value = new String(request.getData());
             assertEquals(value, "message1");
-            System.out.println(value);
+            System.out.println(JSON.toJSONString(request));
         });
         srv.registerPubSubCallback(pubsub.getComponentName(), pubsub);
         Semaphore sm = new Semaphore(0);

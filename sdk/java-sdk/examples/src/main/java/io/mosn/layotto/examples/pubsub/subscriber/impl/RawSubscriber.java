@@ -15,7 +15,7 @@
  */
 package io.mosn.layotto.examples.pubsub.subscriber.impl;
 
-import io.mosn.layotto.v1.callback.component.pubsub.PubSub;
+import io.mosn.layotto.v1.callback.component.pubsub.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spec.sdk.runtime.v1.domain.pubsub.TopicEventRequest;
@@ -31,14 +31,14 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Raw pubsub client.
  */
-public class RawPubSub implements PubSub {
+public class RawSubscriber implements Subscriber {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RawPubSub.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RawSubscriber.class);
 
     private final Map<String, EventListener> listeners = new ConcurrentHashMap<>();
     private final String                     componentName;
 
-    public RawPubSub(String pubsubName) {
+    public RawSubscriber(String pubsubName) {
         componentName = pubsubName;
     }
 
