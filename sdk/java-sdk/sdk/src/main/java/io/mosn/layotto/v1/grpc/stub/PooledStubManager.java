@@ -31,28 +31,6 @@ public class PooledStubManager<A extends AbstractAsyncStub, B extends AbstractBl
     private final    RRPool<A>        asyncRuntimePool;
     private final    RRPool<B>        runtimePool;
 
-    /**
-     * Construct a new PooledStubManager with same channels in `other` PooledStubManager
-     *
-     * @param other
-     * @param sc
-     */
-    public PooledStubManager(PooledStubManager other, StubCreator<A, B> sc) {
-        // 1. validate
-        if (other == null || other.channels == null) {
-            throw new IllegalArgumentException("Invalid other");
-        }
-        if (sc == null) {
-            throw new IllegalArgumentException("Invalid StubCreator");
-        }
-        // 2. construct
-        ConstructResult<A, B> result = constructPools(channels, sc);
-        this.asyncRuntimePool = result.asyncPool;
-        this.runtimePool = result.blockingPool;
-        // 3. init connections
-        init(result.asyncStubs, result.blockingStubs);
-    }
-
     public PooledStubManager(ManagedChannel[] channels,
                              StubCreator<A, B> sc) {
         // 1. validate

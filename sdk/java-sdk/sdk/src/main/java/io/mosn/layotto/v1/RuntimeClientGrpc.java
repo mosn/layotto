@@ -473,4 +473,9 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
     public StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> getStubManager() {
         return stubManager;
     }
+
+    @Override
+    public void shutdown() {
+        stubManager.destroy();
+    }
 }

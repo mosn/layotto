@@ -26,4 +26,6 @@ public interface RuntimeClient extends
         LockRuntime,
         SequencerRuntime,
         FileRuntime {
+
+    void shutdown();
 }

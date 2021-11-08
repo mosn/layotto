@@ -16,14 +16,10 @@ package io.mosn.layotto.v1;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Empty;
-import io.grpc.inprocess.InProcessChannelBuilder;
-import io.grpc.inprocess.InProcessServerBuilder;
-import io.grpc.testing.GrpcCleanupRule;
-import io.mosn.layotto.v1.callback.GrpcAppCallbackImpl;
-import io.mosn.layotto.v1.callback.component.pubsub.SubscriberRegistry;
-import io.mosn.layotto.v1.callback.component.pubsub.SubscriberRegistryImpl;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -33,29 +29,31 @@ import spec.proto.runtime.v1.AppCallbackProto;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
-public class SubscriberTest {
+public class SubscriberTestWithRealServer {
     private final static String pubsubName = "redis";
     private final static String topic      = "hello";
 
-    @Rule
-    public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
-
     AppCallbackGrpc.AppCallbackBlockingStub blockingStub;
+    RuntimeServerGrpc                       server;
+    int                                     port = 7777;
+    String                                  ip   = "127.0.0.1";
 
     @Before
     public void setUp() throws Exception {
-        // Generate a unique in-process server name.
-        String serverName = InProcessServerBuilder.generateName();
-        SubscriberRegistry sr = new SubscriberRegistryImpl();
-        sr.registerPubSubCallback(pubsubName, new MySubscriber(pubsubName, topic));
+        server = new RuntimeServerGrpc(port);
+        server.registerPubSubCallback(pubsubName, new MySubscriber(pubsubName, topic));
+        server.start();
 
-        // Create a server, add service, start, and register for automatic graceful shutdown.
-        grpcCleanup.register(InProcessServerBuilder
-                .forName(serverName).directExecutor().addService(new GrpcAppCallbackImpl(sr)).build().start());
+        // build a client
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port)
+                .usePlaintext()
+                .build();
+        blockingStub = AppCallbackGrpc.newBlockingStub(channel);
+    }
 
-        // Create a client channel and register for automatic graceful shutdown.
-        blockingStub = AppCallbackGrpc.newBlockingStub(
-                grpcCleanup.register(InProcessChannelBuilder.forName(serverName).directExecutor().build()));
+    @After
+    public void shutdown() throws InterruptedException {
+        server.stop();
     }
 
     @Test
