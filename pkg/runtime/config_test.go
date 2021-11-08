@@ -17,7 +17,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"mosn.io/layotto/components/file/oss/alicloud/oss"
+	"mosn.io/layotto/components/file/s3/alicloud"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -34,8 +34,7 @@ func TestConfig(t *testing.T) {
                             {
                               "endpoint": "endpoint_address",
                               "accessKeyID": "accessKey",
-                              "accessKeySecret": "secret",
-                              "bucket": ["bucket1", "bucket2"]
+                              "accessKeySecret": "secret"
                             }
                           ]
 					}
@@ -44,13 +43,12 @@ func TestConfig(t *testing.T) {
 	mscf, err := ParseRuntimeConfig([]byte(data))
 	assert.Nil(t, err)
 	v := mscf.Files["aliOSS"]
-	m := make([]*oss.OssMetadata, 0, 0)
+	m := make([]*alicloud.OssMetadata, 0, 0)
 	err = json.Unmarshal(v.Metadata, &m)
 	assert.Nil(t, err)
 	for _, x := range m {
 		assert.Equal(t, "endpoint_address", x.Endpoint)
 		assert.Equal(t, "accessKey", x.AccessKeyID)
 		assert.Equal(t, "secret", x.AccessKeySecret)
-		assert.Equal(t, []string{"bucket1", "bucket2"}, x.Bucket)
 	}
 }
