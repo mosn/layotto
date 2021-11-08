@@ -83,7 +83,7 @@ service Runtime {
 }
 
 message GetFileMetaRequest{
-	FileRequest request = 1;
+    FileRequest request = 1;
 }
 
 message GetFileMetaResponse{
@@ -99,7 +99,7 @@ message FileMetaValue{
 }
 
 message FileMeta{
-	map<string,FileMetaValue> metadata = 1;
+    map<string,FileMetaValue> metadata = 1;
 }
 
 message GetFileRequest {
