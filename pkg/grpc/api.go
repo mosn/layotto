@@ -232,9 +232,11 @@ func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRe
 	if resp.Header != nil {
 		header := metadata.Pairs()
 		for k, values := range resp.Header {
-			for _, v := range values {
-				header.Append(k, v)
+			// fix https://github.com/mosn/layotto/issues/285
+			if strings.EqualFold("content-length", k) {
+				continue
 			}
+			header.Set(k, values...)
 		}
 		grpc.SetHeader(ctx, header)
 	}
