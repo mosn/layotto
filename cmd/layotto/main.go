@@ -23,9 +23,11 @@ import (
 	"strconv"
 	"time"
 
-	"mosn.io/layotto/components/file/s3/minio"
+	"mosn.io/layotto/components/file/local"
 
 	"mosn.io/layotto/components/file/s3/alicloud"
+	"mosn.io/layotto/components/file/s3/aws"
+	"mosn.io/layotto/components/file/s3/minio"
 
 	dbindings "github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/bindings/http"
@@ -166,6 +168,8 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithFileFactory(
 			file.NewFileFactory("aliOSS", alicloud.NewAliCloudOSS),
 			file.NewFileFactory("minioOSS", minio.NewMinioOss),
+			file.NewFileFactory("awsOSS", aws.NewAwsOss),
+			file.NewFileFactory("local", local.NewLocalStore),
 		),
 
 		// PubSub
