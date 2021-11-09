@@ -1012,6 +1012,15 @@ func TestPutFile(t *testing.T) {
 	mockStream.EXPECT().Recv().Return(&runtimev1pb.PutFileRequest{StoreName: "mock1"}, nil).Times(1)
 	err = api.PutFile(mockStream)
 	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not support store type: mock1"))
+
+	mockStream.EXPECT().Recv().Return(&runtimev1pb.PutFileRequest{StoreName: "mock"}, nil).Times(1)
+	stream := newPutObjectStreamReader(nil, mockStream)
+	Metadata := make(map[string]string)
+	mockStream.EXPECT().Context().Return(context.Background())
+	mockFile.EXPECT().Put(context.Background(), &file.PutFileStu{DataStream: stream, FileName: "", Metadata: Metadata}).Return(errors.New("err occur")).Times(1)
+	err = api.PutFile(mockStream)
+	s, _ := status.FromError(err)
+	assert.Equal(t, s.Message(), "err occur")
 }
 
 func TestListFile(t *testing.T) {
@@ -1033,6 +1042,13 @@ func TestListFile(t *testing.T) {
 	mockFile.EXPECT().List(context.Background(), &file.ListRequest{DirectoryName: request.Name, Metadata: request.Metadata}).Return(&file.ListResp{}, errors.New("test fail")).Times(1)
 	resp, err = api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
 	assert.NotNil(t, err)
+	info := &file.FilesInfo{FileName: "hello", Size: 10, LastModified: "2021.11.12"}
+	files := make([]*file.FilesInfo, 0)
+	files = append(files, info)
+	mockFile.EXPECT().List(context.Background(), &file.ListRequest{DirectoryName: request.Name, Metadata: request.Metadata}).Return(&file.ListResp{Files: files}, nil).Times(1)
+	resp, err = api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
+	assert.Equal(t, len(resp.Files), 1)
+	assert.Equal(t, resp.Files[0].FileName, "hello")
 }
 
 func TestDelFile(t *testing.T) {

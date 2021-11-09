@@ -22,6 +22,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	aws_config "github.com/aws/aws-sdk-go-v2/config"
@@ -256,6 +257,9 @@ func (a *AwsOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.File
 	}
 	out, err := client.HeadObject(ctx, input)
 	if err != nil {
+		if strings.Contains(err.Error(), "no such key") {
+			return nil, file.ErrNotExist
+		}
 		return nil, fmt.Errorf("awsoss stat file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	resp := &file.FileMetaResp{}
