@@ -200,18 +200,16 @@ func (a *AwsOss) List(ctx context.Context, st *file.ListRequest) (*file.ListResp
 	}
 	resp := &file.ListResp{}
 	resp.IsTruncated = out.IsTruncated
-	l := len(out.Contents)
-	//last object is marker
-	if l > 0 {
-		resp.Marker = *out.Contents[l-1].Key
-	}
+	marker := ""
 	for _, v := range out.Contents {
 		file := &file.FilesInfo{}
 		file.FileName = *v.Key
 		file.Size = v.Size
 		file.LastModified = v.LastModified.String()
 		resp.Files = append(resp.Files, file)
+		marker = *v.Key
 	}
+	resp.Marker = marker
 	return resp, nil
 }
 
@@ -261,7 +259,10 @@ func (a *AwsOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.File
 		return nil, fmt.Errorf("awsoss stat file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	resp := &file.FileMetaResp{}
+	resp.Size = out.ContentLength
+	resp.LastModified = out.LastModified.String()
 	resp.Metadata = make(map[string][]string)
+	resp.Metadata[loss.ETag] = append(resp.Metadata[loss.ETag], *out.ETag)
 	for k, v := range out.Metadata {
 		resp.Metadata[k] = append(resp.Metadata[k], v)
 	}
