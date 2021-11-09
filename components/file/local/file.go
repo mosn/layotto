@@ -23,6 +23,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
 
 	"mosn.io/layotto/components/file"
 )
@@ -146,9 +147,12 @@ func (lf *LocalStore) Del(ctx context.Context, f *file.DelRequest) error {
 func (lf *LocalStore) Stat(ctx context.Context, f *file.FileMetaRequest) (*file.FileMetaResp, error) {
 	fileInfo, err := os.Stat(f.FileName)
 	if err != nil {
+		if strings.Contains(err.Error(), "no such file or directory") {
+			return nil, file.ErrNotExist
+		}
 		return nil, err
 	}
-	resp := file.FileMetaResp{}
+	resp := &file.FileMetaResp{}
 	resp.Metadata = make(map[string][]string)
 	resp.Size = fileInfo.Size()
 	resp.LastModified = fileInfo.ModTime().String()
@@ -161,5 +165,5 @@ func (lf *LocalStore) Stat(ctx context.Context, f *file.FileMetaRequest) (*file.
 	}
 	resp.Metadata[FileMode] = append(resp.Metadata[FileMode], m)
 	resp.Metadata[FileIsDir] = append(resp.Metadata[FileIsDir], isDir)
-	return nil, nil
+	return resp, nil
 }

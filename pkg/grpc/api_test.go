@@ -1053,3 +1053,21 @@ func TestDelFile(t *testing.T) {
 	_, err = api.DelFile(context.Background(), &runtimev1pb.DelFileRequest{Request: request})
 	assert.NotNil(t, err)
 }
+
+func TestGetFileMeta(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	mockFile := mock.NewMockFile(ctrl)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil)
+	request := &runtimev1pb.GetFileMetaRequest{Request: nil}
+	resp, err := api.GetFileMeta(context.Background(), request)
+	assert.Nil(t, resp)
+	st, _ := status.FromError(err)
+	assert.Equal(t, st.Message(), "request can't be nil")
+	request.Request = &runtimev1pb.FileRequest{StoreName: "mock", Name: "test"}
+	meta := make(map[string]string)
+	re := &file.FileMetaResp{Size: 10, LastModified: "123"}
+	mockFile.EXPECT().Stat(context.Background(), &file.FileMetaRequest{FileName: request.Request.Name, Metadata: meta}).Return(re, nil).Times(1)
+	resp, err = api.GetFileMeta(context.Background(), request)
+	assert.Equal(t, resp.LastModified, "123")
+	assert.Equal(t, int(resp.Size), 10)
+}

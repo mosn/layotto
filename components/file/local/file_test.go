@@ -98,6 +98,16 @@ func TestFile(t *testing.T) {
 		t.Log(v)
 	}
 
+	st := &file.FileMetaRequest{FileName: "hello.txt"}
+	r, err := ls.Stat(context.TODO(), st)
+	assert.Equal(t, file.ErrNotExist, err)
+	assert.Nil(t, r)
+
+	st.FileName = "file.go"
+	r, err = ls.Stat(context.TODO(), st)
+	assert.Nil(t, err)
+	assert.Equal(t, r.Metadata[FileIsDir][0], "false")
+
 	fd := &file.DelRequest{}
 	fd.FileName = FileName
 	err = ls.Del(context.TODO(), fd)
