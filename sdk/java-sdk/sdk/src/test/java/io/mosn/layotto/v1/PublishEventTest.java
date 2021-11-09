@@ -14,12 +14,11 @@
  */
 package io.mosn.layotto.v1;
 
-import com.google.protobuf.Empty;
 import io.grpc.ManagedChannel;
 import io.grpc.inprocess.InProcessChannelBuilder;
 import io.grpc.inprocess.InProcessServerBuilder;
-import io.grpc.stub.StreamObserver;
 import io.grpc.testing.GrpcCleanupRule;
+import io.mosn.layotto.v1.mock.MyPublishService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,17 +28,6 @@ import org.junit.runners.JUnit4;
 import spec.proto.runtime.v1.RuntimeGrpc;
 import spec.proto.runtime.v1.RuntimeProto;
 import spec.sdk.runtime.v1.client.RuntimeClient;
-import spec.sdk.runtime.v1.domain.state.GetBulkStateRequest;
-import spec.sdk.runtime.v1.domain.state.GetStateRequest;
-import spec.sdk.runtime.v1.domain.state.State;
-import spec.sdk.runtime.v1.domain.state.StateOptions;
-import spec.sdk.runtime.v1.domain.state.TransactionalStateOperation;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.mockito.AdditionalAnswers.delegatesTo;
 import static org.mockito.Mockito.mock;
@@ -49,27 +37,7 @@ public class PublishEventTest {
     @Rule
     public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
 
-    static class MyRuntimeImpl extends RuntimeGrpc.RuntimeImplBase {
-        RuntimeProto.PublishEventRequest lastReq = null;
-
-        @Override
-        public void publishEvent(RuntimeProto.PublishEventRequest request, StreamObserver<Empty> responseObserver) {
-            lastReq = request;
-            responseObserver.onNext(null);
-            responseObserver.onCompleted();
-        }
-
-        /**
-         * Getter method for property <tt>lastReq</tt>.
-         *
-         * @return property value of lastReq
-         */
-        public RuntimeProto.PublishEventRequest getLastReq() {
-            return lastReq;
-        }
-    }
-
-    private final MyRuntimeImpl mockService = new MyRuntimeImpl();
+    private final MyPublishService mockService = new MyPublishService();
 
     private final RuntimeGrpc.RuntimeImplBase serviceImpl =
             mock(RuntimeGrpc.RuntimeImplBase.class, delegatesTo(mockService));

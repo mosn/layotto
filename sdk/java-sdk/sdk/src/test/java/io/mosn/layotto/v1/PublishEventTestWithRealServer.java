@@ -16,23 +16,27 @@ package io.mosn.layotto.v1;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.testing.GrpcCleanupRule;
 import io.mosn.layotto.v1.grpc.ExceptionHandler;
 import io.mosn.layotto.v1.grpc.GrpcRuntimeClient;
-import io.mosn.layotto.v1.mock.MyHelloService;
+import io.mosn.layotto.v1.mock.MyPublishService;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import spec.proto.runtime.v1.RuntimeGrpc;
+import spec.proto.runtime.v1.RuntimeProto;
 
-import static org.junit.Assert.assertEquals;
+import static org.mockito.AdditionalAnswers.delegatesTo;
 import static org.mockito.Mockito.mock;
 
 @RunWith(JUnit4.class)
-public class SayHelloTestWithRealServer {
+public class PublishEventTestWithRealServer {
 
-    private RuntimeGrpc.RuntimeImplBase helloService = new MyHelloService();
+    private final MyPublishService mockService = new MyPublishService();
 
     private Server            srv;
     private GrpcRuntimeClient client;
@@ -45,7 +49,7 @@ public class SayHelloTestWithRealServer {
         // start grpc server
         /* The port on which the server should run */
         srv = ServerBuilder.forPort(port)
-                .addService(helloService)
+                .addService(mockService)
                 .intercept(new ExceptionHandler())
                 .build()
                 .start();
@@ -66,9 +70,11 @@ public class SayHelloTestWithRealServer {
     }
 
     @Test
-    public void sayHello() {
-        String greet = client.sayHello("layotto");
-        assertEquals("hi, layotto", greet);
+    public void testPublishEvent() {
+        client.publishEvent("redis", "hello", "word".getBytes());
+        RuntimeProto.PublishEventRequest last = mockService.getLastReq();
+        Assert.assertEquals(last.getPubsubName(), "redis");
+        Assert.assertEquals(last.getTopic(), "hello");
+        Assert.assertEquals(new String(last.getData().toByteArray()), "word");
     }
-
 }

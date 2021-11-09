@@ -18,6 +18,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Empty;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.mosn.layotto.v1.mock.MySubscriber;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

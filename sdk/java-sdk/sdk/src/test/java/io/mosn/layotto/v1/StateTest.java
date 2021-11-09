@@ -18,6 +18,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.inprocess.InProcessChannelBuilder;
 import io.grpc.inprocess.InProcessServerBuilder;
 import io.grpc.testing.GrpcCleanupRule;
+import io.mosn.layotto.v1.mock.MyStateService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;

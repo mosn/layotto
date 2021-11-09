@@ -22,6 +22,7 @@ import io.grpc.testing.GrpcCleanupRule;
 import io.mosn.layotto.v1.callback.GrpcAppCallbackImpl;
 import io.mosn.layotto.v1.callback.component.pubsub.SubscriberRegistry;
 import io.mosn.layotto.v1.callback.component.pubsub.SubscriberRegistryImpl;
+import io.mosn.layotto.v1.mock.MySubscriber;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

@@ -16,13 +16,12 @@ package io.mosn.layotto.v1;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import io.grpc.testing.GrpcCleanupRule;
 import io.mosn.layotto.v1.grpc.ExceptionHandler;
 import io.mosn.layotto.v1.grpc.GrpcRuntimeClient;
+import io.mosn.layotto.v1.mock.MyStateService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -37,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.AdditionalAnswers.delegatesTo;
 import static org.mockito.Mockito.mock;
 
 @RunWith(JUnit4.class)
