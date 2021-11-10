@@ -5,9 +5,12 @@
 
 package spec.sdk.reactor.v1.domain.core.invocation;
 
+import okhttp3.HttpUrl;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * HTTP Extension class.
@@ -110,6 +113,27 @@ public final class HttpExtension {
 
     public Map<String, String> getHeaders() {
         return headers;
+    }
+
+    /**
+     * Encodes the query string for the HTTP request.
+     *
+     * @return Encoded HTTP query string.
+     */
+    public String encodeQueryString() {
+        if ((this.queryParams == null) || (this.queryParams.isEmpty())) {
+            return "";
+        }
+
+        HttpUrl.Builder urlBuilder = new HttpUrl.Builder();
+        // Setting required values but we only need query params in the end.
+        urlBuilder.scheme("http").host("localhost");
+        Optional.ofNullable(this.queryParams).orElse(Collections.emptyMap()).entrySet().stream()
+                .forEach(urlParameter ->
+                        Optional.ofNullable(urlParameter.getValue()).orElse(Collections.emptyList()).stream()
+                                .forEach(urlParameterValue ->
+                                        urlBuilder.addQueryParameter(urlParameter.getKey(), urlParameterValue)));
+        return urlBuilder.build().encodedQuery();
     }
 
     /**
