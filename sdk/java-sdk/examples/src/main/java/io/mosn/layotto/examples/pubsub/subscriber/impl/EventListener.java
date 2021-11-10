@@ -13,7 +13,7 @@
  * limitations under the License.
  *
  */
-package io.mosn.layotto.examples.pubsub.subscriber;
+package io.mosn.layotto.examples.pubsub.subscriber.impl;
 
 import spec.sdk.runtime.v1.domain.pubsub.TopicEventRequest;
 

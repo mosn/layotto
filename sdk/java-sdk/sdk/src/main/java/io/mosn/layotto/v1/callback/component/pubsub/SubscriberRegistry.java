@@ -13,19 +13,15 @@
  * limitations under the License.
  *
  */
-package spec.sdk.runtime.v1.client;
+package io.mosn.layotto.v1.callback.component.pubsub;
 
-import spec.sdk.runtime.v1.domain.*;
+import java.util.Collection;
 
-public interface RuntimeClient extends
-        HelloRuntime,
-        ConfigurationRuntime,
-        InvocationRuntime,
-        PubSubRuntime,
-        StateRuntime,
-        LockRuntime,
-        SequencerRuntime,
-        FileRuntime {
+public interface SubscriberRegistry {
 
-    void shutdown();
+    void registerPubSubCallback(String pubsubName, Subscriber callback);
+
+    Subscriber getCallbackByPubSubName(String pubSubName);
+
+    Collection<Subscriber> getAllPubSubCallbacks();
 }

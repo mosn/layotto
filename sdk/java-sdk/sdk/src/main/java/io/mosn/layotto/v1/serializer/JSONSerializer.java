@@ -19,16 +19,13 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
 
-public class JSONSerializer implements ObjectSerializer {
+public class JSONSerializer extends AbstractSerializer {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public byte[] serialize(Object o) throws IOException {
-        if (o == null) {
-            return null;
-        }
+    protected byte[] doSerialize(Object o) throws IOException {
         return JSONObject.toJSONBytes(o);
     }
 
@@ -36,10 +33,7 @@ public class JSONSerializer implements ObjectSerializer {
      * {@inheritDoc}
      */
     @Override
-    public <T> T deserialize(byte[] data, Class<T> clazz) throws IOException {
-        if (data == null) {
-            return null;
-        }
+    protected <T> T doDeserialize(byte[] data, Class<T> clazz) throws IOException {
         return JSONObject.parseObject(data, clazz);
     }
 
