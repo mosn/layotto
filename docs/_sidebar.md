@@ -19,17 +19,17 @@
   - [Trace management](en/start/trace/trace.md)
   - [Health check and metadata query](en/start/actuator/start.md)
   - [FaaS model based on WASM and Runtime](en/start/faas/start.md)
-- Reference
-  - API reference
-    - [File API](en/api_reference/file/file.md)
-    - [Configuration API](en/api_reference/configuration/reference.md)
-    - [Actuator API](en/api_reference/actuator/actuator.md)
-    - [State API](en/api_reference/state/reference.md)
-    - [Sequencer API](en/api_reference/sequencer/reference.md)
-    - [Distributed Lock API](en/api_reference/lock/reference.md)
-    - [Pub/Sub API](en/api_reference/pubsub/reference.md)
-    - [Configuration API](en/api_reference/configuration/reference.md)
-    - [RPC API](en/api_reference/rpc/reference.md)    
+- Developer guide
+  - Building blocks
+    - [File API](en/building_blocks/file/file.md)
+    - [Configuration API](en/building_blocks/configuration/reference.md)
+    - [Actuator API](en/building_blocks/actuator/actuator.md)
+    - [State API](en/building_blocks/state/reference.md)
+    - [Sequencer API](en/building_blocks/sequencer/reference.md)
+    - [Distributed Lock API](en/building_blocks/lock/reference.md)
+    - [Pub/Sub API](en/building_blocks/pubsub/reference.md)
+    - [RPC API](en/building_blocks/rpc/reference.md)    
+  - [API reference](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
   - SDK reference
     - [go-sdk](en/sdk_reference/go/start.md)
     - [java-sdk](en/sdk_reference/java/start.md)
@@ -53,6 +53,7 @@
     - [Sequencer](en/component_specs/sequencer/common.md)
       - [Etcd](en/component_specs/sequencer/etcd.md)
       - [Redis](en/component_specs/sequencer/redis.md)
+      - [Zookeeper](en/component_specs/sequencer/zookeeper.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
@@ -61,7 +62,12 @@
   - [Distributed lock API design](en/design/lock/lock-api-design.md)
   - [FaaS design](en/design/faas/faas-poc-design.md)
 - Contributing
-  - [Layotto contributor guide](en/development/CONTRIBUTING.md)
   - [Document Contribution Guide](en/development/contributing-doc.md)
   - [Component Development Guide](en/development/developing-component.md)
-  - [Development specification when adding API](en/development/developing-api.md)
+  - You wanna modify proto files or API definition?
+    - [Development specification when adding API](en/development/developing-api.md)
+    - [Comment specification of proto file](en/api_reference/comment_spec_of_proto.md)
+    - [How to generate API document based on the proto files](en/api_reference/how_to_generate_api_doc.md)
+  - [Explanation for github workflow](en/development/explanation-for-github-workflow.md)
+  - [Layotto contributor guide](en/development/CONTRIBUTING.md)
+

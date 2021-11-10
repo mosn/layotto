@@ -4,7 +4,7 @@
 
 Layotto supports loading and running functions in the form of wasm, and supports calling each other between functions and accessing infrastructure, such as Redis.
 
-Detailed design documents can refer to：[FaaS design](../../design/faas/faas-poc-design.md)
+Detailed design documents can refer to：[FaaS design](en/design/faas/faas-poc-design.md)
 
 ### 2. Dependent software
 
@@ -20,7 +20,7 @@ The following software needs to be installed to run this demo:
 
 3. [virtualbox](https://www.virtualbox.org/)
    
-   Download the installation package from the official website and install it. You can also use [homebrew](https://brew.sh/) to install it on mac.
+   Download the installation package from the official website and install it. You can also use [homebrew](https://brew.sh/) to install it on mac.If the startup fails after installation, please refer to [The host-only adapter we just created is not visible](https://github.com/kubernetes/minikube/issues/3614).
 
 
 ### 3. Setup
@@ -33,7 +33,7 @@ The example only needs a Redis server that can be used normally. As for where it
 > brew install redis
 > redis-server /usr/local/etc/redis.conf
 ```
-**Note: If you want external services to connect to redis, you need to modify the protected-mode in redis.conf to no.**
+**Note: If you want external services to connect to redis, you need to modify the protected-mode in redis.conf to no,At the same time, add bind * -::* to let it monitor all interfaces.**
 
 #### B、Start minikube in virtualbox + containerd mode
 ```
@@ -62,6 +62,7 @@ The example only needs a Redis server that can be used normally. As for where it
 > cd containerd-wasm
 > sh build.sh
 > minikube cp containerd-shim-layotto-v2 /home/docker/containerd-shim-layotto-v2
+> minikube ssh
 > sudo chmod +x containerd-shim-layotto-v2
 > sudo mv containerd-shim-layotto-v2 /usr/bin/
 ```
@@ -70,6 +71,7 @@ The example only needs a Redis server that can be used normally. As for where it
 
 Add laytto runtime configuration.
 ```
+> minikube ssh
 > sudo vi /etc/containerd/config.toml
 [plugins.cri.containerd.runtimes.layotto]
   runtime_type = "io.containerd.layotto.v2"
@@ -101,6 +103,7 @@ runtimeclass.node.k8s.io/layotto created
 ```
 
 #### C、Create Function
+This operation will automatically inject function_1.wasm and function_2.wasm into the Virtualbox virtual machine.
 ```
 > kubectl apply -f ./demo/faas/function-1.yaml
 pod/function-1 created
@@ -133,6 +136,16 @@ There are 100 inventories for book1.
 2. func1 calls func2 through Runtime ABI
 3. func2 calls redis through Runtime ABI
 4. Return results
+
+### Common problem description
+
+1. Virtualbox failed to start, "The host-only adapter we just created is not visible":
+
+    refer  [The host-only adapter we just created is not visible](https://github.com/kubernetes/minikube/issues/3614)
+
+2. When Layotto is started, the redis connection fails, and "occurs an error: redis store: error connecting to redis at" is printed:
+
+   Check the redis configuration to see if it is caused by a redis configuration error.
 
 ### 6. Note
 

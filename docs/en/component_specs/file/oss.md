@@ -11,4 +11,3 @@ Example：configs/config_file.json
 | accessKeySecret | Y | accessKeySecret |
 | bucket | Y | The bucket collection is an array of strings |
 
-

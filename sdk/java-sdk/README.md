@@ -1,31 +1,85 @@
+[中文](./README-zh.md)
+## How to use java sdk
+### 1. import sdk
+For a Maven project, add the following to your `pom.xml` file:
+```xml
+<project>
+  ...
+  <dependencies>
+    ...
+    <dependency>
+        <groupId>io.mosn.layotto</groupId>
+        <artifactId>runtime-sdk-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    ...
+  </dependencies>
+  ...
+</project>
+```
+
+### 2. Run the examples
+Clone this repository including the submodules:
+
+```sh
+git clone https://github.com/mosn/layotto.git
+```
+
+Build and run Layotto:
+
+```bash
+# make sure you replace this` ${projectpath}` with your own project path.
+cd ${projectpath}/cmd/layotto
+go build
+./layotto start -c ../../configs/config_redis.json
+```
+
+Then head over to build the java-sdk [Maven](https://maven.apache.org/install.html) (Apache Maven version 3.x) project:
+
+```sh
+# make sure you replace this` ${projectpath}` with your own project path.
+cd ${projectpath}/sdk/java-sdk
+mvn clean install
+```
+
+
+
+
+Try the following examples to learn more about this SDK:
+* [Hello world](./examples/src/main/java/io/mosn/layotto/examples/helloworld)
+* [State management](./examples/src/main/java/io/mosn/layotto/examples/state)
+* [Pubsub API](./examples/src/main/java/io/mosn/layotto/examples/pubsub)
+
 
 ## How to generate a Java PROTO file
 
-### 1. 下载对应[proto](https://github.com/protocolbuffers/protobuf/releases/tag/v3.6.1) 文件到本地
-
-my protoc version: 
+### 1. Download proto compiler [protoc](https://github.com/protocolbuffers/protobuf/releases)
+my protoc version:
 ```shell
 $ protoc --version
-libprotoc 3.17.3
+libprotoc 3.11.2
 ```
 
-### 2. 修改对应`proto`文件生成类名包名等信息
-(需先修改文件内部service名)
-appcallback.proto: 
+### 2. Check `option` fields in these proto files
+Make sure these `option` fields have been configurated.
+
+spec/proto/runtime/v1/appcallback.proto : 
 ```protobuf
 option java_outer_classname = "AppCallbackProto";
 option java_package = "spec.proto.runtime.v1";
 ```
-runtime.proto
+
+spec/proto/runtime/v1/runtime.proto :
 ```protobuf
 option java_outer_classname = "RuntimeProto";
 option java_package = "spec.proto.runtime.v1";
 ```
 
-### 3. 编译其对应`JAVA`文件
+### 3. Compile them into corresponding `JAVA` files
 ```shell
+# make sure you replace this `${your PROJECT path}` with your own project path.
 cd ${your PROJECT path}/spec/proto/runtime/v1
 protoc -I=. --java_out=./  runtime.proto
 ```
 
-PS: 建议用maven插件`protoc-gen-grpc-java`生成protobuf和grpc的java代码
+PS: We recommend that you use the maven plugin `protoc-gen-grpc-java` to generate these protobuf and grpc related java code.

@@ -87,7 +87,7 @@ message GetFileRequest {
   // The name of the file or object want to get.
   string name = 2;
   // The metadata for user extension.
-  map<string,string> metadata = 3;
+  map<string, string> metadata = 3;
 }
 
 message GetFileResponse {
@@ -101,7 +101,7 @@ message PutFileRequest {
   // The data will be store.
   bytes data = 3;
   // The metadata for user extension.
-  map<string,string> metadata = 4;
+  map<string, string> metadata = 4;
 }
 
 message FileRequest {
@@ -109,7 +109,7 @@ message FileRequest {
   // The name of the directory
   string name = 2;
   // The metadata for user extension.
-  map<string,string> metadata = 3;
+  map<string, string> metadata = 3;
 }
 
 message ListFileRequest {
@@ -178,12 +178,9 @@ message TryLockRequest {
 
   // Required. lock_owner indicate the identifier of lock owner.
   // You can generate a uuid as lock_owner.For example,in golang:
-  //
   // req.LockOwner = uuid.New().String()
-  //
   // This field is per request,not per process,so it is different for each request,
   // which aims to prevent multi-thread in the same process trying the same lock concurrently.
-  //
   // The reason why we don't make it automatically generated is:
   // 1. If it is automatically generated,there must be a 'my_lock_owner_id' field in the response.
   // This name is so weird that we think it is inappropriate to put it into the api spec
@@ -546,13 +543,11 @@ message StateOptions {
   enum StateConsistency {
     CONSISTENCY_UNSPECIFIED = 0;
     //  The API server assumes data stores are eventually consistent by default.A state store should:
-    //
     // - For read requests, the state store can return data from any of the replicas
     // - For write request, the state store should asynchronously replicate updates to configured quorum after acknowledging the update request.
     CONSISTENCY_EVENTUAL = 1;
 
     // When a strong consistency hint is attached, a state store should:
-    //
     // - For read requests, the state store should return the most up-to-date data consistently across replicas.
     // - For write/delete requests, the state store should synchronisely replicate updated data to configured quorum before completing the write request.
     CONSISTENCY_STRONG = 2;
@@ -564,7 +559,10 @@ message StateOptions {
 
 // TransactionalStateOperation is the message to execute a specified operation with a key-value pair.
 message TransactionalStateOperation {
-  // Required. The type of operation to be executed
+  // Required. The type of operation to be executed.
+  // Legal values include:
+  // "upsert" represents an update or create operation
+  // "delete" represents a delete operation
   string operationType = 1;
 
   // Required. State values to be operated on
@@ -612,13 +610,12 @@ message InvokeBindingRequest {
   bytes data = 2;
 
   // The metadata passing to output binding components
-  //
   // Common metadata property:
   // - ttlInSeconds : the time to live in seconds for the message.
   // If set in the binding definition will cause all messages to
   // have a default time to live. The message ttl overrides any value
   // in the binding definition.
-  map<string,string> metadata = 3;
+  map<string, string> metadata = 3;
 
   // The name of the operation type for the binding to invoke
   string operation = 4;
@@ -630,5 +627,5 @@ message InvokeBindingResponse {
   bytes data = 1;
 
   // The metadata returned from an external system
-  map<string,string> metadata = 2;
+  map<string, string> metadata = 2;
 }

@@ -18,3 +18,27 @@ vendor/
 bin/
 obj/
 demo/state/redis/client
+
+# node
+node_modules/
+
+# Java
+target/
+*.class
+.DS_Store
+application.pid
+*.jar
+*.war
+*.ear
+
+# Eclipse
+.classpath
+.project
+.settings
+
+# Idea
+.idea
+*.iml
+
+# git
+*.orig
