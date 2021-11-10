@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 	"strings"
 	"sync"
 
@@ -229,9 +230,11 @@ func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRe
 	if resp.Header != nil {
 		header := metadata.Pairs()
 		for k, values := range resp.Header {
-			for _, v := range values {
-				header.Append(k, v)
+			// fix https://github.com/mosn/layotto/issues/285
+			if strings.EqualFold("content-length", k) {
+				continue
 			}
+			header.Set(k, values...)
 		}
 		grpc.SetHeader(ctx, header)
 	}
@@ -426,7 +429,7 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 			return &emptypb.Empty{}, err
 		}
 	} else {
-		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), "", contrib_pubsub.DefaultCloudEventType, "", topic, pubsubName,
+		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", topic, pubsubName,
 			contentType, data, "")
 	}
 	features := component.Features()
@@ -714,12 +717,12 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 		case state.Upsert:
 			operation = state.TransactionalStateOperation{
 				Operation: state.Upsert,
-				Request:   converter.StateItem2SetRequest(req, key),
+				Request:   *converter.StateItem2SetRequest(req, key),
 			}
 		case state.Delete:
 			operation = state.TransactionalStateOperation{
 				Operation: state.Delete,
-				Request:   converter.StateItem2DeleteRequest(req, key),
+				Request:   *converter.StateItem2DeleteRequest(req, key),
 			}
 		default:
 			err := status.Errorf(codes.Unimplemented, messages.ErrNotSupportedStateOperation, op.OperationType)

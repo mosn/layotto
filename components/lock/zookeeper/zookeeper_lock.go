@@ -22,6 +22,7 @@ import (
 	"time"
 )
 
+// Zookeeper lock store
 type ZookeeperLock struct {
 	//trylock reestablish connection  every time
 	factory utils.ConnectionFactory
@@ -31,6 +32,7 @@ type ZookeeperLock struct {
 	logger     log.ErrorLogger
 }
 
+// Create ZookeeperLock
 func NewZookeeperLock(logger log.ErrorLogger) *ZookeeperLock {
 	lock := &ZookeeperLock{
 		logger: logger,
@@ -38,6 +40,7 @@ func NewZookeeperLock(logger log.ErrorLogger) *ZookeeperLock {
 	return lock
 }
 
+// Init ZookeeperLock
 func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
 
 	m, err := utils.ParseZookeeperMetadata(metadata.Properties)
@@ -57,9 +60,12 @@ func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
 	return nil
 }
 
+// Features is to get ZookeeperLock's features
 func (p *ZookeeperLock) Features() []lock.Feature {
 	return nil
 }
+
+// Node tries to acquire a zookeeper lock
 func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 
 	conn, err := p.factory.NewConnection(time.Duration(req.Expire)*time.Second, p.metadata)
@@ -97,6 +103,8 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 	}, nil
 
 }
+
+// Node tries to release a zookeeper lock
 func (p *ZookeeperLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 
 	conn := p.unlockConn
