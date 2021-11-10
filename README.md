@@ -38,7 +38,8 @@ Layotto provides sdks in various languages. The sdk interacts with Layotto throu
 
 ![Architecture](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
 
-## API
+## Quickstarts
+### API
 
 |  API            | status |                               quick start                             |                                components                                 | desc |
 |  -------------  | :----: | :--------------------------------------------------------------------:|:-------------------------------------------------------------------------:|---- |
@@ -50,21 +51,21 @@ Layotto provides sdks in various languages. The sdk interacts with Layotto throu
 | Sequencer       | ✅     | [demo](https://mosn.io/layotto/#/en/start/sequencer/start)            | [list](https://mosn.io/layotto/#/en/component_specs/sequencer/common)     | Distribube auto increment ID generator |
 
 
-## Actuator
+### Actuator
 
 |  feature       | status |                         quick start                       |                         desc                         |
 |  ------------- | :----: | :--------------------------------------------------------:|------------------------------------------------------|
 | Health Check   | ✅     | [demo](https://mosn.io/layotto/#/en/start/actuator/start) | Query health state of app and components in Layotto  |
 | Metadata Query | ✅     | [demo](https://mosn.io/layotto/#/en/start/actuator/start) | Query metadata in Layotto/app                        |
 
-## Traffic Control
+### Traffic Control
 
 |  feature      | status |                              quick start                              |                               desc                              |
 |  -----------  | :----: | :--------------------------------------------------------------------:|-----------------------------------------------------------------|
 | TCP Copy      | ✅     | [demo](https://mosn.io/layotto/#/en/start/network_filter/tcpcopy)     | Dump the tcp traffic received by Layotto into local file system |
 | Flow Control  | ✅     | [demo](https://mosn.io/layotto/#/en/start/stream_filter/flow_control) | limit access to the APIs provided by Layotto                    |
 
-## FaaS (Layotto + WebAssembly + k8s)
+### FaaS (Layotto + WebAssembly + k8s)
 
 |  feature       | status |                       quick start                      |                               desc                                  |
 |  ------------- | :----: | :-----------------------------------------------------:|---------------------------------------------------------------------|
@@ -72,7 +73,7 @@ Layotto provides sdks in various languages. The sdk interacts with Layotto throu
 | Rust           | TODO     |   | Compile Code written by Rust to *.wasm and run in Layotto           |
 | AssemblyScript | TODO     |   | Compile Code written by AssemblyScript to *.wasm and run in Layotto |
 
-## Other features
+### Service Mesh
 | feature | status |                       quick start                      |            desc            |
 | ------- | :----: | :-----------------------------------------------------:|----------------------------|
 | istio   | ✅     | [demo](https://mosn.io/layotto/#/en/start/istio/start) | As the data plane of istio |
