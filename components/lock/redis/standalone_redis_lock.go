@@ -46,6 +46,7 @@ func NewStandaloneRedisLock(logger log.ErrorLogger) *StandaloneRedisLock {
 	return s
 }
 
+// Init StandaloneRedisLock
 func (p *StandaloneRedisLock) Init(metadata lock.Metadata) error {
 	// 1. parse config
 	m, err := utils.ParseRedisMetadata(metadata.Properties)
@@ -63,15 +64,19 @@ func (p *StandaloneRedisLock) Init(metadata lock.Metadata) error {
 	return err
 }
 
+// Features is to get StandaloneRedisLock's features
 func (p *StandaloneRedisLock) Features() []lock.Feature {
 	return p.features
 }
 
+// Node tries to acquire a redis lock
 func (p *StandaloneRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
+	// 1.Setting redis expiration time
 	nx := p.client.SetNX(p.ctx, req.ResourceId, req.LockOwner, time.Second*time.Duration(req.Expire))
 	if nx == nil {
 		return &lock.TryLockResponse{}, fmt.Errorf("[standaloneRedisLock]: SetNX returned nil.ResourceId: %s", req.ResourceId)
 	}
+	// 2. check error
 	err := nx.Err()
 	if err != nil {
 		return &lock.TryLockResponse{}, err
@@ -84,6 +89,7 @@ func (p *StandaloneRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockRe
 
 const unlockScript = "local v = redis.call(\"get\",KEYS[1]); if v==false then return -1 end; if v~=ARGV[1] then return -2 else return redis.call(\"del\",KEYS[1]) end"
 
+// Node tries to release a redis lock
 func (p *StandaloneRedisLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	// 1. delegate to client.eval lua script
 	eval := p.client.Eval(p.ctx, unlockScript, []string{req.ResourceId}, req.LockOwner)
@@ -115,12 +121,14 @@ func (p *StandaloneRedisLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockRespo
 	}, nil
 }
 
+// newInternalErrorUnlockResponse is to return lock release error
 func newInternalErrorUnlockResponse() *lock.UnlockResponse {
 	return &lock.UnlockResponse{
 		Status: lock.INTERNAL_ERROR,
 	}
 }
 
+// Close shuts down the client's redis connections.
 func (p *StandaloneRedisLock) Close() error {
 	p.cancel()
 

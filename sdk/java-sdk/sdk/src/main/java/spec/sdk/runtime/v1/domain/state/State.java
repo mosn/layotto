@@ -196,4 +196,13 @@ public class State<T> {
     public StateOptions getOptions() {
         return options;
     }
+
+    /**
+     * Getter method for property <tt>error</tt>.
+     *
+     * @return property value of error
+     */
+    public String getError() {
+        return error;
+    }
 }

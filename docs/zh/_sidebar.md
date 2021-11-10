@@ -18,6 +18,8 @@
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - [trace管理](zh/start/trace/trace.md)
+    - [使用WASM进行多语言编程](zh/start/wasm/start.md)
+    - [OSS访问文件](zh/start/file/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - 用户手册
     - 功能介绍
@@ -49,10 +51,8 @@
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)
             - [Apollo](zh/component_specs/configuration/apollo.md)
-        - File
+        - [File](zh/component_specs/file/common.md)
             - [OSS](zh/component_specs/file/oss.md)
-            - [Etcd](zh/component_specs/configuration/etcd.md)        
-            - [Apollo](zh/component_specs/configuration/apollo.md)        
         - [Sequencer](zh/component_specs/sequencer/common.md)
             - [Etcd](zh/component_specs/sequencer/etcd.md)
             - [Redis](zh/component_specs/sequencer/redis.md)
@@ -72,6 +72,7 @@
     - [组件开发指南](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
         - [新增API时的开发规范](zh/development/developing-api.md)
+        - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
         - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
     - [解释一下Layotto的github workflow](zh/development/explanation-for-github-workflow.md)

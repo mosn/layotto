@@ -1,97 +1,114 @@
 # File API
 
+## What is File API
+
+File api is used to implement file operations. Applications can perform CRUD operations on files through this interface. The interface supports streaming mode to realize the transmission of large files.
+
+## How to use File API
+You can call the File API through grpc. The API is defined in [runtime.proto](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto).
+
+The component needs to be configured before use. Different components should have own configuration.For OSS detail configuration items, see [OSS Component Document](en/component_specs/file/oss.md)
+
+### Example
+
+For examples of using file api, please refer to [File Demo](../../../../demo/file)
+
+
 ## grpc API definition
 
-```
-Put(*PutFileStu) error
-Get(*GetFileStu) (io.ReadCloser, error)
-List(*ListRequest) (*ListResp, error)
-Del(*DelRequest) error
+```protobuf
+  // Get file with stream
+  rpc GetFile(GetFileRequest) returns (stream GetFileResponse) {}
+
+  // Put file with stream
+  rpc PutFile(stream PutFileRequest) returns (google.protobuf.Empty) {}
+
+  // List all files
+  rpc ListFile(ListFileRequest) returns (ListFileResp){}
+
+  // Delete specific file
+  rpc DelFile(DelFileRequest) returns (google.protobuf.Empty){}
 ```
 
 ## Research
 
 Refer：
 
-```
+```protobuf
 https://github.com/mosn/layotto/issues/98
 ```
 
-## Explanation
+#### parameters
 
-### Put
-
-#### Entry type
-The put interface is used to upload files. The input types are as follows：
-
-```
-type PutFileStu struct {
-    DataStream io.Reader //used to read the file data transmitted by grpc stream
-    FileName string //File name
-    Metadata mapping [string]string //Find the field
+```protobuf
+message GetFileRequest {
+  //
+  string store_name = 1;
+  // The name of the file or object want to get.
+  string name = 2;
+  // The metadata for user extension.
+  map<string,string> metadata = 3;
 }
 
-```
-#### return type
+message GetFileResponse {
+  bytes data = 1;
+}
 
-error
+message PutFileRequest {
+  string store_name = 1;
+  // The name of the file or object want to put.
+  string name = 2;
+  // The data will be store.
+  bytes data = 3;
+  // The metadata for user extension.
+  map<string,string> metadata = 4;
+}
 
-----
+message FileRequest {
+  string store_name = 1;
+  // The name of the directory
+  string name = 2;
+  // The metadata for user extension.
+  map<string,string> metadata = 3;
+}
 
-### Get
+message ListFileRequest {
+  FileRequest request = 1;
+}
 
-#### Entry type
+message ListFileResp {
+  repeated string file_name = 1;
+}
 
-get interface used download file：
-
-```
-    type GetFileStu struct {
-    ObjectName string  //FileName
-    Metadata   map[string]string //extended fields， eg.bucketName，endpoint
-    }
-```
-#### return type
-
-The return type is io.ReadCloser, error. io.ReadCloser implements the read and write interfaces and can be implemented by yourself, as long as it supports streaming, such as net.Pipe() type
-
----
-
-### List
-
-#### Entry type
-
-The List interface is used to query files in a certain directory (bucket). The input types are as follows:
-
-```
-     type ListRequest struct {
-         DirectoryName string //Directory name
-         Metadata map[string]string //Extension field
-     }
-```
-#### Return value type
-
-```
-     type ListResp struct {
-     FilesName []string //List of all files in the directory
-     }
-```
----
-
-### Del
-
-#### Entry type
-
-The Del interface is used to delete a file. The input types are as follows:
-
-```
-     type DelRequest struct {
-         FileName string //File name to delete
-         Metadata map[string]string //Extension field
-     }
+message DelFileRequest {
+  FileRequest request = 1;
+}
 ```
 
-#### Return value type
+### Get File
+```protobuf
+  // Get file with stream
+  rpc GetFile(GetFileRequest) returns (stream GetFileResponse) {}
+```
+To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.
 
-Return error type
+### Put File
+```protobuf
+  // Put file with stream
+  rpc PutFile(stream PutFileRequest) returns (google.protobuf.Empty) {}
+```
+To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.
 
----
+### Delete File
+```protobuf
+// Delete specific file
+rpc DelFile(DelFileRequest) returns (google.protobuf.Empty){}
+```
+To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.
+
+### List File
+```protobuf
+// List all files
+rpc ListFile(ListFileRequest) returns (ListFileResp){}
+```
+To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.

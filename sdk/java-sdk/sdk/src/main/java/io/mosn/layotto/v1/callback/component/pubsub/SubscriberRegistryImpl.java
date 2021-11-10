@@ -20,29 +20,37 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PubSubClientRegistryImpl implements PubSubRegistry {
+public class SubscriberRegistryImpl implements SubscriberRegistry {
 
-    public final Map<String, PubSub> pubSubClients = new ConcurrentHashMap<>();
+    public final Map<String, Subscriber> pubSubClients = new ConcurrentHashMap<>();
 
     @Override
-    public void registerPubSubCallback(String pubsubName, PubSub callback) {
+    public void registerPubSubCallback(String pubsubName, Subscriber callback) {
+        if (pubsubName == null) {
+            throw new IllegalArgumentException("pubSubName shouldn't be null");
+        }
+        if (callback == null) {
+            throw new IllegalArgumentException("callback shouldn't be null");
+        }
         if (pubSubClients.putIfAbsent(pubsubName, callback) != null) {
             throw new IllegalArgumentException("Pub/sub callback with name " + pubsubName + " already exists!");
         }
     }
 
     @Override
-    public PubSub getCallbackByPubSubName(String pubSubName) {
-        final PubSub pubSub = pubSubClients.get(pubSubName);
-        if (pubSub != null) {
-            return pubSub;
+    public Subscriber getCallbackByPubSubName(String pubsubName) {
+        if (pubsubName == null) {
+            throw new IllegalArgumentException("pubsubName shouldn't be null");
         }
-
-        throw new IllegalArgumentException("Cannot find pubsub callback by name " + pubSubName);
+        final Subscriber subscriber = pubSubClients.get(pubsubName);
+        if (subscriber == null) {
+            throw new IllegalArgumentException("Cannot find pubsub callback by name " + pubsubName);
+        }
+        return subscriber;
     }
 
     @Override
-    public Collection<PubSub> getAllPubSubCallbacks() {
+    public Collection<Subscriber> getAllPubSubCallbacks() {
         return new HashSet<>(pubSubClients.values());
     }
 }
