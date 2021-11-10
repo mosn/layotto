@@ -11,21 +11,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-package spec.sdk.runtime.v1.client;
+package io.mosn.layotto.v1.grpc.stub;
 
-import spec.sdk.runtime.v1.domain.*;
+import io.grpc.ManagedChannel;
+import io.grpc.stub.AbstractAsyncStub;
+import io.grpc.stub.AbstractBlockingStub;
 
-public interface RuntimeClient extends
-        HelloRuntime,
-        ConfigurationRuntime,
-        InvocationRuntime,
-        PubSubRuntime,
-        StateRuntime,
-        LockRuntime,
-        SequencerRuntime,
-        FileRuntime {
+/**
+ * An abstraction to manage grpc stub. It can be used to implement connection pool pattern
+ */
+public interface StubManager<A extends AbstractAsyncStub, B extends AbstractBlockingStub> {
 
-    void shutdown();
+    A getAsyncStub();
+
+    B getBlockingStub();
+
+    ManagedChannel[] getChannels();
+
+    void destroy();
 }

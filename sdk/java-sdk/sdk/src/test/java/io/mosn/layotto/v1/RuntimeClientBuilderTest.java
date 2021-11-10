@@ -55,4 +55,9 @@ public class RuntimeClientBuilderTest {
         new RuntimeClientBuilder().withStateSerializer(null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void noApiProtocal() {
+        new RuntimeClientBuilder().withApiProtocol(null);
+    }
+
 }

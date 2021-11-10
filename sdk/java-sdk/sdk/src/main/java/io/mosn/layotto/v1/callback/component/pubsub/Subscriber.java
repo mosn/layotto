@@ -15,13 +15,19 @@
  */
 package io.mosn.layotto.v1.callback.component.pubsub;
 
-import java.util.Collection;
+import io.mosn.layotto.v1.callback.component.Component;
+import spec.sdk.runtime.v1.domain.pubsub.TopicEventRequest;
+import spec.sdk.runtime.v1.domain.pubsub.TopicEventResponse;
+import spec.sdk.runtime.v1.domain.pubsub.TopicSubscription;
 
-public interface PubSubRegistry {
+import java.util.Set;
 
-    void registerPubSubCallback(String pubsubName, PubSub callback);
+/**
+ * Subscriber component
+ */
+public interface Subscriber extends Component {
 
-    PubSub getCallbackByPubSubName(String pubSubName);
+    Set<TopicSubscription> listTopicSubscriptions();
 
-    Collection<PubSub> getAllPubSubCallbacks();
+    TopicEventResponse onTopicEvent(TopicEventRequest request);
 }
