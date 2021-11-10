@@ -33,6 +33,11 @@ public class JSONSerializerTest {
 
     private static final ObjectSerializer SERIALIZER = new JSONSerializer();
 
+    @Test
+    public void getContentType() {
+        assertEquals(new JSONSerializer().getContentType(), "application/json");
+    }
+
     public static class MyObjectTestToSerialize implements Serializable {
         private String  stringValue;
         private int     intValue;
@@ -264,15 +269,51 @@ public class JSONSerializerTest {
     }
 
     @Test
+    public void serializeEmptyByteArrayTest() {
+
+        byte[] byteSerializedValue;
+        try {
+            byteSerializedValue = SERIALIZER.serialize(new byte[] {});
+            Assert.assertTrue(byteSerializedValue != null && byteSerializedValue.length == 0);
+        } catch (IOException exception) {
+            fail(exception.getMessage());
+        }
+        try {
+            byteSerializedValue = SERIALIZER.deserialize(null, byte[].class);
+            Assert.assertNull(byteSerializedValue);
+        } catch (IOException exception) {
+            fail(exception.getMessage());
+        }
+        try {
+            byteSerializedValue = SERIALIZER.deserialize(new byte[] {}, byte[].class);
+            Assert.assertTrue(byteSerializedValue != null && byteSerializedValue.length == 0);
+        } catch (IOException exception) {
+            fail(exception.getMessage());
+        }
+        try {
+            MyObjectTestToSerialize de = SERIALIZER.deserialize(new byte[] {}, MyObjectTestToSerialize.class);
+            Assert.assertNull(de);
+        } catch (IOException exception) {
+            fail(exception.getMessage());
+        }
+        try {
+            MyObjectTestToSerialize de = SERIALIZER.deserialize(null, MyObjectTestToSerialize.class);
+            Assert.assertNull(de);
+        } catch (IOException exception) {
+            fail(exception.getMessage());
+        }
+
+    }
+
+    @Test
     public void serializeStringTest() {
         String valueToSerialize = "A String";
-        String expectedSerializedValue = "\"A String\"";
 
         String serializedValue;
         byte[] byteValue;
         try {
             serializedValue = new String(SERIALIZER.serialize(valueToSerialize));
-            assertEquals(expectedSerializedValue, serializedValue);
+            assertEquals(valueToSerialize, serializedValue);
             byteValue = SERIALIZER.serialize(valueToSerialize);
             Assert.assertNotNull(byteValue);
             String deserializedValue = SERIALIZER.deserialize(byteValue, String.class);
