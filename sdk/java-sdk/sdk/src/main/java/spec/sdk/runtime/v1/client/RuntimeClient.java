@@ -24,5 +24,8 @@ public interface RuntimeClient extends
         PubSubRuntime,
         StateRuntime,
         LockRuntime,
-        SequencerRuntime {
+        SequencerRuntime,
+        FileRuntime {
+
+    void shutdown();
 }

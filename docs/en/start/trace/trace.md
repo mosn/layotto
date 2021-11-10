@@ -16,10 +16,21 @@ In [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runti
   }
 ]
 ```
-This configuration can turn on the trace capability of layotto. The user can specify the method of trace reporting and the generation method of spanId and traceId through configuration.
+This configuration can turn on the trace capability of layotto, allowing layotto to print the tracing log after receiving the request. The user can specify the way of exporting the trace log and generating fields such as spanId and traceId through configuration.
 
-The corresponding caller code is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), the trace of layotto is printed as follows:
+You can start a layotto server as follows:  
+```
+./layotto start -c ../../configs/runtime_config.json
+```
 
+
+The corresponding client code is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), running it will call the SayHello API of layotto: 
+```
+ cd ${projectpath}/demo/flowcontrol/
+ go build -o client
+ ./client
+``` 
+Check the log of layotto, you will see the detailed tracking log printed out: 
 ![img.png](../../../img/trace/trace.png)
 
 
@@ -44,6 +55,8 @@ Trace expansion configuration:
 
 
 ### Trace design and expansion
+Overall  diagram:
+![img.png](../../../img/trace/structure.png)
 
 #### Span structure:
 
@@ -89,7 +102,7 @@ Refer to the implementation of [StdoutExporter](../../../../diagnostics/exporter
 
 #### Span context transfer:
 
-##### Layotto test
+##### Layotto side
 ```go
 GenerateNewContext(ctx context.Context, span api.Span) context.Context
 ```
@@ -101,9 +114,9 @@ ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
 ```
 You can refer to the implementation of [OpenGenerator](../../../../diagnostics/genetator.go) in the code
 
-##### Component test
+##### Component side
 
-In Component measurement, you can insert component information through [SetExtraComponentInfo](../../../../components/trace/utils.go),
+On the Component side, you can insert component information through [SetExtraComponentInfo](../../../../components/trace/utils.go),
 For example, the following operations are performed on the interface [Hello](../../../../components/hello/helloworld/helloworld.go):
 
 ```go
@@ -113,3 +126,9 @@ trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v", "hello"))
 The results printed by trace are as follows:
 
 ![img.png](../../../img/trace/trace.png)
+
+### Trace mechanism
+
+Tracing in Layotto is mainly to record grpc calls, which relies on two interceptors added in grpc： [UnaryInterceptorFilter](../../../../diagnostics/grpc_tracing.go)、 [StreamInterceptorFilter](../../../../diagnostics/grpc_tracing.go)
+
+The interceptor will start tracing every time the grpc method is called, generate traceId spanId, a new context, record the method name, time, and pass the tracing information through the context, and finally export the span information when the method returns.

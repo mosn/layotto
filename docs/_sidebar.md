@@ -53,6 +53,7 @@
     - [Sequencer](en/component_specs/sequencer/common.md)
       - [Etcd](en/component_specs/sequencer/etcd.md)
       - [Redis](en/component_specs/sequencer/redis.md)
+      - [Zookeeper](en/component_specs/sequencer/zookeeper.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
@@ -65,5 +66,8 @@
   - [Component Development Guide](en/development/developing-component.md)
   - You wanna modify proto files or API definition?
     - [Development specification when adding API](en/development/developing-api.md)
+    - [Comment specification of proto file](en/api_reference/comment_spec_of_proto.md)
     - [How to generate API document based on the proto files](en/api_reference/how_to_generate_api_doc.md)
+  - [Explanation for github workflow](en/development/explanation-for-github-workflow.md)
   - [Layotto contributor guide](en/development/CONTRIBUTING.md)
+
