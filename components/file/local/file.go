@@ -45,19 +45,18 @@ func (lf *LocalStore) Init(ctx context.Context, f *file.FileConfig) error {
 	return nil
 }
 func (lf *LocalStore) Put(ctx context.Context, f *file.PutFileStu) error {
-	if _, ok := f.Metadata[FileMode]; !ok {
+	mode, ok := f.Metadata[FileMode]
+	if !ok {
 		return fmt.Errorf("fileMode is required for put file")
 	}
-	if _, ok := f.Metadata[FileFlag]; !ok {
+	flag, ok := f.Metadata[FileFlag]
+	if !ok {
 		return fmt.Errorf("fileFlag is required for put file")
 	}
-	mode := f.Metadata[FileMode]
 	m, err := strconv.Atoi(mode)
 	if err != nil {
 		return fmt.Errorf("wrong fileMode value:%+v in metadata", err)
 	}
-
-	flag := f.Metadata[FileFlag]
 	fl, err := strconv.Atoi(flag)
 	if err != nil {
 		return fmt.Errorf("wrong fileFlag value:%+v in metadata", err)
