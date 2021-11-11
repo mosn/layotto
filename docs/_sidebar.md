@@ -18,6 +18,7 @@
     - [Method Level Flow Control](en/start/stream_filter/flow_control.md)
   - [Trace management](en/start/trace/trace.md)
   - [Health check and metadata query](en/start/actuator/start.md)
+  - [Multilingual programming based on WASM](en/start/wasm/start.md)
   - [FaaS model based on WASM and Runtime](en/start/faas/start.md)
 - Developer guide
   - Building blocks
