@@ -75,7 +75,7 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 | TCP Copy      | ✅     | [demo](https://mosn.io/layotto/#/zh/start/network_filter/tcpcopy)     | 把Layotto收到的TCP数据dump到本地文件 |
 | Flow Control  | ✅     | [demo](https://mosn.io/layotto/#/zh/start/stream_filter/flow_control) | 限制访问Layotto对外提供的API        |
 
-### 通过WebAssembly (WASM)做扩展、写FaaS
+### 使用WASM进行多语言编程
 
 |  feature       | status |                       quick start                      |                               desc                         |
 |  ------------- | :----: | :-----------------------------------------------------:|------------------------------------------------------------|

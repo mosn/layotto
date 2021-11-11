@@ -18,8 +18,8 @@
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - [trace管理](zh/start/trace/trace.md)
-    - [使用WASM进行多语言编程](zh/start/wasm/start.md)
     - [OSS访问文件](zh/start/file/start.md)
+    - [使用WASM进行多语言编程](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - 用户手册
     - 功能介绍

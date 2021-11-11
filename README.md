@@ -74,7 +74,7 @@ For other features,see the demos below:
 | TCP Copy      | ✅     | [demo](https://mosn.io/layotto/#/en/start/network_filter/tcpcopy)     | Dump the tcp traffic received by Layotto into local file system |
 | Flow Control  | ✅     | [demo](https://mosn.io/layotto/#/en/start/stream_filter/flow_control) | limit access to the APIs provided by Layotto                    |
 
-### Layotto + WebAssembly
+### Multilingual programming based on WASM
 
 |  feature       | status |                       quick start                      |                               desc                                  |
 |  ------------- | :----: | :-----------------------------------------------------:|---------------------------------------------------------------------|
