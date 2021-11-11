@@ -14,35 +14,16 @@
  * limitations under the License.
  */
 
-package trace
+package file
 
 import (
-	"context"
-	"sync"
-
-	"mosn.io/api"
+	"errors"
 )
 
 var (
-	generators sync.Map
+	ErrInvalid    = errors.New("invalid argument")
+	ErrPermission = errors.New("permission denied")
+	ErrExist      = errors.New("file already exists")
+	ErrNotExist   = errors.New("file does not exist")
+	ErrExpired    = errors.New("file does not exist")
 )
-
-//Generator  is used to get or generate traceId/spanId/context
-type Generator interface {
-	GetTraceId(ctx context.Context) string
-	GetSpanId(ctx context.Context) string
-	GenerateNewContext(ctx context.Context, span api.Span) context.Context
-	GetParentSpanId(ctx context.Context) string
-}
-
-func RegisterGenerator(name string, ge Generator) {
-	generators.Store(name, ge)
-}
-
-func GetGenerator(name string) Generator {
-	g, ok := generators.Load(name)
-	if ok {
-		return g.(Generator)
-	}
-	return nil
-}
