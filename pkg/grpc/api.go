@@ -719,12 +719,12 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 		case state.Upsert:
 			operation = state.TransactionalStateOperation{
 				Operation: state.Upsert,
-				Request:   converter.StateItem2SetRequest(req, key),
+				Request:   *converter.StateItem2SetRequest(req, key),
 			}
 		case state.Delete:
 			operation = state.TransactionalStateOperation{
 				Operation: state.Delete,
-				Request:   converter.StateItem2DeleteRequest(req, key),
+				Request:   *converter.StateItem2DeleteRequest(req, key),
 			}
 		default:
 			err := status.Errorf(codes.Unimplemented, messages.ErrNotSupportedStateOperation, op.OperationType)

@@ -23,13 +23,22 @@ header:
     - 'sdk/'
 
   paths-ignore:
+    # js related
+    - 'sdk/js-sdk/node_modules/'
+    - 'sdk/js-sdk/demo/'
+    - '**/*.config.js'
+    - '**/*pb.d.ts'
+    - '**/*pb.js'
+    # java related
+    - 'sdk/java-sdk/sdk/target/'
+    - 'sdk/java-sdk/examples/target/'
+    - '**/*Grpc.java'
+    - '**/*Proto.java'
     - '**/*.json'
     - '**/*.log'
     - '**/*.log.*'
     - '**/*.lst'
     - '**/*.pb.go'
-    - '**/*Grpc.java'
-    - '**/*Proto.java'
     - '**/*.proto'
     - '**/*.yaml'
     - '**/*.xml'
@@ -47,6 +56,8 @@ header:
     - 'demo/'
     - 'configs/'
     - '.github/'
+    - '**/.idea/'
+    - 'sdk/java-sdk/.idea/'
 
   comment: on-failure
 

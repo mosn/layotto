@@ -39,7 +39,7 @@ public class RuntimeProperties {
     /**
      * Layotto Runtimes default timeout in 1000ms for GRPC client reads.
      */
-    public static final Integer DEFAULT_TIMEOUT_MS = 1000;
+    public static final Integer DEFAULT_TIMEOUT_MS = 3000;
 
     /**
      * Layotto Runtimes default pubsub content type.

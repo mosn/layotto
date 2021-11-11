@@ -17,18 +17,6 @@
             {
               "filters": [
                 {
-                  "type": "tcpcopy",
-                  "config": {
-                    "strategy": {
-                      "switch": "ON",
-                      "interval": 30,
-                      "duration": 10,
-                      "cpu_max_rate": 80,
-                      "mem_max_rate": 80
-                    }
-                  }
-                },
-                {
                   "type": "grpc",
                   "config": {
                     "server_name": "runtime",
@@ -55,6 +43,14 @@
                         }
                       },
                       "lock": {
+                        "redis": {
+                          "metadata": {
+                            "redisHost": "localhost:6380",
+                            "redisPassword": ""
+                          }
+                        }
+                      },
+                      "pub_subs": {
                         "redis": {
                           "metadata": {
                             "redisHost": "localhost:6380",

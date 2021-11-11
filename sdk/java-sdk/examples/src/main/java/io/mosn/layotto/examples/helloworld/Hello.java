@@ -27,6 +27,9 @@ public class Hello {
                 .build();
 
         String resp = client.sayHello("helloworld");
+        if (!"greeting, helloworld".equals(resp)) {
+            throw new RuntimeException("Unexpected result:" + resp);
+        }
         System.out.println(resp);
     }
 }

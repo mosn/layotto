@@ -27,7 +27,6 @@ import (
 type StandaloneRedisLock struct {
 	client   *redis.Client
 	metadata utils.RedisMetadata
-	replicas int
 
 	features []lock.Feature
 	logger   log.ErrorLogger
