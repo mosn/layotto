@@ -366,7 +366,7 @@ func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
 			m.errInt(err, "create files component %s failed", name)
 			return err
 		}
-		if err := c.Init(&config); err != nil {
+		if err := c.Init(context.TODO(), &config); err != nil {
 			m.errInt(err, "init files component %s failed", name)
 			return err
 		}
