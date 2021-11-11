@@ -58,7 +58,8 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 | Config          | ✅     | [demo](https://mosn.io/layotto/#/zh/start/configuration/start-apollo) | [list](https://mosn.io/layotto/#/zh/component_specs/configuration/apollo) | 提供配置增删改查及订阅的能力|
 | Lock            | ✅     | [demo](https://mosn.io/layotto/#/zh/start/lock/start)                 | [list](https://mosn.io/layotto/#/zh/component_specs/lock/common)          | 提供 lock/unlock 分布式锁的实现|
 | Sequencer       | ✅     | [demo](https://mosn.io/layotto/#/zh/start/sequencer/start)            | [list](https://mosn.io/layotto/#/zh/component_specs/sequencer/common)     | 提供获取分布式自增ID的能力 |
-
+| File            | ✅     | [demo](https://mosn.io/layotto/#/zh/start/file/start)                 | [list](https://mosn.io/layotto/#/zh/component_specs/file/common)          | 提供访问文件的能力 |
+| Binding         | ✅     | TODO                                                                  | TODO                                                                      | 提供透传数据的能力 |
 
 ### Actuator
 
@@ -78,9 +79,17 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 |  feature       | status |                       quick start                      |                               desc                         |
 |  ------------- | :----: | :-----------------------------------------------------:|------------------------------------------------------------|
-| Go (TinyGo)    | ✅     | [demo](https://mosn.io/layotto/#/zh/start/faas/start)  | 把用 TinyGo 开发的代码编译成 *.wasm文件跑在 Layotto 上         |
-| Rust           | 待开发     |   | 把用 Rust 开发的代码编译成 *.wasm文件跑在 Layotto 上           |
-| AssemblyScript | 待开发     |   | 把用 AssemblyScript 开发的代码编译成 *.wasm文件跑在 Layotto 上 |
+| Go (TinyGo)    | ✅     | [demo](https://mosn.io/layotto/#/zh/start/wasm/start)  | 把用 TinyGo 开发的代码编译成 *.wasm文件跑在 Layotto 上         |
+| Rust           | 待开发     |  待开发 | 把用 Rust 开发的代码编译成 *.wasm文件跑在 Layotto 上           |
+| AssemblyScript | 待开发     |  待开发 | 把用 AssemblyScript 开发的代码编译成 *.wasm文件跑在 Layotto 上 |
+
+### 通过WebAssembly (WASM)做扩展、写FaaS
+
+|  feature       | status |                       quick start                      |                               desc                         |
+|  ------------- | :----: | :-----------------------------------------------------:|------------------------------------------------------------|
+| Go (TinyGo)    | ✅     | [demo](https://mosn.io/layotto/#/zh/start/faas/start)  | 把用 TinyGo 开发的代码编译成 *.wasm文件跑在 Layotto 上，并且使用k8s进行调度。         |
+| Rust           | 待开发     | 待开发 | 把用 Rust 开发的代码编译成 *.wasm文件跑在 Layotto 上，并且使用k8s进行调度。           |
+| AssemblyScript | 待开发     | 待开发 | 把用 AssemblyScript 开发的代码编译成 *.wasm文件跑在 Layotto 上，并且使用k8s进行调度。 |
 
 ### Service Mesh
 | feature | status |                       quick start                      |            desc            |

@@ -53,7 +53,8 @@ For other features,see the demos below:
 | Config          | ✅     | [demo](https://mosn.io/layotto/#/en/start/configuration/start-apollo) | [list](https://mosn.io/layotto/#/en/component_specs/configuration/apollo) | Write/Query/Subscribe the config through various Config Center|
 | Lock            | ✅     | [demo](https://mosn.io/layotto/#/en/start/lock/start)                 | [list](https://mosn.io/layotto/#/en/component_specs/lock/common)          | Distribute lock implementation|
 | Sequencer       | ✅     | [demo](https://mosn.io/layotto/#/en/start/sequencer/start)            | [list](https://mosn.io/layotto/#/en/component_specs/sequencer/common)     | Distribube auto increment ID generator |
-
+| File            | ✅     | TODO                                                                  | [list](https://mosn.io/layotto/#/en/component_specs/file/oss)             | File API implementation|
+| Binding         | ✅     | TODO                                                                  | TODO                                                                      | Transparent data transmission API |
 
 ### Actuator
 
@@ -69,13 +70,21 @@ For other features,see the demos below:
 | TCP Copy      | ✅     | [demo](https://mosn.io/layotto/#/en/start/network_filter/tcpcopy)     | Dump the tcp traffic received by Layotto into local file system |
 | Flow Control  | ✅     | [demo](https://mosn.io/layotto/#/en/start/stream_filter/flow_control) | limit access to the APIs provided by Layotto                    |
 
+### Layotto + WebAssembly
+
+|  feature       | status |                       quick start                      |                               desc                                  |
+|  ------------- | :----: | :-----------------------------------------------------:|---------------------------------------------------------------------|
+| Go (TinyGo)    | ✅     | [demo](https://mosn.io/layotto/#/en/start/wasm/start)  | Compile Code written by TinyGo to *.wasm and run in Layotto         |
+| Rust           | TODO     | TODO | Compile Code written by Rust to *.wasm and run in Layotto           |
+| AssemblyScript | TODO     | TODO | Compile Code written by AssemblyScript to *.wasm and run in Layotto |
+
 ### FaaS (Layotto + WebAssembly + k8s)
 
 |  feature       | status |                       quick start                      |                               desc                                  |
 |  ------------- | :----: | :-----------------------------------------------------:|---------------------------------------------------------------------|
-| Go (TinyGo)    | ✅     | [demo](https://mosn.io/layotto/#/en/start/faas/start)  | Compile Code written by TinyGo to *.wasm and run in Layotto         |
-| Rust           | TODO     |   | Compile Code written by Rust to *.wasm and run in Layotto           |
-| AssemblyScript | TODO     |   | Compile Code written by AssemblyScript to *.wasm and run in Layotto |
+| Go (TinyGo)    | ✅     | [demo](https://mosn.io/layotto/#/en/start/faas/start)  | Compile Code written by TinyGo to *.wasm and run in Layotto And Scheduled by k8s. |
+| Rust           | TODO     | TODO  | Compile Code written by Rust to *.wasm and run in Layotto And Scheduled by k8s.            |
+| AssemblyScript | TODO     | TODO  | Compile Code written by AssemblyScript to *.wasm and run in Layotto And Scheduled by k8s.  |
 
 ### Service Mesh
 | feature | status |                       quick start                      |            desc            |
