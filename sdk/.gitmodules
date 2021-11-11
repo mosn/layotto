@@ -1,0 +1,6 @@
+[submodule "dotnet"]
+	path = dotnet
+	url = https://github.com/layotto/dotnet-sdk
+[submodule "js"]
+	path = js
+	url = https://github.com/layotto/js-sdk
