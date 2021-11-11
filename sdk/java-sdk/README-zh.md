@@ -1,4 +1,4 @@
-## How to use this sdk
+## 如何使用java sdk
 ### 1. import sdk
 对于 Maven 项目，将以下配置添加进 `pom.xml` 文件:
 ```xml
@@ -17,7 +17,7 @@
 </project>
 ```
 
-### 2. Run the examples
+### 2. 运行 examples 示例
 可以本地部署redis和Layotto，然后运行java应用示例，通过java sdk调Layotto，Layotto转发给redis
 
 #### 第一步：部署redis
@@ -80,7 +80,7 @@ mvn clean install
 * [Pubsub API](./examples/src/main/java/io/mosn/layotto/examples/pubsub)
 
 
-## How to generate a Java PROTO file
+## 如何将proto文件编译成java代码
 
 ### 1. 下载编译工具 [protoc](https://github.com/protocolbuffers/protobuf/releases)
 my protoc version:
