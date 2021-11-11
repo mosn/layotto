@@ -32,7 +32,6 @@ type ClusterRedisLock struct {
 	clients  []*redis.Client
 	metadata utils.RedisClusterMetadata
 	workpool msync.WorkerPool
-	replicas int
 
 	features []lock.Feature
 	logger   log.ErrorLogger
