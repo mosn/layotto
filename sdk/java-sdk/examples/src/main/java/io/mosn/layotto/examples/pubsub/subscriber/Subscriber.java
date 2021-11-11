@@ -16,7 +16,8 @@
 package io.mosn.layotto.examples.pubsub.subscriber;
 
 import com.alibaba.fastjson.JSON;
-import io.mosn.layotto.v1.RuntimeServer;
+import io.mosn.layotto.examples.pubsub.subscriber.impl.RawSubscriber;
+import io.mosn.layotto.v1.RuntimeServerGrpc;
 
 import java.util.concurrent.Semaphore;
 
@@ -28,17 +29,29 @@ public class Subscriber {
      * @throws Exception An Exception on startup.
      */
     public static void main(String[] args) throws Exception {
-        RuntimeServer srv = new RuntimeServer(9999);
-        RawPubSub pubsub = new RawPubSub("redis");
+        RuntimeServerGrpc srv = new RuntimeServerGrpc(9999);
+        RawSubscriber pubsub = new RawSubscriber("redis");
         pubsub.subscribe("hello", request -> {
+            String value = new String(request.getData());
+            assertEquals(value, "world");
             System.out.println(JSON.toJSONString(request));
         });
         pubsub.subscribe("topic1", request -> {
+            String value = new String(request.getData());
+            assertEquals(value, "message1");
             System.out.println(JSON.toJSONString(request));
         });
         srv.registerPubSubCallback(pubsub.getComponentName(), pubsub);
         Semaphore sm = new Semaphore(0);
         srv.start();
         sm.acquire();
+    }
+
+    private static void assertEquals(Object actualResult, Object expected) {
+        if (actualResult == expected || actualResult.equals(expected)) {
+            return;
+        }
+        String msg = "Unexpected result:" + actualResult;
+        throw new RuntimeException(msg);
     }
 }

@@ -54,6 +54,17 @@ public interface StateRuntime {
     <T> State<T> getState(GetStateRequest request, Class<T> clazz);
 
     /**
+     * Retrieve a State based on their key.
+     *
+     * @param request   The request to get state.
+     * @param clazz     The Class of State needed as return.
+     * @param timeoutMs
+     * @param <T>       The Type of the return.
+     * @return
+     */
+    <T> State<T> getState(GetStateRequest request, Class<T> clazz, int timeoutMs);
+
+    /**
      * Retrieve bulk States based on their keys.
      *
      * @param storeName The name of the state store.
@@ -72,6 +83,17 @@ public interface StateRuntime {
      * @return The requested State.
      */
     <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz);
+
+    /**
+     * Retrieve bulk States based on their keys.
+     *
+     * @param request   The request to get state.
+     * @param clazz     The Class of State needed as return.
+     * @param <T>       The Type of the return.
+     * @param timeoutMs The time limit(millisecond) of this call.
+     * @return The requested State.
+     */
+    <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz, int timeoutMs);
 
     /**
      * Execute a transaction.
@@ -103,6 +125,14 @@ public interface StateRuntime {
      * @param request Request to save states.
      */
     void saveBulkState(SaveStateRequest request);
+
+    /**
+     * Save/Update a list of states.
+     *
+     * @param request
+     * @param timeoutMs
+     */
+    void saveBulkState(SaveStateRequest request, int timeoutMs);
 
     /**
      * Save/Update a state.
@@ -148,4 +178,12 @@ public interface StateRuntime {
      * @param request Request to delete a state.
      */
     void deleteState(DeleteStateRequest request);
+
+    /**
+     * Delete a state.
+     *
+     * @param request   Request to delete a state.
+     * @param timeoutMs
+     */
+    void deleteState(DeleteStateRequest request, int timeoutMs);
 }
