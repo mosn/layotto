@@ -262,6 +262,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		),
 		// Lock
 		runtime.WithLockFactory(
+			runtime_lock.NewFactory("redis_cluster", func() lock.LockStore {
+				return lock_redis.NewClusterRedisLock(log.DefaultLogger)
+			}),
 			runtime_lock.NewFactory("redis", func() lock.LockStore {
 				return lock_redis.NewStandaloneRedisLock(log.DefaultLogger)
 			}),
