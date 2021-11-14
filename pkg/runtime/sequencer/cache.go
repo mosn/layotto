@@ -7,10 +7,15 @@ import (
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
 	"sync"
+	"sync/atomic"
+	"time"
+	"unsafe"
 )
 
-const defaultSize = 1000
-const defaultLimit = 700
+const defaultSize = 10000
+const defaultLimit = 1000
+const defaultRetry = 5
+const waitTime = time.Millisecond * 10
 
 // DoubleBuffer is double segment id buffer.
 // There are two buffers in DoubleBuffer: InUseBuffer is in use, BackUpBuffer is a backup buffer.
@@ -21,8 +26,10 @@ type DoubleBuffer struct {
 	Size         int
 	InUseBuffer  *Buffer
 	BackUpBuffer *Buffer
-	lock         sync.Mutex
-	Store        sequencer.Store
+	// 1 means getting BackUpBuffer，0 means not
+	Processing uint32
+	lock       sync.Mutex
+	Store      sequencer.Store
 }
 
 type Buffer struct {
@@ -57,13 +64,12 @@ func (d *DoubleBuffer) init() error {
 //getId next id
 func (d *DoubleBuffer) getId() (int64, error) {
 
-	if d.InUseBuffer == nil {
-		return 0, errors.New("[DoubleBuffer] Get error: InUseBuffer nil ")
-	}
-
 	d.lock.Lock()
 	defer d.lock.Unlock()
 
+	if d.InUseBuffer == nil {
+		return 0, errors.New("[DoubleBuffer] Get error: InUseBuffer nil ")
+	}
 	//check swap
 	if d.InUseBuffer.from > d.InUseBuffer.to {
 		err := d.swap()
@@ -78,23 +84,21 @@ func (d *DoubleBuffer) getId() (int64, error) {
 	//equal make sure only one thread enter
 	if d.InUseBuffer.to-d.InUseBuffer.from == defaultLimit {
 		utils.GoWithRecover(func() {
-
-			//lock to avoid data race
-			d.lock.Lock()
-			defer d.lock.Unlock()
 			//one case: here and swap are performed simultaneously,
 			//swap fast,no check will cover old BackUpBuffer
-			if d.BackUpBuffer != nil {
-				return
-			}
-			buffer, err := d.getNewBuffer()
-			if err != nil {
-				log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
-				return
-			}
 
-			d.BackUpBuffer = buffer
-
+			//remove lock,add  atomic for visibility
+			//check nil and not on processing
+			if d.BackUpBuffer == nil && atomic.CompareAndSwapUint32(&d.Processing, 0, 1) {
+				defer atomic.StoreUint32(&d.Processing, 0)
+				buffer, err := d.getNewBuffer()
+				//for visibility
+				atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&d.BackUpBuffer)), unsafe.Pointer(buffer))
+				if err != nil {
+					log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
+					return
+				}
+			}
 		}, nil)
 	}
 
@@ -104,16 +108,35 @@ func (d *DoubleBuffer) getId() (int64, error) {
 //swap InUseBuffer and BackUpBuffer, must be locked
 func (d *DoubleBuffer) swap() error {
 
-	//check again
-	if d.BackUpBuffer == nil {
-		buffer, err := d.getNewBuffer()
-		if err != nil {
-			return err
+	//check again and BackUpBuffer == nil
+	if atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&d.BackUpBuffer))) == nil {
+		//retry do processing
+		for i := 0; i < defaultRetry; i++ {
+			if atomic.CompareAndSwapUint32(&d.Processing, 0, 1) {
+				defer atomic.StoreUint32(&d.Processing, 0)
+				//double check
+				if atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&d.BackUpBuffer))) != nil {
+					break
+				}
+				buffer, err := d.getNewBuffer()
+				if err != nil {
+					return err
+				}
+				d.BackUpBuffer = &Buffer{}
+				atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&d.BackUpBuffer)), unsafe.Pointer(buffer))
+			} else {
+				// sleep to avoid competition
+				log.DefaultLogger.Infof("[DoubleBuffer] wait swap")
+				time.Sleep(waitTime)
+			}
 		}
-		d.BackUpBuffer = buffer
+	}
+	//if still nil, give up swap and return error
+	if atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&d.BackUpBuffer))) == nil {
+		return errors.New("swap error")
 	}
 
-	d.InUseBuffer = d.BackUpBuffer
+	d.InUseBuffer = (*Buffer)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&d.BackUpBuffer))))
 	d.BackUpBuffer = nil
 	return nil
 }
