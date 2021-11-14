@@ -112,8 +112,7 @@ func TestMinioOss_Put(t *testing.T) {
 		"bucket": "layotto",
 	}
 	putReq.Metadata = meta
-	ctx := context.Background()
-	err = oss.Put(ctx, putReq)
+	err = oss.Put(context.TODO(), putReq)
 	assert.Nil(t, err)
 }
 

@@ -3,7 +3,6 @@ module mosn.io/layotto/demo
 go 1.14
 
 require (
-	github.com/go-ini/ini v1.63.2 // indirect
 	github.com/golang/protobuf v1.5.0
 	github.com/google/uuid v1.2.0
 	github.com/minio/minio-go/v7 v7.0.15

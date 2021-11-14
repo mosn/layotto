@@ -45,7 +45,7 @@ func TestPut(fileName string) {
 		return
 	}
 	meta := make(map[string]string)
-	meta["storageType"] = "Standard"
+	// meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
 	req := &runtimev1pb.PutFileRequest{StoreName: "minioOSS", Name: fileName, Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
@@ -101,7 +101,9 @@ func TestList(bucketName string) {
 		fmt.Printf("list file fail, err: %+v", err)
 		return
 	}
-	fmt.Printf("files under bucket is: %+v", resp.FileName)
+	for _, file := range resp.Files {
+		fmt.Printf("files under bucket is: %+v", file.FileName)
+	}
 }
 
 func TestDel(fileName string) {
