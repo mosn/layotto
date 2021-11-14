@@ -11,25 +11,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-package io.mosn.layotto.examples.helloworld;
+package io.mosn.layotto.v1.grpc;
 
-import io.mosn.layotto.v1.RuntimeClientBuilder;
-import io.mosn.layotto.v1.config.RuntimeProperties;
+import io.grpc.ManagedChannel;
+import io.mosn.layotto.v1.grpc.stub.StubManager;
+import spec.proto.runtime.v1.RuntimeGrpc;
 import spec.sdk.runtime.v1.client.RuntimeClient;
 
-public class Hello {
+public interface GrpcRuntimeClient extends RuntimeClient {
 
-    public static void main(String[] args) {
-        RuntimeClient client = new RuntimeClientBuilder()
-                .withPort(RuntimeProperties.DEFAULT_PORT)
-                .build();
-
-        String resp = client.sayHello("helloworld");
-        if (!"greeting, helloworld".equals(resp)) {
-            throw new RuntimeException("Unexpected result:" + resp);
-        }
-        System.out.println(resp);
-    }
+    StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> getStubManager();
 }

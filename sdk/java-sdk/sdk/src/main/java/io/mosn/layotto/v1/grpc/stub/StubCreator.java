@@ -11,21 +11,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-package spec.sdk.runtime.v1.client;
+package io.mosn.layotto.v1.grpc.stub;
 
-import spec.sdk.runtime.v1.domain.*;
+import io.grpc.ManagedChannel;
+import io.grpc.stub.AbstractAsyncStub;
+import io.grpc.stub.AbstractBlockingStub;
 
-public interface RuntimeClient extends
-        HelloRuntime,
-        ConfigurationRuntime,
-        InvocationRuntime,
-        PubSubRuntime,
-        StateRuntime,
-        LockRuntime,
-        SequencerRuntime,
-        FileRuntime {
+public interface StubCreator<A extends AbstractAsyncStub, B extends AbstractBlockingStub> {
 
-    void shutdown();
+    A createAsyncStub(ManagedChannel channel);
+
+    B createBlockingStub(ManagedChannel channel);
+
 }

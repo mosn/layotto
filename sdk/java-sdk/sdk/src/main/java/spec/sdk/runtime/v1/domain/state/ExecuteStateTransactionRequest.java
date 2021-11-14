@@ -15,6 +15,7 @@
  */
 package spec.sdk.runtime.v1.domain.state;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class ExecuteStateTransactionRequest {
     /**
      * Metadata used for transactional operations.
      */
-    private Map<String, String> metadata;
+    private Map<String, String> metadata = new HashMap<>();
 
     public ExecuteStateTransactionRequest(String stateStoreName) {
         this.stateStoreName = stateStoreName;
@@ -78,4 +79,14 @@ public class ExecuteStateTransactionRequest {
     public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
     }
+
+    public void putMetadata(String key, String value) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        if (value == null) { throw new java.lang.NullPointerException(); }
+        if (metadata == null) {
+            metadata = new HashMap<>();
+        }
+        metadata.put(key, value);
+    }
+
 }
