@@ -198,6 +198,46 @@ func (mr *MockRuntimeClientMockRecorder) GetFile(ctx, in interface{}, opts ...in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFile", reflect.TypeOf((*MockRuntimeClient)(nil).GetFile), varargs...)
 }
 
+// GetFileMeta mocks base method.
+func (m *MockRuntimeClient) GetFileMeta(ctx context.Context, in *runtime.GetFileMetaRequest, opts ...grpc.CallOption) (*runtime.GetFileMetaResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetFileMeta", varargs...)
+	ret0, _ := ret[0].(*runtime.GetFileMetaResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFileMeta indicates an expected call of GetFileMeta.
+func (mr *MockRuntimeClientMockRecorder) GetFileMeta(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFileMeta", reflect.TypeOf((*MockRuntimeClient)(nil).GetFileMeta), varargs...)
+}
+
+// GetNextId mocks base method.
+func (m *MockRuntimeClient) GetNextId(ctx context.Context, in *runtime.GetNextIdRequest, opts ...grpc.CallOption) (*runtime.GetNextIdResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetNextId", varargs...)
+	ret0, _ := ret[0].(*runtime.GetNextIdResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNextId indicates an expected call of GetNextId.
+func (mr *MockRuntimeClientMockRecorder) GetNextId(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNextId", reflect.TypeOf((*MockRuntimeClient)(nil).GetNextId), varargs...)
+}
+
 // GetState mocks base method.
 func (m *MockRuntimeClient) GetState(ctx context.Context, in *runtime.GetStateRequest, opts ...grpc.CallOption) (*runtime.GetStateResponse, error) {
 	m.ctrl.T.Helper()
@@ -216,6 +256,26 @@ func (mr *MockRuntimeClientMockRecorder) GetState(ctx, in interface{}, opts ...i
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetState", reflect.TypeOf((*MockRuntimeClient)(nil).GetState), varargs...)
+}
+
+// InvokeBinding mocks base method.
+func (m *MockRuntimeClient) InvokeBinding(ctx context.Context, in *runtime.InvokeBindingRequest, opts ...grpc.CallOption) (*runtime.InvokeBindingResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "InvokeBinding", varargs...)
+	ret0, _ := ret[0].(*runtime.InvokeBindingResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InvokeBinding indicates an expected call of InvokeBinding.
+func (mr *MockRuntimeClientMockRecorder) InvokeBinding(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InvokeBinding", reflect.TypeOf((*MockRuntimeClient)(nil).InvokeBinding), varargs...)
 }
 
 // InvokeService mocks base method.
@@ -957,6 +1017,36 @@ func (mr *MockRuntimeServerMockRecorder) GetFile(arg0, arg1 interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFile", reflect.TypeOf((*MockRuntimeServer)(nil).GetFile), arg0, arg1)
 }
 
+// GetFileMeta mocks base method.
+func (m *MockRuntimeServer) GetFileMeta(arg0 context.Context, arg1 *runtime.GetFileMetaRequest) (*runtime.GetFileMetaResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFileMeta", arg0, arg1)
+	ret0, _ := ret[0].(*runtime.GetFileMetaResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFileMeta indicates an expected call of GetFileMeta.
+func (mr *MockRuntimeServerMockRecorder) GetFileMeta(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFileMeta", reflect.TypeOf((*MockRuntimeServer)(nil).GetFileMeta), arg0, arg1)
+}
+
+// GetNextId mocks base method.
+func (m *MockRuntimeServer) GetNextId(arg0 context.Context, arg1 *runtime.GetNextIdRequest) (*runtime.GetNextIdResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNextId", arg0, arg1)
+	ret0, _ := ret[0].(*runtime.GetNextIdResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNextId indicates an expected call of GetNextId.
+func (mr *MockRuntimeServerMockRecorder) GetNextId(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNextId", reflect.TypeOf((*MockRuntimeServer)(nil).GetNextId), arg0, arg1)
+}
+
 // GetState mocks base method.
 func (m *MockRuntimeServer) GetState(arg0 context.Context, arg1 *runtime.GetStateRequest) (*runtime.GetStateResponse, error) {
 	m.ctrl.T.Helper()
@@ -970,6 +1060,21 @@ func (m *MockRuntimeServer) GetState(arg0 context.Context, arg1 *runtime.GetStat
 func (mr *MockRuntimeServerMockRecorder) GetState(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetState", reflect.TypeOf((*MockRuntimeServer)(nil).GetState), arg0, arg1)
+}
+
+// InvokeBinding mocks base method.
+func (m *MockRuntimeServer) InvokeBinding(arg0 context.Context, arg1 *runtime.InvokeBindingRequest) (*runtime.InvokeBindingResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InvokeBinding", arg0, arg1)
+	ret0, _ := ret[0].(*runtime.InvokeBindingResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InvokeBinding indicates an expected call of InvokeBinding.
+func (mr *MockRuntimeServerMockRecorder) InvokeBinding(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InvokeBinding", reflect.TypeOf((*MockRuntimeServer)(nil).InvokeBinding), arg0, arg1)
 }
 
 // InvokeService mocks base method.

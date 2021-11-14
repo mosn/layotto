@@ -1,27 +1,28 @@
 /*
- * Copyright 2021 Layotto Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+* Copyright 2021 Layotto Authors
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
  */
 
-package oss
+package minio
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"testing"
 
-	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio-go/v7"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/file"
 )
@@ -42,31 +43,31 @@ func TestMinioOss_Init(t *testing.T) {
 	oss := NewMinioOss()
 
 	initCfg := &file.FileConfig{}
-	err := oss.Init(initCfg)
+	err := oss.Init(context.TODO(), initCfg)
 	assert.Equal(t, err, ErrInvalidConfig)
 
 	initCfg.Metadata = json.RawMessage(cfg)
 
-	err = oss.Init(initCfg)
+	err = oss.Init(context.TODO(), initCfg)
 	assert.Nil(t, err)
 }
 
 func TestMinioOss_selectClient(t *testing.T) {
 	minioOss := &MinioOss{
-		client: make(map[string]*minio.Client),
+		client: make(map[string]*minio.Core),
 		meta:   make(map[string]*MinioMetaData),
 	}
 	initCfg := &file.FileConfig{
 		Metadata: json.RawMessage(cfg),
 	}
-	err := minioOss.Init(initCfg)
+	err := minioOss.Init(context.TODO(), initCfg)
 	assert.Nil(t, err)
 
 	meta := make(map[string]string)
 	_, err = minioOss.selectClient(meta)
 	assert.Nil(t, err)
 
-	minioOss.client["extra"] = &minio.Client{}
+	minioOss.client["extra"] = &minio.Core{}
 	_, err = minioOss.selectClient(meta)
 	assert.Equal(t, ErrNotSpecifyEndPoint, err)
 
@@ -86,37 +87,33 @@ func TestMinioOss_Put(t *testing.T) {
 
 	initCfg := &file.FileConfig{}
 	initCfg.Metadata = json.RawMessage(cfg)
-	err := oss.Init(initCfg)
+	err := oss.Init(context.TODO(), initCfg)
 	assert.Nil(t, err)
 
 	f, _ := os.Open("oss.go")
 
 	putReq := &file.PutFileStu{
 		DataStream: f,
-		FileName:   "file",
+		FileName:   "bucket/file",
 		Metadata:   map[string]string{"": ""},
 	}
-	// missing bucket
-	err = oss.Put(putReq)
-	assert.Equal(t, ErrMissingBucket, err)
-
 	// client not exist
-	putReq.Metadata["bucket"] = "bucket1"
 	putReq.Metadata["endpoint"] = "demo-endpoint"
-	err = oss.Put(putReq)
+	err = oss.Put(context.TODO(), putReq)
 	assert.Equal(t, ErrClientNotExist, err)
 
 	// convert from string to int64 failed
 	putReq.Metadata["endpoint"] = "endpoint"
 	putReq.Metadata["fileSize"] = "a2"
-	err = oss.Put(putReq)
+	err = oss.Put(context.TODO(), putReq)
 	assert.NotNil(t, err)
 
 	meta := map[string]string{
 		"bucket": "layotto",
 	}
 	putReq.Metadata = meta
-	err = oss.Put(putReq)
+	ctx := context.Background()
+	err = oss.Put(ctx, putReq)
 	assert.Nil(t, err)
 }
 
@@ -125,7 +122,7 @@ func TestMinioOss_Get(t *testing.T) {
 
 	initCfg := &file.FileConfig{}
 	initCfg.Metadata = json.RawMessage(cfg)
-	err := oss.Init(initCfg)
+	err := oss.Init(context.TODO(), initCfg)
 	assert.Nil(t, err)
 
 	getReq := &file.GetFileStu{
@@ -133,16 +130,16 @@ func TestMinioOss_Get(t *testing.T) {
 		Metadata: map[string]string{"": ""},
 	}
 
-	_, err = oss.Get(getReq)
-	assert.Equal(t, ErrMissingBucket, err)
+	_, err = oss.Get(context.TODO(), getReq)
+	assert.Equal(t, "minioOss get file[file] fail,err: invalid fileName format", err.Error())
 
 	// client not exist
-	getReq.Metadata["bucket"] = "bucket1"
+	getReq.FileName = "bucketName/file"
 	getReq.Metadata["endpoint"] = "demo-endpoint"
-	_, err = oss.Get(getReq)
+	_, err = oss.Get(context.TODO(), getReq)
 	assert.Equal(t, ErrClientNotExist, err)
 
 	getReq.Metadata["endpoint"] = "endpoint"
-	_, err = oss.Get(getReq)
+	_, err = oss.Get(context.TODO(), getReq)
 	assert.Nil(t, err)
 }

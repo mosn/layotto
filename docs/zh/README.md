@@ -39,49 +39,63 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 ![系统架构图](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
 
+
 ## 快速开始
 
-### 使用配置中心API
+### Get started with Layotto
 
-[通过 Layotto 调用 apollo 配置中心](zh/start/configuration/start-apollo.md)
+您可以尝试 demo [通过 Layotto 调用 apollo 配置中心](zh/start/configuration/start-apollo.md) 来体验Layotto
 
-### 使用Pub/Sub API实现发布/订阅模式
+其他功能的demo见下.
 
-[通过Layotto调用redis，进行消息发布/订阅](zh/start/pubsub/start.md)
+### API
 
-### 使用State API进行状态数据的增删改查
+|  API            | status |                               quick start                             |                                components                                 | desc |
+|  -------------  | :----: | :--------------------------------------------------------------------:|:-------------------------------------------------------------------------:|---- |
+| State           | ✅     | [demo](https://mosn.io/layotto/#/zh/start/state/start)                | [list](https://mosn.io/layotto/#/zh/component_specs/state/common)         | 提供读写KV模型存储的数据的能力 |
+| Pub/Sub         | ✅     | [demo](https://mosn.io/layotto/#/zh/start/pubsub/start)               | [list](https://mosn.io/layotto/#/zh/component_specs/pubsub/redis)         | 提供消息的发布/订阅能力|
+| Service Invoke  | ✅     | [demo](https://mosn.io/layotto/#/zh/start/rpc/helloworld)             | [list](https://mosn.io/layotto/#/zh/start/rpc/helloworld)                 | 通过 MOSN 进行服务调用|
+| Config          | ✅     | [demo](https://mosn.io/layotto/#/zh/start/configuration/start-apollo) | [list](https://mosn.io/layotto/#/zh/component_specs/configuration/apollo) | 提供配置增删改查及订阅的能力|
+| Lock            | ✅     | [demo](https://mosn.io/layotto/#/zh/start/lock/start)                 | [list](https://mosn.io/layotto/#/zh/component_specs/lock/common)          | 提供 lock/unlock 分布式锁的实现|
+| Sequencer       | ✅     | [demo](https://mosn.io/layotto/#/zh/start/sequencer/start)            | [list](https://mosn.io/layotto/#/zh/component_specs/sequencer/common)     | 提供获取分布式自增ID的能力 |
+| File            | ✅     | [demo](https://mosn.io/layotto/#/zh/start/file/start)                 | [list](https://mosn.io/layotto/#/zh/component_specs/file/common)          | 提供访问文件的能力 |
+| Binding         | ✅     | TODO                                                                  | TODO                                                                      | 提供透传数据的能力 |
 
-[通过Layotto调用redis，进行状态管理](zh/start/state/start.md)
+### Actuator
 
-### 使用分布式锁API
+|  feature       | status |                         quick start                       |               desc               |
+|  ------------- | :----: | :--------------------------------------------------------:|----------------------------------|
+| Health Check   | ✅     | [demo](https://mosn.io/layotto/#/zh/start/actuator/start) | 查询Layotto依赖的各种组件的健康状态  |
+| Metadata Query | ✅     | [demo](https://mosn.io/layotto/#/zh/start/actuator/start) | 查询Layotto或应用对外暴露的元信息    |
 
-[基于redis使用分布式锁](zh/start/lock/start.md)
+### 流量控制
 
-### 在四层网络进行流量干预
-
-[Dump TCP 流量](zh/start/network_filter/tcpcopy.md)
-
-### 在七层网络进行流量干预
-
-[方法级别限流](zh/start/stream_filter/flow_control.md)
-
-### 进行RPC调用
-
-[Hello World](zh/start/rpc/helloworld.md)
-
-[Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
-
-### 跟istio集成
-
-[作为 istio 的数据面](zh/start/istio/start.md)
-
-### 健康检查、查询运行时元数据
-
-[使用 Layotto Actuator 进行健康检查和元数据查询](zh/start/actuator/start.md)
+|  feature      | status |                              quick start                              |                desc               |
+|  -----------  | :----: | :--------------------------------------------------------------------:|-----------------------------------|
+| TCP Copy      | ✅     | [demo](https://mosn.io/layotto/#/zh/start/network_filter/tcpcopy)     | 把Layotto收到的TCP数据dump到本地文件 |
+| Flow Control  | ✅     | [demo](https://mosn.io/layotto/#/zh/start/stream_filter/flow_control) | 限制访问Layotto对外提供的API        |
 
 ### 使用WASM进行多语言编程
 
-[基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
+|  feature       | status |                       quick start                      |                               desc                         |
+|  ------------- | :----: | :-----------------------------------------------------:|------------------------------------------------------------|
+| Go (TinyGo)    | ✅     | [demo](https://mosn.io/layotto/#/zh/start/wasm/start)  | 把用 TinyGo 开发的代码编译成 *.wasm文件跑在 Layotto 上         |
+| Rust           | 待开发     |  待开发 | 把用 Rust 开发的代码编译成 *.wasm文件跑在 Layotto 上           |
+| AssemblyScript | 待开发     |  待开发 | 把用 AssemblyScript 开发的代码编译成 *.wasm文件跑在 Layotto 上 |
+
+### 通过WebAssembly (WASM)做扩展、写FaaS
+
+|  feature       | status |                       quick start                      |                               desc                         |
+|  ------------- | :----: | :-----------------------------------------------------:|------------------------------------------------------------|
+| Go (TinyGo)    | ✅     | [demo](https://mosn.io/layotto/#/zh/start/faas/start)  | 把用 TinyGo 开发的代码编译成 *.wasm文件跑在 Layotto 上，并且使用k8s进行调度。         |
+| Rust           | 待开发     | 待开发 | 把用 Rust 开发的代码编译成 *.wasm文件跑在 Layotto 上，并且使用k8s进行调度。           |
+| AssemblyScript | 待开发     | 待开发 | 把用 AssemblyScript 开发的代码编译成 *.wasm文件跑在 Layotto 上，并且使用k8s进行调度。 |
+
+### Service Mesh
+| feature | status |                       quick start                      |            desc            |
+| ------- | :----: | :-----------------------------------------------------:|----------------------------|
+| istio   | ✅     | [demo](https://mosn.io/layotto/#/zh/start/istio/start) | 跟istio集成，作为它的数据面   |
+
 
 ## 设计文档
 

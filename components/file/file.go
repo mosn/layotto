@@ -16,14 +16,18 @@
 
 package file
 
-import "io"
+import (
+	"context"
+	"io"
+)
 
 const ServiceName = "file"
 
 type File interface {
-	Init(*FileConfig) error
-	Put(*PutFileStu) error
-	Get(*GetFileStu) (io.ReadCloser, error)
-	List(*ListRequest) (*ListResp, error)
-	Del(*DelRequest) error
+	Init(context.Context, *FileConfig) error
+	Put(context.Context, *PutFileStu) error
+	Get(context.Context, *GetFileStu) (io.ReadCloser, error)
+	List(context.Context, *ListRequest) (*ListResp, error)
+	Del(context.Context, *DelRequest) error
+	Stat(context.Context, *FileMetaRequest) (*FileMetaResp, error)
 }
