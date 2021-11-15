@@ -18,6 +18,7 @@
     - [Method Level Flow Control](en/start/stream_filter/flow_control.md)
   - [Trace management](en/start/trace/trace.md)
   - [Health check and metadata query](en/start/actuator/start.md)
+  - [Multilingual programming based on WASM](en/start/wasm/start.md)
   - [FaaS model based on WASM and Runtime](en/start/faas/start.md)
 - Developer guide
   - Building blocks
@@ -31,8 +32,10 @@
     - [RPC API](en/building_blocks/rpc/reference.md)    
   - [API reference](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
   - SDK reference
-    - [go-sdk](en/sdk_reference/go/start.md)
-    - [java-sdk](en/sdk_reference/java/start.md)
+    - [go sdk](en/sdk_reference/go/start.md)
+    - [java sdk](en/sdk_reference/java/start.md)
+    - [.net sdk](https://github.com/layotto/dotnet-sdk)
+    - [js sdk](https://github.com/layotto/js-sdk)
   - [Configuration reference](en/configuration/overview.md)  
   - [Component specs](en/component_specs/overview.md)
     - [State](en/component_specs/state/common.md)
@@ -53,6 +56,7 @@
     - [Sequencer](en/component_specs/sequencer/common.md)
       - [Etcd](en/component_specs/sequencer/etcd.md)
       - [Redis](en/component_specs/sequencer/redis.md)
+      - [Zookeeper](en/component_specs/sequencer/zookeeper.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
@@ -61,8 +65,12 @@
   - [Distributed lock API design](en/design/lock/lock-api-design.md)
   - [FaaS design](en/design/faas/faas-poc-design.md)
 - Contributing
-  - [Layotto contributor guide](en/development/CONTRIBUTING.md)
   - [Document Contribution Guide](en/development/contributing-doc.md)
   - [Component Development Guide](en/development/developing-component.md)
-  - [Development specification when adding API](en/development/developing-api.md)
-  - [How to generate API document](en/api_reference/how_to_generate_api_doc.md)
+  - You wanna modify proto files or API definition?
+    - [Development specification when adding API](en/development/developing-api.md)
+    - [Comment specification of proto file](en/api_reference/comment_spec_of_proto.md)
+    - [How to generate API document based on the proto files](en/api_reference/how_to_generate_api_doc.md)
+  - [Explanation for github workflow](en/development/explanation-for-github-workflow.md)
+  - [Layotto contributor guide](en/development/CONTRIBUTING.md)
+

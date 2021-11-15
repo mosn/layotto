@@ -75,8 +75,31 @@ service Runtime {
   // Delete specific file
   rpc DelFile(DelFileRequest) returns (google.protobuf.Empty){}
 
+  // Get file meta data, if file not exist,return code.NotFound error
+  rpc GetFileMeta(GetFileMetaRequest) returns (GetFileMetaResponse){}
+
   // Invokes binding data to specific output bindings
   rpc InvokeBinding(InvokeBindingRequest) returns (InvokeBindingResponse) {}
+}
+
+message GetFileMetaRequest{
+    FileRequest request = 1;
+}
+
+message GetFileMetaResponse{
+    // The size of file
+    int64 size = 1;
+    // The modified time of file
+    string last_modified = 2;
+    FileMeta response = 3;
+}
+
+message FileMetaValue{
+    repeated string value = 1;
+}
+
+message FileMeta{
+    map<string,FileMetaValue> metadata = 1;
 }
 
 message GetFileRequest {
@@ -85,7 +108,7 @@ message GetFileRequest {
   // The name of the file or object want to get.
   string name = 2;
   // The metadata for user extension.
-  map<string,string> metadata = 3;
+  map<string, string> metadata = 3;
 }
 
 message GetFileResponse {
@@ -99,7 +122,7 @@ message PutFileRequest {
   // The data will be store.
   bytes data = 3;
   // The metadata for user extension.
-  map<string,string> metadata = 4;
+  map<string, string> metadata = 4;
 }
 
 message FileRequest {
@@ -107,15 +130,29 @@ message FileRequest {
   // The name of the directory
   string name = 2;
   // The metadata for user extension.
-  map<string,string> metadata = 3;
+  map<string, string> metadata = 3;
 }
 
 message ListFileRequest {
   FileRequest request = 1;
+  int32 page_size = 2;
+  string marker = 3;
 }
 
+message FileInfo {
+  // The name of file
+  string file_name = 1;
+  // The size of file
+  int64 size = 2;
+  // The modified time of file
+  string last_modified = 3;
+  // The metadata for user extension.
+  map<string,string> metadata = 4;
+}
 message ListFileResp {
-  repeated string file_name = 1;
+  repeated FileInfo files = 1;
+  string marker = 2;
+  bool is_truncated = 3;
 }
 
 message DelFileRequest {
@@ -557,7 +594,10 @@ message StateOptions {
 
 // TransactionalStateOperation is the message to execute a specified operation with a key-value pair.
 message TransactionalStateOperation {
-  // Required. The type of operation to be executed
+  // Required. The type of operation to be executed.
+  // Legal values include:
+  // "upsert" represents an update or create operation
+  // "delete" represents a delete operation
   string operationType = 1;
 
   // Required. State values to be operated on
@@ -610,7 +650,7 @@ message InvokeBindingRequest {
   // If set in the binding definition will cause all messages to
   // have a default time to live. The message ttl overrides any value
   // in the binding definition.
-  map<string,string> metadata = 3;
+  map<string, string> metadata = 3;
 
   // The name of the operation type for the binding to invoke
   string operation = 4;
@@ -622,5 +662,5 @@ message InvokeBindingResponse {
   bytes data = 1;
 
   // The metadata returned from an external system
-  map<string,string> metadata = 2;
+  map<string, string> metadata = 2;
 }

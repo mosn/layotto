@@ -15,35 +15,42 @@ package lock
 
 type Feature string
 
+// Lock's metadata
 type Config struct {
 	Metadata map[string]string `json:"metadata"`
 }
 
+// Lock's properties
 type Metadata struct {
 	Properties map[string]string `json:"properties"`
 }
 
+// Lock acquire request
 type TryLockRequest struct {
 	ResourceId string
 	LockOwner  string
 	Expire     int32
 }
 
+// Lock acquire request was successful or not
 type TryLockResponse struct {
 	Success bool
 }
 
+// Lock release request
 type UnlockRequest struct {
 	ResourceId string
 	LockOwner  string
 }
 
+// Status when releasing the lock
 type UnlockResponse struct {
 	Status LockStatus
 }
 
 type LockStatus int32
 
+// lock status
 const (
 	SUCCESS               LockStatus = 0
 	LOCK_UNEXIST          LockStatus = 1

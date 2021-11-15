@@ -19,6 +19,7 @@ func init() {
 	trace.RegisterGenerator("mosntracing", &OpenGenerator{})
 }
 
+//OpenGenerator is the default implementation of Generator
 type OpenGenerator struct {
 }
 
