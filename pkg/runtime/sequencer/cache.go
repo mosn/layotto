@@ -14,7 +14,7 @@ import (
 const defaultSize = 10000
 const defaultLimit = 1000
 const defaultRetry = 5
-const waitTime = time.Millisecond * 10
+const waitTime = time.Second
 
 // DoubleBuffer is double segment id buffer.
 // There are two buffers in DoubleBuffer: InUseBuffer is in use, BackUpBuffer is a backup buffer.
@@ -89,8 +89,11 @@ func (d *DoubleBuffer) getId() (int64, error) {
 
 			//remove lock,add channel&CAS for visibility
 			//check  not on processing and bufChannel  nil
-			if atomic.CompareAndSwapUint32(&d.Processing, 0, 1) && len(d.BackUpBufferChan) == 0 {
+			if atomic.CompareAndSwapUint32(&d.Processing, 0, 1) {
 				defer atomic.StoreUint32(&d.Processing, 0)
+				if len(d.BackUpBufferChan) != 0 {
+					return
+				}
 				buffer, err := d.getNewBuffer()
 				if err != nil {
 					log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
@@ -116,7 +119,7 @@ func (d *DoubleBuffer) swap() error {
 				return nil
 			}
 		//timeout, getNewBuffer by self
-		case <-time.After(time.Second):
+		case <-time.After(waitTime):
 			{
 				//another goroutine processing ,retry
 				if !atomic.CompareAndSwapUint32(&d.Processing, 0, 1) {
