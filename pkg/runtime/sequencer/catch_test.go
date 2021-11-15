@@ -58,19 +58,18 @@ func TestConcurrentGetNextIdFromCache(t *testing.T) {
 	assert.NoError(t, err)
 
 	var wg sync.WaitGroup
-	GRCount := 50
+	GRCount := 100
 	wg.Add(GRCount)
 	startTime := time.Now().UnixMilli()
 	for g := 0; g < GRCount; g++ {
 		go func() {
 			for i := 0; i < idLimit; i++ {
-				support, _, err := GetNextIdFromCache(context.Background(), comp, &sequencer.GetNextIdRequest{
+				support, id, err := GetNextIdFromCache(context.Background(), comp, &sequencer.GetNextIdRequest{
 					Key: key,
 				})
-				//fmt.Println(id)
+				fmt.Println(id)
 				assert.NoError(t, err)
 				assert.Equal(t, true, support)
-
 			}
 			wg.Done()
 		}()
