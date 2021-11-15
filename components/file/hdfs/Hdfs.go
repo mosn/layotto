@@ -169,14 +169,14 @@ func (h *hdfs) List(ctx context.Context, request *file.ListRequest) (*file.ListR
 
 		size, ok := o.GetContentLength()
 		if !ok {
-			return nil, fmt.Errorf("HdfsOss list path[%s] size fail, err: %s", o.Path, err.Error())
+			return nil, fmt.Errorf("Hdfs list path[%s] size fail, err: %s", o.Path, err.Error())
 		}
 
 		file.Size = size
 
 		time, ok := o.GetLastModified()
 		if !ok {
-			return nil, fmt.Errorf("HdfsOss list path[%s] lastModified fail, err: %s", o.Path, err.Error())
+			return nil, fmt.Errorf("Hdfs list path[%s] lastModified fail, err: %s", o.Path, err.Error())
 		}
 		file.LastModified = time.String()
 
@@ -214,14 +214,14 @@ func (h *hdfs) Stat(ctx context.Context, request *file.FileMetaRequest) (*file.F
 
 	size, ok := stat.GetContentLength()
 	if !ok {
-		return nil, fmt.Errorf("HdfsOss stat file[%s] size fail, err: %s", stat.Path, err.Error())
+		return nil, fmt.Errorf("Hdfs stat file[%s] size fail, err: %s", stat.Path, err.Error())
 	}
 
 	resp.Size = size
 
 	time, ok := stat.GetLastModified()
 	if !ok {
-		return nil, fmt.Errorf("HdfsOss stat file[%s] lastModified fail, err: %s", stat.Path, err.Error())
+		return nil, fmt.Errorf("Hdfs stat file[%s] lastModified fail, err: %s", stat.Path, err.Error())
 	}
 
 	resp.LastModified = time.String()
