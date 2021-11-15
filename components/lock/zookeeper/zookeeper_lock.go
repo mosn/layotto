@@ -1,3 +1,16 @@
+//
+// Copyright 2021 Layotto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package zookeeper
 
 import (
@@ -9,6 +22,7 @@ import (
 	"time"
 )
 
+// Zookeeper lock store
 type ZookeeperLock struct {
 	//trylock reestablish connection  every time
 	factory utils.ConnectionFactory
@@ -18,6 +32,7 @@ type ZookeeperLock struct {
 	logger     log.ErrorLogger
 }
 
+// Create ZookeeperLock
 func NewZookeeperLock(logger log.ErrorLogger) *ZookeeperLock {
 	lock := &ZookeeperLock{
 		logger: logger,
@@ -25,6 +40,7 @@ func NewZookeeperLock(logger log.ErrorLogger) *ZookeeperLock {
 	return lock
 }
 
+// Init ZookeeperLock
 func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
 
 	m, err := utils.ParseZookeeperMetadata(metadata.Properties)
@@ -44,9 +60,12 @@ func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
 	return nil
 }
 
+// Features is to get ZookeeperLock's features
 func (p *ZookeeperLock) Features() []lock.Feature {
 	return nil
 }
+
+// Node tries to acquire a zookeeper lock
 func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 
 	conn, err := p.factory.NewConnection(time.Duration(req.Expire)*time.Second, p.metadata)
@@ -84,6 +103,8 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 	}, nil
 
 }
+
+// Node tries to release a zookeeper lock
 func (p *ZookeeperLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 
 	conn := p.unlockConn

@@ -1,6 +1,20 @@
+//
+// Copyright 2021 Layotto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package wasm
 
 import (
+	"mosn.io/pkg/utils"
 	"os"
 	"path/filepath"
 	"strings"
@@ -27,7 +41,7 @@ func init() {
 		log.DefaultLogger.Errorf("[proxywasm] [watcher] init fail to create watcher: %v", err)
 		return
 	}
-	go runWatcher()
+	utils.GoWithRecover(runWatcher, nil)
 }
 
 func runWatcher() {
@@ -72,7 +86,6 @@ func addWatchFile(cfg *filterConfigItem, factory *FilterConfigFactory) {
 	path := cfg.VmConfig.Path
 	if err := watcher.Add(path); err != nil {
 		log.DefaultLogger.Errorf("[proxywasm] [watcher] addWatchFile fail to watch wasm file, err: %v", err)
-		return
 	}
 
 	dir := filepath.Dir(path)
@@ -113,6 +126,17 @@ func reloadWasm(fullPath string) {
 			}
 
 			factory := factories[path]
+			config.VmConfig = pw.GetConfig().VmConfig
+			factory.config = append(factory.config, config)
+
+			wasmPlugin := &WasmPlugin{
+				pluginName:    config.PluginName,
+				plugin:        pw.GetPlugin(),
+				rootContextID: config.RootContextID,
+				config:        config,
+			}
+			factory.plugins[config.PluginName] = wasmPlugin
+
 			pw.RegisterPluginHandler(factory)
 
 			for _, plugin := range factory.plugins {

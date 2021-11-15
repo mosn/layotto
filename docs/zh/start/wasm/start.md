@@ -6,47 +6,34 @@ Layotto支持加载编译好的WASM文件，并通过`proxy_abi_version_0_2_0`�
 
 ### 快速开始
 
-1. 启动layotto
+1. 启动redis并写入测试数据
+
+这里只是需要一个可以正常使用 Redis 即可，至于 Redis 安装在哪里没有特别限制，可以是虚拟机里，也可以是本机或者服务器，这里以安装在 mac 为例进行介绍。
+
+```
+> brew install redis
+> redis-server /usr/local/etc/redis.conf
+```
+
+```
+> redis-cli
+127.0.0.1:6379> set book1 100
+OK
+```
+
+2. 启动layotto
 
 ```
 go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
 ./layotto start -c ./demo/wasm/config.json
 ```
+**注：需要把`./demo/faas/config.json`中的 redis 地址修改为实际地址，默认地址为：localhost:6379。**
 
-2. 发送请求
-
-```
-curl -H 'name:Layotto' -H 'id:id_1' localhost:2045
-Hi, Layotto_id_1
-
-curl -H 'name:Layotto' -H 'id:id_2' localhost:2045
-Hi, Layotto_id_2
-```
-
-### 示例介绍
-
-工程里分别用golang、rust、assemblyscript开发了功能一致的wasm模块，它们的实现思路如下：
-1. 通过`proxy_on_request_headers`接收HTTP请求
-2. 从`proxy_get_header_map_pairs`中取出header中的name字段
-3. 使用`proxy_call_foreign_function`向Layotto发起调用
-4. 通过`proxy_set_buffer_bytes`把处理结果返回给调用端
-
-golang源码路径：
+3. 发送请求
 
 ```
-layotto/demo/wasm/code/golang/
-```
-
-rust源码路径：
-
-```
-layotto/demo/wasm/code/rust/
-```
-
-assemblyscript源码路径：
-
-```
-layotto/demo/wasm/code/assemblyscript/
+curl -H 'id:id_1' 'localhost:2045?name=book1'
+There are 100 inventories for book1.
 ```
 
 ### 说明
