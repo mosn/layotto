@@ -17,6 +17,7 @@
 package hdfs
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"testing"
@@ -38,12 +39,12 @@ func TestHdfs_Init(t *testing.T) {
 	hdfs := NewHdfs()
 
 	c := &file.FileConfig{}
-	err := hdfs.Init(c)
+	err := hdfs.Init(context.TODO(), c)
 	assert.Equal(t, err, ErrInvalidConfig)
 
 	c.Metadata = json.RawMessage(config)
 
-	err = hdfs.Init(c)
+	err = hdfs.Init(context.TODO(), c)
 
 	assert.Nil(t, err)
 }
@@ -57,7 +58,7 @@ func TestHdfs_selectClient(t *testing.T) {
 	c := &file.FileConfig{
 		Metadata: json.RawMessage(config),
 	}
-	err := hdfs.Init(c)
+	err := hdfs.Init(context.TODO(), c)
 	assert.Nil(t, err)
 
 	meta := make(map[string]string)
@@ -84,7 +85,7 @@ func TestHdfs_Put(t *testing.T) {
 	c := &file.FileConfig{
 		Metadata: json.RawMessage(config),
 	}
-	err := hdfs.Init(c)
+	err := hdfs.Init(context.TODO(), c)
 	assert.Nil(t, err)
 
 	f, _ := os.Open("hdfs.go")
@@ -95,24 +96,24 @@ func TestHdfs_Put(t *testing.T) {
 		Metadata:   map[string]string{"": ""},
 	}
 	// missing endpoint
-	err = hdfs.Put(req)
+	err = hdfs.Put(context.TODO(), req)
 	assert.Equal(t, ErrMissingEndPoint, err)
 
 	// client not exist
 	req.Metadata["endpoint"] = "tcp:127.0.0.1:9001"
-	err = hdfs.Put(req)
+	err = hdfs.Put(context.TODO(), req)
 	assert.Equal(t, ErrClientNotExist, err)
 
 	// convert from string to int64 failed
 	req.Metadata["endpoint"] = "endpoint"
 	req.Metadata["fileSize"] = "hdfs"
-	err = hdfs.Put(req)
+	err = hdfs.Put(context.TODO(), req)
 	assert.NotNil(t, err)
 
 	// convert from string to int64 success
 	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
 	req.Metadata["fileSize"] = "123"
-	err = hdfs.Put(req)
+	err = hdfs.Put(context.TODO(), req)
 	assert.Nil(t, err)
 
 }
@@ -124,7 +125,7 @@ func TestHdfs_Get(t *testing.T) {
 		Metadata: json.RawMessage(config),
 	}
 
-	err := hdfs.Init(c)
+	err := hdfs.Init(context.TODO(), c)
 	assert.Nil(t, err)
 
 	req := &file.GetFileStu{
@@ -132,52 +133,20 @@ func TestHdfs_Get(t *testing.T) {
 		Metadata: map[string]string{"": ""},
 	}
 
-	_, err = hdfs.Get(req)
+	_, err = hdfs.Get(context.TODO(), req)
 	assert.Equal(t, ErrMissingEndPoint, err)
 
 	// client not exist
 	req.Metadata["endpoint"] = "127.0.0.1:9000"
-	_, err = hdfs.Get(req)
+	_, err = hdfs.Get(context.TODO(), req)
 	assert.Equal(t, ErrClientNotExist, err)
 
 	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
-	_, err = hdfs.Get(req)
+	_, err = hdfs.Get(context.TODO(), req)
 	assert.Nil(t, err)
 
 	//TODO
 	//Test checksum content with Get file
-}
-
-func TestHdfs_List(t *testing.T) {
-	hdfs := NewHdfs()
-
-	c := &file.FileConfig{
-		Metadata: json.RawMessage(config),
-	}
-
-	err := hdfs.Init(c)
-	assert.Nil(t, err)
-
-	req := &file.ListRequest{
-		DirectoryName: "test_put",
-		Metadata:      map[string]string{"": ""},
-	}
-
-	_, err = hdfs.List(req)
-	assert.Equal(t, ErrMissingEndPoint, err)
-
-	// client not exist
-	req.Metadata["endpoint"] = "127.0.0.1:9000"
-	_, err = hdfs.List(req)
-	assert.Equal(t, ErrClientNotExist, err)
-
-	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
-	_, err = hdfs.List(req)
-	assert.Nil(t, err)
-
-	//TODO
-	//Test "" Directory and exist files Directory
-
 }
 
 func TestHdfs_Del(t *testing.T) {
@@ -187,22 +156,22 @@ func TestHdfs_Del(t *testing.T) {
 		Metadata: json.RawMessage(config),
 	}
 
-	err := hdfs.Init(c)
+	err := hdfs.Init(context.TODO(), c)
 	assert.Nil(t, err)
 
 	req := &file.DelRequest{
 		FileName: "test_put",
 		Metadata: map[string]string{"": ""},
 	}
-	err = hdfs.Del(req)
+	err = hdfs.Del(context.TODO(), req)
 	assert.Equal(t, ErrMissingEndPoint, err)
 
 	// client not exist
 	req.Metadata["endpoint"] = "127.0.0.1:9000"
-	err = hdfs.Del(req)
+	err = hdfs.Del(context.TODO(), req)
 	assert.Equal(t, ErrClientNotExist, err)
 
 	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
-	err = hdfs.Del(req)
+	err = hdfs.Del(context.TODO(), req)
 	assert.Nil(t, err)
 }

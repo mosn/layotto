@@ -18,6 +18,7 @@ package hdfs
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -43,7 +44,7 @@ var (
 	ErrEndPointNotExist   error = errors.New("specific endpoing key not exist")
 	ErrInvalidConfig      error = errors.New("invalid hdfs config")
 	ErrNotSpecifyEndpoint error = errors.New("other error happend in metadata")
-	ErrHdfsListFail       error = errors.New("hdfs List opt failed")
+	ErrHdfsListFail       error = errors.New("hdfs list opt failed")
 )
 
 type hdfs struct {
@@ -62,7 +63,7 @@ func NewHdfs() file.File {
 	}
 }
 
-func (h *hdfs) Init(config *file.FileConfig) error {
+func (h *hdfs) Init(ctx context.Context, config *file.FileConfig) error {
 	hd := make([]*HdfsMetaData, 0)
 	err := json.Unmarshal(config.Metadata, &hd)
 
@@ -86,7 +87,7 @@ func (h *hdfs) Init(config *file.FileConfig) error {
 	return nil
 }
 
-func (h *hdfs) Put(stu *file.PutFileStu) error {
+func (h *hdfs) Put(ctx context.Context, stu *file.PutFileStu) error {
 	endpoint := stu.Metadata[endpointKey]
 
 	//It depends on OS HDFS XML ???
@@ -116,7 +117,7 @@ func (h *hdfs) Put(stu *file.PutFileStu) error {
 	return nil
 }
 
-func (h *hdfs) Get(stu *file.GetFileStu) (io.ReadCloser, error) {
+func (h *hdfs) Get(ctx context.Context, stu *file.GetFileStu) (io.ReadCloser, error) {
 	if _, ok := stu.Metadata[endpointKey]; !ok {
 		return nil, ErrMissingEndPoint
 	}
@@ -135,7 +136,7 @@ func (h *hdfs) Get(stu *file.GetFileStu) (io.ReadCloser, error) {
 	return r, nil
 }
 
-func (h *hdfs) List(request *file.ListRequest) (*file.ListResp, error) {
+func (h *hdfs) List(ctx context.Context, request *file.ListRequest) (*file.ListResp, error) {
 	if _, ok := request.Metadata[endpointKey]; !ok {
 		return nil, ErrMissingEndPoint
 	}
@@ -152,6 +153,7 @@ func (h *hdfs) List(request *file.ListRequest) (*file.ListResp, error) {
 		err = ErrHdfsListFail
 	}
 
+	resp.Marker = it.ContinuationToken()
 	for {
 		o, err := it.Next()
 		if err != nil && !errors.Is(err, types.IterateDone) {
@@ -162,12 +164,29 @@ func (h *hdfs) List(request *file.ListRequest) (*file.ListResp, error) {
 			fmt.Println("list completed")
 			break
 		}
-		resp.FilesName = append(resp.FilesName, o.Path)
+		file := &file.FilesInfo{}
+		file.FileName = o.Path
+
+		size, ok := o.GetContentLength()
+		if !ok {
+			return nil, fmt.Errorf("HdfsOss list path[%s] size fail, err: %s", o.Path, err.Error())
+		}
+
+		file.Size = size
+
+		time, ok := o.GetLastModified()
+		if !ok {
+			return nil, fmt.Errorf("HdfsOss list path[%s] lastModified fail, err: %s", o.Path, err.Error())
+		}
+		file.LastModified = time.String()
+
+		resp.Files = append(resp.Files, file)
 	}
+
 	return resp, nil
 }
 
-func (h *hdfs) Del(request *file.DelRequest) error {
+func (h *hdfs) Del(ctx context.Context, request *file.DelRequest) error {
 	if _, ok := request.Metadata[endpointKey]; !ok {
 		return ErrMissingEndPoint
 	}
@@ -177,6 +196,37 @@ func (h *hdfs) Del(request *file.DelRequest) error {
 		return err
 	}
 	return client.Delete(request.FileName)
+}
+
+func (h *hdfs) Stat(ctx context.Context, request *file.FileMetaRequest) (*file.FileMetaResp, error) {
+
+	clinet, err := h.selectClient(request.Metadata)
+	if err != nil {
+		return nil, err
+	}
+
+	stat, err := clinet.Stat(request.FileName)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &file.FileMetaResp{}
+
+	size, ok := stat.GetContentLength()
+	if !ok {
+		return nil, fmt.Errorf("HdfsOss stat file[%s] size fail, err: %s", stat.Path, err.Error())
+	}
+
+	resp.Size = size
+
+	time, ok := stat.GetLastModified()
+	if !ok {
+		return nil, fmt.Errorf("HdfsOss stat file[%s] lastModified fail, err: %s", stat.Path, err.Error())
+	}
+
+	resp.LastModified = time.String()
+
+	return resp, nil
 }
 
 func (h *hdfs) selectClient(meta map[string]string) (client types.Storager, err error) {
