@@ -148,7 +148,7 @@ func (d *DoubleBuffer) swap() error {
 			}
 		}
 	}
-	return nil
+	return errors.New("[DoubleBuffer]swap error")
 }
 
 //getNewBuffer return a new segment
