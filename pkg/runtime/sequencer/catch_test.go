@@ -64,10 +64,10 @@ func TestConcurrentGetNextIdFromCache(t *testing.T) {
 	for g := 0; g < GRCount; g++ {
 		go func() {
 			for i := 0; i < idLimit; i++ {
-				support, id, err := GetNextIdFromCache(context.Background(), comp, &sequencer.GetNextIdRequest{
+				support, _, err := GetNextIdFromCache(context.Background(), comp, &sequencer.GetNextIdRequest{
 					Key: key,
 				})
-				fmt.Println(id)
+				//fmt.Println(id)
 				assert.NoError(t, err)
 				assert.Equal(t, true, support)
 			}
