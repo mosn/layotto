@@ -89,7 +89,7 @@ func (d *DoubleBuffer) getId() (int64, error) {
 
 			//remove lock,add channel&CAS for visibility
 			//check  not on processing and bufChannel  nil
-			if atomic.CompareAndSwapUint32(&d.Processing, 0, 1) && len(d.BackUpBufferChan) == 1 {
+			if atomic.CompareAndSwapUint32(&d.Processing, 0, 1) && len(d.BackUpBufferChan) == 0 {
 				defer atomic.StoreUint32(&d.Processing, 0)
 				buffer, err := d.getNewBuffer()
 				if err != nil {
