@@ -98,6 +98,7 @@ public class PubsubConverter {
         result.setType(req.getType());
         result.setSpecVersion(req.getSpecVersion());
         result.setContentType(req.getDataContentType());
+        result.setMetadata(req.getMetadataMap());
         ByteString byteString = req.getData();
         if (byteString == null) {
             result.setData(new byte[]{});
