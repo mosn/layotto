@@ -56,6 +56,9 @@ message TopicEventRequest {
 
   // The name of the pubsub the publisher sent to.
   string pubsub_name = 8;
+
+  // add a map to pass some extra properties.
+  map<string,string> metadata = 10;
 }
 
 // TopicEventResponse is response from app on published message
