@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package spec.sdk.runtime.v1.domain.state;
 
@@ -25,7 +24,7 @@ public class TransactionalStateOperation<T> {
     /**
      * State values to be operated on.
      */
-    private final State<T> request;
+    private final State<T>      request;
 
     /**
      * Construct an immutable transactional state operation object.

@@ -14,6 +14,2901 @@ public final class RuntimeProto {
     registerAllExtensions(
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
+  public interface GetFileMetaRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:spec.proto.runtime.v1.GetFileMetaRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+     * @return Whether the request field is set.
+     */
+    boolean hasRequest();
+    /**
+     * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+     * @return The request.
+     */
+    spec.proto.runtime.v1.RuntimeProto.FileRequest getRequest();
+    /**
+     * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+     */
+    spec.proto.runtime.v1.RuntimeProto.FileRequestOrBuilder getRequestOrBuilder();
+  }
+  /**
+   * Protobuf type {@code spec.proto.runtime.v1.GetFileMetaRequest}
+   */
+  public static final class GetFileMetaRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:spec.proto.runtime.v1.GetFileMetaRequest)
+      GetFileMetaRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetFileMetaRequest.newBuilder() to construct.
+    private GetFileMetaRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetFileMetaRequest() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new GetFileMetaRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GetFileMetaRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              spec.proto.runtime.v1.RuntimeProto.FileRequest.Builder subBuilder = null;
+              if (request_ != null) {
+                subBuilder = request_.toBuilder();
+              }
+              request_ = input.readMessage(spec.proto.runtime.v1.RuntimeProto.FileRequest.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(request_);
+                request_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_GetFileMetaRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_GetFileMetaRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest.class, spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest.Builder.class);
+    }
+
+    public static final int REQUEST_FIELD_NUMBER = 1;
+    private spec.proto.runtime.v1.RuntimeProto.FileRequest request_;
+    /**
+     * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+     * @return Whether the request field is set.
+     */
+    @java.lang.Override
+    public boolean hasRequest() {
+      return request_ != null;
+    }
+    /**
+     * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+     * @return The request.
+     */
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.FileRequest getRequest() {
+      return request_ == null ? spec.proto.runtime.v1.RuntimeProto.FileRequest.getDefaultInstance() : request_;
+    }
+    /**
+     * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+     */
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.FileRequestOrBuilder getRequestOrBuilder() {
+      return getRequest();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (request_ != null) {
+        output.writeMessage(1, getRequest());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (request_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getRequest());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest)) {
+        return super.equals(obj);
+      }
+      spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest other = (spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest) obj;
+
+      if (hasRequest() != other.hasRequest()) return false;
+      if (hasRequest()) {
+        if (!getRequest()
+            .equals(other.getRequest())) return false;
+      }
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasRequest()) {
+        hash = (37 * hash) + REQUEST_FIELD_NUMBER;
+        hash = (53 * hash) + getRequest().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code spec.proto.runtime.v1.GetFileMetaRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:spec.proto.runtime.v1.GetFileMetaRequest)
+        spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_GetFileMetaRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_GetFileMetaRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest.class, spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest.Builder.class);
+      }
+
+      // Construct using spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (requestBuilder_ == null) {
+          request_ = null;
+        } else {
+          request_ = null;
+          requestBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_GetFileMetaRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest getDefaultInstanceForType() {
+        return spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest build() {
+        spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest buildPartial() {
+        spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest result = new spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest(this);
+        if (requestBuilder_ == null) {
+          result.request_ = request_;
+        } else {
+          result.request_ = requestBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest) {
+          return mergeFrom((spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest other) {
+        if (other == spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest.getDefaultInstance()) return this;
+        if (other.hasRequest()) {
+          mergeRequest(other.getRequest());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private spec.proto.runtime.v1.RuntimeProto.FileRequest request_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          spec.proto.runtime.v1.RuntimeProto.FileRequest, spec.proto.runtime.v1.RuntimeProto.FileRequest.Builder, spec.proto.runtime.v1.RuntimeProto.FileRequestOrBuilder> requestBuilder_;
+      /**
+       * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+       * @return Whether the request field is set.
+       */
+      public boolean hasRequest() {
+        return requestBuilder_ != null || request_ != null;
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+       * @return The request.
+       */
+      public spec.proto.runtime.v1.RuntimeProto.FileRequest getRequest() {
+        if (requestBuilder_ == null) {
+          return request_ == null ? spec.proto.runtime.v1.RuntimeProto.FileRequest.getDefaultInstance() : request_;
+        } else {
+          return requestBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+       */
+      public Builder setRequest(spec.proto.runtime.v1.RuntimeProto.FileRequest value) {
+        if (requestBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          request_ = value;
+          onChanged();
+        } else {
+          requestBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+       */
+      public Builder setRequest(
+          spec.proto.runtime.v1.RuntimeProto.FileRequest.Builder builderForValue) {
+        if (requestBuilder_ == null) {
+          request_ = builderForValue.build();
+          onChanged();
+        } else {
+          requestBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+       */
+      public Builder mergeRequest(spec.proto.runtime.v1.RuntimeProto.FileRequest value) {
+        if (requestBuilder_ == null) {
+          if (request_ != null) {
+            request_ =
+              spec.proto.runtime.v1.RuntimeProto.FileRequest.newBuilder(request_).mergeFrom(value).buildPartial();
+          } else {
+            request_ = value;
+          }
+          onChanged();
+        } else {
+          requestBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+       */
+      public Builder clearRequest() {
+        if (requestBuilder_ == null) {
+          request_ = null;
+          onChanged();
+        } else {
+          request_ = null;
+          requestBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+       */
+      public spec.proto.runtime.v1.RuntimeProto.FileRequest.Builder getRequestBuilder() {
+        
+        onChanged();
+        return getRequestFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+       */
+      public spec.proto.runtime.v1.RuntimeProto.FileRequestOrBuilder getRequestOrBuilder() {
+        if (requestBuilder_ != null) {
+          return requestBuilder_.getMessageOrBuilder();
+        } else {
+          return request_ == null ?
+              spec.proto.runtime.v1.RuntimeProto.FileRequest.getDefaultInstance() : request_;
+        }
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          spec.proto.runtime.v1.RuntimeProto.FileRequest, spec.proto.runtime.v1.RuntimeProto.FileRequest.Builder, spec.proto.runtime.v1.RuntimeProto.FileRequestOrBuilder> 
+          getRequestFieldBuilder() {
+        if (requestBuilder_ == null) {
+          requestBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              spec.proto.runtime.v1.RuntimeProto.FileRequest, spec.proto.runtime.v1.RuntimeProto.FileRequest.Builder, spec.proto.runtime.v1.RuntimeProto.FileRequestOrBuilder>(
+                  getRequest(),
+                  getParentForChildren(),
+                  isClean());
+          request_ = null;
+        }
+        return requestBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:spec.proto.runtime.v1.GetFileMetaRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:spec.proto.runtime.v1.GetFileMetaRequest)
+    private static final spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest();
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetFileMetaRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetFileMetaRequest>() {
+      @java.lang.Override
+      public GetFileMetaRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GetFileMetaRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetFileMetaRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetFileMetaRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GetFileMetaResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:spec.proto.runtime.v1.GetFileMetaResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The size of file
+     * </pre>
+     *
+     * <code>int64 size = 1;</code>
+     * @return The size.
+     */
+    long getSize();
+
+    /**
+     * <pre>
+     * The modified time of file
+     * </pre>
+     *
+     * <code>string last_modified = 2;</code>
+     * @return The lastModified.
+     */
+    java.lang.String getLastModified();
+    /**
+     * <pre>
+     * The modified time of file
+     * </pre>
+     *
+     * <code>string last_modified = 2;</code>
+     * @return The bytes for lastModified.
+     */
+    com.google.protobuf.ByteString
+        getLastModifiedBytes();
+
+    /**
+     * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+     * @return Whether the response field is set.
+     */
+    boolean hasResponse();
+    /**
+     * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+     * @return The response.
+     */
+    spec.proto.runtime.v1.RuntimeProto.FileMeta getResponse();
+    /**
+     * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+     */
+    spec.proto.runtime.v1.RuntimeProto.FileMetaOrBuilder getResponseOrBuilder();
+  }
+  /**
+   * Protobuf type {@code spec.proto.runtime.v1.GetFileMetaResponse}
+   */
+  public static final class GetFileMetaResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:spec.proto.runtime.v1.GetFileMetaResponse)
+      GetFileMetaResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetFileMetaResponse.newBuilder() to construct.
+    private GetFileMetaResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetFileMetaResponse() {
+      lastModified_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new GetFileMetaResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GetFileMetaResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              size_ = input.readInt64();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              lastModified_ = s;
+              break;
+            }
+            case 26: {
+              spec.proto.runtime.v1.RuntimeProto.FileMeta.Builder subBuilder = null;
+              if (response_ != null) {
+                subBuilder = response_.toBuilder();
+              }
+              response_ = input.readMessage(spec.proto.runtime.v1.RuntimeProto.FileMeta.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(response_);
+                response_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_GetFileMetaResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_GetFileMetaResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse.class, spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse.Builder.class);
+    }
+
+    public static final int SIZE_FIELD_NUMBER = 1;
+    private long size_;
+    /**
+     * <pre>
+     * The size of file
+     * </pre>
+     *
+     * <code>int64 size = 1;</code>
+     * @return The size.
+     */
+    @java.lang.Override
+    public long getSize() {
+      return size_;
+    }
+
+    public static final int LAST_MODIFIED_FIELD_NUMBER = 2;
+    private volatile java.lang.Object lastModified_;
+    /**
+     * <pre>
+     * The modified time of file
+     * </pre>
+     *
+     * <code>string last_modified = 2;</code>
+     * @return The lastModified.
+     */
+    @java.lang.Override
+    public java.lang.String getLastModified() {
+      java.lang.Object ref = lastModified_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lastModified_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The modified time of file
+     * </pre>
+     *
+     * <code>string last_modified = 2;</code>
+     * @return The bytes for lastModified.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getLastModifiedBytes() {
+      java.lang.Object ref = lastModified_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        lastModified_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RESPONSE_FIELD_NUMBER = 3;
+    private spec.proto.runtime.v1.RuntimeProto.FileMeta response_;
+    /**
+     * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+     * @return Whether the response field is set.
+     */
+    @java.lang.Override
+    public boolean hasResponse() {
+      return response_ != null;
+    }
+    /**
+     * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+     * @return The response.
+     */
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.FileMeta getResponse() {
+      return response_ == null ? spec.proto.runtime.v1.RuntimeProto.FileMeta.getDefaultInstance() : response_;
+    }
+    /**
+     * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+     */
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.FileMetaOrBuilder getResponseOrBuilder() {
+      return getResponse();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (size_ != 0L) {
+        output.writeInt64(1, size_);
+      }
+      if (!getLastModifiedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, lastModified_);
+      }
+      if (response_ != null) {
+        output.writeMessage(3, getResponse());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (size_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, size_);
+      }
+      if (!getLastModifiedBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, lastModified_);
+      }
+      if (response_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, getResponse());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse)) {
+        return super.equals(obj);
+      }
+      spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse other = (spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse) obj;
+
+      if (getSize()
+          != other.getSize()) return false;
+      if (!getLastModified()
+          .equals(other.getLastModified())) return false;
+      if (hasResponse() != other.hasResponse()) return false;
+      if (hasResponse()) {
+        if (!getResponse()
+            .equals(other.getResponse())) return false;
+      }
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + SIZE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getSize());
+      hash = (37 * hash) + LAST_MODIFIED_FIELD_NUMBER;
+      hash = (53 * hash) + getLastModified().hashCode();
+      if (hasResponse()) {
+        hash = (37 * hash) + RESPONSE_FIELD_NUMBER;
+        hash = (53 * hash) + getResponse().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code spec.proto.runtime.v1.GetFileMetaResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:spec.proto.runtime.v1.GetFileMetaResponse)
+        spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_GetFileMetaResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_GetFileMetaResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse.class, spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse.Builder.class);
+      }
+
+      // Construct using spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        size_ = 0L;
+
+        lastModified_ = "";
+
+        if (responseBuilder_ == null) {
+          response_ = null;
+        } else {
+          response_ = null;
+          responseBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_GetFileMetaResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse getDefaultInstanceForType() {
+        return spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse build() {
+        spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse buildPartial() {
+        spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse result = new spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse(this);
+        result.size_ = size_;
+        result.lastModified_ = lastModified_;
+        if (responseBuilder_ == null) {
+          result.response_ = response_;
+        } else {
+          result.response_ = responseBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse) {
+          return mergeFrom((spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse other) {
+        if (other == spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse.getDefaultInstance()) return this;
+        if (other.getSize() != 0L) {
+          setSize(other.getSize());
+        }
+        if (!other.getLastModified().isEmpty()) {
+          lastModified_ = other.lastModified_;
+          onChanged();
+        }
+        if (other.hasResponse()) {
+          mergeResponse(other.getResponse());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long size_ ;
+      /**
+       * <pre>
+       * The size of file
+       * </pre>
+       *
+       * <code>int64 size = 1;</code>
+       * @return The size.
+       */
+      @java.lang.Override
+      public long getSize() {
+        return size_;
+      }
+      /**
+       * <pre>
+       * The size of file
+       * </pre>
+       *
+       * <code>int64 size = 1;</code>
+       * @param value The size to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSize(long value) {
+        
+        size_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The size of file
+       * </pre>
+       *
+       * <code>int64 size = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSize() {
+        
+        size_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lastModified_ = "";
+      /**
+       * <pre>
+       * The modified time of file
+       * </pre>
+       *
+       * <code>string last_modified = 2;</code>
+       * @return The lastModified.
+       */
+      public java.lang.String getLastModified() {
+        java.lang.Object ref = lastModified_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lastModified_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The modified time of file
+       * </pre>
+       *
+       * <code>string last_modified = 2;</code>
+       * @return The bytes for lastModified.
+       */
+      public com.google.protobuf.ByteString
+          getLastModifiedBytes() {
+        java.lang.Object ref = lastModified_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          lastModified_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The modified time of file
+       * </pre>
+       *
+       * <code>string last_modified = 2;</code>
+       * @param value The lastModified to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLastModified(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        lastModified_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The modified time of file
+       * </pre>
+       *
+       * <code>string last_modified = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLastModified() {
+        
+        lastModified_ = getDefaultInstance().getLastModified();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The modified time of file
+       * </pre>
+       *
+       * <code>string last_modified = 2;</code>
+       * @param value The bytes for lastModified to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLastModifiedBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        lastModified_ = value;
+        onChanged();
+        return this;
+      }
+
+      private spec.proto.runtime.v1.RuntimeProto.FileMeta response_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          spec.proto.runtime.v1.RuntimeProto.FileMeta, spec.proto.runtime.v1.RuntimeProto.FileMeta.Builder, spec.proto.runtime.v1.RuntimeProto.FileMetaOrBuilder> responseBuilder_;
+      /**
+       * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+       * @return Whether the response field is set.
+       */
+      public boolean hasResponse() {
+        return responseBuilder_ != null || response_ != null;
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+       * @return The response.
+       */
+      public spec.proto.runtime.v1.RuntimeProto.FileMeta getResponse() {
+        if (responseBuilder_ == null) {
+          return response_ == null ? spec.proto.runtime.v1.RuntimeProto.FileMeta.getDefaultInstance() : response_;
+        } else {
+          return responseBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+       */
+      public Builder setResponse(spec.proto.runtime.v1.RuntimeProto.FileMeta value) {
+        if (responseBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          response_ = value;
+          onChanged();
+        } else {
+          responseBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+       */
+      public Builder setResponse(
+          spec.proto.runtime.v1.RuntimeProto.FileMeta.Builder builderForValue) {
+        if (responseBuilder_ == null) {
+          response_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+       */
+      public Builder mergeResponse(spec.proto.runtime.v1.RuntimeProto.FileMeta value) {
+        if (responseBuilder_ == null) {
+          if (response_ != null) {
+            response_ =
+              spec.proto.runtime.v1.RuntimeProto.FileMeta.newBuilder(response_).mergeFrom(value).buildPartial();
+          } else {
+            response_ = value;
+          }
+          onChanged();
+        } else {
+          responseBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+       */
+      public Builder clearResponse() {
+        if (responseBuilder_ == null) {
+          response_ = null;
+          onChanged();
+        } else {
+          response_ = null;
+          responseBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+       */
+      public spec.proto.runtime.v1.RuntimeProto.FileMeta.Builder getResponseBuilder() {
+        
+        onChanged();
+        return getResponseFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+       */
+      public spec.proto.runtime.v1.RuntimeProto.FileMetaOrBuilder getResponseOrBuilder() {
+        if (responseBuilder_ != null) {
+          return responseBuilder_.getMessageOrBuilder();
+        } else {
+          return response_ == null ?
+              spec.proto.runtime.v1.RuntimeProto.FileMeta.getDefaultInstance() : response_;
+        }
+      }
+      /**
+       * <code>.spec.proto.runtime.v1.FileMeta response = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          spec.proto.runtime.v1.RuntimeProto.FileMeta, spec.proto.runtime.v1.RuntimeProto.FileMeta.Builder, spec.proto.runtime.v1.RuntimeProto.FileMetaOrBuilder> 
+          getResponseFieldBuilder() {
+        if (responseBuilder_ == null) {
+          responseBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              spec.proto.runtime.v1.RuntimeProto.FileMeta, spec.proto.runtime.v1.RuntimeProto.FileMeta.Builder, spec.proto.runtime.v1.RuntimeProto.FileMetaOrBuilder>(
+                  getResponse(),
+                  getParentForChildren(),
+                  isClean());
+          response_ = null;
+        }
+        return responseBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:spec.proto.runtime.v1.GetFileMetaResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:spec.proto.runtime.v1.GetFileMetaResponse)
+    private static final spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse();
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetFileMetaResponse>
+        PARSER = new com.google.protobuf.AbstractParser<GetFileMetaResponse>() {
+      @java.lang.Override
+      public GetFileMetaResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GetFileMetaResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetFileMetaResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetFileMetaResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface FileMetaValueOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:spec.proto.runtime.v1.FileMetaValue)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated string value = 1;</code>
+     * @return A list containing the value.
+     */
+    java.util.List<java.lang.String>
+        getValueList();
+    /**
+     * <code>repeated string value = 1;</code>
+     * @return The count of value.
+     */
+    int getValueCount();
+    /**
+     * <code>repeated string value = 1;</code>
+     * @param index The index of the element to return.
+     * @return The value at the given index.
+     */
+    java.lang.String getValue(int index);
+    /**
+     * <code>repeated string value = 1;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the value at the given index.
+     */
+    com.google.protobuf.ByteString
+        getValueBytes(int index);
+  }
+  /**
+   * Protobuf type {@code spec.proto.runtime.v1.FileMetaValue}
+   */
+  public static final class FileMetaValue extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:spec.proto.runtime.v1.FileMetaValue)
+      FileMetaValueOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use FileMetaValue.newBuilder() to construct.
+    private FileMetaValue(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private FileMetaValue() {
+      value_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new FileMetaValue();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private FileMetaValue(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                value_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              value_.add(s);
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          value_ = value_.getUnmodifiableView();
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileMetaValue_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileMetaValue_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              spec.proto.runtime.v1.RuntimeProto.FileMetaValue.class, spec.proto.runtime.v1.RuntimeProto.FileMetaValue.Builder.class);
+    }
+
+    public static final int VALUE_FIELD_NUMBER = 1;
+    private com.google.protobuf.LazyStringList value_;
+    /**
+     * <code>repeated string value = 1;</code>
+     * @return A list containing the value.
+     */
+    public com.google.protobuf.ProtocolStringList
+        getValueList() {
+      return value_;
+    }
+    /**
+     * <code>repeated string value = 1;</code>
+     * @return The count of value.
+     */
+    public int getValueCount() {
+      return value_.size();
+    }
+    /**
+     * <code>repeated string value = 1;</code>
+     * @param index The index of the element to return.
+     * @return The value at the given index.
+     */
+    public java.lang.String getValue(int index) {
+      return value_.get(index);
+    }
+    /**
+     * <code>repeated string value = 1;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the value at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getValueBytes(int index) {
+      return value_.getByteString(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < value_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, value_.getRaw(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < value_.size(); i++) {
+          dataSize += computeStringSizeNoTag(value_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getValueList().size();
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof spec.proto.runtime.v1.RuntimeProto.FileMetaValue)) {
+        return super.equals(obj);
+      }
+      spec.proto.runtime.v1.RuntimeProto.FileMetaValue other = (spec.proto.runtime.v1.RuntimeProto.FileMetaValue) obj;
+
+      if (!getValueList()
+          .equals(other.getValueList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getValueCount() > 0) {
+        hash = (37 * hash) + VALUE_FIELD_NUMBER;
+        hash = (53 * hash) + getValueList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(spec.proto.runtime.v1.RuntimeProto.FileMetaValue prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code spec.proto.runtime.v1.FileMetaValue}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:spec.proto.runtime.v1.FileMetaValue)
+        spec.proto.runtime.v1.RuntimeProto.FileMetaValueOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileMetaValue_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileMetaValue_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                spec.proto.runtime.v1.RuntimeProto.FileMetaValue.class, spec.proto.runtime.v1.RuntimeProto.FileMetaValue.Builder.class);
+      }
+
+      // Construct using spec.proto.runtime.v1.RuntimeProto.FileMetaValue.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        value_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileMetaValue_descriptor;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.FileMetaValue getDefaultInstanceForType() {
+        return spec.proto.runtime.v1.RuntimeProto.FileMetaValue.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.FileMetaValue build() {
+        spec.proto.runtime.v1.RuntimeProto.FileMetaValue result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.FileMetaValue buildPartial() {
+        spec.proto.runtime.v1.RuntimeProto.FileMetaValue result = new spec.proto.runtime.v1.RuntimeProto.FileMetaValue(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          value_ = value_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.value_ = value_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof spec.proto.runtime.v1.RuntimeProto.FileMetaValue) {
+          return mergeFrom((spec.proto.runtime.v1.RuntimeProto.FileMetaValue)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(spec.proto.runtime.v1.RuntimeProto.FileMetaValue other) {
+        if (other == spec.proto.runtime.v1.RuntimeProto.FileMetaValue.getDefaultInstance()) return this;
+        if (!other.value_.isEmpty()) {
+          if (value_.isEmpty()) {
+            value_ = other.value_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureValueIsMutable();
+            value_.addAll(other.value_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        spec.proto.runtime.v1.RuntimeProto.FileMetaValue parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (spec.proto.runtime.v1.RuntimeProto.FileMetaValue) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private com.google.protobuf.LazyStringList value_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureValueIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          value_ = new com.google.protobuf.LazyStringArrayList(value_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated string value = 1;</code>
+       * @return A list containing the value.
+       */
+      public com.google.protobuf.ProtocolStringList
+          getValueList() {
+        return value_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string value = 1;</code>
+       * @return The count of value.
+       */
+      public int getValueCount() {
+        return value_.size();
+      }
+      /**
+       * <code>repeated string value = 1;</code>
+       * @param index The index of the element to return.
+       * @return The value at the given index.
+       */
+      public java.lang.String getValue(int index) {
+        return value_.get(index);
+      }
+      /**
+       * <code>repeated string value = 1;</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the value at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getValueBytes(int index) {
+        return value_.getByteString(index);
+      }
+      /**
+       * <code>repeated string value = 1;</code>
+       * @param index The index to set the value at.
+       * @param value The value to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValue(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureValueIsMutable();
+        value_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string value = 1;</code>
+       * @param value The value to add.
+       * @return This builder for chaining.
+       */
+      public Builder addValue(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureValueIsMutable();
+        value_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string value = 1;</code>
+       * @param values The value to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllValue(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureValueIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, value_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string value = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearValue() {
+        value_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string value = 1;</code>
+       * @param value The bytes of the value to add.
+       * @return This builder for chaining.
+       */
+      public Builder addValueBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        ensureValueIsMutable();
+        value_.add(value);
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:spec.proto.runtime.v1.FileMetaValue)
+    }
+
+    // @@protoc_insertion_point(class_scope:spec.proto.runtime.v1.FileMetaValue)
+    private static final spec.proto.runtime.v1.RuntimeProto.FileMetaValue DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new spec.proto.runtime.v1.RuntimeProto.FileMetaValue();
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.FileMetaValue getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<FileMetaValue>
+        PARSER = new com.google.protobuf.AbstractParser<FileMetaValue>() {
+      @java.lang.Override
+      public FileMetaValue parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new FileMetaValue(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<FileMetaValue> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<FileMetaValue> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.FileMetaValue getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface FileMetaOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:spec.proto.runtime.v1.FileMeta)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+     */
+    int getMetadataCount();
+    /**
+     * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+     */
+    boolean containsMetadata(
+        java.lang.String key);
+    /**
+     * Use {@link #getMetadataMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue>
+    getMetadata();
+    /**
+     * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+     */
+    java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue>
+    getMetadataMap();
+    /**
+     * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+     */
+
+    spec.proto.runtime.v1.RuntimeProto.FileMetaValue getMetadataOrDefault(
+        java.lang.String key,
+        spec.proto.runtime.v1.RuntimeProto.FileMetaValue defaultValue);
+    /**
+     * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+     */
+
+    spec.proto.runtime.v1.RuntimeProto.FileMetaValue getMetadataOrThrow(
+        java.lang.String key);
+  }
+  /**
+   * Protobuf type {@code spec.proto.runtime.v1.FileMeta}
+   */
+  public static final class FileMeta extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:spec.proto.runtime.v1.FileMeta)
+      FileMetaOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use FileMeta.newBuilder() to construct.
+    private FileMeta(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private FileMeta() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new FileMeta();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private FileMeta(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                metadata_ = com.google.protobuf.MapField.newMapField(
+                    MetadataDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000001;
+              }
+              com.google.protobuf.MapEntry<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue>
+              metadata__ = input.readMessage(
+                  MetadataDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              metadata_.getMutableMap().put(
+                  metadata__.getKey(), metadata__.getValue());
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileMeta_descriptor;
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 1:
+          return internalGetMetadata();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileMeta_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              spec.proto.runtime.v1.RuntimeProto.FileMeta.class, spec.proto.runtime.v1.RuntimeProto.FileMeta.Builder.class);
+    }
+
+    public static final int METADATA_FIELD_NUMBER = 1;
+    private static final class MetadataDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue>newDefaultInstance(
+                  spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileMeta_MetadataEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.MESSAGE,
+                  spec.proto.runtime.v1.RuntimeProto.FileMetaValue.getDefaultInstance());
+    }
+    private com.google.protobuf.MapField<
+        java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> metadata_;
+    private com.google.protobuf.MapField<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue>
+    internalGetMetadata() {
+      if (metadata_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            MetadataDefaultEntryHolder.defaultEntry);
+      }
+      return metadata_;
+    }
+
+    public int getMetadataCount() {
+      return internalGetMetadata().getMap().size();
+    }
+    /**
+     * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+     */
+
+    @java.lang.Override
+    public boolean containsMetadata(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetMetadata().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getMetadataMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> getMetadata() {
+      return getMetadataMap();
+    }
+    /**
+     * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+     */
+    @java.lang.Override
+
+    public java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> getMetadataMap() {
+      return internalGetMetadata().getMap();
+    }
+    /**
+     * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+     */
+    @java.lang.Override
+
+    public spec.proto.runtime.v1.RuntimeProto.FileMetaValue getMetadataOrDefault(
+        java.lang.String key,
+        spec.proto.runtime.v1.RuntimeProto.FileMetaValue defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> map =
+          internalGetMetadata().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+     */
+    @java.lang.Override
+
+    public spec.proto.runtime.v1.RuntimeProto.FileMetaValue getMetadataOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> map =
+          internalGetMetadata().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      com.google.protobuf.GeneratedMessageV3
+        .serializeStringMapTo(
+          output,
+          internalGetMetadata(),
+          MetadataDefaultEntryHolder.defaultEntry,
+          1);
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (java.util.Map.Entry<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> entry
+           : internalGetMetadata().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue>
+        metadata__ = MetadataDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(1, metadata__);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof spec.proto.runtime.v1.RuntimeProto.FileMeta)) {
+        return super.equals(obj);
+      }
+      spec.proto.runtime.v1.RuntimeProto.FileMeta other = (spec.proto.runtime.v1.RuntimeProto.FileMeta) obj;
+
+      if (!internalGetMetadata().equals(
+          other.internalGetMetadata())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (!internalGetMetadata().getMap().isEmpty()) {
+        hash = (37 * hash) + METADATA_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetMetadata().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(spec.proto.runtime.v1.RuntimeProto.FileMeta prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code spec.proto.runtime.v1.FileMeta}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:spec.proto.runtime.v1.FileMeta)
+        spec.proto.runtime.v1.RuntimeProto.FileMetaOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileMeta_descriptor;
+      }
+
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 1:
+            return internalGetMetadata();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 1:
+            return internalGetMutableMetadata();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileMeta_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                spec.proto.runtime.v1.RuntimeProto.FileMeta.class, spec.proto.runtime.v1.RuntimeProto.FileMeta.Builder.class);
+      }
+
+      // Construct using spec.proto.runtime.v1.RuntimeProto.FileMeta.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        internalGetMutableMetadata().clear();
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileMeta_descriptor;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.FileMeta getDefaultInstanceForType() {
+        return spec.proto.runtime.v1.RuntimeProto.FileMeta.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.FileMeta build() {
+        spec.proto.runtime.v1.RuntimeProto.FileMeta result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.FileMeta buildPartial() {
+        spec.proto.runtime.v1.RuntimeProto.FileMeta result = new spec.proto.runtime.v1.RuntimeProto.FileMeta(this);
+        int from_bitField0_ = bitField0_;
+        result.metadata_ = internalGetMetadata();
+        result.metadata_.makeImmutable();
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof spec.proto.runtime.v1.RuntimeProto.FileMeta) {
+          return mergeFrom((spec.proto.runtime.v1.RuntimeProto.FileMeta)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(spec.proto.runtime.v1.RuntimeProto.FileMeta other) {
+        if (other == spec.proto.runtime.v1.RuntimeProto.FileMeta.getDefaultInstance()) return this;
+        internalGetMutableMetadata().mergeFrom(
+            other.internalGetMetadata());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        spec.proto.runtime.v1.RuntimeProto.FileMeta parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (spec.proto.runtime.v1.RuntimeProto.FileMeta) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private com.google.protobuf.MapField<
+          java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> metadata_;
+      private com.google.protobuf.MapField<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue>
+      internalGetMetadata() {
+        if (metadata_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              MetadataDefaultEntryHolder.defaultEntry);
+        }
+        return metadata_;
+      }
+      private com.google.protobuf.MapField<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue>
+      internalGetMutableMetadata() {
+        onChanged();;
+        if (metadata_ == null) {
+          metadata_ = com.google.protobuf.MapField.newMapField(
+              MetadataDefaultEntryHolder.defaultEntry);
+        }
+        if (!metadata_.isMutable()) {
+          metadata_ = metadata_.copy();
+        }
+        return metadata_;
+      }
+
+      public int getMetadataCount() {
+        return internalGetMetadata().getMap().size();
+      }
+      /**
+       * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+       */
+
+      @java.lang.Override
+      public boolean containsMetadata(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        return internalGetMetadata().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getMetadataMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> getMetadata() {
+        return getMetadataMap();
+      }
+      /**
+       * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+       */
+      @java.lang.Override
+
+      public java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> getMetadataMap() {
+        return internalGetMetadata().getMap();
+      }
+      /**
+       * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+       */
+      @java.lang.Override
+
+      public spec.proto.runtime.v1.RuntimeProto.FileMetaValue getMetadataOrDefault(
+          java.lang.String key,
+          spec.proto.runtime.v1.RuntimeProto.FileMetaValue defaultValue) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> map =
+            internalGetMetadata().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+       */
+      @java.lang.Override
+
+      public spec.proto.runtime.v1.RuntimeProto.FileMetaValue getMetadataOrThrow(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> map =
+            internalGetMetadata().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearMetadata() {
+        internalGetMutableMetadata().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+       */
+
+      public Builder removeMetadata(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableMetadata().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue>
+      getMutableMetadata() {
+        return internalGetMutableMetadata().getMutableMap();
+      }
+      /**
+       * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+       */
+      public Builder putMetadata(
+          java.lang.String key,
+          spec.proto.runtime.v1.RuntimeProto.FileMetaValue value) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        if (value == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableMetadata().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <code>map&lt;string, .spec.proto.runtime.v1.FileMetaValue&gt; metadata = 1;</code>
+       */
+
+      public Builder putAllMetadata(
+          java.util.Map<java.lang.String, spec.proto.runtime.v1.RuntimeProto.FileMetaValue> values) {
+        internalGetMutableMetadata().getMutableMap()
+            .putAll(values);
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:spec.proto.runtime.v1.FileMeta)
+    }
+
+    // @@protoc_insertion_point(class_scope:spec.proto.runtime.v1.FileMeta)
+    private static final spec.proto.runtime.v1.RuntimeProto.FileMeta DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new spec.proto.runtime.v1.RuntimeProto.FileMeta();
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.FileMeta getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<FileMeta>
+        PARSER = new com.google.protobuf.AbstractParser<FileMeta>() {
+      @java.lang.Override
+      public FileMeta parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new FileMeta(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<FileMeta> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<FileMeta> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.FileMeta getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface GetFileRequestOrBuilder extends
       // @@protoc_insertion_point(interface_extends:spec.proto.runtime.v1.GetFileRequest)
       com.google.protobuf.MessageOrBuilder {
@@ -4059,6 +6954,24 @@ public final class RuntimeProto {
      * <code>.spec.proto.runtime.v1.FileRequest request = 1;</code>
      */
     spec.proto.runtime.v1.RuntimeProto.FileRequestOrBuilder getRequestOrBuilder();
+
+    /**
+     * <code>int32 page_size = 2;</code>
+     * @return The pageSize.
+     */
+    int getPageSize();
+
+    /**
+     * <code>string marker = 3;</code>
+     * @return The marker.
+     */
+    java.lang.String getMarker();
+    /**
+     * <code>string marker = 3;</code>
+     * @return The bytes for marker.
+     */
+    com.google.protobuf.ByteString
+        getMarkerBytes();
   }
   /**
    * Protobuf type {@code spec.proto.runtime.v1.ListFileRequest}
@@ -4073,6 +6986,7 @@ public final class RuntimeProto {
       super(builder);
     }
     private ListFileRequest() {
+      marker_ = "";
     }
 
     @java.lang.Override
@@ -4116,6 +7030,17 @@ public final class RuntimeProto {
                 request_ = subBuilder.buildPartial();
               }
 
+              break;
+            }
+            case 16: {
+
+              pageSize_ = input.readInt32();
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              marker_ = s;
               break;
             }
             default: {
@@ -4176,6 +7101,55 @@ public final class RuntimeProto {
       return getRequest();
     }
 
+    public static final int PAGE_SIZE_FIELD_NUMBER = 2;
+    private int pageSize_;
+    /**
+     * <code>int32 page_size = 2;</code>
+     * @return The pageSize.
+     */
+    @java.lang.Override
+    public int getPageSize() {
+      return pageSize_;
+    }
+
+    public static final int MARKER_FIELD_NUMBER = 3;
+    private volatile java.lang.Object marker_;
+    /**
+     * <code>string marker = 3;</code>
+     * @return The marker.
+     */
+    @java.lang.Override
+    public java.lang.String getMarker() {
+      java.lang.Object ref = marker_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        marker_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string marker = 3;</code>
+     * @return The bytes for marker.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getMarkerBytes() {
+      java.lang.Object ref = marker_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        marker_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -4193,6 +7167,12 @@ public final class RuntimeProto {
       if (request_ != null) {
         output.writeMessage(1, getRequest());
       }
+      if (pageSize_ != 0) {
+        output.writeInt32(2, pageSize_);
+      }
+      if (!getMarkerBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, marker_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -4205,6 +7185,13 @@ public final class RuntimeProto {
       if (request_ != null) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, getRequest());
+      }
+      if (pageSize_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, pageSize_);
+      }
+      if (!getMarkerBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, marker_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -4226,6 +7213,10 @@ public final class RuntimeProto {
         if (!getRequest()
             .equals(other.getRequest())) return false;
       }
+      if (getPageSize()
+          != other.getPageSize()) return false;
+      if (!getMarker()
+          .equals(other.getMarker())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -4241,6 +7232,10 @@ public final class RuntimeProto {
         hash = (37 * hash) + REQUEST_FIELD_NUMBER;
         hash = (53 * hash) + getRequest().hashCode();
       }
+      hash = (37 * hash) + PAGE_SIZE_FIELD_NUMBER;
+      hash = (53 * hash) + getPageSize();
+      hash = (37 * hash) + MARKER_FIELD_NUMBER;
+      hash = (53 * hash) + getMarker().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4380,6 +7375,10 @@ public final class RuntimeProto {
           request_ = null;
           requestBuilder_ = null;
         }
+        pageSize_ = 0;
+
+        marker_ = "";
+
         return this;
       }
 
@@ -4411,6 +7410,8 @@ public final class RuntimeProto {
         } else {
           result.request_ = requestBuilder_.build();
         }
+        result.pageSize_ = pageSize_;
+        result.marker_ = marker_;
         onBuilt();
         return result;
       }
@@ -4461,6 +7462,13 @@ public final class RuntimeProto {
         if (other == spec.proto.runtime.v1.RuntimeProto.ListFileRequest.getDefaultInstance()) return this;
         if (other.hasRequest()) {
           mergeRequest(other.getRequest());
+        }
+        if (other.getPageSize() != 0) {
+          setPageSize(other.getPageSize());
+        }
+        if (!other.getMarker().isEmpty()) {
+          marker_ = other.marker_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -4609,6 +7617,113 @@ public final class RuntimeProto {
         }
         return requestBuilder_;
       }
+
+      private int pageSize_ ;
+      /**
+       * <code>int32 page_size = 2;</code>
+       * @return The pageSize.
+       */
+      @java.lang.Override
+      public int getPageSize() {
+        return pageSize_;
+      }
+      /**
+       * <code>int32 page_size = 2;</code>
+       * @param value The pageSize to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPageSize(int value) {
+        
+        pageSize_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 page_size = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPageSize() {
+        
+        pageSize_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object marker_ = "";
+      /**
+       * <code>string marker = 3;</code>
+       * @return The marker.
+       */
+      public java.lang.String getMarker() {
+        java.lang.Object ref = marker_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          marker_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string marker = 3;</code>
+       * @return The bytes for marker.
+       */
+      public com.google.protobuf.ByteString
+          getMarkerBytes() {
+        java.lang.Object ref = marker_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          marker_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string marker = 3;</code>
+       * @param value The marker to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMarker(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        marker_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string marker = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMarker() {
+        
+        marker_ = getDefaultInstance().getMarker();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string marker = 3;</code>
+       * @param value The bytes for marker to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMarkerBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        marker_ = value;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -4662,34 +7777,1316 @@ public final class RuntimeProto {
 
   }
 
+  public interface FileInfoOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:spec.proto.runtime.v1.FileInfo)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The name of file
+     * </pre>
+     *
+     * <code>string file_name = 1;</code>
+     * @return The fileName.
+     */
+    java.lang.String getFileName();
+    /**
+     * <pre>
+     * The name of file
+     * </pre>
+     *
+     * <code>string file_name = 1;</code>
+     * @return The bytes for fileName.
+     */
+    com.google.protobuf.ByteString
+        getFileNameBytes();
+
+    /**
+     * <pre>
+     * The size of file
+     * </pre>
+     *
+     * <code>int64 size = 2;</code>
+     * @return The size.
+     */
+    long getSize();
+
+    /**
+     * <pre>
+     * The modified time of file
+     * </pre>
+     *
+     * <code>string last_modified = 3;</code>
+     * @return The lastModified.
+     */
+    java.lang.String getLastModified();
+    /**
+     * <pre>
+     * The modified time of file
+     * </pre>
+     *
+     * <code>string last_modified = 3;</code>
+     * @return The bytes for lastModified.
+     */
+    com.google.protobuf.ByteString
+        getLastModifiedBytes();
+
+    /**
+     * <pre>
+     * The metadata for user extension.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 4;</code>
+     */
+    int getMetadataCount();
+    /**
+     * <pre>
+     * The metadata for user extension.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 4;</code>
+     */
+    boolean containsMetadata(
+        java.lang.String key);
+    /**
+     * Use {@link #getMetadataMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, java.lang.String>
+    getMetadata();
+    /**
+     * <pre>
+     * The metadata for user extension.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 4;</code>
+     */
+    java.util.Map<java.lang.String, java.lang.String>
+    getMetadataMap();
+    /**
+     * <pre>
+     * The metadata for user extension.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 4;</code>
+     */
+
+    java.lang.String getMetadataOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue);
+    /**
+     * <pre>
+     * The metadata for user extension.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 4;</code>
+     */
+
+    java.lang.String getMetadataOrThrow(
+        java.lang.String key);
+  }
+  /**
+   * Protobuf type {@code spec.proto.runtime.v1.FileInfo}
+   */
+  public static final class FileInfo extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:spec.proto.runtime.v1.FileInfo)
+      FileInfoOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use FileInfo.newBuilder() to construct.
+    private FileInfo(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private FileInfo() {
+      fileName_ = "";
+      lastModified_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new FileInfo();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private FileInfo(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              fileName_ = s;
+              break;
+            }
+            case 16: {
+
+              size_ = input.readInt64();
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              lastModified_ = s;
+              break;
+            }
+            case 34: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                metadata_ = com.google.protobuf.MapField.newMapField(
+                    MetadataDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000001;
+              }
+              com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+              metadata__ = input.readMessage(
+                  MetadataDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              metadata_.getMutableMap().put(
+                  metadata__.getKey(), metadata__.getValue());
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileInfo_descriptor;
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 4:
+          return internalGetMetadata();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileInfo_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              spec.proto.runtime.v1.RuntimeProto.FileInfo.class, spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder.class);
+    }
+
+    public static final int FILE_NAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object fileName_;
+    /**
+     * <pre>
+     * The name of file
+     * </pre>
+     *
+     * <code>string file_name = 1;</code>
+     * @return The fileName.
+     */
+    @java.lang.Override
+    public java.lang.String getFileName() {
+      java.lang.Object ref = fileName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        fileName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The name of file
+     * </pre>
+     *
+     * <code>string file_name = 1;</code>
+     * @return The bytes for fileName.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getFileNameBytes() {
+      java.lang.Object ref = fileName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        fileName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SIZE_FIELD_NUMBER = 2;
+    private long size_;
+    /**
+     * <pre>
+     * The size of file
+     * </pre>
+     *
+     * <code>int64 size = 2;</code>
+     * @return The size.
+     */
+    @java.lang.Override
+    public long getSize() {
+      return size_;
+    }
+
+    public static final int LAST_MODIFIED_FIELD_NUMBER = 3;
+    private volatile java.lang.Object lastModified_;
+    /**
+     * <pre>
+     * The modified time of file
+     * </pre>
+     *
+     * <code>string last_modified = 3;</code>
+     * @return The lastModified.
+     */
+    @java.lang.Override
+    public java.lang.String getLastModified() {
+      java.lang.Object ref = lastModified_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lastModified_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The modified time of file
+     * </pre>
+     *
+     * <code>string last_modified = 3;</code>
+     * @return The bytes for lastModified.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getLastModifiedBytes() {
+      java.lang.Object ref = lastModified_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        lastModified_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int METADATA_FIELD_NUMBER = 4;
+    private static final class MetadataDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.String, java.lang.String> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.String, java.lang.String>newDefaultInstance(
+                  spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileInfo_MetadataEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "");
+    }
+    private com.google.protobuf.MapField<
+        java.lang.String, java.lang.String> metadata_;
+    private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+    internalGetMetadata() {
+      if (metadata_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            MetadataDefaultEntryHolder.defaultEntry);
+      }
+      return metadata_;
+    }
+
+    public int getMetadataCount() {
+      return internalGetMetadata().getMap().size();
+    }
+    /**
+     * <pre>
+     * The metadata for user extension.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 4;</code>
+     */
+
+    @java.lang.Override
+    public boolean containsMetadata(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetMetadata().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getMetadataMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
+      return getMetadataMap();
+    }
+    /**
+     * <pre>
+     * The metadata for user extension.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 4;</code>
+     */
+    @java.lang.Override
+
+    public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
+      return internalGetMetadata().getMap();
+    }
+    /**
+     * <pre>
+     * The metadata for user extension.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 4;</code>
+     */
+    @java.lang.Override
+
+    public java.lang.String getMetadataOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetMetadata().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <pre>
+     * The metadata for user extension.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 4;</code>
+     */
+    @java.lang.Override
+
+    public java.lang.String getMetadataOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetMetadata().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!getFileNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, fileName_);
+      }
+      if (size_ != 0L) {
+        output.writeInt64(2, size_);
+      }
+      if (!getLastModifiedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, lastModified_);
+      }
+      com.google.protobuf.GeneratedMessageV3
+        .serializeStringMapTo(
+          output,
+          internalGetMetadata(),
+          MetadataDefaultEntryHolder.defaultEntry,
+          4);
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getFileNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, fileName_);
+      }
+      if (size_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(2, size_);
+      }
+      if (!getLastModifiedBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, lastModified_);
+      }
+      for (java.util.Map.Entry<java.lang.String, java.lang.String> entry
+           : internalGetMetadata().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+        metadata__ = MetadataDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(4, metadata__);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof spec.proto.runtime.v1.RuntimeProto.FileInfo)) {
+        return super.equals(obj);
+      }
+      spec.proto.runtime.v1.RuntimeProto.FileInfo other = (spec.proto.runtime.v1.RuntimeProto.FileInfo) obj;
+
+      if (!getFileName()
+          .equals(other.getFileName())) return false;
+      if (getSize()
+          != other.getSize()) return false;
+      if (!getLastModified()
+          .equals(other.getLastModified())) return false;
+      if (!internalGetMetadata().equals(
+          other.internalGetMetadata())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + FILE_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getFileName().hashCode();
+      hash = (37 * hash) + SIZE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getSize());
+      hash = (37 * hash) + LAST_MODIFIED_FIELD_NUMBER;
+      hash = (53 * hash) + getLastModified().hashCode();
+      if (!internalGetMetadata().getMap().isEmpty()) {
+        hash = (37 * hash) + METADATA_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetMetadata().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(spec.proto.runtime.v1.RuntimeProto.FileInfo prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code spec.proto.runtime.v1.FileInfo}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:spec.proto.runtime.v1.FileInfo)
+        spec.proto.runtime.v1.RuntimeProto.FileInfoOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileInfo_descriptor;
+      }
+
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 4:
+            return internalGetMetadata();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 4:
+            return internalGetMutableMetadata();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileInfo_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                spec.proto.runtime.v1.RuntimeProto.FileInfo.class, spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder.class);
+      }
+
+      // Construct using spec.proto.runtime.v1.RuntimeProto.FileInfo.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        fileName_ = "";
+
+        size_ = 0L;
+
+        lastModified_ = "";
+
+        internalGetMutableMetadata().clear();
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return spec.proto.runtime.v1.RuntimeProto.internal_static_spec_proto_runtime_v1_FileInfo_descriptor;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.FileInfo getDefaultInstanceForType() {
+        return spec.proto.runtime.v1.RuntimeProto.FileInfo.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.FileInfo build() {
+        spec.proto.runtime.v1.RuntimeProto.FileInfo result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public spec.proto.runtime.v1.RuntimeProto.FileInfo buildPartial() {
+        spec.proto.runtime.v1.RuntimeProto.FileInfo result = new spec.proto.runtime.v1.RuntimeProto.FileInfo(this);
+        int from_bitField0_ = bitField0_;
+        result.fileName_ = fileName_;
+        result.size_ = size_;
+        result.lastModified_ = lastModified_;
+        result.metadata_ = internalGetMetadata();
+        result.metadata_.makeImmutable();
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof spec.proto.runtime.v1.RuntimeProto.FileInfo) {
+          return mergeFrom((spec.proto.runtime.v1.RuntimeProto.FileInfo)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(spec.proto.runtime.v1.RuntimeProto.FileInfo other) {
+        if (other == spec.proto.runtime.v1.RuntimeProto.FileInfo.getDefaultInstance()) return this;
+        if (!other.getFileName().isEmpty()) {
+          fileName_ = other.fileName_;
+          onChanged();
+        }
+        if (other.getSize() != 0L) {
+          setSize(other.getSize());
+        }
+        if (!other.getLastModified().isEmpty()) {
+          lastModified_ = other.lastModified_;
+          onChanged();
+        }
+        internalGetMutableMetadata().mergeFrom(
+            other.internalGetMetadata());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        spec.proto.runtime.v1.RuntimeProto.FileInfo parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (spec.proto.runtime.v1.RuntimeProto.FileInfo) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object fileName_ = "";
+      /**
+       * <pre>
+       * The name of file
+       * </pre>
+       *
+       * <code>string file_name = 1;</code>
+       * @return The fileName.
+       */
+      public java.lang.String getFileName() {
+        java.lang.Object ref = fileName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          fileName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The name of file
+       * </pre>
+       *
+       * <code>string file_name = 1;</code>
+       * @return The bytes for fileName.
+       */
+      public com.google.protobuf.ByteString
+          getFileNameBytes() {
+        java.lang.Object ref = fileName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          fileName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The name of file
+       * </pre>
+       *
+       * <code>string file_name = 1;</code>
+       * @param value The fileName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFileName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        fileName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The name of file
+       * </pre>
+       *
+       * <code>string file_name = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFileName() {
+        
+        fileName_ = getDefaultInstance().getFileName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The name of file
+       * </pre>
+       *
+       * <code>string file_name = 1;</code>
+       * @param value The bytes for fileName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFileNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        fileName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long size_ ;
+      /**
+       * <pre>
+       * The size of file
+       * </pre>
+       *
+       * <code>int64 size = 2;</code>
+       * @return The size.
+       */
+      @java.lang.Override
+      public long getSize() {
+        return size_;
+      }
+      /**
+       * <pre>
+       * The size of file
+       * </pre>
+       *
+       * <code>int64 size = 2;</code>
+       * @param value The size to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSize(long value) {
+        
+        size_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The size of file
+       * </pre>
+       *
+       * <code>int64 size = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSize() {
+        
+        size_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lastModified_ = "";
+      /**
+       * <pre>
+       * The modified time of file
+       * </pre>
+       *
+       * <code>string last_modified = 3;</code>
+       * @return The lastModified.
+       */
+      public java.lang.String getLastModified() {
+        java.lang.Object ref = lastModified_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lastModified_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The modified time of file
+       * </pre>
+       *
+       * <code>string last_modified = 3;</code>
+       * @return The bytes for lastModified.
+       */
+      public com.google.protobuf.ByteString
+          getLastModifiedBytes() {
+        java.lang.Object ref = lastModified_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          lastModified_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The modified time of file
+       * </pre>
+       *
+       * <code>string last_modified = 3;</code>
+       * @param value The lastModified to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLastModified(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        lastModified_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The modified time of file
+       * </pre>
+       *
+       * <code>string last_modified = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLastModified() {
+        
+        lastModified_ = getDefaultInstance().getLastModified();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The modified time of file
+       * </pre>
+       *
+       * <code>string last_modified = 3;</code>
+       * @param value The bytes for lastModified to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLastModifiedBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        lastModified_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.MapField<
+          java.lang.String, java.lang.String> metadata_;
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetMetadata() {
+        if (metadata_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              MetadataDefaultEntryHolder.defaultEntry);
+        }
+        return metadata_;
+      }
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetMutableMetadata() {
+        onChanged();;
+        if (metadata_ == null) {
+          metadata_ = com.google.protobuf.MapField.newMapField(
+              MetadataDefaultEntryHolder.defaultEntry);
+        }
+        if (!metadata_.isMutable()) {
+          metadata_ = metadata_.copy();
+        }
+        return metadata_;
+      }
+
+      public int getMetadataCount() {
+        return internalGetMetadata().getMap().size();
+      }
+      /**
+       * <pre>
+       * The metadata for user extension.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 4;</code>
+       */
+
+      @java.lang.Override
+      public boolean containsMetadata(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        return internalGetMetadata().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getMetadataMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
+        return getMetadataMap();
+      }
+      /**
+       * <pre>
+       * The metadata for user extension.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 4;</code>
+       */
+      @java.lang.Override
+
+      public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
+        return internalGetMetadata().getMap();
+      }
+      /**
+       * <pre>
+       * The metadata for user extension.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 4;</code>
+       */
+      @java.lang.Override
+
+      public java.lang.String getMetadataOrDefault(
+          java.lang.String key,
+          java.lang.String defaultValue) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetMetadata().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <pre>
+       * The metadata for user extension.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 4;</code>
+       */
+      @java.lang.Override
+
+      public java.lang.String getMetadataOrThrow(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetMetadata().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearMetadata() {
+        internalGetMutableMetadata().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <pre>
+       * The metadata for user extension.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 4;</code>
+       */
+
+      public Builder removeMetadata(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableMetadata().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String>
+      getMutableMetadata() {
+        return internalGetMutableMetadata().getMutableMap();
+      }
+      /**
+       * <pre>
+       * The metadata for user extension.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 4;</code>
+       */
+      public Builder putMetadata(
+          java.lang.String key,
+          java.lang.String value) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        if (value == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableMetadata().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <pre>
+       * The metadata for user extension.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 4;</code>
+       */
+
+      public Builder putAllMetadata(
+          java.util.Map<java.lang.String, java.lang.String> values) {
+        internalGetMutableMetadata().getMutableMap()
+            .putAll(values);
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:spec.proto.runtime.v1.FileInfo)
+    }
+
+    // @@protoc_insertion_point(class_scope:spec.proto.runtime.v1.FileInfo)
+    private static final spec.proto.runtime.v1.RuntimeProto.FileInfo DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new spec.proto.runtime.v1.RuntimeProto.FileInfo();
+    }
+
+    public static spec.proto.runtime.v1.RuntimeProto.FileInfo getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<FileInfo>
+        PARSER = new com.google.protobuf.AbstractParser<FileInfo>() {
+      @java.lang.Override
+      public FileInfo parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new FileInfo(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<FileInfo> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<FileInfo> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.FileInfo getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface ListFileRespOrBuilder extends
       // @@protoc_insertion_point(interface_extends:spec.proto.runtime.v1.ListFileResp)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated string file_name = 1;</code>
-     * @return A list containing the fileName.
+     * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
      */
-    java.util.List<java.lang.String>
-        getFileNameList();
+    java.util.List<spec.proto.runtime.v1.RuntimeProto.FileInfo> 
+        getFilesList();
     /**
-     * <code>repeated string file_name = 1;</code>
-     * @return The count of fileName.
+     * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
      */
-    int getFileNameCount();
+    spec.proto.runtime.v1.RuntimeProto.FileInfo getFiles(int index);
     /**
-     * <code>repeated string file_name = 1;</code>
-     * @param index The index of the element to return.
-     * @return The fileName at the given index.
+     * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
      */
-    java.lang.String getFileName(int index);
+    int getFilesCount();
     /**
-     * <code>repeated string file_name = 1;</code>
-     * @param index The index of the value to return.
-     * @return The bytes of the fileName at the given index.
+     * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+     */
+    java.util.List<? extends spec.proto.runtime.v1.RuntimeProto.FileInfoOrBuilder> 
+        getFilesOrBuilderList();
+    /**
+     * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+     */
+    spec.proto.runtime.v1.RuntimeProto.FileInfoOrBuilder getFilesOrBuilder(
+        int index);
+
+    /**
+     * <code>string marker = 2;</code>
+     * @return The marker.
+     */
+    java.lang.String getMarker();
+    /**
+     * <code>string marker = 2;</code>
+     * @return The bytes for marker.
      */
     com.google.protobuf.ByteString
-        getFileNameBytes(int index);
+        getMarkerBytes();
+
+    /**
+     * <code>bool is_truncated = 3;</code>
+     * @return The isTruncated.
+     */
+    boolean getIsTruncated();
   }
   /**
    * Protobuf type {@code spec.proto.runtime.v1.ListFileResp}
@@ -4704,7 +9101,8 @@ public final class RuntimeProto {
       super(builder);
     }
     private ListFileResp() {
-      fileName_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      files_ = java.util.Collections.emptyList();
+      marker_ = "";
     }
 
     @java.lang.Override
@@ -4739,12 +9137,23 @@ public final class RuntimeProto {
               done = true;
               break;
             case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
               if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                fileName_ = new com.google.protobuf.LazyStringArrayList();
+                files_ = new java.util.ArrayList<spec.proto.runtime.v1.RuntimeProto.FileInfo>();
                 mutable_bitField0_ |= 0x00000001;
               }
-              fileName_.add(s);
+              files_.add(
+                  input.readMessage(spec.proto.runtime.v1.RuntimeProto.FileInfo.parser(), extensionRegistry));
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              marker_ = s;
+              break;
+            }
+            case 24: {
+
+              isTruncated_ = input.readBool();
               break;
             }
             default: {
@@ -4763,7 +9172,7 @@ public final class RuntimeProto {
             e).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          fileName_ = fileName_.getUnmodifiableView();
+          files_ = java.util.Collections.unmodifiableList(files_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -4782,39 +9191,93 @@ public final class RuntimeProto {
               spec.proto.runtime.v1.RuntimeProto.ListFileResp.class, spec.proto.runtime.v1.RuntimeProto.ListFileResp.Builder.class);
     }
 
-    public static final int FILE_NAME_FIELD_NUMBER = 1;
-    private com.google.protobuf.LazyStringList fileName_;
+    public static final int FILES_FIELD_NUMBER = 1;
+    private java.util.List<spec.proto.runtime.v1.RuntimeProto.FileInfo> files_;
     /**
-     * <code>repeated string file_name = 1;</code>
-     * @return A list containing the fileName.
+     * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
      */
-    public com.google.protobuf.ProtocolStringList
-        getFileNameList() {
-      return fileName_;
+    @java.lang.Override
+    public java.util.List<spec.proto.runtime.v1.RuntimeProto.FileInfo> getFilesList() {
+      return files_;
     }
     /**
-     * <code>repeated string file_name = 1;</code>
-     * @return The count of fileName.
+     * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
      */
-    public int getFileNameCount() {
-      return fileName_.size();
+    @java.lang.Override
+    public java.util.List<? extends spec.proto.runtime.v1.RuntimeProto.FileInfoOrBuilder> 
+        getFilesOrBuilderList() {
+      return files_;
     }
     /**
-     * <code>repeated string file_name = 1;</code>
-     * @param index The index of the element to return.
-     * @return The fileName at the given index.
+     * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
      */
-    public java.lang.String getFileName(int index) {
-      return fileName_.get(index);
+    @java.lang.Override
+    public int getFilesCount() {
+      return files_.size();
     }
     /**
-     * <code>repeated string file_name = 1;</code>
-     * @param index The index of the value to return.
-     * @return The bytes of the fileName at the given index.
+     * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
      */
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.FileInfo getFiles(int index) {
+      return files_.get(index);
+    }
+    /**
+     * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+     */
+    @java.lang.Override
+    public spec.proto.runtime.v1.RuntimeProto.FileInfoOrBuilder getFilesOrBuilder(
+        int index) {
+      return files_.get(index);
+    }
+
+    public static final int MARKER_FIELD_NUMBER = 2;
+    private volatile java.lang.Object marker_;
+    /**
+     * <code>string marker = 2;</code>
+     * @return The marker.
+     */
+    @java.lang.Override
+    public java.lang.String getMarker() {
+      java.lang.Object ref = marker_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        marker_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string marker = 2;</code>
+     * @return The bytes for marker.
+     */
+    @java.lang.Override
     public com.google.protobuf.ByteString
-        getFileNameBytes(int index) {
-      return fileName_.getByteString(index);
+        getMarkerBytes() {
+      java.lang.Object ref = marker_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        marker_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int IS_TRUNCATED_FIELD_NUMBER = 3;
+    private boolean isTruncated_;
+    /**
+     * <code>bool is_truncated = 3;</code>
+     * @return The isTruncated.
+     */
+    @java.lang.Override
+    public boolean getIsTruncated() {
+      return isTruncated_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -4831,8 +9294,14 @@ public final class RuntimeProto {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      for (int i = 0; i < fileName_.size(); i++) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, fileName_.getRaw(i));
+      for (int i = 0; i < files_.size(); i++) {
+        output.writeMessage(1, files_.get(i));
+      }
+      if (!getMarkerBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, marker_);
+      }
+      if (isTruncated_ != false) {
+        output.writeBool(3, isTruncated_);
       }
       unknownFields.writeTo(output);
     }
@@ -4843,13 +9312,16 @@ public final class RuntimeProto {
       if (size != -1) return size;
 
       size = 0;
-      {
-        int dataSize = 0;
-        for (int i = 0; i < fileName_.size(); i++) {
-          dataSize += computeStringSizeNoTag(fileName_.getRaw(i));
-        }
-        size += dataSize;
-        size += 1 * getFileNameList().size();
+      for (int i = 0; i < files_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, files_.get(i));
+      }
+      if (!getMarkerBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, marker_);
+      }
+      if (isTruncated_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(3, isTruncated_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -4866,8 +9338,12 @@ public final class RuntimeProto {
       }
       spec.proto.runtime.v1.RuntimeProto.ListFileResp other = (spec.proto.runtime.v1.RuntimeProto.ListFileResp) obj;
 
-      if (!getFileNameList()
-          .equals(other.getFileNameList())) return false;
+      if (!getFilesList()
+          .equals(other.getFilesList())) return false;
+      if (!getMarker()
+          .equals(other.getMarker())) return false;
+      if (getIsTruncated()
+          != other.getIsTruncated()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -4879,10 +9355,15 @@ public final class RuntimeProto {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      if (getFileNameCount() > 0) {
-        hash = (37 * hash) + FILE_NAME_FIELD_NUMBER;
-        hash = (53 * hash) + getFileNameList().hashCode();
+      if (getFilesCount() > 0) {
+        hash = (37 * hash) + FILES_FIELD_NUMBER;
+        hash = (53 * hash) + getFilesList().hashCode();
       }
+      hash = (37 * hash) + MARKER_FIELD_NUMBER;
+      hash = (53 * hash) + getMarker().hashCode();
+      hash = (37 * hash) + IS_TRUNCATED_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIsTruncated());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5011,13 +9492,22 @@ public final class RuntimeProto {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
+          getFilesFieldBuilder();
         }
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        fileName_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
+        if (filesBuilder_ == null) {
+          files_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          filesBuilder_.clear();
+        }
+        marker_ = "";
+
+        isTruncated_ = false;
+
         return this;
       }
 
@@ -5045,11 +9535,17 @@ public final class RuntimeProto {
       public spec.proto.runtime.v1.RuntimeProto.ListFileResp buildPartial() {
         spec.proto.runtime.v1.RuntimeProto.ListFileResp result = new spec.proto.runtime.v1.RuntimeProto.ListFileResp(this);
         int from_bitField0_ = bitField0_;
-        if (((bitField0_ & 0x00000001) != 0)) {
-          fileName_ = fileName_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000001);
+        if (filesBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            files_ = java.util.Collections.unmodifiableList(files_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.files_ = files_;
+        } else {
+          result.files_ = filesBuilder_.build();
         }
-        result.fileName_ = fileName_;
+        result.marker_ = marker_;
+        result.isTruncated_ = isTruncated_;
         onBuilt();
         return result;
       }
@@ -5098,15 +9594,38 @@ public final class RuntimeProto {
 
       public Builder mergeFrom(spec.proto.runtime.v1.RuntimeProto.ListFileResp other) {
         if (other == spec.proto.runtime.v1.RuntimeProto.ListFileResp.getDefaultInstance()) return this;
-        if (!other.fileName_.isEmpty()) {
-          if (fileName_.isEmpty()) {
-            fileName_ = other.fileName_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensureFileNameIsMutable();
-            fileName_.addAll(other.fileName_);
+        if (filesBuilder_ == null) {
+          if (!other.files_.isEmpty()) {
+            if (files_.isEmpty()) {
+              files_ = other.files_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureFilesIsMutable();
+              files_.addAll(other.files_);
+            }
+            onChanged();
           }
+        } else {
+          if (!other.files_.isEmpty()) {
+            if (filesBuilder_.isEmpty()) {
+              filesBuilder_.dispose();
+              filesBuilder_ = null;
+              files_ = other.files_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              filesBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getFilesFieldBuilder() : null;
+            } else {
+              filesBuilder_.addAllMessages(other.files_);
+            }
+          }
+        }
+        if (!other.getMarker().isEmpty()) {
+          marker_ = other.marker_;
           onChanged();
+        }
+        if (other.getIsTruncated() != false) {
+          setIsTruncated(other.getIsTruncated());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -5138,112 +9657,349 @@ public final class RuntimeProto {
       }
       private int bitField0_;
 
-      private com.google.protobuf.LazyStringList fileName_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureFileNameIsMutable() {
+      private java.util.List<spec.proto.runtime.v1.RuntimeProto.FileInfo> files_ =
+        java.util.Collections.emptyList();
+      private void ensureFilesIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          fileName_ = new com.google.protobuf.LazyStringArrayList(fileName_);
+          files_ = new java.util.ArrayList<spec.proto.runtime.v1.RuntimeProto.FileInfo>(files_);
           bitField0_ |= 0x00000001;
          }
       }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          spec.proto.runtime.v1.RuntimeProto.FileInfo, spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder, spec.proto.runtime.v1.RuntimeProto.FileInfoOrBuilder> filesBuilder_;
+
       /**
-       * <code>repeated string file_name = 1;</code>
-       * @return A list containing the fileName.
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
        */
-      public com.google.protobuf.ProtocolStringList
-          getFileNameList() {
-        return fileName_.getUnmodifiableView();
+      public java.util.List<spec.proto.runtime.v1.RuntimeProto.FileInfo> getFilesList() {
+        if (filesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(files_);
+        } else {
+          return filesBuilder_.getMessageList();
+        }
       }
       /**
-       * <code>repeated string file_name = 1;</code>
-       * @return The count of fileName.
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
        */
-      public int getFileNameCount() {
-        return fileName_.size();
+      public int getFilesCount() {
+        if (filesBuilder_ == null) {
+          return files_.size();
+        } else {
+          return filesBuilder_.getCount();
+        }
       }
       /**
-       * <code>repeated string file_name = 1;</code>
-       * @param index The index of the element to return.
-       * @return The fileName at the given index.
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
        */
-      public java.lang.String getFileName(int index) {
-        return fileName_.get(index);
+      public spec.proto.runtime.v1.RuntimeProto.FileInfo getFiles(int index) {
+        if (filesBuilder_ == null) {
+          return files_.get(index);
+        } else {
+          return filesBuilder_.getMessage(index);
+        }
       }
       /**
-       * <code>repeated string file_name = 1;</code>
-       * @param index The index of the value to return.
-       * @return The bytes of the fileName at the given index.
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
        */
-      public com.google.protobuf.ByteString
-          getFileNameBytes(int index) {
-        return fileName_.getByteString(index);
-      }
-      /**
-       * <code>repeated string file_name = 1;</code>
-       * @param index The index to set the value at.
-       * @param value The fileName to set.
-       * @return This builder for chaining.
-       */
-      public Builder setFileName(
-          int index, java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureFileNameIsMutable();
-        fileName_.set(index, value);
-        onChanged();
+      public Builder setFiles(
+          int index, spec.proto.runtime.v1.RuntimeProto.FileInfo value) {
+        if (filesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFilesIsMutable();
+          files_.set(index, value);
+          onChanged();
+        } else {
+          filesBuilder_.setMessage(index, value);
+        }
         return this;
       }
       /**
-       * <code>repeated string file_name = 1;</code>
-       * @param value The fileName to add.
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public Builder setFiles(
+          int index, spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder builderForValue) {
+        if (filesBuilder_ == null) {
+          ensureFilesIsMutable();
+          files_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          filesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public Builder addFiles(spec.proto.runtime.v1.RuntimeProto.FileInfo value) {
+        if (filesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFilesIsMutable();
+          files_.add(value);
+          onChanged();
+        } else {
+          filesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public Builder addFiles(
+          int index, spec.proto.runtime.v1.RuntimeProto.FileInfo value) {
+        if (filesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFilesIsMutable();
+          files_.add(index, value);
+          onChanged();
+        } else {
+          filesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public Builder addFiles(
+          spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder builderForValue) {
+        if (filesBuilder_ == null) {
+          ensureFilesIsMutable();
+          files_.add(builderForValue.build());
+          onChanged();
+        } else {
+          filesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public Builder addFiles(
+          int index, spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder builderForValue) {
+        if (filesBuilder_ == null) {
+          ensureFilesIsMutable();
+          files_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          filesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public Builder addAllFiles(
+          java.lang.Iterable<? extends spec.proto.runtime.v1.RuntimeProto.FileInfo> values) {
+        if (filesBuilder_ == null) {
+          ensureFilesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, files_);
+          onChanged();
+        } else {
+          filesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public Builder clearFiles() {
+        if (filesBuilder_ == null) {
+          files_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          filesBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public Builder removeFiles(int index) {
+        if (filesBuilder_ == null) {
+          ensureFilesIsMutable();
+          files_.remove(index);
+          onChanged();
+        } else {
+          filesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder getFilesBuilder(
+          int index) {
+        return getFilesFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public spec.proto.runtime.v1.RuntimeProto.FileInfoOrBuilder getFilesOrBuilder(
+          int index) {
+        if (filesBuilder_ == null) {
+          return files_.get(index);  } else {
+          return filesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public java.util.List<? extends spec.proto.runtime.v1.RuntimeProto.FileInfoOrBuilder> 
+           getFilesOrBuilderList() {
+        if (filesBuilder_ != null) {
+          return filesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(files_);
+        }
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder addFilesBuilder() {
+        return getFilesFieldBuilder().addBuilder(
+            spec.proto.runtime.v1.RuntimeProto.FileInfo.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder addFilesBuilder(
+          int index) {
+        return getFilesFieldBuilder().addBuilder(
+            index, spec.proto.runtime.v1.RuntimeProto.FileInfo.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .spec.proto.runtime.v1.FileInfo files = 1;</code>
+       */
+      public java.util.List<spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder> 
+           getFilesBuilderList() {
+        return getFilesFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          spec.proto.runtime.v1.RuntimeProto.FileInfo, spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder, spec.proto.runtime.v1.RuntimeProto.FileInfoOrBuilder> 
+          getFilesFieldBuilder() {
+        if (filesBuilder_ == null) {
+          filesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              spec.proto.runtime.v1.RuntimeProto.FileInfo, spec.proto.runtime.v1.RuntimeProto.FileInfo.Builder, spec.proto.runtime.v1.RuntimeProto.FileInfoOrBuilder>(
+                  files_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          files_ = null;
+        }
+        return filesBuilder_;
+      }
+
+      private java.lang.Object marker_ = "";
+      /**
+       * <code>string marker = 2;</code>
+       * @return The marker.
+       */
+      public java.lang.String getMarker() {
+        java.lang.Object ref = marker_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          marker_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string marker = 2;</code>
+       * @return The bytes for marker.
+       */
+      public com.google.protobuf.ByteString
+          getMarkerBytes() {
+        java.lang.Object ref = marker_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          marker_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string marker = 2;</code>
+       * @param value The marker to set.
        * @return This builder for chaining.
        */
-      public Builder addFileName(
+      public Builder setMarker(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureFileNameIsMutable();
-        fileName_.add(value);
+  
+        marker_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string file_name = 1;</code>
-       * @param values The fileName to add.
+       * <code>string marker = 2;</code>
        * @return This builder for chaining.
        */
-      public Builder addAllFileName(
-          java.lang.Iterable<java.lang.String> values) {
-        ensureFileNameIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, fileName_);
+      public Builder clearMarker() {
+        
+        marker_ = getDefaultInstance().getMarker();
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string file_name = 1;</code>
+       * <code>string marker = 2;</code>
+       * @param value The bytes for marker to set.
        * @return This builder for chaining.
        */
-      public Builder clearFileName() {
-        fileName_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string file_name = 1;</code>
-       * @param value The bytes of the fileName to add.
-       * @return This builder for chaining.
-       */
-      public Builder addFileNameBytes(
+      public Builder setMarkerBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        ensureFileNameIsMutable();
-        fileName_.add(value);
+        
+        marker_ = value;
+        onChanged();
+        return this;
+      }
+
+      private boolean isTruncated_ ;
+      /**
+       * <code>bool is_truncated = 3;</code>
+       * @return The isTruncated.
+       */
+      @java.lang.Override
+      public boolean getIsTruncated() {
+        return isTruncated_;
+      }
+      /**
+       * <code>bool is_truncated = 3;</code>
+       * @param value The isTruncated to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsTruncated(boolean value) {
+        
+        isTruncated_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool is_truncated = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsTruncated() {
+        
+        isTruncated_ = false;
         onChanged();
         return this;
       }
@@ -8030,9 +12786,10 @@ public final class RuntimeProto {
     /**
      * <pre>
      * The next unique id
+     * Fixed int64 overflow problems on JavaScript https://github.com/improbable-eng/ts-protoc-gen#gotchas
      * </pre>
      *
-     * <code>int64 next_id = 1;</code>
+     * <code>int64 next_id = 1 [jstype = JS_STRING];</code>
      * @return The nextId.
      */
     long getNextId();
@@ -8124,9 +12881,10 @@ public final class RuntimeProto {
     /**
      * <pre>
      * The next unique id
+     * Fixed int64 overflow problems on JavaScript https://github.com/improbable-eng/ts-protoc-gen#gotchas
      * </pre>
      *
-     * <code>int64 next_id = 1;</code>
+     * <code>int64 next_id = 1 [jstype = JS_STRING];</code>
      * @return The nextId.
      */
     @java.lang.Override
@@ -8441,9 +13199,10 @@ public final class RuntimeProto {
       /**
        * <pre>
        * The next unique id
+       * Fixed int64 overflow problems on JavaScript https://github.com/improbable-eng/ts-protoc-gen#gotchas
        * </pre>
        *
-       * <code>int64 next_id = 1;</code>
+       * <code>int64 next_id = 1 [jstype = JS_STRING];</code>
        * @return The nextId.
        */
       @java.lang.Override
@@ -8453,9 +13212,10 @@ public final class RuntimeProto {
       /**
        * <pre>
        * The next unique id
+       * Fixed int64 overflow problems on JavaScript https://github.com/improbable-eng/ts-protoc-gen#gotchas
        * </pre>
        *
-       * <code>int64 next_id = 1;</code>
+       * <code>int64 next_id = 1 [jstype = JS_STRING];</code>
        * @param value The nextId to set.
        * @return This builder for chaining.
        */
@@ -8468,9 +13228,10 @@ public final class RuntimeProto {
       /**
        * <pre>
        * The next unique id
+       * Fixed int64 overflow problems on JavaScript https://github.com/improbable-eng/ts-protoc-gen#gotchas
        * </pre>
        *
-       * <code>int64 next_id = 1;</code>
+       * <code>int64 next_id = 1 [jstype = JS_STRING];</code>
        * @return This builder for chaining.
        */
       public Builder clearNextId() {
@@ -41771,7 +46532,10 @@ public final class RuntimeProto {
 
     /**
      * <pre>
-     * Required. The type of operation to be executed
+     * Required. The type of operation to be executed.
+     * Legal values include:
+     * "upsert" represents an update or create operation
+     * "delete" represents a delete operation
      * </pre>
      *
      * <code>string operationType = 1;</code>
@@ -41780,7 +46544,10 @@ public final class RuntimeProto {
     java.lang.String getOperationType();
     /**
      * <pre>
-     * Required. The type of operation to be executed
+     * Required. The type of operation to be executed.
+     * Legal values include:
+     * "upsert" represents an update or create operation
+     * "delete" represents a delete operation
      * </pre>
      *
      * <code>string operationType = 1;</code>
@@ -41921,7 +46688,10 @@ public final class RuntimeProto {
     private volatile java.lang.Object operationType_;
     /**
      * <pre>
-     * Required. The type of operation to be executed
+     * Required. The type of operation to be executed.
+     * Legal values include:
+     * "upsert" represents an update or create operation
+     * "delete" represents a delete operation
      * </pre>
      *
      * <code>string operationType = 1;</code>
@@ -41942,7 +46712,10 @@ public final class RuntimeProto {
     }
     /**
      * <pre>
-     * Required. The type of operation to be executed
+     * Required. The type of operation to be executed.
+     * Legal values include:
+     * "upsert" represents an update or create operation
+     * "delete" represents a delete operation
      * </pre>
      *
      * <code>string operationType = 1;</code>
@@ -42340,7 +47113,10 @@ public final class RuntimeProto {
       private java.lang.Object operationType_ = "";
       /**
        * <pre>
-       * Required. The type of operation to be executed
+       * Required. The type of operation to be executed.
+       * Legal values include:
+       * "upsert" represents an update or create operation
+       * "delete" represents a delete operation
        * </pre>
        *
        * <code>string operationType = 1;</code>
@@ -42360,7 +47136,10 @@ public final class RuntimeProto {
       }
       /**
        * <pre>
-       * Required. The type of operation to be executed
+       * Required. The type of operation to be executed.
+       * Legal values include:
+       * "upsert" represents an update or create operation
+       * "delete" represents a delete operation
        * </pre>
        *
        * <code>string operationType = 1;</code>
@@ -42381,7 +47160,10 @@ public final class RuntimeProto {
       }
       /**
        * <pre>
-       * Required. The type of operation to be executed
+       * Required. The type of operation to be executed.
+       * Legal values include:
+       * "upsert" represents an update or create operation
+       * "delete" represents a delete operation
        * </pre>
        *
        * <code>string operationType = 1;</code>
@@ -42400,7 +47182,10 @@ public final class RuntimeProto {
       }
       /**
        * <pre>
-       * Required. The type of operation to be executed
+       * Required. The type of operation to be executed.
+       * Legal values include:
+       * "upsert" represents an update or create operation
+       * "delete" represents a delete operation
        * </pre>
        *
        * <code>string operationType = 1;</code>
@@ -42414,7 +47199,10 @@ public final class RuntimeProto {
       }
       /**
        * <pre>
-       * Required. The type of operation to be executed
+       * Required. The type of operation to be executed.
+       * Legal values include:
+       * "upsert" represents an update or create operation
+       * "delete" represents a delete operation
        * </pre>
        *
        * <code>string operationType = 1;</code>
@@ -47875,6 +52663,31 @@ public final class RuntimeProto {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_GetFileMetaRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_GetFileMetaRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_GetFileMetaResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_GetFileMetaResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_FileMetaValue_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_FileMetaValue_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_FileMeta_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_FileMeta_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_FileMeta_MetadataEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_FileMeta_MetadataEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_spec_proto_runtime_v1_GetFileRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -47914,6 +52727,16 @@ public final class RuntimeProto {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_spec_proto_runtime_v1_ListFileRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_FileInfo_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_FileInfo_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_FileInfo_MetadataEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_FileInfo_MetadataEntry_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_spec_proto_runtime_v1_ListFileResp_descriptor;
   private static final 
@@ -48200,229 +53023,248 @@ public final class RuntimeProto {
     java.lang.String[] descriptorData = {
       "\n\036proto/runtime/v1/runtime.proto\022\025spec.p" +
       "roto.runtime.v1\032\033google/protobuf/empty.p" +
-      "roto\032\031google/protobuf/any.proto\"\252\001\n\016GetF" +
-      "ileRequest\022\022\n\nstore_name\030\001 \001(\t\022\014\n\004name\030\002" +
-      " \001(\t\022E\n\010metadata\030\003 \003(\01323.spec.proto.runt" +
-      "ime.v1.GetFileRequest.MetadataEntry\032/\n\rM" +
-      "etadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t" +
-      ":\0028\001\"\037\n\017GetFileResponse\022\014\n\004data\030\001 \001(\014\"\270\001" +
-      "\n\016PutFileRequest\022\022\n\nstore_name\030\001 \001(\t\022\014\n\004" +
-      "name\030\002 \001(\t\022\014\n\004data\030\003 \001(\014\022E\n\010metadata\030\004 \003" +
-      "(\01323.spec.proto.runtime.v1.PutFileReques" +
-      "t.MetadataEntry\032/\n\rMetadataEntry\022\013\n\003key\030" +
-      "\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\244\001\n\013FileRequest" +
-      "\022\022\n\nstore_name\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022B\n\010me" +
-      "tadata\030\003 \003(\01320.spec.proto.runtime.v1.Fil" +
-      "eRequest.MetadataEntry\032/\n\rMetadataEntry\022" +
-      "\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"F\n\017ListF" +
-      "ileRequest\0223\n\007request\030\001 \001(\0132\".spec.proto" +
-      ".runtime.v1.FileRequest\"!\n\014ListFileResp\022" +
-      "\021\n\tfile_name\030\001 \003(\t\"E\n\016DelFileRequest\0223\n\007" +
-      "request\030\001 \001(\0132\".spec.proto.runtime.v1.Fi" +
-      "leRequest\"\347\001\n\020GetNextIdRequest\022\022\n\nstore_" +
-      "name\030\001 \001(\t\022\013\n\003key\030\002 \001(\t\0228\n\007options\030\003 \001(\013" +
-      "2\'.spec.proto.runtime.v1.SequencerOption" +
-      "s\022G\n\010metadata\030\004 \003(\01325.spec.proto.runtime" +
-      ".v1.GetNextIdRequest.MetadataEntry\032/\n\rMe" +
-      "tadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:" +
-      "\0028\001\"\203\001\n\020SequencerOptions\022H\n\tincrement\030\001 " +
-      "\001(\01625.spec.proto.runtime.v1.SequencerOpt" +
-      "ions.AutoIncrement\"%\n\rAutoIncrement\022\010\n\004W" +
-      "EAK\020\000\022\n\n\006STRONG\020\001\"$\n\021GetNextIdResponse\022\017" +
-      "\n\007next_id\030\001 \001(\003\"]\n\016TryLockRequest\022\022\n\nsto" +
-      "re_name\030\001 \001(\t\022\023\n\013resource_id\030\002 \001(\t\022\022\n\nlo" +
-      "ck_owner\030\003 \001(\t\022\016\n\006expire\030\004 \001(\005\"\"\n\017TryLoc" +
-      "kResponse\022\017\n\007success\030\001 \001(\010\"L\n\rUnlockRequ" +
-      "est\022\022\n\nstore_name\030\001 \001(\t\022\023\n\013resource_id\030\002" +
-      " \001(\t\022\022\n\nlock_owner\030\003 \001(\t\"\246\001\n\016UnlockRespo" +
-      "nse\022<\n\006status\030\001 \001(\0162,.spec.proto.runtime" +
-      ".v1.UnlockResponse.Status\"V\n\006Status\022\013\n\007S" +
-      "UCCESS\020\000\022\020\n\014LOCK_UNEXIST\020\001\022\031\n\025LOCK_BELON" +
-      "G_TO_OTHERS\020\002\022\022\n\016INTERNAL_ERROR\020\003\"Y\n\017Say" +
-      "HelloRequest\022\024\n\014service_name\030\001 \001(\t\022\014\n\004na" +
-      "me\030\002 \001(\t\022\"\n\004data\030\003 \001(\0132\024.google.protobuf" +
-      ".Any\"E\n\020SayHelloResponse\022\r\n\005hello\030\001 \001(\t\022" +
-      "\"\n\004data\030\002 \001(\0132\024.google.protobuf.Any\"_\n\024I" +
-      "nvokeServiceRequest\022\n\n\002id\030\001 \001(\t\022;\n\007messa" +
-      "ge\030\003 \001(\0132*.spec.proto.runtime.v1.CommonI" +
-      "nvokeRequest\"\235\001\n\023CommonInvokeRequest\022\016\n\006" +
-      "method\030\001 \001(\t\022\"\n\004data\030\002 \001(\0132\024.google.prot" +
-      "obuf.Any\022\024\n\014content_type\030\003 \001(\t\022<\n\016http_e" +
-      "xtension\030\004 \001(\0132$.spec.proto.runtime.v1.H" +
-      "TTPExtension\"\306\001\n\rHTTPExtension\0227\n\004verb\030\001" +
-      " \001(\0162).spec.proto.runtime.v1.HTTPExtensi" +
-      "on.Verb\022\023\n\013querystring\030\002 \001(\t\"g\n\004Verb\022\010\n\004" +
-      "NONE\020\000\022\007\n\003GET\020\001\022\010\n\004HEAD\020\002\022\010\n\004POST\020\003\022\007\n\003P" +
-      "UT\020\004\022\n\n\006DELETE\020\005\022\013\n\007CONNECT\020\006\022\013\n\007OPTIONS" +
-      "\020\007\022\t\n\005TRACE\020\010\"J\n\016InvokeResponse\022\"\n\004data\030" +
-      "\001 \001(\0132\024.google.protobuf.Any\022\024\n\014content_t" +
-      "ype\030\002 \001(\t\"\271\002\n\021ConfigurationItem\022\013\n\003key\030\001" +
-      " \001(\t\022\017\n\007content\030\002 \001(\t\022\r\n\005group\030\003 \001(\t\022\r\n\005" +
-      "label\030\004 \001(\t\022@\n\004tags\030\005 \003(\01322.spec.proto.r" +
-      "untime.v1.ConfigurationItem.TagsEntry\022H\n" +
-      "\010metadata\030\006 \003(\01326.spec.proto.runtime.v1." +
-      "ConfigurationItem.MetadataEntry\032+\n\tTagsE" +
-      "ntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\032/\n\r" +
-      "MetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(" +
-      "\t:\0028\001\"\204\002\n\027GetConfigurationRequest\022\022\n\nsto" +
-      "re_name\030\001 \001(\t\022\016\n\006app_id\030\002 \001(\t\022\r\n\005group\030\003" +
-      " \001(\t\022\r\n\005label\030\004 \001(\t\022\014\n\004keys\030\005 \003(\t\022N\n\010met" +
-      "adata\030\006 \003(\0132<.spec.proto.runtime.v1.GetC" +
-      "onfigurationRequest.MetadataEntry\022\030\n\020sub" +
-      "scribe_update\030\007 \001(\010\032/\n\rMetadataEntry\022\013\n\003" +
-      "key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"S\n\030GetConfi" +
-      "gurationResponse\0227\n\005items\030\001 \003(\0132(.spec.p" +
-      "roto.runtime.v1.ConfigurationItem\"\366\001\n\035Su" +
-      "bscribeConfigurationRequest\022\022\n\nstore_nam" +
-      "e\030\001 \001(\t\022\016\n\006app_id\030\002 \001(\t\022\r\n\005group\030\003 \001(\t\022\r" +
-      "\n\005label\030\004 \001(\t\022\014\n\004keys\030\005 \003(\t\022T\n\010metadata\030" +
-      "\006 \003(\0132B.spec.proto.runtime.v1.SubscribeC" +
-      "onfigurationRequest.MetadataEntry\032/\n\rMet" +
-      "adataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\002" +
-      "8\001\"}\n\036SubscribeConfigurationResponse\022\022\n\n" +
-      "store_name\030\001 \001(\t\022\016\n\006app_id\030\002 \001(\t\0227\n\005item" +
-      "s\030\003 \003(\0132(.spec.proto.runtime.v1.Configur" +
-      "ationItem\"\371\001\n\030SaveConfigurationRequest\022\022" +
-      "\n\nstore_name\030\001 \001(\t\022\016\n\006app_id\030\002 \001(\t\0227\n\005it" +
-      "ems\030\003 \003(\0132(.spec.proto.runtime.v1.Config" +
-      "urationItem\022O\n\010metadata\030\004 \003(\0132=.spec.pro" +
-      "to.runtime.v1.SaveConfigurationRequest.M" +
-      "etadataEntry\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001" +
-      "(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\360\001\n\032DeleteConfigur" +
-      "ationRequest\022\022\n\nstore_name\030\001 \001(\t\022\016\n\006app_" +
-      "id\030\002 \001(\t\022\r\n\005group\030\003 \001(\t\022\r\n\005label\030\004 \001(\t\022\014" +
-      "\n\004keys\030\005 \003(\t\022Q\n\010metadata\030\006 \003(\0132?.spec.pr" +
-      "oto.runtime.v1.DeleteConfigurationReques" +
-      "t.MetadataEntry\032/\n\rMetadataEntry\022\013\n\003key\030" +
-      "\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\366\001\n\017GetStateReq" +
-      "uest\022\022\n\nstore_name\030\001 \001(\t\022\013\n\003key\030\002 \001(\t\022I\n" +
-      "\013consistency\030\003 \001(\01624.spec.proto.runtime." +
-      "v1.StateOptions.StateConsistency\022F\n\010meta" +
-      "data\030\004 \003(\01324.spec.proto.runtime.v1.GetSt" +
-      "ateRequest.MetadataEntry\032/\n\rMetadataEntr" +
-      "y\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\311\001\n\023Ge" +
-      "tBulkStateRequest\022\022\n\nstore_name\030\001 \001(\t\022\014\n" +
-      "\004keys\030\002 \003(\t\022\023\n\013parallelism\030\003 \001(\005\022J\n\010meta" +
-      "data\030\004 \003(\01328.spec.proto.runtime.v1.GetBu" +
-      "lkStateRequest.MetadataEntry\032/\n\rMetadata" +
-      "Entry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"K\n" +
-      "\024GetBulkStateResponse\0223\n\005items\030\001 \003(\0132$.s" +
-      "pec.proto.runtime.v1.BulkStateItem\"\276\001\n\rB" +
-      "ulkStateItem\022\013\n\003key\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\022" +
-      "\014\n\004etag\030\003 \001(\t\022\r\n\005error\030\004 \001(\t\022D\n\010metadata" +
-      "\030\005 \003(\01322.spec.proto.runtime.v1.BulkState" +
-      "Item.MetadataEntry\032/\n\rMetadataEntry\022\013\n\003k" +
-      "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\250\001\n\020GetState" +
-      "Response\022\014\n\004data\030\001 \001(\014\022\014\n\004etag\030\002 \001(\t\022G\n\010" +
-      "metadata\030\003 \003(\01325.spec.proto.runtime.v1.G" +
-      "etStateResponse.MetadataEntry\032/\n\rMetadat" +
-      "aEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\222" +
-      "\002\n\022DeleteStateRequest\022\022\n\nstore_name\030\001 \001(" +
-      "\t\022\013\n\003key\030\002 \001(\t\022)\n\004etag\030\003 \001(\0132\033.spec.prot" +
-      "o.runtime.v1.Etag\0224\n\007options\030\004 \001(\0132#.spe" +
-      "c.proto.runtime.v1.StateOptions\022I\n\010metad" +
-      "ata\030\005 \003(\01327.spec.proto.runtime.v1.Delete" +
-      "StateRequest.MetadataEntry\032/\n\rMetadataEn" +
-      "try\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"^\n\026D" +
-      "eleteBulkStateRequest\022\022\n\nstore_name\030\001 \001(" +
-      "\t\0220\n\006states\030\002 \003(\0132 .spec.proto.runtime.v" +
-      "1.StateItem\"X\n\020SaveStateRequest\022\022\n\nstore" +
-      "_name\030\001 \001(\t\0220\n\006states\030\002 \003(\0132 .spec.proto" +
-      ".runtime.v1.StateItem\"\373\001\n\tStateItem\022\013\n\003k" +
-      "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\014\022)\n\004etag\030\003 \001(\0132\033." +
-      "spec.proto.runtime.v1.Etag\022@\n\010metadata\030\004" +
-      " \003(\0132..spec.proto.runtime.v1.StateItem.M" +
-      "etadataEntry\0224\n\007options\030\005 \001(\0132#.spec.pro" +
-      "to.runtime.v1.StateOptions\032/\n\rMetadataEn" +
-      "try\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\025\n\004E" +
-      "tag\022\r\n\005value\030\001 \001(\t\"\361\002\n\014StateOptions\022I\n\013c" +
-      "oncurrency\030\001 \001(\01624.spec.proto.runtime.v1" +
-      ".StateOptions.StateConcurrency\022I\n\013consis" +
-      "tency\030\002 \001(\01624.spec.proto.runtime.v1.Stat" +
-      "eOptions.StateConsistency\"h\n\020StateConcur" +
-      "rency\022\033\n\027CONCURRENCY_UNSPECIFIED\020\000\022\033\n\027CO" +
-      "NCURRENCY_FIRST_WRITE\020\001\022\032\n\026CONCURRENCY_L" +
-      "AST_WRITE\020\002\"a\n\020StateConsistency\022\033\n\027CONSI" +
-      "STENCY_UNSPECIFIED\020\000\022\030\n\024CONSISTENCY_EVEN" +
-      "TUAL\020\001\022\026\n\022CONSISTENCY_STRONG\020\002\"g\n\033Transa" +
-      "ctionalStateOperation\022\025\n\roperationType\030\001" +
-      " \001(\t\0221\n\007request\030\002 \001(\0132 .spec.proto.runti" +
-      "me.v1.StateItem\"\203\002\n\036ExecuteStateTransact" +
-      "ionRequest\022\021\n\tstoreName\030\001 \001(\t\022F\n\noperati" +
-      "ons\030\002 \003(\01322.spec.proto.runtime.v1.Transa" +
-      "ctionalStateOperation\022U\n\010metadata\030\003 \003(\0132" +
-      "C.spec.proto.runtime.v1.ExecuteStateTran" +
-      "sactionRequest.MetadataEntry\032/\n\rMetadata" +
-      "Entry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\337\001" +
-      "\n\023PublishEventRequest\022\023\n\013pubsub_name\030\001 \001" +
-      "(\t\022\r\n\005topic\030\002 \001(\t\022\014\n\004data\030\003 \001(\014\022\031\n\021data_" +
-      "content_type\030\004 \001(\t\022J\n\010metadata\030\005 \003(\01328.s" +
-      "pec.proto.runtime.v1.PublishEventRequest" +
-      ".MetadataEntry\032/\n\rMetadataEntry\022\013\n\003key\030\001" +
-      " \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\303\001\n\024InvokeBindin" +
-      "gRequest\022\014\n\004name\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\022K\n\010" +
-      "metadata\030\003 \003(\01329.spec.proto.runtime.v1.I" +
-      "nvokeBindingRequest.MetadataEntry\022\021\n\tope" +
-      "ration\030\004 \001(\t\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001" +
-      "(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\244\001\n\025InvokeBindingR" +
-      "esponse\022\014\n\004data\030\001 \001(\014\022L\n\010metadata\030\002 \003(\0132" +
-      ":.spec.proto.runtime.v1.InvokeBindingRes" +
-      "ponse.MetadataEntry\032/\n\rMetadataEntry\022\013\n\003" +
-      "key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\0012\374\017\n\007Runtime" +
-      "\022]\n\010SayHello\022&.spec.proto.runtime.v1.Say" +
-      "HelloRequest\032\'.spec.proto.runtime.v1.Say" +
-      "HelloResponse\"\000\022e\n\rInvokeService\022+.spec." +
-      "proto.runtime.v1.InvokeServiceRequest\032%." +
-      "spec.proto.runtime.v1.InvokeResponse\"\000\022u" +
-      "\n\020GetConfiguration\022..spec.proto.runtime." +
-      "v1.GetConfigurationRequest\032/.spec.proto." +
-      "runtime.v1.GetConfigurationResponse\"\000\022^\n" +
-      "\021SaveConfiguration\022/.spec.proto.runtime." +
-      "v1.SaveConfigurationRequest\032\026.google.pro" +
-      "tobuf.Empty\"\000\022b\n\023DeleteConfiguration\0221.s" +
-      "pec.proto.runtime.v1.DeleteConfiguration" +
-      "Request\032\026.google.protobuf.Empty\"\000\022\213\001\n\026Su" +
-      "bscribeConfiguration\0224.spec.proto.runtim" +
-      "e.v1.SubscribeConfigurationRequest\0325.spe" +
-      "c.proto.runtime.v1.SubscribeConfiguratio" +
-      "nResponse\"\000(\0010\001\022Z\n\007TryLock\022%.spec.proto." +
-      "runtime.v1.TryLockRequest\032&.spec.proto.r" +
-      "untime.v1.TryLockResponse\"\000\022W\n\006Unlock\022$." +
-      "spec.proto.runtime.v1.UnlockRequest\032%.sp" +
-      "ec.proto.runtime.v1.UnlockResponse\"\000\022`\n\t" +
-      "GetNextId\022\'.spec.proto.runtime.v1.GetNex" +
-      "tIdRequest\032(.spec.proto.runtime.v1.GetNe" +
-      "xtIdResponse\"\000\022]\n\010GetState\022&.spec.proto." +
-      "runtime.v1.GetStateRequest\032\'.spec.proto." +
-      "runtime.v1.GetStateResponse\"\000\022i\n\014GetBulk" +
-      "State\022*.spec.proto.runtime.v1.GetBulkSta" +
-      "teRequest\032+.spec.proto.runtime.v1.GetBul" +
-      "kStateResponse\"\000\022N\n\tSaveState\022\'.spec.pro" +
-      "to.runtime.v1.SaveStateRequest\032\026.google." +
-      "protobuf.Empty\"\000\022R\n\013DeleteState\022).spec.p" +
-      "roto.runtime.v1.DeleteStateRequest\032\026.goo" +
-      "gle.protobuf.Empty\"\000\022Z\n\017DeleteBulkState\022" +
-      "-.spec.proto.runtime.v1.DeleteBulkStateR" +
-      "equest\032\026.google.protobuf.Empty\"\000\022j\n\027Exec" +
-      "uteStateTransaction\0225.spec.proto.runtime" +
-      ".v1.ExecuteStateTransactionRequest\032\026.goo" +
-      "gle.protobuf.Empty\"\000\022T\n\014PublishEvent\022*.s" +
-      "pec.proto.runtime.v1.PublishEventRequest" +
-      "\032\026.google.protobuf.Empty\"\000\022\\\n\007GetFile\022%." +
-      "spec.proto.runtime.v1.GetFileRequest\032&.s" +
-      "pec.proto.runtime.v1.GetFileResponse\"\0000\001" +
-      "\022L\n\007PutFile\022%.spec.proto.runtime.v1.PutF" +
-      "ileRequest\032\026.google.protobuf.Empty\"\000(\001\022Y" +
-      "\n\010ListFile\022&.spec.proto.runtime.v1.ListF" +
-      "ileRequest\032#.spec.proto.runtime.v1.ListF" +
-      "ileResp\"\000\022J\n\007DelFile\022%.spec.proto.runtim" +
-      "e.v1.DelFileRequest\032\026.google.protobuf.Em" +
-      "pty\"\000\022l\n\rInvokeBinding\022+.spec.proto.runt" +
-      "ime.v1.InvokeBindingRequest\032,.spec.proto" +
-      ".runtime.v1.InvokeBindingResponse\"\000BT\n\025s" +
-      "pec.proto.runtime.v1B\014RuntimeProtoZ-mosn" +
-      ".io/layotto/spec/proto/runtime/v1;runtim" +
-      "eb\006proto3"
+      "roto\032\031google/protobuf/any.proto\"I\n\022GetFi" +
+      "leMetaRequest\0223\n\007request\030\001 \001(\0132\".spec.pr" +
+      "oto.runtime.v1.FileRequest\"m\n\023GetFileMet" +
+      "aResponse\022\014\n\004size\030\001 \001(\003\022\025\n\rlast_modified" +
+      "\030\002 \001(\t\0221\n\010response\030\003 \001(\0132\037.spec.proto.ru" +
+      "ntime.v1.FileMeta\"\036\n\rFileMetaValue\022\r\n\005va" +
+      "lue\030\001 \003(\t\"\242\001\n\010FileMeta\022?\n\010metadata\030\001 \003(\013" +
+      "2-.spec.proto.runtime.v1.FileMeta.Metada" +
+      "taEntry\032U\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t\0223\n" +
+      "\005value\030\002 \001(\0132$.spec.proto.runtime.v1.Fil" +
+      "eMetaValue:\0028\001\"\252\001\n\016GetFileRequest\022\022\n\nsto" +
+      "re_name\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022E\n\010metadata\030" +
+      "\003 \003(\01323.spec.proto.runtime.v1.GetFileReq" +
+      "uest.MetadataEntry\032/\n\rMetadataEntry\022\013\n\003k" +
+      "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\037\n\017GetFileRe" +
+      "sponse\022\014\n\004data\030\001 \001(\014\"\270\001\n\016PutFileRequest\022" +
+      "\022\n\nstore_name\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\014\n\004dat" +
+      "a\030\003 \001(\014\022E\n\010metadata\030\004 \003(\01323.spec.proto.r" +
+      "untime.v1.PutFileRequest.MetadataEntry\032/" +
+      "\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 " +
+      "\001(\t:\0028\001\"\244\001\n\013FileRequest\022\022\n\nstore_name\030\001 " +
+      "\001(\t\022\014\n\004name\030\002 \001(\t\022B\n\010metadata\030\003 \003(\01320.sp" +
+      "ec.proto.runtime.v1.FileRequest.Metadata" +
+      "Entry\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005v" +
+      "alue\030\002 \001(\t:\0028\001\"i\n\017ListFileRequest\0223\n\007req" +
+      "uest\030\001 \001(\0132\".spec.proto.runtime.v1.FileR" +
+      "equest\022\021\n\tpage_size\030\002 \001(\005\022\016\n\006marker\030\003 \001(" +
+      "\t\"\264\001\n\010FileInfo\022\021\n\tfile_name\030\001 \001(\t\022\014\n\004siz" +
+      "e\030\002 \001(\003\022\025\n\rlast_modified\030\003 \001(\t\022?\n\010metada" +
+      "ta\030\004 \003(\0132-.spec.proto.runtime.v1.FileInf" +
+      "o.MetadataEntry\032/\n\rMetadataEntry\022\013\n\003key\030" +
+      "\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"d\n\014ListFileResp" +
+      "\022.\n\005files\030\001 \003(\0132\037.spec.proto.runtime.v1." +
+      "FileInfo\022\016\n\006marker\030\002 \001(\t\022\024\n\014is_truncated" +
+      "\030\003 \001(\010\"E\n\016DelFileRequest\0223\n\007request\030\001 \001(" +
+      "\0132\".spec.proto.runtime.v1.FileRequest\"\347\001" +
+      "\n\020GetNextIdRequest\022\022\n\nstore_name\030\001 \001(\t\022\013" +
+      "\n\003key\030\002 \001(\t\0228\n\007options\030\003 \001(\0132\'.spec.prot" +
+      "o.runtime.v1.SequencerOptions\022G\n\010metadat" +
+      "a\030\004 \003(\01325.spec.proto.runtime.v1.GetNextI" +
+      "dRequest.MetadataEntry\032/\n\rMetadataEntry\022" +
+      "\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\203\001\n\020Sequ" +
+      "encerOptions\022H\n\tincrement\030\001 \001(\01625.spec.p" +
+      "roto.runtime.v1.SequencerOptions.AutoInc" +
+      "rement\"%\n\rAutoIncrement\022\010\n\004WEAK\020\000\022\n\n\006STR" +
+      "ONG\020\001\"(\n\021GetNextIdResponse\022\023\n\007next_id\030\001 " +
+      "\001(\003B\0020\001\"]\n\016TryLockRequest\022\022\n\nstore_name\030" +
+      "\001 \001(\t\022\023\n\013resource_id\030\002 \001(\t\022\022\n\nlock_owner" +
+      "\030\003 \001(\t\022\016\n\006expire\030\004 \001(\005\"\"\n\017TryLockRespons" +
+      "e\022\017\n\007success\030\001 \001(\010\"L\n\rUnlockRequest\022\022\n\ns" +
+      "tore_name\030\001 \001(\t\022\023\n\013resource_id\030\002 \001(\t\022\022\n\n" +
+      "lock_owner\030\003 \001(\t\"\246\001\n\016UnlockResponse\022<\n\006s" +
+      "tatus\030\001 \001(\0162,.spec.proto.runtime.v1.Unlo" +
+      "ckResponse.Status\"V\n\006Status\022\013\n\007SUCCESS\020\000" +
+      "\022\020\n\014LOCK_UNEXIST\020\001\022\031\n\025LOCK_BELONG_TO_OTH" +
+      "ERS\020\002\022\022\n\016INTERNAL_ERROR\020\003\"Y\n\017SayHelloReq" +
+      "uest\022\024\n\014service_name\030\001 \001(\t\022\014\n\004name\030\002 \001(\t" +
+      "\022\"\n\004data\030\003 \001(\0132\024.google.protobuf.Any\"E\n\020" +
+      "SayHelloResponse\022\r\n\005hello\030\001 \001(\t\022\"\n\004data\030" +
+      "\002 \001(\0132\024.google.protobuf.Any\"_\n\024InvokeSer" +
+      "viceRequest\022\n\n\002id\030\001 \001(\t\022;\n\007message\030\003 \001(\013" +
+      "2*.spec.proto.runtime.v1.CommonInvokeReq" +
+      "uest\"\235\001\n\023CommonInvokeRequest\022\016\n\006method\030\001" +
+      " \001(\t\022\"\n\004data\030\002 \001(\0132\024.google.protobuf.Any" +
+      "\022\024\n\014content_type\030\003 \001(\t\022<\n\016http_extension" +
+      "\030\004 \001(\0132$.spec.proto.runtime.v1.HTTPExten" +
+      "sion\"\306\001\n\rHTTPExtension\0227\n\004verb\030\001 \001(\0162).s" +
+      "pec.proto.runtime.v1.HTTPExtension.Verb\022" +
+      "\023\n\013querystring\030\002 \001(\t\"g\n\004Verb\022\010\n\004NONE\020\000\022\007" +
+      "\n\003GET\020\001\022\010\n\004HEAD\020\002\022\010\n\004POST\020\003\022\007\n\003PUT\020\004\022\n\n\006" +
+      "DELETE\020\005\022\013\n\007CONNECT\020\006\022\013\n\007OPTIONS\020\007\022\t\n\005TR" +
+      "ACE\020\010\"J\n\016InvokeResponse\022\"\n\004data\030\001 \001(\0132\024." +
+      "google.protobuf.Any\022\024\n\014content_type\030\002 \001(" +
+      "\t\"\271\002\n\021ConfigurationItem\022\013\n\003key\030\001 \001(\t\022\017\n\007" +
+      "content\030\002 \001(\t\022\r\n\005group\030\003 \001(\t\022\r\n\005label\030\004 " +
+      "\001(\t\022@\n\004tags\030\005 \003(\01322.spec.proto.runtime.v" +
+      "1.ConfigurationItem.TagsEntry\022H\n\010metadat" +
+      "a\030\006 \003(\01326.spec.proto.runtime.v1.Configur" +
+      "ationItem.MetadataEntry\032+\n\tTagsEntry\022\013\n\003" +
+      "key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\032/\n\rMetadata" +
+      "Entry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\204\002" +
+      "\n\027GetConfigurationRequest\022\022\n\nstore_name\030" +
+      "\001 \001(\t\022\016\n\006app_id\030\002 \001(\t\022\r\n\005group\030\003 \001(\t\022\r\n\005" +
+      "label\030\004 \001(\t\022\014\n\004keys\030\005 \003(\t\022N\n\010metadata\030\006 " +
+      "\003(\0132<.spec.proto.runtime.v1.GetConfigura" +
+      "tionRequest.MetadataEntry\022\030\n\020subscribe_u" +
+      "pdate\030\007 \001(\010\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(" +
+      "\t\022\r\n\005value\030\002 \001(\t:\0028\001\"S\n\030GetConfiguration" +
+      "Response\0227\n\005items\030\001 \003(\0132(.spec.proto.run" +
+      "time.v1.ConfigurationItem\"\366\001\n\035SubscribeC" +
+      "onfigurationRequest\022\022\n\nstore_name\030\001 \001(\t\022" +
+      "\016\n\006app_id\030\002 \001(\t\022\r\n\005group\030\003 \001(\t\022\r\n\005label\030" +
+      "\004 \001(\t\022\014\n\004keys\030\005 \003(\t\022T\n\010metadata\030\006 \003(\0132B." +
+      "spec.proto.runtime.v1.SubscribeConfigura" +
+      "tionRequest.MetadataEntry\032/\n\rMetadataEnt" +
+      "ry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"}\n\036Su" +
+      "bscribeConfigurationResponse\022\022\n\nstore_na" +
+      "me\030\001 \001(\t\022\016\n\006app_id\030\002 \001(\t\0227\n\005items\030\003 \003(\0132" +
+      "(.spec.proto.runtime.v1.ConfigurationIte" +
+      "m\"\371\001\n\030SaveConfigurationRequest\022\022\n\nstore_" +
+      "name\030\001 \001(\t\022\016\n\006app_id\030\002 \001(\t\0227\n\005items\030\003 \003(" +
+      "\0132(.spec.proto.runtime.v1.ConfigurationI" +
+      "tem\022O\n\010metadata\030\004 \003(\0132=.spec.proto.runti" +
+      "me.v1.SaveConfigurationRequest.MetadataE" +
+      "ntry\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005va" +
+      "lue\030\002 \001(\t:\0028\001\"\360\001\n\032DeleteConfigurationReq" +
+      "uest\022\022\n\nstore_name\030\001 \001(\t\022\016\n\006app_id\030\002 \001(\t" +
+      "\022\r\n\005group\030\003 \001(\t\022\r\n\005label\030\004 \001(\t\022\014\n\004keys\030\005" +
+      " \003(\t\022Q\n\010metadata\030\006 \003(\0132?.spec.proto.runt" +
+      "ime.v1.DeleteConfigurationRequest.Metada" +
+      "taEntry\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n" +
+      "\005value\030\002 \001(\t:\0028\001\"\366\001\n\017GetStateRequest\022\022\n\n" +
+      "store_name\030\001 \001(\t\022\013\n\003key\030\002 \001(\t\022I\n\013consist" +
+      "ency\030\003 \001(\01624.spec.proto.runtime.v1.State" +
+      "Options.StateConsistency\022F\n\010metadata\030\004 \003" +
+      "(\01324.spec.proto.runtime.v1.GetStateReque" +
+      "st.MetadataEntry\032/\n\rMetadataEntry\022\013\n\003key" +
+      "\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\311\001\n\023GetBulkSta" +
+      "teRequest\022\022\n\nstore_name\030\001 \001(\t\022\014\n\004keys\030\002 " +
+      "\003(\t\022\023\n\013parallelism\030\003 \001(\005\022J\n\010metadata\030\004 \003" +
+      "(\01328.spec.proto.runtime.v1.GetBulkStateR" +
+      "equest.MetadataEntry\032/\n\rMetadataEntry\022\013\n" +
+      "\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"K\n\024GetBulk" +
+      "StateResponse\0223\n\005items\030\001 \003(\0132$.spec.prot" +
+      "o.runtime.v1.BulkStateItem\"\276\001\n\rBulkState" +
+      "Item\022\013\n\003key\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\022\014\n\004etag\030" +
+      "\003 \001(\t\022\r\n\005error\030\004 \001(\t\022D\n\010metadata\030\005 \003(\01322" +
+      ".spec.proto.runtime.v1.BulkStateItem.Met" +
+      "adataEntry\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t" +
+      "\022\r\n\005value\030\002 \001(\t:\0028\001\"\250\001\n\020GetStateResponse" +
+      "\022\014\n\004data\030\001 \001(\014\022\014\n\004etag\030\002 \001(\t\022G\n\010metadata" +
+      "\030\003 \003(\01325.spec.proto.runtime.v1.GetStateR" +
+      "esponse.MetadataEntry\032/\n\rMetadataEntry\022\013" +
+      "\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\222\002\n\022Delet" +
+      "eStateRequest\022\022\n\nstore_name\030\001 \001(\t\022\013\n\003key" +
+      "\030\002 \001(\t\022)\n\004etag\030\003 \001(\0132\033.spec.proto.runtim" +
+      "e.v1.Etag\0224\n\007options\030\004 \001(\0132#.spec.proto." +
+      "runtime.v1.StateOptions\022I\n\010metadata\030\005 \003(" +
+      "\01327.spec.proto.runtime.v1.DeleteStateReq" +
+      "uest.MetadataEntry\032/\n\rMetadataEntry\022\013\n\003k" +
+      "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"^\n\026DeleteBul" +
+      "kStateRequest\022\022\n\nstore_name\030\001 \001(\t\0220\n\006sta" +
+      "tes\030\002 \003(\0132 .spec.proto.runtime.v1.StateI" +
+      "tem\"X\n\020SaveStateRequest\022\022\n\nstore_name\030\001 " +
+      "\001(\t\0220\n\006states\030\002 \003(\0132 .spec.proto.runtime" +
+      ".v1.StateItem\"\373\001\n\tStateItem\022\013\n\003key\030\001 \001(\t" +
+      "\022\r\n\005value\030\002 \001(\014\022)\n\004etag\030\003 \001(\0132\033.spec.pro" +
+      "to.runtime.v1.Etag\022@\n\010metadata\030\004 \003(\0132..s" +
+      "pec.proto.runtime.v1.StateItem.MetadataE" +
+      "ntry\0224\n\007options\030\005 \001(\0132#.spec.proto.runti" +
+      "me.v1.StateOptions\032/\n\rMetadataEntry\022\013\n\003k" +
+      "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\025\n\004Etag\022\r\n\005v" +
+      "alue\030\001 \001(\t\"\361\002\n\014StateOptions\022I\n\013concurren" +
+      "cy\030\001 \001(\01624.spec.proto.runtime.v1.StateOp" +
+      "tions.StateConcurrency\022I\n\013consistency\030\002 " +
+      "\001(\01624.spec.proto.runtime.v1.StateOptions" +
+      ".StateConsistency\"h\n\020StateConcurrency\022\033\n" +
+      "\027CONCURRENCY_UNSPECIFIED\020\000\022\033\n\027CONCURRENC" +
+      "Y_FIRST_WRITE\020\001\022\032\n\026CONCURRENCY_LAST_WRIT" +
+      "E\020\002\"a\n\020StateConsistency\022\033\n\027CONSISTENCY_U" +
+      "NSPECIFIED\020\000\022\030\n\024CONSISTENCY_EVENTUAL\020\001\022\026" +
+      "\n\022CONSISTENCY_STRONG\020\002\"g\n\033TransactionalS" +
+      "tateOperation\022\025\n\roperationType\030\001 \001(\t\0221\n\007" +
+      "request\030\002 \001(\0132 .spec.proto.runtime.v1.St" +
+      "ateItem\"\203\002\n\036ExecuteStateTransactionReque" +
+      "st\022\021\n\tstoreName\030\001 \001(\t\022F\n\noperations\030\002 \003(" +
+      "\01322.spec.proto.runtime.v1.TransactionalS" +
+      "tateOperation\022U\n\010metadata\030\003 \003(\0132C.spec.p" +
+      "roto.runtime.v1.ExecuteStateTransactionR" +
+      "equest.MetadataEntry\032/\n\rMetadataEntry\022\013\n" +
+      "\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\337\001\n\023Publis" +
+      "hEventRequest\022\023\n\013pubsub_name\030\001 \001(\t\022\r\n\005to" +
+      "pic\030\002 \001(\t\022\014\n\004data\030\003 \001(\014\022\031\n\021data_content_" +
+      "type\030\004 \001(\t\022J\n\010metadata\030\005 \003(\01328.spec.prot" +
+      "o.runtime.v1.PublishEventRequest.Metadat" +
+      "aEntry\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005" +
+      "value\030\002 \001(\t:\0028\001\"\303\001\n\024InvokeBindingRequest" +
+      "\022\014\n\004name\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\022K\n\010metadata" +
+      "\030\003 \003(\01329.spec.proto.runtime.v1.InvokeBin" +
+      "dingRequest.MetadataEntry\022\021\n\toperation\030\004" +
+      " \001(\t\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005va" +
+      "lue\030\002 \001(\t:\0028\001\"\244\001\n\025InvokeBindingResponse\022" +
+      "\014\n\004data\030\001 \001(\014\022L\n\010metadata\030\002 \003(\0132:.spec.p" +
+      "roto.runtime.v1.InvokeBindingResponse.Me" +
+      "tadataEntry\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(" +
+      "\t\022\r\n\005value\030\002 \001(\t:\0028\0012\344\020\n\007Runtime\022]\n\010SayH" +
+      "ello\022&.spec.proto.runtime.v1.SayHelloReq" +
+      "uest\032\'.spec.proto.runtime.v1.SayHelloRes" +
+      "ponse\"\000\022e\n\rInvokeService\022+.spec.proto.ru" +
+      "ntime.v1.InvokeServiceRequest\032%.spec.pro" +
+      "to.runtime.v1.InvokeResponse\"\000\022u\n\020GetCon" +
+      "figuration\022..spec.proto.runtime.v1.GetCo" +
+      "nfigurationRequest\032/.spec.proto.runtime." +
+      "v1.GetConfigurationResponse\"\000\022^\n\021SaveCon" +
+      "figuration\022/.spec.proto.runtime.v1.SaveC" +
+      "onfigurationRequest\032\026.google.protobuf.Em" +
+      "pty\"\000\022b\n\023DeleteConfiguration\0221.spec.prot" +
+      "o.runtime.v1.DeleteConfigurationRequest\032" +
+      "\026.google.protobuf.Empty\"\000\022\213\001\n\026SubscribeC" +
+      "onfiguration\0224.spec.proto.runtime.v1.Sub" +
+      "scribeConfigurationRequest\0325.spec.proto." +
+      "runtime.v1.SubscribeConfigurationRespons" +
+      "e\"\000(\0010\001\022Z\n\007TryLock\022%.spec.proto.runtime." +
+      "v1.TryLockRequest\032&.spec.proto.runtime.v" +
+      "1.TryLockResponse\"\000\022W\n\006Unlock\022$.spec.pro" +
+      "to.runtime.v1.UnlockRequest\032%.spec.proto" +
+      ".runtime.v1.UnlockResponse\"\000\022`\n\tGetNextI" +
+      "d\022\'.spec.proto.runtime.v1.GetNextIdReque" +
+      "st\032(.spec.proto.runtime.v1.GetNextIdResp" +
+      "onse\"\000\022]\n\010GetState\022&.spec.proto.runtime." +
+      "v1.GetStateRequest\032\'.spec.proto.runtime." +
+      "v1.GetStateResponse\"\000\022i\n\014GetBulkState\022*." +
+      "spec.proto.runtime.v1.GetBulkStateReques" +
+      "t\032+.spec.proto.runtime.v1.GetBulkStateRe" +
+      "sponse\"\000\022N\n\tSaveState\022\'.spec.proto.runti" +
+      "me.v1.SaveStateRequest\032\026.google.protobuf" +
+      ".Empty\"\000\022R\n\013DeleteState\022).spec.proto.run" +
+      "time.v1.DeleteStateRequest\032\026.google.prot" +
+      "obuf.Empty\"\000\022Z\n\017DeleteBulkState\022-.spec.p" +
+      "roto.runtime.v1.DeleteBulkStateRequest\032\026" +
+      ".google.protobuf.Empty\"\000\022j\n\027ExecuteState" +
+      "Transaction\0225.spec.proto.runtime.v1.Exec" +
+      "uteStateTransactionRequest\032\026.google.prot" +
+      "obuf.Empty\"\000\022T\n\014PublishEvent\022*.spec.prot" +
+      "o.runtime.v1.PublishEventRequest\032\026.googl" +
+      "e.protobuf.Empty\"\000\022\\\n\007GetFile\022%.spec.pro" +
+      "to.runtime.v1.GetFileRequest\032&.spec.prot" +
+      "o.runtime.v1.GetFileResponse\"\0000\001\022L\n\007PutF" +
+      "ile\022%.spec.proto.runtime.v1.PutFileReque" +
+      "st\032\026.google.protobuf.Empty\"\000(\001\022Y\n\010ListFi" +
+      "le\022&.spec.proto.runtime.v1.ListFileReque" +
+      "st\032#.spec.proto.runtime.v1.ListFileResp\"" +
+      "\000\022J\n\007DelFile\022%.spec.proto.runtime.v1.Del" +
+      "FileRequest\032\026.google.protobuf.Empty\"\000\022f\n" +
+      "\013GetFileMeta\022).spec.proto.runtime.v1.Get" +
+      "FileMetaRequest\032*.spec.proto.runtime.v1." +
+      "GetFileMetaResponse\"\000\022l\n\rInvokeBinding\022+" +
+      ".spec.proto.runtime.v1.InvokeBindingRequ" +
+      "est\032,.spec.proto.runtime.v1.InvokeBindin" +
+      "gResponse\"\000BT\n\025spec.proto.runtime.v1B\014Ru" +
+      "ntimeProtoZ-mosn.io/layotto/spec/proto/r" +
+      "untime/v1;runtimeb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -48430,8 +53272,38 @@ public final class RuntimeProto {
           com.google.protobuf.EmptyProto.getDescriptor(),
           com.google.protobuf.AnyProto.getDescriptor(),
         });
-    internal_static_spec_proto_runtime_v1_GetFileRequest_descriptor =
+    internal_static_spec_proto_runtime_v1_GetFileMetaRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
+    internal_static_spec_proto_runtime_v1_GetFileMetaRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_GetFileMetaRequest_descriptor,
+        new java.lang.String[] { "Request", });
+    internal_static_spec_proto_runtime_v1_GetFileMetaResponse_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_spec_proto_runtime_v1_GetFileMetaResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_GetFileMetaResponse_descriptor,
+        new java.lang.String[] { "Size", "LastModified", "Response", });
+    internal_static_spec_proto_runtime_v1_FileMetaValue_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_spec_proto_runtime_v1_FileMetaValue_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_FileMetaValue_descriptor,
+        new java.lang.String[] { "Value", });
+    internal_static_spec_proto_runtime_v1_FileMeta_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_spec_proto_runtime_v1_FileMeta_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_FileMeta_descriptor,
+        new java.lang.String[] { "Metadata", });
+    internal_static_spec_proto_runtime_v1_FileMeta_MetadataEntry_descriptor =
+      internal_static_spec_proto_runtime_v1_FileMeta_descriptor.getNestedTypes().get(0);
+    internal_static_spec_proto_runtime_v1_FileMeta_MetadataEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_FileMeta_MetadataEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_spec_proto_runtime_v1_GetFileRequest_descriptor =
+      getDescriptor().getMessageTypes().get(4);
     internal_static_spec_proto_runtime_v1_GetFileRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_GetFileRequest_descriptor,
@@ -48443,13 +53315,13 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_GetFileRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_GetFileResponse_descriptor =
-      getDescriptor().getMessageTypes().get(1);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_spec_proto_runtime_v1_GetFileResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_GetFileResponse_descriptor,
         new java.lang.String[] { "Data", });
     internal_static_spec_proto_runtime_v1_PutFileRequest_descriptor =
-      getDescriptor().getMessageTypes().get(2);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_spec_proto_runtime_v1_PutFileRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_PutFileRequest_descriptor,
@@ -48461,7 +53333,7 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_PutFileRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_FileRequest_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_spec_proto_runtime_v1_FileRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_FileRequest_descriptor,
@@ -48473,25 +53345,37 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_FileRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_ListFileRequest_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_spec_proto_runtime_v1_ListFileRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_ListFileRequest_descriptor,
-        new java.lang.String[] { "Request", });
+        new java.lang.String[] { "Request", "PageSize", "Marker", });
+    internal_static_spec_proto_runtime_v1_FileInfo_descriptor =
+      getDescriptor().getMessageTypes().get(9);
+    internal_static_spec_proto_runtime_v1_FileInfo_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_FileInfo_descriptor,
+        new java.lang.String[] { "FileName", "Size", "LastModified", "Metadata", });
+    internal_static_spec_proto_runtime_v1_FileInfo_MetadataEntry_descriptor =
+      internal_static_spec_proto_runtime_v1_FileInfo_descriptor.getNestedTypes().get(0);
+    internal_static_spec_proto_runtime_v1_FileInfo_MetadataEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_FileInfo_MetadataEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_ListFileResp_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_spec_proto_runtime_v1_ListFileResp_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_ListFileResp_descriptor,
-        new java.lang.String[] { "FileName", });
+        new java.lang.String[] { "Files", "Marker", "IsTruncated", });
     internal_static_spec_proto_runtime_v1_DelFileRequest_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_spec_proto_runtime_v1_DelFileRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_DelFileRequest_descriptor,
         new java.lang.String[] { "Request", });
     internal_static_spec_proto_runtime_v1_GetNextIdRequest_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_spec_proto_runtime_v1_GetNextIdRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_GetNextIdRequest_descriptor,
@@ -48503,79 +53387,79 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_GetNextIdRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_SequencerOptions_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(13);
     internal_static_spec_proto_runtime_v1_SequencerOptions_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_SequencerOptions_descriptor,
         new java.lang.String[] { "Increment", });
     internal_static_spec_proto_runtime_v1_GetNextIdResponse_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(14);
     internal_static_spec_proto_runtime_v1_GetNextIdResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_GetNextIdResponse_descriptor,
         new java.lang.String[] { "NextId", });
     internal_static_spec_proto_runtime_v1_TryLockRequest_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(15);
     internal_static_spec_proto_runtime_v1_TryLockRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_TryLockRequest_descriptor,
         new java.lang.String[] { "StoreName", "ResourceId", "LockOwner", "Expire", });
     internal_static_spec_proto_runtime_v1_TryLockResponse_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(16);
     internal_static_spec_proto_runtime_v1_TryLockResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_TryLockResponse_descriptor,
         new java.lang.String[] { "Success", });
     internal_static_spec_proto_runtime_v1_UnlockRequest_descriptor =
-      getDescriptor().getMessageTypes().get(12);
+      getDescriptor().getMessageTypes().get(17);
     internal_static_spec_proto_runtime_v1_UnlockRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_UnlockRequest_descriptor,
         new java.lang.String[] { "StoreName", "ResourceId", "LockOwner", });
     internal_static_spec_proto_runtime_v1_UnlockResponse_descriptor =
-      getDescriptor().getMessageTypes().get(13);
+      getDescriptor().getMessageTypes().get(18);
     internal_static_spec_proto_runtime_v1_UnlockResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_UnlockResponse_descriptor,
         new java.lang.String[] { "Status", });
     internal_static_spec_proto_runtime_v1_SayHelloRequest_descriptor =
-      getDescriptor().getMessageTypes().get(14);
+      getDescriptor().getMessageTypes().get(19);
     internal_static_spec_proto_runtime_v1_SayHelloRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_SayHelloRequest_descriptor,
         new java.lang.String[] { "ServiceName", "Name", "Data", });
     internal_static_spec_proto_runtime_v1_SayHelloResponse_descriptor =
-      getDescriptor().getMessageTypes().get(15);
+      getDescriptor().getMessageTypes().get(20);
     internal_static_spec_proto_runtime_v1_SayHelloResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_SayHelloResponse_descriptor,
         new java.lang.String[] { "Hello", "Data", });
     internal_static_spec_proto_runtime_v1_InvokeServiceRequest_descriptor =
-      getDescriptor().getMessageTypes().get(16);
+      getDescriptor().getMessageTypes().get(21);
     internal_static_spec_proto_runtime_v1_InvokeServiceRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_InvokeServiceRequest_descriptor,
         new java.lang.String[] { "Id", "Message", });
     internal_static_spec_proto_runtime_v1_CommonInvokeRequest_descriptor =
-      getDescriptor().getMessageTypes().get(17);
+      getDescriptor().getMessageTypes().get(22);
     internal_static_spec_proto_runtime_v1_CommonInvokeRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_CommonInvokeRequest_descriptor,
         new java.lang.String[] { "Method", "Data", "ContentType", "HttpExtension", });
     internal_static_spec_proto_runtime_v1_HTTPExtension_descriptor =
-      getDescriptor().getMessageTypes().get(18);
+      getDescriptor().getMessageTypes().get(23);
     internal_static_spec_proto_runtime_v1_HTTPExtension_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_HTTPExtension_descriptor,
         new java.lang.String[] { "Verb", "Querystring", });
     internal_static_spec_proto_runtime_v1_InvokeResponse_descriptor =
-      getDescriptor().getMessageTypes().get(19);
+      getDescriptor().getMessageTypes().get(24);
     internal_static_spec_proto_runtime_v1_InvokeResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_InvokeResponse_descriptor,
         new java.lang.String[] { "Data", "ContentType", });
     internal_static_spec_proto_runtime_v1_ConfigurationItem_descriptor =
-      getDescriptor().getMessageTypes().get(20);
+      getDescriptor().getMessageTypes().get(25);
     internal_static_spec_proto_runtime_v1_ConfigurationItem_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_ConfigurationItem_descriptor,
@@ -48593,7 +53477,7 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_ConfigurationItem_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_GetConfigurationRequest_descriptor =
-      getDescriptor().getMessageTypes().get(21);
+      getDescriptor().getMessageTypes().get(26);
     internal_static_spec_proto_runtime_v1_GetConfigurationRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_GetConfigurationRequest_descriptor,
@@ -48605,13 +53489,13 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_GetConfigurationRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_GetConfigurationResponse_descriptor =
-      getDescriptor().getMessageTypes().get(22);
+      getDescriptor().getMessageTypes().get(27);
     internal_static_spec_proto_runtime_v1_GetConfigurationResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_GetConfigurationResponse_descriptor,
         new java.lang.String[] { "Items", });
     internal_static_spec_proto_runtime_v1_SubscribeConfigurationRequest_descriptor =
-      getDescriptor().getMessageTypes().get(23);
+      getDescriptor().getMessageTypes().get(28);
     internal_static_spec_proto_runtime_v1_SubscribeConfigurationRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_SubscribeConfigurationRequest_descriptor,
@@ -48623,13 +53507,13 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_SubscribeConfigurationRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_SubscribeConfigurationResponse_descriptor =
-      getDescriptor().getMessageTypes().get(24);
+      getDescriptor().getMessageTypes().get(29);
     internal_static_spec_proto_runtime_v1_SubscribeConfigurationResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_SubscribeConfigurationResponse_descriptor,
         new java.lang.String[] { "StoreName", "AppId", "Items", });
     internal_static_spec_proto_runtime_v1_SaveConfigurationRequest_descriptor =
-      getDescriptor().getMessageTypes().get(25);
+      getDescriptor().getMessageTypes().get(30);
     internal_static_spec_proto_runtime_v1_SaveConfigurationRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_SaveConfigurationRequest_descriptor,
@@ -48641,7 +53525,7 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_SaveConfigurationRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_DeleteConfigurationRequest_descriptor =
-      getDescriptor().getMessageTypes().get(26);
+      getDescriptor().getMessageTypes().get(31);
     internal_static_spec_proto_runtime_v1_DeleteConfigurationRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_DeleteConfigurationRequest_descriptor,
@@ -48653,7 +53537,7 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_DeleteConfigurationRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_GetStateRequest_descriptor =
-      getDescriptor().getMessageTypes().get(27);
+      getDescriptor().getMessageTypes().get(32);
     internal_static_spec_proto_runtime_v1_GetStateRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_GetStateRequest_descriptor,
@@ -48665,7 +53549,7 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_GetStateRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_GetBulkStateRequest_descriptor =
-      getDescriptor().getMessageTypes().get(28);
+      getDescriptor().getMessageTypes().get(33);
     internal_static_spec_proto_runtime_v1_GetBulkStateRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_GetBulkStateRequest_descriptor,
@@ -48677,13 +53561,13 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_GetBulkStateRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_GetBulkStateResponse_descriptor =
-      getDescriptor().getMessageTypes().get(29);
+      getDescriptor().getMessageTypes().get(34);
     internal_static_spec_proto_runtime_v1_GetBulkStateResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_GetBulkStateResponse_descriptor,
         new java.lang.String[] { "Items", });
     internal_static_spec_proto_runtime_v1_BulkStateItem_descriptor =
-      getDescriptor().getMessageTypes().get(30);
+      getDescriptor().getMessageTypes().get(35);
     internal_static_spec_proto_runtime_v1_BulkStateItem_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_BulkStateItem_descriptor,
@@ -48695,7 +53579,7 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_BulkStateItem_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_GetStateResponse_descriptor =
-      getDescriptor().getMessageTypes().get(31);
+      getDescriptor().getMessageTypes().get(36);
     internal_static_spec_proto_runtime_v1_GetStateResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_GetStateResponse_descriptor,
@@ -48707,7 +53591,7 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_GetStateResponse_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_DeleteStateRequest_descriptor =
-      getDescriptor().getMessageTypes().get(32);
+      getDescriptor().getMessageTypes().get(37);
     internal_static_spec_proto_runtime_v1_DeleteStateRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_DeleteStateRequest_descriptor,
@@ -48719,19 +53603,19 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_DeleteStateRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_DeleteBulkStateRequest_descriptor =
-      getDescriptor().getMessageTypes().get(33);
+      getDescriptor().getMessageTypes().get(38);
     internal_static_spec_proto_runtime_v1_DeleteBulkStateRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_DeleteBulkStateRequest_descriptor,
         new java.lang.String[] { "StoreName", "States", });
     internal_static_spec_proto_runtime_v1_SaveStateRequest_descriptor =
-      getDescriptor().getMessageTypes().get(34);
+      getDescriptor().getMessageTypes().get(39);
     internal_static_spec_proto_runtime_v1_SaveStateRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_SaveStateRequest_descriptor,
         new java.lang.String[] { "StoreName", "States", });
     internal_static_spec_proto_runtime_v1_StateItem_descriptor =
-      getDescriptor().getMessageTypes().get(35);
+      getDescriptor().getMessageTypes().get(40);
     internal_static_spec_proto_runtime_v1_StateItem_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_StateItem_descriptor,
@@ -48743,25 +53627,25 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_StateItem_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_Etag_descriptor =
-      getDescriptor().getMessageTypes().get(36);
+      getDescriptor().getMessageTypes().get(41);
     internal_static_spec_proto_runtime_v1_Etag_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_Etag_descriptor,
         new java.lang.String[] { "Value", });
     internal_static_spec_proto_runtime_v1_StateOptions_descriptor =
-      getDescriptor().getMessageTypes().get(37);
+      getDescriptor().getMessageTypes().get(42);
     internal_static_spec_proto_runtime_v1_StateOptions_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_StateOptions_descriptor,
         new java.lang.String[] { "Concurrency", "Consistency", });
     internal_static_spec_proto_runtime_v1_TransactionalStateOperation_descriptor =
-      getDescriptor().getMessageTypes().get(38);
+      getDescriptor().getMessageTypes().get(43);
     internal_static_spec_proto_runtime_v1_TransactionalStateOperation_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_TransactionalStateOperation_descriptor,
         new java.lang.String[] { "OperationType", "Request", });
     internal_static_spec_proto_runtime_v1_ExecuteStateTransactionRequest_descriptor =
-      getDescriptor().getMessageTypes().get(39);
+      getDescriptor().getMessageTypes().get(44);
     internal_static_spec_proto_runtime_v1_ExecuteStateTransactionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_ExecuteStateTransactionRequest_descriptor,
@@ -48773,7 +53657,7 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_ExecuteStateTransactionRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_PublishEventRequest_descriptor =
-      getDescriptor().getMessageTypes().get(40);
+      getDescriptor().getMessageTypes().get(45);
     internal_static_spec_proto_runtime_v1_PublishEventRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_PublishEventRequest_descriptor,
@@ -48785,7 +53669,7 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_PublishEventRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_InvokeBindingRequest_descriptor =
-      getDescriptor().getMessageTypes().get(41);
+      getDescriptor().getMessageTypes().get(46);
     internal_static_spec_proto_runtime_v1_InvokeBindingRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_InvokeBindingRequest_descriptor,
@@ -48797,7 +53681,7 @@ public final class RuntimeProto {
         internal_static_spec_proto_runtime_v1_InvokeBindingRequest_MetadataEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_InvokeBindingResponse_descriptor =
-      getDescriptor().getMessageTypes().get(42);
+      getDescriptor().getMessageTypes().get(47);
     internal_static_spec_proto_runtime_v1_InvokeBindingResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_InvokeBindingResponse_descriptor,
