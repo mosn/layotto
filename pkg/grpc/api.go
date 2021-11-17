@@ -21,9 +21,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 	"strings"
 	"sync"
+
+	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 
 	"github.com/dapr/components-contrib/bindings"
 
@@ -104,7 +105,8 @@ type API interface {
 	ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error)
 	//Delete specific file
 	DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error)
-
+	// Get file meta data, if file not exist,return code.NotFound error
+	GetFileMeta(ctx context.Context, in *runtimev1pb.GetFileMetaRequest) (*runtimev1pb.GetFileMetaResponse, error)
 	// Distributed Lock API
 	TryLock(context.Context, *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error)
 	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
@@ -749,8 +751,11 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	if a.fileOps[req.StoreName] == nil {
 		return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
 	}
+	if req.Metadata == nil {
+		req.Metadata = make(map[string]string)
+	}
 	st := &file.GetFileStu{FileName: req.Name, Metadata: req.Metadata}
-	data, err := a.fileOps[req.StoreName].Get(st)
+	data, err := a.fileOps[req.StoreName].Get(stream.Context(), st)
 	if err != nil {
 		return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
 	}
@@ -830,8 +835,11 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 		return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
 	}
 	fileReader := newPutObjectStreamReader(req.Data, stream)
+	if req.Metadata == nil {
+		req.Metadata = make(map[string]string)
+	}
 	st := &file.PutFileStu{DataStream: fileReader, FileName: req.Name, Metadata: req.Metadata}
-	if err = a.fileOps[req.StoreName].Put(st); err != nil {
+	if err = a.fileOps[req.StoreName].Put(stream.Context(), st); err != nil {
 		return status.Errorf(codes.Internal, err.Error())
 	}
 	stream.SendAndClose(&empty.Empty{})
@@ -840,26 +848,80 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 
 //ListFile list all files
 func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error) {
+	if in.Request == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "request can't be nil")
+	}
+	if in.Request.Metadata == nil {
+		in.Request.Metadata = make(map[string]string)
+	}
+
 	if a.fileOps[in.Request.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
 	}
-	resp, err := a.fileOps[in.Request.StoreName].List(&file.ListRequest{DirectoryName: in.Request.Name, Metadata: in.Request.Metadata})
+	resp, err := a.fileOps[in.Request.StoreName].List(ctx, &file.ListRequest{DirectoryName: in.Request.Name, PageSize: in.PageSize, Marker: in.Marker, Metadata: in.Request.Metadata})
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	return &runtimev1pb.ListFileResp{FileName: resp.FilesName}, nil
+	files := make([]*runtimev1pb.FileInfo, 0)
+	for _, v := range resp.Files {
+		file := &runtimev1pb.FileInfo{}
+		file.FileName = v.FileName
+		file.LastModified = v.LastModified
+		file.Size = v.Size
+		file.Metadata = v.Meta
+		files = append(files, file)
+	}
+	return &runtimev1pb.ListFileResp{Files: files, Marker: resp.Marker, IsTruncated: resp.IsTruncated}, nil
 }
 
 //DelFile delete specific file
 func (a *api) DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error) {
+	errCode := codes.Internal
+	if in.Request == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "request can't be nil")
+	}
+	if in.Request.Metadata == nil {
+		in.Request.Metadata = make(map[string]string)
+	}
 	if a.fileOps[in.Request.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
 	}
-	err := a.fileOps[in.Request.StoreName].Del(&file.DelRequest{FileName: in.Request.Name, Metadata: in.Request.Metadata})
+	err := a.fileOps[in.Request.StoreName].Del(ctx, &file.DelRequest{FileName: in.Request.Name, Metadata: in.Request.Metadata})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		if code, ok := FileErrMap2GrpcErr[err]; ok {
+			errCode = code
+		}
+		return nil, status.Errorf(errCode, err.Error())
 	}
 	return &emptypb.Empty{}, nil
+}
+
+//GetFileMeta get meta of file
+func (a *api) GetFileMeta(ctx context.Context, in *runtimev1pb.GetFileMetaRequest) (*runtimev1pb.GetFileMetaResponse, error) {
+	errCode := codes.Internal
+	if in.Request == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "request can't be nil")
+	}
+	if in.Request.Metadata == nil {
+		in.Request.Metadata = make(map[string]string)
+	}
+	if a.fileOps[in.Request.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", in.Request.StoreName)
+	}
+	resp, err := a.fileOps[in.Request.StoreName].Stat(ctx, &file.FileMetaRequest{FileName: in.Request.Name, Metadata: in.Request.Metadata})
+	if err != nil {
+		if code, ok := FileErrMap2GrpcErr[err]; ok {
+			errCode = code
+		}
+		return nil, status.Errorf(errCode, err.Error())
+	}
+	meta := &runtimev1pb.FileMeta{}
+	meta.Metadata = make(map[string]*runtimev1pb.FileMetaValue)
+	for k, v := range resp.Metadata {
+		meta.Metadata[k] = &runtimev1pb.FileMetaValue{}
+		meta.Metadata[k].Value = append(meta.Metadata[k].Value, v...)
+	}
+	return &runtimev1pb.GetFileMetaResponse{Size: resp.Size, LastModified: resp.LastModified, Response: meta}, nil
 }
 
 func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error) {

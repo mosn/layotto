@@ -3,9 +3,10 @@ module mosn.io/layotto/demo
 go 1.14
 
 require (
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/go-ini/ini v1.63.2 // indirect
 	github.com/golang/protobuf v1.5.0
 	github.com/google/uuid v1.2.0
+	github.com/minio/minio-go/v7 v7.0.15
 	github.com/tetratelabs/proxy-wasm-go-sdk v0.14.1-0.20210922004205-46e3ac3a25fe
 	google.golang.org/grpc v1.37.0
 	google.golang.org/protobuf v1.26.0-rc.1
