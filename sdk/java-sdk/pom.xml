@@ -103,7 +103,6 @@
                     <configFile>${user.dir}/tools/codestyle/formatter.xml</configFile>
                     <encoding>UTF-8</encoding>
                     <excludes>
-                        <exclude>io/mosn/layotto/v1/**</exclude>
                         <exclude>spec/proto/runtime/v1/**</exclude>
                     </excludes>
                 </configuration>
