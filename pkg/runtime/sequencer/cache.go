@@ -20,28 +20,25 @@ import (
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
 	"sync"
-	"sync/atomic"
 	"time"
 )
 
 const defaultSize = 10000
 const defaultLimit = 1000
 const defaultRetry = 5
-const waitTime = time.Second
+const waitTime = time.Second * 2
 
 // DoubleBuffer is double segment id buffer.
-// There are two buffers in DoubleBuffer: InUseBuffer is in use, BackUpBuffer is a backup buffer.
-// Their default capacity is 1000. When the InUseBuffer usage exceeds 30%, the BackUpBuffer will be initialized.
-// When InUseBuffer is used up, swap them.
+// There are two buffers in DoubleBuffer: inUseBuffer is in use, BackUpBuffer is a backup buffer.
+// Their default capacity is 1000. When the inUseBuffer usage exceeds 30%, the BackUpBuffer will be initialized.
+// When inUseBuffer is used up, swap them.
 type DoubleBuffer struct {
 	Key              string
-	Size             int
-	InUseBuffer      *Buffer
-	BackUpBufferChan chan *Buffer
-	// 1 means getting BackUpBuffer，0 means not
-	Processing uint32
-	lock       sync.Mutex
-	Store      sequencer.Store
+	size             int
+	inUseBuffer      *Buffer
+	backUpBufferChan chan *Buffer
+	lock             sync.Mutex
+	Store            sequencer.Store
 }
 
 type Buffer struct {
@@ -53,9 +50,9 @@ func NewDoubleBuffer(key string, store sequencer.Store) *DoubleBuffer {
 
 	d := &DoubleBuffer{
 		Key:              key,
-		Size:             defaultSize,
+		size:             defaultSize,
 		Store:            store,
-		BackUpBufferChan: make(chan *Buffer, 1),
+		backUpBufferChan: make(chan *Buffer, 1),
 	}
 
 	return d
@@ -69,7 +66,7 @@ func (d *DoubleBuffer) init() error {
 		return err
 	}
 
-	d.InUseBuffer = buffer
+	d.inUseBuffer = buffer
 
 	return nil
 }
@@ -80,39 +77,33 @@ func (d *DoubleBuffer) getId() (int64, error) {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 
-	if d.InUseBuffer == nil {
-		return 0, errors.New("[DoubleBuffer] Get error: InUseBuffer nil ")
+	if d.inUseBuffer == nil {
+		return 0, errors.New("[DoubleBuffer] Get error: inUseBuffer nil ")
 	}
 	//check swap
-	if d.InUseBuffer.from > d.InUseBuffer.to {
+	if d.inUseBuffer.from > d.inUseBuffer.to {
 		err := d.swap()
 		if err != nil {
 			return 0, err
 		}
 	}
-	next := d.InUseBuffer.from
-	d.InUseBuffer.from++
+	next := d.inUseBuffer.from
+	d.inUseBuffer.from++
 
-	//when InUseBuffer id more than half used, initialize BackUpBuffer.
+	//when inUseBuffer id more than limit used, initialize BackUpBuffer.
 	//equal make sure only one thread enter
-	if d.InUseBuffer.to-d.InUseBuffer.from == defaultLimit {
+	if d.inUseBuffer.to-d.inUseBuffer.from == defaultLimit {
 		utils.GoWithRecover(func() {
-			//one case: here and swap are performed simultaneously,
-			//swap fast,no check will cover old BackUpBuffer
 
-			//remove lock,add channel&CAS for visibility
-			//check  not on processing and bufChannel  nil
-			if atomic.CompareAndSwapUint32(&d.Processing, 0, 1) {
-				defer atomic.StoreUint32(&d.Processing, 0)
-				if len(d.BackUpBufferChan) != 0 {
-					return
-				}
+			//retry get buffer
+			for i := 0; i < defaultRetry; i++ {
 				buffer, err := d.getNewBuffer()
 				if err != nil {
 					log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
-					return
+					continue
 				}
-				d.BackUpBufferChan <- buffer
+				d.backUpBufferChan <- buffer
+				return
 			}
 		}, nil)
 	}
@@ -120,42 +111,28 @@ func (d *DoubleBuffer) getId() (int64, error) {
 	return next, nil
 }
 
-//swap InUseBuffer and BackUpBuffer, must be locked
+//swap inUseBuffer and BackUpBuffer, must be locked
 func (d *DoubleBuffer) swap() error {
 
-	//retry do processing
-	for i := 0; i < defaultRetry; i++ {
-		select {
-		case buffer := <-d.BackUpBufferChan:
-			{
-				d.InUseBuffer = buffer
-				return nil
-			}
-		//timeout, getNewBuffer by self
-		case <-time.After(waitTime):
-			{
-				//another goroutine processing ,retry
-				if !atomic.CompareAndSwapUint32(&d.Processing, 0, 1) {
-					continue
-				}
-				defer atomic.StoreUint32(&d.Processing, 0)
-				buffer, err := d.getNewBuffer()
-				if err != nil {
-					return err
-				}
-				d.InUseBuffer = buffer
-				return nil
-			}
+	select {
+	case buffer := <-d.backUpBufferChan:
+		{
+			d.inUseBuffer = buffer
+			return nil
+		}
+	//timeout, getNewBuffer by self
+	case <-time.After(waitTime):
+		{
+			return errors.New("[DoubleBuffer] swap error")
 		}
 	}
-	return errors.New("[DoubleBuffer]swap error")
 }
 
 //getNewBuffer return a new segment
 func (d *DoubleBuffer) getNewBuffer() (*Buffer, error) {
 	support, result, err := d.Store.GetSegment(&sequencer.GetSegmentRequest{
 		Key:  d.Key,
-		Size: d.Size,
+		Size: d.size,
 	})
 	if err != nil {
 		return nil, err
@@ -169,9 +146,10 @@ func (d *DoubleBuffer) getNewBuffer() (*Buffer, error) {
 	}, nil
 }
 
+// BufferCatch catch key and buffer
 var BufferCatch = map[string]*DoubleBuffer{}
 
-//common lock is enough ？
+//read/write lock for BufferCatch
 var rwLock sync.RWMutex
 
 func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequencer.GetNextIdRequest) (bool, int64, error) {
@@ -211,7 +189,7 @@ func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequenc
 	return true, id, nil
 }
 
-//DoubleBuffer for this key not exist
+// get DoubleBuffer using write lock
 func getDoubleBufferInWL(key string, store sequencer.Store) (*DoubleBuffer, error) {
 	d := NewDoubleBuffer(key, store)
 	rwLock.Lock()
@@ -228,12 +206,12 @@ func getDoubleBufferInWL(key string, store sequencer.Store) (*DoubleBuffer, erro
 	return d, nil
 }
 
-// DoubleBuffer for this key
+// get DoubleBuffer using read lock
 func getDoubleBufferInRL(key string) *DoubleBuffer {
 	rwLock.RLock()
 	defer rwLock.RUnlock()
-	if _, ok := BufferCatch[key]; ok {
-		return BufferCatch[key]
+	if buffer, ok := BufferCatch[key]; ok {
+		return buffer
 	}
 	return nil
 }
