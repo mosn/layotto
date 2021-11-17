@@ -31,10 +31,10 @@ Layotto提供了访问文件的示例 [demo](../../../../demo/file/minio/client.
 
 go build client.go //编译生成client可执行文件
 
-./client put fileName //上传文件
-./client get fileName //下载文件
-./client del fileName //删除文件
-./client list fileName //查看文件
+./client put bucketName/fileName //上传文件
+./client get bucketName/fileName //下载文件
+./client del bucketName/fileName //删除文件
+./client list bucketName //查看文件
 
 ```
 #### 细节以后再说，继续体验其他API
