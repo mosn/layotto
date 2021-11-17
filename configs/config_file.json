@@ -26,10 +26,10 @@
                           "metadata":[
                             {
                               "endpoint": "play.min.io",
-                              "accessKeyID": "minioadmin",
-                              "accessKeySecret": "minioadmin",
+                              "accessKeyID": "Q3AM3UQ867SPQQA43P2F",
+                              "accessKeySecret": "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG",
                               "SSL":true,
-                              "bucket": ["layotto"]
+                              "region":"us-west-2"
                             }
                           ]
                         }

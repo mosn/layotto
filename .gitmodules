@@ -1,6 +1,0 @@
-[submodule "sdk/dotnent-sdk"]
-	path = sdk/dotnent-sdk
-	url = https://github.com/layotto/dotnet-sdk
-[submodule "sdk/js-sdk"]
-	path = sdk/js-sdk
-	url = https://github.com/layotto/js-sdk
