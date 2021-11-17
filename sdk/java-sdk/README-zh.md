@@ -105,7 +105,8 @@ option java_package = "spec.proto.runtime.v1";
 ### 3. 编译其对应`JAVA`文件
 ```shell
 cd ${your PROJECT path}/spec/proto/runtime/v1
-protoc -I=. --java_out=./  runtime.proto
+protoc -I=. --java_out=../../../../sdk/java-sdk/sdk/src/main/java/  runtime.proto
+protoc -I=. --java_out=../../../../sdk/java-sdk/sdk/src/main/java/  appcallback.proto
 ```
 
 PS: 建议用maven插件`protoc-gen-grpc-java`生成protobuf和grpc的java代码
