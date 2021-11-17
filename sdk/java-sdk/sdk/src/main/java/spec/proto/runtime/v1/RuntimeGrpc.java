@@ -647,6 +647,37 @@ public final class RuntimeGrpc {
     return getDelFileMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest,
+      spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> getGetFileMetaMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetFileMeta",
+      requestType = spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest.class,
+      responseType = spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest,
+      spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> getGetFileMetaMethod() {
+    io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest, spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> getGetFileMetaMethod;
+    if ((getGetFileMetaMethod = RuntimeGrpc.getGetFileMetaMethod) == null) {
+      synchronized (RuntimeGrpc.class) {
+        if ((getGetFileMetaMethod = RuntimeGrpc.getGetFileMetaMethod) == null) {
+          RuntimeGrpc.getGetFileMetaMethod = getGetFileMetaMethod =
+              io.grpc.MethodDescriptor.<spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest, spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetFileMeta"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new RuntimeMethodDescriptorSupplier("GetFileMeta"))
+              .build();
+        }
+      }
+    }
+    return getGetFileMetaMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest,
       spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse> getInvokeBindingMethod;
 
@@ -927,6 +958,16 @@ public final class RuntimeGrpc {
 
     /**
      * <pre>
+     * Get file meta data, if file not exist,return code.NotFound error
+     * </pre>
+     */
+    public void getFileMeta(spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest request,
+        io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetFileMetaMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      * Invokes binding data to specific output bindings
      * </pre>
      */
@@ -1077,6 +1118,13 @@ public final class RuntimeGrpc {
                 spec.proto.runtime.v1.RuntimeProto.DelFileRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_DEL_FILE)))
+          .addMethod(
+            getGetFileMetaMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest,
+                spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse>(
+                  this, METHODID_GET_FILE_META)))
           .addMethod(
             getInvokeBindingMethod(),
             asyncUnaryCall(
@@ -1323,6 +1371,17 @@ public final class RuntimeGrpc {
 
     /**
      * <pre>
+     * Get file meta data, if file not exist,return code.NotFound error
+     * </pre>
+     */
+    public void getFileMeta(spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest request,
+        io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetFileMetaMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
      * Invokes binding data to specific output bindings
      * </pre>
      */
@@ -1525,6 +1584,16 @@ public final class RuntimeGrpc {
     public com.google.protobuf.Empty delFile(spec.proto.runtime.v1.RuntimeProto.DelFileRequest request) {
       return blockingUnaryCall(
           getChannel(), getDelFileMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Get file meta data, if file not exist,return code.NotFound error
+     * </pre>
+     */
+    public spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse getFileMeta(spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetFileMetaMethod(), getCallOptions(), request);
     }
 
     /**
@@ -1740,6 +1809,17 @@ public final class RuntimeGrpc {
 
     /**
      * <pre>
+     * Get file meta data, if file not exist,return code.NotFound error
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> getFileMeta(
+        spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetFileMetaMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      * Invokes binding data to specific output bindings
      * </pre>
      */
@@ -1768,9 +1848,10 @@ public final class RuntimeGrpc {
   private static final int METHODID_GET_FILE = 15;
   private static final int METHODID_LIST_FILE = 16;
   private static final int METHODID_DEL_FILE = 17;
-  private static final int METHODID_INVOKE_BINDING = 18;
-  private static final int METHODID_SUBSCRIBE_CONFIGURATION = 19;
-  private static final int METHODID_PUT_FILE = 20;
+  private static final int METHODID_GET_FILE_META = 18;
+  private static final int METHODID_INVOKE_BINDING = 19;
+  private static final int METHODID_SUBSCRIBE_CONFIGURATION = 20;
+  private static final int METHODID_PUT_FILE = 21;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1860,6 +1941,10 @@ public final class RuntimeGrpc {
         case METHODID_DEL_FILE:
           serviceImpl.delFile((spec.proto.runtime.v1.RuntimeProto.DelFileRequest) request,
               (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
+          break;
+        case METHODID_GET_FILE_META:
+          serviceImpl.getFileMeta((spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest) request,
+              (io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse>) responseObserver);
           break;
         case METHODID_INVOKE_BINDING:
           serviceImpl.invokeBinding((spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest) request,
@@ -1952,6 +2037,7 @@ public final class RuntimeGrpc {
               .addMethod(getPutFileMethod())
               .addMethod(getListFileMethod())
               .addMethod(getDelFileMethod())
+              .addMethod(getGetFileMetaMethod())
               .addMethod(getInvokeBindingMethod())
               .build();
         }

@@ -79,6 +79,13 @@ mvn clean install
 * [State management](./examples/src/main/java/io/mosn/layotto/examples/state)
 * [Pubsub API](./examples/src/main/java/io/mosn/layotto/examples/pubsub)
 
+## 如何格式化 java sdk 代码
+提交pull request之前先用maven编译一下
+
+```shell
+mvn clean compile
+```
+会自动格式化您的代码
 
 ## 如何将proto文件编译成java代码
 

@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package io.mosn.layotto.v1;
 
@@ -31,11 +30,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RuntimeServerGrpc {
 
-    private static final Logger logger = LoggerFactory.getLogger(RuntimeServerGrpc.class.getName());
+    private static final Logger logger  = LoggerFactory.getLogger(RuntimeServerGrpc.class.getName());
 
-    private final    int           port;
-    private volatile Server        server;
-    private final    AtomicBoolean started = new AtomicBoolean(false);
+    private final int           port;
+    private volatile Server     server;
+    private final AtomicBoolean started = new AtomicBoolean(false);
 
     public RuntimeServerGrpc(int port) {
         this.port = port;
@@ -52,10 +51,10 @@ public class RuntimeServerGrpc {
         try {
             /* The port on which the server should run */
             server = ServerBuilder.forPort(port)
-                    .addService(new GrpcAppCallbackImpl(subscriberRegistry))
-                    .intercept(new ExceptionHandler())
-                    .build()
-                    .start();
+                .addService(new GrpcAppCallbackImpl(subscriberRegistry))
+                .intercept(new ExceptionHandler())
+                .build()
+                .start();
         } catch (Exception e) {
             // revert
             server = null;
