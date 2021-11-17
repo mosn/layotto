@@ -43,26 +43,27 @@ import static org.mockito.Mockito.mock;
 @RunWith(JUnit4.class)
 public class StateTest {
     @Rule
-    public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
+    public final GrpcCleanupRule              grpcCleanup  = new GrpcCleanupRule();
 
-    RuntimeGrpc.RuntimeImplBase stateService = new MyStateService();
+    RuntimeGrpc.RuntimeImplBase               stateService = new MyStateService();
 
-    private final RuntimeGrpc.RuntimeImplBase serviceImpl =
-            mock(RuntimeGrpc.RuntimeImplBase.class, delegatesTo(stateService));
+    private final RuntimeGrpc.RuntimeImplBase serviceImpl  =
+                                                                   mock(RuntimeGrpc.RuntimeImplBase.class,
+                                                                       delegatesTo(stateService));
 
-    private RuntimeClient client;
+    private RuntimeClient                     client;
 
     @Before
     public void setUp() throws Exception {
         String serverName = InProcessServerBuilder.generateName();
         grpcCleanup.register(InProcessServerBuilder
-                .forName(serverName).directExecutor()
-                .addService(serviceImpl)
-                .build().start());
+            .forName(serverName).directExecutor()
+            .addService(serviceImpl)
+            .build().start());
         ManagedChannel channel = grpcCleanup.register(
-                InProcessChannelBuilder.forName(serverName).directExecutor().build());
+            InProcessChannelBuilder.forName(serverName).directExecutor().build());
         client = new RuntimeClientBuilder()
-                .buildGrpcWithExistingChannel(channel);
+            .buildGrpcWithExistingChannel(channel);
     }
 
     @Test
@@ -96,9 +97,9 @@ public class StateTest {
 
         // deleteState
         client.deleteState(storeName, "key1", null
-                , new StateOptions(StateOptions.Consistency.STRONG, StateOptions.Concurrency.FIRST_WRITE));
+            , new StateOptions(StateOptions.Consistency.STRONG, StateOptions.Concurrency.FIRST_WRITE));
         client.deleteState(storeName, "key2", null
-                , new StateOptions(null, null));
+            , new StateOptions(null, null));
 
         br = new GetBulkStateRequest(storeName, Arrays.asList("key1", "key2"));
         bulkResp = client.getBulkState(br, String.class);

@@ -25,11 +25,12 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PooledStubManager<A extends AbstractAsyncStub, B extends AbstractBlockingStub>
-        implements StubManager<A, B> {
+                                                                                            implements
+                                                                                            StubManager<A, B> {
 
     private volatile ManagedChannel[] channels;
-    private final    RRPool<A>        asyncRuntimePool;
-    private final    RRPool<B>        runtimePool;
+    private final RRPool<A>           asyncRuntimePool;
+    private final RRPool<B>           runtimePool;
 
     public PooledStubManager(ManagedChannel[] channels,
                              StubCreator<A, B> sc) {

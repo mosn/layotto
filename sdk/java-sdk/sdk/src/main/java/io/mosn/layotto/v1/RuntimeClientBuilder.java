@@ -36,21 +36,21 @@ import spec.sdk.runtime.v1.client.RuntimeClient;
  */
 public class RuntimeClientBuilder {
 
-    private static final Logger DEFAULT_LOGGER = LoggerFactory.getLogger(RuntimeClient.class.getName());
+    private static final Logger DEFAULT_LOGGER  = LoggerFactory.getLogger(RuntimeClient.class.getName());
 
-    private int timeoutMs = RuntimeProperties.DEFAULT_TIMEOUT_MS;
+    private int                 timeoutMs       = RuntimeProperties.DEFAULT_TIMEOUT_MS;
 
-    private String ip = RuntimeProperties.DEFAULT_IP;
+    private String              ip              = RuntimeProperties.DEFAULT_IP;
 
-    private int port = RuntimeProperties.DEFAULT_PORT;
+    private int                 port            = RuntimeProperties.DEFAULT_PORT;
 
-    private ApiProtocol protocol = RuntimeProperties.DEFAULT_API_PROTOCOL;
+    private ApiProtocol         protocol        = RuntimeProperties.DEFAULT_API_PROTOCOL;
 
-    private Logger logger = DEFAULT_LOGGER;
+    private Logger              logger          = DEFAULT_LOGGER;
 
-    private ObjectSerializer stateSerializer = new JSONSerializer();
+    private ObjectSerializer    stateSerializer = new JSONSerializer();
 
-    private int poolSize;
+    private int                 poolSize;
 
     // TODO add rpc serializer
 
@@ -172,17 +172,18 @@ public class RuntimeClientBuilder {
             throw new IllegalArgumentException("Invalid port.");
         }
         // 2. construct stubManager
-        StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager
-                = new SingleStubManager(channel, new StubCreatorImpl());
+        StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager = new SingleStubManager(
+            channel, new StubCreatorImpl());
         // 3. construct client
         return new RuntimeClientGrpc(
-                logger,
-                timeoutMs,
-                stateSerializer,
-                stubManager);
+            logger,
+            timeoutMs,
+            stateSerializer,
+            stubManager);
     }
 
-    public static class StubCreatorImpl implements StubCreator<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> {
+    public static class StubCreatorImpl implements
+                                       StubCreator<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> {
 
         @Override
         public RuntimeGrpc.RuntimeStub createAsyncStub(ManagedChannel channel) {

@@ -26,10 +26,11 @@ import java.util.Map;
 public class MyHelloService extends RuntimeGrpc.RuntimeImplBase {
 
     @Override
-    public void sayHello(RuntimeProto.SayHelloRequest request, StreamObserver<RuntimeProto.SayHelloResponse> responseObserver) {
+    public void sayHello(RuntimeProto.SayHelloRequest request,
+                         StreamObserver<RuntimeProto.SayHelloResponse> responseObserver) {
 
         RuntimeProto.SayHelloResponse resp = RuntimeProto.SayHelloResponse.newBuilder()
-                .setHello("hi, " + request.getServiceName()).build();
+            .setHello("hi, " + request.getServiceName()).build();
         responseObserver.onNext(resp);
         responseObserver.onCompleted();
     }

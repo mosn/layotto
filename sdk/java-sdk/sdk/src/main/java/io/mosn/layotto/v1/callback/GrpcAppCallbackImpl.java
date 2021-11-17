@@ -41,8 +41,8 @@ public class GrpcAppCallbackImpl extends AppCallbackGrpc.AppCallbackImplBase {
     @Override
     public void listTopicSubscriptions(Empty request,
                                        StreamObserver<AppCallbackProto.ListTopicSubscriptionsResponse> responseObserver) {
-        final AppCallbackProto.ListTopicSubscriptionsResponse.Builder builder
-                = AppCallbackProto.ListTopicSubscriptionsResponse.newBuilder();
+        final AppCallbackProto.ListTopicSubscriptionsResponse.Builder builder = AppCallbackProto.ListTopicSubscriptionsResponse
+            .newBuilder();
         // get all PubSub callbacks
         Collection<Subscriber> pubsubs = subscriberRegistry.getAllPubSubCallbacks();
         if (pubsubs == null) {
