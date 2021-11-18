@@ -13,7 +13,11 @@
 // limitations under the License.
 package utils
 
-import "github.com/hashicorp/consul/api"
+import (
+	"errors"
+	"github.com/hashicorp/consul/api"
+	"mosn.io/layotto/components/lock"
+)
 
 type ConsulClient interface {
 	Session() *api.Session
@@ -25,4 +29,44 @@ type ConsulKV interface {
 }
 type SessionFactory interface {
 	Create(se *api.SessionEntry, q *api.WriteOptions) (string, *api.WriteMeta, error)
+	Destroy(id string, q *api.WriteOptions) (*api.WriteMeta, error)
+}
+
+const (
+	consulAddress  = "address"
+	scheme         = "scheme"
+	consulUsername = "username"
+	consulPassword = "password"
+	defaultScheme  = "http"
+)
+
+type ConsulMetadata struct {
+	Address  string
+	Scheme   string
+	Username string
+	Password string
+}
+
+func ParseConsulMetadata(meta lock.Metadata) (ConsulMetadata, error) {
+	m := ConsulMetadata{}
+
+	if val, ok := meta.Properties[consulAddress]; ok && val != "" {
+		m.Address = val
+	} else {
+		return m, errors.New("consul error: missing host address")
+	}
+
+	m.Scheme = defaultScheme
+	if val, ok := meta.Properties[scheme]; ok && val != "" {
+		m.Scheme = val
+	}
+
+	if val, ok := meta.Properties[consulUsername]; ok && val != "" {
+		m.Username = val
+	}
+	if val, ok := meta.Properties[consulPassword]; ok && val != "" {
+		m.Password = val
+	}
+
+	return m, nil
 }

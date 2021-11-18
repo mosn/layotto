@@ -14,50 +14,46 @@
 package consul
 
 import (
-	"errors"
 	"github.com/hashicorp/consul/api"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/utils"
+	msync "mosn.io/mosn/pkg/sync"
 	"mosn.io/pkg/log"
+	"runtime"
 	"strconv"
 	"sync"
-)
-
-const (
-	address       = "address"
-	scheme        = "scheme"
-	username      = "username"
-	password      = "password"
-	defaultScheme = "http"
+	"time"
 )
 
 type ConsulLock struct {
-	metadata       metadata
+	metadata       utils.ConsulMetadata
 	logger         log.ErrorLogger
 	client         utils.ConsulClient
 	sessionFactory utils.SessionFactory
 	kv             utils.ConsulKV
 	sMap           sync.Map
+	workPool       msync.WorkerPool
 }
 
 func NewConsulLock(logger log.ErrorLogger) *ConsulLock {
-	consulLock := &ConsulLock{}
+	consulLock := &ConsulLock{logger: logger}
 	return consulLock
 }
 
 func (c *ConsulLock) Init(metadata lock.Metadata) error {
-	consulMetadata, err := parseConsulMetadata(metadata)
+	consulMetadata, err := utils.ParseConsulMetadata(metadata)
 	if err != nil {
 		return err
 	}
 	c.metadata = consulMetadata
 	client, err := api.NewClient(&api.Config{
-		Address: consulMetadata.address,
-		Scheme:  consulMetadata.scheme,
+		Address: consulMetadata.Address,
+		Scheme:  consulMetadata.Scheme,
 	})
 	c.client = client
 	c.sessionFactory = client.Session()
 	c.kv = client.KV()
+	c.workPool = msync.NewWorkerPool(runtime.NumCPU())
 	return nil
 }
 func (c *ConsulLock) Features() []lock.Feature {
@@ -97,6 +93,11 @@ func (c *ConsulLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, e
 	if acquire {
 		//bind lockOwner+resourceId and session
 		c.sMap.Store(req.LockOwner+"-"+req.ResourceId, session)
+		c.workPool.Schedule(func() {
+			time.Sleep(time.Second * time.Duration(req.Expire))
+			//may delete the second lock,but not affect the result
+			c.sMap.Delete(req.LockOwner + "-" + req.ResourceId)
+		})
 		return &lock.TryLockResponse{
 			Success: true,
 		}, nil
@@ -125,39 +126,13 @@ func (c *ConsulLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, erro
 
 	if release {
 		c.sMap.Delete(req.LockOwner + "-" + req.ResourceId)
-		return &lock.UnlockResponse{Status: lock.SUCCESS}, nil
+		_, err = c.sessionFactory.Destroy(session.(string), nil)
+		if err != nil {
+			c.logger.Errorf("consul lock session destroy error: %v", err)
+		}
+		return &lock.UnlockResponse{Status: lock.
+			SUCCESS}, nil
 	} else {
 		return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
 	}
-}
-
-type metadata struct {
-	address  string
-	scheme   string
-	username string
-	password string
-}
-
-func parseConsulMetadata(meta lock.Metadata) (metadata, error) {
-	m := metadata{}
-
-	if val, ok := meta.Properties[address]; ok && val != "" {
-		m.address = val
-	} else {
-		return m, errors.New("consul error: missing host address")
-	}
-
-	m.scheme = defaultScheme
-	if val, ok := meta.Properties[scheme]; ok && val != "" {
-		m.scheme = val
-	}
-
-	if val, ok := meta.Properties[username]; ok && val != "" {
-		m.username = val
-	}
-	if val, ok := meta.Properties[password]; ok && val != "" {
-		m.password = val
-	}
-
-	return m, nil
 }
