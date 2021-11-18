@@ -14,5 +14,50 @@
  */
 package spec.sdk.runtime.v1.domain;
 
+import spec.sdk.runtime.v1.domain.file.GetFileRequest;
+import spec.sdk.runtime.v1.domain.file.PutFileRequest;
+import spec.sdk.runtime.v1.domain.file.DelFileRequest;
+import spec.sdk.runtime.v1.domain.file.ListFileResponse;
+import spec.sdk.runtime.v1.domain.file.ListFileRequest;
+import spec.sdk.runtime.v1.domain.file.GetMetaRequest;
+import spec.sdk.runtime.v1.domain.file.GetMeteResponse;
+
 public interface FileRuntime {
+
+    /**
+     * save or update file
+     *
+     * @param request
+     * @param timeoutMs If the time is less than or equal to zero, the method will not wait at all.
+     * @throws Exception Instance of RuntimeClientException Or StatusRuntimeException
+     */
+    void putFile(PutFileRequest request, int timeoutMs) throws Exception;
+
+    /**
+     * @param request
+     * @param timeoutMs If the time is less than or equal to zero, the method will not wait at all.
+     * @throws Exception Instance of RuntimeClientException Or StatusRuntimeException
+     */
+    void getFile(GetFileRequest request, int timeoutMs) throws Exception;
+
+    /**
+     * @param request
+     * @param timeoutMs If the time is less than or equal to zero, the method will not wait at all.
+     * @throws Exception Instance of RuntimeClientException Or StatusRuntimeException
+     */
+    ListFileResponse listFile(ListFileRequest request, int timeoutMs) throws Exception;
+
+    /**
+     * @param request
+     * @param timeoutMs If the time is less than or equal to zero, the method will not wait at all.
+     * @throws Exception Instance of RuntimeClientException Or StatusRuntimeException
+     */
+    void delFile(DelFileRequest request, int timeoutMs) throws Exception;
+
+    /**
+     * @param request
+     * @param timeoutMs If the time is less than or equal to zero, the method will not wait at all.
+     * @throws Exception Instance of RuntimeClientException Or StatusRuntimeException
+     */
+    GetMeteResponse getMeta(GetMetaRequest request, int timeoutMs) throws Exception;
 }
