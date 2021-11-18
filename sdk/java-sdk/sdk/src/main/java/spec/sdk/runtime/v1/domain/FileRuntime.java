@@ -14,5 +14,37 @@
  */
 package spec.sdk.runtime.v1.domain;
 
+import spec.sdk.runtime.v1.domain.file.*;
+
 public interface FileRuntime {
+
+    /**
+     * save or update file
+     *
+     * @param request
+     * @param timeoutMs If the time is less than or equal to zero, the method will not wait at all.
+     * @throws Exception Instance of RuntimeClientException Or StatusRuntimeException
+     */
+    void PutFile(PutFileRequest request, int timeoutMs) throws Exception;
+
+    /**
+     * @param request
+     * @param timeoutMs If the time is less than or equal to zero, the method will not wait at all.
+     * @throws Exception Instance of RuntimeClientException Or StatusRuntimeException
+     */
+    void GetFile(GetFileRequest request, int timeoutMs) throws Exception;
+
+    /**
+     * @param request
+     * @param timeoutMs If the time is less than or equal to zero, the method will not wait at all.
+     * @throws Exception Instance of RuntimeClientException Or StatusRuntimeException
+     */
+    ListFileResponse ListFile(ListFileRequest request, int timeoutMs) throws Exception;
+
+    /**
+     * @param request
+     * @param timeoutMs If the time is less than or equal to zero, the method will not wait at all.
+     * @throws Exception Instance of RuntimeClientException Or StatusRuntimeException
+     */
+    void DelFile(DelFileRequest request, int timeoutMs) throws Exception;
 }

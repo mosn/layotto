@@ -17,8 +17,11 @@ package io.mosn.layotto.v1;
 import com.google.common.base.Strings;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.Empty;
 import io.grpc.Metadata;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.MetadataUtils;
+import io.grpc.stub.StreamObserver;
 import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.exceptions.RuntimeClientException;
 import io.mosn.layotto.v1.grpc.GrpcRuntimeClient;
@@ -27,13 +30,13 @@ import io.mosn.layotto.v1.serializer.ObjectSerializer;
 import org.slf4j.Logger;
 import spec.proto.runtime.v1.RuntimeGrpc;
 import spec.proto.runtime.v1.RuntimeProto;
+import spec.sdk.runtime.v1.domain.file.*;
 import spec.sdk.runtime.v1.domain.invocation.InvokeResponse;
 import spec.sdk.runtime.v1.domain.state.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRuntimeClient {
@@ -108,7 +111,7 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
             // 3. parse result
             InvokeResponse<byte[]> result = new InvokeResponse<>();
             result.setContentType(resp.getContentType());
-            byte[] bytes = new byte[] {};
+            byte[] bytes = new byte[]{};
             result.setData(bytes);
             if (resp.getData() == null) {
                 return result;
@@ -495,5 +498,314 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
     @Override
     public void shutdown() {
         stubManager.destroy();
+    }
+
+    @Override
+    public void PutFile(PutFileRequest request, int timeoutMs) throws Exception {
+
+        Exception exp = this.checkParamOfPutFile(request);
+        if (exp != null) {
+            logger.error("put File error ", exp);
+            throw exp;
+        }
+
+        CountDownLatch uploadLatch = new CountDownLatch(1);
+
+        PutFileCallback callback = new PutFileCallback(request.filename, uploadLatch);
+        StreamObserver<RuntimeProto.PutFileRequest> observer = this.createPutFileObserver(callback, timeoutMs);
+
+        observer.onNext(buildPutFileMetaDataRequest(request.storeName, request.filename, request.metaData));
+
+        byte[] buf = new byte[4096];
+        for (int size = request.in.read(buf); size > 0; size = request.in.read(buf)) {
+            observer.onNext(buildPutFileDataRequest(buf, size));
+        }
+
+        observer.onCompleted();
+
+        waitForUploading(uploadLatch, request.filename, timeoutMs);
+
+        throwPutFileException(callback);
+    }
+
+    @Override
+    public void GetFile(GetFileRequest request, int timeoutMs) throws Exception {
+
+        Exception exp = this.checkParamOfGetFile(request);
+        if (exp != null) {
+            logger.error("get file error ", exp);
+            throw exp;
+        }
+
+        Iterator<RuntimeProto.GetFileResponse> resItr = stubManager.
+            getBlockingStub().
+            withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS).
+            getFile(
+                buildGetFileRequest(request.storeName, request.filename, request.metaData));
+
+        while (resItr.hasNext()) {
+            request.out.
+                write(
+                resItr.
+                    next().
+                    getData().toByteArray());
+        }
+    }
+
+    @Override
+    public ListFileResponse ListFile(ListFileRequest request, int timeoutMs) throws Exception {
+
+        Exception exp = this.checkParamOfListFile(request);
+        if (exp != null) {
+            logger.error("list file error: ", exp);
+            throw exp;
+        }
+
+        RuntimeProto.ListFileResp response = stubManager.
+            getBlockingStub().
+            withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS).
+            listFile(
+                buildListFileRequest(request.storeName, request.metaData));
+
+        List<RuntimeProto.FileInfo> files = response.getFilesList();
+        String[] names = new String[files.size()];
+        for (int i = 0; i < files.size(); i++) {
+            names[i] = files.get(i).getFileName();
+        }
+
+        return new ListFileResponse(names);
+    }
+
+    @Override
+    public void DelFile(DelFileRequest request, int timeoutMs) throws Exception {
+
+        Exception exp = this.checkParamOfDeleteFile(request);
+        if (exp != null) {
+            logger.error("delete file error: ", exp);
+            throw exp;
+        }
+
+        stubManager.
+            getBlockingStub().
+            withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS).
+            delFile(
+                buildDelFileRequest(request.storeName, request.filename, request.metaData));
+    }
+
+    private Exception checkParamOfGetFile(GetFileRequest request) {
+
+        // check request
+        if (request == null) {
+            return new IllegalArgumentException("miss request");
+        }
+
+        // check output stream
+        if (request.out == null) {
+            return new IllegalArgumentException("miss file stream");
+        }
+
+        // check store name
+        if (request.storeName == null) {
+            return new IllegalArgumentException("miss store name");
+        }
+
+        // check file name
+        if (request.filename == null) {
+            return new IllegalArgumentException("miss file name");
+        }
+
+        return null;
+    }
+
+    private Exception checkParamOfPutFile(PutFileRequest request) {
+
+        // check request
+        if (request == null) {
+            return new IllegalArgumentException("miss request");
+        }
+
+        // check store name
+        if (request.storeName == null) {
+            return new IllegalArgumentException("miss store name");
+        }
+
+        // check file name
+        if (request.filename == null) {
+            return new IllegalArgumentException("miss file name");
+        }
+
+        // check input stream
+        if (request.in == null) {
+            return new IllegalArgumentException("miss file stream");
+        }
+
+        return null;
+    }
+
+    private Exception checkParamOfListFile(ListFileRequest request) {
+
+        // check request
+        if (request == null) {
+            return new IllegalArgumentException("miss request");
+        }
+
+        // check store name
+        if (request.storeName == null) {
+            return new IllegalArgumentException("miss store name");
+        }
+
+        return null;
+    }
+
+    private Exception checkParamOfDeleteFile(DelFileRequest request) {
+
+        // check request
+        if (request == null) {
+            return new IllegalArgumentException("miss request");
+        }
+
+        // check file name
+        if (request.filename == null) {
+            return new IllegalArgumentException("miss file name");
+        }
+
+        // check store name
+        if (request.storeName == null) {
+            return new IllegalArgumentException("miss store name");
+        }
+
+        return null;
+    }
+
+    private class PutFileCallback implements StreamObserver<Empty> {
+
+        private final String         fileName;
+        private final CountDownLatch latch;
+
+        private volatile Throwable   t;
+
+        PutFileCallback(String fileName, CountDownLatch latch) {
+            this.fileName = fileName;
+            this.latch = latch;
+        }
+
+        @Override
+        public void onNext(Empty value) {
+            logger.info(String.format("put File %s successfully", this.fileName));
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            logger.error(String.format("put File error, file=%s", this.fileName), t);
+            this.t = t;
+            this.latch.countDown();
+        }
+
+        @Override
+        public void onCompleted() {
+            logger.info(String.format("put File %s complete", this.fileName));
+            this.latch.countDown();
+        }
+
+        public void throwException() throws Throwable {
+            if (this.t != null) {
+                throw t;
+            }
+        }
+    }
+
+    private StreamObserver<RuntimeProto.PutFileRequest> createPutFileObserver(
+                                                                              StreamObserver<Empty> callBackObserver,
+                                                                              int timeoutMs) {
+
+        return stubManager.
+            getAsyncStub().
+            withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS).
+            putFile(callBackObserver);
+    }
+
+    private RuntimeProto.PutFileRequest buildPutFileMetaDataRequest(String storeName,
+                                                                    String fileName,
+                                                                    Map<String, String> meta) {
+        return RuntimeProto.PutFileRequest.
+            newBuilder().
+            setStoreName(storeName).
+            setName(fileName).
+            putAllMetadata(meta).
+            build();
+    }
+
+    private RuntimeProto.PutFileRequest buildPutFileDataRequest(byte[] bytes, int size) {
+
+        return RuntimeProto.PutFileRequest.
+            newBuilder().
+            setData(ByteString.copyFrom(bytes, 0, size)).
+            build();
+    }
+
+    private RuntimeProto.GetFileRequest buildGetFileRequest(String storeName,
+                                                            String fileName,
+                                                            Map<String, String> meta) {
+
+        return RuntimeProto.GetFileRequest.
+            newBuilder().
+            setStoreName(storeName).
+            setName(fileName).
+            putAllMetadata(meta).
+            build();
+    }
+
+    private RuntimeProto.ListFileRequest buildListFileRequest(String storeName, Map<String, String> meta) {
+
+        RuntimeProto.FileRequest fileRequest = RuntimeProto.FileRequest.
+            newBuilder().
+            setStoreName(storeName).
+            putAllMetadata(meta).
+            build();
+
+        return RuntimeProto.ListFileRequest.
+            newBuilder().
+            setRequest(fileRequest).
+            build();
+    }
+
+    private RuntimeProto.DelFileRequest buildDelFileRequest(String storeName,
+                                                            String fileName,
+                                                            Map<String, String> meta) {
+
+        RuntimeProto.FileRequest fileRequest = RuntimeProto.FileRequest.
+            newBuilder().
+            setStoreName(storeName).
+            setName(fileName).
+            putAllMetadata(meta).
+            build();
+
+        return RuntimeProto.DelFileRequest.
+            newBuilder().
+            setRequest(fileRequest).
+            build();
+    }
+
+    private void waitForUploading(CountDownLatch latch, String fileName, int timeoutMs) throws Exception {
+
+        boolean finished = latch.await(timeoutMs, TimeUnit.MILLISECONDS);
+        if (finished) {
+            return;
+        }
+
+        String tip = String.format("put file timeout, file=%s", fileName);
+        logger.error(tip);
+        throw new RuntimeClientException("PUT_FILE", tip);
+    }
+
+    private void throwPutFileException(PutFileCallback callback) {
+
+        try {
+            callback.throwException();
+        } catch (StatusRuntimeException exception) { // not wrap for grpc Exception
+            throw exception;
+        } catch (Throwable t) {
+            throw new RuntimeClientException(t);
+        }
     }
 }
