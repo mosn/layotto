@@ -14,16 +14,12 @@
 package lock
 
 type LockStore interface {
-
-	// Init this component
+	// Init lock
 	Init(metadata Metadata) error
-
-	// Features return the feature set this component supports
+	// Get lock's features
 	Features() []Feature
-
-	// TryLock tries to acquire a lock
+	// Node tries to acquire a lock
 	TryLock(req *TryLockRequest) (*TryLockResponse, error)
-
-	// Unlock tries to release a lock
+	// Node tries to release a lock
 	Unlock(req *UnlockRequest) (*UnlockResponse, error)
 }
