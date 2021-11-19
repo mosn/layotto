@@ -94,12 +94,22 @@ func (d *DoubleBuffer) getId() (int64, error) {
 	//equal make sure only one thread enter
 	if d.inUseBuffer.to-d.inUseBuffer.from == defaultLimit {
 		utils.GoWithRecover(func() {
-
-			//retry get buffer
+			//quick retry
 			for i := 0; i < defaultRetry; i++ {
 				buffer, err := d.getNewBuffer()
 				if err != nil {
 					log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
+					continue
+				}
+				d.backUpBufferChan <- buffer
+				return
+			}
+			//slow retry
+			for true {
+				buffer, err := d.getNewBuffer()
+				if err != nil {
+					log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
+					time.Sleep(waitTime)
 					continue
 				}
 				d.backUpBufferChan <- buffer
@@ -120,7 +130,7 @@ func (d *DoubleBuffer) swap() error {
 			d.inUseBuffer = buffer
 			return nil
 		}
-	//timeout, getNewBuffer by self
+	//timeout, return error
 	case <-time.After(waitTime):
 		{
 			return errors.New("[DoubleBuffer] swap error")
