@@ -179,6 +179,60 @@ public final class AppCallbackProto {
      */
     com.google.protobuf.ByteString
         getPubsubNameBytes();
+
+    /**
+     * <pre>
+     * add a map to pass some extra properties.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 10;</code>
+     */
+    int getMetadataCount();
+    /**
+     * <pre>
+     * add a map to pass some extra properties.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 10;</code>
+     */
+    boolean containsMetadata(
+        java.lang.String key);
+    /**
+     * Use {@link #getMetadataMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, java.lang.String>
+    getMetadata();
+    /**
+     * <pre>
+     * add a map to pass some extra properties.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 10;</code>
+     */
+    java.util.Map<java.lang.String, java.lang.String>
+    getMetadataMap();
+    /**
+     * <pre>
+     * add a map to pass some extra properties.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 10;</code>
+     */
+
+    java.lang.String getMetadataOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue);
+    /**
+     * <pre>
+     * add a map to pass some extra properties.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 10;</code>
+     */
+
+    java.lang.String getMetadataOrThrow(
+        java.lang.String key);
   }
   /**
    * <pre>
@@ -228,6 +282,7 @@ public final class AppCallbackProto {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -285,6 +340,19 @@ public final class AppCallbackProto {
               pubsubName_ = s;
               break;
             }
+            case 82: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                metadata_ = com.google.protobuf.MapField.newMapField(
+                    MetadataDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000001;
+              }
+              com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+              metadata__ = input.readMessage(
+                  MetadataDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              metadata_.getMutableMap().put(
+                  metadata__.getKey(), metadata__.getValue());
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -309,6 +377,18 @@ public final class AppCallbackProto {
       return spec.proto.runtime.v1.AppCallbackProto.internal_static_spec_proto_runtime_v1_TopicEventRequest_descriptor;
     }
 
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 10:
+          return internalGetMetadata();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
@@ -666,6 +746,103 @@ public final class AppCallbackProto {
       }
     }
 
+    public static final int METADATA_FIELD_NUMBER = 10;
+    private static final class MetadataDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.String, java.lang.String> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.String, java.lang.String>newDefaultInstance(
+                  spec.proto.runtime.v1.AppCallbackProto.internal_static_spec_proto_runtime_v1_TopicEventRequest_MetadataEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "");
+    }
+    private com.google.protobuf.MapField<
+        java.lang.String, java.lang.String> metadata_;
+    private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+    internalGetMetadata() {
+      if (metadata_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            MetadataDefaultEntryHolder.defaultEntry);
+      }
+      return metadata_;
+    }
+
+    public int getMetadataCount() {
+      return internalGetMetadata().getMap().size();
+    }
+    /**
+     * <pre>
+     * add a map to pass some extra properties.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 10;</code>
+     */
+
+    @java.lang.Override
+    public boolean containsMetadata(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetMetadata().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getMetadataMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
+      return getMetadataMap();
+    }
+    /**
+     * <pre>
+     * add a map to pass some extra properties.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 10;</code>
+     */
+    @java.lang.Override
+
+    public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
+      return internalGetMetadata().getMap();
+    }
+    /**
+     * <pre>
+     * add a map to pass some extra properties.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 10;</code>
+     */
+    @java.lang.Override
+
+    public java.lang.String getMetadataOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetMetadata().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <pre>
+     * add a map to pass some extra properties.
+     * </pre>
+     *
+     * <code>map&lt;string, string&gt; metadata = 10;</code>
+     */
+    @java.lang.Override
+
+    public java.lang.String getMetadataOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetMetadata().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -704,6 +881,12 @@ public final class AppCallbackProto {
       if (!getPubsubNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 8, pubsubName_);
       }
+      com.google.protobuf.GeneratedMessageV3
+        .serializeStringMapTo(
+          output,
+          internalGetMetadata(),
+          MetadataDefaultEntryHolder.defaultEntry,
+          10);
       unknownFields.writeTo(output);
     }
 
@@ -738,6 +921,16 @@ public final class AppCallbackProto {
       if (!getPubsubNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, pubsubName_);
       }
+      for (java.util.Map.Entry<java.lang.String, java.lang.String> entry
+           : internalGetMetadata().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+        metadata__ = MetadataDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(10, metadata__);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -769,6 +962,8 @@ public final class AppCallbackProto {
           .equals(other.getTopic())) return false;
       if (!getPubsubName()
           .equals(other.getPubsubName())) return false;
+      if (!internalGetMetadata().equals(
+          other.internalGetMetadata())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -796,6 +991,10 @@ public final class AppCallbackProto {
       hash = (53 * hash) + getTopic().hashCode();
       hash = (37 * hash) + PUBSUB_NAME_FIELD_NUMBER;
       hash = (53 * hash) + getPubsubName().hashCode();
+      if (!internalGetMetadata().getMap().isEmpty()) {
+        hash = (37 * hash) + METADATA_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetMetadata().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -908,6 +1107,28 @@ public final class AppCallbackProto {
         return spec.proto.runtime.v1.AppCallbackProto.internal_static_spec_proto_runtime_v1_TopicEventRequest_descriptor;
       }
 
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 10:
+            return internalGetMetadata();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 10:
+            return internalGetMutableMetadata();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
@@ -950,6 +1171,7 @@ public final class AppCallbackProto {
 
         pubsubName_ = "";
 
+        internalGetMutableMetadata().clear();
         return this;
       }
 
@@ -976,6 +1198,7 @@ public final class AppCallbackProto {
       @java.lang.Override
       public spec.proto.runtime.v1.AppCallbackProto.TopicEventRequest buildPartial() {
         spec.proto.runtime.v1.AppCallbackProto.TopicEventRequest result = new spec.proto.runtime.v1.AppCallbackProto.TopicEventRequest(this);
+        int from_bitField0_ = bitField0_;
         result.id_ = id_;
         result.source_ = source_;
         result.type_ = type_;
@@ -984,6 +1207,8 @@ public final class AppCallbackProto {
         result.data_ = data_;
         result.topic_ = topic_;
         result.pubsubName_ = pubsubName_;
+        result.metadata_ = internalGetMetadata();
+        result.metadata_.makeImmutable();
         onBuilt();
         return result;
       }
@@ -1063,6 +1288,8 @@ public final class AppCallbackProto {
           pubsubName_ = other.pubsubName_;
           onChanged();
         }
+        internalGetMutableMetadata().mergeFrom(
+            other.internalGetMetadata());
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -1091,6 +1318,7 @@ public final class AppCallbackProto {
         }
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object id_ = "";
       /**
@@ -1837,6 +2065,162 @@ public final class AppCallbackProto {
         
         pubsubName_ = value;
         onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.MapField<
+          java.lang.String, java.lang.String> metadata_;
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetMetadata() {
+        if (metadata_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              MetadataDefaultEntryHolder.defaultEntry);
+        }
+        return metadata_;
+      }
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetMutableMetadata() {
+        onChanged();;
+        if (metadata_ == null) {
+          metadata_ = com.google.protobuf.MapField.newMapField(
+              MetadataDefaultEntryHolder.defaultEntry);
+        }
+        if (!metadata_.isMutable()) {
+          metadata_ = metadata_.copy();
+        }
+        return metadata_;
+      }
+
+      public int getMetadataCount() {
+        return internalGetMetadata().getMap().size();
+      }
+      /**
+       * <pre>
+       * add a map to pass some extra properties.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 10;</code>
+       */
+
+      @java.lang.Override
+      public boolean containsMetadata(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        return internalGetMetadata().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getMetadataMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
+        return getMetadataMap();
+      }
+      /**
+       * <pre>
+       * add a map to pass some extra properties.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 10;</code>
+       */
+      @java.lang.Override
+
+      public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
+        return internalGetMetadata().getMap();
+      }
+      /**
+       * <pre>
+       * add a map to pass some extra properties.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 10;</code>
+       */
+      @java.lang.Override
+
+      public java.lang.String getMetadataOrDefault(
+          java.lang.String key,
+          java.lang.String defaultValue) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetMetadata().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <pre>
+       * add a map to pass some extra properties.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 10;</code>
+       */
+      @java.lang.Override
+
+      public java.lang.String getMetadataOrThrow(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetMetadata().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearMetadata() {
+        internalGetMutableMetadata().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <pre>
+       * add a map to pass some extra properties.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 10;</code>
+       */
+
+      public Builder removeMetadata(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableMetadata().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String>
+      getMutableMetadata() {
+        return internalGetMutableMetadata().getMutableMap();
+      }
+      /**
+       * <pre>
+       * add a map to pass some extra properties.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 10;</code>
+       */
+      public Builder putMetadata(
+          java.lang.String key,
+          java.lang.String value) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        if (value == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableMetadata().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <pre>
+       * add a map to pass some extra properties.
+       * </pre>
+       *
+       * <code>map&lt;string, string&gt; metadata = 10;</code>
+       */
+
+      public Builder putAllMetadata(
+          java.util.Map<java.lang.String, java.lang.String> values) {
+        internalGetMutableMetadata().getMutableMap()
+            .putAll(values);
         return this;
       }
       @java.lang.Override
@@ -4707,6 +5091,11 @@ public final class AppCallbackProto {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_spec_proto_runtime_v1_TopicEventRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_spec_proto_runtime_v1_TopicEventRequest_MetadataEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_spec_proto_runtime_v1_TopicEventRequest_MetadataEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_spec_proto_runtime_v1_TopicEventResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -4737,30 +5126,33 @@ public final class AppCallbackProto {
     java.lang.String[] descriptorData = {
       "\n\"proto/runtime/v1/appcallback.proto\022\025sp" +
       "ec.proto.runtime.v1\032\033google/protobuf/emp" +
-      "ty.proto\"\240\001\n\021TopicEventRequest\022\n\n\002id\030\001 \001" +
+      "ty.proto\"\233\002\n\021TopicEventRequest\022\n\n\002id\030\001 \001" +
       "(\t\022\016\n\006source\030\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\024\n\014spec" +
       "_version\030\004 \001(\t\022\031\n\021data_content_type\030\005 \001(" +
       "\t\022\014\n\004data\030\007 \001(\014\022\r\n\005topic\030\006 \001(\t\022\023\n\013pubsub" +
-      "_name\030\010 \001(\t\"\246\001\n\022TopicEventResponse\022R\n\006st" +
-      "atus\030\001 \001(\0162B.spec.proto.runtime.v1.Topic" +
-      "EventResponse.TopicEventResponseStatus\"<" +
-      "\n\030TopicEventResponseStatus\022\013\n\007SUCCESS\020\000\022" +
-      "\t\n\005RETRY\020\001\022\010\n\004DROP\020\002\"a\n\036ListTopicSubscri" +
-      "ptionsResponse\022?\n\rsubscriptions\030\001 \003(\0132(." +
-      "spec.proto.runtime.v1.TopicSubscription\"" +
-      "\262\001\n\021TopicSubscription\022\023\n\013pubsub_name\030\001 \001" +
-      "(\t\022\r\n\005topic\030\002 \001(\t\022H\n\010metadata\030\003 \003(\01326.sp" +
-      "ec.proto.runtime.v1.TopicSubscription.Me" +
-      "tadataEntry\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(" +
-      "\t\022\r\n\005value\030\002 \001(\t:\0028\0012\337\001\n\013AppCallback\022i\n\026" +
-      "ListTopicSubscriptions\022\026.google.protobuf" +
-      ".Empty\0325.spec.proto.runtime.v1.ListTopic" +
-      "SubscriptionsResponse\"\000\022e\n\014OnTopicEvent\022" +
-      "(.spec.proto.runtime.v1.TopicEventReques" +
-      "t\032).spec.proto.runtime.v1.TopicEventResp" +
-      "onse\"\000BX\n\025spec.proto.runtime.v1B\020AppCall" +
-      "backProtoZ-mosn.io/layotto/spec/proto/ru" +
-      "ntime/v1;runtimeb\006proto3"
+      "_name\030\010 \001(\t\022H\n\010metadata\030\n \003(\01326.spec.pro" +
+      "to.runtime.v1.TopicEventRequest.Metadata" +
+      "Entry\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005v" +
+      "alue\030\002 \001(\t:\0028\001\"\246\001\n\022TopicEventResponse\022R\n" +
+      "\006status\030\001 \001(\0162B.spec.proto.runtime.v1.To" +
+      "picEventResponse.TopicEventResponseStatu" +
+      "s\"<\n\030TopicEventResponseStatus\022\013\n\007SUCCESS" +
+      "\020\000\022\t\n\005RETRY\020\001\022\010\n\004DROP\020\002\"a\n\036ListTopicSubs" +
+      "criptionsResponse\022?\n\rsubscriptions\030\001 \003(\013" +
+      "2(.spec.proto.runtime.v1.TopicSubscripti" +
+      "on\"\262\001\n\021TopicSubscription\022\023\n\013pubsub_name\030" +
+      "\001 \001(\t\022\r\n\005topic\030\002 \001(\t\022H\n\010metadata\030\003 \003(\01326" +
+      ".spec.proto.runtime.v1.TopicSubscription" +
+      ".MetadataEntry\032/\n\rMetadataEntry\022\013\n\003key\030\001" +
+      " \001(\t\022\r\n\005value\030\002 \001(\t:\0028\0012\337\001\n\013AppCallback\022" +
+      "i\n\026ListTopicSubscriptions\022\026.google.proto" +
+      "buf.Empty\0325.spec.proto.runtime.v1.ListTo" +
+      "picSubscriptionsResponse\"\000\022e\n\014OnTopicEve" +
+      "nt\022(.spec.proto.runtime.v1.TopicEventReq" +
+      "uest\032).spec.proto.runtime.v1.TopicEventR" +
+      "esponse\"\000BX\n\025spec.proto.runtime.v1B\020AppC" +
+      "allbackProtoZ-mosn.io/layotto/spec/proto" +
+      "/runtime/v1;runtimeb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -4772,7 +5164,13 @@ public final class AppCallbackProto {
     internal_static_spec_proto_runtime_v1_TopicEventRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_spec_proto_runtime_v1_TopicEventRequest_descriptor,
-        new java.lang.String[] { "Id", "Source", "Type", "SpecVersion", "DataContentType", "Data", "Topic", "PubsubName", });
+        new java.lang.String[] { "Id", "Source", "Type", "SpecVersion", "DataContentType", "Data", "Topic", "PubsubName", "Metadata", });
+    internal_static_spec_proto_runtime_v1_TopicEventRequest_MetadataEntry_descriptor =
+      internal_static_spec_proto_runtime_v1_TopicEventRequest_descriptor.getNestedTypes().get(0);
+    internal_static_spec_proto_runtime_v1_TopicEventRequest_MetadataEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_spec_proto_runtime_v1_TopicEventRequest_MetadataEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
     internal_static_spec_proto_runtime_v1_TopicEventResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_spec_proto_runtime_v1_TopicEventResponse_fieldAccessorTable = new

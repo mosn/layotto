@@ -33,7 +33,7 @@
   - [API reference](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
   - SDK reference
     - [go sdk](en/sdk_reference/go/start.md)
-    - [java sdk](en/sdk_reference/java/start.md)
+    - [java sdk](https://github.com/mosn/layotto/tree/main/sdk/java-sdk)
     - [.net sdk](https://github.com/layotto/dotnet-sdk)
     - [js sdk](https://github.com/layotto/js-sdk)
   - [Configuration reference](en/configuration/overview.md)  

@@ -1,3 +1,17 @@
+/*
+ * Copyright 2021 Layotto Authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.mosn.layotto.v1;
 
 import com.google.common.base.Strings;
@@ -24,8 +38,8 @@ import java.util.concurrent.TimeUnit;
 
 public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRuntimeClient {
 
-    private static final String                                                                TIMEOUT_KEY = "timeout";
-    private final        StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager;
+    private static final String                                                         TIMEOUT_KEY = "timeout";
+    private final StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager;
 
     RuntimeClientGrpc(Logger logger,
                       int timeoutMs,
@@ -40,15 +54,15 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
         try {
             // 1. prepare request
             RuntimeProto.SayHelloRequest req = RuntimeProto.SayHelloRequest.newBuilder()
-                    .setServiceName(name)
-                    .setName(name)
-                    .build();
+                .setServiceName(name)
+                .setName(name)
+                .build();
 
             // 2. invoke
             RuntimeProto.SayHelloResponse response = stubManager.getBlockingStub()
-                    .withDeadlineAfter(timeoutMillisecond,
-                            TimeUnit.MILLISECONDS)
-                    .sayHello(req);
+                .withDeadlineAfter(timeoutMillisecond,
+                    TimeUnit.MILLISECONDS)
+                .sayHello(req);
 
             // 3. parse result
             return response.getHello();
@@ -114,7 +128,8 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
     }
 
     @Override
-    public void publishEvent(String pubsubName, String topicName, byte[] data, String contentType, Map<String, String> metadata) {
+    public void publishEvent(String pubsubName, String topicName, byte[] data, String contentType,
+                             Map<String, String> metadata) {
         try {
             // 1. prepare data
             if (data == null) {
@@ -129,10 +144,10 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
 
             // 2. prepare request
             RuntimeProto.PublishEventRequest.Builder envelopeBuilder = RuntimeProto.PublishEventRequest.newBuilder()
-                    .setTopic(topicName)
-                    .setPubsubName(pubsubName)
-                    .setData(byteString)
-                    .setDataContentType(contentType);
+                .setTopic(topicName)
+                .setPubsubName(pubsubName)
+                .setData(byteString)
+                .setDataContentType(contentType);
             // metadata
             if (metadata != null) {
                 envelopeBuilder.putAllMetadata(metadata);
@@ -162,14 +177,14 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
             for (State<?> state : states) {
                 // convert request and do serialization
                 RuntimeProto.StateItem stateItem = buildStateRequest(state)
-                        .build();
+                    .build();
                 builder.addStates(stateItem);
             }
             RuntimeProto.SaveStateRequest req = builder.build();
             // 3. invoke
             this.stubManager.getBlockingStub()
-                    .withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS)
-                    .saveState(req);
+                .withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS)
+                .saveState(req);
         } catch (Exception e) {
             logger.error("saveBulkState error ", e);
             throw new RuntimeClientException(e);
@@ -191,8 +206,8 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
         // 2. etag
         if (state.getEtag() != null) {
             RuntimeProto.Etag etag = RuntimeProto.Etag.newBuilder()
-                    .setValue(state.getEtag())
-                    .build();
+                .setValue(state.getEtag())
+                .build();
             stateBuilder.setEtag(etag);
         }
         // 3. metadata
@@ -253,15 +268,15 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
                 }
             }
             RuntimeProto.DeleteStateRequest.Builder builder = RuntimeProto.DeleteStateRequest.newBuilder()
-                    .setStoreName(stateStoreName)
-                    .setKey(key);
+                .setStoreName(stateStoreName)
+                .setKey(key);
             if (metadata != null) {
                 builder.putAllMetadata(metadata);
             }
             if (etag != null) {
                 RuntimeProto.Etag value = RuntimeProto.Etag.newBuilder()
-                        .setValue(etag)
-                        .build();
+                    .setValue(etag)
+                    .build();
                 builder.setEtag(value);
             }
             if (optionBuilder != null) {
@@ -272,8 +287,8 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
 
             // 3. invoke
             this.stubManager.getBlockingStub()
-                    .withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS)
-                    .deleteState(req);
+                .withDeadlineAfter(timeoutMs, TimeUnit.MILLISECONDS)
+                .deleteState(req);
         } catch (Exception e) {
             logger.error("deleteState error ", e);
             throw new RuntimeClientException(e);
@@ -314,11 +329,13 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
         final Map<String, String> metadata = request.getMetadata();
 
         // 1. validate
-        assertTrue(stateStoreName != null && !stateStoreName.trim().isEmpty(), "stateStoreName cannot be null or empty.");
+        assertTrue(stateStoreName != null && !stateStoreName.trim().isEmpty(),
+            "stateStoreName cannot be null or empty.");
         assertTrue(operations != null && !operations.isEmpty(), "operations cannot be null or empty.");
         try {
             // 2. construct request object
-            RuntimeProto.ExecuteStateTransactionRequest.Builder builder = RuntimeProto.ExecuteStateTransactionRequest.newBuilder();
+            RuntimeProto.ExecuteStateTransactionRequest.Builder builder = RuntimeProto.ExecuteStateTransactionRequest
+                .newBuilder();
             builder.setStoreName(stateStoreName);
             if (metadata != null) {
                 builder.putAllMetadata(metadata);
@@ -332,13 +349,14 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
                 assertTrue(k != null && !k.isEmpty(), "request cannot be null.");
 
                 // build grpc request
-                RuntimeProto.TransactionalStateOperation.Builder operationBuilder = RuntimeProto.TransactionalStateOperation.newBuilder();
+                RuntimeProto.TransactionalStateOperation.Builder operationBuilder = RuntimeProto.TransactionalStateOperation
+                    .newBuilder();
                 String operationType = op.getOperation().toString().toLowerCase();
                 operationBuilder.setOperationType(operationType);
 
                 // convert request and do serialization
                 RuntimeProto.StateItem stateItem = buildStateRequest(req)
-                        .build();
+                    .build();
                 operationBuilder.setRequest(stateItem);
 
                 builder.addOperations(operationBuilder.build());

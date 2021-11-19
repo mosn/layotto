@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package spec.sdk.runtime.v1.domain;
 
@@ -152,7 +151,8 @@ public interface StateRuntime {
      * @param value     The value of the state.
      * @param options   The Options to use for each state.
      */
-    void saveState(String storeName, String key, String etag, Object value, StateOptions options, Map<String, String> metadata);
+    void saveState(String storeName, String key, String etag, Object value, StateOptions options,
+                   Map<String, String> metadata);
 
     /**
      * Delete a state.
