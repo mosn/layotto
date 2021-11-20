@@ -79,7 +79,38 @@ mvn clean install
 * [State management](./examples/src/main/java/io/mosn/layotto/examples/state)
 * [Pubsub API](./examples/src/main/java/io/mosn/layotto/examples/pubsub)
 
-## 如何格式化 java sdk 代码
+## java sdk开发指南
+### java sdk职责
+1. sdk负责对Layotto的grpc API进行封装、不应该有任何中间件的定制逻辑，比如不应该出现redis、rocketmq等产品相关的逻辑。
+
+2. sdk需要把所有跟通信协议相关的东西（比如proto编译出来的stub类）屏蔽掉，请勿让public方法暴露出任何跟协议相关的东西，最好protected方法也不暴露proto相关的东西。
+   这么做是因为将来可能改grpc API的package路径，甚至哪天不用grpc了（谁知道呢）。总之请让用户不用关心协议。
+
+举个例子, state API对应有个`deleteState`方法，需要传`DeleteStateRequest`对象。 
+```java
+
+    /**
+     * Delete a state.
+     *
+     * @param request Request to delete a state.
+     */
+    void deleteState(DeleteStateRequest request);
+
+```
+这个`DeleteStateRequest`是sdk定义的，其实sdk会把它转成 `RuntimeProto.DeleteStateRequest` (proto编译出来的类) 。
+
+你可能会问：为什么不能直接传`RuntimeProto.DeleteStateRequest` 呢？
+
+这就是上面说的原因，sdk需要封装掉协议相关的东西
+
+### 想为某个grpc API提供java sdk，需要做哪些事情？
+举个例子，grpc API里添加了file API，现在想为java sdk开发file API相关功能，需要做哪些事情？
+
+1. 先找个java sdk的demo跑起来，然后看懂java sdk是怎么创建对象、怎么调用的。其实java sdk就是把grpc包了一层，封装掉grpc的一些stub类，逻辑不多。
+
+2. 参考pr [feat(java-sdk): java sdk support File API](https://github.com/mosn/layotto/pull/325) . 这个pr 给java sdk添加了file API相关功能
+
+### 如何格式化 java sdk 代码
 提交pull request之前先用maven编译一下
 
 ```shell
@@ -87,16 +118,16 @@ mvn clean compile
 ```
 会自动格式化您的代码
 
-## 如何将proto文件编译成java代码
+### 如何将proto文件编译成java代码
 
-### 1. 下载编译工具 [protoc](https://github.com/protocolbuffers/protobuf/releases)
+#### 1. 下载编译工具 [protoc](https://github.com/protocolbuffers/protobuf/releases)
 my protoc version:
 ```shell
 $ protoc --version
 libprotoc 3.11.2
 ```
 
-### 2. 修改对应`proto`文件生成类名包名等信息
+#### 2. 修改对应`proto`文件生成类名包名等信息
 (需先修改文件内部service名)
 `spec/proto/runtime/v1/appcallback.proto` : 
 ```protobuf
@@ -109,7 +140,7 @@ option java_outer_classname = "RuntimeProto";
 option java_package = "spec.proto.runtime.v1";
 ```
 
-### 3. 编译其对应`JAVA`文件
+#### 3. 编译其对应`JAVA`文件
 ```shell
 cd ${your PROJECT path}/spec/proto/runtime/v1
 protoc -I=. --java_out=../../../../sdk/java-sdk/sdk/src/main/java/  runtime.proto
@@ -117,3 +148,7 @@ protoc -I=. --java_out=../../../../sdk/java-sdk/sdk/src/main/java/  appcallback.
 ```
 
 PS: 建议用maven插件`protoc-gen-grpc-java`生成protobuf和grpc的java代码
+
+如果您在使用 [IntelliJ IDEA](https://www.jetbrains.com/help/idea/discover-intellij-idea.html) ,双击 Maven插件中的 `compile` ， IDE 会自动帮你编译 proto 文件:
+
+![img.png](../../docs/img/sdk/img.png)
