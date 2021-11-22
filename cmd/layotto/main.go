@@ -19,6 +19,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	"os"
 	"strconv"
 	"time"
@@ -210,6 +211,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		),
 		// State
 		runtime.WithStateFactory(
+			runtime_state.NewFactory("mock.inmemory", func() state.Store {
+				return mock_state.NewInMemoryStateStore()
+			}),
 			runtime_state.NewFactory("redis", func() state.Store {
 				return state_redis.NewRedisStateStore(loggerForDaprComp)
 			}),
