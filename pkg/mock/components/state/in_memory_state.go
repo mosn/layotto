@@ -68,6 +68,15 @@ func (store *inMemoryStateStore) Delete(req *state.DeleteRequest) error {
 }
 
 func (store *inMemoryStateStore) BulkDelete(req []state.DeleteRequest) error {
+	if req == nil || len(req) == 0 {
+		return nil
+	}
+	for _, dr := range req {
+		err := store.Delete(&dr)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
