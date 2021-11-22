@@ -18,6 +18,8 @@
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - [trace管理](zh/start/trace/trace.md)
+    - [OSS访问文件](zh/start/file/start.md)
+    - [使用WASM进行多语言编程](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - 用户手册
     - 功能介绍
@@ -32,8 +34,10 @@
         - [RPC API](zh/building_blocks/rpc/reference.md)
     - [grpc API 文档](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
     - SDK文档    
-        - [go-sdk](zh/sdk_reference/go/start.md)
-        - [java-sdk](zh/sdk_reference/java/start.md)
+        - [go sdk](zh/sdk_reference/go/start.md)
+        - [java sdk](https://github.com/mosn/layotto/blob/main/sdk/java-sdk/README-zh.md)
+        - [.net sdk](https://github.com/layotto/dotnet-sdk)
+        - [js sdk](https://github.com/layotto/js-sdk)
     - [配置文档](zh/configuration/overview.md)
     - [组件文档](zh/component_specs/overview.md)
         - [State](zh/component_specs/state/common.md)
@@ -49,10 +53,8 @@
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)
             - [Apollo](zh/component_specs/configuration/apollo.md)
-        - File
+        - [File](zh/component_specs/file/common.md)
             - [OSS](zh/component_specs/file/oss.md)
-            - [Etcd](zh/component_specs/configuration/etcd.md)        
-            - [Apollo](zh/component_specs/configuration/apollo.md)        
         - [Sequencer](zh/component_specs/sequencer/common.md)
             - [Etcd](zh/component_specs/sequencer/etcd.md)
             - [Redis](zh/component_specs/sequencer/redis.md)

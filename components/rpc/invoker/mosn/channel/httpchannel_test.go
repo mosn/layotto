@@ -19,11 +19,13 @@ package channel
 import (
 	"bufio"
 	"context"
+	"log"
 	"net"
 	"strconv"
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/valyala/fasthttp"
@@ -51,6 +53,8 @@ func (ts *testhttpServer) readLoop(conn net.Conn) {
 		switch content {
 		case "close":
 			return
+		case "timeout":
+			time.Sleep(2*time.Second)
 		default:
 		}
 
@@ -58,6 +62,7 @@ func (ts *testhttpServer) readLoop(conn net.Conn) {
 		resp.SetBody(req.Body())
 
 		if _, err := resp.WriteTo(conn); err != nil {
+			log.Println("test server err:", err.Error())
 			break
 		}
 	}
@@ -94,6 +99,36 @@ func TestRenewHttpConn(t *testing.T) {
 	resp, err := channel.Do(req)
 	assert.Nil(t, err)
 	assert.Equal(t, "hello", string(resp.Data))
+}
+
+func TestManyRequests(t *testing.T) {
+	startTestHttpServer()
+
+	channel, err := newHttpChannel(ChannelConfig{Size: 1})
+	assert.Nil(t, err)
+
+	for i:=0;i<100;i++{
+		req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello"), Timeout: 1000}
+		_, err = channel.Do(req)
+		assert.Nil(t, err)
+	}
+}
+
+func TestResponseTimeout(t *testing.T) {
+	startTestHttpServer()
+
+	channel, err := newHttpChannel(ChannelConfig{Size: 1})
+	assert.Nil(t, err)
+
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("timeout"), Timeout: 1000}
+	_, err = channel.Do(req)
+	assert.Error(t, err)
+
+	for i:=0;i<100;i++{
+		req = &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello"), Timeout: 1000}
+		_, err = channel.Do(req)
+		assert.Nil(t, err)
+	}
 }
 
 func TestConcurrent(t *testing.T) {

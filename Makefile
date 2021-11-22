@@ -49,4 +49,7 @@ build-linux-wasm-layotto:
 	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/faas
 	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} go build -tags wasmer -o layotto /go/src/${PROJECT_NAME}/cmd/layotto
 
+license-checker:
+	docker run -it --rm -v $(pwd):/github/workspace apache/skywalking-eyes header fix
+
 .PHONY: build

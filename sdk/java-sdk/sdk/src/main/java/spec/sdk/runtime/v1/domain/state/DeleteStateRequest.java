@@ -11,10 +11,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package spec.sdk.runtime.v1.domain.state;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,7 +26,7 @@ public class DeleteStateRequest {
 
     private final String key;
 
-    private Map<String, String> metadata;
+    private Map<String, String> metadata = new HashMap<>();
 
     private String etag;
 
@@ -61,6 +61,15 @@ public class DeleteStateRequest {
      */
     public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
+    }
+
+    public void putMetadata(String key, String value) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        if (value == null) { throw new java.lang.NullPointerException(); }
+        if (metadata == null) {
+            metadata = new HashMap<>();
+        }
+        metadata.put(key, value);
     }
 
     /**

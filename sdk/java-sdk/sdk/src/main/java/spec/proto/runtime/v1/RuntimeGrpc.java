@@ -1,11 +1,24 @@
 package spec.proto.runtime.v1;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
+import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncUnaryCall;
+import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
+import static io.grpc.stub.ClientCalls.blockingUnaryCall;
+import static io.grpc.stub.ClientCalls.futureUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /**
  */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.37.0)",
+    value = "by gRPC proto compiler (version 1.34.1)",
     comments = "Source: proto/runtime/v1/runtime.proto")
 public final class RuntimeGrpc {
 
@@ -634,6 +647,37 @@ public final class RuntimeGrpc {
     return getDelFileMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest,
+      spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> getGetFileMetaMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetFileMeta",
+      requestType = spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest.class,
+      responseType = spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest,
+      spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> getGetFileMetaMethod() {
+    io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest, spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> getGetFileMetaMethod;
+    if ((getGetFileMetaMethod = RuntimeGrpc.getGetFileMetaMethod) == null) {
+      synchronized (RuntimeGrpc.class) {
+        if ((getGetFileMetaMethod = RuntimeGrpc.getGetFileMetaMethod) == null) {
+          RuntimeGrpc.getGetFileMetaMethod = getGetFileMetaMethod =
+              io.grpc.MethodDescriptor.<spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest, spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetFileMeta"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new RuntimeMethodDescriptorSupplier("GetFileMeta"))
+              .build();
+        }
+      }
+    }
+    return getGetFileMetaMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest,
       spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse> getInvokeBindingMethod;
 
@@ -720,7 +764,7 @@ public final class RuntimeGrpc {
      */
     public void sayHello(spec.proto.runtime.v1.RuntimeProto.SayHelloRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.SayHelloResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSayHelloMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getSayHelloMethod(), responseObserver);
     }
 
     /**
@@ -730,7 +774,7 @@ public final class RuntimeGrpc {
      */
     public void invokeService(spec.proto.runtime.v1.RuntimeProto.InvokeServiceRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.InvokeResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getInvokeServiceMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getInvokeServiceMethod(), responseObserver);
     }
 
     /**
@@ -740,7 +784,7 @@ public final class RuntimeGrpc {
      */
     public void getConfiguration(spec.proto.runtime.v1.RuntimeProto.GetConfigurationRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetConfigurationResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetConfigurationMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getGetConfigurationMethod(), responseObserver);
     }
 
     /**
@@ -750,7 +794,7 @@ public final class RuntimeGrpc {
      */
     public void saveConfiguration(spec.proto.runtime.v1.RuntimeProto.SaveConfigurationRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveConfigurationMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getSaveConfigurationMethod(), responseObserver);
     }
 
     /**
@@ -760,7 +804,7 @@ public final class RuntimeGrpc {
      */
     public void deleteConfiguration(spec.proto.runtime.v1.RuntimeProto.DeleteConfigurationRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteConfigurationMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getDeleteConfigurationMethod(), responseObserver);
     }
 
     /**
@@ -770,7 +814,7 @@ public final class RuntimeGrpc {
      */
     public io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.SubscribeConfigurationRequest> subscribeConfiguration(
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.SubscribeConfigurationResponse> responseObserver) {
-      return io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall(getSubscribeConfigurationMethod(), responseObserver);
+      return asyncUnimplementedStreamingCall(getSubscribeConfigurationMethod(), responseObserver);
     }
 
     /**
@@ -781,14 +825,14 @@ public final class RuntimeGrpc {
      */
     public void tryLock(spec.proto.runtime.v1.RuntimeProto.TryLockRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.TryLockResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getTryLockMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getTryLockMethod(), responseObserver);
     }
 
     /**
      */
     public void unlock(spec.proto.runtime.v1.RuntimeProto.UnlockRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.UnlockResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUnlockMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getUnlockMethod(), responseObserver);
     }
 
     /**
@@ -799,7 +843,7 @@ public final class RuntimeGrpc {
      */
     public void getNextId(spec.proto.runtime.v1.RuntimeProto.GetNextIdRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetNextIdResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetNextIdMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getGetNextIdMethod(), responseObserver);
     }
 
     /**
@@ -809,7 +853,7 @@ public final class RuntimeGrpc {
      */
     public void getState(spec.proto.runtime.v1.RuntimeProto.GetStateRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetStateResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetStateMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getGetStateMethod(), responseObserver);
     }
 
     /**
@@ -819,7 +863,7 @@ public final class RuntimeGrpc {
      */
     public void getBulkState(spec.proto.runtime.v1.RuntimeProto.GetBulkStateRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetBulkStateResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetBulkStateMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getGetBulkStateMethod(), responseObserver);
     }
 
     /**
@@ -829,7 +873,7 @@ public final class RuntimeGrpc {
      */
     public void saveState(spec.proto.runtime.v1.RuntimeProto.SaveStateRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveStateMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getSaveStateMethod(), responseObserver);
     }
 
     /**
@@ -839,7 +883,7 @@ public final class RuntimeGrpc {
      */
     public void deleteState(spec.proto.runtime.v1.RuntimeProto.DeleteStateRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteStateMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getDeleteStateMethod(), responseObserver);
     }
 
     /**
@@ -849,7 +893,7 @@ public final class RuntimeGrpc {
      */
     public void deleteBulkState(spec.proto.runtime.v1.RuntimeProto.DeleteBulkStateRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteBulkStateMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getDeleteBulkStateMethod(), responseObserver);
     }
 
     /**
@@ -859,7 +903,7 @@ public final class RuntimeGrpc {
      */
     public void executeStateTransaction(spec.proto.runtime.v1.RuntimeProto.ExecuteStateTransactionRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getExecuteStateTransactionMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getExecuteStateTransactionMethod(), responseObserver);
     }
 
     /**
@@ -869,7 +913,7 @@ public final class RuntimeGrpc {
      */
     public void publishEvent(spec.proto.runtime.v1.RuntimeProto.PublishEventRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getPublishEventMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getPublishEventMethod(), responseObserver);
     }
 
     /**
@@ -879,7 +923,7 @@ public final class RuntimeGrpc {
      */
     public void getFile(spec.proto.runtime.v1.RuntimeProto.GetFileRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetFileResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetFileMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getGetFileMethod(), responseObserver);
     }
 
     /**
@@ -889,7 +933,7 @@ public final class RuntimeGrpc {
      */
     public io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.PutFileRequest> putFile(
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      return io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall(getPutFileMethod(), responseObserver);
+      return asyncUnimplementedStreamingCall(getPutFileMethod(), responseObserver);
     }
 
     /**
@@ -899,7 +943,7 @@ public final class RuntimeGrpc {
      */
     public void listFile(spec.proto.runtime.v1.RuntimeProto.ListFileRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.ListFileResp> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListFileMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getListFileMethod(), responseObserver);
     }
 
     /**
@@ -909,7 +953,17 @@ public final class RuntimeGrpc {
      */
     public void delFile(spec.proto.runtime.v1.RuntimeProto.DelFileRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDelFileMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getDelFileMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Get file meta data, if file not exist,return code.NotFound error
+     * </pre>
+     */
+    public void getFileMeta(spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest request,
+        io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetFileMetaMethod(), responseObserver);
     }
 
     /**
@@ -919,154 +973,161 @@ public final class RuntimeGrpc {
      */
     public void invokeBinding(spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getInvokeBindingMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getInvokeBindingMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
             getSayHelloMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.SayHelloRequest,
                 spec.proto.runtime.v1.RuntimeProto.SayHelloResponse>(
                   this, METHODID_SAY_HELLO)))
           .addMethod(
             getInvokeServiceMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.InvokeServiceRequest,
                 spec.proto.runtime.v1.RuntimeProto.InvokeResponse>(
                   this, METHODID_INVOKE_SERVICE)))
           .addMethod(
             getGetConfigurationMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.GetConfigurationRequest,
                 spec.proto.runtime.v1.RuntimeProto.GetConfigurationResponse>(
                   this, METHODID_GET_CONFIGURATION)))
           .addMethod(
             getSaveConfigurationMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.SaveConfigurationRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_SAVE_CONFIGURATION)))
           .addMethod(
             getDeleteConfigurationMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.DeleteConfigurationRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_DELETE_CONFIGURATION)))
           .addMethod(
             getSubscribeConfigurationMethod(),
-            io.grpc.stub.ServerCalls.asyncBidiStreamingCall(
+            asyncBidiStreamingCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.SubscribeConfigurationRequest,
                 spec.proto.runtime.v1.RuntimeProto.SubscribeConfigurationResponse>(
                   this, METHODID_SUBSCRIBE_CONFIGURATION)))
           .addMethod(
             getTryLockMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.TryLockRequest,
                 spec.proto.runtime.v1.RuntimeProto.TryLockResponse>(
                   this, METHODID_TRY_LOCK)))
           .addMethod(
             getUnlockMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.UnlockRequest,
                 spec.proto.runtime.v1.RuntimeProto.UnlockResponse>(
                   this, METHODID_UNLOCK)))
           .addMethod(
             getGetNextIdMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.GetNextIdRequest,
                 spec.proto.runtime.v1.RuntimeProto.GetNextIdResponse>(
                   this, METHODID_GET_NEXT_ID)))
           .addMethod(
             getGetStateMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.GetStateRequest,
                 spec.proto.runtime.v1.RuntimeProto.GetStateResponse>(
                   this, METHODID_GET_STATE)))
           .addMethod(
             getGetBulkStateMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.GetBulkStateRequest,
                 spec.proto.runtime.v1.RuntimeProto.GetBulkStateResponse>(
                   this, METHODID_GET_BULK_STATE)))
           .addMethod(
             getSaveStateMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.SaveStateRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_SAVE_STATE)))
           .addMethod(
             getDeleteStateMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.DeleteStateRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_DELETE_STATE)))
           .addMethod(
             getDeleteBulkStateMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.DeleteBulkStateRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_DELETE_BULK_STATE)))
           .addMethod(
             getExecuteStateTransactionMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.ExecuteStateTransactionRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_EXECUTE_STATE_TRANSACTION)))
           .addMethod(
             getPublishEventMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.PublishEventRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_PUBLISH_EVENT)))
           .addMethod(
             getGetFileMethod(),
-            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
+            asyncServerStreamingCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.GetFileRequest,
                 spec.proto.runtime.v1.RuntimeProto.GetFileResponse>(
                   this, METHODID_GET_FILE)))
           .addMethod(
             getPutFileMethod(),
-            io.grpc.stub.ServerCalls.asyncClientStreamingCall(
+            asyncClientStreamingCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.PutFileRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_PUT_FILE)))
           .addMethod(
             getListFileMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.ListFileRequest,
                 spec.proto.runtime.v1.RuntimeProto.ListFileResp>(
                   this, METHODID_LIST_FILE)))
           .addMethod(
             getDelFileMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.DelFileRequest,
                 com.google.protobuf.Empty>(
                   this, METHODID_DEL_FILE)))
           .addMethod(
+            getGetFileMetaMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest,
+                spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse>(
+                  this, METHODID_GET_FILE_META)))
+          .addMethod(
             getInvokeBindingMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest,
                 spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse>(
@@ -1096,7 +1157,7 @@ public final class RuntimeGrpc {
      */
     public void sayHello(spec.proto.runtime.v1.RuntimeProto.SayHelloRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.SayHelloResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getSayHelloMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1107,7 +1168,7 @@ public final class RuntimeGrpc {
      */
     public void invokeService(spec.proto.runtime.v1.RuntimeProto.InvokeServiceRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.InvokeResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getInvokeServiceMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1118,7 +1179,7 @@ public final class RuntimeGrpc {
      */
     public void getConfiguration(spec.proto.runtime.v1.RuntimeProto.GetConfigurationRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetConfigurationResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getGetConfigurationMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1129,7 +1190,7 @@ public final class RuntimeGrpc {
      */
     public void saveConfiguration(spec.proto.runtime.v1.RuntimeProto.SaveConfigurationRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getSaveConfigurationMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1140,7 +1201,7 @@ public final class RuntimeGrpc {
      */
     public void deleteConfiguration(spec.proto.runtime.v1.RuntimeProto.DeleteConfigurationRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getDeleteConfigurationMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1151,7 +1212,7 @@ public final class RuntimeGrpc {
      */
     public io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.SubscribeConfigurationRequest> subscribeConfiguration(
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.SubscribeConfigurationResponse> responseObserver) {
-      return io.grpc.stub.ClientCalls.asyncBidiStreamingCall(
+      return asyncBidiStreamingCall(
           getChannel().newCall(getSubscribeConfigurationMethod(), getCallOptions()), responseObserver);
     }
 
@@ -1163,7 +1224,7 @@ public final class RuntimeGrpc {
      */
     public void tryLock(spec.proto.runtime.v1.RuntimeProto.TryLockRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.TryLockResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getTryLockMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1171,7 +1232,7 @@ public final class RuntimeGrpc {
      */
     public void unlock(spec.proto.runtime.v1.RuntimeProto.UnlockRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.UnlockResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getUnlockMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1183,7 +1244,7 @@ public final class RuntimeGrpc {
      */
     public void getNextId(spec.proto.runtime.v1.RuntimeProto.GetNextIdRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetNextIdResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getGetNextIdMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1194,7 +1255,7 @@ public final class RuntimeGrpc {
      */
     public void getState(spec.proto.runtime.v1.RuntimeProto.GetStateRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetStateResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getGetStateMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1205,7 +1266,7 @@ public final class RuntimeGrpc {
      */
     public void getBulkState(spec.proto.runtime.v1.RuntimeProto.GetBulkStateRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetBulkStateResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getGetBulkStateMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1216,7 +1277,7 @@ public final class RuntimeGrpc {
      */
     public void saveState(spec.proto.runtime.v1.RuntimeProto.SaveStateRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getSaveStateMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1227,7 +1288,7 @@ public final class RuntimeGrpc {
      */
     public void deleteState(spec.proto.runtime.v1.RuntimeProto.DeleteStateRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getDeleteStateMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1238,7 +1299,7 @@ public final class RuntimeGrpc {
      */
     public void deleteBulkState(spec.proto.runtime.v1.RuntimeProto.DeleteBulkStateRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getDeleteBulkStateMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1249,7 +1310,7 @@ public final class RuntimeGrpc {
      */
     public void executeStateTransaction(spec.proto.runtime.v1.RuntimeProto.ExecuteStateTransactionRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getExecuteStateTransactionMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1260,7 +1321,7 @@ public final class RuntimeGrpc {
      */
     public void publishEvent(spec.proto.runtime.v1.RuntimeProto.PublishEventRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getPublishEventMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1271,7 +1332,7 @@ public final class RuntimeGrpc {
      */
     public void getFile(spec.proto.runtime.v1.RuntimeProto.GetFileRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetFileResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncServerStreamingCall(
+      asyncServerStreamingCall(
           getChannel().newCall(getGetFileMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1282,7 +1343,7 @@ public final class RuntimeGrpc {
      */
     public io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.PutFileRequest> putFile(
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      return io.grpc.stub.ClientCalls.asyncClientStreamingCall(
+      return asyncClientStreamingCall(
           getChannel().newCall(getPutFileMethod(), getCallOptions()), responseObserver);
     }
 
@@ -1293,7 +1354,7 @@ public final class RuntimeGrpc {
      */
     public void listFile(spec.proto.runtime.v1.RuntimeProto.ListFileRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.ListFileResp> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getListFileMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -1304,8 +1365,19 @@ public final class RuntimeGrpc {
      */
     public void delFile(spec.proto.runtime.v1.RuntimeProto.DelFileRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getDelFileMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Get file meta data, if file not exist,return code.NotFound error
+     * </pre>
+     */
+    public void getFileMeta(spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest request,
+        io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetFileMetaMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -1315,7 +1387,7 @@ public final class RuntimeGrpc {
      */
     public void invokeBinding(spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getInvokeBindingMethod(), getCallOptions()), request, responseObserver);
     }
   }
@@ -1340,7 +1412,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public spec.proto.runtime.v1.RuntimeProto.SayHelloResponse sayHello(spec.proto.runtime.v1.RuntimeProto.SayHelloRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getSayHelloMethod(), getCallOptions(), request);
     }
 
@@ -1350,7 +1422,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public spec.proto.runtime.v1.RuntimeProto.InvokeResponse invokeService(spec.proto.runtime.v1.RuntimeProto.InvokeServiceRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getInvokeServiceMethod(), getCallOptions(), request);
     }
 
@@ -1360,7 +1432,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public spec.proto.runtime.v1.RuntimeProto.GetConfigurationResponse getConfiguration(spec.proto.runtime.v1.RuntimeProto.GetConfigurationRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getGetConfigurationMethod(), getCallOptions(), request);
     }
 
@@ -1370,7 +1442,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty saveConfiguration(spec.proto.runtime.v1.RuntimeProto.SaveConfigurationRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getSaveConfigurationMethod(), getCallOptions(), request);
     }
 
@@ -1380,7 +1452,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty deleteConfiguration(spec.proto.runtime.v1.RuntimeProto.DeleteConfigurationRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getDeleteConfigurationMethod(), getCallOptions(), request);
     }
 
@@ -1391,14 +1463,14 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public spec.proto.runtime.v1.RuntimeProto.TryLockResponse tryLock(spec.proto.runtime.v1.RuntimeProto.TryLockRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getTryLockMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public spec.proto.runtime.v1.RuntimeProto.UnlockResponse unlock(spec.proto.runtime.v1.RuntimeProto.UnlockRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getUnlockMethod(), getCallOptions(), request);
     }
 
@@ -1409,7 +1481,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public spec.proto.runtime.v1.RuntimeProto.GetNextIdResponse getNextId(spec.proto.runtime.v1.RuntimeProto.GetNextIdRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getGetNextIdMethod(), getCallOptions(), request);
     }
 
@@ -1419,7 +1491,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public spec.proto.runtime.v1.RuntimeProto.GetStateResponse getState(spec.proto.runtime.v1.RuntimeProto.GetStateRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getGetStateMethod(), getCallOptions(), request);
     }
 
@@ -1429,7 +1501,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public spec.proto.runtime.v1.RuntimeProto.GetBulkStateResponse getBulkState(spec.proto.runtime.v1.RuntimeProto.GetBulkStateRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getGetBulkStateMethod(), getCallOptions(), request);
     }
 
@@ -1439,7 +1511,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty saveState(spec.proto.runtime.v1.RuntimeProto.SaveStateRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getSaveStateMethod(), getCallOptions(), request);
     }
 
@@ -1449,7 +1521,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty deleteState(spec.proto.runtime.v1.RuntimeProto.DeleteStateRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getDeleteStateMethod(), getCallOptions(), request);
     }
 
@@ -1459,7 +1531,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty deleteBulkState(spec.proto.runtime.v1.RuntimeProto.DeleteBulkStateRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getDeleteBulkStateMethod(), getCallOptions(), request);
     }
 
@@ -1469,7 +1541,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty executeStateTransaction(spec.proto.runtime.v1.RuntimeProto.ExecuteStateTransactionRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getExecuteStateTransactionMethod(), getCallOptions(), request);
     }
 
@@ -1479,7 +1551,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty publishEvent(spec.proto.runtime.v1.RuntimeProto.PublishEventRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getPublishEventMethod(), getCallOptions(), request);
     }
 
@@ -1490,7 +1562,7 @@ public final class RuntimeGrpc {
      */
     public java.util.Iterator<spec.proto.runtime.v1.RuntimeProto.GetFileResponse> getFile(
         spec.proto.runtime.v1.RuntimeProto.GetFileRequest request) {
-      return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
+      return blockingServerStreamingCall(
           getChannel(), getGetFileMethod(), getCallOptions(), request);
     }
 
@@ -1500,7 +1572,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public spec.proto.runtime.v1.RuntimeProto.ListFileResp listFile(spec.proto.runtime.v1.RuntimeProto.ListFileRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getListFileMethod(), getCallOptions(), request);
     }
 
@@ -1510,8 +1582,18 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty delFile(spec.proto.runtime.v1.RuntimeProto.DelFileRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getDelFileMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Get file meta data, if file not exist,return code.NotFound error
+     * </pre>
+     */
+    public spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse getFileMeta(spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetFileMetaMethod(), getCallOptions(), request);
     }
 
     /**
@@ -1520,7 +1602,7 @@ public final class RuntimeGrpc {
      * </pre>
      */
     public spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse invokeBinding(spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getInvokeBindingMethod(), getCallOptions(), request);
     }
   }
@@ -1546,7 +1628,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.SayHelloResponse> sayHello(
         spec.proto.runtime.v1.RuntimeProto.SayHelloRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getSayHelloMethod(), getCallOptions()), request);
     }
 
@@ -1557,7 +1639,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.InvokeResponse> invokeService(
         spec.proto.runtime.v1.RuntimeProto.InvokeServiceRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getInvokeServiceMethod(), getCallOptions()), request);
     }
 
@@ -1568,7 +1650,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.GetConfigurationResponse> getConfiguration(
         spec.proto.runtime.v1.RuntimeProto.GetConfigurationRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getGetConfigurationMethod(), getCallOptions()), request);
     }
 
@@ -1579,7 +1661,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> saveConfiguration(
         spec.proto.runtime.v1.RuntimeProto.SaveConfigurationRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getSaveConfigurationMethod(), getCallOptions()), request);
     }
 
@@ -1590,7 +1672,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> deleteConfiguration(
         spec.proto.runtime.v1.RuntimeProto.DeleteConfigurationRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getDeleteConfigurationMethod(), getCallOptions()), request);
     }
 
@@ -1602,7 +1684,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.TryLockResponse> tryLock(
         spec.proto.runtime.v1.RuntimeProto.TryLockRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getTryLockMethod(), getCallOptions()), request);
     }
 
@@ -1610,7 +1692,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.UnlockResponse> unlock(
         spec.proto.runtime.v1.RuntimeProto.UnlockRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getUnlockMethod(), getCallOptions()), request);
     }
 
@@ -1622,7 +1704,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.GetNextIdResponse> getNextId(
         spec.proto.runtime.v1.RuntimeProto.GetNextIdRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getGetNextIdMethod(), getCallOptions()), request);
     }
 
@@ -1633,7 +1715,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.GetStateResponse> getState(
         spec.proto.runtime.v1.RuntimeProto.GetStateRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getGetStateMethod(), getCallOptions()), request);
     }
 
@@ -1644,7 +1726,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.GetBulkStateResponse> getBulkState(
         spec.proto.runtime.v1.RuntimeProto.GetBulkStateRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getGetBulkStateMethod(), getCallOptions()), request);
     }
 
@@ -1655,7 +1737,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> saveState(
         spec.proto.runtime.v1.RuntimeProto.SaveStateRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getSaveStateMethod(), getCallOptions()), request);
     }
 
@@ -1666,7 +1748,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> deleteState(
         spec.proto.runtime.v1.RuntimeProto.DeleteStateRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getDeleteStateMethod(), getCallOptions()), request);
     }
 
@@ -1677,7 +1759,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> deleteBulkState(
         spec.proto.runtime.v1.RuntimeProto.DeleteBulkStateRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getDeleteBulkStateMethod(), getCallOptions()), request);
     }
 
@@ -1688,7 +1770,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> executeStateTransaction(
         spec.proto.runtime.v1.RuntimeProto.ExecuteStateTransactionRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getExecuteStateTransactionMethod(), getCallOptions()), request);
     }
 
@@ -1699,7 +1781,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> publishEvent(
         spec.proto.runtime.v1.RuntimeProto.PublishEventRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getPublishEventMethod(), getCallOptions()), request);
     }
 
@@ -1710,7 +1792,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.ListFileResp> listFile(
         spec.proto.runtime.v1.RuntimeProto.ListFileRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getListFileMethod(), getCallOptions()), request);
     }
 
@@ -1721,8 +1803,19 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> delFile(
         spec.proto.runtime.v1.RuntimeProto.DelFileRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getDelFileMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * Get file meta data, if file not exist,return code.NotFound error
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse> getFileMeta(
+        spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetFileMetaMethod(), getCallOptions()), request);
     }
 
     /**
@@ -1732,7 +1825,7 @@ public final class RuntimeGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.RuntimeProto.InvokeBindingResponse> invokeBinding(
         spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getInvokeBindingMethod(), getCallOptions()), request);
     }
   }
@@ -1755,9 +1848,10 @@ public final class RuntimeGrpc {
   private static final int METHODID_GET_FILE = 15;
   private static final int METHODID_LIST_FILE = 16;
   private static final int METHODID_DEL_FILE = 17;
-  private static final int METHODID_INVOKE_BINDING = 18;
-  private static final int METHODID_SUBSCRIBE_CONFIGURATION = 19;
-  private static final int METHODID_PUT_FILE = 20;
+  private static final int METHODID_GET_FILE_META = 18;
+  private static final int METHODID_INVOKE_BINDING = 19;
+  private static final int METHODID_SUBSCRIBE_CONFIGURATION = 20;
+  private static final int METHODID_PUT_FILE = 21;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1847,6 +1941,10 @@ public final class RuntimeGrpc {
         case METHODID_DEL_FILE:
           serviceImpl.delFile((spec.proto.runtime.v1.RuntimeProto.DelFileRequest) request,
               (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
+          break;
+        case METHODID_GET_FILE_META:
+          serviceImpl.getFileMeta((spec.proto.runtime.v1.RuntimeProto.GetFileMetaRequest) request,
+              (io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.GetFileMetaResponse>) responseObserver);
           break;
         case METHODID_INVOKE_BINDING:
           serviceImpl.invokeBinding((spec.proto.runtime.v1.RuntimeProto.InvokeBindingRequest) request,
@@ -1939,6 +2037,7 @@ public final class RuntimeGrpc {
               .addMethod(getPutFileMethod())
               .addMethod(getListFileMethod())
               .addMethod(getDelFileMethod())
+              .addMethod(getGetFileMetaMethod())
               .addMethod(getInvokeBindingMethod())
               .build();
         }
