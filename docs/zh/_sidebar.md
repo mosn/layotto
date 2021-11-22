@@ -35,7 +35,7 @@
     - [grpc API 文档](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
     - SDK文档    
         - [go sdk](zh/sdk_reference/go/start.md)
-        - [java sdk](zh/sdk_reference/java/start.md)
+        - [java sdk](https://github.com/mosn/layotto/blob/main/sdk/java-sdk/README-zh.md)
         - [.net sdk](https://github.com/layotto/dotnet-sdk)
         - [js sdk](https://github.com/layotto/js-sdk)
     - [配置文档](zh/configuration/overview.md)

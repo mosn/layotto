@@ -43,8 +43,8 @@ public class RRPool<T> {
 
     static class RRIndex {
         private final static int mask = 0x7FFFFFFF;
-        AtomicInteger idx;
-        private final int size;
+        AtomicInteger            idx;
+        private final int        size;
 
         RRIndex(int size) {
             this.idx = new AtomicInteger(-1);
