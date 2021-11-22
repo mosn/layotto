@@ -38,29 +38,29 @@ public class PublishEventTestWithRealServer {
 
     private final MyPublishService mockService = new MyPublishService();
 
-    private Server            srv;
-    private GrpcRuntimeClient client;
+    private Server                 srv;
+    private GrpcRuntimeClient      client;
 
-    int    port = 9999;
-    String ip   = "127.0.0.1";
+    int                            port        = 9999;
+    String                         ip          = "127.0.0.1";
 
     @Before
     public void setUp() throws Exception {
         // start grpc server
         /* The port on which the server should run */
         srv = ServerBuilder.forPort(port)
-                .addService(mockService)
-                .intercept(new ExceptionHandler())
-                .build()
-                .start();
+            .addService(mockService)
+            .intercept(new ExceptionHandler())
+            .build()
+            .start();
 
         // build a client
         client = new RuntimeClientBuilder()
-                .withIp(ip)
-                .withPort(port)
-                .withConnectionPoolSize(4)
-                .withTimeout(2000)
-                .buildGrpc();
+            .withIp(ip)
+            .withPort(port)
+            .withConnectionPoolSize(4)
+            .withTimeout(2000)
+            .buildGrpc();
     }
 
     @After

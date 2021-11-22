@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package io.mosn.layotto.v1;
 
@@ -42,7 +41,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     /**
      * Runtime invocation timeout ms.
      */
-    private final   int              timeoutMs;
+    private final int                timeoutMs;
 
     AbstractRuntimeClient(Logger logger, int timeoutMs, ObjectSerializer stateSerializer) {
         if (logger == null) {
@@ -65,6 +64,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     public InvokeResponse<byte[]> invokeMethod(String appId, String methodName, byte[] data, Map<String, String> header) {
         return this.invokeMethod(appId, methodName, data, header, this.getTimeoutMs());
     }
+
     // TODO add some methods that serialize data before invoking method
 
     @Override

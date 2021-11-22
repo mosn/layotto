@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package spec.sdk.runtime.v1.domain.pubsub;
 
@@ -19,10 +18,10 @@ import java.util.Map;
 
 public class TopicSubscription {
     // Required. The name of the pubsub containing the topic below to subscribe to.
-    private String pubsubName;
+    private String              pubsubName;
 
     // Required. The name of topic which will be subscribed
-    private String topic;
+    private String              topic;
 
     // The optional properties used for this topic's subscription e.g. session id
     private Map<String, String> metadata;

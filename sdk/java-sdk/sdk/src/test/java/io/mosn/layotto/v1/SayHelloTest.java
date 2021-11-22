@@ -41,21 +41,26 @@ import static org.mockito.Mockito.mock;
 public class SayHelloTest {
 
     @Rule
-    public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
+    public final GrpcCleanupRule              grpcCleanup = new GrpcCleanupRule();
 
     private final RuntimeGrpc.RuntimeImplBase serviceImpl =
-            mock(RuntimeGrpc.RuntimeImplBase.class, delegatesTo(
-                    new RuntimeGrpc.RuntimeImplBase() {
-                        @Override
-                        public void sayHello(RuntimeProto.SayHelloRequest request,
-                                             io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.SayHelloResponse> responseObserver) {
-                            responseObserver.onNext(
-                                    RuntimeProto.SayHelloResponse.newBuilder().setHello("hi, " + request.getServiceName()).build());
-                            responseObserver.onCompleted();
-                        }
-                    }));
+                                                                  mock(RuntimeGrpc.RuntimeImplBase.class, delegatesTo(
+                                                                      new RuntimeGrpc.RuntimeImplBase() {
+                                                                          @Override
+                                                                          public void sayHello(RuntimeProto.SayHelloRequest request,
+                                                                                               io.grpc.stub.StreamObserver<spec.proto.runtime.v1.RuntimeProto.SayHelloResponse> responseObserver) {
+                                                                              responseObserver.onNext(
+                                                                                  RuntimeProto.SayHelloResponse
+                                                                                      .newBuilder()
+                                                                                      .setHello(
+                                                                                          "hi, " +
+                                                                                              request.getServiceName())
+                                                                                      .build());
+                                                                              responseObserver.onCompleted();
+                                                                          }
+                                                                      }));
 
-    private RuntimeClient client;
+    private RuntimeClient                     client;
 
     @Before
     public void setUp() throws Exception {
@@ -64,16 +69,16 @@ public class SayHelloTest {
 
         // Create a server, add service, start, and register for automatic graceful shutdown.
         grpcCleanup.register(InProcessServerBuilder
-                .forName(serverName).directExecutor().addService(serviceImpl).build().start());
+            .forName(serverName).directExecutor().addService(serviceImpl).build().start());
 
         // Create a client channel and register for automatic graceful shutdown.
         ManagedChannel channel = grpcCleanup.register(
-                InProcessChannelBuilder.forName(serverName).directExecutor().build());
+            InProcessChannelBuilder.forName(serverName).directExecutor().build());
 
         // Create a HelloWorldClient using the in-process channel;
 
         client = new RuntimeClientBuilder()
-                .buildGrpcWithExistingChannel(channel);
+            .buildGrpcWithExistingChannel(channel);
     }
 
     @Test

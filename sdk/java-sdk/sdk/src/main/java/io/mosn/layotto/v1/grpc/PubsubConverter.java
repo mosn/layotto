@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package io.mosn.layotto.v1.grpc;
 
@@ -33,10 +32,10 @@ public class PubsubConverter {
             return null;
         }
         RuntimeProto.PublishEventRequest.Builder builder = RuntimeProto.PublishEventRequest.newBuilder()
-                .setPubsubName(req.getPubsubName())
-                .setTopic(req.getTopic())
-                .setData(ByteString.copyFrom(req.getData()))
-                .setDataContentType(req.getContentType());
+            .setPubsubName(req.getPubsubName())
+            .setTopic(req.getTopic())
+            .setData(ByteString.copyFrom(req.getData()))
+            .setDataContentType(req.getContentType());
         if (req.getMetadata() != null) {
             builder.putAllMetadata(req.getMetadata());
         }
@@ -48,8 +47,8 @@ public class PubsubConverter {
             return null;
         }
         AppCallbackProto.TopicSubscription.Builder builder = AppCallbackProto.TopicSubscription.newBuilder()
-                .setPubsubName(sub.getPubsubName())
-                .setTopic(sub.getTopic());
+            .setPubsubName(sub.getPubsubName())
+            .setTopic(sub.getTopic());
         if (sub.getMetadata() != null) {
             builder.putAllMetadata(sub.getMetadata());
         }
@@ -65,8 +64,8 @@ public class PubsubConverter {
             idx = resp.getStatus().getIdx();
         }
         AppCallbackProto.TopicEventResponse result = AppCallbackProto.TopicEventResponse.newBuilder()
-                .setStatusValue(idx)
-                .build();
+            .setStatusValue(idx)
+            .build();
         return result;
     }
 
@@ -75,17 +74,17 @@ public class PubsubConverter {
             return null;
         }
         AppCallbackProto.TopicEventRequest.Builder builder = AppCallbackProto.TopicEventRequest.newBuilder()
-                .setId(req.getId())
-                .setSource(req.getSource())
-                .setType(req.getType())
-                .setSpecVersion(req.getSpecVersion())
-                .setDataContentType(req.getContentType())
-                .setTopic(req.getTopic())
-                .setPubsubName(req.getPubsubName());
+            .setId(req.getId())
+            .setSource(req.getSource())
+            .setType(req.getType())
+            .setSpecVersion(req.getSpecVersion())
+            .setDataContentType(req.getContentType())
+            .setTopic(req.getTopic())
+            .setPubsubName(req.getPubsubName());
         //.putAllMetadata(req.getMetadata())
         byte[] bytes = req.getData();
         if (bytes == null) {
-            bytes = new byte[]{};
+            bytes = new byte[] {};
         }
         builder.setData(ByteString.copyFrom(bytes));
         return builder.build();
@@ -98,9 +97,10 @@ public class PubsubConverter {
         result.setType(req.getType());
         result.setSpecVersion(req.getSpecVersion());
         result.setContentType(req.getDataContentType());
+        result.setMetadata(req.getMetadataMap());
         ByteString byteString = req.getData();
         if (byteString == null) {
-            result.setData(new byte[]{});
+            result.setData(new byte[] {});
         } else {
             result.setData(byteString.toByteArray());
         }
