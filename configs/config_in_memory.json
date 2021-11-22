@@ -27,7 +27,7 @@
                         }
                       },
                       "state": {
-                        "mock.inmemory": {
+                        "in.memory": {
                           "metadata": {
                           }
                         }
