@@ -162,7 +162,7 @@ func (store *inMemoryStateStore) Multi(request *state.TransactionalStateRequest)
 	for _, o := range request.Operations {
 		if o.Operation == state.Upsert {
 			req := o.Request.(state.SetRequest)
-			b, _ := json.Marshal(req.Value)
+			b, _ := Marshal(req.Value, json.Marshal)
 			store.items[req.Key] = store.newItem(b, req.ETag)
 		} else if o.Operation == state.Delete {
 			req := o.Request.(state.DeleteRequest)
