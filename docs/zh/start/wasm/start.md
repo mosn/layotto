@@ -1,6 +1,16 @@
-## WASM概述
-
+## 将业务逻辑通过WASM下沉进sidecar
 ### 功能介绍
+service mesh 和 multi-runtime 的 sidecar 是全公司通用的基础设施，但实践中,业务系统也会有自己的sdk，也会有推动用户升级难、版本碎片的问题.
+
+比如某中台系统以jar包形式开发了sdk，供上层业务系统使用。他们的feature不算全公司通用，因此没法说服中间件团队、开发到公司统一的sidecar里。
+
+![img_1.png](../../../img/wasm/img_1.png)
+
+而如果变成这样：
+
+![img.png](../../../img/wasm/img.png)
+
+如果开发者不再开发sdk(jar包），改成开发.wasm文件、支持独立升级部署，就没有推动业务方升级的痛苦了,想要升级的时候在运维平台上操作发布即可，不需要app和sidecar重启
 
 Layotto支持加载编译好的WASM文件，并通过`proxy_abi_version_0_2_0`版本的API与目标WASM进行交互。
 
@@ -35,6 +45,8 @@ go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
 curl -H 'id:id_1' 'localhost:2045?name=book1'
 There are 100 inventories for book1.
 ```
+
+该http请求会访问Layotto中的wasm模块。该wasm模块会调用redis进行逻辑处理
 
 ### 说明
 
