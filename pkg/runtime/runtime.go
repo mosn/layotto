@@ -429,6 +429,12 @@ func (m *MosnRuntime) initSequencers(factorys ...*runtime_sequencer.Factory) err
 			m.errInt(err, "init sequencer component %s failed", name)
 			return err
 		}
+		// 2.3. save runtime related configs
+		err = runtime_sequencer.SaveSeqConfiguration(name, config.Metadata)
+		if err != nil {
+			m.errInt(err, "save lock configuration %s failed", name)
+			return err
+		}
 		m.sequencers[name] = comp
 	}
 	return nil
