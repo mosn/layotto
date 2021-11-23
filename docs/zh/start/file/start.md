@@ -25,16 +25,19 @@ docker run -p 9000:9000 minio/minio server /data --console-address ":9000" --add
 
 ### 第三步：启动测试demo
 
-Layotto提供了访问文件的示例 [demo](../../../../demo/file/minio/client.go)
+Layotto提供了访问文件的示例 [demo](../../../../demo/file/client.go)
 
 ```go
 
-go build client.go //编译生成client可执行文件
+cd ${projectpath}/demo/file
+go build client.go
 
-./client put bucketName/fileName //上传文件
-./client get bucketName/fileName //下载文件
-./client del bucketName/fileName //删除文件
-./client list bucketName //查看文件
+./client bucket test //创建名为test的bucket
+./client put test/hello/layotto.txt "hello layotto" //上传文件到test bucket，前缀为hello，内容为"hello layotto"
+./client get test/hello/layotto.txt //获取 layotto.txt的内容
+./client list test/hello // 获取test bucket下的前缀为hello的所有文件列表
+./client stat test/hello/layotto.txt //获取layotto.txt文件的元数据
+./client del test/hello/layotto.txt //删除layotto.txt文件
 
 ```
 #### 细节以后再说，继续体验其他API
