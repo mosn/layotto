@@ -50,17 +50,25 @@ Try the following examples to learn more about this SDK:
 * [State management](./examples/src/main/java/io/mosn/layotto/examples/state)
 * [Pubsub API](./examples/src/main/java/io/mosn/layotto/examples/pubsub)
 
+## java sdk developer guide 
+### How to format java sdk code
+Compile before submit your pull request:
 
-## How to generate a Java PROTO file
+```shell
+mvn clean compile
+```
+It will format your code automatically.
 
-### 1. Download proto compiler [protoc](https://github.com/protocolbuffers/protobuf/releases)
+### How to generate a Java PROTO file
+
+#### 1. Download proto compiler [protoc](https://github.com/protocolbuffers/protobuf/releases)
 my protoc version:
 ```shell
 $ protoc --version
 libprotoc 3.11.2
 ```
 
-### 2. Check `option` fields in these proto files
+#### 2. Check `option` fields in these proto files
 Make sure these `option` fields have been configurated.
 
 spec/proto/runtime/v1/appcallback.proto : 
@@ -75,11 +83,12 @@ option java_outer_classname = "RuntimeProto";
 option java_package = "spec.proto.runtime.v1";
 ```
 
-### 3. Compile them into corresponding `JAVA` files
+#### 3. Compile them into corresponding `JAVA` files
 ```shell
 # make sure you replace this `${your PROJECT path}` with your own project path.
 cd ${your PROJECT path}/spec/proto/runtime/v1
-protoc -I=. --java_out=./  runtime.proto
+protoc -I=. --java_out=../../../../sdk/java-sdk/sdk/src/main/java/  runtime.proto
+protoc -I=. --java_out=../../../../sdk/java-sdk/sdk/src/main/java/  appcallback.proto
 ```
 
 PS: We recommend that you use the maven plugin `protoc-gen-grpc-java` to generate these protobuf and grpc related java code.
