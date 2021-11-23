@@ -32,6 +32,13 @@
                           }
                         }
                       },
+                      "pub_subs": {
+                        "in-memory": {
+                          "metadata": {
+                            "consumerID": "1"
+                          }
+                        }
+                      },
                       "app": {
                         "app_id": "app1",
                         "grpc_callback_port": 9999
