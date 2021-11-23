@@ -485,8 +485,13 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
     /**
      * Getter method for property <tt>stubManager</tt>.
      *
+     * Do not use it !
+     * This method is deprecated and might be refactored in the future.
+     * We want this client to expose grpc Channels instead of grpc stubs.
+     *
      * @return property value of stubManager
      */
+    @Deprecated
     @Override
     public StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> getStubManager() {
         return stubManager;
