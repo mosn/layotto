@@ -2,7 +2,7 @@
 
 ## 快速开始
 
-Layotto提供了访问文件的示例 [demo](../../../../demo/file/minio/client.go),该示例实现了文件的增删改查操作。
+Layotto提供了访问文件的示例 [demo](../../../../demo/file/client.go),该示例实现了文件的增删改查操作。
 
 ### 第一步：启动layotto
 
