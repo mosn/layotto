@@ -216,7 +216,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		),
 		// State
 		runtime.WithStateFactory(
-			runtime_state.NewFactory("in.memory", func() state.Store {
+			runtime_state.NewFactory("in-memory", func() state.Store {
 				return mock_state.NewInMemoryStateStore()
 			}),
 			runtime_state.NewFactory("redis", func() state.Store {
