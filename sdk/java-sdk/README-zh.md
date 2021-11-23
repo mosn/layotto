@@ -79,6 +79,13 @@ mvn clean install
 * [State management](./examples/src/main/java/io/mosn/layotto/examples/state)
 * [Pubsub API](./examples/src/main/java/io/mosn/layotto/examples/pubsub)
 
+## 如何格式化 java sdk 代码
+提交pull request之前先用maven编译一下
+
+```shell
+mvn clean compile
+```
+会自动格式化您的代码
 
 ## 如何将proto文件编译成java代码
 
@@ -105,7 +112,8 @@ option java_package = "spec.proto.runtime.v1";
 ### 3. 编译其对应`JAVA`文件
 ```shell
 cd ${your PROJECT path}/spec/proto/runtime/v1
-protoc -I=. --java_out=./  runtime.proto
+protoc -I=. --java_out=../../../../sdk/java-sdk/sdk/src/main/java/  runtime.proto
+protoc -I=. --java_out=../../../../sdk/java-sdk/sdk/src/main/java/  appcallback.proto
 ```
 
 PS: 建议用maven插件`protoc-gen-grpc-java`生成protobuf和grpc的java代码

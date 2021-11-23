@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package spec.sdk.runtime.v1.domain.state;
 
@@ -22,33 +21,33 @@ import java.util.List;
  */
 public class SaveStateRequest {
 
-  private final String storeName;
+    private final String   storeName;
 
-  private List<State<?>> states;
+    private List<State<?>> states;
 
-  public SaveStateRequest(String storeName) {
-    this.storeName = storeName;
-  }
+    public SaveStateRequest(String storeName) {
+        this.storeName = storeName;
+    }
 
-  public String getStoreName() {
-    return storeName;
-  }
+    public String getStoreName() {
+        return storeName;
+    }
 
-  /**
-   * Getter method for property <tt>states</tt>.
-   *
-   * @return property value of states
-   */
-  public List<State<?>> getStates() {
-    return states;
-  }
+    /**
+     * Getter method for property <tt>states</tt>.
+     *
+     * @return property value of states
+     */
+    public List<State<?>> getStates() {
+        return states;
+    }
 
-  /**
-   * Setter method for property <tt>states</tt>.
-   *
-   * @param states value to be assigned to property states
-   */
-  public void setStates(List<State<?>> states) {
-    this.states = states;
-  }
+    /**
+     * Setter method for property <tt>states</tt>.
+     *
+     * @param states value to be assigned to property states
+     */
+    public void setStates(List<State<?>> states) {
+        this.states = states;
+    }
 }

@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 // CODE ATTRIBUTION: https://github.com/dapr/java-sdk
 // Modified some test cases to test layotto's code
@@ -156,7 +155,8 @@ public class JSONSerializerTest {
             if (Double.compare(that.getDoubleValue(), getDoubleValue()) != 0) {
                 return false;
             }
-            if (getStringValue() != null ? !getStringValue().equals(that.getStringValue()) : that.getStringValue() != null) {
+            if (getStringValue() != null ? !getStringValue().equals(that.getStringValue())
+                : that.getStringValue() != null) {
                 return false;
             }
 
@@ -183,16 +183,16 @@ public class JSONSerializerTest {
         @Override
         public String toString() {
             return "MyObjectTestToSerialize{" +
-                    "stringValue='" + stringValue + '\'' +
-                    ", intValue=" + intValue +
-                    ", boolValue=" + boolValue +
-                    ", charValue=" + charValue +
-                    ", byteValue=" + byteValue +
-                    ", shortValue=" + shortValue +
-                    ", longValue=" + longValue +
-                    ", floatValue=" + floatValue +
-                    ", doubleValue=" + doubleValue +
-                    '}';
+                "stringValue='" + stringValue + '\'' +
+                ", intValue=" + intValue +
+                ", boolValue=" + boolValue +
+                ", charValue=" + charValue +
+                ", byteValue=" + byteValue +
+                ", shortValue=" + shortValue +
+                ", longValue=" + longValue +
+                ", floatValue=" + floatValue +
+                ", doubleValue=" + doubleValue +
+                '}';
         }
     }
 
@@ -209,13 +209,14 @@ public class JSONSerializerTest {
         obj.setFloatValue(1.0f);
         obj.setDoubleValue(1000.0);
         String expectedResult = "{\"boolValue\":true,\"byteValue\":65,\"charValue\":\"a\",\"doubleValue\":1000.0,\"floatValue\":1.0,"
-                + "\"intValue\":2147483647,\"longValue\":9223372036854775807,\"shortValue\":32767,\"stringValue\":\"A String\"}";
+            + "\"intValue\":2147483647,\"longValue\":9223372036854775807,\"shortValue\":32767,\"stringValue\":\"A String\"}";
 
         String serializedValue;
         try {
             serializedValue = new String(SERIALIZER.serialize(obj));
-            assertEquals("FOUND:[[" + serializedValue + "]] \n but was EXPECTING: [[" + expectedResult + "]]", expectedResult,
-                    serializedValue);
+            assertEquals("FOUND:[[" + serializedValue + "]] \n but was EXPECTING: [[" + expectedResult + "]]",
+                expectedResult,
+                serializedValue);
         } catch (IOException exception) {
             fail(exception.getMessage());
         }
@@ -240,7 +241,8 @@ public class JSONSerializerTest {
         try {
             serializedValue = SERIALIZER.serialize(obj);
             Assert.assertNotNull(serializedValue);
-            MyObjectTestToSerialize deserializedValue = SERIALIZER.deserialize(serializedValue, MyObjectTestToSerialize.class);
+            MyObjectTestToSerialize deserializedValue = SERIALIZER.deserialize(serializedValue,
+                MyObjectTestToSerialize.class);
             assertEquals(obj, deserializedValue);
         } catch (IOException exception) {
             fail(exception.getMessage());
@@ -249,7 +251,8 @@ public class JSONSerializerTest {
         try {
             serializedValue = SERIALIZER.serialize(obj);
             Assert.assertNotNull(serializedValue);
-            MyObjectTestToSerialize deserializedValue = SERIALIZER.deserialize(serializedValue, MyObjectTestToSerialize.class);
+            MyObjectTestToSerialize deserializedValue = SERIALIZER.deserialize(serializedValue,
+                MyObjectTestToSerialize.class);
             assertEquals(obj, deserializedValue);
         } catch (IOException exception) {
             fail(exception.getMessage());
@@ -439,9 +442,8 @@ public class JSONSerializerTest {
 
     @Test
     public void deserializeObjectTest() {
-        String jsonToDeserialize
-                = "{\"stringValue\":\"A String\",\"intValue\":2147483647,\"boolValue\":true,\"charValue\":\"a\",\"byteValue\":65,"
-                + "\"shortValue\":32767,\"longValue\":9223372036854775807,\"floatValue\":1.0,\"doubleValue\":1000.0}";
+        String jsonToDeserialize = "{\"stringValue\":\"A String\",\"intValue\":2147483647,\"boolValue\":true,\"charValue\":\"a\",\"byteValue\":65,"
+            + "\"shortValue\":32767,\"longValue\":9223372036854775807,\"floatValue\":1.0,\"doubleValue\":1000.0}";
         MyObjectTestToSerialize expectedResult = new MyObjectTestToSerialize();
         expectedResult.setStringValue("A String");
         expectedResult.setIntValue(2147483647);

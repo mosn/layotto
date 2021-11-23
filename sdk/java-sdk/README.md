@@ -50,6 +50,13 @@ Try the following examples to learn more about this SDK:
 * [State management](./examples/src/main/java/io/mosn/layotto/examples/state)
 * [Pubsub API](./examples/src/main/java/io/mosn/layotto/examples/pubsub)
 
+## How to format java sdk code
+Compile before submit your pull request:
+
+```shell
+mvn clean compile
+```
+It will format your code automatically.
 
 ## How to generate a Java PROTO file
 
@@ -79,7 +86,8 @@ option java_package = "spec.proto.runtime.v1";
 ```shell
 # make sure you replace this `${your PROJECT path}` with your own project path.
 cd ${your PROJECT path}/spec/proto/runtime/v1
-protoc -I=. --java_out=./  runtime.proto
+protoc -I=. --java_out=../../../../sdk/java-sdk/sdk/src/main/java/  runtime.proto
+protoc -I=. --java_out=../../../../sdk/java-sdk/sdk/src/main/java/  appcallback.proto
 ```
 
 PS: We recommend that you use the maven plugin `protoc-gen-grpc-java` to generate these protobuf and grpc related java code.

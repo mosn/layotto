@@ -19,11 +19,12 @@ import io.grpc.stub.AbstractAsyncStub;
 import io.grpc.stub.AbstractBlockingStub;
 
 public class SingleStubManager<A extends AbstractAsyncStub, B extends AbstractBlockingStub>
-        implements StubManager<A, B> {
+                                                                                            implements
+                                                                                            StubManager<A, B> {
 
     private volatile ManagedChannel channel;
-    private final    A              asyncStub;
-    private final    B              blockingStub;
+    private final A                 asyncStub;
+    private final B                 blockingStub;
 
     public SingleStubManager(ManagedChannel channel,
                              StubCreator<A, B> sc) {

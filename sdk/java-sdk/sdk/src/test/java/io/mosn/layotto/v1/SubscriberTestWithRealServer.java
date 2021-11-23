@@ -31,13 +31,13 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
 public class SubscriberTestWithRealServer {
-    private final static String pubsubName = "redis";
-    private final static String topic      = "hello";
+    private final static String             pubsubName = "redis";
+    private final static String             topic      = "hello";
 
     AppCallbackGrpc.AppCallbackBlockingStub blockingStub;
     RuntimeServerGrpc                       server;
-    int                                     port = 7777;
-    String                                  ip   = "127.0.0.1";
+    int                                     port       = 7777;
+    String                                  ip         = "127.0.0.1";
 
     @Before
     public void setUp() throws Exception {
@@ -47,8 +47,8 @@ public class SubscriberTestWithRealServer {
 
         // build a client
         ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port)
-                .usePlaintext()
-                .build();
+            .usePlaintext()
+            .build();
         blockingStub = AppCallbackGrpc.newBlockingStub(channel);
     }
 
@@ -60,7 +60,7 @@ public class SubscriberTestWithRealServer {
     @Test
     public void listTopicSubscriptions() throws Exception {
         AppCallbackProto.ListTopicSubscriptionsResponse subscriptionsResponse = blockingStub.listTopicSubscriptions(
-                Empty.getDefaultInstance());
+            Empty.getDefaultInstance());
         assertEquals(1, subscriptionsResponse.getSubscriptionsCount());
         assertEquals("hello", subscriptionsResponse.getSubscriptions(0).getTopic());
     }
@@ -78,13 +78,13 @@ public class SubscriberTestWithRealServer {
         //        "type": "com.runtime.event.sent"
         //}
         AppCallbackProto.TopicEventRequest req = AppCallbackProto.TopicEventRequest.newBuilder()
-                .setData(ByteString.copyFrom("d29ybGQ=".getBytes()))
-                .setId("a31aa292-2703-4f29-be58-c1798e540619")
-                .setPubsubName("redis")
-                .setSpecVersion("1.0")
-                .setTopic("hello")
-                .setType("com.runtime.event.sent")
-                .build();
+            .setData(ByteString.copyFrom("d29ybGQ=".getBytes()))
+            .setId("a31aa292-2703-4f29-be58-c1798e540619")
+            .setPubsubName("redis")
+            .setSpecVersion("1.0")
+            .setTopic("hello")
+            .setType("com.runtime.event.sent")
+            .build();
         AppCallbackProto.TopicEventResponse resp = blockingStub.onTopicEvent(req);
         assertEquals(resp.getStatusValue(), 0);
     }
@@ -102,13 +102,13 @@ public class SubscriberTestWithRealServer {
         //        "type": "com.runtime.event.sent"
         //}
         AppCallbackProto.TopicEventRequest req = AppCallbackProto.TopicEventRequest.newBuilder()
-                .setData(ByteString.copyFrom("d29ybGQ=".getBytes()))
-                .setId("a31aa292-2703-4f29-be58-c1798e540619")
-                .setPubsubName("redis")
-                .setSpecVersion("1.0")
-                .setTopic("hello1")
-                .setType("com.runtime.event.sent")
-                .build();
+            .setData(ByteString.copyFrom("d29ybGQ=".getBytes()))
+            .setId("a31aa292-2703-4f29-be58-c1798e540619")
+            .setPubsubName("redis")
+            .setSpecVersion("1.0")
+            .setTopic("hello1")
+            .setType("com.runtime.event.sent")
+            .build();
         AppCallbackProto.TopicEventResponse resp = blockingStub.onTopicEvent(req);
         assertEquals(resp.getStatusValue(), 2);
     }
@@ -126,13 +126,13 @@ public class SubscriberTestWithRealServer {
         //        "type": "com.runtime.event.sent"
         //}
         AppCallbackProto.TopicEventRequest req = AppCallbackProto.TopicEventRequest.newBuilder()
-                .setData(ByteString.copyFrom("d29ybGQ=".getBytes()))
-                .setId("a31aa292-2703-4f29-be58-c1798e540619")
-                .setPubsubName("redis1")
-                .setSpecVersion("1.0")
-                .setTopic("hello")
-                .setType("com.runtime.event.sent")
-                .build();
+            .setData(ByteString.copyFrom("d29ybGQ=".getBytes()))
+            .setId("a31aa292-2703-4f29-be58-c1798e540619")
+            .setPubsubName("redis1")
+            .setSpecVersion("1.0")
+            .setTopic("hello")
+            .setType("com.runtime.event.sent")
+            .build();
         AppCallbackProto.TopicEventResponse resp = blockingStub.onTopicEvent(req);
         assertEquals(resp.getStatusValue(), 2);
     }
