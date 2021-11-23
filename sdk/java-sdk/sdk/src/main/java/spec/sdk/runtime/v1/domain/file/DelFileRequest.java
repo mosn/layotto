@@ -14,12 +14,43 @@
  */
 package spec.sdk.runtime.v1.domain.file;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class DelFileRequest {
 
-    public String              storeName;
-    public String              fileName;
+    private String              storeName;
+    private String              fileName;
 
-    public Map<String, String> metaData;
+    private Map<String, String> metaData;
+
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public Map<String, String> getMetaData() {
+
+        if (metaData == null) {
+            metaData = new HashMap<>();
+        }
+
+        return metaData;
+    }
+
+    public void setMetaData(Map<String, String> metaData) {
+        this.metaData = metaData;
+    }
+
 }

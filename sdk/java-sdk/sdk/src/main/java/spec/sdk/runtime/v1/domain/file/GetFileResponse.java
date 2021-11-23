@@ -14,39 +14,21 @@
  */
 package spec.sdk.runtime.v1.domain.file;
 
-public class ListFileResponse {
+import java.io.InputStream;
 
-    private boolean    isTruncated;
-    private String     marker;
+public class GetFileResponse {
 
-    private FileInfo[] files;
+    private InputStream in;
 
-    public boolean isTruncated() {
-        return isTruncated;
+    public GetFileResponse(InputStream in) {
+        this.in = in;
     }
 
-    public void setTruncated(boolean truncated) {
-        isTruncated = truncated;
+    public InputStream getIn() {
+        return in;
     }
 
-    public String getMarker() {
-        return marker;
-    }
-
-    public void setMarker(String marker) {
-        this.marker = marker;
-    }
-
-    public FileInfo[] getFiles() {
-
-        if (files == null) {
-            files = new FileInfo[0];
-        }
-
-        return files;
-    }
-
-    public void setFiles(FileInfo[] files) {
-        this.files = files;
+    public void setIn(InputStream in) {
+        this.in = in;
     }
 }

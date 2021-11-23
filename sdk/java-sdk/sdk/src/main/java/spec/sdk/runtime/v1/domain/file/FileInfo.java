@@ -17,19 +17,17 @@ package spec.sdk.runtime.v1.domain.file;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GetFileRequest {
-
-    private String              storeName;
+public class FileInfo {
     private String              fileName;
-
+    private long                size;
+    private String              lastModified;
     private Map<String, String> metaData;
 
-    public String getStoreName() {
-        return storeName;
-    }
-
-    public void setStoreName(String storeName) {
-        this.storeName = storeName;
+    public FileInfo(String fileName, long size, String lastModified, Map<String, String> metaData) {
+        this.fileName = fileName;
+        this.size = size;
+        this.lastModified = lastModified;
+        this.metaData = metaData;
     }
 
     public String getFileName() {
@@ -38,6 +36,22 @@ public class GetFileRequest {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public String getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
     }
 
     public Map<String, String> getMetaData() {

@@ -14,11 +14,60 @@
  */
 package spec.sdk.runtime.v1.domain.file;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ListFileRequest {
 
-    public String              storeName;
+    private String              storeName;
+    private String              name;
+    private Map<String, String> metaData;
 
-    public Map<String, String> metaData;
+    private int                 pageSize;
+    private String              marker;
+
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Map<String, String> getMetaData() {
+
+        if (metaData == null) {
+            metaData = new HashMap<>();
+        }
+
+        return metaData;
+    }
+
+    public void setMetaData(Map<String, String> metaData) {
+        this.metaData = metaData;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public String getMarker() {
+        return marker;
+    }
+
+    public void setMarker(String marker) {
+        this.marker = marker;
+    }
 }

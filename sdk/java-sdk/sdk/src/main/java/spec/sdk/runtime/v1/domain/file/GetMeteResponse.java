@@ -14,10 +14,40 @@
  */
 package spec.sdk.runtime.v1.domain.file;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class GetMeteResponse {
-    public long                  size;
-    public String                lastModified;
-    public Map<String, String[]> meta;
+    private long                  size;
+    private String                lastModified;
+    private Map<String, String[]> meta;
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public String getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public Map<String, String[]> getMeta() {
+
+        if (meta == null) {
+            meta = new HashMap<>();
+        }
+
+        return meta;
+    }
+
+    public void setMeta(Map<String, String[]> meta) {
+        this.meta = meta;
+    }
 }

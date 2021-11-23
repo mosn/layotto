@@ -29,14 +29,16 @@ import spec.proto.runtime.v1.RuntimeGrpc;
 import spec.sdk.runtime.v1.domain.file.GetFileRequest;
 import spec.sdk.runtime.v1.domain.file.PutFileRequest;
 import spec.sdk.runtime.v1.domain.file.DelFileRequest;
-import spec.sdk.runtime.v1.domain.file.ListFileResponse;
 import spec.sdk.runtime.v1.domain.file.ListFileRequest;
 import spec.sdk.runtime.v1.domain.file.GetMetaRequest;
 import spec.sdk.runtime.v1.domain.file.GetMeteResponse;
+import spec.sdk.runtime.v1.domain.file.GetFileResponse;
+import spec.sdk.runtime.v1.domain.file.ListFileResponse;
+import spec.sdk.runtime.v1.domain.file.FileInfo;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 @RunWith(JUnit4.class)
 public class FileTestWithRealServer {
@@ -79,13 +81,14 @@ public class FileTestWithRealServer {
     public void testPutFile1() throws Exception {
 
         PutFileRequest req = new PutFileRequest();
-        req.in = new ByteArrayInputStream("hello world".getBytes());
-        req.storeName = "oss";
-        req.fileName = "test.log";
+        req.setIn( new ByteArrayInputStream("hello world".getBytes()));
+        req.setStoreName("oss");
+        req.setFileName("test.log");
 
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
         client.putFile(req, 10000);
     }
@@ -101,12 +104,13 @@ public class FileTestWithRealServer {
     public void testPutFile3() throws Exception {
 
         PutFileRequest req = new PutFileRequest();
-        req.storeName = "oss";
-        req.fileName = "test.log";
+        req.setStoreName( "oss");
+        req.setFileName("test.log");
 
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
         client.putFile(req, 10000);
     }
@@ -116,12 +120,13 @@ public class FileTestWithRealServer {
     public void testPutFile4() throws Exception {
 
         PutFileRequest req = new PutFileRequest();
-        req.in = new ByteArrayInputStream("hello world".getBytes());
-        req.storeName = "oss";
+        req.setIn(  new ByteArrayInputStream("hello world".getBytes()));
+        req.setStoreName( "oss");
 
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
         client.putFile(req, 10000);
     }
@@ -131,12 +136,13 @@ public class FileTestWithRealServer {
     public void testPutFile5() throws Exception {
 
         PutFileRequest req = new PutFileRequest();
-        req.in = new ByteArrayInputStream("hello world".getBytes());
-        req.fileName = "test.log";
+        req.setIn(  new ByteArrayInputStream("hello world".getBytes()));
+        req.setFileName( "test.log");
 
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
         client.putFile(req, 10000);
     }
@@ -146,17 +152,20 @@ public class FileTestWithRealServer {
     public void testGetFile1() throws Exception {
 
         GetFileRequest req = new GetFileRequest();
-        req.out = new ByteArrayOutputStream();
-        req.storeName = "oss";
-        req.fileName = "test.log";
+        req.setStoreName( "oss");
+        req.setFileName( "test.log");
 
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
-        client.getFile(req, 10000);
+        GetFileResponse resp = client.getFile(req, 10000);
 
-        String echo = req.out.toString();
+        byte[] buf = new byte[126];
+        int len = resp.getIn().read(buf);
+
+        String echo = new String(buf,0,len);
         Assert.assertEquals("get file store name oss, meta 2, file name test.log", echo);
     }
 
@@ -166,58 +175,34 @@ public class FileTestWithRealServer {
         client.getFile(null, 10000);
     }
 
-    // miss out stream
+    // miss store name
     @Test(expected = IllegalArgumentException.class)
     public void testGetFile3() throws Exception {
 
         GetFileRequest req = new GetFileRequest();
-        req.storeName = "oss";
-        req.fileName = "test.log";
+        req.setFileName( "test.log");
 
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
-
-        client.getFile(req, 10000);
-
-        String echo = req.out.toString();
-        Assert.assertEquals("put file store name oss, meta 2, file name test.log", echo);
-    }
-
-    // miss store name
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetFile4() throws Exception {
-
-        GetFileRequest req = new GetFileRequest();
-        req.out = new ByteArrayOutputStream();
-        req.fileName = "test.log";
-
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
         client.getFile(req, 10000);
-
-        String echo = req.out.toString();
-        Assert.assertEquals("put file store name oss, meta 2, file name test.log", echo);
     }
 
     // miss file name
     @Test(expected = IllegalArgumentException.class)
-    public void testGetFile5() throws Exception {
+    public void testGetFile4() throws Exception {
 
         GetFileRequest req = new GetFileRequest();
-        req.out = new ByteArrayOutputStream();
-        req.storeName = "oss";
+        req.setStoreName( "oss");
 
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
         client.getFile(req, 10000);
-
-        String echo = req.out.toString();
-        Assert.assertEquals("put file store name oss, meta 2, file name test.log", echo);
     }
 
     // normal case
@@ -225,12 +210,13 @@ public class FileTestWithRealServer {
     public void testDelFile1() throws Exception {
 
         DelFileRequest req = new DelFileRequest();
-        req.storeName = "oss";
-        req.fileName = "test.log";
+        req.setStoreName( "oss");
+        req.setFileName( "test.log");
 
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
         client.delFile(req, 10000);
     }
@@ -246,11 +232,12 @@ public class FileTestWithRealServer {
     public void testDelFile3() throws Exception {
 
         DelFileRequest req = new DelFileRequest();
-        req.fileName = "test.log";
+        req.setFileName( "test.log");
 
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
         client.delFile(req, 10000);
     }
@@ -260,11 +247,12 @@ public class FileTestWithRealServer {
     public void testDelFile4() throws Exception {
 
         DelFileRequest req = new DelFileRequest();
-        req.storeName = "oss";
+        req.setStoreName( "oss");
 
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
         client.delFile(req, 10000);
     }
@@ -274,16 +262,27 @@ public class FileTestWithRealServer {
     public void testListFile1() throws Exception {
 
         ListFileRequest req = new ListFileRequest();
-        req.storeName = "oss";
+        req.setStoreName( "oss");
+        req.setName("dir");
+        req.setMarker("test.log");
+        req.setPageSize(10);
 
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
         ListFileResponse resp = client.listFile(req, 10000);
 
-        Assert.assertEquals(1, resp.fileNames.length);
-        Assert.assertEquals("put file store name oss, meta 2", resp.fileNames[0]);
+        Assert.assertTrue(resp.isTruncated());
+        Assert.assertEquals("marker", resp.getMarker());
+        Assert.assertEquals(1, resp.getFiles().length);
+
+        FileInfo f = resp.getFiles()[0];
+        Assert.assertEquals("put file store name oss, meta 2", f.getFileName());
+        Assert.assertEquals(100L, f.getSize());
+        Assert.assertEquals("2021-11-23 10:24:11", f.getLastModified());
+        Assert.assertEquals("v1", f.getMetaData().get("k1"));
     }
 
     // miss request
@@ -297,14 +296,12 @@ public class FileTestWithRealServer {
     public void testListFile3() throws Exception {
 
         ListFileRequest req = new ListFileRequest();
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
         ListFileResponse resp = client.listFile(req, 10000);
-
-        Assert.assertEquals(1, resp.fileNames.length);
-        Assert.assertEquals("put file store name oss, meta 2", resp.fileNames[0]);
     }
 
     // normal
@@ -312,23 +309,25 @@ public class FileTestWithRealServer {
     public void testGetFileMeta1() throws Exception {
 
         GetMetaRequest req = new GetMetaRequest();
-        req.storeName = "oss";
-        req.fileName = "test.log";
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        req.setStoreName( "oss");
+        req.setFileName( "test.log");
 
-        GetMeteResponse res = client.getMeta(req, 10000);
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
-        Assert.assertEquals(100L,res.size);
-        Assert.assertEquals("2021-11-22 10:24:11",res.lastModified);
-        Assert.assertArrayEquals(new String[]{"v1","v2"},res.meta.get("k1"));
+        GetMeteResponse res = client.getFileMeta(req, 10000);
+
+        Assert.assertEquals(100L,res.getSize());
+        Assert.assertEquals("2021-11-22 10:24:11",res.getLastModified());
+        Assert.assertArrayEquals(new String[]{"v1","v2"},res.getMeta().get("k1"));
     }
 
     // miss request
     @Test(expected = IllegalArgumentException.class)
     public void testGetFileMeta2() throws Exception {
-        client.getMeta(null, 10000);
+        client.getFileMeta(null, 10000);
     }
 
     // miss store name
@@ -336,16 +335,18 @@ public class FileTestWithRealServer {
     public void testGetFileMeta3() throws Exception {
 
         GetMetaRequest req = new GetMetaRequest();
-        req.fileName = "test.log";
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        req.setFileName( "test.log");
 
-        GetMeteResponse res = client.getMeta(req, 10000);
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
 
-        Assert.assertEquals(100L,res.size);
-        Assert.assertEquals("2021-11-22 10:24:11",res.lastModified);
-        Assert.assertArrayEquals(new String[]{"v1","v2"},res.meta.get("k1"));
+        GetMeteResponse res = client.getFileMeta(req, 10000);
+
+        Assert.assertEquals(100L,res.getSize());
+        Assert.assertEquals("2021-11-22 10:24:11",res.getLastModified());
+        Assert.assertArrayEquals(new String[]{"v1","v2"},res.getMeta().get("k1"));
     }
 
     // miss file name
@@ -353,11 +354,13 @@ public class FileTestWithRealServer {
     public void testGetFileMeta4() throws Exception {
 
         GetMetaRequest req = new GetMetaRequest();
-        req.storeName = "oss";
-        req.metaData = new HashMap<>();
-        req.metaData.put("k1", "v1");
-        req.metaData.put("k2", "v2");
+        req.setStoreName( "oss");
 
-        client.getMeta(req, 10000);
+        Map<String,String> metaData = new HashMap<>();
+        metaData.put("k1", "v1");
+        metaData.put("k2", "v2");
+        req.setMetaData(metaData);
+
+        client.getFileMeta(req, 10000);
     }
 }
