@@ -21,5 +21,15 @@ import spec.sdk.runtime.v1.client.RuntimeClient;
 
 public interface GrpcRuntimeClient extends RuntimeClient {
 
+    /**
+     * Getter method for property <tt>stubManager</tt>.
+     *
+     * Do not use it !
+     * This method is deprecated and might be refactored in the future.
+     * We want this client to expose grpc Channels instead of grpc stubs.
+     *
+     * @return property value of stubManager
+     */
+    @Deprecated
     StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> getStubManager();
 }
