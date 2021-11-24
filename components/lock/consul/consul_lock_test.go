@@ -29,47 +29,6 @@ const lockOwerB = "p2"
 const expireTime = 5
 
 //A lock A unlock
-/*func TestConsulLock_TryLock(t *testing.T) {
-
-	//mock
-	ctrl := gomock.NewController(t)
-	client := utils.NewMockConsulClient(ctrl)
-	factory := utils.NewMockSessionFactory(ctrl)
-	kv := utils.NewMockConsulKV(ctrl)
-
-	comp := NewConsulLock(log.DefaultLogger)
-	comp.client = client
-	comp.sessionFactory = factory
-	comp.kv = kv
-
-	comp := NewConsulLock(log.DefaultLogger)
-	cfg := lock.Metadata{
-		Properties: make(map[string]string),
-	}
-	cfg.Properties["address"] = "127.0.0.1:8500"
-	err := comp.Init(cfg)
-
-	assert.NoError(t, err)
-	tryLock, err := comp.TryLock(&lock.TryLockRequest{
-		ResourceId: resouseId,
-		LockOwner:  lockOwerA,
-		Expire:     expireTime,
-	})
-
-	assert.NoError(t, err)
-	assert.Equal(t, true, tryLock.Success)
-
-	unlock, err := comp.Unlock(&lock.UnlockRequest{
-		ResourceId: resouseId,
-		LockOwner:  lockOwerA,
-	})
-
-	assert.NoError(t, err)
-	assert.Equal(t, lock.SUCCESS, unlock.Status)
-
-}*/
-
-//A lock A unlock
 func TestConsulLock_TryLock(t *testing.T) {
 	//mock
 	ctrl := gomock.NewController(t)

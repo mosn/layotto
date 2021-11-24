@@ -91,6 +91,7 @@ import (
 
 	// Lock
 	"mosn.io/layotto/components/lock"
+	lock_consul "mosn.io/layotto/components/lock/consul"
 	lock_etcd "mosn.io/layotto/components/lock/etcd"
 	lock_redis "mosn.io/layotto/components/lock/redis"
 	lock_zookeeper "mosn.io/layotto/components/lock/zookeeper"
@@ -279,6 +280,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_lock.NewFactory("etcd", func() lock.LockStore {
 				return lock_etcd.NewEtcdLock(log.DefaultLogger)
+			}),
+			runtime_lock.NewFactory("consul", func() lock.LockStore {
+				return lock_consul.NewConsulLock(log.DefaultLogger)
 			}),
 		),
 
