@@ -75,9 +75,9 @@ mvn clean install
 
 #### 第三步：运行java sdk示例
 通过以下Examples示例来了解如何使用SDK:
-* [Hello world](./examples/src/main/java/io/mosn/layotto/examples/helloworld)
-* [State management](./examples/src/main/java/io/mosn/layotto/examples/state)
-* [Pubsub API](./examples/src/main/java/io/mosn/layotto/examples/pubsub)
+* [Hello world](./examples/src/test/java/io/mosn/layotto/examples/helloworld)
+* [State management](./examples/src/test/java/io/mosn/layotto/examples/state)
+* [Pubsub API](./examples/src/test/java/io/mosn/layotto/examples/pubsub)
 
 ## java sdk开发指南
 ### java sdk职责
