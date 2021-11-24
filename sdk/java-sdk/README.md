@@ -10,7 +10,7 @@ For a Maven project, add the following to your `pom.xml` file:
     <dependency>
         <groupId>io.mosn.layotto</groupId>
         <artifactId>runtime-sdk-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </dependency>
     ...
   </dependencies>
