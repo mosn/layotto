@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package io.mosn.layotto.examples.helloworld;
 
@@ -23,8 +22,8 @@ public class Hello {
 
     public static void main(String[] args) {
         RuntimeClient client = new RuntimeClientBuilder()
-                .withPort(RuntimeProperties.DEFAULT_PORT)
-                .build();
+            .withPort(RuntimeProperties.DEFAULT_PORT)
+            .build();
 
         String resp = client.sayHello("helloworld");
         if (!"greeting, helloworld".equals(resp)) {

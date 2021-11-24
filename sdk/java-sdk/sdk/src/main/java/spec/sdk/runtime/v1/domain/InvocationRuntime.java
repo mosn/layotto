@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package spec.sdk.runtime.v1.domain;
 
@@ -33,5 +32,6 @@ public interface InvocationRuntime {
      * @param timeoutMs  can be customized every time a service method is called, since different services provide different SLA.
      * @return
      */
-    InvokeResponse<byte[]> invokeMethod(String appId, String methodName, byte[] data, Map<String, String> header, int timeoutMs);
+    InvokeResponse<byte[]> invokeMethod(String appId, String methodName, byte[] data, Map<String, String> header,
+                                        int timeoutMs);
 }

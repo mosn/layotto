@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package spec.sdk.runtime.v1.domain.state;
 
@@ -29,7 +28,7 @@ public class TransactionalStateRequest<T> {
     /**
      * Metadata used for transactional operations.
      */
-    private final Map<String, String> metadata;
+    private final Map<String, String>                  metadata;
 
     /**
      * Constructor to create immutable transactional state request object.
@@ -51,8 +50,12 @@ public class TransactionalStateRequest<T> {
     }
 
     public void putMetadata(String key, String value) {
-        if (key == null) { throw new java.lang.NullPointerException(); }
-        if (value == null) { throw new java.lang.NullPointerException(); }
+        if (key == null) {
+            throw new java.lang.NullPointerException();
+        }
+        if (value == null) {
+            throw new java.lang.NullPointerException();
+        }
         metadata.put(key, value);
     }
 }

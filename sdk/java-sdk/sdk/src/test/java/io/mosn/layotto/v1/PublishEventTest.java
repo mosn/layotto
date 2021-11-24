@@ -35,26 +35,27 @@ import static org.mockito.Mockito.mock;
 @RunWith(JUnit4.class)
 public class PublishEventTest {
     @Rule
-    public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
+    public final GrpcCleanupRule              grpcCleanup = new GrpcCleanupRule();
 
-    private final MyPublishService mockService = new MyPublishService();
+    private final MyPublishService            mockService = new MyPublishService();
 
     private final RuntimeGrpc.RuntimeImplBase serviceImpl =
-            mock(RuntimeGrpc.RuntimeImplBase.class, delegatesTo(mockService));
+                                                                  mock(RuntimeGrpc.RuntimeImplBase.class,
+                                                                      delegatesTo(mockService));
 
-    private RuntimeClient client;
+    private RuntimeClient                     client;
 
     @Before
     public void setUp() throws Exception {
         String serverName = InProcessServerBuilder.generateName();
         grpcCleanup.register(InProcessServerBuilder
-                .forName(serverName).directExecutor()
-                .addService(serviceImpl)
-                .build().start());
+            .forName(serverName).directExecutor()
+            .addService(serviceImpl)
+            .build().start());
         ManagedChannel channel = grpcCleanup.register(
-                InProcessChannelBuilder.forName(serverName).directExecutor().build());
+            InProcessChannelBuilder.forName(serverName).directExecutor().build());
         client = new RuntimeClientBuilder()
-                .buildGrpcWithExistingChannel(channel);
+            .buildGrpcWithExistingChannel(channel);
     }
 
     @Test
