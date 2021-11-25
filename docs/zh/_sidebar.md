@@ -70,6 +70,7 @@
     - [file API设计文档](zh/design/file/file-design.md)
     - [FaaS 设计文档](zh/design/faas/faas-poc-design.md)
 - 贡献指南
+    - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
