@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package io.mosn.layotto.v1.serializer;
 
@@ -19,16 +18,13 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
 
-public class JSONSerializer implements ObjectSerializer {
+public class JSONSerializer extends AbstractSerializer {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public byte[] serialize(Object o) throws IOException {
-        if (o == null) {
-            return null;
-        }
+    protected byte[] doSerialize(Object o) throws IOException {
         return JSONObject.toJSONBytes(o);
     }
 
@@ -36,10 +32,7 @@ public class JSONSerializer implements ObjectSerializer {
      * {@inheritDoc}
      */
     @Override
-    public <T> T deserialize(byte[] data, Class<T> clazz) throws IOException {
-        if (data == null) {
-            return null;
-        }
+    protected <T> T doDeserialize(byte[] data, Class<T> clazz) throws IOException {
         return JSONObject.parseObject(data, clazz);
     }
 

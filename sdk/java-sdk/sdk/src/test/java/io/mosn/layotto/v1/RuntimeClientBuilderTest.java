@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 // CODE ATTRIBUTION: https://github.com/dapr/java-sdk
 // Modified some test cases to test layotto's code
@@ -53,6 +52,11 @@ public class RuntimeClientBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void noStateSerializer() {
         new RuntimeClientBuilder().withStateSerializer(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void noApiProtocal() {
+        new RuntimeClientBuilder().withApiProtocol(null);
     }
 
 }

@@ -1,6 +1,19 @@
 package spec.proto.runtime.v1;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
+import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncUnaryCall;
+import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
+import static io.grpc.stub.ClientCalls.blockingUnaryCall;
+import static io.grpc.stub.ClientCalls.futureUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /**
  * <pre>
@@ -10,7 +23,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  * </pre>
  */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.37.0)",
+    value = "by gRPC proto compiler (version 1.34.1)",
     comments = "Source: proto/runtime/v1/appcallback.proto")
 public final class AppCallbackGrpc {
 
@@ -141,7 +154,7 @@ public final class AppCallbackGrpc {
      */
     public void listTopicSubscriptions(com.google.protobuf.Empty request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.AppCallbackProto.ListTopicSubscriptionsResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListTopicSubscriptionsMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getListTopicSubscriptionsMethod(), responseObserver);
     }
 
     /**
@@ -151,21 +164,21 @@ public final class AppCallbackGrpc {
      */
     public void onTopicEvent(spec.proto.runtime.v1.AppCallbackProto.TopicEventRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.AppCallbackProto.TopicEventResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getOnTopicEventMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getOnTopicEventMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
             getListTopicSubscriptionsMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 com.google.protobuf.Empty,
                 spec.proto.runtime.v1.AppCallbackProto.ListTopicSubscriptionsResponse>(
                   this, METHODID_LIST_TOPIC_SUBSCRIPTIONS)))
           .addMethod(
             getOnTopicEventMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            asyncUnaryCall(
               new MethodHandlers<
                 spec.proto.runtime.v1.AppCallbackProto.TopicEventRequest,
                 spec.proto.runtime.v1.AppCallbackProto.TopicEventResponse>(
@@ -200,7 +213,7 @@ public final class AppCallbackGrpc {
      */
     public void listTopicSubscriptions(com.google.protobuf.Empty request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.AppCallbackProto.ListTopicSubscriptionsResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getListTopicSubscriptionsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -211,7 +224,7 @@ public final class AppCallbackGrpc {
      */
     public void onTopicEvent(spec.proto.runtime.v1.AppCallbackProto.TopicEventRequest request,
         io.grpc.stub.StreamObserver<spec.proto.runtime.v1.AppCallbackProto.TopicEventResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      asyncUnaryCall(
           getChannel().newCall(getOnTopicEventMethod(), getCallOptions()), request, responseObserver);
     }
   }
@@ -241,7 +254,7 @@ public final class AppCallbackGrpc {
      * </pre>
      */
     public spec.proto.runtime.v1.AppCallbackProto.ListTopicSubscriptionsResponse listTopicSubscriptions(com.google.protobuf.Empty request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getListTopicSubscriptionsMethod(), getCallOptions(), request);
     }
 
@@ -251,7 +264,7 @@ public final class AppCallbackGrpc {
      * </pre>
      */
     public spec.proto.runtime.v1.AppCallbackProto.TopicEventResponse onTopicEvent(spec.proto.runtime.v1.AppCallbackProto.TopicEventRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+      return blockingUnaryCall(
           getChannel(), getOnTopicEventMethod(), getCallOptions(), request);
     }
   }
@@ -282,7 +295,7 @@ public final class AppCallbackGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.AppCallbackProto.ListTopicSubscriptionsResponse> listTopicSubscriptions(
         com.google.protobuf.Empty request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getListTopicSubscriptionsMethod(), getCallOptions()), request);
     }
 
@@ -293,7 +306,7 @@ public final class AppCallbackGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<spec.proto.runtime.v1.AppCallbackProto.TopicEventResponse> onTopicEvent(
         spec.proto.runtime.v1.AppCallbackProto.TopicEventRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
+      return futureUnaryCall(
           getChannel().newCall(getOnTopicEventMethod(), getCallOptions()), request);
     }
   }

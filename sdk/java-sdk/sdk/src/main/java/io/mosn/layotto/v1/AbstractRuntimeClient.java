@@ -11,17 +11,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package io.mosn.layotto.v1;
 
 import io.mosn.layotto.v1.config.RuntimeProperties;
+import io.mosn.layotto.v1.exceptions.RuntimeClientException;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
 import org.slf4j.Logger;
 import spec.sdk.runtime.v1.client.RuntimeClient;
 import spec.sdk.runtime.v1.domain.invocation.InvokeResponse;
 import spec.sdk.runtime.v1.domain.state.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,9 +41,15 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     /**
      * Runtime invocation timeout ms.
      */
-    private final   int              timeoutMs;
+    private final int                timeoutMs;
 
     AbstractRuntimeClient(Logger logger, int timeoutMs, ObjectSerializer stateSerializer) {
+        if (logger == null) {
+            throw new IllegalArgumentException("logger shouldn't be null");
+        }
+        if (stateSerializer == null) {
+            throw new IllegalArgumentException("stateSerializer shouldn't be null");
+        }
         this.logger = logger;
         this.timeoutMs = timeoutMs;
         this.stateSerializer = stateSerializer;
@@ -57,6 +64,7 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     public InvokeResponse<byte[]> invokeMethod(String appId, String methodName, byte[] data, Map<String, String> header) {
         return this.invokeMethod(appId, methodName, data, header, this.getTimeoutMs());
     }
+
     // TODO add some methods that serialize data before invoking method
 
     @Override
@@ -98,6 +106,50 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
     }
 
     /**
+     * Retrieve a State based on their key.
+     *
+     * @param request The request to get state.
+     * @param clazz   The Class of State needed as return.
+     * @return The requested State.
+     */
+    @Override
+    public <T> State<T> getState(GetStateRequest request, Class<T> clazz) {
+        return getState(request, clazz, getTimeoutMs());
+    }
+
+    @Override
+    public <T> State<T> getState(GetStateRequest request, Class<T> clazz, int timeoutMs) {
+        // 1. validate
+        if (clazz == null) {
+            throw new IllegalArgumentException("clazz cannot be null.");
+        }
+        final String stateStoreName = request.getStoreName();
+        if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
+            throw new IllegalArgumentException("State store name cannot be null or empty.");
+        }
+        final String key = request.getKey();
+        if ((key == null) || (key.trim().isEmpty())) {
+            throw new IllegalArgumentException("Key cannot be null or empty.");
+        }
+        // 2. invoke
+        State<byte[]> state = doGetState(request, timeoutMs);
+        try {
+            // 3. deserialize
+            T value = null;
+            byte[] data = state.getValue();
+            if (data != null) {
+                value = stateSerializer.deserialize(data, clazz);
+            }
+            return new State<>(state.getKey(), value, state.getEtag(), state.getMetadata(), state.getOptions());
+        } catch (Exception e) {
+            logger.error("getState error ", e);
+            throw new RuntimeClientException(e);
+        }
+    }
+
+    protected abstract State<byte[]> doGetState(GetStateRequest request, int timeoutMs);
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -114,6 +166,16 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
         request.setEtag(etag);
         request.setStateOptions(options);
         this.deleteState(request);
+    }
+
+    /**
+     * Delete a state.
+     *
+     * @param request Request to delete a state.
+     */
+    @Override
+    public void deleteState(DeleteStateRequest request) {
+        deleteState(request, getTimeoutMs());
     }
 
     /**
@@ -149,6 +211,14 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
      * {@inheritDoc}
      */
     @Override
+    public void saveBulkState(SaveStateRequest request) {
+        saveBulkState(request, getTimeoutMs());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void executeStateTransaction(String storeName, List<TransactionalStateOperation<?>> operations) {
         ExecuteStateTransactionRequest request = new ExecuteStateTransactionRequest(storeName);
         request.setOperations(operations);
@@ -163,6 +233,54 @@ public abstract class AbstractRuntimeClient implements RuntimeClient {
         GetBulkStateRequest request = new GetBulkStateRequest(storeName, keys);
         return this.getBulkState(request, clazz);
     }
+
+    @Override
+    public <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz) {
+        return getBulkState(request, clazz, getTimeoutMs());
+    }
+
+    @Override
+    public <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz, int timeoutMs) {
+        // 1. validate
+        if (clazz == null) {
+            throw new IllegalArgumentException("clazz cannot be null.");
+        }
+        final String stateStoreName = request.getStoreName();
+        final List<String> keys = request.getKeys();
+        final int parallelism = request.getParallelism();
+
+        if ((stateStoreName == null) || (stateStoreName.trim().isEmpty())) {
+            throw new IllegalArgumentException("State store name cannot be null or empty.");
+        }
+        if (keys == null || keys.isEmpty()) {
+            throw new IllegalArgumentException("Key cannot be null or empty.");
+        }
+        if (parallelism < 0) {
+            throw new IllegalArgumentException("Parallelism cannot be negative.");
+        }
+
+        try {
+            // 2. invoke
+            List<State<byte[]>> bulkState = doGetBulkState(request, timeoutMs);
+            // 3. deserialize
+            List<State<T>> result = new ArrayList<>(bulkState.size());
+            for (State<byte[]> state : bulkState) {
+                byte[] value = state.getValue();
+                T deValue = null;
+                if (value != null) {
+                    deValue = stateSerializer.deserialize(value, clazz);
+                }
+                State<T> tState = new State<>(state.getKey(), deValue, state.getEtag(), state.getMetadata(), state.getOptions());
+                result.add(tState);
+            }
+            return result;
+        } catch (Exception e) {
+            logger.error("getBulkState error ", e);
+            throw new RuntimeClientException(e);
+        }
+    }
+
+    protected abstract List<State<byte[]>> doGetBulkState(GetBulkStateRequest request, int timeoutMs);
 
     /**
      * Getter method for property <tt>timeoutMs</tt>.

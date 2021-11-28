@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package io.mosn.layotto.v1;
 
@@ -20,6 +19,11 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.mosn.layotto.v1.config.RuntimeProperties;
 import io.mosn.layotto.v1.domain.ApiProtocol;
+import io.mosn.layotto.v1.grpc.GrpcRuntimeClient;
+import io.mosn.layotto.v1.grpc.stub.PooledStubManager;
+import io.mosn.layotto.v1.grpc.stub.SingleStubManager;
+import io.mosn.layotto.v1.grpc.stub.StubCreator;
+import io.mosn.layotto.v1.grpc.stub.StubManager;
 import io.mosn.layotto.v1.serializer.JSONSerializer;
 import io.mosn.layotto.v1.serializer.ObjectSerializer;
 import org.slf4j.Logger;
@@ -27,27 +31,26 @@ import org.slf4j.LoggerFactory;
 import spec.proto.runtime.v1.RuntimeGrpc;
 import spec.sdk.runtime.v1.client.RuntimeClient;
 
-import java.io.Closeable;
-import java.util.function.Supplier;
-
 /**
  * A builder for the RuntimeClient,
  */
 public class RuntimeClientBuilder {
 
-    private static final Logger DEFAULT_LOGGER = LoggerFactory.getLogger(RuntimeClient.class.getName());
+    private static final Logger DEFAULT_LOGGER  = LoggerFactory.getLogger(RuntimeClient.class.getName());
 
-    private int timeoutMs = RuntimeProperties.DEFAULT_TIMEOUT_MS;
+    private int                 timeoutMs       = RuntimeProperties.DEFAULT_TIMEOUT_MS;
 
-    private String ip = RuntimeProperties.DEFAULT_IP;
+    private String              ip              = RuntimeProperties.DEFAULT_IP;
 
-    private int port = RuntimeProperties.DEFAULT_PORT;
+    private int                 port            = RuntimeProperties.DEFAULT_PORT;
 
-    private ApiProtocol protocol = RuntimeProperties.DEFAULT_API_PROTOCOL;
+    private ApiProtocol         protocol        = RuntimeProperties.DEFAULT_API_PROTOCOL;
 
-    private Logger logger = DEFAULT_LOGGER;
+    private Logger              logger          = DEFAULT_LOGGER;
 
-    private ObjectSerializer stateSerializer = new JSONSerializer();
+    private ObjectSerializer    stateSerializer = new JSONSerializer();
+
+    private int                 poolSize;
 
     // TODO add rpc serializer
 
@@ -55,6 +58,14 @@ public class RuntimeClientBuilder {
      * Creates a constructor for RuntimeClient.
      */
     public RuntimeClientBuilder() {
+    }
+
+    public RuntimeClientBuilder withConnectionPoolSize(int poolSize) {
+        if (poolSize <= 0) {
+            throw new IllegalArgumentException("Invalid poolSize.");
+        }
+        this.poolSize = poolSize;
+        return this;
     }
 
     public RuntimeClientBuilder withIp(String ip) {
@@ -132,24 +143,56 @@ public class RuntimeClientBuilder {
         }
     }
 
-    private RuntimeClient buildGrpc() {
+    public GrpcRuntimeClient buildGrpc() {
+        // 1. validate
         if (port <= 0) {
             throw new IllegalArgumentException("Invalid port.");
         }
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port)
-                .usePlaintext()
-                .build();
-        Closeable closeable = () -> {
-            if (channel != null && !channel.isShutdown()) {
-                channel.shutdown();
-            }
-        };
-        RuntimeGrpc.RuntimeBlockingStub blockingStub = RuntimeGrpc.newBlockingStub(channel);
+        // 2. construct stubManager
+        StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager;
+        if (poolSize > 1) {
+            stubManager = new PooledStubManager<>(ip, port, poolSize, new StubCreatorImpl());
+        } else {
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(ip, port)
+                    .usePlaintext()
+                    .build();
+            stubManager = new SingleStubManager(channel, new StubCreatorImpl());
+        }
+        // 3. construct client
         return new RuntimeClientGrpc(
                 logger,
                 timeoutMs,
                 stateSerializer,
-                closeable,
-                blockingStub);
+                stubManager);
+    }
+
+    public GrpcRuntimeClient buildGrpcWithExistingChannel(ManagedChannel channel) {
+        // 1. validate
+        if (port <= 0) {
+            throw new IllegalArgumentException("Invalid port.");
+        }
+        // 2. construct stubManager
+        StubManager<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> stubManager = new SingleStubManager(
+            channel, new StubCreatorImpl());
+        // 3. construct client
+        return new RuntimeClientGrpc(
+            logger,
+            timeoutMs,
+            stateSerializer,
+            stubManager);
+    }
+
+    public static class StubCreatorImpl implements
+                                       StubCreator<RuntimeGrpc.RuntimeStub, RuntimeGrpc.RuntimeBlockingStub> {
+
+        @Override
+        public RuntimeGrpc.RuntimeStub createAsyncStub(ManagedChannel channel) {
+            return RuntimeGrpc.newStub(channel);
+        }
+
+        @Override
+        public RuntimeGrpc.RuntimeBlockingStub createBlockingStub(ManagedChannel channel) {
+            return RuntimeGrpc.newBlockingStub(channel);
+        }
     }
 }

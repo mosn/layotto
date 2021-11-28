@@ -18,8 +18,8 @@
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - [trace管理](zh/start/trace/trace.md)
-    - [使用WASM进行多语言编程](zh/start/wasm/start.md)
     - [OSS访问文件](zh/start/file/start.md)
+    - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - 用户手册
     - 功能介绍
@@ -34,8 +34,10 @@
         - [RPC API](zh/building_blocks/rpc/reference.md)
     - [grpc API 文档](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
     - SDK文档    
-        - [go-sdk](zh/sdk_reference/go/start.md)
-        - [java-sdk](zh/sdk_reference/java/start.md)
+        - [go sdk](zh/sdk_reference/go/start.md)
+        - [java sdk](https://github.com/mosn/layotto/blob/main/sdk/java-sdk/README-zh.md)
+        - [.net sdk](https://github.com/layotto/dotnet-sdk)
+        - [js sdk](https://github.com/layotto/js-sdk)
     - [配置文档](zh/configuration/overview.md)
     - [组件文档](zh/component_specs/overview.md)
         - [State](zh/component_specs/state/common.md)
@@ -48,6 +50,7 @@
             - [Redis](zh/component_specs/lock/redis.md)
             - [Etcd](zh/component_specs/lock/etcd.md)
             - [Zookeeper](zh/component_specs/lock/zookeeper.md)
+            - [Consul](zh/component_specs/lock/consul.md)
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)
             - [Apollo](zh/component_specs/configuration/apollo.md)
@@ -68,6 +71,7 @@
     - [file API设计文档](zh/design/file/file-design.md)
     - [FaaS 设计文档](zh/design/faas/faas-poc-design.md)
 - 贡献指南
+    - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？

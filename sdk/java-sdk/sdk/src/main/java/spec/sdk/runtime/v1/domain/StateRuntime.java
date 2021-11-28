@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package spec.sdk.runtime.v1.domain;
 
@@ -54,6 +53,17 @@ public interface StateRuntime {
     <T> State<T> getState(GetStateRequest request, Class<T> clazz);
 
     /**
+     * Retrieve a State based on their key.
+     *
+     * @param request   The request to get state.
+     * @param clazz     The Class of State needed as return.
+     * @param timeoutMs
+     * @param <T>       The Type of the return.
+     * @return
+     */
+    <T> State<T> getState(GetStateRequest request, Class<T> clazz, int timeoutMs);
+
+    /**
      * Retrieve bulk States based on their keys.
      *
      * @param storeName The name of the state store.
@@ -72,6 +82,17 @@ public interface StateRuntime {
      * @return The requested State.
      */
     <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz);
+
+    /**
+     * Retrieve bulk States based on their keys.
+     *
+     * @param request   The request to get state.
+     * @param clazz     The Class of State needed as return.
+     * @param <T>       The Type of the return.
+     * @param timeoutMs The time limit(millisecond) of this call.
+     * @return The requested State.
+     */
+    <T> List<State<T>> getBulkState(GetBulkStateRequest request, Class<T> clazz, int timeoutMs);
 
     /**
      * Execute a transaction.
@@ -105,6 +126,14 @@ public interface StateRuntime {
     void saveBulkState(SaveStateRequest request);
 
     /**
+     * Save/Update a list of states.
+     *
+     * @param request
+     * @param timeoutMs
+     */
+    void saveBulkState(SaveStateRequest request, int timeoutMs);
+
+    /**
      * Save/Update a state.
      *
      * @param storeName The name of the state store.
@@ -122,7 +151,8 @@ public interface StateRuntime {
      * @param value     The value of the state.
      * @param options   The Options to use for each state.
      */
-    void saveState(String storeName, String key, String etag, Object value, StateOptions options, Map<String, String> metadata);
+    void saveState(String storeName, String key, String etag, Object value, StateOptions options,
+                   Map<String, String> metadata);
 
     /**
      * Delete a state.
@@ -148,4 +178,12 @@ public interface StateRuntime {
      * @param request Request to delete a state.
      */
     void deleteState(DeleteStateRequest request);
+
+    /**
+     * Delete a state.
+     *
+     * @param request   Request to delete a state.
+     * @param timeoutMs
+     */
+    void deleteState(DeleteStateRequest request, int timeoutMs);
 }
