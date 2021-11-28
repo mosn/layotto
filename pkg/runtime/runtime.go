@@ -21,6 +21,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"mosn.io/layotto/components/secretstores"
 	"strings"
 
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
@@ -82,6 +83,7 @@ type MosnRuntime struct {
 	locks             map[string]lock.LockStore
 	sequencers        map[string]sequencer.Store
 	outputBindings    map[string]bindings.OutputBinding
+	secretStores      map[string]secretstores.SecretStore
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
 	// extends
@@ -121,6 +123,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		sequencers:          make(map[string]sequencer.Store),
 		outputBindings:      make(map[string]bindings.OutputBinding),
 		json:                jsoniter.ConfigFastest,
+		secretStores:        make(map[string]secretstores.SecretStore),
 	}
 }
 
@@ -180,6 +183,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		m.locks,
 		m.sequencers,
 		m.sendToOutputBinding,
+		m.secretStores,
 	)
 	grpcOpts = append(grpcOpts,
 		grpc.WithGrpcOptions(o.options...),
