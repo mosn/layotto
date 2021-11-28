@@ -52,7 +52,7 @@ func TestGetState(t *testing.T) {
 			Metadata: nil,
 		}
 		mockStore.EXPECT().Get(gomock.Any()).Return(compResp, nil)
-		Layotto = grpc.NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil)
+		Layotto = grpc.NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil,nil)
 
 		value, ok := d.GetState("mock", "mykey")
 		assert.Equal(t, proxywasm.WasmResultOk, ok)
@@ -74,7 +74,7 @@ func TestInvokeService(t *testing.T) {
 				assert.Equal(t, "id_2", req.Id)
 				return resp, nil
 			})
-		Layotto = grpc.NewAPI("", nil, nil, map[string]rpc.Invoker{mosninvoker.Name: mockInvoker}, nil, nil, nil, nil, nil, nil)
+		Layotto = grpc.NewAPI("", nil, nil, map[string]rpc.Invoker{mosninvoker.Name: mockInvoker}, nil, nil, nil, nil, nil, nil,nil)
 
 		result, ok := d.InvokeService("id_2", "", "book1")
 		assert.Equal(t, proxywasm.WasmResultOk, ok)
