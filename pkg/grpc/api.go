@@ -1111,6 +1111,7 @@ func (a *api) InvokeBinding(ctx context.Context, in *runtimev1pb.InvokeBindingRe
 }
 
 func (a *api) GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest) (*runtimev1pb.GetSecretResponse, error) {
+
 	if a.secretStores == nil || len(a.secretStores) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrSecretStoreNotConfigured)
 		log.DefaultLogger.Errorf("GetSecret fail,not configured err:%+v", err)

@@ -1164,6 +1164,7 @@ func TestGetSecret(t *testing.T) {
 }
 
 func TestGetBulkSecret(t *testing.T) {
+
 	fakeStore := moke_secret.FakeSecretStore{}
 	fakeStores := map[string]secretstores.SecretStore{
 		"store1": fakeStore,

@@ -23,6 +23,7 @@ func (c FakeSecretStore) GetSecret(req secretstores.GetSecretRequest) (secretsto
 
 func (c FakeSecretStore) BulkGetSecret(req secretstores.BulkGetSecretRequest) (secretstores.BulkGetSecretResponse, error) {
 	response := map[string]map[string]string{}
+
 	response["good-key"] = map[string]string{"good-key": "life is good"}
 
 	return secretstores.BulkGetSecretResponse{
