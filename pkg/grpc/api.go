@@ -20,12 +20,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/dapr/components-contrib/bindings"
 	"io"
 	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 	"mosn.io/layotto/components/secretstores"
 	"strings"
 	"sync"
-	"github.com/dapr/components-contrib/bindings"
 
 	"mosn.io/pkg/utils"
 
