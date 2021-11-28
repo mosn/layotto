@@ -1,9 +1,7 @@
 package secret
 
-
 import (
 	"errors"
-
 	"mosn.io/layotto/components/secretstores"
 )
 

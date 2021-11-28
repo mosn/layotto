@@ -1063,11 +1063,11 @@ func (a *api) GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest) (
 		return &runtimev1pb.GetSecretResponse{}, err
 	}
 
+
 	req := secretstores.GetSecretRequest{
 		Name:     in.Key,
 		Metadata: in.Metadata,
 	}
-	// Later reserved check permission logic
 
 	getResponse, err := a.secretStores[secretStoreName].GetSecret(req)
 	if err != nil {
