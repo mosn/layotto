@@ -132,7 +132,7 @@ type api struct {
 	lockStores               map[string]lock.LockStore
 	sequencers               map[string]sequencer.Store
 	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
-	secretStores map[string]secretstores.SecretStore
+	secretStores             map[string]secretstores.SecretStore
 }
 
 func NewAPI(
@@ -1125,7 +1125,6 @@ func (a *api) GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest) (
 		log.DefaultLogger.Errorf("GetSecret fail,not find err:%+v", err)
 		return &runtimev1pb.GetSecretResponse{}, err
 	}
-
 
 	req := secretstores.GetSecretRequest{
 		Name:     in.Key,

@@ -1057,7 +1057,7 @@ func TestListFile(t *testing.T) {
 func TestDelFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockFile := mock.NewMockFile(ctrl)
-	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil,nil)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil, nil)
 	request := &runtimev1pb.FileRequest{StoreName: "mock1"}
 	request.Metadata = make(map[string]string)
 	resp, err := api.DelFile(context.Background(), &runtimev1pb.DelFileRequest{Request: request})
@@ -1076,7 +1076,7 @@ func TestDelFile(t *testing.T) {
 func TestGetFileMeta(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockFile := mock.NewMockFile(ctrl)
-	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil,nil)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil, nil)
 	request := &runtimev1pb.GetFileMetaRequest{Request: nil}
 	resp, err := api.GetFileMeta(context.Background(), request)
 	assert.Nil(t, resp)
@@ -1119,7 +1119,7 @@ func TestGetSecret(t *testing.T) {
 			key:              "good-key",
 			errorExcepted:    false,
 			expectedResponse: "life is good",
-			expectedError: codes.OK,
+			expectedError:    codes.OK,
 		},
 		{
 			testName:         "error occur with error-key",
@@ -1132,7 +1132,7 @@ func TestGetSecret(t *testing.T) {
 	}
 	// Setup API server
 	fakeAPI := &api{
-		secretStores:         fakeStores,
+		secretStores: fakeStores,
 	}
 	// Run test server
 	port, _ := freeport.GetFreePort()
