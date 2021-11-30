@@ -48,6 +48,7 @@
       - [Redis](en/component_specs/lock/redis.md)  
       - [Etcd](en/component_specs/lock/etcd.md)
       - [Zookeeper](en/component_specs/lock/zookeeper.md)
+      - [Consul](en/component_specs/lock/consul.md)
     - Configuration
       - [Etcd](en/component_specs/configuration/etcd.md)
       - [Apollo](en/component_specs/configuration/apollo.md)
