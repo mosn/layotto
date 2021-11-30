@@ -753,33 +753,60 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
         }
     }
 
-    private class GetFilePipe implements StreamObserver<RuntimeProto.GetFileResponse> {
-
-        private final String       fileName;
-        private final InputStream  reader;
-        private final OutputStream dataSource;
+    private class PipeFileInputStream extends PipedInputStream {
 
         private volatile Throwable cause;
 
+        PipeFileInputStream(PipedOutputStream out) throws IOException {
+            super(out);
+        }
+
+        @Override
+        public synchronized int read() throws IOException {
+
+            checkCause();
+
+            return super.read();
+        }
+
+        @Override
+        public int read(byte[] b) throws IOException {
+
+            checkCause();
+
+            return super.read(b);
+        }
+
+        @Override
+        public synchronized int read(byte[] b, int off, int len) throws IOException {
+
+            checkCause();
+
+            return super.read(b, off, len);
+        }
+
+        private void checkCause() throws IOException {
+            if (this.cause != null) {
+                this.close();
+                throw new IOException(this.cause);
+            }
+        }
+
+        public void setCause(Throwable cause) {
+            this.cause = cause;
+        }
+    }
+
+    private class GetFilePipe implements StreamObserver<RuntimeProto.GetFileResponse> {
+
+        private final String              fileName;
+        private final PipeFileInputStream reader;
+        private final PipedOutputStream   dataSource;
+
         GetFilePipe(String fileName) throws IOException {
-
             this.fileName = fileName;
-
-            // init pipe
-            PipedInputStream in = new PipedInputStream();
-            PipedOutputStream out = new PipedOutputStream();
-            in.connect(out);
-
-            this.reader = new InputStream() {
-                @Override
-                public int read() throws IOException {
-                    if (cause != null){
-                        throw new IOException(cause);
-                    }
-                    return in.read();
-                }
-            };
-            this.dataSource = out;
+            this.dataSource = new PipedOutputStream();
+            this.reader = new PipeFileInputStream(this.dataSource);
         }
 
         @Override
@@ -795,9 +822,9 @@ public class RuntimeClientGrpc extends AbstractRuntimeClient implements GrpcRunt
 
             logger.error(String.format("get File error, file=%s", this.fileName), t);
 
-            this.cause = t;
+            reader.setCause(t);
 
-            close();
+            pipe(t.getMessage().getBytes());
         }
 
         @Override
