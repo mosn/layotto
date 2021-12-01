@@ -10,7 +10,7 @@ For a Maven project, add the following to your `pom.xml` file:
     <dependency>
         <groupId>io.mosn.layotto</groupId>
         <artifactId>runtime-sdk-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </dependency>
     ...
   </dependencies>
@@ -46,9 +46,9 @@ mvn clean install
 
 
 Try the following examples to learn more about this SDK:
-* [Hello world](./examples/src/main/java/io/mosn/layotto/examples/helloworld)
-* [State management](./examples/src/main/java/io/mosn/layotto/examples/state)
-* [Pubsub API](./examples/src/main/java/io/mosn/layotto/examples/pubsub)
+* [Hello world](./examples/src/test/java/io/mosn/layotto/examples/helloworld)
+* [State management](./examples/src/test/java/io/mosn/layotto/examples/state)
+* [Pubsub API](./examples/src/test/java/io/mosn/layotto/examples/pubsub)
 
 ## java sdk developer guide 
 ### How to format java sdk code

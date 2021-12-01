@@ -19,10 +19,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	"os"
 	"strconv"
 	"time"
+
+	mock_state "mosn.io/layotto/pkg/mock/components/state"
 
 	"mosn.io/layotto/components/file/local"
 
@@ -54,6 +55,7 @@ import (
 	"github.com/dapr/components-contrib/pubsub/azure/servicebus"
 	pubsub_gcp "github.com/dapr/components-contrib/pubsub/gcp/pubsub"
 	pubsub_hazelcast "github.com/dapr/components-contrib/pubsub/hazelcast"
+	pubsub_inmemory "github.com/dapr/components-contrib/pubsub/in-memory"
 	pubsub_kafka "github.com/dapr/components-contrib/pubsub/kafka"
 	pubsub_mqtt "github.com/dapr/components-contrib/pubsub/mqtt"
 	"github.com/dapr/components-contrib/pubsub/natsstreaming"
@@ -92,6 +94,7 @@ import (
 
 	// Lock
 	"mosn.io/layotto/components/lock"
+	lock_consul "mosn.io/layotto/components/lock/consul"
 	lock_etcd "mosn.io/layotto/components/lock/etcd"
 	lock_redis "mosn.io/layotto/components/lock/redis"
 	lock_zookeeper "mosn.io/layotto/components/lock/zookeeper"
@@ -208,10 +211,13 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			pubsub.NewFactory("pulsar", func() dapr_comp_pubsub.PubSub {
 				return pubsub_pulsar.NewPulsar(loggerForDaprComp)
 			}),
+			pubsub.NewFactory("in-memory", func() dapr_comp_pubsub.PubSub {
+				return pubsub_inmemory.New(loggerForDaprComp)
+			}),
 		),
 		// State
 		runtime.WithStateFactory(
-			runtime_state.NewFactory("in.memory", func() state.Store {
+			runtime_state.NewFactory("in-memory", func() state.Store {
 				return mock_state.NewInMemoryStateStore()
 			}),
 			runtime_state.NewFactory("redis", func() state.Store {
@@ -283,6 +289,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_lock.NewFactory("etcd", func() lock.LockStore {
 				return lock_etcd.NewEtcdLock(log.DefaultLogger)
+			}),
+			runtime_lock.NewFactory("consul", func() lock.LockStore {
+				return lock_consul.NewConsulLock(log.DefaultLogger)
 			}),
 		),
 

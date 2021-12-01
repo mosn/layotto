@@ -26,16 +26,11 @@
                           "hello": "greeting"
                         }
                       },
-                      "state": {
-                        "in-memory": {
+                      "lock": {
+                        "consul": {
                           "metadata": {
-                          }
-                        }
-                      },
-                      "pub_subs": {
-                        "in-memory": {
-                          "metadata": {
-                            "consumerID": "1"
+                            "address": "localhost:8500",
+                            "scheme": "http"
                           }
                         }
                       },
