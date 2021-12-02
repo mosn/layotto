@@ -49,6 +49,7 @@ Try the following examples to learn more about this SDK:
 * [Hello world](./examples/src/test/java/io/mosn/layotto/examples/helloworld)
 * [State management](./examples/src/test/java/io/mosn/layotto/examples/state)
 * [Pubsub API](./examples/src/test/java/io/mosn/layotto/examples/pubsub)
+* [File API](./examples/src/test/java/io/mosn/layotto/examples/file)
 
 ## java sdk developer guide 
 ### How to format java sdk code
