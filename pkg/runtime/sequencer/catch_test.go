@@ -23,8 +23,8 @@ import (
 	"testing"
 )
 
-const key = "resource_xxx"
-const idLimit = 6000
+const keyXx = "resource_xxx"
+const idLimit = 12000
 
 func TestGetNextIdFromCache(t *testing.T) {
 	s, err := miniredis.Run()
@@ -43,11 +43,10 @@ func TestGetNextIdFromCache(t *testing.T) {
 
 	for i := 1; i < idLimit; i++ {
 		support, id, err := GetNextIdFromCache(context.Background(), comp, &sequencer.GetNextIdRequest{
-			Key: key,
+			Key: keyXx,
 		})
 		assert.NoError(t, err)
 		assert.Equal(t, true, support)
 		assert.Equal(t, id, int64(i))
 	}
-
 }
