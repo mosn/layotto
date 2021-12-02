@@ -20,7 +20,6 @@ import (
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/components/sequencer/redis"
 	"mosn.io/pkg/log"
-	"sync"
 	"testing"
 )
 
@@ -51,43 +50,4 @@ func TestGetNextIdFromCache(t *testing.T) {
 		assert.Equal(t, id, int64(i))
 	}
 
-}
-
-func TestConcurrentGetNextIdFromCache(t *testing.T) {
-	s, err := miniredis.Run()
-	assert.NoError(t, err)
-	defer s.Close()
-	// construct componen
-	comp := redis.NewStandaloneRedisSequencer(log.DefaultLogger)
-	cfg := sequencer.Configuration{
-		Properties: make(map[string]string),
-	}
-	cfg.Properties["redisHost"] = s.Addr()
-	cfg.Properties["redisPassword"] = ""
-	// init
-	err = comp.Init(cfg)
-	assert.NoError(t, err)
-
-	var wg sync.WaitGroup
-	GRCount := 1
-	wg.Add(GRCount)
-	for g := 0; g < GRCount; g++ {
-		go func() {
-			for i := 0; i < idLimit; i++ {
-				support, _, err := GetNextIdFromCache(context.Background(), comp, &sequencer.GetNextIdRequest{
-					Key: key,
-				})
-				assert.NoError(t, err)
-				assert.Equal(t, true, support)
-			}
-			wg.Done()
-		}()
-	}
-	wg.Wait()
-	support, id, err := GetNextIdFromCache(context.Background(), comp, &sequencer.GetNextIdRequest{
-		Key: key,
-	})
-	assert.NoError(t, err)
-	assert.Equal(t, true, support)
-	assert.Equal(t, int64(idLimit*GRCount+1), id)
 }
