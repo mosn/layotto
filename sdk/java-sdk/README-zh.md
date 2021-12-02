@@ -78,6 +78,7 @@ mvn clean install
 * [Hello world](./examples/src/main/java/io/mosn/layotto/examples/helloworld)
 * [State management](./examples/src/main/java/io/mosn/layotto/examples/state)
 * [Pubsub API](./examples/src/main/java/io/mosn/layotto/examples/pubsub)
+* [File API](./examples/src/main/java/io/mosn/layotto/examples/file)
 
 ## 如何格式化 java sdk 代码
 提交pull request之前先用maven编译一下

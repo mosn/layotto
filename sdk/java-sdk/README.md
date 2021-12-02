@@ -49,6 +49,7 @@ Try the following examples to learn more about this SDK:
 * [Hello world](./examples/src/main/java/io/mosn/layotto/examples/helloworld)
 * [State management](./examples/src/main/java/io/mosn/layotto/examples/state)
 * [Pubsub API](./examples/src/main/java/io/mosn/layotto/examples/pubsub)
+* [File API](./examples/src/main/java/io/mosn/layotto/examples/file)
 
 ## How to format java sdk code
 Compile before submit your pull request:
