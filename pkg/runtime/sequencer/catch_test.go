@@ -15,7 +15,6 @@ package sequencer
 
 import (
 	"context"
-	"fmt"
 	"github.com/alicebob/miniredis/v2"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/sequencer"
@@ -23,7 +22,6 @@ import (
 	"mosn.io/pkg/log"
 	"sync"
 	"testing"
-	"time"
 )
 
 const key = "resource_xxx"
@@ -73,14 +71,12 @@ func TestConcurrentGetNextIdFromCache(t *testing.T) {
 	var wg sync.WaitGroup
 	GRCount := 100
 	wg.Add(GRCount)
-	startTime := time.Now().UnixNano()
 	for g := 0; g < GRCount; g++ {
 		go func() {
 			for i := 0; i < idLimit; i++ {
 				support, _, err := GetNextIdFromCache(context.Background(), comp, &sequencer.GetNextIdRequest{
 					Key: key,
 				})
-				//fmt.Println(id)
 				assert.NoError(t, err)
 				assert.Equal(t, true, support)
 			}
@@ -94,8 +90,4 @@ func TestConcurrentGetNextIdFromCache(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, true, support)
 	assert.Equal(t, int64(idLimit*GRCount+1), id)
-	//fmt.Printf("next id: %v \n", id)
-	endTime := time.Now().UnixNano()
-	fmt.Println(endTime - startTime)
-	//fmt.Printf("cost time: %v ms ", endTime-startTime)
 }
