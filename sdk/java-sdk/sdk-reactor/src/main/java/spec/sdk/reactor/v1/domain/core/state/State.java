@@ -1,8 +1,17 @@
 /*
- * Copyright (c) CloudRuntimes Contributors.
- * Licensed under the MIT License.
+ * Copyright 2021 Layotto Authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package spec.sdk.reactor.v1.domain.core.state;
 
 import java.util.Map;
@@ -17,18 +26,18 @@ public class State<T> {
     /**
      * The value of the state.
      */
-    private final T value;
+    private final T                   value;
 
     /**
      * The key of the state.
      */
-    private final String key;
+    private final String              key;
 
     /**
      * The ETag to be used
      * Keep in mind that for some state stores (like redis) only numbers are supported.
      */
-    private final String etag;
+    private final String              etag;
 
     /**
      * The metadata which will be passed to state store component.
@@ -38,12 +47,12 @@ public class State<T> {
     /**
      * The error in case the key could not be retrieved.
      */
-    private final String error;
+    private final String              error;
 
     /**
      * The options used for saving the state.
      */
-    private final StateOptions options;
+    private final StateOptions        options;
 
     /**
      * Create an immutable state reference to be retrieved or deleted.
@@ -256,12 +265,12 @@ public class State<T> {
     @Override
     public String toString() {
         return "StateKeyValue{"
-                + "key='" + key + "'"
-                + ", value=" + value
-                + ", etag='" + etag + "'"
-                + ", metadata={'" + (metadata != null ? metadata.toString() : null) + "'}"
-                + ", error='" + error + "'"
-                + ", options={'" + (options != null ? options.toString() : null) + "'}"
-                + "}";
+            + "key='" + key + "'"
+            + ", value=" + value
+            + ", etag='" + etag + "'"
+            + ", metadata={'" + (metadata != null ? metadata.toString() : null) + "'}"
+            + ", error='" + error + "'"
+            + ", options={'" + (options != null ? options.toString() : null) + "'}"
+            + "}";
     }
 }

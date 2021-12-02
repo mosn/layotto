@@ -1,8 +1,17 @@
 /*
- * Copyright (c) Microsoft Corporation and Layotto Contributors.
- * Licensed under the MIT License.
+ * Copyright 2021 Layotto Authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package io.mosn.layotto.v1.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -24,50 +33,51 @@ public final class CloudEvent<T> {
     /**
      * Mime type used for CloudEvent.
      */
-    public static final String CONTENT_TYPE = "application/cloudevents+json";
+    public static final String          CONTENT_TYPE  = "application/cloudevents+json";
 
     /**
      * Shared Json serializer/deserializer as per Jackson's documentation.
      */
     protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                                                          .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+                                                              false)
+                                                          .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
     /**
      * Identifier of the message being processed.
      */
-    private String id;
+    private String                      id;
 
     /**
      * Event's source.
      */
-    private String source;
+    private String                      source;
 
     /**
      * Envelope type.
      */
-    private String type;
+    private String                      type;
 
     /**
      * Version of the specification.
      */
-    private String specversion;
+    private String                      specversion;
 
     /**
      * Type of the data's content.
      */
-    private String datacontenttype;
+    private String                      datacontenttype;
 
     /**
      * Cloud event specs says data can be a JSON object or string.
      */
-    private T data;
+    private T                           data;
 
     /**
      * Cloud event specs says binary data should be in data_base64.
      */
     @JsonProperty("data_base64")
-    private byte[] binaryData;
+    private byte[]                      binaryData;
 
     /**
      * Instantiates a CloudEvent.
@@ -86,12 +96,12 @@ public final class CloudEvent<T> {
      * @param data            Payload.
      */
     public CloudEvent(
-            String id,
-            String source,
-            String type,
-            String specversion,
-            String datacontenttype,
-            T data) {
+                      String id,
+                      String source,
+                      String type,
+                      String specversion,
+                      String datacontenttype,
+                      T data) {
         this.id = id;
         this.source = source;
         this.type = type;
@@ -110,11 +120,11 @@ public final class CloudEvent<T> {
      * @param binaryData  Payload.
      */
     public CloudEvent(
-            String id,
-            String source,
-            String type,
-            String specversion,
-            byte[] binaryData) {
+                      String id,
+                      String source,
+                      String type,
+                      String specversion,
+                      byte[] binaryData) {
         this.id = id;
         this.source = source;
         this.type = type;
@@ -278,12 +288,12 @@ public final class CloudEvent<T> {
         }
         CloudEvent<?> that = (CloudEvent<?>) o;
         return Objects.equals(id, that.id)
-                && Objects.equals(source, that.source)
-                && Objects.equals(type, that.type)
-                && Objects.equals(specversion, that.specversion)
-                && Objects.equals(datacontenttype, that.datacontenttype)
-                && Objects.equals(data, that.data)
-                && Arrays.equals(binaryData, that.binaryData);
+            && Objects.equals(source, that.source)
+            && Objects.equals(type, that.type)
+            && Objects.equals(specversion, that.specversion)
+            && Objects.equals(datacontenttype, that.datacontenttype)
+            && Objects.equals(data, that.data)
+            && Arrays.equals(binaryData, that.binaryData);
     }
 
     /**

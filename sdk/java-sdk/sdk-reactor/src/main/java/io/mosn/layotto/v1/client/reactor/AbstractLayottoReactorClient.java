@@ -1,3 +1,17 @@
+/*
+ * Copyright 2021 Layotto Authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.mosn.layotto.v1.client.reactor;
 
 import io.mosn.layotto.v1.serializer.LayottoObjectSerializer;
@@ -50,7 +64,7 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
     @Override
     public Mono<Void> publishEvent(String pubsubName, String topicName, Object data, Map<String, String> metadata) {
         PublishEventRequest req = new PublishEventRequest(pubsubName, topicName, data)
-                .setMetadata(metadata);
+            .setMetadata(metadata);
         return this.publishEvent(req).then();
     }
 
@@ -65,9 +79,9 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
                                     Map<String, String> metadata,
                                     TypeRef<T> type) {
         InvokeMethodRequest req = new InvokeMethodRequest(appId, methodName)
-                .setBody(data)
-                .setHttpExtension(httpExtension)
-                .setContentType(objectSerializer.getContentType());
+            .setBody(data)
+            .setHttpExtension(httpExtension)
+            .setContentType(objectSerializer.getContentType());
         return this.invokeMethod(req, type);
     }
 
@@ -88,7 +102,8 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
      * {@inheritDoc}
      */
     @Override
-    public <T> Mono<T> invokeMethod(String appId, String methodName, HttpExtension httpExtension, Map<String, String> metadata, TypeRef<T> type) {
+    public <T> Mono<T> invokeMethod(String appId, String methodName, HttpExtension httpExtension,
+                                    Map<String, String> metadata, TypeRef<T> type) {
         return this.invokeMethod(appId, methodName, null, httpExtension, metadata, type);
     }
 
@@ -96,7 +111,8 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
      * {@inheritDoc}
      */
     @Override
-    public <T> Mono<T> invokeMethod(String appId, String methodName, HttpExtension httpExtension, Map<String, String> metadata, Class<T> clazz) {
+    public <T> Mono<T> invokeMethod(String appId, String methodName, HttpExtension httpExtension,
+                                    Map<String, String> metadata, Class<T> clazz) {
         return this.invokeMethod(appId, methodName, null, httpExtension, metadata, TypeRef.get(clazz));
     }
 
@@ -104,7 +120,8 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
      * {@inheritDoc}
      */
     @Override
-    public <T> Mono<T> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension, TypeRef<T> type) {
+    public <T> Mono<T> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension,
+                                    TypeRef<T> type) {
         return this.invokeMethod(appId, methodName, request, httpExtension, null, type);
     }
 
@@ -112,7 +129,8 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
      * {@inheritDoc}
      */
     @Override
-    public <T> Mono<T> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension, Class<T> clazz) {
+    public <T> Mono<T> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension,
+                                    Class<T> clazz) {
         return this.invokeMethod(appId, methodName, request, httpExtension, null, TypeRef.get(clazz));
     }
 
@@ -128,7 +146,8 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Void> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension, Map<String, String> metadata) {
+    public Mono<Void> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension,
+                                   Map<String, String> metadata) {
         return this.invokeMethod(appId, methodName, request, httpExtension, metadata, TypeRef.BYTE_ARRAY).then();
     }
 
@@ -136,7 +155,8 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Void> invokeMethod(String appId, String methodName, HttpExtension httpExtension, Map<String, String> metadata) {
+    public Mono<Void> invokeMethod(String appId, String methodName, HttpExtension httpExtension,
+                                   Map<String, String> metadata) {
         return this.invokeMethod(appId, methodName, null, httpExtension, metadata, TypeRef.BYTE_ARRAY).then();
     }
 
@@ -144,7 +164,8 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
      * {@inheritDoc}
      */
     @Override
-    public Mono<byte[]> invokeMethod(String appId, String methodName, byte[] request, HttpExtension httpExtension, Map<String, String> metadata) {
+    public Mono<byte[]> invokeMethod(String appId, String methodName, byte[] request, HttpExtension httpExtension,
+                                     Map<String, String> metadata) {
         return this.invokeMethod(appId, methodName, request, httpExtension, metadata, TypeRef.BYTE_ARRAY);
     }
 
@@ -186,7 +207,7 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
     @Override
     public <T> Mono<State<T>> getState(String storeName, String key, StateOptions options, TypeRef<T> type) {
         GetStateRequest request = new GetStateRequest(storeName, key)
-                .setStateOptions(options);
+            .setStateOptions(options);
         return this.getState(request, type);
     }
 
@@ -220,7 +241,7 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
     @Override
     public Mono<Void> executeStateTransaction(String storeName, List<TransactionalStateOperation<?>> operations) {
         ExecuteStateTransactionRequest request = new ExecuteStateTransactionRequest(storeName)
-                .setOperations(operations);
+            .setOperations(operations);
         return executeStateTransaction(request).then();
     }
 
@@ -230,7 +251,7 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
     @Override
     public Mono<Void> saveBulkState(String storeName, List<State<?>> states) {
         SaveStateRequest request = new SaveStateRequest(storeName)
-                .setStates(states);
+            .setStates(states);
         return this.saveBulkState(request).then();
     }
 
@@ -265,8 +286,8 @@ abstract class AbstractLayottoReactorClient implements LayottoReactorClient {
     @Override
     public Mono<Void> deleteState(String storeName, String key, String etag, StateOptions options) {
         DeleteStateRequest request = new DeleteStateRequest(storeName, key)
-                .setEtag(etag)
-                .setStateOptions(options);
+            .setEtag(etag)
+            .setStateOptions(options);
         return deleteState(request).then();
     }
 }
