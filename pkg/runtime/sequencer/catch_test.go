@@ -69,7 +69,7 @@ func TestConcurrentGetNextIdFromCache(t *testing.T) {
 	assert.NoError(t, err)
 
 	var wg sync.WaitGroup
-	GRCount := 5
+	GRCount := 1
 	wg.Add(GRCount)
 	for g := 0; g < GRCount; g++ {
 		go func() {
