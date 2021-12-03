@@ -75,7 +75,7 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 
 	// create exprie time index
 	indexModel := mongo.IndexModel{
-		Keys:    bsonx.Doc{{"expireAt", bsonx.Int64(1)}},
+		Keys:    bsonx.Doc{{"Expire", bsonx.Int64(1)}},
 		Options: options.Index().SetExpireAfterSeconds(0),
 	}
 	e.collection.Indexes().CreateOne(e.ctx, indexModel)
@@ -95,29 +95,57 @@ func (e *MongoLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, er
 
 	defer session.EndSession(e.ctx)
 
-	_, err = session.WithTransaction(e.ctx, func(sessionContext mongo.SessionContext) (interface{}, error) {
-		// set exprie date
-		expireTime := time.Now()
-		expireTime.Add(time.Duration(req.Expire) * time.Second)
+	// check session
+	if err != nil {
+		return &lock.TryLockResponse{}, fmt.Errorf("[mongoLock]: Create session return error: %s ResourceId: %s", err, req.ResourceId)
+	}
 
-		_, err := e.collection.InsertOne(e.ctx, bson.M{"_id": req.ResourceId, "LockOwner": req.LockOwner, "expireAt": expireTime})
+	status, err := session.WithTransaction(e.ctx, func(sessionContext mongo.SessionContext) (interface{}, error) {
+		var status int
+		var err error
+		var singleResult *mongo.SingleResult
+		var insertOneResult *mongo.InsertOneResult
+
+		// set exprie date
+		expireTime := time.Now().Add(time.Duration(req.Expire) * time.Second)
+
+		// find mongo lock
+		singleResult = e.collection.FindOne(e.ctx, bson.M{"_id": req.ResourceId})
+
+		// insert mongo lock
+		if singleResult.Err() == mongo.ErrNoDocuments {
+			insertOneResult, err = e.collection.InsertOne(e.ctx, bson.M{"_id": req.ResourceId, "LockOwner": req.LockOwner, "Expire": expireTime})
+		}
 
 		if err != nil {
 			sessionContext.AbortTransaction(sessionContext)
-			return nil, err
+			return status, err
 		}
-		err = sessionContext.CommitTransaction(sessionContext)
 
-		return nil, err
+		// commit and set status
+		if insertOneResult != nil && insertOneResult.InsertedID == req.ResourceId {
+			if err = sessionContext.CommitTransaction(sessionContext); err == nil {
+				status = 1
+			}
+		}
+
+		return status, err
 	}, txnOpts)
 
+	// check lock
 	if err != nil {
 		return &lock.TryLockResponse{}, fmt.Errorf("[mongoLock]: Create new lock return error: %s ResourceId: %s", err, req.ResourceId)
 	}
 
-	return &lock.TryLockResponse{
-		Success: true,
-	}, nil
+	if status == 1 {
+		return &lock.TryLockResponse{
+			Success: true,
+		}, nil
+	} else {
+		return &lock.TryLockResponse{
+			Success: false,
+		}, nil
+	}
 }
 
 func (e *MongoLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
@@ -127,8 +155,13 @@ func (e *MongoLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error
 
 	defer session.EndSession(e.ctx)
 
+	if err != nil {
+		return newInternalErrorUnlockResponse(), fmt.Errorf("[mongoLock]: Create Session return error: %s ResourceId: %s", err, req.ResourceId)
+	}
+
 	status, err := session.WithTransaction(e.ctx, func(sessionContext mongo.SessionContext) (interface{}, error) {
 		var status int
+
 		result, err := e.collection.DeleteOne(e.ctx, bson.M{"_id": req.ResourceId, "LockOwner": req.LockOwner})
 
 		if result.DeletedCount == 1 && err == nil {
