@@ -26,18 +26,6 @@
             <artifactId>reactor-core</artifactId>
             <version>3.3.11.RELEASE</version>
         </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-protobuf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-stub</artifactId>
-        </dependency>
         <!-- serializer -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
