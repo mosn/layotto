@@ -152,4 +152,4 @@ PS: 建议用maven插件`protoc-gen-grpc-java`生成protobuf和grpc的java代码
 
 如果您在使用 [IntelliJ IDEA](https://www.jetbrains.com/help/idea/discover-intellij-idea.html) ,双击 Maven插件中的 `compile` ， IDE 会自动帮你编译 proto 文件:
 
-![img.png](../../docs/img/sdk/img.png)
+![img.png](img.png)
