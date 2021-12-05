@@ -1,3 +1,17 @@
+/*
+ * Copyright 2021 Layotto Authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.mosn.layotto.v1.client.reactor;
 
 import com.google.common.base.Strings;
@@ -41,7 +55,7 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
     /**
      * The GRPC managed channel to be used.
      */
-    private final Closeable channel;
+    private final Closeable               channel;
 
     /**
      * The async gRPC stub.
@@ -64,7 +78,8 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
     }
 
     @Override
-    public <T> Mono<List<ConfigurationItem<T>>> getConfiguration(ConfigurationRequestItem configurationRequestItem, TypeRef<T> type) {
+    public <T> Mono<List<ConfigurationItem<T>>> getConfiguration(ConfigurationRequestItem configurationRequestItem,
+                                                                 TypeRef<T> type) {
         // TODO: 2021/9/26
         return null;
     }
@@ -82,7 +97,8 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
     }
 
     @Override
-    public <T> Flux<SubConfigurationResp<T>> subscribeConfiguration(ConfigurationRequestItem configurationRequestItem, TypeRef<T> type) {
+    public <T> Flux<SubConfigurationResp<T>> subscribeConfiguration(ConfigurationRequestItem configurationRequestItem,
+                                                                    TypeRef<T> type) {
         // TODO: 2021/9/26
         return null;
     }
@@ -368,10 +384,10 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
      * @throws IOException If there's an issue serializing the request.
      */
     private <K> RuntimeProto.InvokeServiceRequest buildInvokeServiceRequest(
-            HttpExtension httpExtension,
-            String appId,
-            String method,
-            K body) throws IOException {
+                                                                            HttpExtension httpExtension,
+                                                                            String appId,
+                                                                            String method,
+                                                                            K body) throws IOException {
         if (httpExtension == null) {
             throw new IllegalArgumentException("HttpExtension cannot be null. Use HttpExtension.NONE instead.");
         }
@@ -387,14 +403,14 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
         RuntimeProto.HTTPExtension.Builder httpExtensionBuilder = RuntimeProto.HTTPExtension.newBuilder();
 
         httpExtensionBuilder.setVerb(RuntimeProto.HTTPExtension.Verb.valueOf(httpExtension.getMethod().toString()))
-                .setQuerystring(httpExtension.encodeQueryString());
+            .setQuerystring(httpExtension.encodeQueryString());
         requestBuilder.setHttpExtension(httpExtensionBuilder.build());
 
         requestBuilder.setContentType(objectSerializer.getContentType());
 
         RuntimeProto.InvokeServiceRequest.Builder envelopeBuilder = RuntimeProto.InvokeServiceRequest.newBuilder()
-                .setId(appId)
-                .setMessage(requestBuilder.build());
+            .setId(appId)
+            .setMessage(requestBuilder.build());
         return envelopeBuilder.build();
     }
 
@@ -501,12 +517,12 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
     @Override
     public Mono<Void> shutdown() {
         return Mono.subscriberContext()
-                // FIXME: 2021/9/26 Refer to Dapr
-                // .flatMap(context ->
-                //     this.<Empty>createMono(it ->
-                //         intercept(context, asyncStub)
-                //                 .shutdown(Empty.getDefaultInstance(), it)))
-                .then();
+            // FIXME: 2021/9/26 Refer to Dapr
+            // .flatMap(context ->
+            //     this.<Empty>createMono(it ->
+            //         intercept(context, asyncStub)
+            //                 .shutdown(Empty.getDefaultInstance(), it)))
+            .then();
     }
 
     private <T> Mono<T> createMono(Consumer<StreamObserver<T>> consumer) {
@@ -582,7 +598,8 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
                     public void start(final Listener<RespT> responseListener, final Metadata metadata) {
                         String layottoApiToken = Properties.API_TOKEN.get();
                         if (layottoApiToken != null) {
-                            metadata.put(Metadata.Key.of(Headers.DAPR_API_TOKEN, Metadata.ASCII_STRING_MARSHALLER), layottoApiToken);
+                            metadata.put(Metadata.Key.of(Headers.DAPR_API_TOKEN, Metadata.ASCII_STRING_MARSHALLER),
+                                layottoApiToken);
                         }
                         super.start(responseListener, metadata);
                     }

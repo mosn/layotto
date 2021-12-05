@@ -1,3 +1,17 @@
+/*
+ * Copyright 2021 Layotto Authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.mosn.layotto.v1.client.reactor;
 
 import reactor.core.publisher.Flux;
@@ -28,7 +42,8 @@ public interface LayottoReactorClient extends CloudRuntimesClient {
     void close() throws Exception;
 
     @Override
-    <T> Mono<List<ConfigurationItem<T>>> getConfiguration(ConfigurationRequestItem configurationRequestItem, TypeRef<T> type);
+    <T> Mono<List<ConfigurationItem<T>>> getConfiguration(ConfigurationRequestItem configurationRequestItem,
+                                                          TypeRef<T> type);
 
     @Override
     Mono<Void> saveConfiguration(SaveConfigurationRequest saveConfigurationRequest);
@@ -37,28 +52,36 @@ public interface LayottoReactorClient extends CloudRuntimesClient {
     Mono<Void> deleteConfiguration(ConfigurationRequestItem configurationRequestItem);
 
     @Override
-    <T> Flux<SubConfigurationResp<T>> subscribeConfiguration(ConfigurationRequestItem configurationRequestItem, TypeRef<T> type);
+    <T> Flux<SubConfigurationResp<T>> subscribeConfiguration(ConfigurationRequestItem configurationRequestItem,
+                                                             TypeRef<T> type);
 
     @Override
-    <T> Mono<T> invokeMethod(String appId, String methodName, Object data, HttpExtension httpExtension, Map<String, String> metadata, TypeRef<T> type);
+    <T> Mono<T> invokeMethod(String appId, String methodName, Object data, HttpExtension httpExtension,
+                             Map<String, String> metadata, TypeRef<T> type);
 
     @Override
-    <T> Mono<T> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension, Map<String, String> metadata, Class<T> clazz);
+    <T> Mono<T> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension,
+                             Map<String, String> metadata, Class<T> clazz);
 
     @Override
-    <T> Mono<T> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension, TypeRef<T> type);
+    <T> Mono<T> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension,
+                             TypeRef<T> type);
 
     @Override
-    <T> Mono<T> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension, Class<T> clazz);
+    <T> Mono<T> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension,
+                             Class<T> clazz);
 
     @Override
-    <T> Mono<T> invokeMethod(String appId, String methodName, HttpExtension httpExtension, Map<String, String> metadata, TypeRef<T> type);
+    <T> Mono<T> invokeMethod(String appId, String methodName, HttpExtension httpExtension,
+                             Map<String, String> metadata, TypeRef<T> type);
 
     @Override
-    <T> Mono<T> invokeMethod(String appId, String methodName, HttpExtension httpExtension, Map<String, String> metadata, Class<T> clazz);
+    <T> Mono<T> invokeMethod(String appId, String methodName, HttpExtension httpExtension,
+                             Map<String, String> metadata, Class<T> clazz);
 
     @Override
-    Mono<Void> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension, Map<String, String> metadata);
+    Mono<Void> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension,
+                            Map<String, String> metadata);
 
     @Override
     Mono<Void> invokeMethod(String appId, String methodName, Object request, HttpExtension httpExtension);
@@ -67,7 +90,8 @@ public interface LayottoReactorClient extends CloudRuntimesClient {
     Mono<Void> invokeMethod(String appId, String methodName, HttpExtension httpExtension, Map<String, String> metadata);
 
     @Override
-    Mono<byte[]> invokeMethod(String appId, String methodName, byte[] request, HttpExtension httpExtension, Map<String, String> metadata);
+    Mono<byte[]> invokeMethod(String appId, String methodName, byte[] request, HttpExtension httpExtension,
+                              Map<String, String> metadata);
 
     @Override
     <T> Mono<T> invokeMethod(InvokeMethodRequest invokeMethodRequest, TypeRef<T> type);
