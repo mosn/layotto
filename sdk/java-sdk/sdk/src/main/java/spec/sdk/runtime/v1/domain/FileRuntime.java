@@ -14,16 +14,16 @@
  */
 package spec.sdk.runtime.v1.domain;
 
-import spec.sdk.runtime.v1.domain.file.GetFileRequest;
-import spec.sdk.runtime.v1.domain.file.PutFileRequest;
 import spec.sdk.runtime.v1.domain.file.DelFileRequest;
-import spec.sdk.runtime.v1.domain.file.ListFileResponse;
-import spec.sdk.runtime.v1.domain.file.ListFileRequest;
+import spec.sdk.runtime.v1.domain.file.DelFileResponse;
+import spec.sdk.runtime.v1.domain.file.GetFileRequest;
+import spec.sdk.runtime.v1.domain.file.GetFileResponse;
 import spec.sdk.runtime.v1.domain.file.GetMetaRequest;
 import spec.sdk.runtime.v1.domain.file.GetMeteResponse;
+import spec.sdk.runtime.v1.domain.file.ListFileRequest;
+import spec.sdk.runtime.v1.domain.file.ListFileResponse;
+import spec.sdk.runtime.v1.domain.file.PutFileRequest;
 import spec.sdk.runtime.v1.domain.file.PutFileResponse;
-import spec.sdk.runtime.v1.domain.file.GetFileResponse;
-import spec.sdk.runtime.v1.domain.file.DelFileResponse;
 
 public interface FileRuntime {
 

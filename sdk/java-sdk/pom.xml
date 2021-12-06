@@ -15,6 +15,8 @@
     <modules>
         <module>sdk</module>
         <module>examples</module>
+        <module>sdk-reactor</module>
+        <module>spec</module>
     </modules>
 
     <properties>
@@ -36,10 +38,9 @@
             </dependency>
             <dependency>
                 <groupId>io.mosn.layotto</groupId>
-                <artifactId>examples</artifactId>
+                <artifactId>runtime-spec-pb</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <!-- json -->
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -60,7 +61,21 @@
                 <artifactId>grpc-all</artifactId>
                 <version>${grpc.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-netty</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-protobuf</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-stub</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
             <!-- unit test -->
             <dependency>
                 <groupId>org.mockito</groupId>

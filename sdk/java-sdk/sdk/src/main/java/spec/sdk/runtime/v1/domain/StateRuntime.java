@@ -14,7 +14,14 @@
  */
 package spec.sdk.runtime.v1.domain;
 
-import spec.sdk.runtime.v1.domain.state.*;
+import spec.sdk.runtime.v1.domain.state.DeleteStateRequest;
+import spec.sdk.runtime.v1.domain.state.ExecuteStateTransactionRequest;
+import spec.sdk.runtime.v1.domain.state.GetBulkStateRequest;
+import spec.sdk.runtime.v1.domain.state.GetStateRequest;
+import spec.sdk.runtime.v1.domain.state.SaveStateRequest;
+import spec.sdk.runtime.v1.domain.state.State;
+import spec.sdk.runtime.v1.domain.state.StateOptions;
+import spec.sdk.runtime.v1.domain.state.TransactionalStateOperation;
 
 import java.util.List;
 import java.util.Map;

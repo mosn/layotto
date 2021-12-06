@@ -14,14 +14,9 @@
  */
 package io.mosn.layotto.v1.mock;
 
-import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import spec.proto.runtime.v1.RuntimeGrpc;
 import spec.proto.runtime.v1.RuntimeProto;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MyHelloService extends RuntimeGrpc.RuntimeImplBase {
 

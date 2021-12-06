@@ -16,8 +16,6 @@ package io.mosn.layotto.v1.config;
 
 import io.mosn.layotto.v1.domain.ApiProtocol;
 
-import java.util.function.Supplier;
-
 public class RuntimeProperties {
 
     /**

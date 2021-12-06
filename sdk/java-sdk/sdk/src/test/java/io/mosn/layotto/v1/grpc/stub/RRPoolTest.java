@@ -14,7 +14,6 @@
  */
 package io.mosn.layotto.v1.grpc.stub;
 
-import io.mosn.layotto.v1.grpc.stub.RRPool;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

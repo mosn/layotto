@@ -93,3 +93,6 @@ protoc -I=. --java_out=../../../../sdk/java-sdk/sdk/src/main/java/  appcallback.
 ```
 
 PS: We recommend that you use the maven plugin `protoc-gen-grpc-java` to generate these protobuf and grpc related java code.
+If you are using [IntelliJ IDEA](https://www.jetbrains.com/help/idea/discover-intellij-idea.html) ,just double click `compile` in the Maven tab and the IDE will generate proto files automatically:
+
+![img.png](img.png)

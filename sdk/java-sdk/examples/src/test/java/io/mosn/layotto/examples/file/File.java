@@ -16,22 +16,23 @@ package io.mosn.layotto.examples.file;
 
 import io.mosn.layotto.v1.RuntimeClientBuilder;
 import io.mosn.layotto.v1.config.RuntimeProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spec.sdk.runtime.v1.client.RuntimeClient;
-import spec.sdk.runtime.v1.domain.file.PutFileRequest;
-import spec.sdk.runtime.v1.domain.file.GetFileRequest;
-import spec.sdk.runtime.v1.domain.file.ListFileRequest;
-import spec.sdk.runtime.v1.domain.file.GetMetaRequest;
 import spec.sdk.runtime.v1.domain.file.DelFileRequest;
-import spec.sdk.runtime.v1.domain.file.GetFileResponse;
-import spec.sdk.runtime.v1.domain.file.ListFileResponse;
 import spec.sdk.runtime.v1.domain.file.FileInfo;
+import spec.sdk.runtime.v1.domain.file.GetFileRequest;
+import spec.sdk.runtime.v1.domain.file.GetFileResponse;
+import spec.sdk.runtime.v1.domain.file.GetMetaRequest;
 import spec.sdk.runtime.v1.domain.file.GetMeteResponse;
+import spec.sdk.runtime.v1.domain.file.ListFileRequest;
+import spec.sdk.runtime.v1.domain.file.ListFileResponse;
+import spec.sdk.runtime.v1.domain.file.PutFileRequest;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Specially
@@ -41,7 +42,7 @@ import java.util.logging.Logger;
  */
 public class File {
 
-    private static final Logger logger    = Logger.getLogger(File.class.getName());
+    private static final Logger logger    = LoggerFactory.getLogger(File.class.getName());
 
     static String               storeName = "local";
     static String               fileName  = "/tmp/test.log";
