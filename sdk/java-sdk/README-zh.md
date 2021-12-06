@@ -78,6 +78,7 @@ mvn clean install
 * [Hello world](./examples/src/test/java/io/mosn/layotto/examples/helloworld)
 * [State management](./examples/src/test/java/io/mosn/layotto/examples/state)
 * [Pubsub API](./examples/src/test/java/io/mosn/layotto/examples/pubsub)
+* [File API](./examples/src/test/java/io/mosn/layotto/examples/file)
 
 ## java sdk开发指南
 ### java sdk职责
