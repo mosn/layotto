@@ -14,14 +14,15 @@
  */
 package io.mosn.layotto.v1.config;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A configuration property in the Layotto's SDK.
  */
 public abstract class Property<T> {
 
-    private static final Logger LOGGER = Logger.getLogger(Property.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Property.class.getName());
 
     /**
      * Property's name as a Java Property.
@@ -80,7 +81,7 @@ public abstract class Property<T> {
             try {
                 return this.parse(propValue);
             } catch (IllegalArgumentException e) {
-                LOGGER.warning(String.format("Invalid value in property: %s", this.name));
+                LOGGER.warn(String.format("Invalid value in property: %s", this.name));
                 // OK, we tried. Falling back to system environment variable.
             }
         }
@@ -90,7 +91,7 @@ public abstract class Property<T> {
             try {
                 return this.parse(envValue);
             } catch (IllegalArgumentException e) {
-                LOGGER.warning(String.format("Invalid value in environment variable: %s", this.envName));
+                LOGGER.warn(String.format("Invalid value in environment variable: %s", this.envName));
                 // OK, we tried. Falling back to default.
             }
         }

@@ -22,17 +22,16 @@ import io.grpc.ForwardingClientCall;
 import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 import io.mosn.layotto.v1.config.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.util.context.Context;
 import spec.proto.runtime.v1.RuntimeGrpc;
-
-import java.util.logging.Logger;
-
 /**
  * Wraps a Layotto gRPC stub with telemetry interceptor.
  */
 public final class GrpcWrapper {
 
-    private static final Logger               LOGGER             = Logger.getLogger(Property.class.getName());
+    private static final Logger               LOGGER             = LoggerFactory.getLogger(Property.class.getName());
 
     private static final Metadata.Key<byte[]> GRPC_TRACE_BIN_KEY =
                                                                          Metadata.Key.of("grpc-trace-bin",
