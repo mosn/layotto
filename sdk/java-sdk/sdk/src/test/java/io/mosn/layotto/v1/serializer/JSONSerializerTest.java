@@ -18,12 +18,9 @@ package io.mosn.layotto.v1.serializer;
 
 import org.junit.Assert;
 import org.junit.Test;
-import spec.proto.runtime.v1.RuntimeProto;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Base64;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

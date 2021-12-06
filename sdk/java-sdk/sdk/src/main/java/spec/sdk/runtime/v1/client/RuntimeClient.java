@@ -14,7 +14,14 @@
  */
 package spec.sdk.runtime.v1.client;
 
-import spec.sdk.runtime.v1.domain.*;
+import spec.sdk.runtime.v1.domain.ConfigurationRuntime;
+import spec.sdk.runtime.v1.domain.FileRuntime;
+import spec.sdk.runtime.v1.domain.HelloRuntime;
+import spec.sdk.runtime.v1.domain.InvocationRuntime;
+import spec.sdk.runtime.v1.domain.LockRuntime;
+import spec.sdk.runtime.v1.domain.PubSubRuntime;
+import spec.sdk.runtime.v1.domain.SequencerRuntime;
+import spec.sdk.runtime.v1.domain.StateRuntime;
 
 public interface RuntimeClient extends
                               HelloRuntime,

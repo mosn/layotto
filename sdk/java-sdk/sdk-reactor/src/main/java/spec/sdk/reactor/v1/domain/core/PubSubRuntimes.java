@@ -14,8 +14,8 @@
  */
 package spec.sdk.reactor.v1.domain.core;
 
-import spec.sdk.reactor.v1.domain.core.pubsub.PublishEventRequest;
 import reactor.core.publisher.Mono;
+import spec.sdk.reactor.v1.domain.core.pubsub.PublishEventRequest;
 
 import java.util.Map;
 

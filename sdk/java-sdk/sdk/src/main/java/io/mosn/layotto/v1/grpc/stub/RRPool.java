@@ -15,7 +15,6 @@
 package io.mosn.layotto.v1.grpc.stub;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

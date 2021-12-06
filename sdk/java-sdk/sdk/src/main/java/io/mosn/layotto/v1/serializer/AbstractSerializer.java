@@ -14,8 +14,6 @@
  */
 package io.mosn.layotto.v1.serializer;
 
-import com.alibaba.fastjson.JSONObject;
-
 import java.io.IOException;
 
 public abstract class AbstractSerializer implements ObjectSerializer {
