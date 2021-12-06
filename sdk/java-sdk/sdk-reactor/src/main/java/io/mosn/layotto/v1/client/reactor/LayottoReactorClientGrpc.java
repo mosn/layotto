@@ -68,7 +68,7 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
     /**
      * The GRPC managed channel to be used.
      */
-    private final Closeable channel;
+    private final Closeable               channel;
 
     /**
      * The async gRPC stub.
@@ -397,10 +397,10 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
      * @throws IOException If there's an issue serializing the request.
      */
     private <K> RuntimeProto.InvokeServiceRequest buildInvokeServiceRequest(
-            HttpExtension httpExtension,
-            String appId,
-            String method,
-            K body) throws IOException {
+                                                                            HttpExtension httpExtension,
+                                                                            String appId,
+                                                                            String method,
+                                                                            K body) throws IOException {
         if (httpExtension == null) {
             throw new IllegalArgumentException("HttpExtension cannot be null. Use HttpExtension.NONE instead.");
         }
@@ -416,14 +416,14 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
         RuntimeProto.HTTPExtension.Builder httpExtensionBuilder = RuntimeProto.HTTPExtension.newBuilder();
 
         httpExtensionBuilder.setVerb(RuntimeProto.HTTPExtension.Verb.valueOf(httpExtension.getMethod().toString()))
-                .setQuerystring(httpExtension.encodeQueryString());
+            .setQuerystring(httpExtension.encodeQueryString());
         requestBuilder.setHttpExtension(httpExtensionBuilder.build());
 
         requestBuilder.setContentType(objectSerializer.getContentType());
 
         RuntimeProto.InvokeServiceRequest.Builder envelopeBuilder = RuntimeProto.InvokeServiceRequest.newBuilder()
-                .setId(appId)
-                .setMessage(requestBuilder.build());
+            .setId(appId)
+            .setMessage(requestBuilder.build());
         return envelopeBuilder.build();
     }
 
@@ -530,12 +530,12 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
     @Override
     public Mono<Void> shutdown() {
         return Mono.subscriberContext()
-                // FIXME: 2021/9/26 Refer to Dapr
-                // .flatMap(context ->
-                //     this.<Empty>createMono(it ->
-                //         intercept(context, asyncStub)
-                //                 .shutdown(Empty.getDefaultInstance(), it)))
-                .then();
+            // FIXME: 2021/9/26 Refer to Dapr
+            // .flatMap(context ->
+            //     this.<Empty>createMono(it ->
+            //         intercept(context, asyncStub)
+            //                 .shutdown(Empty.getDefaultInstance(), it)))
+            .then();
     }
 
     private <T> Mono<T> createMono(Consumer<StreamObserver<T>> consumer) {
@@ -612,7 +612,7 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
                         String layottoApiToken = Properties.API_TOKEN.get();
                         if (layottoApiToken != null) {
                             metadata.put(Metadata.Key.of(Headers.DAPR_API_TOKEN, Metadata.ASCII_STRING_MARSHALLER),
-                                    layottoApiToken);
+                                layottoApiToken);
                         }
                         super.start(responseListener, metadata);
                     }
