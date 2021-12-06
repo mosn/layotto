@@ -33,7 +33,7 @@ public class Properties {
     /**
      * Layotto's default gRPC port.
      */
-    private static final Integer DEFAULT_GRPC_PORT = 50001;
+    private static final Integer DEFAULT_GRPC_PORT = 34904;
 
     /**
      * Layotto's default use of gRPC.

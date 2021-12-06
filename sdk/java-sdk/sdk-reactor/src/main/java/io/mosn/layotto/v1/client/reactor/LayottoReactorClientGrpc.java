@@ -18,7 +18,13 @@ import com.google.common.base.Strings;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Empty;
-import io.grpc.*;
+import io.grpc.CallOptions;
+import io.grpc.Channel;
+import io.grpc.ClientCall;
+import io.grpc.ClientInterceptor;
+import io.grpc.ForwardingClientCall;
+import io.grpc.Metadata;
+import io.grpc.MethodDescriptor;
 import io.grpc.stub.StreamObserver;
 import io.mosn.layotto.v1.config.Properties;
 import io.mosn.layotto.v1.exceptions.LayottoException;
@@ -39,7 +45,14 @@ import spec.sdk.reactor.v1.domain.core.configuration.SubConfigurationResp;
 import spec.sdk.reactor.v1.domain.core.invocation.HttpExtension;
 import spec.sdk.reactor.v1.domain.core.invocation.InvokeMethodRequest;
 import spec.sdk.reactor.v1.domain.core.pubsub.PublishEventRequest;
-import spec.sdk.reactor.v1.domain.core.state.*;
+import spec.sdk.reactor.v1.domain.core.state.DeleteStateRequest;
+import spec.sdk.reactor.v1.domain.core.state.ExecuteStateTransactionRequest;
+import spec.sdk.reactor.v1.domain.core.state.GetBulkStateRequest;
+import spec.sdk.reactor.v1.domain.core.state.GetStateRequest;
+import spec.sdk.reactor.v1.domain.core.state.SaveStateRequest;
+import spec.sdk.reactor.v1.domain.core.state.State;
+import spec.sdk.reactor.v1.domain.core.state.StateOptions;
+import spec.sdk.reactor.v1.domain.core.state.TransactionalStateOperation;
 import spec.sdk.reactor.v1.utils.TypeRef;
 
 import java.io.Closeable;
@@ -55,7 +68,7 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
     /**
      * The GRPC managed channel to be used.
      */
-    private final Closeable               channel;
+    private final Closeable channel;
 
     /**
      * The async gRPC stub.
@@ -384,10 +397,10 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
      * @throws IOException If there's an issue serializing the request.
      */
     private <K> RuntimeProto.InvokeServiceRequest buildInvokeServiceRequest(
-                                                                            HttpExtension httpExtension,
-                                                                            String appId,
-                                                                            String method,
-                                                                            K body) throws IOException {
+            HttpExtension httpExtension,
+            String appId,
+            String method,
+            K body) throws IOException {
         if (httpExtension == null) {
             throw new IllegalArgumentException("HttpExtension cannot be null. Use HttpExtension.NONE instead.");
         }
@@ -403,14 +416,14 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
         RuntimeProto.HTTPExtension.Builder httpExtensionBuilder = RuntimeProto.HTTPExtension.newBuilder();
 
         httpExtensionBuilder.setVerb(RuntimeProto.HTTPExtension.Verb.valueOf(httpExtension.getMethod().toString()))
-            .setQuerystring(httpExtension.encodeQueryString());
+                .setQuerystring(httpExtension.encodeQueryString());
         requestBuilder.setHttpExtension(httpExtensionBuilder.build());
 
         requestBuilder.setContentType(objectSerializer.getContentType());
 
         RuntimeProto.InvokeServiceRequest.Builder envelopeBuilder = RuntimeProto.InvokeServiceRequest.newBuilder()
-            .setId(appId)
-            .setMessage(requestBuilder.build());
+                .setId(appId)
+                .setMessage(requestBuilder.build());
         return envelopeBuilder.build();
     }
 
@@ -517,12 +530,12 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
     @Override
     public Mono<Void> shutdown() {
         return Mono.subscriberContext()
-            // FIXME: 2021/9/26 Refer to Dapr
-            // .flatMap(context ->
-            //     this.<Empty>createMono(it ->
-            //         intercept(context, asyncStub)
-            //                 .shutdown(Empty.getDefaultInstance(), it)))
-            .then();
+                // FIXME: 2021/9/26 Refer to Dapr
+                // .flatMap(context ->
+                //     this.<Empty>createMono(it ->
+                //         intercept(context, asyncStub)
+                //                 .shutdown(Empty.getDefaultInstance(), it)))
+                .then();
     }
 
     private <T> Mono<T> createMono(Consumer<StreamObserver<T>> consumer) {
@@ -599,7 +612,7 @@ public class LayottoReactorClientGrpc extends AbstractLayottoReactorClient {
                         String layottoApiToken = Properties.API_TOKEN.get();
                         if (layottoApiToken != null) {
                             metadata.put(Metadata.Key.of(Headers.DAPR_API_TOKEN, Metadata.ASCII_STRING_MARSHALLER),
-                                layottoApiToken);
+                                    layottoApiToken);
                         }
                         super.start(responseListener, metadata);
                     }
