@@ -294,9 +294,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_lock.NewFactory("consul", func() lock.LockStore {
 				return lock_consul.NewConsulLock(log.DefaultLogger)
 			}),
-			runtime_lock.NewFactory("mongo", func() lock.LockStore {
-				return lock_mongo.NewMongoLock(log.DefaultLogger)
-			}),
 		),
 
 		// bindings
