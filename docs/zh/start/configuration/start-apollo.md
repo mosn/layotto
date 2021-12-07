@@ -22,6 +22,7 @@ git clone https://github.com/mosn/layotto.git
 切换代码目录、编译：
 
 ```bash
+#备注 请将${projectpath}替换成你的项目路径
 cd ${projectpath}/cmd/layotto
 go build
 #备注 如果发现构建失败无法下载,请进行如先设置

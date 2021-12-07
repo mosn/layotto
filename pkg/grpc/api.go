@@ -1031,7 +1031,7 @@ func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) 
 		return &runtimev1pb.GetNextIdResponse{}, err
 	}
 	// modify key
-	compReq.Key, err = runtime_sequencer.GetModifiedKey(compReq.Key, req.StoreName, a.appId)
+	compReq.Key, err = runtime_sequencer.GetModifiedSeqKey(compReq.Key, req.StoreName, a.appId)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
 		return &runtimev1pb.GetNextIdResponse{}, err
