@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readconcern"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 	"strconv"
 	"time"
@@ -51,7 +52,49 @@ type MongoMetadata struct {
 	OperationTimeout time.Duration
 }
 
-func NewMongoClient(m MongoMetadata) (*mongo.Client, error) {
+// Item is Mongodb document wrapper.
+type Item struct {
+	Key   string      `bson:"_id"`
+	Value interface{} `bson:"value"`
+	Etag  string      `bson:"_etag"`
+}
+
+type MongoFactory interface {
+	NewMongoClient(m MongoMetadata) (MongoClient, error)
+	NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) MongoCollection
+}
+
+type MongoClient interface {
+	StartSession(opts ...*options.SessionOptions) (mongo.Session, error)
+	Ping(ctx context.Context, rp *readpref.ReadPref) error
+	Database(name string, opts ...*options.DatabaseOptions) *mongo.Database
+	Disconnect(ctx context.Context) error
+}
+
+type MongoSession interface {
+	AbortTransaction(context.Context) error
+	CommitTransaction(context.Context) error
+	WithTransaction(ctx context.Context, fn func(sessCtx mongo.SessionContext) (interface{}, error),
+		opts ...*options.TransactionOptions) (interface{}, error)
+	EndSession(context.Context)
+}
+
+type MongoCollection interface {
+	FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) *mongo.SingleResult
+	InsertOne(ctx context.Context, document interface{}, opts ...*options.InsertOneOptions) (*mongo.InsertOneResult, error)
+	DeleteOne(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error)
+	Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (*mongo.Cursor, error)
+	Indexes() mongo.IndexView
+}
+
+type MongoFactoryImpl struct{}
+
+func (c *MongoFactoryImpl) NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) MongoCollection {
+	collection := m.Collection(collectionName, opts)
+	return collection
+}
+
+func (c *MongoFactoryImpl) NewMongoClient(m MongoMetadata) (MongoClient, error) {
 	uri := getMongoURI(m)
 
 	// Set client options

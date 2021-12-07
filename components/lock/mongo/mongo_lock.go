@@ -15,11 +15,22 @@ import (
 	"time"
 )
 
+const (
+	TRY_LOCK_SUCCESS        = 1
+	TRY_LOCK_FAIL           = 2
+	UNLOCK_SUCCESS          = 3
+	UNLOCK_UNEXIST          = 4
+	UNLOCK_BELONG_TO_OTHERS = 5
+	UNLOCK_FAIL             = 6
+)
+
 // mongo lock store
 type MongoLock struct {
-	client     *mongo.Client
-	collection *mongo.Collection
-	database   *mongo.Database
+	factory utils.MongoFactory
+
+	client     utils.MongoClient
+	session    utils.MongoSession
+	collection utils.MongoCollection
 	metadata   utils.MongoMetadata
 
 	features []lock.Feature
@@ -39,6 +50,7 @@ func NewMongoLock(logger log.ErrorLogger) *MongoLock {
 }
 
 func (e *MongoLock) Init(metadata lock.Metadata) error {
+	var client utils.MongoClient
 	// 1.parse config
 	m, err := utils.ParseMongoMetadata(metadata.Properties)
 	if err != nil {
@@ -46,14 +58,16 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 	}
 	e.metadata = m
 
+	e.factory = &utils.MongoFactoryImpl{}
+
 	// 2. construct client
-	if e.client, err = utils.NewMongoClient(m); err != nil {
+	if client, err = e.factory.NewMongoClient(m); err != nil {
 		return err
 	}
 
 	e.ctx, e.cancel = context.WithCancel(context.Background())
 
-	if err := e.client.Ping(e.ctx, nil); err != nil {
+	if err := client.Ping(e.ctx, nil); err != nil {
 		return err
 	}
 
@@ -67,11 +81,14 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 		return err
 	}
 
+	// set mongo options of collection
 	opts := options.Collection().SetWriteConcern(wc).SetReadConcern(rc)
-	database := e.client.Database(e.metadata.DatabaseName)
-	collection := database.Collection(e.metadata.CollectionName, opts)
-	e.database = database
-	e.collection = collection
+
+	// create database
+	database := client.Database(e.metadata.DatabaseName)
+
+	// create collection
+	e.collection = e.factory.NewMongoCollection(database, e.metadata.CollectionName, opts)
 
 	// create exprie time index
 	indexModel := mongo.IndexModel{
@@ -79,6 +96,8 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 		Options: options.Index().SetExpireAfterSeconds(0),
 	}
 	e.collection.Indexes().CreateOne(e.ctx, indexModel)
+
+	e.client = client
 
 	return err
 }
@@ -89,19 +108,17 @@ func (e *MongoLock) Features() []lock.Feature {
 }
 
 func (e *MongoLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
-	session, err := e.client.StartSession()
+	var err error
+	// create mongo session
+	e.session, err = e.client.StartSession()
 	txnOpts := options.Transaction().SetReadConcern(readconcern.Snapshot()).
 		SetWriteConcern(writeconcern.New(writeconcern.WMajority()))
 
-	defer session.EndSession(e.ctx)
+	// close mongo session
+	defer e.session.EndSession(e.ctx)
 
-	// check session
-	if err != nil {
-		return &lock.TryLockResponse{}, fmt.Errorf("[mongoLock]: Create session return error: %s ResourceId: %s", err, req.ResourceId)
-	}
-
-	status, err := session.WithTransaction(e.ctx, func(sessionContext mongo.SessionContext) (interface{}, error) {
-		var status int
+	// start transaction
+	status, err := e.session.WithTransaction(e.ctx, func(sessionContext mongo.SessionContext) (interface{}, error) {
 		var err error
 		var singleResult *mongo.SingleResult
 		var insertOneResult *mongo.InsertOneResult
@@ -118,18 +135,18 @@ func (e *MongoLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, er
 		}
 
 		if err != nil {
-			sessionContext.AbortTransaction(sessionContext)
-			return status, err
+			_ = sessionContext.AbortTransaction(sessionContext)
+			return TRY_LOCK_FAIL, err
 		}
 
 		// commit and set status
 		if insertOneResult != nil && insertOneResult.InsertedID == req.ResourceId {
 			if err = sessionContext.CommitTransaction(sessionContext); err == nil {
-				status = 1
+				return TRY_LOCK_SUCCESS, err
 			}
 		}
 
-		return status, err
+		return TRY_LOCK_FAIL, err
 	}, txnOpts)
 
 	// check lock
@@ -137,7 +154,7 @@ func (e *MongoLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, er
 		return &lock.TryLockResponse{}, fmt.Errorf("[mongoLock]: Create new lock return error: %s ResourceId: %s", err, req.ResourceId)
 	}
 
-	if status == 1 {
+	if status == TRY_LOCK_SUCCESS {
 		return &lock.TryLockResponse{
 			Success: true,
 		}, nil
@@ -149,51 +166,57 @@ func (e *MongoLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, er
 }
 
 func (e *MongoLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
-	session, err := e.client.StartSession()
+	var err error
+	// create mongo session
+	e.session, err = e.client.StartSession()
 	txnOpts := options.Transaction().SetReadConcern(readconcern.Snapshot()).
 		SetWriteConcern(writeconcern.New(writeconcern.WMajority()))
 
-	defer session.EndSession(e.ctx)
+	// close mongo session
+	defer e.session.EndSession(e.ctx)
 
-	if err != nil {
-		return newInternalErrorUnlockResponse(), fmt.Errorf("[mongoLock]: Create Session return error: %s ResourceId: %s", err, req.ResourceId)
-	}
-
-	status, err := session.WithTransaction(e.ctx, func(sessionContext mongo.SessionContext) (interface{}, error) {
+	// start transaction
+	status, err := e.session.WithTransaction(e.ctx, func(sessionContext mongo.SessionContext) (interface{}, error) {
 		var status int
 
+		// delete lock
 		result, err := e.collection.DeleteOne(e.ctx, bson.M{"_id": req.ResourceId, "LockOwner": req.LockOwner})
 
+		// check delete result
 		if result.DeletedCount == 1 && err == nil {
-			status = 0
+			status = UNLOCK_SUCCESS
 		} else if result.DeletedCount == 0 && err == nil {
 			if cursor, err := e.collection.Find(e.ctx, bson.M{"_id": req.ResourceId}); cursor != nil && cursor.RemainingBatchLength() != 0 && err == nil {
-				status = 2
+				status = UNLOCK_BELONG_TO_OTHERS
 			} else if cursor != nil && cursor.RemainingBatchLength() == 0 && err == nil {
-				status = 1
+				status = UNLOCK_UNEXIST
 			}
 		}
 
 		if err != nil {
-			sessionContext.AbortTransaction(sessionContext)
-			return nil, err
+			_ = sessionContext.AbortTransaction(sessionContext)
+			return UNLOCK_FAIL, err
 		}
-		err = sessionContext.CommitTransaction(sessionContext)
 
-		return status, err
+		// commit and set status
+		if err = sessionContext.CommitTransaction(sessionContext); err == nil {
+			return status, err
+		}
+
+		return UNLOCK_FAIL, err
 	}, txnOpts)
+
+	resp := lock.INTERNAL_ERROR
 
 	if err != nil {
 		return newInternalErrorUnlockResponse(), fmt.Errorf("[mongoLock]: Unlock returned error: %s ResourceId: %s", err, req.ResourceId)
 	}
 
-	resp := lock.INTERNAL_ERROR
-
-	if status == 0 {
+	if status == UNLOCK_SUCCESS {
 		resp = lock.SUCCESS
-	} else if status == 1 {
+	} else if status == UNLOCK_UNEXIST {
 		resp = lock.LOCK_UNEXIST
-	} else if status == 2 {
+	} else if status == UNLOCK_BELONG_TO_OTHERS {
 		resp = lock.LOCK_BELONG_TO_OTHERS
 	}
 	return &lock.UnlockResponse{

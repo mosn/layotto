@@ -1,4 +1,4 @@
-package mongo
+package main
 
 import (
 	"context"
@@ -62,12 +62,12 @@ func main() {
 	// 3. client 1 unlock
 	fmt.Println("client1 prepare to unlock...")
 	unlockResp, err := cli.Unlock(ctx, &runtimev1pb.UnlockRequest{
-		StoreName:            storeName,
-		ResourceId:           resourceId,
-		LockOwner:            owner1,
-		XXX_NoUnkeyedLiteral: struct{}{},
-		XXX_unrecognized:     nil,
-		XXX_sizecache:        0,
+		StoreName:  storeName,
+		ResourceId: resourceId,
+		LockOwner:  owner1,
+		//XXX_NoUnkeyedLiteral: struct{}{},
+		//XXX_unrecognized:     nil,
+		//XXX_sizecache:        0,
 	})
 	if err != nil {
 		panic(err)
@@ -96,12 +96,12 @@ func main() {
 		fmt.Printf("client2 got lock.ResourceId is %s\n", resourceId)
 		// 5. client2 unlock
 		unlockResp, err := cli.Unlock(ctx, &runtimev1pb.UnlockRequest{
-			StoreName:            storeName,
-			ResourceId:           resourceId,
-			LockOwner:            owner2,
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
+			StoreName:  storeName,
+			ResourceId: resourceId,
+			LockOwner:  owner2,
+			//XXX_NoUnkeyedLiteral: struct{}{},
+			//XXX_unrecognized:     nil,
+			//XXX_sizecache:        0,
 		})
 		if err != nil {
 			panic(err)

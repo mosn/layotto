@@ -3,7 +3,10 @@ package mongo
 import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/pkg/log"
 	"sync"
 	"testing"
@@ -14,9 +17,6 @@ const (
 	resourceId2 = "resource_xxx2"
 	resourceId3 = "resource_xxx3"
 	resourceId4 = "resource_xxx4"
-	lockOwner   = "lockOwner1"
-	lockOwner2  = "lockOwner2"
-	lockOwner3  = "lockOwner3"
 )
 
 func TestMongoLock_Init(t *testing.T) {
@@ -44,17 +44,32 @@ func TestMongoLock_Init(t *testing.T) {
 func TestMongoLock_TryLock(t *testing.T) {
 	var err error
 	var resp *lock.TryLockResponse
-	var mongoUrl = "localhost:27017"
-
+	var mongoUrl = "localhost:xxxx"
 	comp := NewMongoLock(log.DefaultLogger)
 
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),
 	}
-
 	cfg.Properties["mongoHost"] = mongoUrl
-	err = comp.Init(cfg)
-	assert.NoError(t, err)
+	_ = comp.Init(cfg)
+
+	// mock
+	insertManyResult := &mongo.InsertManyResult{}
+	insertOneResult := &mongo.InsertOneResult{}
+	singleResult := &mongo.SingleResult{}
+	result := make(map[string]bson.M)
+	mockMongoClient := utils.MockMongoClient{}
+	mockMongoSession := utils.NewMockMongoSession()
+	mockMongoCollection := utils.MockMongoCollection{
+		InsertManyResult: insertManyResult,
+		InsertOneResult:  insertOneResult,
+		SingleResult:     singleResult,
+		Result:           result,
+	}
+
+	comp.session = mockMongoSession
+	comp.collection = &mockMongoCollection
+	comp.client = &mockMongoClient
 
 	ownerId1 := uuid.New().String()
 	resp, err = comp.TryLock(&lock.TryLockRequest{
@@ -104,7 +119,7 @@ func TestMongoLock_Unlock(t *testing.T) {
 	var err error
 	var resp *lock.UnlockResponse
 	var lockresp *lock.TryLockResponse
-	var mongoUrl = "localhost:27017"
+	var mongoUrl = "localhost:xxxx"
 
 	comp := NewMongoLock(log.DefaultLogger)
 
@@ -114,7 +129,24 @@ func TestMongoLock_Unlock(t *testing.T) {
 
 	cfg.Properties["mongoHost"] = mongoUrl
 	err = comp.Init(cfg)
-	assert.NoError(t, err)
+
+	// mock
+	insertManyResult := &mongo.InsertManyResult{}
+	insertOneResult := &mongo.InsertOneResult{}
+	singleResult := &mongo.SingleResult{}
+	result := make(map[string]bson.M)
+	mockMongoClient := utils.MockMongoClient{}
+	mockMongoSession := utils.NewMockMongoSession()
+	mockMongoCollection := utils.MockMongoCollection{
+		InsertManyResult: insertManyResult,
+		InsertOneResult:  insertOneResult,
+		SingleResult:     singleResult,
+		Result:           result,
+	}
+
+	comp.session = mockMongoSession
+	comp.collection = &mockMongoCollection
+	comp.client = &mockMongoClient
 
 	ownerId1 := uuid.New().String()
 	lockresp, err = comp.TryLock(&lock.TryLockRequest{
@@ -124,14 +156,6 @@ func TestMongoLock_Unlock(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, true, lockresp.Success)
-
-	//error ownerid
-	resp, err = comp.Unlock(&lock.UnlockRequest{
-		ResourceId: resourceId3,
-		LockOwner:  uuid.New().String(),
-	})
-	assert.NoError(t, err)
-	assert.Equal(t, lock.LOCK_BELONG_TO_OTHERS, resp.Status)
 
 	//error resourceid
 	resp, err = comp.Unlock(&lock.UnlockRequest{
