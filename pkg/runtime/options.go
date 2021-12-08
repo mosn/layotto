@@ -52,6 +52,8 @@ type runtimeOptions struct {
 	srvMaker rgrpc.NewServer
 	errInt   ErrInterceptor
 	options  []grpc.ServerOption
+	// new grpc api
+	apiFactorys []rgrpc.NewGrpcAPI
 }
 
 type Option func(o *runtimeOptions)
@@ -65,6 +67,12 @@ func WithNewServer(f rgrpc.NewServer) Option {
 func WithGrpcOptions(options ...grpc.ServerOption) Option {
 	return func(o *runtimeOptions) {
 		o.options = append(o.options, options...)
+	}
+}
+
+func WithGrpcAPI(apiFuncs ...rgrpc.NewGrpcAPI) Option {
+	return func(o *runtimeOptions) {
+		o.apiFactorys = append(o.apiFactorys, apiFuncs...)
 	}
 }
 

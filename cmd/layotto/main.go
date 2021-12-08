@@ -115,6 +115,7 @@ import (
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
+	l8grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/runtime"
 	"mosn.io/mosn/pkg/featuregate"
 	_ "mosn.io/mosn/pkg/filter/network/grpc"
@@ -153,6 +154,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	// 3. run
 	server, err := rt.Run(
 		runtime.WithGrpcOptions(opts...),
+		runtime.WithGrpcAPI(
+			l8grpc.NewLayottoAPI,
+		),
 		// Hello
 		runtime.WithHelloFactory(
 			hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),

@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"strings"
 	"sync"
 
@@ -74,6 +75,9 @@ var (
 			return new([]byte)
 		},
 	}
+	// FIXME I put it here for compatibility.Don't write singleton like this !
+	// It should be refactored and deleted.
+	LayottoAPISingleton API
 )
 
 type API interface {
@@ -114,6 +118,8 @@ type API interface {
 	GetNextId(context.Context, *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
 	// InvokeBinding Binding API
 	InvokeBinding(context.Context, *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error)
+	// Register GrpcAPI
+	Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -129,6 +135,27 @@ type api struct {
 	lockStores               map[string]lock.LockStore
 	sequencers               map[string]sequencer.Store
 	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
+}
+
+func (a *api) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer {
+	LayottoAPISingleton = a
+	runtimev1pb.RegisterRuntimeServer(s, a)
+	return registeredServer
+}
+
+func NewLayottoAPI(
+	appId string,
+	hellos map[string]hello.HelloService,
+	configStores map[string]configstores.Store,
+	rpcs map[string]rpc.Invoker,
+	pubSubs map[string]pubsub.PubSub,
+	stateStores map[string]state.Store,
+	files map[string]file.File,
+	lockStores map[string]lock.LockStore,
+	sequencers map[string]sequencer.Store,
+	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
+) GrpcAPI {
+	return NewAPI(appId, hellos, configStores, rpcs, pubSubs, stateStores, files, lockStores, sequencers, sendToOutputBindingFn)
 }
 
 func NewAPI(

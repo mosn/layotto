@@ -22,5 +22,5 @@ import (
 
 func TestNewGrpcServer(t *testing.T) {
 	apiInterface := &api{}
-	NewGrpcServer(WithAPI(apiInterface), WithNewServer(NewDefaultServer), WithGrpcOptions())
+	NewGrpcServer(WithGrpcAPIs([]GrpcAPI{apiInterface}), WithNewServer(NewDefaultServer), WithGrpcOptions())
 }

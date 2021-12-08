@@ -50,7 +50,6 @@ import (
 	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
-	"mosn.io/layotto/pkg/wasm"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"mosn.io/pkg/log"
@@ -150,10 +149,12 @@ func (m *MosnRuntime) sendToOutputBinding(name string, req *bindings.InvokeReque
 }
 
 func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
+	// prepare runtimeOptions
 	var o runtimeOptions
 	for _, opt := range opts {
 		opt(&o)
 	}
+	// set ErrInterceptor
 	if o.errInt != nil {
 		m.errInt = o.errInt
 	} else {
@@ -161,30 +162,38 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 	}
-
+	// init runtime with runtimeOptions
 	if err := m.initRuntime(&o); err != nil {
 		return nil, err
 	}
+	// prepare grpcOpts
 	var grpcOpts []grpc.Option
 	if o.srvMaker != nil {
 		grpcOpts = append(grpcOpts, grpc.WithNewServer(o.srvMaker))
 	}
-	wasm.Layotto = grpc.NewAPI(
-		m.runtimeConfig.AppManagement.AppId,
-		m.hellos,
-		m.configStores,
-		m.rpcs,
-		m.pubSubs,
-		m.states,
-		m.files,
-		m.locks,
-		m.sequencers,
-		m.sendToOutputBinding,
-	)
+	// create GrpcAPIs
+	var apis []grpc.GrpcAPI
+	for _, apiFactory := range o.apiFactorys {
+		api := apiFactory(
+			m.runtimeConfig.AppManagement.AppId,
+			m.hellos,
+			m.configStores,
+			m.rpcs,
+			m.pubSubs,
+			m.states,
+			m.files,
+			m.locks,
+			m.sequencers,
+			m.sendToOutputBinding,
+		)
+		apis = append(apis, api)
+	}
+	// put them into grpc options
 	grpcOpts = append(grpcOpts,
 		grpc.WithGrpcOptions(o.options...),
-		grpc.WithAPI(wasm.Layotto),
+		grpc.WithGrpcAPIs(apis),
 	)
+	// create grpc server
 	m.srv = grpc.NewGrpcServer(grpcOpts...)
 	return m.srv, nil
 }
