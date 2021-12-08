@@ -117,6 +117,7 @@ import (
 	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
 	l8grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/runtime"
+	_ "mosn.io/layotto/pkg/wasm"
 	"mosn.io/mosn/pkg/featuregate"
 	_ "mosn.io/mosn/pkg/filter/network/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
