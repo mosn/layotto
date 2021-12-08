@@ -7,15 +7,11 @@ require (
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gammazero/workerpool v1.1.2
-	github.com/go-ini/ini v1.63.2 // indirect
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.2.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/json-iterator/go v1.1.11
-	github.com/minio/minio-go v6.0.14+incompatible // indirect
-	github.com/minio/minio-go/v6 v6.0.57 // indirect
-	github.com/minio/minio-go/v7 v7.0.15 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0

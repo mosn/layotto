@@ -34,7 +34,6 @@ const cfg = `[
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
 					"region": "us-west-2",
-					"bucket":["demo"],
 					"SSL":true
 				}
 			]`
@@ -108,12 +107,8 @@ func TestMinioOss_Put(t *testing.T) {
 	err = oss.Put(context.TODO(), putReq)
 	assert.NotNil(t, err)
 
-	meta := map[string]string{
-		"bucket": "layotto",
-	}
-	putReq.Metadata = meta
 	err = oss.Put(context.TODO(), putReq)
-	assert.Nil(t, err)
+	assert.NotNil(t, err)
 }
 
 func TestMinioOss_Get(t *testing.T) {
