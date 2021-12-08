@@ -154,6 +154,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	// 3. run
 	server, err := rt.Run(
 		runtime.WithGrpcOptions(opts...),
+		// register your grpc API here
 		runtime.WithGrpcAPI(
 			l8grpc.NewLayottoAPI,
 		),
