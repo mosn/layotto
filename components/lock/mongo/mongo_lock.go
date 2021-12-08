@@ -127,25 +127,26 @@ func (e *MongoLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, er
 	txnOpts := options.Transaction().SetReadConcern(readconcern.Snapshot()).
 		SetWriteConcern(writeconcern.New(writeconcern.WMajority()))
 
+	// check session
+	if err != nil {
+		return &lock.TryLockResponse{
+			Success: false,
+		}, fmt.Errorf("[mongoLock]: Create session return error: %s ResourceId: %s", err, req.ResourceId)
+	}
+
 	// close mongo session
 	defer e.session.EndSession(e.ctx)
 
 	// start transaction
 	status, err := e.session.WithTransaction(e.ctx, func(sessionContext mongo.SessionContext) (interface{}, error) {
 		var err error
-		var singleResult *mongo.SingleResult
 		var insertOneResult *mongo.InsertOneResult
 
 		// set exprie date
 		expireTime := time.Now().Add(time.Duration(req.Expire) * time.Second)
 
-		// find mongo lock
-		singleResult = e.collection.FindOne(e.ctx, bson.M{"_id": req.ResourceId})
-
 		// insert mongo lock
-		if singleResult.Err() == mongo.ErrNoDocuments {
-			insertOneResult, err = e.collection.InsertOne(e.ctx, bson.M{"_id": req.ResourceId, "LockOwner": req.LockOwner, "Expire": expireTime})
-		}
+		insertOneResult, err = e.collection.InsertOne(e.ctx, bson.M{"_id": req.ResourceId, "LockOwner": req.LockOwner, "Expire": expireTime})
 
 		if err != nil {
 			_ = sessionContext.AbortTransaction(sessionContext)
@@ -184,6 +185,11 @@ func (e *MongoLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error
 	e.session, err = e.client.StartSession()
 	txnOpts := options.Transaction().SetReadConcern(readconcern.Snapshot()).
 		SetWriteConcern(writeconcern.New(writeconcern.WMajority()))
+
+	// check session
+	if err != nil {
+		return newInternalErrorUnlockResponse(), fmt.Errorf("[mongoLock]: Create Session return error: %s ResourceId: %s", err, req.ResourceId)
+	}
 
 	// close mongo session
 	defer e.session.EndSession(e.ctx)

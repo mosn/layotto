@@ -29,7 +29,7 @@
                       "lock": {
                         "mongo": {
                           "metadata": {
-                            "Host": "localhost:27017"
+                            "mongoHost": "localhost:27017"
                           }
                         }
                       },
