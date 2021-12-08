@@ -32,6 +32,7 @@ import (
 
 type GrpcAPI interface {
 	Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer
+	Init(conn *grpc.ClientConn) error
 }
 
 type NewGrpcAPI func(

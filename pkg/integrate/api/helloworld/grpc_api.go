@@ -53,6 +53,10 @@ type server struct {
 	pb.UnimplementedGreeterServer
 }
 
+func (s *server) Init(conn *rawGRPC.ClientConn) error {
+	return nil
+}
+
 func (s *server) Register(grpcServer *rawGRPC.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer {
 	pb.RegisterGreeterServer(grpcServer, s)
 	return registeredServer

@@ -67,6 +67,10 @@ import (
 	"mosn.io/pkg/log"
 )
 
+const (
+	Metadata_key_pubsubName = "pubsubName"
+)
+
 var (
 	ErrNoInstance = errors.New("no instance found")
 	bytesPool     = sync.Pool{
@@ -135,6 +139,17 @@ type api struct {
 	lockStores               map[string]lock.LockStore
 	sequencers               map[string]sequencer.Store
 	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
+	// app callback
+	AppCallbackConn   *grpc.ClientConn
+	topicPerComponent map[string]TopicSubscriptions
+	// json
+	json jsoniter.API
+}
+
+func (a *api) Init(conn *grpc.ClientConn) error {
+	// 1. set connection
+	a.AppCallbackConn = conn
+	return a.startSubscribing()
 }
 
 func (a *api) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer {
@@ -190,6 +205,7 @@ func NewAPI(
 		lockStores:               lockStores,
 		sequencers:               sequencers,
 		sendToOutputBindingFn:    sendToOutputBindingFn,
+		json:                     jsoniter.ConfigFastest,
 	}
 }
 
