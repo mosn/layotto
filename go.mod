@@ -3,6 +3,7 @@ module mosn.io/layotto
 go 1.14
 
 require (
+	github.com/alicebob/miniredis/v2 v2.13.3
 	github.com/dapr/components-contrib v1.4.0-rc2
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/fsnotify/fsnotify v1.4.9

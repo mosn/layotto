@@ -50,6 +50,7 @@
             - [Redis](zh/component_specs/lock/redis.md)
             - [Etcd](zh/component_specs/lock/etcd.md)
             - [Zookeeper](zh/component_specs/lock/zookeeper.md)
+            - [Consul](zh/component_specs/lock/consul.md)
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)
             - [Apollo](zh/component_specs/configuration/apollo.md)
@@ -70,6 +71,7 @@
     - [file API设计文档](zh/design/file/file-design.md)
     - [FaaS 设计文档](zh/design/faas/faas-poc-design.md)
 - 贡献指南
+    - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
@@ -86,3 +88,6 @@
 - 博客
     - [蚂蚁云原生应用运行时的探索和实践 - ArchSummit 上海](zh/blog/exploration-and-practice-of-antcloud-native-application-runtime-archsummit-shanghai.md)
     - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index.md)
+- 演讲视频
+  - [Service Mesh落地之后：为 sidecar 注入灵魂](zh/video/inject-soul-into-sidecar.md)
+  - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/video/a-new-chapter-in-service-mesh-application-runtime.md)
