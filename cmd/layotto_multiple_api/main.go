@@ -25,6 +25,7 @@ import (
 	"time"
 
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
+	_ "mosn.io/layotto/pkg/wasm"
 
 	"mosn.io/layotto/components/file/local"
 
