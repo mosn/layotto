@@ -1,4 +1,12 @@
+# API plugin: register your own API
 This is a demo to show you how to register your own API.
+
+Layotto has the api-plugin feature to let you add your own API based on your need.
+
+## step 0. change directory 
+```shell
+cd ${projectpath}/cmd/layotto_multiple_api
+```
 
 ## step 1. start Layotto with a new helloworld API
 Build and run Layotto :

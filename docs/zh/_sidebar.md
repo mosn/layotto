@@ -10,6 +10,9 @@
     - 进行RPC调用
         - [Hello World](zh/start/rpc/helloworld.md)
         - [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
+    - 使用File API
+        - [基于阿里云OSS](zh/start/file/start.md)
+    - [API插件：注册您自己的API](zh/start/api_plugin/helloworld.md)
     - 集成 Istio
         - [作为 Istio 的数据面](zh/start/istio/start.md)
     - 在四层网络进行流量干预
@@ -18,7 +21,6 @@
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - [trace管理](zh/start/trace/trace.md)
-    - [OSS访问文件](zh/start/file/start.md)
     - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - 用户手册
