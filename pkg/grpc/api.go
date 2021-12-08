@@ -118,8 +118,8 @@ type API interface {
 	GetNextId(context.Context, *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
 	// InvokeBinding Binding API
 	InvokeBinding(context.Context, *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error)
-	// Register GrpcAPI
-	Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer
+	// GrpcAPI related
+	GrpcAPI
 }
 
 // api is a default implementation for MosnRuntimeServer.
