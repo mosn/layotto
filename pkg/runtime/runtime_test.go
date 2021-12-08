@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	l8grpc "mosn.io/layotto/pkg/grpc"
 	"net"
 	"testing"
 
@@ -72,14 +73,24 @@ func TestMosnRuntime_Run(t *testing.T) {
 	t.Run("run succ", func(t *testing.T) {
 		runtimeConfig := &MosnRuntimeConfig{}
 		rt := NewMosnRuntime(runtimeConfig)
-		server, err := rt.Run()
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				l8grpc.NewLayottoAPI,
+			),
+		)
 		assert.Nil(t, err)
 		assert.NotNil(t, server)
 	})
 
 	t.Run("no runtime config", func(t *testing.T) {
 		rt := NewMosnRuntime(nil)
-		_, err := rt.Run()
+		_, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				l8grpc.NewLayottoAPI,
+			),
+		)
 		assert.NotNil(t, err)
 		assert.Equal(t, "[runtime] init error:no runtimeConfig", err.Error())
 	})
