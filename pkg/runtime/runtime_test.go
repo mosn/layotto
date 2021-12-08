@@ -60,6 +60,7 @@ func TestNewMosnRuntime(t *testing.T) {
 	runtimeConfig := &MosnRuntimeConfig{}
 	rt := NewMosnRuntime(runtimeConfig)
 	assert.NotNil(t, rt)
+	rt.Stop()
 }
 
 func TestMosnRuntime_GetInfo(t *testing.T) {
@@ -67,6 +68,7 @@ func TestMosnRuntime_GetInfo(t *testing.T) {
 	rt := NewMosnRuntime(runtimeConfig)
 	runtimeInfo := rt.GetInfo()
 	assert.NotNil(t, runtimeInfo)
+	rt.Stop()
 }
 
 func TestMosnRuntime_Run(t *testing.T) {
@@ -81,6 +83,7 @@ func TestMosnRuntime_Run(t *testing.T) {
 		)
 		assert.Nil(t, err)
 		assert.NotNil(t, server)
+		rt.Stop()
 	})
 
 	t.Run("no runtime config", func(t *testing.T) {
@@ -93,6 +96,7 @@ func TestMosnRuntime_Run(t *testing.T) {
 		)
 		assert.NotNil(t, err)
 		assert.Equal(t, "[runtime] init error:no runtimeConfig", err.Error())
+		rt.Stop()
 	})
 }
 
