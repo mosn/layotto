@@ -58,14 +58,15 @@ func main() {
 	// SaveBulkState with options and metadata
 	testSaveBulkState(ctx, cli, storeName, key1, value, key2)
 
-	testGetBulkState(ctx, cli, storeName, key1, key2)
+	// GetBulkState
+	testGetBulkStateKey12345(ctx, cli, storeName)
 
 	// delete state
 	testDelete(ctx, cli, storeName, key1)
 	testDelete(ctx, cli, storeName, key2)
 }
 
-func testGetBulkState(ctx context.Context, cli client.Client, store string, key1 string, key2 string) {
+func testGetBulkStateKey12345(ctx context.Context, cli client.Client, store string) {
 	state, err := cli.GetBulkState(ctx, store, []string{key1, key2, key3, key4, key5}, nil, 3)
 	if err != nil {
 		panic(err)
