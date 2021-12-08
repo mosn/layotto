@@ -1,8 +1,23 @@
-## WASM on Layotto
+## Run business logic in Layotto using WASM
 
 ### What is WASM on Layotto?
+The sidecar of service mesh and multi-runtime is a common infrastructure for the whole company, but in practice, the business system will also have its own SDK, and it will also have the difficulty of pushing users to upgrade the SDK and the problem of version fragmentation.
 
-Layotto supports load the compiled WASM file, and interacts with it through the API of the `proxy_abi_version_0_2_0` version.
+For example, a business system has developed an SDK in the form of a jar package for use by other business systems. Their features are not universal to the entire company, so they cannot persuade the middleware team to develop them into the company's unified sidecar.
+
+![img_1.png](../../../img/wasm/img_1.png)
+
+
+
+And if it becomes like this:
+
+![img.png](../../../img/wasm/img.png)
+
+If developers no longer develop sdk (jar package), change to develop .wasm files and support independent upgrade and deployment, there will be no pain to push the users to upgrade. 
+
+When you want to upgrade, you can release it on the operation platform. There is no need to restart the app and sidecar.
+
+Layotto can load the compiled WASM files automatically, and interacts with them through the API of the `proxy_abi_version_0_2_0` version.
 
 ### Quick start
 
@@ -37,6 +52,8 @@ go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
 curl -H 'id:id_1' 'localhost:2045?name=book1'
 There are 100 inventories for book1.
 ```
+
+This http request will access the wasm module in Layotto. The wasm module will call redis for logical processing.
 
 ### Note
 
