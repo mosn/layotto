@@ -72,6 +72,7 @@
     - [Sequencer API设计文档](zh/design/sequencer/design.md)
     - [file API设计文档](zh/design/file/file-design.md)
     - [FaaS 设计文档](zh/design/faas/faas-poc-design.md)
+    - [API插件](zh/design/api_plugin/design.md)
 - 贡献指南
     - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
     - [文档贡献指南](zh/development/contributing-doc.md)
