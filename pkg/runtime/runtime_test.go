@@ -17,8 +17,12 @@
 package runtime
 
 import (
+	"context"
 	"fmt"
+	"google.golang.org/grpc/test/bufconn"
 	l8grpc "mosn.io/layotto/pkg/grpc"
+	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"net"
 	"testing"
 
@@ -324,4 +328,75 @@ func TestMosnRuntime_initOutputBinding(t *testing.T) {
 	}
 	m.initOutputBinding(registry)
 	assert.NotNil(t, m.outputBindings["mockOutbindings"])
+}
+
+func TestMosnRuntime_initGrpcAPI(t *testing.T) {
+	t.Run("normal", func(t *testing.T) {
+		// 1. prepare callback
+		// mock callback response
+		subResp := &runtimev1pb.ListTopicSubscriptionsResponse{
+			Subscriptions: []*runtimev1pb.TopicSubscription{
+				{
+					PubsubName: "mock",
+					Topic:      "layotto",
+					Metadata:   nil,
+				},
+			},
+		}
+		// init grpc server for callback
+		mockAppCallbackServer := mock_appcallback.NewMockAppCallbackServer(gomock.NewController(t))
+		mockAppCallbackServer.EXPECT().ListTopicSubscriptions(gomock.Any(), gomock.Any()).Return(subResp, nil)
+
+		lis := bufconn.Listen(1024 * 1024)
+		s := rawGRPC.NewServer()
+		runtimev1pb.RegisterAppCallbackServer(s, mockAppCallbackServer)
+		go func() {
+			s.Serve(lis)
+		}()
+
+		// 2. prepare those necessary fields for mosn runtime
+		// init callback client
+		callbackClient, err := rawGRPC.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
+			return lis.Dial()
+		}))
+		assert.Nil(t, err)
+
+		// mock pubsub component
+		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
+		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).Return(nil)
+		f := func() pubsub.PubSub {
+			return mockPubSub
+		}
+
+		// 3. prepare mosn runtime
+		cfg := &MosnRuntimeConfig{
+			PubSubManagement: map[string]mpubsub.Config{
+				"mock": {
+					Metadata: map[string]string{
+						"target": "layotto",
+					},
+				},
+			},
+		}
+		rt := NewMosnRuntime(cfg)
+		rt.AppCallbackConn = callbackClient
+		// 4. Run
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				l8grpc.NewLayottoAPI,
+			),
+			// PubSub
+			WithPubSubFactory(
+				mpubsub.NewFactory("mock", f),
+			),
+		)
+		// 5. assert
+		assert.Nil(t, err)
+		assert.NotNil(t, server)
+
+		// 6. stop
+		rt.Stop()
+	})
 }
