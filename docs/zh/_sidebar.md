@@ -10,6 +10,9 @@
     - 进行RPC调用
         - [Hello World](zh/start/rpc/helloworld.md)
         - [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
+    - 使用File API
+        - [基于阿里云OSS](zh/start/file/start.md)
+    - [API插件：注册您自己的API](zh/start/api_plugin/helloworld.md)
     - 集成 Istio
         - [作为 Istio 的数据面](zh/start/istio/start.md)
     - 在四层网络进行流量干预
@@ -18,8 +21,7 @@
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - [trace管理](zh/start/trace/trace.md)
-    - [OSS访问文件](zh/start/file/start.md)
-    - [使用WASM进行多语言编程](zh/start/wasm/start.md)
+    - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - 用户手册
     - 功能介绍
@@ -35,7 +37,7 @@
     - [grpc API 文档](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
     - SDK文档    
         - [go sdk](zh/sdk_reference/go/start.md)
-        - [java sdk](zh/sdk_reference/java/start.md)
+        - [java sdk](https://github.com/mosn/layotto/blob/main/sdk/java-sdk/README-zh.md)
         - [.net sdk](https://github.com/layotto/dotnet-sdk)
         - [js sdk](https://github.com/layotto/js-sdk)
     - [配置文档](zh/configuration/overview.md)
@@ -50,6 +52,7 @@
             - [Redis](zh/component_specs/lock/redis.md)
             - [Etcd](zh/component_specs/lock/etcd.md)
             - [Zookeeper](zh/component_specs/lock/zookeeper.md)
+            - [Consul](zh/component_specs/lock/consul.md)
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)
             - [Apollo](zh/component_specs/configuration/apollo.md)
@@ -69,7 +72,9 @@
     - [Sequencer API设计文档](zh/design/sequencer/design.md)
     - [file API设计文档](zh/design/file/file-design.md)
     - [FaaS 设计文档](zh/design/faas/faas-poc-design.md)
+    - [API插件](zh/design/api_plugin/design.md)
 - 贡献指南
+    - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
     - [文档贡献指南](zh/development/contributing-doc.md)
     - [组件开发指南](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
@@ -86,3 +91,6 @@
 - 博客
     - [蚂蚁云原生应用运行时的探索和实践 - ArchSummit 上海](zh/blog/exploration-and-practice-of-antcloud-native-application-runtime-archsummit-shanghai.md)
     - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index.md)
+- 演讲视频
+  - [Service Mesh落地之后：为 sidecar 注入灵魂](zh/video/inject-soul-into-sidecar.md)
+  - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/video/a-new-chapter-in-service-mesh-application-runtime.md)

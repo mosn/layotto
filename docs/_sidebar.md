@@ -10,6 +10,7 @@
   - Service Invocation
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
+  - [API plugin: register your own API](en/start/api_plugin/helloworld.md)
   - Integrate with istio
     - [As a data plane in istio](en/start/istio/start.md)
   - Traffic intervention on the 4th layer network
@@ -18,7 +19,7 @@
     - [Method Level Flow Control](en/start/stream_filter/flow_control.md)
   - [Trace management](en/start/trace/trace.md)
   - [Health check and metadata query](en/start/actuator/start.md)
-  - [Multilingual programming based on WASM](en/start/wasm/start.md)
+  - [Run business logic in Layotto using WASM](en/start/wasm/start.md)
   - [FaaS model based on WASM and Runtime](en/start/faas/start.md)
 - Developer guide
   - Building blocks
@@ -33,7 +34,7 @@
   - [API reference](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
   - SDK reference
     - [go sdk](en/sdk_reference/go/start.md)
-    - [java sdk](en/sdk_reference/java/start.md)
+    - [java sdk](https://github.com/mosn/layotto/tree/main/sdk/java-sdk)
     - [.net sdk](https://github.com/layotto/dotnet-sdk)
     - [js sdk](https://github.com/layotto/js-sdk)
   - [Configuration reference](en/configuration/overview.md)  
@@ -48,6 +49,7 @@
       - [Redis](en/component_specs/lock/redis.md)  
       - [Etcd](en/component_specs/lock/etcd.md)
       - [Zookeeper](en/component_specs/lock/zookeeper.md)
+      - [Consul](en/component_specs/lock/consul.md)
     - Configuration
       - [Etcd](en/component_specs/configuration/etcd.md)
       - [Apollo](en/component_specs/configuration/apollo.md)
