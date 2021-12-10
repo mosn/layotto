@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package grpc
+package default_api
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"io"
+	grpc_api "mosn.io/layotto/pkg/grpc"
+	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"strings"
 	"sync"
 
@@ -66,6 +68,10 @@ import (
 	"mosn.io/pkg/log"
 )
 
+const (
+	Metadata_key_pubsubName = "pubsubName"
+)
+
 var (
 	ErrNoInstance = errors.New("no instance found")
 	bytesPool     = sync.Pool{
@@ -74,6 +80,9 @@ var (
 			return new([]byte)
 		},
 	}
+	// FIXME I put it here for compatibility.Don't write singleton like this !
+	// It should be refactored and deleted.
+	LayottoAPISingleton API
 )
 
 type API interface {
@@ -114,6 +123,8 @@ type API interface {
 	GetNextId(context.Context, *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
 	// InvokeBinding Binding API
 	InvokeBinding(context.Context, *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error)
+	// GrpcAPI related
+	grpc_api.GrpcAPI
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -129,6 +140,38 @@ type api struct {
 	lockStores               map[string]lock.LockStore
 	sequencers               map[string]sequencer.Store
 	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
+	// app callback
+	AppCallbackConn   *grpc.ClientConn
+	topicPerComponent map[string]TopicSubscriptions
+	// json
+	json jsoniter.API
+}
+
+func (a *api) Init(conn *grpc.ClientConn) error {
+	// 1. set connection
+	a.AppCallbackConn = conn
+	return a.startSubscribing()
+}
+
+func (a *api) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer {
+	LayottoAPISingleton = a
+	runtimev1pb.RegisterRuntimeServer(s, a)
+	return registeredServer
+}
+
+func NewGrpcAPI(
+	appId string,
+	hellos map[string]hello.HelloService,
+	configStores map[string]configstores.Store,
+	rpcs map[string]rpc.Invoker,
+	pubSubs map[string]pubsub.PubSub,
+	stateStores map[string]state.Store,
+	files map[string]file.File,
+	lockStores map[string]lock.LockStore,
+	sequencers map[string]sequencer.Store,
+	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
+) grpc_api.GrpcAPI {
+	return NewAPI(appId, hellos, configStores, rpcs, pubSubs, stateStores, files, lockStores, sequencers, sendToOutputBindingFn)
 }
 
 func NewAPI(
@@ -163,6 +206,7 @@ func NewAPI(
 		lockStores:               lockStores,
 		sequencers:               sequencers,
 		sendToOutputBindingFn:    sendToOutputBindingFn,
+		json:                     jsoniter.ConfigFastest,
 	}
 }
 
