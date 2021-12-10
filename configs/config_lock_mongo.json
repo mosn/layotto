@@ -29,7 +29,10 @@
                       "lock": {
                         "mongo": {
                           "metadata": {
-                            "mongoHost": "localhost:27017"
+                            "host": "localhost:27017",
+                            "username": "",
+                            "password": "",
+                            "params": ""
                           }
                         }
                       },
