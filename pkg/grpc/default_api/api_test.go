@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package grpc
+package default_api
 
 import (
 	"context"
@@ -26,6 +26,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
+	l8grpc "mosn.io/layotto/pkg/grpc"
 	"net"
 	"testing"
 
@@ -1143,4 +1144,9 @@ func TestGetFileMeta(t *testing.T) {
 	resp, err = api.GetFileMeta(context.Background(), request)
 	assert.Equal(t, resp.LastModified, "123")
 	assert.Equal(t, int(resp.Size), 10)
+}
+
+func TestNewGrpcServer(t *testing.T) {
+	apiInterface := &api{}
+	l8grpc.NewGrpcServer(l8grpc.WithGrpcAPIs([]l8grpc.GrpcAPI{apiInterface}), l8grpc.WithNewServer(l8grpc.NewDefaultServer), l8grpc.WithGrpcOptions())
 }

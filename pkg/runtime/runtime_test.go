@@ -18,9 +18,10 @@ package runtime
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"google.golang.org/grpc/test/bufconn"
-	l8grpc "mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/grpc/default_api"
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"net"
@@ -75,7 +76,7 @@ func TestMosnRuntime_Run(t *testing.T) {
 		server, err := rt.Run(
 			// register your grpc API here
 			WithGrpcAPI(
-				l8grpc.NewLayottoAPI,
+				default_api.NewLayottoAPI,
 			),
 		)
 		assert.Nil(t, err)
@@ -88,7 +89,7 @@ func TestMosnRuntime_Run(t *testing.T) {
 		_, err := rt.Run(
 			// register your grpc API here
 			WithGrpcAPI(
-				l8grpc.NewLayottoAPI,
+				default_api.NewLayottoAPI,
 			),
 		)
 		assert.NotNil(t, err)
@@ -330,37 +331,8 @@ func TestMosnRuntime_initOutputBinding(t *testing.T) {
 	assert.NotNil(t, m.outputBindings["mockOutbindings"])
 }
 
-func TestMosnRuntime_initGrpcAPI(t *testing.T) {
+func TestMosnRuntime_runWithPubsub(t *testing.T) {
 	t.Run("normal", func(t *testing.T) {
-		// 1. prepare callback
-		// mock callback response
-		subResp := &runtimev1pb.ListTopicSubscriptionsResponse{
-			Subscriptions: []*runtimev1pb.TopicSubscription{
-				{
-					PubsubName: "mock",
-					Topic:      "layotto",
-					Metadata:   nil,
-				},
-			},
-		}
-		// init grpc server for callback
-		mockAppCallbackServer := mock_appcallback.NewMockAppCallbackServer(gomock.NewController(t))
-		mockAppCallbackServer.EXPECT().ListTopicSubscriptions(gomock.Any(), gomock.Any()).Return(subResp, nil)
-
-		lis := bufconn.Listen(1024 * 1024)
-		s := rawGRPC.NewServer()
-		runtimev1pb.RegisterAppCallbackServer(s, mockAppCallbackServer)
-		go func() {
-			s.Serve(lis)
-		}()
-
-		// 2. prepare those necessary fields for mosn runtime
-		// init callback client
-		callbackClient, err := rawGRPC.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
-			return lis.Dial()
-		}))
-		assert.Nil(t, err)
-
 		// mock pubsub component
 		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
 		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
@@ -369,34 +341,126 @@ func TestMosnRuntime_initGrpcAPI(t *testing.T) {
 			return mockPubSub
 		}
 
-		// 3. prepare mosn runtime
-		cfg := &MosnRuntimeConfig{
-			PubSubManagement: map[string]mpubsub.Config{
-				"mock": {
-					Metadata: map[string]string{
-						"target": "layotto",
-					},
-				},
-			},
-		}
-		rt := NewMosnRuntime(cfg)
-		rt.AppCallbackConn = callbackClient
-		// 4. Run
+		// 2. construct runtime
+		rt, _ := runtimeWithCallbackConnection(t)
+
+		// 3. Run
 		server, err := rt.Run(
 			// register your grpc API here
 			WithGrpcAPI(
-				l8grpc.NewLayottoAPI,
+				default_api.NewLayottoAPI,
 			),
 			// PubSub
 			WithPubSubFactory(
 				mpubsub.NewFactory("mock", f),
 			),
 		)
-		// 5. assert
+		// 4. assert
 		assert.Nil(t, err)
 		assert.NotNil(t, server)
 
-		// 6. stop
+		// 5. stop
 		rt.Stop()
 	})
+
+	t.Run("init_with_callback", func(t *testing.T) {
+		cloudEvent := constructCloudEvent()
+		data, err := json.Marshal(cloudEvent)
+		assert.Nil(t, err)
+		// mock pubsub component
+		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
+		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).DoAndReturn(func(req pubsub.SubscribeRequest, handler pubsub.Handler) error {
+			if req.Topic == "layotto" {
+				return handler(context.Background(), &pubsub.NewMessage{
+					Data:     data,
+					Topic:    "test",
+					Metadata: nil,
+				})
+			} else {
+				return nil
+			}
+		})
+		f := func() pubsub.PubSub {
+			return mockPubSub
+		}
+
+		// 2. construct runtime
+		rt, mockAppCallbackServer := runtimeWithCallbackConnection(t)
+
+		topicResp := &runtimev1pb.TopicEventResponse{Status: runtimev1pb.TopicEventResponse_SUCCESS}
+		mockAppCallbackServer.EXPECT().OnTopicEvent(gomock.Any(), gomock.Any()).Return(topicResp, nil)
+		// 3. Run
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewLayottoAPI,
+			),
+			// PubSub
+			WithPubSubFactory(
+				mpubsub.NewFactory("mock", f),
+			),
+		)
+		// 4. assert
+		assert.Nil(t, err)
+		assert.NotNil(t, server)
+
+		// 5. stop
+		rt.Stop()
+	})
+}
+
+func constructCloudEvent() map[string]interface{} {
+	cloudEvent := make(map[string]interface{})
+	cloudEvent[pubsub.IDField] = "1"
+	cloudEvent[pubsub.SpecVersionField] = "1"
+	cloudEvent[pubsub.SourceField] = "adsdafdas"
+	cloudEvent[pubsub.DataContentTypeField] = "application/json"
+	cloudEvent[pubsub.TypeField] = "adsdafdas"
+	return cloudEvent
+}
+
+func runtimeWithCallbackConnection(t *testing.T) (*MosnRuntime, *mock_appcallback.MockAppCallbackServer) {
+	// 1. prepare callback
+	// mock callback response
+	subResp := &runtimev1pb.ListTopicSubscriptionsResponse{
+		Subscriptions: []*runtimev1pb.TopicSubscription{
+			{
+				PubsubName: "mock",
+				Topic:      "layotto",
+				Metadata:   nil,
+			},
+		},
+	}
+	// init grpc server for callback
+	mockAppCallbackServer := mock_appcallback.NewMockAppCallbackServer(gomock.NewController(t))
+	mockAppCallbackServer.EXPECT().ListTopicSubscriptions(gomock.Any(), gomock.Any()).Return(subResp, nil)
+
+	lis := bufconn.Listen(1024 * 1024)
+	s := rawGRPC.NewServer()
+	runtimev1pb.RegisterAppCallbackServer(s, mockAppCallbackServer)
+	go func() {
+		s.Serve(lis)
+	}()
+
+	// 2. construct those necessary fields for mosn runtime
+	// init callback client
+	callbackClient, err := rawGRPC.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
+		return lis.Dial()
+	}))
+	assert.Nil(t, err)
+
+	// 3. construct mosn runtime
+	cfg := &MosnRuntimeConfig{
+		PubSubManagement: map[string]mpubsub.Config{
+			"mock": {
+				Metadata: map[string]string{
+					"target": "layotto",
+				},
+			},
+		},
+	}
+	rt := NewMosnRuntime(cfg)
+	rt.AppCallbackConn = callbackClient
+	return rt, mockAppCallbackServer
 }

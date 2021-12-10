@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package grpc
+package default_api
 
 import (
-	"testing"
+	"google.golang.org/grpc/codes"
+	"mosn.io/layotto/components/file"
 )
 
-func TestNewGrpcServer(t *testing.T) {
-	apiInterface := &api{}
-	NewGrpcServer(WithGrpcAPIs([]GrpcAPI{apiInterface}), WithNewServer(NewDefaultServer), WithGrpcOptions())
-}
+var (
+	FileErrMap2GrpcErr = map[error]codes.Code{
+		file.ErrInvalid:    codes.InvalidArgument,
+		file.ErrNotExist:   codes.NotFound,
+		file.ErrExist:      codes.AlreadyExists,
+		file.ErrExpired:    codes.DataLoss,
+		file.ErrPermission: codes.PermissionDenied,
+	}
+)

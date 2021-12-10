@@ -19,7 +19,7 @@ package wasm
 import (
 	"context"
 	anypb "github.com/golang/protobuf/ptypes/any"
-	"mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/grpc/default_api"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 	"mosn.io/proxy-wasm-go-host/proxywasm/common"
@@ -40,7 +40,7 @@ func (d *LayottoHandler) GetState(storeName string, key string) (string, proxywa
 		StoreName: storeName,
 		Key:       key,
 	}
-	resp, err := grpc.LayottoAPISingleton.GetState(context.Background(), req)
+	resp, err := default_api.LayottoAPISingleton.GetState(context.Background(), req)
 	if err != nil {
 		return "", proxywasm.WasmResultInternalFailure
 	}
@@ -55,7 +55,7 @@ func (d *LayottoHandler) InvokeService(id string, method string, param string) (
 			Data:   &anypb.Any{Value: []byte(param)},
 		},
 	}
-	resp, err := grpc.LayottoAPISingleton.InvokeService(context.Background(), req)
+	resp, err := default_api.LayottoAPISingleton.InvokeService(context.Background(), req)
 	if err != nil {
 		return "", proxywasm.WasmResultInternalFailure
 	}

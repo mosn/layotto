@@ -19,6 +19,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"mosn.io/layotto/pkg/grpc/default_api"
 	helloworld_api "mosn.io/layotto/pkg/integrate/api/helloworld"
 	"os"
 	"strconv"
@@ -117,7 +118,6 @@ import (
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
-	l8grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/runtime"
 	"mosn.io/mosn/pkg/featuregate"
 	_ "mosn.io/mosn/pkg/filter/network/grpc"
@@ -159,7 +159,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// register your grpc API here
 		runtime.WithGrpcAPI(
 			// Layotto API
-			l8grpc.NewLayottoAPI,
+			default_api.NewLayottoAPI,
 			// a demo to show how to register your own API
 			helloworld_api.NewHelloWorldAPI,
 		),

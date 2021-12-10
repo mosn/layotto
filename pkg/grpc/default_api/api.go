@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package grpc
+package default_api
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"io"
+	grpc_api "mosn.io/layotto/pkg/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"strings"
 	"sync"
@@ -123,7 +124,7 @@ type API interface {
 	// InvokeBinding Binding API
 	InvokeBinding(context.Context, *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error)
 	// GrpcAPI related
-	GrpcAPI
+	grpc_api.GrpcAPI
 }
 
 // api is a default implementation for MosnRuntimeServer.
@@ -169,7 +170,7 @@ func NewLayottoAPI(
 	lockStores map[string]lock.LockStore,
 	sequencers map[string]sequencer.Store,
 	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
-) GrpcAPI {
+) grpc_api.GrpcAPI {
 	return NewAPI(appId, hellos, configStores, rpcs, pubSubs, stateStores, files, lockStores, sequencers, sendToOutputBindingFn)
 }
 
