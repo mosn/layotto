@@ -157,7 +157,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithGrpcOptions(opts...),
 		// register your grpc API here
 		runtime.WithGrpcAPI(
-			default_api.NewLayottoAPI,
+			default_api.NewGrpcAPI,
 		),
 		// Hello
 		runtime.WithHelloFactory(

@@ -23,12 +23,12 @@ Check the code in `main.go` and you will find a new API was registered during st
 
 ```go
 		// register your grpc API here
-		runtime.WithGrpcAPI(
-			// Layotto API
-			l8grpc.NewLayottoAPI,
-			// a demo to show how to register your own API
-			helloworld_api.NewHelloWorldAPI,
-		),
+        runtime.WithGrpcAPI(
+            // default grpc API
+            default_api.NewGrpcAPI,
+            // a demo to show how to register your own API
+            helloworld_api.NewHelloWorldAPI,
+        ),
 ```
 
 ## step 2. invoke the helloworld API

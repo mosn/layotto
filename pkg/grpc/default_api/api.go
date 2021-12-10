@@ -159,7 +159,7 @@ func (a *api) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) 
 	return registeredServer
 }
 
-func NewLayottoAPI(
+func NewGrpcAPI(
 	appId string,
 	hellos map[string]hello.HelloService,
 	configStores map[string]configstores.Store,

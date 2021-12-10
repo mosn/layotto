@@ -76,7 +76,7 @@ func TestMosnRuntime_Run(t *testing.T) {
 		server, err := rt.Run(
 			// register your grpc API here
 			WithGrpcAPI(
-				default_api.NewLayottoAPI,
+				default_api.NewGrpcAPI,
 			),
 		)
 		assert.Nil(t, err)
@@ -89,7 +89,7 @@ func TestMosnRuntime_Run(t *testing.T) {
 		_, err := rt.Run(
 			// register your grpc API here
 			WithGrpcAPI(
-				default_api.NewLayottoAPI,
+				default_api.NewGrpcAPI,
 			),
 		)
 		assert.NotNil(t, err)
@@ -348,7 +348,7 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 		server, err := rt.Run(
 			// register your grpc API here
 			WithGrpcAPI(
-				default_api.NewLayottoAPI,
+				default_api.NewGrpcAPI,
 			),
 			// PubSub
 			WithPubSubFactory(
@@ -394,7 +394,7 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 		server, err := rt.Run(
 			// register your grpc API here
 			WithGrpcAPI(
-				default_api.NewLayottoAPI,
+				default_api.NewGrpcAPI,
 			),
 			// PubSub
 			WithPubSubFactory(
