@@ -374,7 +374,7 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			if req.Topic == "layotto" {
 				return handler(context.Background(), &pubsub.NewMessage{
 					Data:     data,
-					Topic:    "test",
+					Topic:    "layotto",
 					Metadata: nil,
 				})
 			} else {
@@ -389,6 +389,102 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 		rt, mockAppCallbackServer := runtimeWithCallbackConnection(t)
 
 		topicResp := &runtimev1pb.TopicEventResponse{Status: runtimev1pb.TopicEventResponse_SUCCESS}
+		mockAppCallbackServer.EXPECT().OnTopicEvent(gomock.Any(), gomock.Any()).Return(topicResp, nil)
+		// 3. Run
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+			// PubSub
+			WithPubSubFactory(
+				mpubsub.NewFactory("mock", f),
+			),
+		)
+		// 4. assert
+		assert.Nil(t, err)
+		assert.NotNil(t, server)
+
+		// 5. stop
+		rt.Stop()
+	})
+
+	t.Run("callback_fail_then_retry", func(t *testing.T) {
+		cloudEvent := constructCloudEvent()
+		data, err := json.Marshal(cloudEvent)
+		assert.Nil(t, err)
+		// mock pubsub component
+		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
+		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).DoAndReturn(func(req pubsub.SubscribeRequest, handler pubsub.Handler) error {
+			if req.Topic == "layotto" {
+				err := handler(context.Background(), &pubsub.NewMessage{
+					Data:     data,
+					Topic:    "layotto",
+					Metadata: nil,
+				})
+				assert.NotNil(t, err)
+				return nil
+			} else {
+				return nil
+			}
+		})
+		f := func() pubsub.PubSub {
+			return mockPubSub
+		}
+
+		// 2. construct runtime
+		rt, mockAppCallbackServer := runtimeWithCallbackConnection(t)
+
+		topicResp := &runtimev1pb.TopicEventResponse{Status: runtimev1pb.TopicEventResponse_RETRY}
+		mockAppCallbackServer.EXPECT().OnTopicEvent(gomock.Any(), gomock.Any()).Return(topicResp, nil)
+		// 3. Run
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+			// PubSub
+			WithPubSubFactory(
+				mpubsub.NewFactory("mock", f),
+			),
+		)
+		// 4. assert
+		assert.Nil(t, err)
+		assert.NotNil(t, server)
+
+		// 5. stop
+		rt.Stop()
+	})
+
+	t.Run("callback_drop", func(t *testing.T) {
+		cloudEvent := constructCloudEvent()
+		data, err := json.Marshal(cloudEvent)
+		assert.Nil(t, err)
+		// mock pubsub component
+		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
+		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).DoAndReturn(func(req pubsub.SubscribeRequest, handler pubsub.Handler) error {
+			if req.Topic == "layotto" {
+				err := handler(context.Background(), &pubsub.NewMessage{
+					Data:     data,
+					Topic:    "layotto",
+					Metadata: nil,
+				})
+				assert.Nil(t, err)
+				return nil
+			} else {
+				return nil
+			}
+		})
+		f := func() pubsub.PubSub {
+			return mockPubSub
+		}
+
+		// 2. construct runtime
+		rt, mockAppCallbackServer := runtimeWithCallbackConnection(t)
+
+		topicResp := &runtimev1pb.TopicEventResponse{Status: runtimev1pb.TopicEventResponse_DROP}
 		mockAppCallbackServer.EXPECT().OnTopicEvent(gomock.Any(), gomock.Any()).Return(topicResp, nil)
 		// 3. Run
 		server, err := rt.Run(
