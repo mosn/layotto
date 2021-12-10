@@ -14,36 +14,31 @@
  * limitations under the License.
  */
 
-package grpc
+package default_api
 
 import (
 	"context"
-	"errors"
+	"encoding/json"
 	"fmt"
-	"io"
-	"net"
-
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
-	"testing"
-	"time"
-
-	"mosn.io/layotto/components/file"
-
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
 	"github.com/golang/mock/gomock"
-	"github.com/golang/protobuf/ptypes/any"
 	"github.com/stretchr/testify/assert"
-	tmock "github.com/stretchr/testify/mock"
-	"google.golang.org/grpc"
+	rawGRPC "google.golang.org/grpc"
+	"google.golang.org/grpc/test/bufconn"
+	l8grpc "mosn.io/layotto/pkg/grpc"
+	"net"
+	"testing"
 
+	"errors"
+	jsoniter "github.com/json-iterator/go"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"io"
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/rpc"
-	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/mock"
 	mock_invoker "mosn.io/layotto/pkg/mock/components/invoker"
@@ -51,7 +46,18 @@ import (
 	mock_pubsub "mosn.io/layotto/pkg/mock/components/pubsub"
 	mock_sequencer "mosn.io/layotto/pkg/mock/components/sequencer"
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
+	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
+
+	"time"
+
+	"mosn.io/layotto/components/file"
+
+	"github.com/golang/protobuf/ptypes/any"
+	tmock "github.com/stretchr/testify/mock"
+	"google.golang.org/grpc"
+
+	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
 )
 
 const (
@@ -130,6 +136,58 @@ func TestSayHello(t *testing.T) {
 		if err != ErrNoInstance {
 			t.Fatalf("expected got a no instance error, but got %v", err)
 		}
+	})
+}
+
+func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
+	t.Run("publish success", func(t *testing.T) {
+		subResp := &runtimev1pb.TopicEventResponse{
+			Status: runtimev1pb.TopicEventResponse_SUCCESS,
+		}
+		// init grpc server
+		mockAppCallbackServer := mock_appcallback.NewMockAppCallbackServer(gomock.NewController(t))
+		mockAppCallbackServer.EXPECT().OnTopicEvent(gomock.Any(), gomock.Any()).Return(subResp, nil)
+
+		lis := bufconn.Listen(1024 * 1024)
+		s := grpc.NewServer()
+		runtimev1pb.RegisterAppCallbackServer(s, mockAppCallbackServer)
+		go func() {
+			s.Serve(lis)
+		}()
+
+		// init callback client
+		callbackClient, err := grpc.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
+			return lis.Dial()
+		}))
+		assert.Nil(t, err)
+
+		cloudEvent := map[string]interface{}{
+			pubsub.IDField:              "id",
+			pubsub.SourceField:          "source",
+			pubsub.DataContentTypeField: "content-type",
+			pubsub.TypeField:            "type",
+			pubsub.SpecVersionField:     "v1.0.0",
+			pubsub.DataBase64Field:      "bGF5b3R0bw==",
+		}
+
+		data, err := json.Marshal(cloudEvent)
+		assert.Nil(t, err)
+
+		msg := &pubsub.NewMessage{
+			Data:     data,
+			Topic:    "layotto",
+			Metadata: make(map[string]string),
+		}
+		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil)
+
+		var apiForTest = a.(*api)
+		//apiForTest.errInt = func(err error, format string, args ...interface{}) {
+		//	log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+		//}
+		apiForTest.AppCallbackConn = callbackClient
+		apiForTest.json = jsoniter.ConfigFastest
+		err = apiForTest.publishMessageGRPC(context.Background(), msg)
+		assert.Nil(t, err)
 	})
 }
 
@@ -1086,4 +1144,9 @@ func TestGetFileMeta(t *testing.T) {
 	resp, err = api.GetFileMeta(context.Background(), request)
 	assert.Equal(t, resp.LastModified, "123")
 	assert.Equal(t, int(resp.Size), 10)
+}
+
+func TestNewGrpcServer(t *testing.T) {
+	apiInterface := &api{}
+	l8grpc.NewGrpcServer(l8grpc.WithGrpcAPIs([]l8grpc.GrpcAPI{apiInterface}), l8grpc.WithNewServer(l8grpc.NewDefaultServer), l8grpc.WithGrpcOptions())
 }
