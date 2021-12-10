@@ -41,10 +41,9 @@ const (
 var (
 	ErrMissingEndPoint    error = errors.New("missing endpoint info in metadata")
 	ErrClientNotExist     error = errors.New("specific client not exist")
-	ErrEndPointNotExist   error = errors.New("specific endpoing key not exist")
 	ErrInvalidConfig      error = errors.New("invalid hdfs config")
 	ErrNotSpecifyEndpoint error = errors.New("other error happend in metadata")
-	ErrHdfsListFail       error = errors.New("hdfs list opt failed")
+	ErrHdfsListFail       error = errors.New("hdfs List opt failed")
 )
 
 type hdfs struct {
@@ -153,11 +152,11 @@ func (h *hdfs) List(ctx context.Context, request *file.ListRequest) (*file.ListR
 		err = ErrHdfsListFail
 	}
 
-	resp.Marker = it.ContinuationToken()
+	marker := ""
 	for {
 		o, err := it.Next()
 		if err != nil && !errors.Is(err, types.IterateDone) {
-			fmt.Errorf("fail to List All Next: %v", err)
+			return nil,err
 		}
 
 		if err != nil {
@@ -181,7 +180,11 @@ func (h *hdfs) List(ctx context.Context, request *file.ListRequest) (*file.ListR
 		file.LastModified = time.String()
 
 		resp.Files = append(resp.Files, file)
+
+		marker=it.ContinuationToken()
 	}
+
+	resp.Marker=marker
 
 	return resp, nil
 }
