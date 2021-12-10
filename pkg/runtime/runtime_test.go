@@ -20,6 +20,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"google.golang.org/grpc/test/bufconn"
+	"mosn.io/layotto/pkg/grpc/default_api"
+	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"net"
 	"testing"
 
@@ -29,11 +33,8 @@ import (
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
 	"github.com/golang/mock/gomock"
-	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/assert"
 	rawGRPC "google.golang.org/grpc"
-	"google.golang.org/grpc/test/bufconn"
-
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/configstores"
@@ -47,18 +48,17 @@ import (
 	mock_pubsub "mosn.io/layotto/pkg/mock/components/pubsub"
 	mock_sequencer "mosn.io/layotto/pkg/mock/components/sequencer"
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
-	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
 	mlock "mosn.io/layotto/pkg/runtime/lock"
 	mpubsub "mosn.io/layotto/pkg/runtime/pubsub"
 	msequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	mstate "mosn.io/layotto/pkg/runtime/state"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 func TestNewMosnRuntime(t *testing.T) {
 	runtimeConfig := &MosnRuntimeConfig{}
 	rt := NewMosnRuntime(runtimeConfig)
 	assert.NotNil(t, rt)
+	rt.Stop()
 }
 
 func TestMosnRuntime_GetInfo(t *testing.T) {
@@ -66,22 +66,35 @@ func TestMosnRuntime_GetInfo(t *testing.T) {
 	rt := NewMosnRuntime(runtimeConfig)
 	runtimeInfo := rt.GetInfo()
 	assert.NotNil(t, runtimeInfo)
+	rt.Stop()
 }
 
 func TestMosnRuntime_Run(t *testing.T) {
 	t.Run("run succ", func(t *testing.T) {
 		runtimeConfig := &MosnRuntimeConfig{}
 		rt := NewMosnRuntime(runtimeConfig)
-		server, err := rt.Run()
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+		)
 		assert.Nil(t, err)
 		assert.NotNil(t, server)
+		rt.Stop()
 	})
 
 	t.Run("no runtime config", func(t *testing.T) {
 		rt := NewMosnRuntime(nil)
-		_, err := rt.Run()
+		_, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+		)
 		assert.NotNil(t, err)
 		assert.Equal(t, "[runtime] init error:no runtimeConfig", err.Error())
+		rt.Stop()
 	})
 }
 
@@ -113,37 +126,9 @@ func TestMosnRuntime_initAppCallbackConnection(t *testing.T) {
 
 func TestMosnRuntime_initPubSubs(t *testing.T) {
 	t.Run("normal", func(t *testing.T) {
-		// mock callback response
-		subResp := &runtimev1pb.ListTopicSubscriptionsResponse{
-			Subscriptions: []*runtimev1pb.TopicSubscription{
-				{
-					PubsubName: "mock",
-					Topic:      "layotto",
-					Metadata:   nil,
-				},
-			},
-		}
-		// init grpc server
-		mockAppCallbackServer := mock_appcallback.NewMockAppCallbackServer(gomock.NewController(t))
-		mockAppCallbackServer.EXPECT().ListTopicSubscriptions(gomock.Any(), gomock.Any()).Return(subResp, nil)
-
-		lis := bufconn.Listen(1024 * 1024)
-		s := rawGRPC.NewServer()
-		runtimev1pb.RegisterAppCallbackServer(s, mockAppCallbackServer)
-		go func() {
-			s.Serve(lis)
-		}()
-
-		// init callback client
-		callbackClient, err := rawGRPC.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
-			return lis.Dial()
-		}))
-		assert.Nil(t, err)
-
 		// mock pubsub component
 		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
 		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
-		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).Return(nil)
 		f := func() pubsub.PubSub {
 			return mockPubSub
 		}
@@ -159,12 +144,11 @@ func TestMosnRuntime_initPubSubs(t *testing.T) {
 		}
 		// construct MosnRuntime
 		m := NewMosnRuntime(cfg)
-		m.AppCallbackConn = callbackClient
 		m.errInt = func(err error, format string, args ...interface{}) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		// test initPubSubs
-		err = m.initPubSubs(mpubsub.NewFactory("mock", f))
+		err := m.initPubSubs(mpubsub.NewFactory("mock", f))
 		// assert result
 		assert.Nil(t, err)
 	})
@@ -314,58 +298,6 @@ func TestMosnRuntime_initLocks(t *testing.T) {
 	})
 }
 
-func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
-	t.Run("publish success", func(t *testing.T) {
-		subResp := &runtimev1pb.TopicEventResponse{
-			Status: runtimev1pb.TopicEventResponse_SUCCESS,
-		}
-		// init grpc server
-		mockAppCallbackServer := mock_appcallback.NewMockAppCallbackServer(gomock.NewController(t))
-		mockAppCallbackServer.EXPECT().OnTopicEvent(gomock.Any(), gomock.Any()).Return(subResp, nil)
-
-		lis := bufconn.Listen(1024 * 1024)
-		s := rawGRPC.NewServer()
-		runtimev1pb.RegisterAppCallbackServer(s, mockAppCallbackServer)
-		go func() {
-			s.Serve(lis)
-		}()
-
-		// init callback client
-		callbackClient, err := rawGRPC.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
-			return lis.Dial()
-		}))
-		assert.Nil(t, err)
-
-		cloudEvent := map[string]interface{}{
-			pubsub.IDField:              "id",
-			pubsub.SourceField:          "source",
-			pubsub.DataContentTypeField: "content-type",
-			pubsub.TypeField:            "type",
-			pubsub.SpecVersionField:     "v1.0.0",
-			pubsub.DataBase64Field:      "bGF5b3R0bw==",
-		}
-
-		data, err := json.Marshal(cloudEvent)
-		assert.Nil(t, err)
-
-		msg := &pubsub.NewMessage{
-			Data:     data,
-			Topic:    "layotto",
-			Metadata: make(map[string]string),
-		}
-
-		cfg := &MosnRuntimeConfig{}
-		m := NewMosnRuntime(cfg)
-		m.errInt = func(err error, format string, args ...interface{}) {
-			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
-		}
-		m.AppCallbackConn = callbackClient
-		m.json = jsoniter.ConfigFastest
-		err = m.publishMessageGRPC(context.Background(), msg)
-		assert.Nil(t, err)
-	})
-}
-
 type MockBindings struct {
 }
 
@@ -397,4 +329,234 @@ func TestMosnRuntime_initOutputBinding(t *testing.T) {
 	}
 	m.initOutputBinding(registry)
 	assert.NotNil(t, m.outputBindings["mockOutbindings"])
+}
+
+func TestMosnRuntime_runWithPubsub(t *testing.T) {
+	t.Run("normal", func(t *testing.T) {
+		// mock pubsub component
+		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
+		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).Return(nil)
+		f := func() pubsub.PubSub {
+			return mockPubSub
+		}
+
+		// 2. construct runtime
+		rt, _ := runtimeWithCallbackConnection(t)
+
+		// 3. Run
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+			// PubSub
+			WithPubSubFactory(
+				mpubsub.NewFactory("mock", f),
+			),
+		)
+		// 4. assert
+		assert.Nil(t, err)
+		assert.NotNil(t, server)
+
+		// 5. stop
+		rt.Stop()
+	})
+
+	t.Run("init_with_callback", func(t *testing.T) {
+		cloudEvent := constructCloudEvent()
+		data, err := json.Marshal(cloudEvent)
+		assert.Nil(t, err)
+		// mock pubsub component
+		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
+		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).DoAndReturn(func(req pubsub.SubscribeRequest, handler pubsub.Handler) error {
+			if req.Topic == "layotto" {
+				return handler(context.Background(), &pubsub.NewMessage{
+					Data:     data,
+					Topic:    "layotto",
+					Metadata: nil,
+				})
+			} else {
+				return nil
+			}
+		})
+		f := func() pubsub.PubSub {
+			return mockPubSub
+		}
+
+		// 2. construct runtime
+		rt, mockAppCallbackServer := runtimeWithCallbackConnection(t)
+
+		topicResp := &runtimev1pb.TopicEventResponse{Status: runtimev1pb.TopicEventResponse_SUCCESS}
+		mockAppCallbackServer.EXPECT().OnTopicEvent(gomock.Any(), gomock.Any()).Return(topicResp, nil)
+		// 3. Run
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+			// PubSub
+			WithPubSubFactory(
+				mpubsub.NewFactory("mock", f),
+			),
+		)
+		// 4. assert
+		assert.Nil(t, err)
+		assert.NotNil(t, server)
+
+		// 5. stop
+		rt.Stop()
+	})
+
+	t.Run("callback_fail_then_retry", func(t *testing.T) {
+		cloudEvent := constructCloudEvent()
+		data, err := json.Marshal(cloudEvent)
+		assert.Nil(t, err)
+		// mock pubsub component
+		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
+		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).DoAndReturn(func(req pubsub.SubscribeRequest, handler pubsub.Handler) error {
+			if req.Topic == "layotto" {
+				err := handler(context.Background(), &pubsub.NewMessage{
+					Data:     data,
+					Topic:    "layotto",
+					Metadata: nil,
+				})
+				assert.NotNil(t, err)
+				return nil
+			} else {
+				return nil
+			}
+		})
+		f := func() pubsub.PubSub {
+			return mockPubSub
+		}
+
+		// 2. construct runtime
+		rt, mockAppCallbackServer := runtimeWithCallbackConnection(t)
+
+		topicResp := &runtimev1pb.TopicEventResponse{Status: runtimev1pb.TopicEventResponse_RETRY}
+		mockAppCallbackServer.EXPECT().OnTopicEvent(gomock.Any(), gomock.Any()).Return(topicResp, nil)
+		// 3. Run
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+			// PubSub
+			WithPubSubFactory(
+				mpubsub.NewFactory("mock", f),
+			),
+		)
+		// 4. assert
+		assert.Nil(t, err)
+		assert.NotNil(t, server)
+
+		// 5. stop
+		rt.Stop()
+	})
+
+	t.Run("callback_drop", func(t *testing.T) {
+		cloudEvent := constructCloudEvent()
+		data, err := json.Marshal(cloudEvent)
+		assert.Nil(t, err)
+		// mock pubsub component
+		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
+		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).DoAndReturn(func(req pubsub.SubscribeRequest, handler pubsub.Handler) error {
+			if req.Topic == "layotto" {
+				err := handler(context.Background(), &pubsub.NewMessage{
+					Data:     data,
+					Topic:    "layotto",
+					Metadata: nil,
+				})
+				assert.Nil(t, err)
+				return nil
+			} else {
+				return nil
+			}
+		})
+		f := func() pubsub.PubSub {
+			return mockPubSub
+		}
+
+		// 2. construct runtime
+		rt, mockAppCallbackServer := runtimeWithCallbackConnection(t)
+
+		topicResp := &runtimev1pb.TopicEventResponse{Status: runtimev1pb.TopicEventResponse_DROP}
+		mockAppCallbackServer.EXPECT().OnTopicEvent(gomock.Any(), gomock.Any()).Return(topicResp, nil)
+		// 3. Run
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+			// PubSub
+			WithPubSubFactory(
+				mpubsub.NewFactory("mock", f),
+			),
+		)
+		// 4. assert
+		assert.Nil(t, err)
+		assert.NotNil(t, server)
+
+		// 5. stop
+		rt.Stop()
+	})
+}
+
+func constructCloudEvent() map[string]interface{} {
+	cloudEvent := make(map[string]interface{})
+	cloudEvent[pubsub.IDField] = "1"
+	cloudEvent[pubsub.SpecVersionField] = "1"
+	cloudEvent[pubsub.SourceField] = "adsdafdas"
+	cloudEvent[pubsub.DataContentTypeField] = "application/json"
+	cloudEvent[pubsub.TypeField] = "adsdafdas"
+	return cloudEvent
+}
+
+func runtimeWithCallbackConnection(t *testing.T) (*MosnRuntime, *mock_appcallback.MockAppCallbackServer) {
+	// 1. prepare callback
+	// mock callback response
+	subResp := &runtimev1pb.ListTopicSubscriptionsResponse{
+		Subscriptions: []*runtimev1pb.TopicSubscription{
+			{
+				PubsubName: "mock",
+				Topic:      "layotto",
+				Metadata:   nil,
+			},
+		},
+	}
+	// init grpc server for callback
+	mockAppCallbackServer := mock_appcallback.NewMockAppCallbackServer(gomock.NewController(t))
+	mockAppCallbackServer.EXPECT().ListTopicSubscriptions(gomock.Any(), gomock.Any()).Return(subResp, nil)
+
+	lis := bufconn.Listen(1024 * 1024)
+	s := rawGRPC.NewServer()
+	runtimev1pb.RegisterAppCallbackServer(s, mockAppCallbackServer)
+	go func() {
+		s.Serve(lis)
+	}()
+
+	// 2. construct those necessary fields for mosn runtime
+	// init callback client
+	callbackClient, err := rawGRPC.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
+		return lis.Dial()
+	}))
+	assert.Nil(t, err)
+
+	// 3. construct mosn runtime
+	cfg := &MosnRuntimeConfig{
+		PubSubManagement: map[string]mpubsub.Config{
+			"mock": {
+				Metadata: map[string]string{
+					"target": "layotto",
+				},
+			},
+		},
+	}
+	rt := NewMosnRuntime(cfg)
+	rt.AppCallbackConn = callbackClient
+	return rt, mockAppCallbackServer
 }
