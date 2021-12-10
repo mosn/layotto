@@ -43,7 +43,7 @@ var (
 	ErrClientNotExist     error = errors.New("specific client not exist")
 	ErrInvalidConfig      error = errors.New("invalid hdfs config")
 	ErrNotSpecifyEndpoint error = errors.New("other error happend in metadata")
-	ErrHdfsListFail       error = errors.New("hdfs List opt failed")
+	ErrHdfsListFail       error = errors.New("hdfs list opt failed")
 )
 
 type hdfs struct {
