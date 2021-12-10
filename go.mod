@@ -3,7 +3,7 @@ module mosn.io/layotto
 go 1.14
 
 require (
-	github.com/alicebob/miniredis/v2 v2.13.3
+	github.com/alicebob/miniredis/v2 v2.16.0
 	github.com/dapr/components-contrib v1.4.0-rc2
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/fsnotify/fsnotify v1.4.9
@@ -18,7 +18,6 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.28.0
-	go.beyondstorage.io/services/hdfs v0.3.0 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20211005001312-d4b1ae081e3b // indirect
 	golang.org/x/text v0.3.7 // indirect

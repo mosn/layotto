@@ -14,7 +14,7 @@ require (
 	github.com/go-redis/redis/v8 v8.8.0
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.2.0
+	github.com/google/uuid v1.3.0
 	github.com/hashicorp/consul/api v1.3.0
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/minio/minio-go/v7 v7.0.15
@@ -24,7 +24,7 @@ require (
 	github.com/valyala/fasthttp v1.26.0
 	github.com/zouyx/agollo/v4 v4.0.7
 	go.beyondstorage.io/services/hdfs v0.3.0
-	go.beyondstorage.io/v5 v5.0.0 // indirect
+	go.beyondstorage.io/v5 v5.0.0
 	go.etcd.io/etcd/api/v3 v3.5.0
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.etcd.io/etcd/server/v3 v3.5.0
