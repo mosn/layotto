@@ -2,13 +2,13 @@
 
 ## 快速开始
 
-Layotto提供了访问文件的示例 [demo](../../../../demo/file/client.go),该示例实现了文件的增删改查操作。
+Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/file/client.go) ,该示例实现了文件的增删改查操作。
 
 ### 第一步：启动layotto
 
-layotto提供了minio的配置文件[oss配置](../../../../configs/config_file.json)，如下图所示
+layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/blob/main/configs/config_file.json) ，如下图所示
 
-![img.png](../../../img/file/minio.png)
+![img.png](https://github.com/mosn/layotto/blob/main/docs/img/file/minio.png)
 
 ### 第二步：启动MinIO服务
 访问[MinIO示例服务](play.min.io)
@@ -25,7 +25,7 @@ docker run -p 9000:9000 minio/minio server /data --console-address ":9000" --add
 
 ### 第三步：启动测试demo
 
-Layotto提供了访问文件的示例 [demo](../../../../demo/file/client.go)
+Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/file/client.go)
 
 ```go
 
@@ -43,6 +43,6 @@ go build client.go
 #### 细节以后再说，继续体验其他API
 通过左侧的导航栏，继续体验别的API吧！
 
-#### 了解分布式锁 API的实现原理
+#### 了解File API的实现原理
 
 如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[File API的设计文档](../../design/file/file-design.md)
