@@ -17,7 +17,6 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/hashicorp/consul/api v1.3.0
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
-	github.com/minio/minio-go/v6 v6.0.57
 	github.com/minio/minio-go/v7 v7.0.15
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
