@@ -43,6 +43,6 @@ go build client.go
 #### 细节以后再说，继续体验其他API
 通过左侧的导航栏，继续体验别的API吧！
 
-#### 了解分布式锁 API的实现原理
+#### 了解File API的实现原理
 
 如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[File API的设计文档](../../design/file/file-design.md)
