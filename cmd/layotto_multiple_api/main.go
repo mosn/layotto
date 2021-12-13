@@ -162,6 +162,10 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			default_api.NewGrpcAPI,
 			// a demo to show how to register your own API
 			helloworld_api.NewHelloWorldAPI,
+			// support Dapr API
+			// Currently it only support Dapr's InvokeService and InvokeBinding API.
+			// Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.
+			default_api.NewDaprAPI_Alpha,
 		),
 		// Hello
 		runtime.WithHelloFactory(
@@ -228,7 +232,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// State
 		runtime.WithStateFactory(
 			runtime_state.NewFactory("in-memory", func() state.Store {
-				return mock_state.NewInMemoryStateStore()
+				return mock_state.New(loggerForDaprComp)
 			}),
 			runtime_state.NewFactory("redis", func() state.Store {
 				return state_redis.NewRedisStateStore(loggerForDaprComp)
