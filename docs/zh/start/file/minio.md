@@ -8,7 +8,7 @@ Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blo
 
 layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/blob/main/configs/config_file.json) ，如下图所示
 
-![img.png](https://github.com/mosn/layotto/blob/main/docs/img/file/minio.png)
+![img.png](../../../img/file/minio.png)
 
 ### 第二步：启动MinIO服务
 访问[MinIO示例服务](play.min.io)
