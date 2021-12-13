@@ -356,11 +356,10 @@ func TestInvokeService(t *testing.T) {
 			},
 		}
 
-		a := &api{
-			rpcs: map[string]rpc.Invoker{
+		a := NewAPI("", nil, nil,
+			map[string]rpc.Invoker{
 				mosninvoker.Name: mockInvoker,
-			},
-		}
+			}, nil, nil, nil, nil, nil, nil)
 
 		_, err := a.InvokeService(context.Background(), in)
 		assert.Nil(t, err)

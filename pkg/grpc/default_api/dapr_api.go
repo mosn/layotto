@@ -260,7 +260,16 @@ func NewDaprAPI_Alpha(
 	sequencers map[string]sequencer.Store,
 	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
 ) grpc_api.GrpcAPI {
-	return NewDaprServer(appId, hellos, configStores, rpcs, pubSubs, stateStores, files, lockStores, sequencers, sendToOutputBindingFn)
+	// filter out transactionalStateStores
+	transactionalStateStores := map[string]state.TransactionalStore{}
+	for key, store := range stateStores {
+		if state.FeatureTransactional.IsPresent(store.Features()) {
+			transactionalStateStores[key] = store.(state.TransactionalStore)
+		}
+	}
+	return NewDaprServer(appId, hellos, configStores, rpcs, pubSubs,
+		stateStores, transactionalStateStores,
+		files, lockStores, sequencers, sendToOutputBindingFn)
 }
 
 func NewDaprServer(
@@ -270,18 +279,12 @@ func NewDaprServer(
 	rpcs map[string]rpc.Invoker,
 	pubSubs map[string]pubsub.PubSub,
 	stateStores map[string]state.Store,
+	transactionalStateStores map[string]state.TransactionalStore,
 	files map[string]file.File,
 	lockStores map[string]lock.LockStore,
 	sequencers map[string]sequencer.Store,
 	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
 ) DaprGrpcAPI {
-	// filter out transactionalStateStores
-	transactionalStateStores := map[string]state.TransactionalStore{}
-	for key, store := range stateStores {
-		if state.FeatureTransactional.IsPresent(store.Features()) {
-			transactionalStateStores[key] = store.(state.TransactionalStore)
-		}
-	}
 	// construct
 	return &daprGrpcAPI{
 		appId:                    appId,

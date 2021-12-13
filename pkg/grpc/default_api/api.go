@@ -192,7 +192,9 @@ func NewAPI(
 			transactionalStateStores[key] = store.(state.TransactionalStore)
 		}
 	}
-	dAPI := NewDaprServer(appId, hellos, configStores, rpcs, pubSubs, stateStores, files, lockStores, sequencers, sendToOutputBindingFn)
+	dAPI := NewDaprServer(appId, hellos, configStores, rpcs, pubSubs,
+		stateStores, transactionalStateStores,
+		files, lockStores, sequencers, sendToOutputBindingFn)
 	// construct
 	return &api{
 		daprAPI:                  dAPI,
