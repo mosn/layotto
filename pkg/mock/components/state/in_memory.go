@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package mock_state
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/dapr/components-contrib/state"
+	"github.com/dapr/kit/logger"
+	jsoniter "github.com/json-iterator/go"
 	"sync"
 )
 
@@ -28,38 +28,40 @@ type inMemStateStoreItem struct {
 	etag *string
 }
 
-type inMemoryStateStore struct {
+type inMemoryStore struct {
 	items map[string]*inMemStateStoreItem
 	lock  *sync.RWMutex
+	log   logger.Logger
 }
 
-func NewInMemoryStateStore() state.Store {
-	return &inMemoryStateStore{
+func New(logger logger.Logger) state.Store {
+	return &inMemoryStore{
 		items: map[string]*inMemStateStoreItem{},
 		lock:  &sync.RWMutex{},
+		log:   logger,
 	}
 }
 
-func (store *inMemoryStateStore) newItem(data []byte, etagString *string) *inMemStateStoreItem {
+func (store *inMemoryStore) newItem(data []byte, etagString *string) *inMemStateStoreItem {
 	return &inMemStateStoreItem{
 		data: data,
 		etag: etagString,
 	}
 }
 
-func (store *inMemoryStateStore) Init(metadata state.Metadata) error {
+func (store *inMemoryStore) Init(metadata state.Metadata) error {
 	return nil
 }
 
-func (store *inMemoryStateStore) Ping() error {
+func (store *inMemoryStore) Ping() error {
 	return nil
 }
 
-func (store *inMemoryStateStore) Features() []state.Feature {
+func (store *inMemoryStore) Features() []state.Feature {
 	return []state.Feature{state.FeatureETag, state.FeatureTransactional}
 }
 
-func (store *inMemoryStateStore) Delete(req *state.DeleteRequest) error {
+func (store *inMemoryStore) Delete(req *state.DeleteRequest) error {
 	store.lock.Lock()
 	defer store.lock.Unlock()
 	delete(store.items, req.Key)
@@ -67,20 +69,21 @@ func (store *inMemoryStateStore) Delete(req *state.DeleteRequest) error {
 	return nil
 }
 
-func (store *inMemoryStateStore) BulkDelete(req []state.DeleteRequest) error {
+func (store *inMemoryStore) BulkDelete(req []state.DeleteRequest) error {
 	if req == nil || len(req) == 0 {
 		return nil
 	}
 	for _, dr := range req {
 		err := store.Delete(&dr)
 		if err != nil {
+			store.log.Error(err)
 			return err
 		}
 	}
 	return nil
 }
 
-func (store *inMemoryStateStore) Get(req *state.GetRequest) (*state.GetResponse, error) {
+func (store *inMemoryStore) Get(req *state.GetRequest) (*state.GetResponse, error) {
 	store.lock.RLock()
 	defer store.lock.RUnlock()
 	item := store.items[req.Key]
@@ -89,10 +92,10 @@ func (store *inMemoryStateStore) Get(req *state.GetRequest) (*state.GetResponse,
 		return &state.GetResponse{Data: nil, ETag: nil}, nil
 	}
 
-	return &state.GetResponse{Data: item.data, ETag: item.etag}, nil
+	return &state.GetResponse{Data: unmarshal(item.data), ETag: item.etag}, nil
 }
 
-func (store *inMemoryStateStore) BulkGet(req []state.GetRequest) (bool, []state.BulkGetResponse, error) {
+func (store *inMemoryStore) BulkGet(req []state.GetRequest) (bool, []state.BulkGetResponse, error) {
 	res := []state.BulkGetResponse{}
 	for _, oneRequest := range req {
 		oneResponse, err := store.Get(&state.GetRequest{
@@ -101,6 +104,7 @@ func (store *inMemoryStateStore) BulkGet(req []state.GetRequest) (bool, []state.
 			Options:  oneRequest.Options,
 		})
 		if err != nil {
+			store.log.Error(err)
 			return false, nil, err
 		}
 
@@ -114,8 +118,8 @@ func (store *inMemoryStateStore) BulkGet(req []state.GetRequest) (bool, []state.
 	return true, res, nil
 }
 
-func (store *inMemoryStateStore) Set(req *state.SetRequest) error {
-	b, _ := Marshal(req.Value, json.Marshal)
+func (store *inMemoryStore) Set(req *state.SetRequest) error {
+	b, _ := marshal(req.Value)
 	store.lock.Lock()
 	defer store.lock.Unlock()
 	store.items[req.Key] = store.newItem(b, req.ETag)
@@ -123,17 +127,18 @@ func (store *inMemoryStateStore) Set(req *state.SetRequest) error {
 	return nil
 }
 
-func (store *inMemoryStateStore) BulkSet(req []state.SetRequest) error {
+func (store *inMemoryStore) BulkSet(req []state.SetRequest) error {
 	for _, r := range req {
 		err := store.Set(&r)
 		if err != nil {
+			store.log.Error(err)
 			return err
 		}
 	}
 	return nil
 }
 
-func (store *inMemoryStateStore) Multi(request *state.TransactionalStateRequest) error {
+func (store *inMemoryStore) Multi(request *state.TransactionalStateRequest) error {
 	store.lock.Lock()
 	defer store.lock.Unlock()
 	// First we check all eTags
@@ -162,7 +167,7 @@ func (store *inMemoryStateStore) Multi(request *state.TransactionalStateRequest)
 	for _, o := range request.Operations {
 		if o.Operation == state.Upsert {
 			req := o.Request.(state.SetRequest)
-			b, _ := Marshal(req.Value, json.Marshal)
+			b, _ := marshal(req.Value)
 			store.items[req.Key] = store.newItem(b, req.ETag)
 		} else if o.Operation == state.Delete {
 			req := o.Request.(state.DeleteRequest)
@@ -173,12 +178,16 @@ func (store *inMemoryStateStore) Multi(request *state.TransactionalStateRequest)
 	return nil
 }
 
-func Marshal(val interface{}, marshaler func(interface{}) ([]byte, error)) ([]byte, error) {
-	var err error = nil
-	bt, ok := val.([]byte)
-	if !ok {
-		bt, err = marshaler(val)
-	}
+func marshal(value interface{}) ([]byte, error) {
+	v, _ := jsoniter.MarshalToString(value)
 
-	return bt, err
+	return []byte(v), nil
+}
+
+func unmarshal(val interface{}) []byte {
+	var output string
+
+	jsoniter.UnmarshalFromString(string(val.([]byte)), &output)
+
+	return []byte(output)
 }
