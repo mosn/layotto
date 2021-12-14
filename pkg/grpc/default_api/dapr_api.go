@@ -82,9 +82,9 @@ func (d *daprGrpcAPI) startSubscribing() error {
 	return nil
 }
 
-func (d *daprGrpcAPI) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer {
+func (d *daprGrpcAPI) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) (mgrpc.RegisteredServer, error) {
 	dapr_v1pb.RegisterDaprServer(s, d)
-	return registeredServer
+	return registeredServer, nil
 }
 
 func (d *daprGrpcAPI) InvokeService(ctx context.Context, in *runtime.InvokeServiceRequest) (*dapr_common_v1pb.InvokeResponse, error) {

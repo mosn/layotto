@@ -152,10 +152,10 @@ func (a *api) Init(conn *grpc.ClientConn) error {
 	return a.startSubscribing()
 }
 
-func (a *api) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer {
+func (a *api) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) (mgrpc.RegisteredServer, error) {
 	LayottoAPISingleton = a
 	runtimev1pb.RegisterRuntimeServer(s, a)
-	return registeredServer
+	return registeredServer, nil
 }
 
 func NewGrpcAPI(

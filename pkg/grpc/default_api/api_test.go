@@ -20,9 +20,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
 	"github.com/golang/mock/gomock"
+	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
@@ -1147,5 +1149,56 @@ func TestGetFileMeta(t *testing.T) {
 
 func TestNewGrpcServer(t *testing.T) {
 	apiInterface := &api{}
-	l8grpc.NewGrpcServer(l8grpc.WithGrpcAPIs([]l8grpc.GrpcAPI{apiInterface}), l8grpc.WithNewServer(l8grpc.NewDefaultServer), l8grpc.WithGrpcOptions())
+	_, err := l8grpc.NewGrpcServer(l8grpc.WithGrpcAPIs([]l8grpc.GrpcAPI{apiInterface}), l8grpc.WithNewServer(l8grpc.NewDefaultServer), l8grpc.WithGrpcOptions())
+	if err != nil {
+		t.Error()
+		return
+	}
+}
+
+func TestInvokeBinding(t *testing.T) {
+	port, _ := freeport.GetFreePort()
+	srv := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil,
+		func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
+			if name == "error-binding" {
+				return nil, errors.New("error when invoke binding")
+			}
+			return &bindings.InvokeResponse{Data: []byte("ok")}, nil
+		})
+	server := startTestServerAPI(port, srv)
+	defer server.Stop()
+
+	clientConn := createTestClient(port)
+	defer clientConn.Close()
+
+	client := runtimev1pb.NewRuntimeClient(clientConn)
+	_, err := client.InvokeBinding(context.Background(), &runtimev1pb.InvokeBindingRequest{})
+	assert.Nil(t, err)
+	_, err = client.InvokeBinding(context.Background(), &runtimev1pb.InvokeBindingRequest{Name: "error-binding"})
+	assert.Equal(t, codes.Internal, status.Code(err))
+}
+
+func startTestServerAPI(port int, srv runtimev1pb.RuntimeServer) *grpc.Server {
+	lis, _ := net.Listen("tcp", fmt.Sprintf(":%d", port))
+
+	server := grpc.NewServer()
+	go func() {
+		runtimev1pb.RegisterRuntimeServer(server, srv)
+		if err := server.Serve(lis); err != nil {
+			panic(err)
+		}
+	}()
+
+	// wait until server starts
+	time.Sleep(maxGRPCServerUptime)
+
+	return server
+}
+
+func createTestClient(port int) *grpc.ClientConn {
+	conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", port), grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	return conn
 }
