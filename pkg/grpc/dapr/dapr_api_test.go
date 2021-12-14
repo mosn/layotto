@@ -20,8 +20,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/dapr/components-contrib/bindings"
+	"github.com/dapr/components-contrib/state"
+	"github.com/golang/mock/gomock"
 	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
+	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	"net"
 	"testing"
 
@@ -38,9 +41,29 @@ const (
 	maxGRPCServerUptime = 100 * time.Millisecond
 )
 
+type MockTxStore struct {
+	state.Store
+	state.TransactionalStore
+}
+
+func (m *MockTxStore) Init(metadata state.Metadata) error {
+	return m.Store.Init(metadata)
+}
+
 func TestNewDaprAPI_Alpha(t *testing.T) {
 	port, _ := freeport.GetFreePort()
-	grpcAPI := NewDaprAPI_Alpha("", nil, nil, nil, nil, nil, nil, nil, nil,
+	ctrl := gomock.NewController(t)
+	mockStore := mock_state.NewMockStore(ctrl)
+	mockStore.EXPECT().Features().Return([]state.Feature{state.FeatureTransactional})
+
+	mockTxStore := mock_state.NewMockTransactionalStore(gomock.NewController(t))
+
+	store := &MockTxStore{
+		mockStore,
+		mockTxStore,
+	}
+	// construct API
+	grpcAPI := NewDaprAPI_Alpha("", nil, nil, nil, nil, map[string]state.Store{"mock": store}, nil, nil, nil,
 		func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
 			if name == "error-binding" {
 				return nil, errors.New("error when invoke binding")
