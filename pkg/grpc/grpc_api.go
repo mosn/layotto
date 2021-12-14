@@ -35,7 +35,7 @@ type GrpcAPI interface {
 	// init this API before binding it to the grpc server. For example,you can call app to query their subscriptions.
 	Init(conn *grpc.ClientConn) error
 	// Bind this API to the grpc server
-	Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer
+	Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) (mgrpc.RegisteredServer, error)
 }
 
 // NewGrpcAPI is the constructor of GrpcAPI
