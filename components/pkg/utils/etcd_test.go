@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-package helloworld
+package utils
 
 import (
-	"context"
+	"github.com/stretchr/testify/assert"
 	"testing"
-
-	"mosn.io/layotto/components/hello"
 )
 
-func TestHelloWorld(t *testing.T) {
-	hs := NewHelloWorld()
-	hs.Init(&hello.HelloConfig{
-		HelloString: "Hi",
-	})
-
-	req := &hello.HelloRequest{
-		Name: "Layotto",
-	}
-
-	resp, _ := hs.Hello(context.Background(), req)
-	if resp.HelloString != "Hi, Layotto" {
-		t.Fatalf("hello output failed")
-	}
+func Test_addPathSeparator(t *testing.T) {
+	p := addPathSeparator("")
+	assert.Equal(t, p, "/")
+	p = addPathSeparator("l8")
+	assert.Equal(t, p, "/l8/")
+	p = addPathSeparator("/l8")
+	assert.Equal(t, p, "/l8/")
+	p = addPathSeparator("l8/")
+	assert.Equal(t, p, "/l8/")
 }
