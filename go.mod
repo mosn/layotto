@@ -6,7 +6,6 @@ require (
 	github.com/agrea/ptr v0.0.0-20180711073057-77a518d99b7b
 	github.com/alicebob/miniredis/v2 v2.13.3
 	github.com/dapr/components-contrib v1.5.1-rc.1
-	github.com/dapr/dapr v1.5.1
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gammazero/workerpool v1.1.2
@@ -36,7 +35,6 @@ require (
 
 replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
-	github.com/google/cel-go => github.com/google/cel-go v0.5.1
 	mosn.io/layotto/components => ./components
 	mosn.io/layotto/spec => ./spec
 	mosn.io/proxy-wasm-go-host => github.com/layotto/proxy-wasm-go-host v0.1.1-0.20210929091514-828451606147

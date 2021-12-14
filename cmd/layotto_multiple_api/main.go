@@ -19,6 +19,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	helloworld_api "mosn.io/layotto/pkg/integrate/api/helloworld"
 	"os"
@@ -165,7 +166,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			// support Dapr API
 			// Currently it only support Dapr's InvokeService and InvokeBinding API.
 			// Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.
-			default_api.NewDaprAPI_Alpha,
+			dapr.NewDaprAPI_Alpha,
 		),
 		// Hello
 		runtime.WithHelloFactory(

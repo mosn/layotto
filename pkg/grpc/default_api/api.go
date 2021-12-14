@@ -20,10 +20,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	dapr_common_v1pb "github.com/dapr/dapr/pkg/proto/common/v1"
-	dapr_v1pb "github.com/dapr/dapr/pkg/proto/runtime/v1"
 	"io"
 	grpc_api "mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/grpc/dapr"
+	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
+	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"strings"
 	"sync"
@@ -127,7 +128,7 @@ type API interface {
 
 // api is a default implementation for MosnRuntimeServer.
 type api struct {
-	daprAPI                  DaprGrpcAPI
+	daprAPI                  dapr.DaprGrpcAPI
 	appId                    string
 	hellos                   map[string]hello.HelloService
 	configStores             map[string]configstores.Store
@@ -192,7 +193,7 @@ func NewAPI(
 			transactionalStateStores[key] = store.(state.TransactionalStore)
 		}
 	}
-	dAPI := NewDaprServer(appId, hellos, configStores, rpcs, pubSubs,
+	dAPI := dapr.NewDaprServer(appId, hellos, configStores, rpcs, pubSubs,
 		stateStores, transactionalStateStores,
 		files, lockStores, sequencers, sendToOutputBindingFn)
 	// construct

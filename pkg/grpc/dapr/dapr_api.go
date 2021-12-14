@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package default_api
+package dapr
 
 import (
 	"context"
@@ -22,9 +22,6 @@ import (
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
-	dapr_common_v1pb "github.com/dapr/dapr/pkg/proto/common/v1"
-	"github.com/dapr/dapr/pkg/proto/runtime/v1"
-	dapr_v1pb "github.com/dapr/dapr/pkg/proto/runtime/v1"
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -41,6 +38,9 @@ import (
 	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
 	"mosn.io/layotto/components/sequencer"
 	grpc_api "mosn.io/layotto/pkg/grpc"
+	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
+	"mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
+	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	"mosn.io/layotto/pkg/messages"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"mosn.io/pkg/log"
@@ -65,8 +65,7 @@ type daprGrpcAPI struct {
 	sequencers               map[string]sequencer.Store
 	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 	// app callback
-	AppCallbackConn   *grpc.ClientConn
-	topicPerComponent map[string]TopicSubscriptions
+	AppCallbackConn *grpc.ClientConn
 	// json
 	json jsoniter.API
 }

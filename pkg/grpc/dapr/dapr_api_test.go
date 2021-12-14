@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package default_api
+package dapr
 
 import (
 	"context"
@@ -31,7 +31,11 @@ import (
 	"google.golang.org/grpc/status"
 	"time"
 
-	dapr_v1pb "github.com/dapr/dapr/pkg/proto/runtime/v1"
+	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
+)
+
+const (
+	maxGRPCServerUptime = 100 * time.Millisecond
 )
 
 func TestNewDaprAPI_Alpha(t *testing.T) {
@@ -88,4 +92,12 @@ func startDaprServerForTest(port int, srv DaprGrpcAPI) *grpc.Server {
 	time.Sleep(maxGRPCServerUptime)
 
 	return server
+}
+
+func createTestClient(port int) *grpc.ClientConn {
+	conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", port), grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	return conn
 }
