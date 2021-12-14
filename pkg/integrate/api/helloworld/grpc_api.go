@@ -57,9 +57,9 @@ func (s *server) Init(conn *rawGRPC.ClientConn) error {
 	return nil
 }
 
-func (s *server) Register(grpcServer *rawGRPC.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer {
+func (s *server) Register(grpcServer *rawGRPC.Server, registeredServer mgrpc.RegisteredServer) (mgrpc.RegisteredServer, error) {
 	pb.RegisterGreeterServer(grpcServer, s)
-	return registeredServer
+	return registeredServer, nil
 }
 
 // SayHello implements helloworld.GreeterServer
