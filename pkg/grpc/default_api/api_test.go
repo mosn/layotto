@@ -349,12 +349,17 @@ func TestInvokeService(t *testing.T) {
 				assert.Equal(t, "application/json", req.ContentType)
 				return resp, nil
 			})
+		httpMethod := int32(runtimev1pb.HTTPExtension_POST)
 		in := &runtimev1pb.InvokeServiceRequest{
 			Id: "id1",
 			Message: &runtimev1pb.CommonInvokeRequest{
 				Method:      "POST",
 				Data:        &any.Any{},
 				ContentType: "application/json",
+				HttpExtension: &runtimev1pb.HTTPExtension{
+					Verb:        runtimev1pb.HTTPExtension_Verb(httpMethod),
+					Querystring: "",
+				},
 			},
 		}
 
