@@ -22,4 +22,5 @@ ignore:
   - "pkg/filter/network/tcpcopy/strategy"
   - "pkg/grpc/dapr/proto/common/v1"
   - "pkg/grpc/dapr/proto/runtime/v1"
+  - "pkg/grpc/dapr/dapr_api_unimplement.go"
   - "pkg/wasm/watcher.go"

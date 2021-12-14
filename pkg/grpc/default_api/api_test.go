@@ -1145,7 +1145,13 @@ func TestGetFileMeta(t *testing.T) {
 	assert.Equal(t, st.Message(), "request can't be nil")
 	request.Request = &runtimev1pb.FileRequest{StoreName: "mock", Name: "test"}
 	meta := make(map[string]string)
-	re := &file.FileMetaResp{Size: 10, LastModified: "123"}
+	re := &file.FileMetaResp{
+		Size:         10,
+		LastModified: "123",
+		Metadata: map[string][]string{
+			"test": []string{},
+		},
+	}
 	mockFile.EXPECT().Stat(context.Background(), &file.FileMetaRequest{FileName: request.Request.Name, Metadata: meta}).Return(re, nil).Times(1)
 	resp, err = api.GetFileMeta(context.Background(), request)
 	assert.Equal(t, resp.LastModified, "123")

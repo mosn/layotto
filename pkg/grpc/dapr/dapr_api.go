@@ -28,7 +28,6 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/hello"
@@ -132,38 +131,6 @@ func (d *daprGrpcAPI) InvokeService(ctx context.Context, in *runtime.InvokeServi
 	}, nil
 }
 
-func (d *daprGrpcAPI) GetState(ctx context.Context, request *runtime.GetStateRequest) (*runtime.GetStateResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) GetBulkState(ctx context.Context, request *runtime.GetBulkStateRequest) (*runtime.GetBulkStateResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) SaveState(ctx context.Context, request *runtime.SaveStateRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *runtime.QueryStateRequest) (*runtime.QueryStateResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) DeleteState(ctx context.Context, request *runtime.DeleteStateRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) DeleteBulkState(ctx context.Context, request *runtime.DeleteBulkStateRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) ExecuteStateTransaction(ctx context.Context, request *runtime.ExecuteStateTransactionRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) PublishEvent(ctx context.Context, request *runtime.PublishEventRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
 func (d *daprGrpcAPI) InvokeBinding(ctx context.Context, in *runtime.InvokeBindingRequest) (*runtime.InvokeBindingResponse, error) {
 	req := &bindings.InvokeRequest{
 		Metadata:  in.Metadata,
@@ -186,62 +153,6 @@ func (d *daprGrpcAPI) InvokeBinding(ctx context.Context, in *runtime.InvokeBindi
 		r.Metadata = resp.Metadata
 	}
 	return r, nil
-}
-
-func (d *daprGrpcAPI) GetSecret(ctx context.Context, request *runtime.GetSecretRequest) (*runtime.GetSecretResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) GetBulkSecret(ctx context.Context, request *runtime.GetBulkSecretRequest) (*runtime.GetBulkSecretResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) RegisterActorTimer(ctx context.Context, request *runtime.RegisterActorTimerRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) UnregisterActorTimer(ctx context.Context, request *runtime.UnregisterActorTimerRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) RegisterActorReminder(ctx context.Context, request *runtime.RegisterActorReminderRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) UnregisterActorReminder(ctx context.Context, request *runtime.UnregisterActorReminderRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) GetActorState(ctx context.Context, request *runtime.GetActorStateRequest) (*runtime.GetActorStateResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) ExecuteActorStateTransaction(ctx context.Context, request *runtime.ExecuteActorStateTransactionRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) InvokeActor(ctx context.Context, request *runtime.InvokeActorRequest) (*runtime.InvokeActorResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) GetConfigurationAlpha1(ctx context.Context, request *runtime.GetConfigurationRequest) (*runtime.GetConfigurationResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) SubscribeConfigurationAlpha1(request *runtime.SubscribeConfigurationRequest, server runtime.Dapr_SubscribeConfigurationAlpha1Server) error {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) GetMetadata(ctx context.Context, empty *emptypb.Empty) (*runtime.GetMetadataResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) SetMetadata(ctx context.Context, request *runtime.SetMetadataRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) Shutdown(ctx context.Context, empty *emptypb.Empty) (*emptypb.Empty, error) {
-	panic("implement me")
 }
 
 // NewDaprAPI_Alpha construct a grpc_api.GrpcAPI which implements DaprServer.
