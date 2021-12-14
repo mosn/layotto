@@ -53,11 +53,8 @@ func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
 	lockConn := utils.NewMockZKConnection(ctrl)
 	factory := utils.NewMockConnectionFactory(ctrl)
 	path := "/" + resouseId
-	factory.EXPECT().NewConnection(time.Duration(expireTime)*time.Second, comp.metadata).Return(lockConn, nil).Times(2)
-
+	factory.EXPECT().NewConnection(time.Duration(expireTime)*time.Second, comp.metadata).Return(lockConn, nil).Times(1)
 	lockConn.EXPECT().Create(path, []byte(lockOwerA), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
-	lockConn.EXPECT().Close().Return().Times(1)
-
 	unlockConn.EXPECT().Get(path).Return([]byte(lockOwerA), &zk.Stat{Version: 123}, nil).Times(1)
 	unlockConn.EXPECT().Delete(path, int32(123)).Return(nil).Times(1)
 
@@ -92,13 +89,9 @@ func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
 	lockConn := utils.NewMockZKConnection(ctrl)
 	factory := utils.NewMockConnectionFactory(ctrl)
 	path := "/" + resouseId
-	factory.EXPECT().NewConnection(time.Duration(expireTime)*time.Second, comp.metadata).Return(lockConn, nil).Times(2)
-
+	factory.EXPECT().NewConnection(time.Duration(expireTime)*time.Second, comp.metadata).Return(lockConn, nil).Times(1)
 	lockConn.EXPECT().Create(path, []byte(lockOwerA), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
-	lockConn.EXPECT().Close().Return().Times(1)
-
 	unlockConn.EXPECT().Get(path).Return([]byte(lockOwerA), &zk.Stat{Version: 123}, nil).Times(1)
-	unlockConn.EXPECT().Delete(path, int32(123)).Return(nil).Times(1)
 
 	comp.unlockConn = unlockConn
 	comp.factory = factory
@@ -137,12 +130,12 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 	lockConn.EXPECT().Create(path, []byte(lockOwerA), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
 	lockConn.EXPECT().Create(path, []byte(lockOwerB), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", zk.ErrNodeExists).Times(1)
 	lockConn.EXPECT().Create(path, []byte(lockOwerB), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
-	lockConn.EXPECT().Close().Return().Times(5)
+	lockConn.EXPECT().Close().Return().Times(1)
 
 	unlockConn.EXPECT().Get(path).Return([]byte(lockOwerA), &zk.Stat{Version: 123}, nil).Times(1)
 	unlockConn.EXPECT().Get(path).Return([]byte(lockOwerB), &zk.Stat{Version: 124}, nil).Times(1)
-	unlockConn.EXPECT().Delete(path, int32(123)).Return(nil).Times(2)
-	unlockConn.EXPECT().Delete(path, int32(124)).Return(nil).Times(2)
+	unlockConn.EXPECT().Delete(path, int32(123)).Return(nil).Times(1)
+	unlockConn.EXPECT().Delete(path, int32(124)).Return(nil).Times(1)
 
 	comp.unlockConn = unlockConn
 	comp.factory = factory
