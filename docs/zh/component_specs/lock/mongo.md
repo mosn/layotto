@@ -2,7 +2,7 @@
 
 ## 配置项说明     
 
-实例：configs/config_lock_mongo.json
+示例：configs/config_lock_mongo.json
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
