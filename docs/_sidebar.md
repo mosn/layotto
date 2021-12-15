@@ -50,6 +50,7 @@
       - [Etcd](en/component_specs/lock/etcd.md)
       - [Zookeeper](en/component_specs/lock/zookeeper.md)
       - [Consul](en/component_specs/lock/consul.md)
+      - [MongoDB](en/component_specs/lock/mongo.md)
     - Configuration
       - [Etcd](en/component_specs/configuration/etcd.md)
       - [Apollo](en/component_specs/configuration/apollo.md)
