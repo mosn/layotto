@@ -22,6 +22,9 @@ import (
 	"fmt"
 	"io"
 	grpc_api "mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/grpc/dapr"
+	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
+	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"strings"
 	"sync"
@@ -50,17 +53,13 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
-	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/messages"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
@@ -129,6 +128,7 @@ type API interface {
 
 // api is a default implementation for MosnRuntimeServer.
 type api struct {
+	daprAPI                  dapr.DaprGrpcAPI
 	appId                    string
 	hellos                   map[string]hello.HelloService
 	configStores             map[string]configstores.Store
@@ -153,10 +153,10 @@ func (a *api) Init(conn *grpc.ClientConn) error {
 	return a.startSubscribing()
 }
 
-func (a *api) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) mgrpc.RegisteredServer {
+func (a *api) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) (mgrpc.RegisteredServer, error) {
 	LayottoAPISingleton = a
 	runtimev1pb.RegisterRuntimeServer(s, a)
-	return registeredServer
+	return registeredServer, nil
 }
 
 func NewGrpcAPI(
@@ -193,8 +193,12 @@ func NewAPI(
 			transactionalStateStores[key] = store.(state.TransactionalStore)
 		}
 	}
+	dAPI := dapr.NewDaprServer(appId, hellos, configStores, rpcs, pubSubs,
+		stateStores, transactionalStateStores,
+		files, lockStores, sequencers, sendToOutputBindingFn)
 	// construct
 	return &api{
+		daprAPI:                  dAPI,
 		appId:                    appId,
 		hellos:                   hellos,
 		configStores:             configStores,
@@ -245,48 +249,35 @@ func (a *api) getHello(name string) (hello.HelloService, error) {
 }
 
 func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error) {
-	msg := in.GetMessage()
-	req := &rpc.RPCRequest{
-		Ctx:         ctx,
-		Id:          in.GetId(),
-		Method:      msg.GetMethod(),
-		ContentType: msg.GetContentType(),
-		Data:        msg.GetData().GetValue(),
-	}
-	if md, ok := metadata.FromIncomingContext(ctx); ok {
-		req.Header = rpc.RPCHeader(md)
-	} else {
-		req.Header = rpc.RPCHeader(map[string][]string{})
-	}
-	if ext := msg.GetHttpExtension(); ext != nil {
-		req.Header["verb"] = []string{ext.Verb.String()}
-		req.Header["query_string"] = []string{ext.GetQuerystring()}
-	}
-
-	invoker, ok := a.rpcs[mosninvoker.Name]
-	if !ok {
-		return nil, errors.New("invoker not init")
-	}
-
-	resp, err := invoker.Invoke(ctx, req)
-	if err != nil {
-		return nil, common.ToGrpcError(err)
-	}
-
-	if resp.Header != nil {
-		header := metadata.Pairs()
-		for k, values := range resp.Header {
-			// fix https://github.com/mosn/layotto/issues/285
-			if strings.EqualFold("content-length", k) {
-				continue
-			}
-			header.Set(k, values...)
+	// convert request
+	var msg *dapr_common_v1pb.InvokeRequest = nil
+	if in != nil && in.Message != nil {
+		msg = &dapr_common_v1pb.InvokeRequest{
+			Method:      in.Message.Method,
+			Data:        in.Message.Data,
+			ContentType: in.Message.ContentType,
 		}
-		grpc.SetHeader(ctx, header)
+		if in.Message.HttpExtension != nil {
+			msg.HttpExtension = &dapr_common_v1pb.HTTPExtension{
+				Verb:        dapr_common_v1pb.HTTPExtension_Verb(in.Message.HttpExtension.Verb),
+				Querystring: in.Message.HttpExtension.Querystring,
+			}
+		}
 	}
+	// delegate to dapr api implementation
+	daprResp, err := a.daprAPI.InvokeService(ctx, &dapr_v1pb.InvokeServiceRequest{
+		Id:      in.Id,
+		Message: msg,
+	})
+	// handle error
+	if err != nil {
+		return nil, err
+	}
+
+	// convert resp
 	return &runtimev1pb.InvokeResponse{
-		ContentType: resp.ContentType,
-		Data:        &anypb.Any{Value: resp.Data},
+		Data:        daprResp.Data,
+		ContentType: daprResp.ContentType,
 	}, nil
 }
 
@@ -1125,25 +1116,17 @@ func (a *api) getNextIdFromComponent(ctx context.Context, store sequencer.Store,
 }
 
 func (a *api) InvokeBinding(ctx context.Context, in *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error) {
-	req := &bindings.InvokeRequest{
+	daprResp, err := a.daprAPI.InvokeBinding(ctx, &dapr_v1pb.InvokeBindingRequest{
+		Name:      in.Name,
+		Data:      in.Data,
 		Metadata:  in.Metadata,
-		Operation: bindings.OperationKind(in.Operation),
-	}
-	if in.Data != nil {
-		req.Data = in.Data
-	}
-
-	r := &runtimev1pb.InvokeBindingResponse{}
-	resp, err := a.sendToOutputBindingFn(in.Name, req)
+		Operation: in.Operation,
+	})
 	if err != nil {
-		err = status.Errorf(codes.Internal, messages.ErrInvokeOutputBinding, in.Name, err.Error())
-		log.DefaultLogger.Errorf("call out binding fail, err:%+v", err)
-		return r, err
+		return &runtimev1pb.InvokeBindingResponse{}, err
 	}
-
-	if resp != nil {
-		r.Data = resp.Data
-		r.Metadata = resp.Metadata
-	}
-	return r, nil
+	return &runtimev1pb.InvokeBindingResponse{
+		Data:     daprResp.Data,
+		Metadata: daprResp.Metadata,
+	}, nil
 }

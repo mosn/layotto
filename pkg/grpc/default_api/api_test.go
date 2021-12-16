@@ -20,9 +20,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
 	"github.com/golang/mock/gomock"
+	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
@@ -347,20 +349,24 @@ func TestInvokeService(t *testing.T) {
 				assert.Equal(t, "application/json", req.ContentType)
 				return resp, nil
 			})
+		httpMethod := int32(runtimev1pb.HTTPExtension_POST)
 		in := &runtimev1pb.InvokeServiceRequest{
 			Id: "id1",
 			Message: &runtimev1pb.CommonInvokeRequest{
 				Method:      "POST",
 				Data:        &any.Any{},
 				ContentType: "application/json",
+				HttpExtension: &runtimev1pb.HTTPExtension{
+					Verb:        runtimev1pb.HTTPExtension_Verb(httpMethod),
+					Querystring: "",
+				},
 			},
 		}
 
-		a := &api{
-			rpcs: map[string]rpc.Invoker{
+		a := NewAPI("", nil, nil,
+			map[string]rpc.Invoker{
 				mosninvoker.Name: mockInvoker,
-			},
-		}
+			}, nil, nil, nil, nil, nil, nil)
 
 		_, err := a.InvokeService(context.Background(), in)
 		assert.Nil(t, err)
@@ -1139,7 +1145,13 @@ func TestGetFileMeta(t *testing.T) {
 	assert.Equal(t, st.Message(), "request can't be nil")
 	request.Request = &runtimev1pb.FileRequest{StoreName: "mock", Name: "test"}
 	meta := make(map[string]string)
-	re := &file.FileMetaResp{Size: 10, LastModified: "123"}
+	re := &file.FileMetaResp{
+		Size:         10,
+		LastModified: "123",
+		Metadata: map[string][]string{
+			"test": []string{},
+		},
+	}
 	mockFile.EXPECT().Stat(context.Background(), &file.FileMetaRequest{FileName: request.Request.Name, Metadata: meta}).Return(re, nil).Times(1)
 	resp, err = api.GetFileMeta(context.Background(), request)
 	assert.Equal(t, resp.LastModified, "123")
@@ -1148,5 +1160,56 @@ func TestGetFileMeta(t *testing.T) {
 
 func TestNewGrpcServer(t *testing.T) {
 	apiInterface := &api{}
-	l8grpc.NewGrpcServer(l8grpc.WithGrpcAPIs([]l8grpc.GrpcAPI{apiInterface}), l8grpc.WithNewServer(l8grpc.NewDefaultServer), l8grpc.WithGrpcOptions())
+	_, err := l8grpc.NewGrpcServer(l8grpc.WithGrpcAPIs([]l8grpc.GrpcAPI{apiInterface}), l8grpc.WithNewServer(l8grpc.NewDefaultServer), l8grpc.WithGrpcOptions())
+	if err != nil {
+		t.Error()
+		return
+	}
+}
+
+func TestInvokeBinding(t *testing.T) {
+	port, _ := freeport.GetFreePort()
+	srv := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil,
+		func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
+			if name == "error-binding" {
+				return nil, errors.New("error when invoke binding")
+			}
+			return &bindings.InvokeResponse{Data: []byte("ok")}, nil
+		})
+	server := startTestServerAPI(port, srv)
+	defer server.Stop()
+
+	clientConn := createTestClient(port)
+	defer clientConn.Close()
+
+	client := runtimev1pb.NewRuntimeClient(clientConn)
+	_, err := client.InvokeBinding(context.Background(), &runtimev1pb.InvokeBindingRequest{})
+	assert.Nil(t, err)
+	_, err = client.InvokeBinding(context.Background(), &runtimev1pb.InvokeBindingRequest{Name: "error-binding"})
+	assert.Equal(t, codes.Internal, status.Code(err))
+}
+
+func startTestServerAPI(port int, srv runtimev1pb.RuntimeServer) *grpc.Server {
+	lis, _ := net.Listen("tcp", fmt.Sprintf(":%d", port))
+
+	server := grpc.NewServer()
+	go func() {
+		runtimev1pb.RegisterRuntimeServer(server, srv)
+		if err := server.Serve(lis); err != nil {
+			panic(err)
+		}
+	}()
+
+	// wait until server starts
+	time.Sleep(maxGRPCServerUptime)
+
+	return server
+}
+
+func createTestClient(port int) *grpc.ClientConn {
+	conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", port), grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	return conn
 }

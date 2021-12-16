@@ -22,7 +22,7 @@ import (
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 )
 
-func NewGrpcServer(opts ...Option) mgrpc.RegisteredServer {
+func NewGrpcServer(opts ...Option) (mgrpc.RegisteredServer, error) {
 	var o grpcOptions
 	for _, opt := range opts {
 		opt(&o)
@@ -36,13 +36,17 @@ func NewGrpcServer(opts ...Option) mgrpc.RegisteredServer {
 	return srvMaker(o.apis, o.options...)
 }
 
-func NewDefaultServer(apis []GrpcAPI, opts ...grpc.ServerOption) mgrpc.RegisteredServer {
+func NewDefaultServer(apis []GrpcAPI, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
 	s := grpc.NewServer(opts...)
 	// create registeredServer to manage lifecycle of the grpc server
 	var registeredServer mgrpc.RegisteredServer = s
+	var err error = nil
 	// loop registering grpc api
 	for _, grpcAPI := range apis {
-		registeredServer = grpcAPI.Register(s, registeredServer)
+		registeredServer, err = grpcAPI.Register(s, registeredServer)
+		if err != nil {
+			return registeredServer, err
+		}
 	}
-	return registeredServer
+	return registeredServer, nil
 }

@@ -35,7 +35,7 @@ func WithGrpcAPIs(apis []GrpcAPI) Option {
 	}
 }
 
-type NewServer func(apis []GrpcAPI, opts ...grpc.ServerOption) mgrpc.RegisteredServer
+type NewServer func(apis []GrpcAPI, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error)
 
 func WithNewServer(f NewServer) Option {
 	return func(o *grpcOptions) {
