@@ -181,7 +181,7 @@ func (h *hdfs) List(ctx context.Context, request *file.ListRequest) (*file.ListR
 
 		resp.Files = append(resp.Files, file)
 
-		marker=it.ContinuationToken()
+		marker=o.Path
 	}
 
 	resp.Marker=marker
