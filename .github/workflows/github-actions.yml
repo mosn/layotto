@@ -49,8 +49,6 @@ jobs:
         with:
           hdfs-version: ${{ matrix.hdfs-version }}
 
-      - run: curl ${{ env.HDFS_NAMENODE_ADDR }}
-
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
