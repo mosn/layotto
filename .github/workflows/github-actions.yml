@@ -30,6 +30,23 @@ jobs:
           go-version: ${{ matrix.go_version }}
         id: go
 
+      - name: Checkout python env
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Checkout java env
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
+      - name: Setup-hdfs env
+        uses: beyondstorage/setup-hdfs@master
+        with:
+          hdfs-version: ${{ matrix.hdfs-version }}
+
+      - run: curl ${{ env.HDFS_NAMENODE_ADDR }}
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
@@ -63,23 +80,6 @@ jobs:
 
       #- name: Run Linter
       #  run: golangci-lint run --timeout=10m -v
-
-      - name: Checkout python env
-        uses: actions/setup-python@v2
-        with:
-            python-version: '3.8'
-
-      - name: Checkout java env
-        uses: actions/setup-java@v1
-        with:
-            java-version: '11'
-
-      - name: Setup-hdfs env
-        uses: beyondstorage/setup-hdfs@master
-        with:
-          hdfs-version: ${{ matrix.hdfs-version }}
-
-      - run: curl ${{ env.HDFS_NAMENODE_ADDR }}
 
       - name: ut
         run: make coverage
