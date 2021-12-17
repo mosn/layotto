@@ -129,7 +129,11 @@ func newInternalErrorUnlockResponse() *lock.UnlockResponse {
 
 // Close shuts down the client's redis connections.
 func (p *StandaloneRedisLock) Close() error {
-	p.cancel()
-
-	return p.client.Close()
+	if p.cancel != nil {
+		p.cancel()
+	}
+	if p.client != nil {
+		return p.client.Close()
+	}
+	return nil
 }

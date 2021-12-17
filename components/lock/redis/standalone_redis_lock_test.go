@@ -25,6 +25,58 @@ import (
 
 const resourceId = "resource_xxx"
 
+func TestStandaloneRedisLock_InitError(t *testing.T) {
+	t.Run("error when connection fail", func(t *testing.T) {
+		// construct component
+		comp := NewStandaloneRedisLock(log.DefaultLogger)
+		defer comp.Close()
+
+		cfg := lock.Metadata{
+			Properties: make(map[string]string),
+		}
+		cfg.Properties["redisHost"] = "127.0.0.1"
+		cfg.Properties["redisPassword"] = ""
+
+		// init
+		err := comp.Init(cfg)
+		assert.Error(t, err)
+	})
+
+	t.Run("error when no host", func(t *testing.T) {
+		// construct component
+		comp := NewStandaloneRedisLock(log.DefaultLogger)
+		defer comp.Close()
+
+		cfg := lock.Metadata{
+			Properties: make(map[string]string),
+		}
+		cfg.Properties["redisHost"] = ""
+		cfg.Properties["redisPassword"] = ""
+
+		// init
+		err := comp.Init(cfg)
+		assert.Error(t, err)
+	})
+
+	t.Run("error when wrong MaxRetries", func(t *testing.T) {
+		// construct component
+		comp := NewStandaloneRedisLock(log.DefaultLogger)
+		defer comp.Close()
+
+		cfg := lock.Metadata{
+			Properties: make(map[string]string),
+		}
+		cfg.Properties["redisHost"] = "127.0.0.1"
+		cfg.Properties["redisPassword"] = ""
+		cfg.Properties["maxRetries"] = "1 "
+
+		// init
+		err := comp.Init(cfg)
+		assert.Error(t, err)
+	})
+
+}
+
 func TestStandaloneRedisLock_TryLock(t *testing.T) {
 	// 0. prepare
 	// start redis
@@ -33,6 +85,8 @@ func TestStandaloneRedisLock_TryLock(t *testing.T) {
 	defer s.Close()
 	// construct component
 	comp := NewStandaloneRedisLock(log.DefaultLogger)
+	defer comp.Close()
+
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),
 	}

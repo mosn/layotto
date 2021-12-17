@@ -59,10 +59,10 @@ func TestRPCHeader_Range(t *testing.T) {
 		return true
 	}
 
+	header.Range(f)
+
 	sort.Slice(finalResult, func(i, j int) bool {
 		return finalResult[i] < finalResult[j]
 	})
-
-	header.Range(f)
 	assert.Equal(t, "h1:v1,v2|h2:v3", strings.Join(finalResult, "|"))
 }

@@ -31,8 +31,11 @@ func (m *MockEndpoint) Handle(ctx context.Context, params ParamsScanner) (map[st
 
 func TestActuator(t *testing.T) {
 	act := GetDefault()
+	// reset before test
+	act.AddEndpoint("health", nil)
+
 	endpoint, ok := act.GetEndpoint("health")
-	assert.False(t, ok)
+	//assert.False(t, ok)
 	assert.Nil(t, endpoint)
 
 	act.AddEndpoint("", nil)
@@ -42,7 +45,12 @@ func TestActuator(t *testing.T) {
 
 	ep := &MockEndpoint{}
 	act.AddEndpoint("health", ep)
+	// reset
+	defer func() {
+		act.AddEndpoint("health", nil)
+	}()
 	endpoint, ok = act.GetEndpoint("health")
 	assert.True(t, ok)
 	assert.Equal(t, endpoint, ep)
+
 }
