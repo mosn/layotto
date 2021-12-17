@@ -64,7 +64,7 @@ jobs:
       #- name: Run Linter
       #  run: golangci-lint run --timeout=10m -v
       - name: ut
-        run: go test -count=1 -failfast -timeout 120s ./pkg/... -coverprofile cover.out && go tool cover -html=cover.out -o coverage.html && go tool cover -func=cover.out -o func.out && echo test func-coverage $(tail -1 func.out | awk '{print $3}')
+        run: make coverage
 
       - name: Post Coverage
         run: bash <(curl -s https://codecov.io/bash)
