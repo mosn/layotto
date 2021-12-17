@@ -344,6 +344,9 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 		// 2. construct runtime
 		rt, _ := runtimeWithCallbackConnection(t)
 
+		rt.errInt = func(err error, format string, args ...interface{}) {
+			panic(err)
+		}
 		// 3. Run
 		server, err := rt.Run(
 			// register your grpc API here
