@@ -156,7 +156,7 @@ func (h *hdfs) List(ctx context.Context, request *file.ListRequest) (*file.ListR
 	for {
 		o, err := it.Next()
 		if err != nil && !errors.Is(err, types.IterateDone) {
-			return nil,err
+			return nil, err
 		}
 
 		if err != nil {
@@ -181,10 +181,10 @@ func (h *hdfs) List(ctx context.Context, request *file.ListRequest) (*file.ListR
 
 		resp.Files = append(resp.Files, file)
 
-		marker=o.Path
+		marker = o.Path
 	}
 
-	resp.Marker=marker
+	resp.Marker = marker
 
 	return resp, nil
 }
