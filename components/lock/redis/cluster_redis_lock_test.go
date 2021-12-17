@@ -34,7 +34,7 @@ func TestClusterRedisLock_InitError(t *testing.T) {
 		cfg := lock.Metadata{
 			Properties: make(map[string]string),
 		}
-		cfg.Properties["redisHost"] = "127.0.0.1"
+		cfg.Properties["redisHosts"] = "127.0.0.1"
 		cfg.Properties["redisPassword"] = ""
 
 		// init
@@ -49,7 +49,7 @@ func TestClusterRedisLock_InitError(t *testing.T) {
 		cfg := lock.Metadata{
 			Properties: make(map[string]string),
 		}
-		cfg.Properties["redisHost"] = ""
+		cfg.Properties["redisHosts"] = ""
 		cfg.Properties["redisPassword"] = ""
 
 		// init
@@ -64,7 +64,7 @@ func TestClusterRedisLock_InitError(t *testing.T) {
 		cfg := lock.Metadata{
 			Properties: make(map[string]string),
 		}
-		cfg.Properties["redisHost"] = "127.0.0.1"
+		cfg.Properties["redisHosts"] = "127.0.0.1"
 		cfg.Properties["redisPassword"] = ""
 		cfg.Properties["maxRetries"] = "1 "
 
