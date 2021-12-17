@@ -29,7 +29,7 @@ require (
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
 	google.golang.org/grpc v1.38.0
-	mosn.io/api v0.0.0-20210714065837-5b4c2d66e70c
-	mosn.io/mosn v0.24.1-0.20210928035557-38b3b922b595
-	mosn.io/pkg v0.0.0-20210823090748-f639c3a0eb36
+	mosn.io/api v0.0.0-20211217011300-b851d129be01
+	mosn.io/mosn v0.25.1-0.20211217125944-69b50c40af81
+	mosn.io/pkg v0.0.0-20211217101631-d914102d1baf
 )

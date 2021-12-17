@@ -7,15 +7,11 @@ require (
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gammazero/workerpool v1.1.2
-	github.com/go-ini/ini v1.63.2 // indirect
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.2.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/json-iterator/go v1.1.11
-	github.com/minio/minio-go v6.0.14+incompatible // indirect
-	github.com/minio/minio-go/v6 v6.0.57 // indirect
-	github.com/minio/minio-go/v7 v7.0.15 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0
@@ -26,11 +22,11 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/protobuf v1.27.1
-	mosn.io/api v0.0.0-20210714065837-5b4c2d66e70c
+	mosn.io/api v0.0.0-20211217011300-b851d129be01
 	mosn.io/layotto/components v0.0.0-20211020084508-6f5ee3cfeba0
 	mosn.io/layotto/spec v0.0.0-20211020084508-6f5ee3cfeba0
-	mosn.io/mosn v0.24.1-0.20210930054637-4bc2c55b30bf
-	mosn.io/pkg v0.0.0-20210823090748-f639c3a0eb36
+	mosn.io/mosn v0.25.1-0.20211217125944-69b50c40af81
+	mosn.io/pkg v0.0.0-20211217101631-d914102d1baf
 	mosn.io/proxy-wasm-go-host v0.1.1-0.20210524020952-3fb13ba763a6
 )
 

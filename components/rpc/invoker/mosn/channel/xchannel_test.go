@@ -31,9 +31,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"mosn.io/api"
 	"mosn.io/layotto/components/rpc"
-	"mosn.io/mosn/pkg/protocol/xprotocol"
 	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
-	"mosn.io/mosn/pkg/types"
 	"mosn.io/pkg/buffer"
 )
 
@@ -116,7 +114,7 @@ func (s *testserver) readLoop(conn net.Conn) {
 
 func startTestServer() {
 	ts := &testserver{
-		XProtocol: xprotocol.GetProtocol(types.ProtocolName(proto)),
+		XProtocol: (&bolt.XCodec{}).NewXProtocol(context.TODO()), // always bolt here.
 	}
 	acceptFunc = ts.accept
 }
