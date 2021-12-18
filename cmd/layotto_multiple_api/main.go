@@ -19,9 +19,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/grpc/default_api"
-	helloworld_api "mosn.io/layotto/pkg/integrate/api/helloworld"
 	"os"
 	"strconv"
 	"time"

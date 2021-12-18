@@ -39,9 +39,7 @@ type GrpcAPI interface {
 }
 
 // NewGrpcAPI is the constructor of GrpcAPI
-type NewGrpcAPI func(
-	applicationContext *ApplicationContext,
-) GrpcAPI
+type NewGrpcAPI func(applicationContext *ApplicationContext) GrpcAPI
 
 type ApplicationContext struct {
 	AppId                 string
