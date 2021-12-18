@@ -61,6 +61,13 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 | File            | ✅     | [demo](https://mosn.io/layotto/#/zh/start/file/start)                 | [list](https://mosn.io/layotto/#/zh/component_specs/file/common)          | 提供访问文件的能力 |
 | Binding         | ✅     | TODO                                                                  | TODO                                                                      | 提供透传数据的能力 |
 
+
+### 可扩展性
+|  feature       | status |                         quick start                       |                         desc                         |
+|  ------------- | :----: | :--------------------------------------------------------:|------------------------------------------------------|
+| API 插件         | ✅     | [demo](https://mosn.io/layotto/#/zh/start/api_plugin/helloworld)   |  为 Layotto 添加您自己的API |
+
+
 ### Actuator
 
 |  feature       | status |                         quick start                       |               desc               |

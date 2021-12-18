@@ -17,6 +17,7 @@
 package helloworld
 
 import (
+	"context"
 	"testing"
 
 	"mosn.io/layotto/components/hello"
@@ -32,7 +33,7 @@ func TestHelloWorld(t *testing.T) {
 		Name: "Layotto",
 	}
 
-	resp, _ := hs.Hello(req)
+	resp, _ := hs.Hello(context.Background(), req)
 	if resp.HelloString != "Hi, Layotto" {
 		t.Fatalf("hello output failed")
 	}

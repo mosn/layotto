@@ -53,7 +53,7 @@ func TestMinioOss_Init(t *testing.T) {
 
 func TestMinioOss_selectClient(t *testing.T) {
 	minioOss := &MinioOss{
-		client: make(map[string]*minio.Client),
+		client: make(map[string]*minio.Core),
 		meta:   make(map[string]*MinioMetaData),
 	}
 	initCfg := &file.FileConfig{
@@ -66,7 +66,7 @@ func TestMinioOss_selectClient(t *testing.T) {
 	_, err = minioOss.selectClient(meta)
 	assert.Nil(t, err)
 
-	minioOss.client["extra"] = &minio.Client{}
+	minioOss.client["extra"] = &minio.Core{}
 	_, err = minioOss.selectClient(meta)
 	assert.Equal(t, ErrNotSpecifyEndPoint, err)
 
@@ -104,6 +104,9 @@ func TestMinioOss_Put(t *testing.T) {
 	// convert from string to int64 failed
 	putReq.Metadata["endpoint"] = "endpoint"
 	putReq.Metadata["fileSize"] = "a2"
+	err = oss.Put(context.TODO(), putReq)
+	assert.NotNil(t, err)
+
 	err = oss.Put(context.TODO(), putReq)
 	assert.NotNil(t, err)
 }
