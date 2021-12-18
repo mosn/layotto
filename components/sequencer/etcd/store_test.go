@@ -17,8 +17,10 @@ import (
 	"fmt"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/pkg/log"
+	"net"
 	"net/url"
 	"os"
+	"strconv"
 	"testing"
 	"time"
 
@@ -32,13 +34,29 @@ const key2 = "resource_xxx2"
 const key3 = "resource_xxx3"
 const key4 = "resource_xxx4"
 
+// GetFreePort returns a free port from the OS.
+func GetFreePort() (int, error) {
+	addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
+	if err != nil {
+		return 0, err
+	}
+
+	l, err := net.ListenTCP("tcp", addr)
+	if err != nil {
+		return 0, err
+	}
+	defer l.Close()
+	return l.Addr().(*net.TCPAddr).Port, nil
+}
+
 func TestEtcd_Init(t *testing.T) {
 	var err error
 	var etcdServer *embed.Etcd
 	var etcdTestDir = "init.test.etcd"
-	var etcdUrl = "localhost:2380"
+	port, _ := GetFreePort()
+	var etcdUrl = "localhost:" + strconv.Itoa(port)
 
-	etcdServer, err = startEtcdServer(etcdTestDir, 2380)
+	etcdServer, err = startEtcdServer(etcdTestDir, port)
 	assert.NoError(t, err)
 	defer func() {
 		etcdServer.Server.Stop()
@@ -101,9 +119,10 @@ func TestEtcd_GetNextId(t *testing.T) {
 	var resp *sequencer.GetNextIdResponse
 	var etcdServer *embed.Etcd
 	var etcdTestDir = "trylock.test.etcd"
-	var etcdUrl = "localhost:23780"
+	port, _ := GetFreePort()
+	var etcdUrl = "localhost:" + strconv.Itoa(port)
 
-	etcdServer, err = startEtcdServer(etcdTestDir, 23780)
+	etcdServer, err = startEtcdServer(etcdTestDir, port)
 	assert.NoError(t, err)
 	defer func() {
 		etcdServer.Server.Stop()
