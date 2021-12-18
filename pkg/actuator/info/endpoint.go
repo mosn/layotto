@@ -61,5 +61,8 @@ func AddInfoContributor(name string, c Contributor) {
 
 // AddInfoContributorFunc register info.Contributor.It's not concurrent-safe,so please invoke it ONLY in init method.
 func AddInfoContributorFunc(name string, f func() (interface{}, error)) {
+	if f == nil {
+		return
+	}
 	AddInfoContributor(name, ContributorAdapter(f))
 }

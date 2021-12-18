@@ -38,6 +38,11 @@ func TestEndpoint_Handle(t *testing.T) {
 	assert.True(t, err == nil)
 	assert.True(t, len(handle) == 0)
 
+	AddInfoContributorFunc("test", nil)
+	handle, err = ep.Handle(context.Background(), nil)
+	assert.True(t, err == nil)
+	assert.True(t, len(handle) == 0)
+
 	AddInfoContributor("test", nil)
 	handle, err = ep.Handle(context.Background(), nil)
 	assert.True(t, err == nil)
