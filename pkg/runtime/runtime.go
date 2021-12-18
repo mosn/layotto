@@ -66,16 +66,16 @@ type MosnRuntime struct {
 	sequencerRegistry   runtime_sequencer.Registry
 	bindingsRegistry    mbindings.Registry
 	// component pool
-	hellos            map[string]hello.HelloService
-	configStores      map[string]configstores.Store
-	rpcs              map[string]rpc.Invoker
-	pubSubs           map[string]pubsub.PubSub
-	states            map[string]state.Store
-	files             map[string]file.File
-	locks             map[string]lock.LockStore
-	sequencers        map[string]sequencer.Store
-	outputBindings    map[string]bindings.OutputBinding
-	secretStores      map[string]secretstores.SecretStore
+	hellos         map[string]hello.HelloService
+	configStores   map[string]configstores.Store
+	rpcs           map[string]rpc.Invoker
+	pubSubs        map[string]pubsub.PubSub
+	states         map[string]state.Store
+	files          map[string]file.File
+	locks          map[string]lock.LockStore
+	sequencers     map[string]sequencer.Store
+	outputBindings map[string]bindings.OutputBinding
+	secretStores   map[string]secretstores.SecretStore
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
 	// extends

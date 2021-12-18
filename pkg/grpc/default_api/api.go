@@ -176,7 +176,7 @@ func NewGrpcAPI(
 	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
 	secretStores map[string]secretstores.SecretStore,
 ) grpc_api.GrpcAPI {
-	return NewAPI(appId, hellos, configStores, rpcs, pubSubs, stateStores, files, lockStores, sequencers, sendToOutputBindingFn,secretStores)
+	return NewAPI(appId, hellos, configStores, rpcs, pubSubs, stateStores, files, lockStores, sequencers, sendToOutputBindingFn, secretStores)
 }
 
 func NewAPI(

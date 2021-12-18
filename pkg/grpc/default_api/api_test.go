@@ -23,7 +23,6 @@ import (
 	"mosn.io/layotto/components/secretstores"
 	moke_secret "mosn.io/layotto/pkg/mock/components/secret"
 
-	"google.golang.org/grpc/codes"
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
@@ -31,6 +30,7 @@ import (
 	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
 	rawGRPC "google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/test/bufconn"
 	l8grpc "mosn.io/layotto/pkg/grpc"
 	"net"
@@ -183,7 +183,7 @@ func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
 			Topic:    "layotto",
 			Metadata: make(map[string]string),
 		}
-		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil,nil)
+		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 		var apiForTest = a.(*api)
 		//apiForTest.errInt = func(err error, format string, args ...interface{}) {
@@ -369,7 +369,7 @@ func TestInvokeService(t *testing.T) {
 		a := NewAPI("", nil, nil,
 			map[string]rpc.Invoker{
 				mosninvoker.Name: mockInvoker,
-			}, nil, nil, nil, nil, nil, nil,nil)
+			}, nil, nil, nil, nil, nil, nil, nil)
 
 		_, err := a.InvokeService(context.Background(), in)
 		assert.Nil(t, err)
@@ -1309,7 +1309,7 @@ func TestInvokeBinding(t *testing.T) {
 				return nil, errors.New("error when invoke binding")
 			}
 			return &bindings.InvokeResponse{Data: []byte("ok")}, nil
-		},nil)
+		}, nil)
 	server := startTestServerAPI(port, srv)
 	defer server.Stop()
 
