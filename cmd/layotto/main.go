@@ -19,6 +19,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"mosn.io/layotto/pkg/grpc/default_api"
 	"os"
 	"strconv"
 	"time"
@@ -96,6 +97,7 @@ import (
 	"mosn.io/layotto/components/lock"
 	lock_consul "mosn.io/layotto/components/lock/consul"
 	lock_etcd "mosn.io/layotto/components/lock/etcd"
+	lock_mongo "mosn.io/layotto/components/lock/mongo"
 	lock_redis "mosn.io/layotto/components/lock/redis"
 	lock_zookeeper "mosn.io/layotto/components/lock/zookeeper"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
@@ -116,6 +118,7 @@ import (
 	"google.golang.org/grpc"
 	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
 	"mosn.io/layotto/pkg/runtime"
+	_ "mosn.io/layotto/pkg/wasm"
 	"mosn.io/mosn/pkg/featuregate"
 	_ "mosn.io/mosn/pkg/filter/network/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
@@ -153,6 +156,10 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	// 3. run
 	server, err := rt.Run(
 		runtime.WithGrpcOptions(opts...),
+		// register your grpc API here
+		runtime.WithGrpcAPI(
+			default_api.NewGrpcAPI,
+		),
 		// Hello
 		runtime.WithHelloFactory(
 			hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),
@@ -218,7 +225,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// State
 		runtime.WithStateFactory(
 			runtime_state.NewFactory("in-memory", func() state.Store {
-				return mock_state.NewInMemoryStateStore()
+				return mock_state.New(loggerForDaprComp)
 			}),
 			runtime_state.NewFactory("redis", func() state.Store {
 				return state_redis.NewRedisStateStore(loggerForDaprComp)
@@ -292,6 +299,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_lock.NewFactory("consul", func() lock.LockStore {
 				return lock_consul.NewConsulLock(log.DefaultLogger)
+			}),
+			runtime_lock.NewFactory("mongo", func() lock.LockStore {
+				return lock_mongo.NewMongoLock(log.DefaultLogger)
 			}),
 		),
 
