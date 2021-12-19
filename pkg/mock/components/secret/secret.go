@@ -2,7 +2,7 @@ package secret
 
 import (
 	"errors"
-	"mosn.io/layotto/components/secretstores"
+	"github.com/dapr/components-contrib/secretstores"
 )
 
 type FakeSecretStore struct{}

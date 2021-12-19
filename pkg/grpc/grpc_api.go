@@ -19,6 +19,7 @@ package grpc
 import (
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"
+	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/state"
 	"google.golang.org/grpc"
 	"mosn.io/layotto/components/configstores"
@@ -26,7 +27,6 @@ import (
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/rpc"
-	"mosn.io/layotto/components/secretstores"
 	"mosn.io/layotto/components/sequencer"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 )

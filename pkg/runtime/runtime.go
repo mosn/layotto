@@ -20,10 +20,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"mosn.io/layotto/components/secretstores"
+	"github.com/dapr/components-contrib/secretstores"
 	"strings"
 
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
+	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
 
 	"github.com/dapr/components-contrib/bindings"
 
@@ -65,6 +66,7 @@ type MosnRuntime struct {
 	lockRegistry        runtime_lock.Registry
 	sequencerRegistry   runtime_sequencer.Registry
 	bindingsRegistry    mbindings.Registry
+	secretStoresRegistry msecretstores.Registry
 	// component pool
 	hellos         map[string]hello.HelloService
 	configStores   map[string]configstores.Store
@@ -96,6 +98,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		fileRegistry:        file.NewRegistry(info),
 		lockRegistry:        runtime_lock.NewRegistry(info),
 		sequencerRegistry:   runtime_sequencer.NewRegistry(info),
+		secretStoresRegistry: msecretstores.NewRegistry(info),
 		hellos:              make(map[string]hello.HelloService),
 		configStores:        make(map[string]configstores.Store),
 		rpcs:                make(map[string]rpc.Invoker),
@@ -235,6 +238,9 @@ func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
 		return err
 	}
 	if err := m.initOutputBinding(o.services.outputBinding...); err != nil {
+		return err
+	}
+	if err := m.initSecretStores(o.services.secretStores...); err != nil {
 		return err
 	}
 	return nil
@@ -486,5 +492,34 @@ func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFact
 
 // TODO: implement initInputBinding
 func (m *MosnRuntime) initInputBinding(factorys ...*mbindings.InputBindingFactory) error {
+	return nil
+}
+
+func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.Factory) error {
+	log.DefaultLogger.Infof("[runtime] init SecretStores service")
+	m.secretStoresRegistry.Register(factorys...)
+	// 2. loop initializing
+	for name, config := range m.runtimeConfig.SecretStoresManagement {
+		// 2.1. create the component
+		comp, err := m.secretStoresRegistry.Create(name,"v1")
+		if err != nil {
+			m.errInt(err, "create secretStore component %s failed", name)
+			return err
+		}
+		// 2.2. init
+		if err := comp.Init(secretstores.Metadata{Properties: config.Metadata}); err != nil {
+			m.errInt(err, "init secretStore component %s failed", name)
+			return err
+		}
+
+		// 2.3. save runtime related configs
+		m.secretStores[name] = comp
+		v := actuators.GetIndicatorWithName(name)
+		//Now don't force user implement actuator of components
+		if v != nil {
+			health.AddLivenessIndicator(name, v.LivenessIndicator)
+			health.AddReadinessIndicator(name, v.ReadinessIndicator)
+		}
+	}
 	return nil
 }

@@ -48,6 +48,7 @@ type MosnRuntimeConfig struct {
 	LockManagement         map[string]lock.Config              `json:"lock"`
 	SequencerManagement    map[string]sequencer.Config         `json:"sequencer"`
 	Bindings               map[string]bindings.Metadata        `json:"bindings"`
+	SecretStoresManagement map[string]bindings.Metadata        `json:"secretStores"`
 }
 
 func ParseRuntimeConfig(data json.RawMessage) (*MosnRuntimeConfig, error) {

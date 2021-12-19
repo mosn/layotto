@@ -22,6 +22,7 @@ import (
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
+	"github.com/dapr/components-contrib/secretstores"
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -169,6 +170,7 @@ func NewDaprAPI_Alpha(
 	lockStores map[string]lock.LockStore,
 	sequencers map[string]sequencer.Store,
 	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
+	secretstores map[string]secretstores.SecretStore,
 ) grpc_api.GrpcAPI {
 	// filter out transactionalStateStores
 	transactionalStateStores := map[string]state.TransactionalStore{}

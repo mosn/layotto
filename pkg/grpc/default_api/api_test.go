@@ -20,7 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"mosn.io/layotto/components/secretstores"
+	"github.com/dapr/components-contrib/secretstores"
 	moke_secret "mosn.io/layotto/pkg/mock/components/secret"
 
 	"github.com/dapr/components-contrib/bindings"

@@ -24,6 +24,7 @@ import (
 	"mosn.io/layotto/components/rpc"
 	rgrpc "mosn.io/layotto/pkg/grpc"
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
+	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 	"mosn.io/layotto/pkg/runtime/pubsub"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
@@ -43,6 +44,7 @@ type services struct {
 	sequencers    []*runtime_sequencer.Factory
 	outputBinding []*mbindings.OutputBindingFactory
 	inputBinding  []*mbindings.InputBindingFactory
+	secretStores  []*msecretstores.Factory
 }
 
 type runtimeOptions struct {
@@ -148,5 +150,11 @@ func WithOutputBindings(factorys ...*mbindings.OutputBindingFactory) Option {
 func WithSequencerFactory(factorys ...*runtime_sequencer.Factory) Option {
 	return func(o *runtimeOptions) {
 		o.services.sequencers = append(o.services.sequencers, factorys...)
+	}
+}
+
+func WithSecretStoresFactory(factorys ...*msecretstores.Factory) Option {
+	return func(o *runtimeOptions) {
+		o.services.secretStores = append(o.services.secretStores, factorys...)
 	}
 }

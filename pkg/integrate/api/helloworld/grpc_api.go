@@ -21,6 +21,7 @@ import (
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
+	"github.com/dapr/components-contrib/secretstores"
 	rawGRPC "google.golang.org/grpc"
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 	"mosn.io/layotto/components/configstores"
@@ -44,6 +45,7 @@ func NewHelloWorldAPI(
 	lockStores map[string]lock.LockStore,
 	sequencers map[string]sequencer.Store,
 	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
+	secretstores map[string] secretstores.SecretStore,
 ) grpc.GrpcAPI {
 	return &server{}
 }
