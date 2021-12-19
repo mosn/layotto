@@ -22,7 +22,6 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-
 )
 
 const ServiceName = "secretStore"
@@ -37,16 +36,16 @@ type (
 
 	secretStoreRegistry struct {
 		secretStores map[string]func() secretstores.SecretStore
-		info *info.RuntimeInfo
+		info         *info.RuntimeInfo
 	}
 )
 
 // NewRegistry returns a new secret store registry.
-func NewRegistry(info *info.RuntimeInfo ) Registry {
+func NewRegistry(info *info.RuntimeInfo) Registry {
 	info.AddService(ServiceName)
 	return &secretStoreRegistry{
 		secretStores: map[string]func() secretstores.SecretStore{},
-		info:  info,
+		info:         info,
 	}
 }
 

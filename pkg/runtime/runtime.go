@@ -57,15 +57,15 @@ type MosnRuntime struct {
 	info          *info.RuntimeInfo
 	srv           mgrpc.RegisteredServer
 	// component registry
-	helloRegistry       hello.Registry
-	configStoreRegistry configstores.Registry
-	rpcRegistry         rpc.Registry
-	pubSubRegistry      runtime_pubsub.Registry
-	stateRegistry       runtime_state.Registry
-	fileRegistry        file.Registry
-	lockRegistry        runtime_lock.Registry
-	sequencerRegistry   runtime_sequencer.Registry
-	bindingsRegistry    mbindings.Registry
+	helloRegistry        hello.Registry
+	configStoreRegistry  configstores.Registry
+	rpcRegistry          rpc.Registry
+	pubSubRegistry       runtime_pubsub.Registry
+	stateRegistry        runtime_state.Registry
+	fileRegistry         file.Registry
+	lockRegistry         runtime_lock.Registry
+	sequencerRegistry    runtime_sequencer.Registry
+	bindingsRegistry     mbindings.Registry
 	secretStoresRegistry msecretstores.Registry
 	// component pool
 	hellos         map[string]hello.HelloService
@@ -87,28 +87,28 @@ type MosnRuntime struct {
 func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 	info := info.NewRuntimeInfo()
 	return &MosnRuntime{
-		runtimeConfig:       runtimeConfig,
-		info:                info,
-		helloRegistry:       hello.NewRegistry(info),
-		configStoreRegistry: configstores.NewRegistry(info),
-		rpcRegistry:         rpc.NewRegistry(info),
-		pubSubRegistry:      runtime_pubsub.NewRegistry(info),
-		stateRegistry:       runtime_state.NewRegistry(info),
-		bindingsRegistry:    mbindings.NewRegistry(info),
-		fileRegistry:        file.NewRegistry(info),
-		lockRegistry:        runtime_lock.NewRegistry(info),
-		sequencerRegistry:   runtime_sequencer.NewRegistry(info),
+		runtimeConfig:        runtimeConfig,
+		info:                 info,
+		helloRegistry:        hello.NewRegistry(info),
+		configStoreRegistry:  configstores.NewRegistry(info),
+		rpcRegistry:          rpc.NewRegistry(info),
+		pubSubRegistry:       runtime_pubsub.NewRegistry(info),
+		stateRegistry:        runtime_state.NewRegistry(info),
+		bindingsRegistry:     mbindings.NewRegistry(info),
+		fileRegistry:         file.NewRegistry(info),
+		lockRegistry:         runtime_lock.NewRegistry(info),
+		sequencerRegistry:    runtime_sequencer.NewRegistry(info),
 		secretStoresRegistry: msecretstores.NewRegistry(info),
-		hellos:              make(map[string]hello.HelloService),
-		configStores:        make(map[string]configstores.Store),
-		rpcs:                make(map[string]rpc.Invoker),
-		pubSubs:             make(map[string]pubsub.PubSub),
-		states:              make(map[string]state.Store),
-		files:               make(map[string]file.File),
-		locks:               make(map[string]lock.LockStore),
-		sequencers:          make(map[string]sequencer.Store),
-		outputBindings:      make(map[string]bindings.OutputBinding),
-		secretStores:        make(map[string]secretstores.SecretStore),
+		hellos:               make(map[string]hello.HelloService),
+		configStores:         make(map[string]configstores.Store),
+		rpcs:                 make(map[string]rpc.Invoker),
+		pubSubs:              make(map[string]pubsub.PubSub),
+		states:               make(map[string]state.Store),
+		files:                make(map[string]file.File),
+		locks:                make(map[string]lock.LockStore),
+		sequencers:           make(map[string]sequencer.Store),
+		outputBindings:       make(map[string]bindings.OutputBinding),
+		secretStores:         make(map[string]secretstores.SecretStore),
 	}
 }
 
@@ -501,7 +501,7 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.Factory) error
 	// 2. loop initializing
 	for name, config := range m.runtimeConfig.SecretStoresManagement {
 		// 2.1. create the component
-		comp, err := m.secretStoresRegistry.Create(name,"v1")
+		comp, err := m.secretStoresRegistry.Create(name, "v1")
 		if err != nil {
 			m.errInt(err, "create secretStore component %s failed", name)
 			return err

@@ -22,7 +22,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 
-	ss 	"github.com/dapr/components-contrib/secretstores"
+	ss "github.com/dapr/components-contrib/secretstores"
 
 	"mosn.io/layotto/pkg/runtime/secretstores"
 )

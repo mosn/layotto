@@ -107,7 +107,6 @@ import (
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 
-
 	// Secret stores.
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
@@ -338,33 +337,33 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 		))
 
-		// secretstores
-		runtime.WithSecretStoresFactory(
-			secretstores_loader.NewFactory("kubernetes", func() secretstores.SecretStore {
-				return sercetstores_kubernetes.NewKubernetesSecretStore(loggerForDaprComp)
-			}),
-			secretstores_loader.NewFactory("azure.keyvault", func() secretstores.SecretStore {
-				return keyvault.NewAzureKeyvaultSecretStore(loggerForDaprComp)
-			}),
-			secretstores_loader.NewFactory("hashicorp.vault", func() secretstores.SecretStore {
-				return vault.NewHashiCorpVaultSecretStore(loggerForDaprComp)
-			}),
-			secretstores_loader.NewFactory("aws.secretmanager", func() secretstores.SecretStore {
-				return secretmanager.NewSecretManager(loggerForDaprComp)
-			}),
-			secretstores_loader.NewFactory("aws.parameterstore", func() secretstores.SecretStore {
-				return parameterstore.NewParameterStore(loggerForDaprComp)
-			}),
-			secretstores_loader.NewFactory("gcp.secretmanager", func() secretstores.SecretStore {
-				return gcp_secretmanager.NewSecreteManager(loggerForDaprComp)
-			}),
-			secretstores_loader.NewFactory("local.file", func() secretstores.SecretStore {
-				return secretstore_file.NewLocalSecretStore(loggerForDaprComp)
-			}),
-			secretstores_loader.NewFactory("local.env", func() secretstores.SecretStore {
-				return secretstore_env.NewEnvSecretStore(loggerForDaprComp)
-			}),
-		)
+	// secretstores
+	runtime.WithSecretStoresFactory(
+		secretstores_loader.NewFactory("kubernetes", func() secretstores.SecretStore {
+			return sercetstores_kubernetes.NewKubernetesSecretStore(loggerForDaprComp)
+		}),
+		secretstores_loader.NewFactory("azure.keyvault", func() secretstores.SecretStore {
+			return keyvault.NewAzureKeyvaultSecretStore(loggerForDaprComp)
+		}),
+		secretstores_loader.NewFactory("hashicorp.vault", func() secretstores.SecretStore {
+			return vault.NewHashiCorpVaultSecretStore(loggerForDaprComp)
+		}),
+		secretstores_loader.NewFactory("aws.secretmanager", func() secretstores.SecretStore {
+			return secretmanager.NewSecretManager(loggerForDaprComp)
+		}),
+		secretstores_loader.NewFactory("aws.parameterstore", func() secretstores.SecretStore {
+			return parameterstore.NewParameterStore(loggerForDaprComp)
+		}),
+		secretstores_loader.NewFactory("gcp.secretmanager", func() secretstores.SecretStore {
+			return gcp_secretmanager.NewSecreteManager(loggerForDaprComp)
+		}),
+		secretstores_loader.NewFactory("local.file", func() secretstores.SecretStore {
+			return secretstore_file.NewLocalSecretStore(loggerForDaprComp)
+		}),
+		secretstores_loader.NewFactory("local.env", func() secretstores.SecretStore {
+			return secretstore_env.NewEnvSecretStore(loggerForDaprComp)
+		}),
+	)
 
 	// 4. check if unhealthy
 	if err != nil {
