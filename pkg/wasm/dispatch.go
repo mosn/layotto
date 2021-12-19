@@ -43,6 +43,7 @@ func (route *Router) RegisterRoute(id string, plugin *WasmPlugin) {
 	}
 }
 
+// Get random plugin with rand id
 func (route *Router) GetRandomPluginByID(id string) (*WasmPlugin, error) {
 	group, ok := route.routes[id]
 	if !ok {
