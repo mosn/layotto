@@ -388,17 +388,27 @@ var cmdStart = cli.Command{
 
 // ExtensionsRegister for register mosn rpc extensions
 func ExtensionsRegister(c *cli.Context) {
-	// tracer driver register
+	// 1. tracer driver register
+	// Q: What is a tracer driver ?
+	// A: MOSN implement a group of trace drivers, but only a configured driver will be loaded.
+	//	A tracer driver can create different tracer by different protocol.
+	//	When MOSN receive a request stream, MOSN will try to start a tracer according to the request protocol
 	trace.RegisterDriver("SOFATracer", trace.NewDefaultDriverImpl())
-	// xprotocol action register
+
+	// 2. xprotocol action register
+	// ResgisterXProtocolAction is MOSN's xprotocol framework's extensions.
+	// when a xprotocol implementation (defined by api.XProtocolCodec) registered, the registered action will be called.
 	xprotocol.ResgisterXProtocolAction(xstream.NewConnPool, xstream.NewStreamFactory, func(codec api.XProtocolCodec) {
 		name := codec.ProtocolName()
 		trace.RegisterTracerBuilder("SOFATracer", name, xtrace.NewTracer)
 	})
-	// register protocols that are used by layotto.
+
+	// 3. register protocols that are used by layotto.
+	// RegisterXProtocolCodec add a new xprotocol implementation, which is a wrapper for protocol register
 	_ = xprotocol.RegisterXProtocolCodec(&bolt.XCodec{})
 	_ = xprotocol.RegisterXProtocolCodec(&dubbo.XCodec{})
-	// register tracer
+
+	// 4. register tracer
 	xtrace.RegisterDelegate(bolt.ProtocolName, tracebolt.Boltv1Delegate)
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
 	trace.RegisterTracerBuilder("SOFATracer", "layotto", diagnostics.NewTracer)
