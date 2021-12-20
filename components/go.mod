@@ -36,3 +36,5 @@ require (
 	mosn.io/mosn v0.24.1-0.20210928035557-38b3b922b595
 	mosn.io/pkg v0.0.0-20210823090748-f639c3a0eb36
 )
+
+replace github.com/klauspost/compress => github.com/klauspost/compress v1.13.1

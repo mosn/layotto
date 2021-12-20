@@ -35,6 +35,7 @@ require (
 
 replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
+	github.com/klauspost/compress => github.com/klauspost/compress v1.13.0
 	mosn.io/layotto/components => ./components
 	mosn.io/layotto/spec => ./spec
 	mosn.io/proxy-wasm-go-host => github.com/layotto/proxy-wasm-go-host v0.1.1-0.20210929091514-828451606147
