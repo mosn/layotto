@@ -18,7 +18,7 @@ import (
 
 	"mosn.io/api"
 
-	"mosn.io/mosn/pkg/trace/sofa/xprotocol"
+	"mosn.io/mosn/pkg/trace/sofa"
 	"mosn.io/mosn/pkg/types"
 )
 
@@ -28,7 +28,7 @@ type Span struct {
 	traceId       string
 	spanId        string
 	parentSpanId  string
-	tags          [xprotocol.TRACE_END]string
+	tags          [sofa.TRACE_END]string
 	operationName string
 }
 

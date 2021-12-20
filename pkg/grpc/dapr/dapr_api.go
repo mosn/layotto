@@ -87,6 +87,7 @@ func (d *daprGrpcAPI) Register(s *grpc.Server, registeredServer mgrpc.Registered
 }
 
 func (d *daprGrpcAPI) InvokeService(ctx context.Context, in *runtime.InvokeServiceRequest) (*dapr_common_v1pb.InvokeResponse, error) {
+	// 1. convert request to RPCRequest,which is the parameter for RPC components
 	msg := in.GetMessage()
 	req := &rpc.RPCRequest{
 		Ctx:         ctx,
@@ -105,12 +106,17 @@ func (d *daprGrpcAPI) InvokeService(ctx context.Context, in *runtime.InvokeServi
 		req.Header["query_string"] = []string{ext.GetQuerystring()}
 	}
 
+	// 2. route to the specific rpc.Invoker component.
+	// Only support mosn component now.
 	invoker, ok := d.rpcs[mosninvoker.Name]
 	if !ok {
 		return nil, errors.New("invoker not init")
 	}
 
+	// 3. delegate to the rpc.Invoker component
 	resp, err := invoker.Invoke(ctx, req)
+
+	// 4. convert result
 	if err != nil {
 		return nil, runtime_common.ToGrpcError(err)
 	}
