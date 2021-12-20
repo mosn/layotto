@@ -31,7 +31,7 @@ func Test_boltCommon_FromFrame(t *testing.T) {
 		resp := &bolt.Response{
 			Content: buffer.NewIoBuffer(100),
 			ResponseHeader: bolt.ResponseHeader{
-				Header: header.BytesHeader{
+				BytesHeader: header.BytesHeader{
 					Kvs: []header.BytesKV{
 						{
 							Key:   []byte("key1"),

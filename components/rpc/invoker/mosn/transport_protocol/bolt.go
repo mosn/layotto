@@ -17,17 +17,18 @@
 package transport_protocol
 
 import (
+	"context"
 	"errors"
+	"reflect"
+	"unsafe"
+
 	"mosn.io/api"
 	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
-	"mosn.io/mosn/pkg/protocol/xprotocol"
 	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
 	"mosn.io/mosn/pkg/protocol/xprotocol/boltv2"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/header"
-	"reflect"
-	"unsafe"
 )
 
 // init mosn bolt or boltv2 protocol
@@ -79,7 +80,7 @@ func (b *boltCommon) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 
 // newBoltProtocol is create boltProtocol
 func newBoltProtocol() TransportProtocol {
-	return &boltProtocol{XProtocol: xprotocol.GetProtocol(bolt.ProtocolName), boltCommon: boltCommon{}}
+	return &boltProtocol{XProtocol: (&bolt.XCodec{}).NewXProtocol(context.TODO()), boltCommon: boltCommon{}}
 }
 
 // boltProtocol is one of TransportProtocol
@@ -95,14 +96,14 @@ func (b *boltProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	boltreq := bolt.NewRpcRequest(0, nil, buf)
 	boltreq.Class = b.className
 	boltreq.Timeout = req.Timeout
-	boltreq.Header = header.BytesHeader{
+	boltreq.BytesHeader = header.BytesHeader{
 		Kvs:     make([]header.BytesKV, headerrLen),
 		Changed: true,
 	}
 
 	i := 0
 	req.Header.Range(func(key string, value string) bool {
-		kv := &boltreq.Header.Kvs[i]
+		kv := &boltreq.BytesHeader.Kvs[i]
 		kv.Key = s2b(key)
 		kv.Value = s2b(value)
 		i++
@@ -113,7 +114,7 @@ func (b *boltProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 
 // newBoltV2Protocol is create boltV2Protocol
 func newBoltV2Protocol() TransportProtocol {
-	return &boltv2Protocol{XProtocol: xprotocol.GetProtocol(boltv2.ProtocolName), boltCommon: boltCommon{}}
+	return &boltv2Protocol{XProtocol: (&bolt.XCodec{}).NewXProtocol(context.TODO()), boltCommon: boltCommon{}}
 }
 
 // boltv2Protocol is one of TransportProtocol
@@ -144,7 +145,7 @@ func (b *boltv2Protocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	boltv2Req.Timeout = req.Timeout
 
 	req.Header.Range(func(key string, value string) bool {
-		boltv2Req.Header.Set(key, value)
+		boltv2Req.BytesHeader.Set(key, value)
 		return true
 	})
 	return boltv2Req
