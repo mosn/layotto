@@ -9,7 +9,6 @@ import (
 
 	"mosn.io/api"
 	ltrace "mosn.io/layotto/components/trace"
-	"mosn.io/mosn/pkg/trace"
 )
 
 const (
@@ -17,11 +16,6 @@ const (
 	Exporter         = "exporter"
 	DefaultGenerator = "mosntracing"
 )
-
-func init() {
-	//register with mosn
-	trace.RegisterTracerBuilder("SOFATracer", "layotto", NewTracer)
-}
 
 //grpcTracer  is used to start a new Span
 type grpcTracer struct {

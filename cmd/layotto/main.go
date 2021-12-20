@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"mosn.io/api"
+	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/pkg/grpc/default_api"
 
 	"mosn.io/layotto/components/file/local"
@@ -400,6 +401,7 @@ func ExtensionsRegister(c *cli.Context) {
 	// register tracer
 	xtrace.RegisterDelegate(bolt.ProtocolName, tracebolt.Boltv1Delegate)
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
+	trace.RegisterTracerBuilder("SOFATracer", "layotto", diagnostics.NewTracer)
 
 }
 

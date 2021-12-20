@@ -19,12 +19,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"mosn.io/layotto/pkg/grpc/dapr"
-	"mosn.io/layotto/pkg/grpc/default_api"
-	helloworld_api "mosn.io/layotto/pkg/integrate/api/helloworld"
 	"os"
 	"strconv"
 	"time"
+
+	"mosn.io/api"
+	"mosn.io/layotto/diagnostics"
+	"mosn.io/layotto/pkg/grpc/dapr"
+	"mosn.io/layotto/pkg/grpc/default_api"
+	helloworld_api "mosn.io/layotto/pkg/integrate/api/helloworld"
 
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	_ "mosn.io/layotto/pkg/wasm"
@@ -129,7 +132,16 @@ import (
 	_ "mosn.io/mosn/pkg/metrics/sink/prometheus"
 	"mosn.io/mosn/pkg/mosn"
 	_ "mosn.io/mosn/pkg/network"
+	"mosn.io/mosn/pkg/protocol"
+	"mosn.io/mosn/pkg/protocol/xprotocol"
+	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
+	"mosn.io/mosn/pkg/protocol/xprotocol/dubbo"
 	_ "mosn.io/mosn/pkg/stream/http"
+	xstream "mosn.io/mosn/pkg/stream/xprotocol"
+	"mosn.io/mosn/pkg/trace"
+	tracehttp "mosn.io/mosn/pkg/trace/sofa/http"
+	xtrace "mosn.io/mosn/pkg/trace/sofa/xprotocol"
+	tracebolt "mosn.io/mosn/pkg/trace/sofa/xprotocol/bolt"
 	_ "mosn.io/mosn/pkg/wasm/runtime/wasmer"
 	_ "mosn.io/pkg/buffer"
 )
@@ -355,6 +367,7 @@ var cmdStart = cli.Command{
 	Action: func(c *cli.Context) error {
 		stm := mosn.NewStageManager(c, c.String("config"))
 
+		stm.AppendParamsParsedStage(ExtensionsRegister)
 		stm.AppendParamsParsedStage(func(c *cli.Context) {
 			err := featuregate.Set(c.String("feature-gates"))
 			if err != nil {
@@ -376,6 +389,25 @@ var cmdStart = cli.Command{
 		stm.WaitFinish()
 		return nil
 	},
+}
+
+// ExtensionsRegister for register mosn rpc extensions
+func ExtensionsRegister(c *cli.Context) {
+	// tracer driver register
+	trace.RegisterDriver("SOFATracer", trace.NewDefaultDriverImpl())
+	// xprotocol action register
+	xprotocol.ResgisterXProtocolAction(xstream.NewConnPool, xstream.NewStreamFactory, func(codec api.XProtocolCodec) {
+		name := codec.ProtocolName()
+		trace.RegisterTracerBuilder("SOFATracer", name, xtrace.NewTracer)
+	})
+	// register protocols that are used by layotto.
+	_ = xprotocol.RegisterXProtocolCodec(&bolt.XCodec{})
+	_ = xprotocol.RegisterXProtocolCodec(&dubbo.XCodec{})
+	// register tracer
+	xtrace.RegisterDelegate(bolt.ProtocolName, tracebolt.Boltv1Delegate)
+	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
+	trace.RegisterTracerBuilder("SOFATracer", "layotto", diagnostics.NewTracer)
+
 }
 
 func main() {
