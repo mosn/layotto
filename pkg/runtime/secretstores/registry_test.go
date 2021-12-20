@@ -16,6 +16,7 @@
 package secretstores_test
 
 import (
+	"mosn.io/layotto/components/pkg/info"
 	"strings"
 	"testing"
 
@@ -32,7 +33,8 @@ type mockSecretStore struct {
 }
 
 func TestRegistry(t *testing.T) {
-	testRegistry := secretstores.NewRegistry()
+	info := info.NewRuntimeInfo()
+	testRegistry := secretstores.NewRegistry(info)
 
 	t.Run("secret store is registered", func(t *testing.T) {
 		const (
@@ -46,10 +48,10 @@ func TestRegistry(t *testing.T) {
 		mockV2 := &mockSecretStore{}
 
 		// act
-		testRegistry.Register(secretstores.New(secretStoreName, func() ss.SecretStore {
+		testRegistry.Register(secretstores.NewFactory(secretStoreName, func() ss.SecretStore {
 			return mock
 		}))
-		testRegistry.Register(secretstores.New(secretStoreNameV2, func() ss.SecretStore {
+		testRegistry.Register(secretstores.NewFactory(secretStoreNameV2, func() ss.SecretStore {
 			return mockV2
 		}))
 

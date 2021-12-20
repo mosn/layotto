@@ -181,7 +181,7 @@ func NewDaprAPI_Alpha(
 	}
 	return NewDaprServer(appId, hellos, configStores, rpcs, pubSubs,
 		stateStores, transactionalStateStores,
-		files, lockStores, sequencers, sendToOutputBindingFn)
+		files, lockStores, sequencers, sendToOutputBindingFn, secretstores)
 }
 
 func NewDaprServer(
@@ -196,6 +196,7 @@ func NewDaprServer(
 	lockStores map[string]lock.LockStore,
 	sequencers map[string]sequencer.Store,
 	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
+	secretstores map[string]secretstores.SecretStore,
 ) DaprGrpcAPI {
 	// construct
 	return &daprGrpcAPI{
