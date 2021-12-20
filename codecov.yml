@@ -24,3 +24,4 @@ ignore:
   - "pkg/grpc/dapr/proto/runtime/v1"
   - "pkg/grpc/dapr/dapr_api_unimplement.go"
   - "pkg/wasm/watcher.go"
+  - "components/lock/consul/consul_lock_task.go"
