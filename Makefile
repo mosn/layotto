@@ -11,6 +11,8 @@ IMAGE_NAME      = layotto
 GIT_VERSION     = $(shell git log -1 --pretty=format:%h)
 REPOSITORY      = layotto/${IMAGE_NAME}
 
+SCRIPT_DIR      = $(shell pwd)/etc/script
+
 build-local:
 	@rm -rf build/bundles/${MAJOR_VERSION}/binary
 	CGO_ENABLED=1 go build \
@@ -45,8 +47,14 @@ wasm-integrate:
 	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/faas
 	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -v $(shell pwd)/test/test.sh:/go/src/${PROJECT_NAME}/test.sh -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} sh ./test.sh
 
+coverage:
+	sh ${SCRIPT_DIR}/report.sh
+
 build-linux-wasm-layotto:
 	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/faas
 	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} go build -tags wasmer -o layotto /go/src/${PROJECT_NAME}/cmd/layotto
+
+license-checker:
+	docker run -it --rm -v $(pwd):/github/workspace apache/skywalking-eyes header fix
 
 .PHONY: build

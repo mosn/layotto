@@ -88,7 +88,7 @@ func TestList(bucketName string) {
 		marker = resp.Marker
 		if !resp.IsTruncated {
 			fmt.Printf("files under bucket is: %+v, %+v \n", resp.Files, marker)
-			fmt.Printf("finish list")
+			fmt.Printf("finish list \n")
 			return
 		}
 		fmt.Printf("files under bucket is: %+v, %+v \n", resp.Files, marker)
@@ -109,10 +109,10 @@ func TestDel(fileName string) {
 	listReq := &runtimev1pb.DelFileRequest{Request: req}
 	_, err = c.DelFile(context.Background(), listReq)
 	if err != nil {
-		fmt.Printf("list file fail, err: %+v", err)
+		fmt.Printf("list file fail, err: %+v \n", err)
 		return
 	}
-	fmt.Printf("delete file success")
+	fmt.Printf("delete file success \n")
 }
 
 func TestStat(fileName string) {
@@ -146,7 +146,7 @@ func TestStat(fileName string) {
 
 }
 
-func CreateBucket() {
+func CreateBucket(bn string) {
 
 	ctx := context.Background()
 	endpoint := "play.min.io"
@@ -164,7 +164,7 @@ func CreateBucket() {
 	}
 
 	// Make a new bucket called mymusic.
-	bucketName := "wwx"
+	bucketName := bn
 	location := "us-west-2"
 
 	err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
@@ -203,6 +203,6 @@ func main() {
 		TestStat(os.Args[2])
 	}
 	if os.Args[1] == "bucket" {
-		CreateBucket()
+		CreateBucket(os.Args[2])
 	}
 }

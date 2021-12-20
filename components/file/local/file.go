@@ -53,7 +53,7 @@ func (lf *LocalStore) Put(ctx context.Context, f *file.PutFileStu) error {
 	if !ok {
 		return fmt.Errorf("fileFlag is required for put file")
 	}
-	m, err := strconv.Atoi(mode)
+	m, err := strconv.ParseUint(mode, 10, 32)
 	if err != nil {
 		return fmt.Errorf("wrong fileMode value:%+v in metadata", err)
 	}

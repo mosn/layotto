@@ -56,6 +56,11 @@ For other features,see the demos below:
 | File            | ✅     | TODO                                                                  | [list](https://mosn.io/layotto/#/en/component_specs/file/oss)             | File API implementation|
 | Binding         | ✅     | TODO                                                                  | TODO                                                                      | Transparent data transmission API |
 
+### Extendability
+|  feature       | status |                         quick start                       |                         desc                         |
+|  ------------- | :----: | :--------------------------------------------------------:|------------------------------------------------------|
+| API plugin         | ✅     | [demo](https://mosn.io/layotto/#/en/start/api_plugin/helloworld)   |  You can add your own API ! |
+
 ### Actuator
 
 |  feature       | status |                         quick start                       |                         desc                         |
