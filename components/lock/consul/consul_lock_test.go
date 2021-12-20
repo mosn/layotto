@@ -28,6 +28,25 @@ const lockOwerA = "p1"
 const lockOwerB = "p2"
 const expireTime = 5
 
+// Init with wrong config
+func TestConsulLock_InitWithWrongConfig(t *testing.T) {
+	t.Run("when no address then error", func(t *testing.T) {
+		comp := NewConsulLock(log.DefaultLogger)
+		cfg := lock.Metadata{
+			Properties: make(map[string]string),
+		}
+		//cfg.Properties["address"] = "127.0.0.1:8500"
+		err := comp.Init(cfg)
+		assert.Error(t, err)
+	})
+}
+
+// Test features
+func TestConsulLock_Features(t *testing.T) {
+	comp := NewConsulLock(log.DefaultLogger)
+	assert.True(t, len(comp.Features()) == 0)
+}
+
 //A lock A unlock
 func TestConsulLock_TryLock(t *testing.T) {
 	//mock
