@@ -34,6 +34,7 @@ type filterConfigItem struct {
 	PluginName     string            `json:"-"`
 }
 
+// Parse filterConfigItem
 func parseFilterConfigItem(cfg map[string]interface{}) (*filterConfigItem, error) {
 	config := filterConfigItem{
 		UserData:      make(map[string]string),
@@ -64,6 +65,7 @@ func parseFilterConfigItem(cfg map[string]interface{}) (*filterConfigItem, error
 	return &config, nil
 }
 
+// Check VMconfig of filterConfigItem
 func checkVmConfig(config *filterConfigItem) error {
 	if config.FromWasmPlugin != "" {
 		config.VmConfig = nil
@@ -82,6 +84,7 @@ func checkVmConfig(config *filterConfigItem) error {
 	return nil
 }
 
+// Parse user data
 func parseUserData(rawConfigBytes []byte, config *filterConfigItem) error {
 	if len(rawConfigBytes) == 0 || config == nil {
 		log.DefaultLogger.Errorf("[proxywasm][config] fail to parse user data, invalid param, raw: %v, config: %v",
@@ -91,6 +94,7 @@ func parseUserData(rawConfigBytes []byte, config *filterConfigItem) error {
 
 	m := make(map[string]interface{})
 
+	// check rawConfigBytes
 	if err := json.Unmarshal(rawConfigBytes, &m); err != nil {
 		log.DefaultLogger.Errorf("[proxywasm][config] fail to unmarshal user data, err: %v", err)
 		return err

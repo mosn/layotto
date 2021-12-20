@@ -25,3 +25,4 @@ ignore:
   - "pkg/grpc/dapr/dapr_api_unimplement.go"
   - "pkg/wasm/watcher.go"
   - "cmd/**/*"
+  - "components/lock/consul/consul_lock_task.go"

@@ -50,6 +50,7 @@ type FilterConfigFactory struct {
 
 var _ api.StreamFilterChainFactory = &FilterConfigFactory{}
 
+// Create a proxy factory for WasmFilter
 func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilterChainFactory, error) {
 	factory := &FilterConfigFactory{
 		config:        make([]*filterConfigItem, 0, len(confs)),
@@ -64,7 +65,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory config not a map, configID: %s", configID)
 			return nil, errors.New("config not a map")
 		}
-
+		// parse filter config
 		config, err := parseFilterConfigItem(conf)
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to parse config, configID: %s, err: %v", configID, err)
@@ -116,6 +117,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 	return factory, nil
 }
 
+// Create the FilterChain
 func (f *FilterConfigFactory) CreateFilterChain(context context.Context, callbacks api.StreamFilterChainFactoryCallbacks) {
 	filter := NewFilter(context, f)
 	if filter == nil {
@@ -126,6 +128,7 @@ func (f *FilterConfigFactory) CreateFilterChain(context context.Context, callbac
 	callbacks.AddStreamSenderFilter(filter, api.BeforeSend)
 }
 
+// Get RootContext's ID
 func (f *FilterConfigFactory) GetRootContextID() int32 {
 	return f.RootContextID
 }
@@ -134,6 +137,7 @@ func (f *FilterConfigFactory) GetRootContextID() int32 {
 // for `pw.RegisterPluginHandler(factory)`
 var _ types.WasmPluginHandler = &FilterConfigFactory{}
 
+// update config of FilterConfigFactory
 func (f *FilterConfigFactory) OnConfigUpdate(config v2.WasmPluginConfig) {
 	for _, plugin := range f.config {
 		if plugin.PluginName == config.PluginName {
@@ -143,6 +147,7 @@ func (f *FilterConfigFactory) OnConfigUpdate(config v2.WasmPluginConfig) {
 	}
 }
 
+// Execute the plugin of FilterConfigFactory
 func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 	plugin.Exec(func(instance types.WasmInstance) bool {
 		wasmPlugin, ok := f.plugins[plugin.PluginName()]
@@ -201,4 +206,5 @@ func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 	})
 }
 
+// Destroy the plugin of FilterConfigFactory
 func (f *FilterConfigFactory) OnPluginDestroy(plugin types.WasmPlugin) {}
