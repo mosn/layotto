@@ -201,7 +201,7 @@ func NewAPI(
 	}
 	dAPI := dapr.NewDaprServer(appId, hellos, configStores, rpcs, pubSubs,
 		stateStores, transactionalStateStores,
-		files, lockStores, sequencers, sendToOutputBindingFn)
+		files, lockStores, sequencers, sendToOutputBindingFn, secretStores)
 	// construct
 	return &api{
 		daprAPI:                  dAPI,
