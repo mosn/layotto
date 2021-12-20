@@ -23,7 +23,7 @@ import (
 
 type task func()
 
-// generate a GCTask which delete element in the map after specific ttl
+// generate a GC task which delete element in the map after specific ttl
 func generateGCTask(ttl int32, m *sync.Map, key string) task {
 	return func() {
 		time.Sleep(time.Second * time.Duration(ttl))
