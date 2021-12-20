@@ -25,10 +25,12 @@ import (
 
 const AbiV2 = "proxy_abi_version_0_2_0"
 
+// registers an abi
 func init() {
 	abi.RegisterABI(AbiV2, abiImplFactory)
 }
 
+// initialization an abi
 func abiImplFactory(instance types.WasmInstance) types.ABI {
 	abi := &AbiV2Impl{}
 	abi.SetInstance(instance)
@@ -45,15 +47,19 @@ var (
 	_ Exports          = &AbiV2Impl{}
 )
 
+// Get abi name
 func (a *AbiV2Impl) Name() string {
 	return AbiV2
 }
 
+// Get abi
 func (a *AbiV2Impl) GetABIExports() interface{} {
 	return a
 }
 
+// Get id
 func (a *AbiV2Impl) ProxyGetID() (string, error) {
+	// store the funcName and common.WasmFunction, then return the common.WasmFunction
 	ff, err := a.Instance.GetExportsFunc("proxy_get_id")
 	if err != nil {
 		return "", err
@@ -64,7 +70,7 @@ func (a *AbiV2Impl) ProxyGetID() (string, error) {
 		return "", err
 	}
 	a.Imports.Wait()
-
+	// generate functionId
 	functionId := string(a.Imports.GetFuncCallData().Bytes())
 	if functionId == "" {
 		return "", errors.New("")
