@@ -22,7 +22,6 @@ import (
 	"runtime"
 	"strconv"
 	"sync"
-	"time"
 )
 
 type ConsulLock struct {
@@ -93,11 +92,7 @@ func (c *ConsulLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, e
 	if acquire {
 		//bind lockOwner+resourceId and session
 		c.sMap.Store(req.LockOwner+"-"+req.ResourceId, session)
-		c.workPool.Schedule(func() {
-			time.Sleep(time.Second * time.Duration(req.Expire))
-			//may delete the second lock,but not affect the result
-			c.sMap.Delete(req.LockOwner + "-" + req.ResourceId)
-		})
+		c.workPool.Schedule(generateGCTask(req.Expire, &c.sMap, req.LockOwner+"-"+req.ResourceId))
 		return &lock.TryLockResponse{
 			Success: true,
 		}, nil
