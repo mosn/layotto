@@ -19,6 +19,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"mosn.io/api"
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/grpc/default_api"
@@ -118,6 +119,7 @@ import (
 
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
+	"mosn.io/layotto/diagnostics"
 	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
 	"mosn.io/layotto/pkg/runtime"
 	"mosn.io/mosn/pkg/featuregate"
