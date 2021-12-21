@@ -88,7 +88,6 @@ func newConnPool(
 	return p
 }
 
-
 // connPool is connected pool
 type connPool struct {
 	maxActive   int
@@ -131,6 +130,7 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 	if p.stateFunc != nil {
 		wc.state = p.stateFunc()
 	}
+	// start a readloop gorountine to read and handle data
 	if p.onDataFunc != nil {
 		utils.GoWithRecover(func() {
 			p.readloop(wc)
@@ -171,6 +171,7 @@ func (p *connPool) readloop(c *wrapConn) {
 
 	c.buf = buffer.NewIoBuffer(defaultBufSize)
 	for {
+		// read data from connection
 		n, readErr := c.buf.ReadOnce(c)
 		if readErr != nil {
 			err = readErr
@@ -182,6 +183,8 @@ func (p *connPool) readloop(c *wrapConn) {
 		}
 
 		if n > 0 {
+			// handle data.
+			// it will delegate to hstate if it's constructed by httpchannel
 			if onDataErr := p.onDataFunc(c); onDataErr != nil {
 				err = onDataErr
 				log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", onDataErr.Error())
