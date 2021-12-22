@@ -89,24 +89,26 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 		}
 	}()
 
+	// 1. validate request
 	if req.Timeout == 0 {
 		req.Timeout = 3000
 	}
 	req.Ctx = ctx
 	log.DefaultLogger.Debugf("[runtime][rpc]request %+v", req)
+	// 2. beforeInvoke callback
 	req, err = m.cb.BeforeInvoke(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]before filter error %s", err.Error())
 		return nil, err
 	}
-
+	// 3. do invocation
 	resp, err = m.channel.Do(req)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]error %s", err.Error())
 		return nil, err
 	}
-
 	resp.Ctx = req.Ctx
+	// 4. afterInvoke callback
 	resp, err = m.cb.AfterInvoke(resp)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime][rpc]after filter error %s", err.Error())

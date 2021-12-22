@@ -24,6 +24,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
+	grpc_api "mosn.io/layotto/pkg/grpc"
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	"net"
 	"testing"
@@ -63,13 +64,15 @@ func TestNewDaprAPI_Alpha(t *testing.T) {
 		mockTxStore,
 	}
 	// construct API
-	grpcAPI := NewDaprAPI_Alpha("", nil, nil, nil, nil, map[string]state.Store{"mock": store}, nil, nil, nil,
+	grpcAPI := NewDaprAPI_Alpha(&grpc_api.ApplicationContext{
+		"", nil, nil, nil, nil,
+		map[string]state.Store{"mock": store}, nil, nil, nil,
 		func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
 			if name == "error-binding" {
 				return nil, errors.New("error when invoke binding")
 			}
 			return &bindings.InvokeResponse{Data: []byte("ok")}, nil
-		})
+		}})
 	err := grpcAPI.Init(nil)
 	if err != nil {
 		t.Errorf("grpcAPI.Init error")

@@ -51,6 +51,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	m := &xChannel{proto: proto}
 	m.pool = newConnPool(
 		config.Size,
+		// dialFunc
 		func() (net.Conn, error) {
 			local, remote := net.Pipe()
 			localTcpConn := &fakeTcpConn{c: local}
@@ -60,6 +61,7 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 			}
 			return localTcpConn, nil
 		},
+		// stateFunc
 		func() interface{} {
 			return &xstate{calls: map[uint32]chan call{}}
 		},
@@ -90,10 +92,12 @@ type xChannel struct {
 
 // Do is handle RPCRequest to RPCResponse
 func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
+	// 1. context.WithTimeout
 	timeout := time.Duration(req.Timeout) * time.Millisecond
 	ctx, cancel := context.WithTimeout(req.Ctx, timeout)
 	defer cancel()
 
+	// 2. get fake connection with mosn
 	conn, err := m.pool.Get(ctx)
 	if err != nil {
 		return nil, err
@@ -101,7 +105,7 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 
 	xstate := conn.state.(*xstate)
 
-	// encode request
+	// 3. encode request
 	frame := m.proto.ToFrame(req)
 	id := atomic.AddUint32(&xstate.reqid, 1)
 	frame.SetRequestId(uint64(id))
@@ -131,6 +135,7 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	}
 	m.pool.Put(conn, false)
 
+	// read response and decode it
 	select {
 	case res := <-callChan:
 		if res.err != nil {

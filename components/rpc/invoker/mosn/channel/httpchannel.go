@@ -36,8 +36,11 @@ func init() {
 	RegistChannel("http", newHttpChannel)
 }
 
+// hstate is a pipe for readloop goroutine to communicate with request goroutine
 type hstate struct {
+	// request goroutine will read data from it
 	reader net.Conn
+	// readloop goroutine will write data to it
 	writer net.Conn
 }
 
@@ -60,11 +63,12 @@ type httpChannel struct {
 	pool *connPool
 }
 
-// newHttpChannel is create rpc.Channel by ChannelConfig
+// newHttpChannel is used to create rpc.Channel according to ChannelConfig
 func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 	hc := &httpChannel{}
 	hc.pool = newConnPool(
 		config.Size,
+		// dialFunc
 		func() (net.Conn, error) {
 			local, remote := net.Pipe()
 			localTcpConn := &fakeTcpConn{c: local}
@@ -72,8 +76,17 @@ func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 			if err := acceptFunc(remoteTcpConn, config.Listener); err != nil {
 				return nil, err
 			}
+			// the goroutine model is:
+			// request goroutine --->  localTcpConn ---> mosn
+			//		^										|
+			//		|										|
+			//		|										|
+			// 		hstate <-- readloop goroutine 	<------
 			return localTcpConn, nil
-		}, func() interface{} {
+		},
+		// stateFunc
+		func() interface{} {
+			// hstate is a pipe for readloop goroutine to communicate with request goroutine
 			s := &hstate{}
 			s.reader, s.writer = net.Pipe()
 			return s
@@ -84,17 +97,21 @@ func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 	return hc, nil
 }
 
-// Do is handle RPCRequest to RPCResponse
+// Do is used to handle RPCRequest and return RPCResponse
 func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
+	// 1. context.WithTimeout
 	timeout := time.Duration(req.Timeout) * time.Millisecond
 	ctx, cancel := context.WithTimeout(req.Ctx, timeout)
 	defer cancel()
 
+	// 2. get a fake connection with mosn
+	// The pool will start a readloop gorountine,
+	// which aims to read data from mosn and then write data to the hstate.writer
 	conn, err := h.pool.Get(ctx)
 	if err != nil {
 		return nil, err
 	}
-
+	// 3. set deadline before write data to this connection
 	hstate := conn.state.(*hstate)
 	deadline, _ := ctx.Deadline()
 	if err = conn.SetWriteDeadline(deadline); err != nil {
@@ -102,7 +119,7 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		h.pool.Put(conn, true)
 		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
-
+	// 4. write data to this fake connection
 	httpReq := h.constructReq(req)
 	defer fasthttp.ReleaseRequest(httpReq)
 
@@ -112,6 +129,7 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 
+	// 5. read response data and parse it into fasthttp.Response
 	httpResp := &fasthttp.Response{}
 	hstate.reader.SetReadDeadline(deadline)
 
@@ -121,6 +139,8 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 	h.pool.Put(conn, false)
+
+	// 6. convert result to rpc.RPCResponse,which is the response of rpc invoker
 	body := httpResp.Body()
 	if httpResp.StatusCode() != http.StatusOK {
 		return nil, common.Errorf(common.UnavailebleCode, "http response code %d, body: %s", httpResp.StatusCode(), string(body))

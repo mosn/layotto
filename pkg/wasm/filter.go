@@ -69,6 +69,7 @@ type WasmPlugin struct {
 	pluginConfigBytes buffer.IoBuffer
 }
 
+// Get the VmConfig of WasmPlugin
 func (p *WasmPlugin) GetVmConfig() common.IoBuffer {
 	if p.vmConfigBytes != nil {
 		return p.vmConfigBytes
@@ -96,6 +97,7 @@ func (p *WasmPlugin) GetVmConfig() common.IoBuffer {
 	return p.vmConfigBytes
 }
 
+// Get the plugin config of WasmPlugin
 func (p *WasmPlugin) GetPluginConfig() common.IoBuffer {
 	if p.pluginConfigBytes != nil {
 		return p.pluginConfigBytes
@@ -112,6 +114,7 @@ func (p *WasmPlugin) GetPluginConfig() common.IoBuffer {
 
 var contextIDGenerator int32
 
+// new context's ID
 func newContextID(rootContextID int32) int32 {
 	for {
 		id := atomic.AddInt32(&contextIDGenerator, 1)
@@ -137,6 +140,7 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 	return filter
 }
 
+// Destruction of filters
 func (f *Filter) OnDestroy() {
 	f.destroyOnce.Do(func() {
 		if f.pluginUsed == nil || f.instance == nil {
@@ -161,14 +165,17 @@ func (f *Filter) OnDestroy() {
 	})
 }
 
+// Set ReceiveFilterHandler of filter
 func (f *Filter) SetReceiveFilterHandler(handler api.StreamReceiverFilterHandler) {
 	f.receiverFilterHandler = handler
 }
 
+// Set SenderFilterHandler of filter
 func (f *Filter) SetSenderFilterHandler(handler api.StreamSenderFilterHandler) {
 	f.senderFilterHandler = handler
 }
 
+// Calculate the size of headerMap
 func headerMapSize(headers api.HeaderMap) int {
 	size := 0
 
@@ -182,6 +189,7 @@ func headerMapSize(headers api.HeaderMap) int {
 	return size
 }
 
+// Reset the filter when receiving then return StreamFilter status
 func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
 	id, ok := headers.Get("id")
 	if !ok {
@@ -263,23 +271,28 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 	return api.StreamFilterContinue
 }
 
+// Append ResponseData of filter
 func (f *Filter) Append(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
 	f.senderFilterHandler.SetResponseData(f.responseBuffer)
 	return api.StreamFilterContinue
 }
 
+// Get RootContext ID of filter's FilterConfigFactory
 func (f *Filter) GetRootContextID() int32 {
 	return f.factory.RootContextID
 }
 
+// Get the used WasmPlugin VmConfig of filter
 func (f *Filter) GetVmConfig() common.IoBuffer {
 	return f.pluginUsed.GetVmConfig()
 }
 
+// Get the used WasmPlugin config of filter
 func (f *Filter) GetPluginConfig() common.IoBuffer {
 	return f.pluginUsed.GetPluginConfig()
 }
 
+// Get the HttpRequest header of proxy-wasm
 func (f *Filter) GetHttpRequestHeader() common.HeaderMap {
 	if f.receiverFilterHandler == nil {
 		return nil
@@ -288,6 +301,7 @@ func (f *Filter) GetHttpRequestHeader() common.HeaderMap {
 	return &proxywasm010.HeaderMapWrapper{HeaderMap: f.receiverFilterHandler.GetRequestHeaders()}
 }
 
+// Get the HttpRequest body of proxy-wasm
 func (f *Filter) GetHttpRequestBody() common.IoBuffer {
 	if f.receiverFilterHandler == nil {
 		return nil
@@ -296,6 +310,7 @@ func (f *Filter) GetHttpRequestBody() common.IoBuffer {
 	return &proxywasm010.IoBufferWrapper{IoBuffer: f.requestBuffer}
 }
 
+// Get the HttpRequest trailer of proxy-wasm
 func (f *Filter) GetHttpRequestTrailer() common.HeaderMap {
 	if f.receiverFilterHandler == nil {
 		return nil
@@ -304,6 +319,7 @@ func (f *Filter) GetHttpRequestTrailer() common.HeaderMap {
 	return &proxywasm010.HeaderMapWrapper{HeaderMap: f.receiverFilterHandler.GetRequestTrailers()}
 }
 
+// Get the HttpResponse header of proxy-wasm
 func (f *Filter) GetHttpResponseHeader() common.HeaderMap {
 	if f.senderFilterHandler == nil {
 		return nil
@@ -312,6 +328,7 @@ func (f *Filter) GetHttpResponseHeader() common.HeaderMap {
 	return &proxywasm010.HeaderMapWrapper{HeaderMap: f.senderFilterHandler.GetResponseHeaders()}
 }
 
+// Get the HttpResponse body of proxy-wasm
 func (f *Filter) GetHttpResponseBody() common.IoBuffer {
 	if f.senderFilterHandler == nil {
 		return nil
@@ -320,6 +337,7 @@ func (f *Filter) GetHttpResponseBody() common.IoBuffer {
 	return &proxywasm010.IoBufferWrapper{IoBuffer: f.responseBuffer}
 }
 
+// Get the HttpResponse trailer of proxy-wasm
 func (f *Filter) GetHttpResponseTrailer() common.HeaderMap {
 	if f.senderFilterHandler == nil {
 		return nil

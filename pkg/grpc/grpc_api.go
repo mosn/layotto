@@ -39,15 +39,17 @@ type GrpcAPI interface {
 }
 
 // NewGrpcAPI is the constructor of GrpcAPI
-type NewGrpcAPI func(
-	appId string,
-	hellos map[string]hello.HelloService,
-	configStores map[string]configstores.Store,
-	rpcs map[string]rpc.Invoker,
-	pubSubs map[string]pubsub.PubSub,
-	stateStores map[string]state.Store,
-	files map[string]file.File,
-	lockStores map[string]lock.LockStore,
-	sequencers map[string]sequencer.Store,
-	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
-) GrpcAPI
+type NewGrpcAPI func(applicationContext *ApplicationContext) GrpcAPI
+
+type ApplicationContext struct {
+	AppId                 string
+	Hellos                map[string]hello.HelloService
+	ConfigStores          map[string]configstores.Store
+	Rpcs                  map[string]rpc.Invoker
+	PubSubs               map[string]pubsub.PubSub
+	StateStores           map[string]state.Store
+	Files                 map[string]file.File
+	LockStores            map[string]lock.LockStore
+	Sequencers            map[string]sequencer.Store
+	SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
+}

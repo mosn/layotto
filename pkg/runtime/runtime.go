@@ -156,19 +156,21 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	}
 	// create GrpcAPIs
 	var apis []grpc.GrpcAPI
+	ac := &grpc.ApplicationContext{
+		m.runtimeConfig.AppManagement.AppId,
+		m.hellos,
+		m.configStores,
+		m.rpcs,
+		m.pubSubs,
+		m.states,
+		m.files,
+		m.locks,
+		m.sequencers,
+		m.sendToOutputBinding,
+	}
+
 	for _, apiFactory := range o.apiFactorys {
-		api := apiFactory(
-			m.runtimeConfig.AppManagement.AppId,
-			m.hellos,
-			m.configStores,
-			m.rpcs,
-			m.pubSubs,
-			m.states,
-			m.files,
-			m.locks,
-			m.sequencers,
-			m.sendToOutputBinding,
-		)
+		api := apiFactory(ac)
 		// init the GrpcAPI
 		if err := api.Init(m.AppCallbackConn); err != nil {
 			return nil, err

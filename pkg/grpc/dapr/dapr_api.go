@@ -86,6 +86,7 @@ func (d *daprGrpcAPI) Register(s *grpc.Server, registeredServer mgrpc.Registered
 }
 
 func (d *daprGrpcAPI) InvokeService(ctx context.Context, in *runtime.InvokeServiceRequest) (*dapr_common_v1pb.InvokeResponse, error) {
+	// 1. convert request to RPCRequest,which is the parameter for RPC components
 	msg := in.GetMessage()
 	req := &rpc.RPCRequest{
 		Ctx:         ctx,
@@ -104,12 +105,17 @@ func (d *daprGrpcAPI) InvokeService(ctx context.Context, in *runtime.InvokeServi
 		req.Header["query_string"] = []string{ext.GetQuerystring()}
 	}
 
+	// 2. route to the specific rpc.Invoker component.
+	// Only support mosn component now.
 	invoker, ok := d.rpcs[mosninvoker.Name]
 	if !ok {
 		return nil, errors.New("invoker not init")
 	}
 
+	// 3. delegate to the rpc.Invoker component
 	resp, err := invoker.Invoke(ctx, req)
+
+	// 4. convert result
 	if err != nil {
 		return nil, runtime_common.ToGrpcError(err)
 	}
@@ -158,28 +164,18 @@ func (d *daprGrpcAPI) InvokeBinding(ctx context.Context, in *runtime.InvokeBindi
 // NewDaprAPI_Alpha construct a grpc_api.GrpcAPI which implements DaprServer.
 // Currently it only support Dapr's InvokeService and InvokeBinding API.
 // Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.
-func NewDaprAPI_Alpha(
-	appId string,
-	hellos map[string]hello.HelloService,
-	configStores map[string]configstores.Store,
-	rpcs map[string]rpc.Invoker,
-	pubSubs map[string]pubsub.PubSub,
-	stateStores map[string]state.Store,
-	files map[string]file.File,
-	lockStores map[string]lock.LockStore,
-	sequencers map[string]sequencer.Store,
-	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
-) grpc_api.GrpcAPI {
+func NewDaprAPI_Alpha(ac *grpc_api.ApplicationContext) grpc_api.GrpcAPI {
 	// filter out transactionalStateStores
 	transactionalStateStores := map[string]state.TransactionalStore{}
-	for key, store := range stateStores {
+	for key, store := range ac.StateStores {
 		if state.FeatureTransactional.IsPresent(store.Features()) {
 			transactionalStateStores[key] = store.(state.TransactionalStore)
 		}
 	}
-	return NewDaprServer(appId, hellos, configStores, rpcs, pubSubs,
-		stateStores, transactionalStateStores,
-		files, lockStores, sequencers, sendToOutputBindingFn)
+	return NewDaprServer(ac.AppId,
+		ac.Hellos, ac.ConfigStores, ac.Rpcs, ac.PubSubs, ac.StateStores, transactionalStateStores,
+		ac.Files, ac.LockStores, ac.Sequencers,
+		ac.SendToOutputBindingFn)
 }
 
 func NewDaprServer(
