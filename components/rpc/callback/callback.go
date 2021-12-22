@@ -57,7 +57,7 @@ var (
 	// to storage BeforeFactory
 	beforeInvokeRegistry = map[string]BeforeFactory{}
 	// to storage AfterFactory
-	afterInvokeRegistry  = map[string]AfterFactory{}
+	afterInvokeRegistry = map[string]AfterFactory{}
 )
 
 // NewCallback is created Callback
@@ -84,7 +84,7 @@ func (c *callback) AddBeforeInvoke(conf rpc.CallbackFunc) {
 	c.beforeInvoke = append(c.beforeInvoke, f.Create())
 }
 
-// AddAfterInvoke is add beforeInvoke into callback.afterInvoke
+// AddAfterInvoke is used to add beforeInvoke into callback.afterInvoke
 func (c *callback) AddAfterInvoke(conf rpc.CallbackFunc) {
 	f, ok := afterInvokeRegistry[conf.Name]
 	if !ok {
@@ -98,7 +98,7 @@ func (c *callback) AddAfterInvoke(conf rpc.CallbackFunc) {
 	c.afterInvoke = append(c.afterInvoke, f.Create())
 }
 
-// BeforeInvoke is get RPCRequest in callback.beforeInvoke
+// BeforeInvoke is used to invoke beforeInvoke callbacks
 func (c *callback) BeforeInvoke(request *rpc.RPCRequest) (*rpc.RPCRequest, error) {
 	var err error
 	for _, cb := range c.beforeInvoke {
@@ -109,7 +109,7 @@ func (c *callback) BeforeInvoke(request *rpc.RPCRequest) (*rpc.RPCRequest, error
 	return request, err
 }
 
-// AfterInvoke is get RPCResponse in callback.afterInvoke
+// AfterInvoke is used to invoke afterInvoke callbacks
 func (c *callback) AfterInvoke(response *rpc.RPCResponse) (*rpc.RPCResponse, error) {
 	var err error
 	for _, cb := range c.afterInvoke {

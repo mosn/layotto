@@ -53,7 +53,7 @@ func (r RPCHeader) Get(key string) string {
 // RPCRequest is request info
 type RPCRequest struct {
 	// context
-	Ctx         context.Context
+	Ctx context.Context
 	// request id
 	Id          string
 	Timeout     int32
@@ -88,9 +88,9 @@ type Callback interface {
 	// AddAfterInvoke is add AfterInvoke func
 	AddAfterInvoke(CallbackFunc)
 
-	// BeforeInvoke is get BeforeInvoke by RPCRequest
+	// BeforeInvoke is used to invoke beforeInvoke callbacks
 	BeforeInvoke(*RPCRequest) (*RPCRequest, error)
-	// AfterInvoke is get AfterInvoke by RPCRequest
+	// AfterInvoke is used to invoke afterInvoke callbacks
 	AfterInvoke(*RPCResponse) (*RPCResponse, error)
 }
 
