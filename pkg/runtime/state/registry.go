@@ -56,5 +56,5 @@ func (r *stateRegistry) Create(name string) (state.Store, error) {
 		r.info.LoadComponent(ServiceName, name)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", name)
+	return nil, fmt.Errorf("service component %s is not registered", name)
 }

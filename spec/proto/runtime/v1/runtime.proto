@@ -5,6 +5,8 @@ package spec.proto.runtime.v1;
 import "google/protobuf/empty.proto";
 import "google/protobuf/any.proto";
 
+// for grpc-gateway
+import "google/api/annotations.proto";
 option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 option java_outer_classname = "RuntimeProto";
 option java_package = "spec.proto.runtime.v1";
@@ -42,123 +44,128 @@ service Runtime {
   //  We try to keep them same as Dapr's because we want to work with Dapr to build an API spec for cloud native runtime
   //  ,like CloudEvent for event data.
 
+  // Publish a single event
+  rpc PublishEvent(PublishEventRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1.0/publish/{pubsub_name}/{topic}"
+      body: "*"
+    };
+  }
+
   // Gets the state for a specific key.
-  rpc GetState(GetStateRequest) returns (GetStateResponse) {}
+  rpc GetState(GetStateRequest) returns (GetStateResponse) {
+    option (google.api.http) = {
+      get: "/v1.0/state/{store_name}/{key}"
+    };
+  }
 
   // Gets a bulk of state items for a list of keys
-  rpc GetBulkState(GetBulkStateRequest) returns (GetBulkStateResponse) {}
+  rpc GetBulkState(GetBulkStateRequest) returns (GetBulkStateResponse) {
+    option (google.api.http) = {
+      post: "/v1.0/state/{store_name}/bulk"
+      body: "*"
+    };
+  }
 
   // Saves an array of state objects
-  rpc SaveState(SaveStateRequest) returns (google.protobuf.Empty) {}
+  rpc SaveState(SaveStateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1.0/state/{store_name}"
+      body: "*"
+    };
+  }
 
   // Deletes the state for a specific key.
-  rpc DeleteState(DeleteStateRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteState(DeleteStateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1.0/state/{store_name}/{key}"
+    };
+  }
 
   // Deletes a bulk of state items for a list of keys
-  rpc DeleteBulkState(DeleteBulkStateRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteBulkState(DeleteBulkStateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1.0/state/{store_name}/bulk"
+    };
+  }
 
   // Executes transactions for a specified store
-  rpc ExecuteStateTransaction(ExecuteStateTransactionRequest) returns (google.protobuf.Empty) {}
-
-  // Publishes events to the specific topic
-  rpc PublishEvent(PublishEventRequest) returns (google.protobuf.Empty) {}
-
-  // Get file with stream
-  rpc GetFile(GetFileRequest) returns (stream GetFileResponse) {}
-
-  // Put file with stream
-  rpc PutFile(stream PutFileRequest) returns (google.protobuf.Empty) {}
-
-  // List all files
-  rpc ListFile(ListFileRequest) returns (ListFileResp){}
-
-  // Delete specific file
-  rpc DelFile(DelFileRequest) returns (google.protobuf.Empty){}
-
-  // Get file meta data, if file not exist,return code.NotFound error
-  rpc GetFileMeta(GetFileMetaRequest) returns (GetFileMetaResponse){}
+  rpc ExecuteStateTransaction(ExecuteStateTransactionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1.0/state/{storeName}/transaction"
+      body: "*"
+    };
+  }
 
   // Invokes binding data to specific output bindings
-  rpc InvokeBinding(InvokeBindingRequest) returns (InvokeBindingResponse) {}
+  rpc InvokeBinding(InvokeBindingRequest) returns (InvokeBindingResponse) {
+    option (google.api.http) = {
+      post: "/v1.0/bindings/{name}/{operation}"
+      body: "*"
+    };
+  }
+
+  // Get file with stream
+  rpc GetFile(GetFileRequest) returns (stream GetFileResponse) {
+    option (google.api.http) = {
+      get: "/v1.0/file/get"
+    };
+  }
+
+  // Put file with stream
+  // Note: grpc gateway doesn't support path parameter with client streaming
+  //       So we are not adding store name in the restful endpoints like
+  //       /v1.0/file/{store_name}/put
+  rpc PutFile(stream PutFileRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1.0/file/put"
+      body: "*"
+    };
+  }
+
+  // List all files
+  rpc ListFile(ListFileRequest) returns (ListFileResp){
+    option (google.api.http) = {
+      post: "/v1.0/file/list"
+      body: "*"
+    };
+  }
+
+  // Delete specific file
+  rpc DelFile(DelFileRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      delete: "/v1.0/file/delete"
+    };
+  }
+
+  // Get file meta data, if file not exist,return code.NotFound error
+  rpc GetFileMeta(GetFileMetaRequest) returns (GetFileMetaResponse){
+    option (google.api.http) = {
+      get: "/v1.0/file/meta"
+    };
+  }
+
 }
 
 message GetFileMetaRequest{
-    FileRequest request = 1;
+  FileRequest request = 1;
 }
 
 message GetFileMetaResponse{
-    // The size of file
-    int64 size = 1;
-    // The modified time of file
-    string last_modified = 2;
-    FileMeta response = 3;
+  // The size of file
+  int64 size = 1;
+  // The modified time of file
+  string last_modified = 2;
+  FileMeta response = 3;
 }
 
 message FileMetaValue{
-    repeated string value = 1;
+  repeated string value = 1;
 }
 
 message FileMeta{
-    map<string,FileMetaValue> metadata = 1;
+  map<string, FileMetaValue> metadata = 1;
 }
-
-message GetFileRequest {
-  //
-  string store_name = 1;
-  // The name of the file or object want to get.
-  string name = 2;
-  // The metadata for user extension.
-  map<string, string> metadata = 3;
-}
-
-message GetFileResponse {
-  bytes data = 1;
-}
-
-message PutFileRequest {
-  string store_name = 1;
-  // The name of the file or object want to put.
-  string name = 2;
-  // The data will be store.
-  bytes data = 3;
-  // The metadata for user extension.
-  map<string, string> metadata = 4;
-}
-
-message FileRequest {
-  string store_name = 1;
-  // The name of the directory
-  string name = 2;
-  // The metadata for user extension.
-  map<string, string> metadata = 3;
-}
-
-message ListFileRequest {
-  FileRequest request = 1;
-  int32 page_size = 2;
-  string marker = 3;
-}
-
-message FileInfo {
-  // The name of file
-  string file_name = 1;
-  // The size of file
-  int64 size = 2;
-  // The modified time of file
-  string last_modified = 3;
-  // The metadata for user extension.
-  map<string,string> metadata = 4;
-}
-message ListFileResp {
-  repeated FileInfo files = 1;
-  string marker = 2;
-  bool is_truncated = 3;
-}
-
-message DelFileRequest {
-  FileRequest request = 1;
-}
-
 message GetNextIdRequest {
   // Required. Name of sequencer storage
   string store_name = 1;
@@ -263,6 +270,27 @@ message SayHelloRequest {
 message SayHelloResponse {
   string hello = 1;
   google.protobuf.Any data = 2;
+}
+
+// PublishEventRequest is the message to publish event data to pubsub topic
+message PublishEventRequest {
+  // The name of the pubsub component
+  string pubsub_name = 1;
+
+  // The pubsub topic
+  string topic = 2;
+
+  // The data which will be published to topic.
+  bytes data = 3;
+
+  // The content type for the data (optional).
+  string data_content_type = 4;
+
+  // The metadata passing to pub components
+  //
+  // metadata property:
+  // - key : the key of the message.
+  map<string, string> metadata = 5;
 }
 
 message InvokeServiceRequest {
@@ -427,7 +455,6 @@ message DeleteConfigurationRequest {
   // The metadata which will be sent to configuration store components.
   map<string, string> metadata = 6;
 }
-
 
 // GetStateRequest is the message to get key-value states from specific state store.
 message GetStateRequest {
@@ -616,27 +643,6 @@ message ExecuteStateTransactionRequest {
   map<string, string> metadata = 3;
 }
 
-// PublishEventRequest is the message to publish event data to pubsub topic
-message PublishEventRequest {
-  // The name of the pubsub component
-  string pubsub_name = 1;
-
-  // The pubsub topic
-  string topic = 2;
-
-  // The data which will be published to topic.
-  bytes data = 3;
-
-  // The content type for the data (optional).
-  string data_content_type = 4;
-
-  // The metadata passing to pub components
-  //
-  // metadata property:
-  // - key : the key of the message.
-  map<string, string> metadata = 5;
-}
-
 // InvokeBindingRequest is the message to send data to output bindings
 message InvokeBindingRequest {
   // The name of the output binding to invoke.
@@ -646,12 +652,13 @@ message InvokeBindingRequest {
   bytes data = 2;
 
   // The metadata passing to output binding components
+  //
   // Common metadata property:
   // - ttlInSeconds : the time to live in seconds for the message.
   // If set in the binding definition will cause all messages to
   // have a default time to live. The message ttl overrides any value
   // in the binding definition.
-  map<string, string> metadata = 3;
+  map<string,string> metadata = 3;
 
   // The name of the operation type for the binding to invoke
   string operation = 4;
@@ -663,5 +670,64 @@ message InvokeBindingResponse {
   bytes data = 1;
 
   // The metadata returned from an external system
-  map<string, string> metadata = 2;
+  map<string,string> metadata = 2;
+}
+
+message GetFileRequest {
+  // File store name
+  string store_name = 1;
+  // The name of the file or object want to get.
+  string name = 2;
+  // The metadata for user extension.
+  map<string, string> metadata = 3;
+}
+
+message GetFileResponse {
+  bytes data = 1;
+}
+
+message PutFileRequest {
+  // File store name
+  string store_name = 1;
+  // The name of the file or object want to put.
+  string name = 2;
+  // The data will be store.
+  bytes data = 3;
+  // The metadata for user extension.
+  map<string, string> metadata = 4;
+}
+
+message FileRequest {
+  // File store name
+  string store_name = 1;
+  // The name of the directory
+  string name = 2;
+  // The metadata for user extension.
+  map<string, string> metadata = 3;
+}
+
+message ListFileRequest {
+  FileRequest request = 1;
+  int32 page_size = 2;
+  string marker = 3;
+}
+
+message FileInfo {
+  // The name of file
+  string file_name = 1;
+  // The size of file
+  int64 size = 2;
+  // The modified time of file
+  string last_modified = 3;
+  // The metadata for user extension.
+  map<string, string> metadata = 4;
+}
+message ListFileResp {
+  repeated FileInfo files = 1;
+  string marker = 2;
+  bool is_truncated = 3;
+}
+
+message DelFileRequest {
+  FileRequest request = 1;
 }
