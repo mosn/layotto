@@ -25,7 +25,6 @@ import (
 	"github.com/dapr/components-contrib/pubsub"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	_ "net/http/pprof"
 
@@ -105,7 +104,7 @@ func (a *api) getInterestedTopics() (map[string]TopicSubscriptions, error) {
 
 	// 2. handle app subscriptions
 	client := runtimev1pb.NewAppCallbackClient(a.AppCallbackConn)
-	subscriptions = runtime_pubsub.ListTopicSubscriptions(client, log.DefaultLogger)
+	subscriptions = ListTopicSubscriptions(client, log.DefaultLogger)
 	// TODO handle declarative subscriptions
 
 	// 3. prepare result

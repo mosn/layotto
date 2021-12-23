@@ -25,6 +25,7 @@ import (
 	"mosn.io/layotto/pkg/grpc/dapr"
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
+	state2 "mosn.io/layotto/pkg/runtime/state"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"strings"
 	"sync"
@@ -42,7 +43,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"mosn.io/layotto/components/file"
 
-	"mosn.io/layotto/pkg/converter"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 
@@ -62,7 +62,6 @@ import (
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/messages"
-	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
@@ -494,7 +493,7 @@ func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*r
 		return nil, err
 	}
 	// 2. generate the actual key
-	key, err := runtime_state.GetModifiedStateKey(in.Key, in.StoreName, a.appId)
+	key, err := state2.GetModifiedStateKey(in.Key, in.StoreName, a.appId)
 	if err != nil {
 		return &runtimev1pb.GetStateResponse{}, err
 	}
@@ -502,7 +501,7 @@ func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*r
 		Key:      key,
 		Metadata: in.Metadata,
 		Options: state.GetStateOption{
-			Consistency: runtime_state.StateConsistencyToString(in.Consistency),
+			Consistency: StateConsistencyToString(in.Consistency),
 		},
 	}
 	// 3. query
@@ -514,7 +513,7 @@ func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*r
 		return &runtimev1pb.GetStateResponse{}, err
 	}
 
-	return converter.GetResponse2GetStateResponse(compResp), nil
+	return GetResponse2GetStateResponse(compResp), nil
 }
 
 func (a *api) getStateStore(name string) (state.Store, error) {
@@ -545,7 +544,7 @@ func (a *api) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequ
 	// 2.1. convert reqs
 	reqs := make([]state.GetRequest, len(in.Keys))
 	for i, k := range in.Keys {
-		key, err := runtime_state.GetModifiedStateKey(k, in.StoreName, a.appId)
+		key, err := state2.GetModifiedStateKey(k, in.StoreName, a.appId)
 		if err != nil {
 			return &runtimev1pb.GetBulkStateResponse{}, err
 		}
@@ -563,7 +562,7 @@ func (a *api) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequ
 	// 2.3. parse and return result if store supports this method
 	if support {
 		for i := 0; i < len(responses); i++ {
-			bulkResp.Items = append(bulkResp.Items, converter.BulkGetResponse2BulkStateItem(&responses[i]))
+			bulkResp.Items = append(bulkResp.Items, BulkGetResponse2BulkStateItem(&responses[i]))
 		}
 		return bulkResp, nil
 	}
@@ -597,11 +596,11 @@ func generateGetStateTask(store state.Store, req *state.GetRequest, resultCh cha
 		var item *runtimev1pb.BulkStateItem
 		if err != nil {
 			item = &runtimev1pb.BulkStateItem{
-				Key:   runtime_state.GetOriginalStateKey(req.Key),
+				Key:   state2.GetOriginalStateKey(req.Key),
 				Error: err.Error(),
 			}
 		} else {
-			item = converter.GetResponse2BulkStateItem(r, runtime_state.GetOriginalStateKey(req.Key))
+			item = GetResponse2BulkStateItem(r, state2.GetOriginalStateKey(req.Key))
 		}
 		// collect result
 		select {
@@ -623,11 +622,11 @@ func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (
 	// 2. convert requests
 	reqs := []state.SetRequest{}
 	for _, s := range in.States {
-		key, err := runtime_state.GetModifiedStateKey(s.Key, in.StoreName, a.appId)
+		key, err := state2.GetModifiedStateKey(s.Key, in.StoreName, a.appId)
 		if err != nil {
 			return &emptypb.Empty{}, err
 		}
-		reqs = append(reqs, *converter.StateItem2SetRequest(s, key))
+		reqs = append(reqs, *StateItem2SetRequest(s, key))
 	}
 	// 3. query
 	err = store.BulkSet(reqs)
@@ -664,12 +663,12 @@ func (a *api) DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateReques
 		return &emptypb.Empty{}, err
 	}
 	// 2. generate the actual key
-	key, err := runtime_state.GetModifiedStateKey(in.Key, in.StoreName, a.appId)
+	key, err := state2.GetModifiedStateKey(in.Key, in.StoreName, a.appId)
 	if err != nil {
 		return &empty.Empty{}, err
 	}
 	// 3. convert and send request
-	err = store.Delete(converter.DeleteStateRequest2DeleteRequest(in, key))
+	err = store.Delete(DeleteStateRequest2DeleteRequest(in, key))
 	// 4. check result
 	if err != nil {
 		err = a.wrapDaprComponentError(err, messages.ErrStateDelete, in.Key, err.Error())
@@ -689,11 +688,11 @@ func (a *api) DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkSta
 	// 2. convert request
 	reqs := make([]state.DeleteRequest, 0, len(in.States))
 	for _, item := range in.States {
-		key, err := runtime_state.GetModifiedStateKey(item.Key, in.StoreName, a.appId)
+		key, err := state2.GetModifiedStateKey(item.Key, in.StoreName, a.appId)
 		if err != nil {
 			return &empty.Empty{}, err
 		}
-		reqs = append(reqs, *converter.StateItem2DeleteRequest(item, key))
+		reqs = append(reqs, *StateItem2DeleteRequest(item, key))
 	}
 	// 3. send request
 	err = store.BulkDelete(reqs)
@@ -736,7 +735,7 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 			log.DefaultLogger.Warnf("[runtime] [grpc.ExecuteStateTransaction] one of TransactionalStateOperation.Request is nil")
 			continue
 		}
-		key, err := runtime_state.GetModifiedStateKey(req.Key, in.StoreName, a.appId)
+		key, err := state2.GetModifiedStateKey(req.Key, in.StoreName, a.appId)
 		if err != nil {
 			return &emptypb.Empty{}, err
 		}
@@ -745,12 +744,12 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 		case state.Upsert:
 			operation = state.TransactionalStateOperation{
 				Operation: state.Upsert,
-				Request:   *converter.StateItem2SetRequest(req, key),
+				Request:   *StateItem2SetRequest(req, key),
 			}
 		case state.Delete:
 			operation = state.TransactionalStateOperation{
 				Operation: state.Delete,
-				Request:   *converter.StateItem2DeleteRequest(req, key),
+				Request:   *StateItem2DeleteRequest(req, key),
 			}
 		default:
 			err := status.Errorf(codes.Unimplemented, messages.ErrNotSupportedStateOperation, op.OperationType)
@@ -975,7 +974,7 @@ func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*ru
 		return &runtimev1pb.TryLockResponse{}, status.Errorf(codes.InvalidArgument, messages.ErrLockStoreNotFound, req.StoreName)
 	}
 	// 3. convert request
-	compReq := converter.TryLockRequest2ComponentRequest(req)
+	compReq := TryLockRequest2ComponentRequest(req)
 	// modify key
 	var err error
 	compReq.ResourceId, err = runtime_lock.GetModifiedLockKey(compReq.ResourceId, req.StoreName, a.appId)
@@ -990,7 +989,7 @@ func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*ru
 		return &runtimev1pb.TryLockResponse{}, err
 	}
 	// 5. convert response
-	resp := converter.TryLockResponse2GrpcResponse(compResp)
+	resp := TryLockResponse2GrpcResponse(compResp)
 	return resp, nil
 }
 
@@ -1015,7 +1014,7 @@ func (a *api) Unlock(ctx context.Context, req *runtimev1pb.UnlockRequest) (*runt
 		return newInternalErrorUnlockResponse(), status.Errorf(codes.InvalidArgument, messages.ErrLockStoreNotFound, req.StoreName)
 	}
 	// 3. convert request
-	compReq := converter.UnlockGrpc2ComponentRequest(req)
+	compReq := UnlockGrpc2ComponentRequest(req)
 	// modify key
 	var err error
 	compReq.ResourceId, err = runtime_lock.GetModifiedLockKey(compReq.ResourceId, req.StoreName, a.appId)
@@ -1030,7 +1029,7 @@ func (a *api) Unlock(ctx context.Context, req *runtimev1pb.UnlockRequest) (*runt
 		return newInternalErrorUnlockResponse(), err
 	}
 	// 5. convert response
-	resp := converter.UnlockComp2GrpcResponse(compResp)
+	resp := UnlockComp2GrpcResponse(compResp)
 	return resp, nil
 }
 
@@ -1052,7 +1051,7 @@ func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) 
 		return &runtimev1pb.GetNextIdResponse{}, err
 	}
 	// 2. convert
-	compReq, err := converter.GetNextIdRequest2ComponentRequest(req)
+	compReq, err := GetNextIdRequest2ComponentRequest(req)
 	if err != nil {
 		return &runtimev1pb.GetNextIdResponse{}, err
 	}

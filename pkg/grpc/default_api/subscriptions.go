@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pubsub
+package default_api
 
 import (
 	"context"
