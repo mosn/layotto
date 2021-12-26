@@ -105,6 +105,10 @@ func (mc *MockMongoCollection) Indexes() mongo.IndexView {
 	return mongo.IndexView{}
 }
 
+func (mc *MockMongoCollection) UpdateOne(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
+	return nil, nil
+}
+
 func (c *MockMongoClient) StartSession(opts ...*options.SessionOptions) (mongo.Session, error) {
 	return &MockMongoSession{}, nil
 }

@@ -17,6 +17,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readconcern"
@@ -98,6 +99,14 @@ type MongoCollection interface {
 	DeleteOne(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error)
 	Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (*mongo.Cursor, error)
 	Indexes() mongo.IndexView
+	UpdateOne(ctx context.Context, filter interface{}, update interface{},
+		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
+}
+
+type MongoSingleResult interface {
+	Decode(v interface{}) error
+	Err() error
+	DecodeBytes() (bson.Raw, error)
 }
 
 type MongoFactoryImpl struct{}
