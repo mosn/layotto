@@ -163,20 +163,10 @@ func (a *api) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) 
 	return registeredServer, nil
 }
 
-func NewGrpcAPI(
-	appId string,
-	hellos map[string]hello.HelloService,
-	configStores map[string]configstores.Store,
-	rpcs map[string]rpc.Invoker,
-	pubSubs map[string]pubsub.PubSub,
-	stateStores map[string]state.Store,
-	files map[string]file.File,
-	lockStores map[string]lock.LockStore,
-	sequencers map[string]sequencer.Store,
-	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
-	secretStores map[string]secretstores.SecretStore,
-) grpc_api.GrpcAPI {
-	return NewAPI(appId, hellos, configStores, rpcs, pubSubs, stateStores, files, lockStores, sequencers, sendToOutputBindingFn, secretStores)
+func NewGrpcAPI(ac *grpc_api.ApplicationContext) grpc_api.GrpcAPI {
+	return NewAPI(ac.AppId,
+		ac.Hellos, ac.ConfigStores, ac.Rpcs, ac.PubSubs, ac.StateStores, ac.Files, ac.LockStores, ac.Sequencers,
+		ac.SendToOutputBindingFn, ac.SecretStores)
 }
 
 func NewAPI(
