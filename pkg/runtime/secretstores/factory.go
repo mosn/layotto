@@ -17,13 +17,13 @@ import (
 	"github.com/dapr/components-contrib/secretstores"
 )
 
-type Factory struct {
+type SecretStoresFactory struct {
 	Name          string
 	FactoryMethod func() secretstores.SecretStore
 }
 
-func NewFactory(name string, f func() secretstores.SecretStore) *Factory {
-	return &Factory{
+func NewFactory(name string, f func() secretstores.SecretStore) *SecretStoresFactory {
+	return &SecretStoresFactory{
 		Name:          name,
 		FactoryMethod: f,
 	}

@@ -87,27 +87,28 @@ type MosnRuntime struct {
 func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 	info := info.NewRuntimeInfo()
 	return &MosnRuntime{
-		runtimeConfig:       runtimeConfig,
-		info:                info,
-		helloRegistry:       hello.NewRegistry(info),
-		configStoreRegistry: configstores.NewRegistry(info),
-		rpcRegistry:         rpc.NewRegistry(info),
-		pubSubRegistry:      runtime_pubsub.NewRegistry(info),
-		stateRegistry:       runtime_state.NewRegistry(info),
-		bindingsRegistry:    mbindings.NewRegistry(info),
-		fileRegistry:        file.NewRegistry(info),
-		lockRegistry:        runtime_lock.NewRegistry(info),
-		sequencerRegistry:   runtime_sequencer.NewRegistry(info),
-		hellos:              make(map[string]hello.HelloService),
-		configStores:        make(map[string]configstores.Store),
-		rpcs:                make(map[string]rpc.Invoker),
-		pubSubs:             make(map[string]pubsub.PubSub),
-		states:              make(map[string]state.Store),
-		files:               make(map[string]file.File),
-		locks:               make(map[string]lock.LockStore),
-		sequencers:          make(map[string]sequencer.Store),
-		outputBindings:      make(map[string]bindings.OutputBinding),
-		secretStores:        make(map[string]secretstores.SecretStore),
+		runtimeConfig:        runtimeConfig,
+		info:                 info,
+		helloRegistry:        hello.NewRegistry(info),
+		configStoreRegistry:  configstores.NewRegistry(info),
+		rpcRegistry:          rpc.NewRegistry(info),
+		pubSubRegistry:       runtime_pubsub.NewRegistry(info),
+		stateRegistry:        runtime_state.NewRegistry(info),
+		bindingsRegistry:     mbindings.NewRegistry(info),
+		fileRegistry:         file.NewRegistry(info),
+		lockRegistry:         runtime_lock.NewRegistry(info),
+		sequencerRegistry:    runtime_sequencer.NewRegistry(info),
+		secretStoresRegistry: msecretstores.NewRegistry(info),
+		hellos:               make(map[string]hello.HelloService),
+		configStores:         make(map[string]configstores.Store),
+		rpcs:                 make(map[string]rpc.Invoker),
+		pubSubs:              make(map[string]pubsub.PubSub),
+		states:               make(map[string]state.Store),
+		files:                make(map[string]file.File),
+		locks:                make(map[string]lock.LockStore),
+		sequencers:           make(map[string]sequencer.Store),
+		outputBindings:       make(map[string]bindings.OutputBinding),
+		secretStores:         make(map[string]secretstores.SecretStore),
 	}
 }
 
@@ -496,8 +497,8 @@ func (m *MosnRuntime) initInputBinding(factorys ...*mbindings.InputBindingFactor
 	return nil
 }
 
-func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.Factory) error {
-	log.DefaultLogger.Infof("[runtime] init SecretStores service")
+func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFactory) error {
+	log.DefaultLogger.Infof("[runtime] start initializing SecretStores components")
 	m.secretStoresRegistry.Register(factorys...)
 	// 2. loop initializing
 	for name, config := range m.runtimeConfig.SecretStoresManagement {

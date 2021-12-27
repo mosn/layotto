@@ -30,7 +30,7 @@ type (
 
 	// Registry is used to get registered secret store implementations.
 	Registry interface {
-		Register(ss ...*Factory)
+		Register(ss ...*SecretStoresFactory)
 		Create(name, version string) (secretstores.SecretStore, error)
 	}
 
@@ -50,7 +50,7 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 }
 
 // Register adds one or many new secret stores to the registry.
-func (s *secretStoreRegistry) Register(ss ...*Factory) {
+func (s *secretStoreRegistry) Register(ss ...*SecretStoresFactory) {
 	for _, component := range ss {
 		s.secretStores[createFullName(component.Name)] = component.FactoryMethod
 		s.info.RegisterComponent(ServiceName, component.Name)

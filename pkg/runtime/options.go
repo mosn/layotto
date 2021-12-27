@@ -44,7 +44,7 @@ type services struct {
 	sequencers    []*runtime_sequencer.Factory
 	outputBinding []*mbindings.OutputBindingFactory
 	inputBinding  []*mbindings.InputBindingFactory
-	secretStores  []*msecretstores.Factory
+	secretStores  []*msecretstores.SecretStoresFactory
 }
 
 type runtimeOptions struct {
@@ -153,7 +153,7 @@ func WithSequencerFactory(factorys ...*runtime_sequencer.Factory) Option {
 	}
 }
 
-func WithSecretStoresFactory(factorys ...*msecretstores.Factory) Option {
+func WithSecretStoresFactory(factorys ...*msecretstores.SecretStoresFactory) Option {
 	return func(o *runtimeOptions) {
 		o.services.secretStores = append(o.services.secretStores, factorys...)
 	}
