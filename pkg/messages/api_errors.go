@@ -53,4 +53,5 @@ const (
 	ErrSecretStoreNotFound      = "error when get secret but not find : %s"
 	ErrSecretGet                = "error when get secret : secret name => %s,store name =>%s,error => %s"
 	ErrBulkSecretGet            = "error when bulk get secret %s: %s"
+	ErrPermissionDenied         = "access denied by policy to get %s from %s"
 )

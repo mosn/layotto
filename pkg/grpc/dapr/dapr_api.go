@@ -163,6 +163,12 @@ func (d *daprGrpcAPI) InvokeBinding(ctx context.Context, in *runtime.InvokeBindi
 	return r, nil
 }
 
+//todo  mosn isSecretAllowed  depend on  dapr。
+func (d *daprGrpcAPI) isSecretAllowed(storeName string, key string) bool {
+	// By default, if a configuration is not defined for a secret store, return true.
+	return false
+}
+
 // NewDaprAPI_Alpha construct a grpc_api.GrpcAPI which implements DaprServer.
 // Currently it only support Dapr's InvokeService and InvokeBinding API.
 // Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.

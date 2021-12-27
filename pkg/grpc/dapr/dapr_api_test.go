@@ -20,10 +20,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/dapr/components-contrib/bindings"
+	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/state"
 	"github.com/golang/mock/gomock"
 	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
+	grpc_api "mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/mock/components/secret"
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	"net"
 	"testing"
@@ -63,13 +66,15 @@ func TestNewDaprAPI_Alpha(t *testing.T) {
 		mockTxStore,
 	}
 	// construct API
-	grpcAPI := NewDaprAPI_Alpha("", nil, nil, nil, nil, map[string]state.Store{"mock": store}, nil, nil, nil,
+	grpcAPI := NewDaprAPI_Alpha(&grpc_api.ApplicationContext{
+		"", nil, nil, nil, nil,
+		map[string]state.Store{"mock": store}, nil, nil, nil,
 		func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
 			if name == "error-binding" {
 				return nil, errors.New("error when invoke binding")
 			}
 			return &bindings.InvokeResponse{Data: []byte("ok")}, nil
-		}, nil)
+		}, nil})
 	err := grpcAPI.Init(nil)
 	if err != nil {
 		t.Errorf("grpcAPI.Init error")
@@ -123,4 +128,139 @@ func createTestClient(port int) *grpc.ClientConn {
 		panic(err)
 	}
 	return conn
+}
+
+func TestNewDaprAPI_SecretStores(t *testing.T) {
+	fakeStore := secret.FakeSecretStore{}
+	fakeStores := map[string]secretstores.SecretStore{
+		"store1": fakeStore,
+		"store2": fakeStore,
+		"store3": fakeStore,
+		"store4": fakeStore,
+	}
+
+	expectedResponse := "life is good"
+	storeName := "store1"
+	deniedStoreName := "store2"
+	restrictedStore := "store3"
+	unrestrictedStore := "store4"     // No configuration defined for the store
+	nonExistingStore := "nonexistent" // Non-existing store
+
+	testCases := []struct {
+		testName         string
+		storeName        string
+		key              string
+		errorExcepted    bool
+		expectedResponse string
+		expectedError    codes.Code
+	}{
+		{
+			testName:         "Good Key from unrestricted store",
+			storeName:        unrestrictedStore,
+			key:              "good-key",
+			errorExcepted:    false,
+			expectedResponse: expectedResponse,
+		},
+		{
+			testName:         "Good Key default access",
+			storeName:        storeName,
+			key:              "good-key",
+			errorExcepted:    false,
+			expectedResponse: expectedResponse,
+		},
+		{
+			testName:         "Good Key restricted store access",
+			storeName:        restrictedStore,
+			key:              "good-key",
+			errorExcepted:    false,
+			expectedResponse: expectedResponse,
+		},
+		{
+			testName:         "Error Key restricted store access",
+			storeName:        restrictedStore,
+			key:              "error-key",
+			errorExcepted:    true,
+			expectedResponse: "",
+			expectedError:    codes.Internal,
+		},
+		{
+			testName:         "Random Key restricted store access",
+			storeName:        restrictedStore,
+			key:              "random",
+			errorExcepted:    true,
+			expectedResponse: "",
+			expectedError:    codes.PermissionDenied,
+		},
+		{
+			testName:         "Random Key accessing a store denied access by default",
+			storeName:        deniedStoreName,
+			key:              "random",
+			errorExcepted:    true,
+			expectedResponse: "",
+			expectedError:    codes.PermissionDenied,
+		},
+		{
+			testName:         "Random Key accessing a store denied access by default",
+			storeName:        deniedStoreName,
+			key:              "random",
+			errorExcepted:    true,
+			expectedResponse: "",
+			expectedError:    codes.PermissionDenied,
+		},
+		{
+			testName:         "Store doesn't exist",
+			storeName:        nonExistingStore,
+			key:              "key",
+			errorExcepted:    true,
+			expectedResponse: "",
+			expectedError:    codes.InvalidArgument,
+		},
+	}
+	// Setup Dapr API server
+	grpcAPI := NewDaprAPI_Alpha(&grpc_api.ApplicationContext{
+		"", nil, nil, nil, nil,
+		nil, nil, nil, nil,
+		nil, fakeStores})
+	err := grpcAPI.Init(nil)
+	if err != nil {
+		t.Errorf("grpcAPI.Init error")
+		return
+	}
+	// test type assertion
+	_, ok := grpcAPI.(dapr_v1pb.DaprServer)
+	if !ok {
+		t.Errorf("Can not cast grpcAPI to DaprServer")
+		return
+	}
+	srv, ok := grpcAPI.(DaprGrpcAPI)
+	if !ok {
+		t.Errorf("Can not cast grpcAPI to DaprServer")
+		return
+	}
+	port, _ := freeport.GetFreePort()
+	server := startDaprServerForTest(port, srv)
+	defer server.Stop()
+
+	clientConn := createTestClient(port)
+	defer clientConn.Close()
+
+	client := dapr_v1pb.NewDaprClient(clientConn)
+	for _, tt := range testCases {
+		t.Run(tt.testName, func(t *testing.T) {
+			request := &dapr_v1pb.GetSecretRequest{
+				StoreName: tt.storeName,
+				Key:       tt.key,
+			}
+			resp, err := client.GetSecret(context.Background(), request)
+
+			if !tt.errorExcepted {
+				assert.NoError(t, err, "Expected no error")
+				assert.Equal(t, resp.Data[tt.key], tt.expectedResponse, "Expected responses to be same")
+			} else {
+				assert.Error(t, err, "Expected error")
+				assert.Equal(t, tt.expectedError, status.Code(err))
+			}
+
+		})
+	}
 }
