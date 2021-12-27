@@ -126,6 +126,46 @@ func TestSaveState(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, "rpc error: code = Internal desc = failed saving state in state store mock: net error", err.Error())
 	})
+
+	t.Run("save error: ETagInvalid", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		mockStore := mock_state.NewMockStore(ctrl)
+		mockStore.EXPECT().Features().Return(nil)
+		mockStore.EXPECT().BulkSet(gomock.Any()).Return(state.NewETagError(state.ETagInvalid, nil))
+		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil)
+		req := &runtimev1pb.SaveStateRequest{
+			StoreName: "mock",
+			States: []*runtimev1pb.StateItem{
+				{
+					Key:   "abc",
+					Value: []byte("mock data"),
+				},
+			},
+		}
+		_, err := api.SaveState(context.Background(), req)
+		assert.NotNil(t, err)
+		assert.Equal(t, "rpc error: code = InvalidArgument desc = failed saving state in state store mock: invalid etag value", err.Error())
+	})
+
+	t.Run("save error: ETagMismatch", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		mockStore := mock_state.NewMockStore(ctrl)
+		mockStore.EXPECT().Features().Return(nil)
+		mockStore.EXPECT().BulkSet(gomock.Any()).Return(state.NewETagError(state.ETagMismatch, nil))
+		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil)
+		req := &runtimev1pb.SaveStateRequest{
+			StoreName: "mock",
+			States: []*runtimev1pb.StateItem{
+				{
+					Key:   "abc",
+					Value: []byte("mock data"),
+				},
+			},
+		}
+		_, err := api.SaveState(context.Background(), req)
+		assert.NotNil(t, err)
+		assert.Equal(t, "rpc error: code = Aborted desc = failed saving state in state store mock: possible etag mismatch. error from state store", err.Error())
+	})
 }
 
 func TestGetResponse2GetStateResponse(t *testing.T) {
