@@ -17,9 +17,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"mosn.io/layotto/components/file/s3/alicloud"
-
 	"github.com/stretchr/testify/assert"
+	"mosn.io/layotto/components/file/s3/alicloud"
 )
 
 func TestConfig(t *testing.T) {

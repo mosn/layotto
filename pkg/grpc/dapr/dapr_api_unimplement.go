@@ -18,6 +18,7 @@ package dapr
 
 import (
 	"context"
+	"github.com/dapr/components-contrib/secretstores"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 )
@@ -55,6 +56,12 @@ func (d *daprGrpcAPI) PublishEvent(ctx context.Context, request *runtime.Publish
 }
 
 func (d *daprGrpcAPI) GetSecret(ctx context.Context, request *runtime.GetSecretRequest) (*runtime.GetSecretResponse, error) {
+	req := &secretstores.GetSecretRequest{
+		Name:     request.StoreName,
+		Metadata: request.Metadata,
+	}
+	resp := runtime.GetSecretResponse{}
+
 	panic("implement me")
 }
 

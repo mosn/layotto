@@ -18,35 +18,14 @@ package helloworld
 
 import (
 	"context"
-	"github.com/dapr/components-contrib/bindings"
-	"github.com/dapr/components-contrib/pubsub"
-	"github.com/dapr/components-contrib/secretstores"
-	"github.com/dapr/components-contrib/state"
 	rawGRPC "google.golang.org/grpc"
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
-	"mosn.io/layotto/components/configstores"
-	"mosn.io/layotto/components/file"
-	"mosn.io/layotto/components/hello"
-	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/rpc"
-	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/grpc"
+	grpc_api "mosn.io/layotto/pkg/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 )
 
-func NewHelloWorldAPI(
-	appId string,
-	hellos map[string]hello.HelloService,
-	configStores map[string]configstores.Store,
-	rpcs map[string]rpc.Invoker,
-	pubSubs map[string]pubsub.PubSub,
-	stateStores map[string]state.Store,
-	files map[string]file.File,
-	lockStores map[string]lock.LockStore,
-	sequencers map[string]sequencer.Store,
-	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
-	secretstores map[string]secretstores.SecretStore,
-) grpc.GrpcAPI {
+func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
 	return &server{}
 }
 

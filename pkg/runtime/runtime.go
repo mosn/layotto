@@ -21,12 +21,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dapr/components-contrib/secretstores"
+	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
 	"strings"
 
-	mbindings "mosn.io/layotto/pkg/runtime/bindings"
-	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
-
 	"github.com/dapr/components-contrib/bindings"
+	mbindings "mosn.io/layotto/pkg/runtime/bindings"
 
 	"mosn.io/layotto/components/file"
 
@@ -67,6 +66,7 @@ type MosnRuntime struct {
 	sequencerRegistry    runtime_sequencer.Registry
 	bindingsRegistry     mbindings.Registry
 	secretStoresRegistry msecretstores.Registry
+
 	// component pool
 	hellos         map[string]hello.HelloService
 	configStores   map[string]configstores.Store
@@ -87,28 +87,27 @@ type MosnRuntime struct {
 func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 	info := info.NewRuntimeInfo()
 	return &MosnRuntime{
-		runtimeConfig:        runtimeConfig,
-		info:                 info,
-		helloRegistry:        hello.NewRegistry(info),
-		configStoreRegistry:  configstores.NewRegistry(info),
-		rpcRegistry:          rpc.NewRegistry(info),
-		pubSubRegistry:       runtime_pubsub.NewRegistry(info),
-		stateRegistry:        runtime_state.NewRegistry(info),
-		bindingsRegistry:     mbindings.NewRegistry(info),
-		fileRegistry:         file.NewRegistry(info),
-		lockRegistry:         runtime_lock.NewRegistry(info),
-		sequencerRegistry:    runtime_sequencer.NewRegistry(info),
-		secretStoresRegistry: msecretstores.NewRegistry(info),
-		hellos:               make(map[string]hello.HelloService),
-		configStores:         make(map[string]configstores.Store),
-		rpcs:                 make(map[string]rpc.Invoker),
-		pubSubs:              make(map[string]pubsub.PubSub),
-		states:               make(map[string]state.Store),
-		files:                make(map[string]file.File),
-		locks:                make(map[string]lock.LockStore),
-		sequencers:           make(map[string]sequencer.Store),
-		outputBindings:       make(map[string]bindings.OutputBinding),
-		secretStores:         make(map[string]secretstores.SecretStore),
+		runtimeConfig:       runtimeConfig,
+		info:                info,
+		helloRegistry:       hello.NewRegistry(info),
+		configStoreRegistry: configstores.NewRegistry(info),
+		rpcRegistry:         rpc.NewRegistry(info),
+		pubSubRegistry:      runtime_pubsub.NewRegistry(info),
+		stateRegistry:       runtime_state.NewRegistry(info),
+		bindingsRegistry:    mbindings.NewRegistry(info),
+		fileRegistry:        file.NewRegistry(info),
+		lockRegistry:        runtime_lock.NewRegistry(info),
+		sequencerRegistry:   runtime_sequencer.NewRegistry(info),
+		hellos:              make(map[string]hello.HelloService),
+		configStores:        make(map[string]configstores.Store),
+		rpcs:                make(map[string]rpc.Invoker),
+		pubSubs:             make(map[string]pubsub.PubSub),
+		states:              make(map[string]state.Store),
+		files:               make(map[string]file.File),
+		locks:               make(map[string]lock.LockStore),
+		sequencers:          make(map[string]sequencer.Store),
+		outputBindings:      make(map[string]bindings.OutputBinding),
+		secretStores:        make(map[string]secretstores.SecretStore),
 	}
 }
 
@@ -162,20 +161,22 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	}
 	// create GrpcAPIs
 	var apis []grpc.GrpcAPI
+	ac := &grpc.ApplicationContext{
+		m.runtimeConfig.AppManagement.AppId,
+		m.hellos,
+		m.configStores,
+		m.rpcs,
+		m.pubSubs,
+		m.states,
+		m.files,
+		m.locks,
+		m.sequencers,
+		m.sendToOutputBinding,
+		m.secretStores,
+	}
+
 	for _, apiFactory := range o.apiFactorys {
-		api := apiFactory(
-			m.runtimeConfig.AppManagement.AppId,
-			m.hellos,
-			m.configStores,
-			m.rpcs,
-			m.pubSubs,
-			m.states,
-			m.files,
-			m.locks,
-			m.sequencers,
-			m.sendToOutputBinding,
-			m.secretStores,
-		)
+		api := apiFactory(ac)
 		// init the GrpcAPI
 		if err := api.Init(m.AppCallbackConn); err != nil {
 			return nil, err
