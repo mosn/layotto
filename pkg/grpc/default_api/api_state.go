@@ -14,11 +14,52 @@
 package default_api
 
 import (
+	"context"
 	"github.com/dapr/components-contrib/state"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/layotto/pkg/common"
+	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
+	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	state2 "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
+	_ "net/http/pprof"
+
+	"google.golang.org/grpc/status"
 )
+
+func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (*emptypb.Empty, error) {
+	if in == nil {
+		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "SaveStateRequest is nil")
+	}
+	// convert request
+	daprReq := &dapr_v1pb.SaveStateRequest{
+		StoreName: in.StoreName,
+		States:    convertStatesToDaprPB(in.States),
+	}
+	// delegate to dapr api implementation
+	return a.daprAPI.SaveState(ctx, daprReq)
+}
+
+func convertStatesToDaprPB(states []*runtimev1pb.StateItem) []*dapr_common_v1pb.StateItem {
+	dStates := make([]*dapr_common_v1pb.StateItem, 0)
+	if states == nil {
+		return dStates
+	}
+	for _, s := range states {
+		dStates = append(dStates, &dapr_common_v1pb.StateItem{
+			Key:      s.Key,
+			Value:    s.Value,
+			Etag:     &dapr_common_v1pb.Etag{Value: s.Etag.Value},
+			Metadata: s.Metadata,
+			Options: &dapr_common_v1pb.StateOptions{
+				Concurrency: dapr_common_v1pb.StateOptions_StateConcurrency(s.Options.Concurrency),
+				Consistency: dapr_common_v1pb.StateOptions_StateConsistency(s.Options.Consistency),
+			},
+		})
+	}
+	return dStates
+}
 
 func GetResponse2GetStateResponse(compResp *state.GetResponse) *runtimev1pb.GetStateResponse {
 	resp := &runtimev1pb.GetStateResponse{}

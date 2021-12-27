@@ -612,33 +612,6 @@ func generateGetStateTask(store state.Store, req *state.GetRequest, resultCh cha
 	}
 }
 
-func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (*emptypb.Empty, error) {
-	// 1. get store
-	store, err := a.getStateStore(in.StoreName)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	// 2. convert requests
-	reqs := []state.SetRequest{}
-	for _, s := range in.States {
-		key, err := state2.GetModifiedStateKey(s.Key, in.StoreName, a.appId)
-		if err != nil {
-			return &emptypb.Empty{}, err
-		}
-		reqs = append(reqs, *StateItem2SetRequest(s, key))
-	}
-	// 3. query
-	err = store.BulkSet(reqs)
-	// 4. check result
-	if err != nil {
-		err = a.wrapDaprComponentError(err, messages.ErrStateSave, in.StoreName, err.Error())
-		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	return &emptypb.Empty{}, nil
-}
-
 // wrapDaprComponentError parse and wrap error from dapr component
 func (a *api) wrapDaprComponentError(err error, format string, args ...interface{}) error {
 	e, ok := err.(*state.ETagError)

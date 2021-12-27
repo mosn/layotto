@@ -30,10 +30,6 @@ func (d *daprGrpcAPI) GetBulkState(ctx context.Context, request *runtime.GetBulk
 	panic("implement me")
 }
 
-func (d *daprGrpcAPI) SaveState(ctx context.Context, request *runtime.SaveStateRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
 func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *runtime.QueryStateRequest) (*runtime.QueryStateResponse, error) {
 	panic("implement me")
 }
