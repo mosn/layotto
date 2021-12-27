@@ -20,15 +20,19 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/dapr/components-contrib/bindings"
 	"google.golang.org/grpc/test/bufconn"
+	"mosn.io/layotto/components/hello/helloworld"
+	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
+	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
+	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
+	mbindings "mosn.io/layotto/pkg/runtime/bindings"
+	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"net"
 	"testing"
-
-	"github.com/dapr/components-contrib/bindings"
-	mbindings "mosn.io/layotto/pkg/runtime/bindings"
 
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
@@ -349,6 +353,10 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 		}
 		// 3. Run
 		server, err := rt.Run(
+			// Hello
+			WithHelloFactory(
+				hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),
+			),
 			// register your grpc API here
 			WithGrpcAPI(
 				default_api.NewGrpcAPI,
@@ -356,6 +364,18 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			// PubSub
 			WithPubSubFactory(
 				mpubsub.NewFactory("mock", f),
+			),
+			// Sequencer
+			WithSequencerFactory(
+				runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
+					return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
+				}),
+				runtime_sequencer.NewFactory("redis", func() sequencer.Store {
+					return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
+				}),
+				runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
+					return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+				}),
 			),
 		)
 		// 4. assert
