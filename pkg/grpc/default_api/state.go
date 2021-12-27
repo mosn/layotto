@@ -68,8 +68,8 @@ func StateItem2SetRequest(grpcReq *runtimev1pb.StateItem, key string) *state.Set
 	}
 	if grpcReq.Options != nil {
 		req.Options = state.SetStateOption{
-			Consistency: state2.StateConsistencyToString(int32(grpcReq.Options.Consistency)),
-			Concurrency: state2.StateConcurrencyToString(int32(grpcReq.Options.Concurrency)),
+			Consistency: StateConsistencyToString(grpcReq.Options.Consistency),
+			Concurrency: StateConcurrencyToString(grpcReq.Options.Concurrency),
 		}
 	}
 	return req
@@ -88,8 +88,8 @@ func DeleteStateRequest2DeleteRequest(grpcReq *runtimev1pb.DeleteStateRequest, k
 	}
 	if grpcReq.Options != nil {
 		req.Options = state.DeleteStateOption{
-			Concurrency: state2.StateConcurrencyToString(int32(grpcReq.Options.Concurrency)),
-			Consistency: state2.StateConsistencyToString(int32(grpcReq.Options.Consistency)),
+			Concurrency: StateConcurrencyToString(grpcReq.Options.Concurrency),
+			Consistency: StateConsistencyToString(grpcReq.Options.Consistency),
 		}
 	}
 	return req
@@ -108,9 +108,31 @@ func StateItem2DeleteRequest(grpcReq *runtimev1pb.StateItem, key string) *state.
 	}
 	if grpcReq.Options != nil {
 		req.Options = state.DeleteStateOption{
-			Concurrency: state2.StateConcurrencyToString(int32(grpcReq.Options.Concurrency)),
-			Consistency: state2.StateConsistencyToString(int32(grpcReq.Options.Consistency)),
+			Concurrency: StateConcurrencyToString(grpcReq.Options.Concurrency),
+			Consistency: StateConsistencyToString(grpcReq.Options.Consistency),
 		}
 	}
 	return req
+}
+
+func StateConsistencyToString(c runtimev1pb.StateOptions_StateConsistency) string {
+	switch c {
+	case runtimev1pb.StateOptions_CONSISTENCY_EVENTUAL:
+		return "eventual"
+	case runtimev1pb.StateOptions_CONSISTENCY_STRONG:
+		return "strong"
+	}
+
+	return ""
+}
+
+func StateConcurrencyToString(c runtimev1pb.StateOptions_StateConcurrency) string {
+	switch c {
+	case runtimev1pb.StateOptions_CONCURRENCY_FIRST_WRITE:
+		return "first-write"
+	case runtimev1pb.StateOptions_CONCURRENCY_LAST_WRITE:
+		return "last-write"
+	}
+
+	return ""
 }

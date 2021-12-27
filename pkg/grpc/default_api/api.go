@@ -501,7 +501,7 @@ func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*r
 		Key:      key,
 		Metadata: in.Metadata,
 		Options: state.GetStateOption{
-			Consistency: state2.StateConsistencyToString(int32(in.Consistency)),
+			Consistency: StateConsistencyToString(in.Consistency),
 		},
 	}
 	// 3. query
