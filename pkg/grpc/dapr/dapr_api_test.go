@@ -181,7 +181,7 @@ func TestNewDaprAPI_SecretStores(t *testing.T) {
 			key:              "error-key",
 			errorExcepted:    true,
 			expectedResponse: "",
-			expectedError:    codes.Internal,
+			expectedError:    codes.PermissionDenied,
 		},
 		{
 			testName:         "Random Key restricted store access",

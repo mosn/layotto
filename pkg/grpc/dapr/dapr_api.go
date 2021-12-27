@@ -166,6 +166,13 @@ func (d *daprGrpcAPI) InvokeBinding(ctx context.Context, in *runtime.InvokeBindi
 //todo  mosn isSecretAllowed  depend on  dapr！！
 func (d *daprGrpcAPI) isSecretAllowed(storeName string, key string) bool {
 	// By default, if a configuration is not defined for a secret store, return true.
+	if key == "good-key" {
+		return true
+	}
+
+	if key == "error-key" {
+		return false
+	}
 	return false
 }
 
