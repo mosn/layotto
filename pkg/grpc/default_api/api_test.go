@@ -584,52 +584,6 @@ func TestGetState(t *testing.T) {
 
 }
 
-func TestSaveState(t *testing.T) {
-	t.Run("normal", func(t *testing.T) {
-		ctrl := gomock.NewController(t)
-		mockStore := mock_state.NewMockStore(ctrl)
-		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().BulkSet(gomock.Any()).DoAndReturn(func(reqs []state.SetRequest) error {
-			assert.Equal(t, 1, len(reqs))
-			assert.Equal(t, "abc", reqs[0].Key)
-			assert.Equal(t, []byte("mock data"), reqs[0].Value)
-			return nil
-		})
-		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil)
-		req := &runtimev1pb.SaveStateRequest{
-			StoreName: "mock",
-			States: []*runtimev1pb.StateItem{
-				{
-					Key:   "abc",
-					Value: []byte("mock data"),
-				},
-			},
-		}
-		_, err := api.SaveState(context.Background(), req)
-		assert.Nil(t, err)
-	})
-
-	t.Run("save error", func(t *testing.T) {
-		ctrl := gomock.NewController(t)
-		mockStore := mock_state.NewMockStore(ctrl)
-		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().BulkSet(gomock.Any()).Return(fmt.Errorf("net error"))
-		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil)
-		req := &runtimev1pb.SaveStateRequest{
-			StoreName: "mock",
-			States: []*runtimev1pb.StateItem{
-				{
-					Key:   "abc",
-					Value: []byte("mock data"),
-				},
-			},
-		}
-		_, err := api.SaveState(context.Background(), req)
-		assert.NotNil(t, err)
-		assert.Equal(t, "rpc error: code = Internal desc = failed saving state in state store mock: net error", err.Error())
-	})
-}
-
 func TestDeleteState(t *testing.T) {
 	t.Run("normal", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
