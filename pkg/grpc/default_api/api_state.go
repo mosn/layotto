@@ -47,20 +47,21 @@ func convertStatesToDaprPB(states []*runtimev1pb.StateItem) []*dapr_common_v1pb.
 		return dStates
 	}
 	for _, s := range states {
-		var etag *dapr_common_v1pb.Etag
-		if s.Etag == nil {
-			etag = &dapr_common_v1pb.Etag{Value: s.Etag.Value}
-		}
-		dStates = append(dStates, &dapr_common_v1pb.StateItem{
+		ds := &dapr_common_v1pb.StateItem{
 			Key:      s.Key,
 			Value:    s.Value,
-			Etag:     etag,
 			Metadata: s.Metadata,
-			Options: &dapr_common_v1pb.StateOptions{
+		}
+		if s.Etag != nil {
+			ds.Etag = &dapr_common_v1pb.Etag{Value: s.Etag.Value}
+		}
+		if s.Options != nil {
+			ds.Options = &dapr_common_v1pb.StateOptions{
 				Concurrency: dapr_common_v1pb.StateOptions_StateConcurrency(s.Options.Concurrency),
 				Consistency: dapr_common_v1pb.StateOptions_StateConsistency(s.Options.Consistency),
-			},
-		})
+			}
+		}
+		dStates = append(dStates, ds)
 	}
 	return dStates
 }
