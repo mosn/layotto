@@ -104,7 +104,7 @@ func (a *api) getInterestedTopics() (map[string]TopicSubscriptions, error) {
 
 	// 2. handle app subscriptions
 	client := runtimev1pb.NewAppCallbackClient(a.AppCallbackConn)
-	subscriptions = ListTopicSubscriptions(client, log.DefaultLogger)
+	subscriptions = listTopicSubscriptions(client, log.DefaultLogger)
 	// TODO handle declarative subscriptions
 
 	// 3. prepare result

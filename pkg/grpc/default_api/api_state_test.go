@@ -25,6 +25,42 @@ import (
 )
 
 func TestSaveState(t *testing.T) {
+	t.Run("error when request is nil", func(t *testing.T) {
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		_, err := api.SaveState(context.Background(), nil)
+		assert.NotNil(t, err)
+	})
+	t.Run("error when no state store registered", func(t *testing.T) {
+		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{}, nil, nil, nil, nil)
+		req := &runtimev1pb.SaveStateRequest{
+			StoreName: "mock",
+			States: []*runtimev1pb.StateItem{
+				{
+					Key:   "abc",
+					Value: []byte("mock data"),
+				},
+			},
+		}
+		_, err := api.SaveState(context.Background(), req)
+		assert.NotNil(t, err)
+	})
+	t.Run("error when store name wrong", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		mockStore := mock_state.NewMockStore(ctrl)
+		mockStore.EXPECT().Features().Return(nil)
+		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil)
+		req := &runtimev1pb.SaveStateRequest{
+			StoreName: "mock1",
+			States: []*runtimev1pb.StateItem{
+				{
+					Key:   "abc",
+					Value: []byte("mock data"),
+				},
+			},
+		}
+		_, err := api.SaveState(context.Background(), req)
+		assert.NotNil(t, err)
+	})
 	t.Run("normal", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)

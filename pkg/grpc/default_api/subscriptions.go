@@ -23,10 +23,10 @@ import (
 	"mosn.io/pkg/log"
 )
 
-func ListTopicSubscriptions(client runtimev1pb.AppCallbackClient, log log.ErrorLogger) []*runtimev1pb.TopicSubscription {
+func listTopicSubscriptions(client runtimev1pb.AppCallbackClient, log log.ErrorLogger) []*runtimev1pb.TopicSubscription {
 	resp, err := client.ListTopicSubscriptions(context.Background(), &emptypb.Empty{})
 	if err != nil {
-		log.Errorf("[runtime][ListTopicSubscriptions]error after callback: %s", err)
+		log.Errorf("[runtime][listTopicSubscriptions]error after callback: %s", err)
 		return make([]*runtimev1pb.TopicSubscription, 0)
 	}
 	if resp != nil && len(resp.Subscriptions) > 0 {
