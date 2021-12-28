@@ -20,14 +20,13 @@ import (
 	"context"
 	_ "net/http/pprof"
 
-	"github.com/dapr/components-contrib/state"
+	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-
-	"google.golang.org/grpc/status"
 )
 
 // GetState obtains the state for a specific key.
@@ -45,7 +44,11 @@ func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*r
 	if err != nil {
 		return &runtimev1pb.GetStateResponse{}, err
 	}
-	return convertGetStateResponseToRuntimeResponse(resp), nil
+	return &runtimev1pb.GetStateResponse{
+		Data:     resp.GetData(),
+		Etag:     resp.GetEtag(),
+		Metadata: resp.GetMetadata(),
+	}, nil
 }
 
 func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (*emptypb.Empty, error) {
@@ -75,7 +78,67 @@ func (a *api) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequ
 	if err != nil {
 		return &runtimev1pb.GetBulkStateResponse{}, err
 	}
-	return convertGetBulkStateResponseToRuntimeResponse(resp), nil
+	ret := &runtimev1pb.GetBulkStateResponse{Items: make([]*runtimev1pb.BulkStateItem, 0)}
+	for _, item := range resp.Items {
+		ret.Items = append(ret.Items, &runtimev1pb.BulkStateItem{
+			Key:      item.GetKey(),
+			Data:     item.GetData(),
+			Etag:     item.GetEtag(),
+			Error:    item.GetError(),
+			Metadata: item.GetMetadata(),
+		})
+	}
+	return ret, nil
+}
+
+func (a *api) DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateRequest) (*emptypb.Empty, error) {
+	if in == nil {
+		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "DeleteStateRequest is nil")
+	}
+	daprReq := &dapr_v1pb.DeleteStateRequest{
+		StoreName: in.GetStoreName(),
+		Key:       in.GetKey(),
+		Etag:      convertEtagToDaprPB(in.Etag),
+		Options:   convertOptionsToDaprPB(in.Options),
+		Metadata:  in.GetMetadata(),
+	}
+	return a.daprAPI.DeleteState(ctx, daprReq)
+}
+
+func (a *api) DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkStateRequest) (*empty.Empty, error) {
+	if in == nil {
+		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "DeleteBulkStateRequest is nil")
+	}
+	daprReq := &dapr_v1pb.DeleteBulkStateRequest{
+		StoreName: in.GetStoreName(),
+		States:    convertStatesToDaprPB(in.States),
+	}
+	return a.daprAPI.DeleteBulkState(ctx, daprReq)
+}
+
+func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*emptypb.Empty, error) {
+	if in == nil {
+		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "ExecuteStateTransactionRequest is nil")
+	}
+	daprReq := &dapr_v1pb.ExecuteStateTransactionRequest{
+		StoreName:  in.GetStoreName(),
+		Operations: convertTransactionalStateOperationToDaprPB(in.Operations),
+		Metadata:   in.GetMetadata(),
+	}
+	return a.daprAPI.ExecuteStateTransaction(ctx, daprReq)
+}
+
+// some code for converting from runtimev1pb to dapr_common_v1pb
+
+func convertEtagToDaprPB(etag *runtimev1pb.Etag) *dapr_common_v1pb.Etag {
+	return &dapr_common_v1pb.Etag{Value: etag.GetValue()}
+}
+
+func convertOptionsToDaprPB(op *runtimev1pb.StateOptions) *dapr_common_v1pb.StateOptions {
+	return &dapr_common_v1pb.StateOptions{
+		Concurrency: dapr_common_v1pb.StateOptions_StateConcurrency(op.Concurrency),
+		Consistency: dapr_common_v1pb.StateOptions_StateConsistency(op.Consistency),
+	}
 }
 
 func convertStatesToDaprPB(states []*runtimev1pb.StateItem) []*dapr_common_v1pb.StateItem {
@@ -90,121 +153,30 @@ func convertStatesToDaprPB(states []*runtimev1pb.StateItem) []*dapr_common_v1pb.
 			Metadata: s.Metadata,
 		}
 		if s.Etag != nil {
-			ds.Etag = &dapr_common_v1pb.Etag{Value: s.Etag.Value}
+			ds.Etag = convertEtagToDaprPB(s.Etag)
 		}
 		if s.Options != nil {
-			ds.Options = &dapr_common_v1pb.StateOptions{
-				Concurrency: dapr_common_v1pb.StateOptions_StateConcurrency(s.Options.Concurrency),
-				Consistency: dapr_common_v1pb.StateOptions_StateConsistency(s.Options.Consistency),
-			}
+			ds.Options = convertOptionsToDaprPB(s.Options)
 		}
 		dStates = append(dStates, ds)
 	}
 	return dStates
 }
 
-func convertGetStateResponseToRuntimeResponse(response *dapr_v1pb.GetStateResponse) *runtimev1pb.GetStateResponse {
-	res := &runtimev1pb.GetStateResponse{
-		Data:     response.GetData(),
-		Etag:     response.GetEtag(),
-		Metadata: response.GetMetadata(),
-	}
-	return res
-}
-
-func convertGetBulkStateResponseToRuntimeResponse(resp *dapr_v1pb.GetBulkStateResponse) *runtimev1pb.GetBulkStateResponse {
-	ret := &runtimev1pb.GetBulkStateResponse{Items: make([]*runtimev1pb.BulkStateItem, 0)}
-	for _, item := range resp.Items {
-		ret.Items = append(ret.Items, &runtimev1pb.BulkStateItem{
-			Key:      item.GetKey(),
-			Data:     item.GetData(),
-			Etag:     item.GetEtag(),
-			Error:    item.GetError(),
-			Metadata: item.GetMetadata(),
-		})
+func convertTransactionalStateOperationToDaprPB(ops []*runtimev1pb.TransactionalStateOperation) []*dapr_v1pb.TransactionalStateOperation {
+	ret := make([]*dapr_v1pb.TransactionalStateOperation, len(ops))
+	for i := 0; i < len(ops); i++ {
+		op := ops[i]
+		ret[i] = &dapr_v1pb.TransactionalStateOperation{
+			OperationType: op.OperationType,
+			Request: &dapr_common_v1pb.StateItem{
+				Key:      op.GetRequest().GetKey(),
+				Value:    op.GetRequest().GetValue(),
+				Etag:     convertEtagToDaprPB(op.GetRequest().GetEtag()),
+				Metadata: op.GetRequest().GetMetadata(),
+				Options:  convertOptionsToDaprPB(op.GetRequest().GetOptions()),
+			},
+		}
 	}
 	return ret
-}
-
-func StateItem2SetRequest(grpcReq *runtimev1pb.StateItem, key string) *state.SetRequest {
-	req := &state.SetRequest{
-		Key: key,
-	}
-	if grpcReq == nil {
-		return req
-	}
-	req.Metadata = grpcReq.Metadata
-	req.Value = grpcReq.Value
-	if grpcReq.Etag != nil {
-		req.ETag = &grpcReq.Etag.Value
-	}
-	if grpcReq.Options != nil {
-		req.Options = state.SetStateOption{
-			Consistency: StateConsistencyToString(grpcReq.Options.Consistency),
-			Concurrency: StateConcurrencyToString(grpcReq.Options.Concurrency),
-		}
-	}
-	return req
-}
-
-func DeleteStateRequest2DeleteRequest(grpcReq *runtimev1pb.DeleteStateRequest, key string) *state.DeleteRequest {
-	req := &state.DeleteRequest{
-		Key: key,
-	}
-	if grpcReq == nil {
-		return req
-	}
-	req.Metadata = grpcReq.Metadata
-	if grpcReq.Etag != nil {
-		req.ETag = &grpcReq.Etag.Value
-	}
-	if grpcReq.Options != nil {
-		req.Options = state.DeleteStateOption{
-			Concurrency: StateConcurrencyToString(grpcReq.Options.Concurrency),
-			Consistency: StateConsistencyToString(grpcReq.Options.Consistency),
-		}
-	}
-	return req
-}
-
-func StateItem2DeleteRequest(grpcReq *runtimev1pb.StateItem, key string) *state.DeleteRequest {
-	req := &state.DeleteRequest{
-		Key: key,
-	}
-	if grpcReq == nil {
-		return req
-	}
-	req.Metadata = grpcReq.Metadata
-	if grpcReq.Etag != nil {
-		req.ETag = &grpcReq.Etag.Value
-	}
-	if grpcReq.Options != nil {
-		req.Options = state.DeleteStateOption{
-			Concurrency: StateConcurrencyToString(grpcReq.Options.Concurrency),
-			Consistency: StateConsistencyToString(grpcReq.Options.Consistency),
-		}
-	}
-	return req
-}
-
-func StateConsistencyToString(c runtimev1pb.StateOptions_StateConsistency) string {
-	switch c {
-	case runtimev1pb.StateOptions_CONSISTENCY_EVENTUAL:
-		return "eventual"
-	case runtimev1pb.StateOptions_CONSISTENCY_STRONG:
-		return "strong"
-	}
-
-	return ""
-}
-
-func StateConcurrencyToString(c runtimev1pb.StateOptions_StateConcurrency) string {
-	switch c {
-	case runtimev1pb.StateOptions_CONCURRENCY_FIRST_WRITE:
-		return "first-write"
-	case runtimev1pb.StateOptions_CONCURRENCY_LAST_WRITE:
-		return "last-write"
-	}
-
-	return ""
 }
