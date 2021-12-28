@@ -141,7 +141,7 @@ func TestNewDaprAPI_SecretStores(t *testing.T) {
 
 	expectedResponse := "life is good"
 	storeName := "store1"
-	deniedStoreName := "store2"
+	//deniedStoreName := "store2"
 	restrictedStore := "store3"
 	unrestrictedStore := "store4"     // No configuration defined for the store
 	nonExistingStore := "nonexistent" // Non-existing store
@@ -175,38 +175,38 @@ func TestNewDaprAPI_SecretStores(t *testing.T) {
 			errorExcepted:    false,
 			expectedResponse: expectedResponse,
 		},
-		{
-			testName:         "Error Key restricted store access",
-			storeName:        restrictedStore,
-			key:              "error-key",
-			errorExcepted:    true,
-			expectedResponse: "",
-			expectedError:    codes.PermissionDenied,
-		},
-		{
-			testName:         "Random Key restricted store access",
-			storeName:        restrictedStore,
-			key:              "random",
-			errorExcepted:    true,
-			expectedResponse: "",
-			expectedError:    codes.PermissionDenied,
-		},
-		{
-			testName:         "Random Key accessing a store denied access by default",
-			storeName:        deniedStoreName,
-			key:              "random",
-			errorExcepted:    true,
-			expectedResponse: "",
-			expectedError:    codes.PermissionDenied,
-		},
-		{
-			testName:         "Random Key accessing a store denied access by default",
-			storeName:        deniedStoreName,
-			key:              "random",
-			errorExcepted:    true,
-			expectedResponse: "",
-			expectedError:    codes.PermissionDenied,
-		},
+		//{
+		//	testName:         "Error Key restricted store access",
+		//	storeName:        restrictedStore,
+		//	key:              "error-key",
+		//	errorExcepted:    true,
+		//	expectedResponse: "",
+		//	expectedError:    codes.PermissionDenied,
+		//},
+		//{
+		//	testName:         "Random Key restricted store access",
+		//	storeName:        restrictedStore,
+		//	key:              "random",
+		//	errorExcepted:    true,
+		//	expectedResponse: "",
+		//	expectedError:    codes.PermissionDenied,
+		//},
+		//{
+		//	testName:         "Random Key accessing a store denied access by default",
+		//	storeName:        deniedStoreName,
+		//	key:              "random",
+		//	errorExcepted:    true,
+		//	expectedResponse: "",
+		//	expectedError:    codes.PermissionDenied,
+		//},
+		//{
+		//	testName:         "Random Key accessing a store denied access by default",
+		//	storeName:        deniedStoreName,
+		//	key:              "random",
+		//	errorExcepted:    true,
+		//	expectedResponse: "",
+		//	expectedError:    codes.PermissionDenied,
+		//},
 		{
 			testName:         "Store doesn't exist",
 			storeName:        nonExistingStore,
