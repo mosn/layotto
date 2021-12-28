@@ -18,13 +18,8 @@ package dapr
 
 import (
 	"context"
-	"github.com/dapr/components-contrib/secretstores"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
-	"mosn.io/layotto/pkg/messages"
-	"mosn.io/pkg/log"
 )
 
 func (d *daprGrpcAPI) GetState(ctx context.Context, request *runtime.GetStateRequest) (*runtime.GetStateResponse, error) {
@@ -57,82 +52,6 @@ func (d *daprGrpcAPI) ExecuteStateTransaction(ctx context.Context, request *runt
 
 func (d *daprGrpcAPI) PublishEvent(ctx context.Context, request *runtime.PublishEventRequest) (*emptypb.Empty, error) {
 	panic("implement me")
-}
-
-func (d *daprGrpcAPI) GetSecret(ctx context.Context, request *runtime.GetSecretRequest) (*runtime.GetSecretResponse, error) {
-	if d.secretStores == nil || len(d.secretStores) == 0 {
-		err := status.Error(codes.FailedPrecondition, messages.ErrSecretStoreNotConfigured)
-		return &runtime.GetSecretResponse{}, err
-	}
-
-	secretStoreName := request.StoreName
-
-	if d.secretStores[secretStoreName] == nil {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrSecretStoreNotFound, secretStoreName)
-		return &runtime.GetSecretResponse{}, err
-	}
-
-	if !d.isSecretAllowed(request.StoreName, request.Key) {
-		err := status.Errorf(codes.PermissionDenied, messages.ErrPermissionDenied, request.Key, request.StoreName)
-		return &runtime.GetSecretResponse{}, err
-	}
-
-	req := secretstores.GetSecretRequest{
-		Name:     request.Key,
-		Metadata: request.Metadata,
-	}
-
-	getResponse, err := d.secretStores[secretStoreName].GetSecret(req)
-	if err != nil {
-		err = status.Errorf(codes.Internal, messages.ErrSecretGet, req.Name, secretStoreName, err.Error())
-		return &runtime.GetSecretResponse{}, err
-	}
-
-	response := &runtime.GetSecretResponse{}
-	if getResponse.Data != nil {
-		response.Data = getResponse.Data
-	}
-	return response, nil
-}
-
-func (d *daprGrpcAPI) GetBulkSecret(ctx context.Context, request *runtime.GetBulkSecretRequest) (*runtime.GetBulkSecretResponse, error) {
-	if d.secretStores == nil || len(d.secretStores) == 0 {
-		err := status.Error(codes.FailedPrecondition, messages.ErrSecretStoreNotConfigured)
-		return &runtime.GetBulkSecretResponse{}, err
-	}
-	secretStoreName := request.StoreName
-	if d.secretStores[secretStoreName] == nil {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrSecretStoreNotFound, secretStoreName)
-		return &runtime.GetBulkSecretResponse{}, err
-	}
-
-	req := secretstores.BulkGetSecretRequest{
-		Metadata: request.Metadata,
-	}
-
-	getResponse, err := d.secretStores[secretStoreName].BulkGetSecret(req)
-	if err != nil {
-		err = status.Errorf(codes.Internal, messages.ErrBulkSecretGet, secretStoreName, err.Error())
-		return &runtime.GetBulkSecretResponse{}, err
-	}
-
-	filteredSecrets := map[string]map[string]string{}
-	for key, v := range getResponse.Data {
-		if d.isSecretAllowed(secretStoreName, key) {
-			filteredSecrets[key] = v
-		} else {
-			log.DefaultLogger.Debugf(messages.ErrPermissionDenied, key, request.StoreName)
-		}
-	}
-
-	response := &runtime.GetBulkSecretResponse{}
-	if getResponse.Data != nil {
-		response.Data = map[string]*runtime.SecretResponse{}
-		for key, v := range filteredSecrets {
-			response.Data[key] = &runtime.SecretResponse{Secrets: v}
-		}
-	}
-	return response, nil
 }
 
 func (d *daprGrpcAPI) RegisterActorTimer(ctx context.Context, request *runtime.RegisterActorTimerRequest) (*emptypb.Empty, error) {

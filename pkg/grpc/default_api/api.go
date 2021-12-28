@@ -1129,79 +1129,43 @@ func (a *api) InvokeBinding(ctx context.Context, in *runtimev1pb.InvokeBindingRe
 }
 
 func (a *api) GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest) (*runtimev1pb.GetSecretResponse, error) {
-
-	if a.secretStores == nil || len(a.secretStores) == 0 {
-		err := status.Error(codes.FailedPrecondition, messages.ErrSecretStoreNotConfigured)
-		log.DefaultLogger.Errorf("GetSecret fail,not configured err:%+v", err)
-		return &runtimev1pb.GetSecretResponse{}, err
-	}
-
-	secretStoreName := in.StoreName
-
-	if a.secretStores[secretStoreName] == nil {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrSecretStoreNotFound, secretStoreName)
-		log.DefaultLogger.Errorf("GetSecret fail,not find err:%+v", err)
-		return &runtimev1pb.GetSecretResponse{}, err
-	}
-
-	req := secretstores.GetSecretRequest{
-		Name:     in.Key,
-		Metadata: in.Metadata,
-	}
-
-	getResponse, err := a.secretStores[secretStoreName].GetSecret(req)
+	daprResp, err := a.daprAPI.GetSecret(ctx, &dapr_v1pb.GetSecretRequest{
+		StoreName: in.StoreName,
+		Key:       in.Key,
+		Metadata:  in.Metadata,
+	})
 	if err != nil {
-		err = status.Errorf(codes.Internal, messages.ErrSecretGet, req.Name, secretStoreName, err.Error())
-		log.DefaultLogger.Errorf("GetSecret fail,get secret err:%+v", err)
 		return &runtimev1pb.GetSecretResponse{}, err
 	}
-
-	response := &runtimev1pb.GetSecretResponse{}
-	if getResponse.Data != nil {
-		response.Data = getResponse.Data
-	}
-	return response, nil
+	return &runtimev1pb.GetSecretResponse{Data: daprResp.Data}, nil
 }
 
 func (a *api) GetBulkSecret(ctx context.Context, in *runtimev1pb.GetBulkSecretRequest) (*runtimev1pb.GetBulkSecretResponse, error) {
-	if a.secretStores == nil || len(a.secretStores) == 0 {
-		err := status.Error(codes.FailedPrecondition, messages.ErrSecretStoreNotConfigured)
-		log.DefaultLogger.Errorf("GetBulkSecret fail,not configured err:%+v", err)
-		return &runtimev1pb.GetBulkSecretResponse{}, err
-	}
-
-	secretStoreName := in.StoreName
-
-	if a.secretStores[secretStoreName] == nil {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrSecretStoreNotFound, secretStoreName)
-		log.DefaultLogger.Errorf("GetBulkSecret fail,not find err:%+v", err)
-		return &runtimev1pb.GetBulkSecretResponse{}, err
-	}
-
-	req := secretstores.BulkGetSecretRequest{
-		Metadata: in.Metadata,
-	}
-
-	getResponse, err := a.secretStores[secretStoreName].BulkGetSecret(req)
+	daprResp, err := a.daprAPI.GetBulkSecret(ctx, &dapr_v1pb.GetBulkSecretRequest{
+		StoreName: in.StoreName,
+		Metadata:  in.Metadata,
+	})
 	if err != nil {
-		err = status.Errorf(codes.Internal, messages.ErrBulkSecretGet, secretStoreName, err.Error())
-		log.DefaultLogger.Errorf("GetBulkSecret fail,bulk secret err:%+v", err)
 		return &runtimev1pb.GetBulkSecretResponse{}, err
 	}
+	return &runtimev1pb.GetBulkSecretResponse{
+		Data: convertSecretResponseMap(daprResp.Data),
+	}, nil
+}
 
-	filteredSecrets := map[string]map[string]string{}
-
-	// Later reserved check permission logic
-	for key, v := range getResponse.Data {
-		filteredSecrets[key] = v
+func convertSecretResponseMap(data map[string]*dapr_v1pb.SecretResponse) map[string]*runtimev1pb.SecretResponse {
+	if data == nil {
+		return nil
 	}
-
-	response := &runtimev1pb.GetBulkSecretResponse{}
-	if getResponse.Data != nil {
-		response.Data = map[string]*runtimev1pb.SecretResponse{}
-		for key, v := range filteredSecrets {
-			response.Data[key] = &runtimev1pb.SecretResponse{Secrets: v}
+	result := make(map[string]*runtimev1pb.SecretResponse)
+	for k, v := range data {
+		var converted *runtimev1pb.SecretResponse
+		if v != nil {
+			converted = &runtimev1pb.SecretResponse{
+				Secrets: v.Secrets,
+			}
 		}
+		result[k] = converted
 	}
-	return response, nil
+	return result
 }
