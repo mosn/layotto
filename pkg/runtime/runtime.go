@@ -516,12 +516,6 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFa
 
 		// 2.3. save runtime related configs
 		m.secretStores[name] = comp
-		v := actuators.GetIndicatorWithName(name)
-		//Now don't force user implement actuator of components
-		if v != nil {
-			health.AddLivenessIndicator(name, v.LivenessIndicator)
-			health.AddReadinessIndicator(name, v.ReadinessIndicator)
-		}
 	}
 	return nil
 }
