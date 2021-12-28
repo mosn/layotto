@@ -1201,9 +1201,9 @@ func TestGetSecret(t *testing.T) {
 		},
 	}
 	// Setup API server
-	fakeAPI := &api{
-		secretStores: fakeStores,
-	}
+	fakeAPI := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil,
+		nil, fakeStores)
+
 	// Run test server
 	port, _ := freeport.GetFreePort()
 	server := startTestRuntimeAPIServer(port, fakeAPI)
@@ -1258,9 +1258,9 @@ func TestGetBulkSecret(t *testing.T) {
 		},
 	}
 	// Setup API server
-	fakeAPI := &api{
-		secretStores: fakeStores,
-	}
+	fakeAPI := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil,
+		nil, fakeStores)
+
 	// Run test server
 	port, _ := freeport.GetFreePort()
 	server := startTestRuntimeAPIServer(port, fakeAPI)
