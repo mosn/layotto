@@ -130,7 +130,7 @@ func createTestClient(port int) *grpc.ClientConn {
 	return conn
 }
 
-func TestNewDaprAPI_SecretStores(t *testing.T) {
+func TestNewDaprAPI_GetSecretStores(t *testing.T) {
 	fakeStore := secret.FakeSecretStore{}
 	fakeStores := map[string]secretstores.SecretStore{
 		"store1": fakeStore,
@@ -261,6 +261,80 @@ func TestNewDaprAPI_SecretStores(t *testing.T) {
 				assert.Equal(t, tt.expectedError, status.Code(err))
 			}
 
+		})
+	}
+}
+
+func TestGetBulkSecret(t *testing.T) {
+	fakeStore := secret.FakeSecretStore{}
+	fakeStores := map[string]secretstores.SecretStore{
+		"store1": fakeStore,
+	}
+
+	expectedResponse := "life is good"
+
+	testCases := []struct {
+		testName         string
+		storeName        string
+		key              string
+		errorExcepted    bool
+		expectedResponse string
+		expectedError    codes.Code
+	}{
+		{
+			testName:         "Good Key from unrestricted store",
+			storeName:        "store1",
+			key:              "good-key",
+			errorExcepted:    false,
+			expectedResponse: expectedResponse,
+		},
+	}
+	// Setup Dapr API server
+	// Setup Dapr API server
+	grpcAPI := NewDaprAPI_Alpha(&grpc_api.ApplicationContext{
+		"", nil, nil, nil, nil,
+		nil, nil, nil, nil,
+		nil, fakeStores})
+	// Run test server
+	err := grpcAPI.Init(nil)
+	if err != nil {
+		t.Errorf("grpcAPI.Init error")
+		return
+	}
+	// test type assertion
+	_, ok := grpcAPI.(dapr_v1pb.DaprServer)
+	if !ok {
+		t.Errorf("Can not cast grpcAPI to DaprServer")
+		return
+	}
+	srv, ok := grpcAPI.(DaprGrpcAPI)
+	if !ok {
+		t.Errorf("Can not cast grpcAPI to DaprServer")
+		return
+	}
+	port, _ := freeport.GetFreePort()
+	server := startDaprServerForTest(port, srv)
+	defer server.Stop()
+
+	clientConn := createTestClient(port)
+	defer clientConn.Close()
+
+	client := dapr_v1pb.NewDaprClient(clientConn)
+
+	for _, tt := range testCases {
+		t.Run(tt.testName, func(t *testing.T) {
+			req := &dapr_v1pb.GetBulkSecretRequest{
+				StoreName: tt.storeName,
+			}
+			resp, err := client.GetBulkSecret(context.Background(), req)
+
+			if !tt.errorExcepted {
+				assert.NoError(t, err, "Expected no error")
+				assert.Equal(t, resp.Data[tt.key].Secrets[tt.key], tt.expectedResponse, "Expected responses to be same")
+			} else {
+				assert.Error(t, err, "Expected error")
+				assert.Equal(t, tt.expectedError, status.Code(err))
+			}
 		})
 	}
 }
