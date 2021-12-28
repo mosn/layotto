@@ -21,13 +21,14 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
+	"sync"
+
 	grpc_api "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
-	"strings"
-	"sync"
 
 	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 
@@ -38,7 +39,6 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/dapr/components-contrib/state"
-	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
 	"mosn.io/layotto/components/file"
 
@@ -485,38 +485,6 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 	return &emptypb.Empty{}, nil
 }
 
-// GetState obtains the state for a specific key.
-func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*runtimev1pb.GetStateResponse, error) {
-	// 1. get store
-	store, err := a.getStateStore(in.StoreName)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.GetState] error: %v", err)
-		return nil, err
-	}
-	// 2. generate the actual key
-	key, err := runtime_state.GetModifiedStateKey(in.Key, in.StoreName, a.appId)
-	if err != nil {
-		return &runtimev1pb.GetStateResponse{}, err
-	}
-	req := state.GetRequest{
-		Key:      key,
-		Metadata: in.Metadata,
-		Options: state.GetStateOption{
-			Consistency: runtime_state.StateConsistencyToString(in.Consistency),
-		},
-	}
-	// 3. query
-	compResp, err := store.Get(&req)
-	// 4. check result
-	if err != nil {
-		err = status.Errorf(codes.Internal, messages.ErrStateGet, in.Key, in.StoreName, err.Error())
-		log.DefaultLogger.Errorf("[runtime] [grpc.GetState] %v", err)
-		return &runtimev1pb.GetStateResponse{}, err
-	}
-
-	return converter.GetResponse2GetStateResponse(compResp), nil
-}
-
 func (a *api) getStateStore(name string) (state.Store, error) {
 	if a.stateStores == nil || len(a.stateStores) == 0 {
 		return nil, status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
@@ -526,67 +494,6 @@ func (a *api) getStateStore(name string) (state.Store, error) {
 		return nil, status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, name)
 	}
 	return a.stateStores[name], nil
-}
-
-func (a *api) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequest) (*runtimev1pb.GetBulkStateResponse, error) {
-	// 1. get store
-	store, err := a.getStateStore(in.StoreName)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.GetBulkState] error: %v", err)
-		return &runtimev1pb.GetBulkStateResponse{}, err
-	}
-
-	bulkResp := &runtimev1pb.GetBulkStateResponse{}
-	if len(in.Keys) == 0 {
-		return bulkResp, nil
-	}
-
-	// 2. store.BulkGet
-	// 2.1. convert reqs
-	reqs := make([]state.GetRequest, len(in.Keys))
-	for i, k := range in.Keys {
-		key, err := runtime_state.GetModifiedStateKey(k, in.StoreName, a.appId)
-		if err != nil {
-			return &runtimev1pb.GetBulkStateResponse{}, err
-		}
-		r := state.GetRequest{
-			Key:      key,
-			Metadata: in.Metadata,
-		}
-		reqs[i] = r
-	}
-	// 2.2. query
-	support, responses, err := store.BulkGet(reqs)
-	if err != nil {
-		return bulkResp, err
-	}
-	// 2.3. parse and return result if store supports this method
-	if support {
-		for i := 0; i < len(responses); i++ {
-			bulkResp.Items = append(bulkResp.Items, converter.BulkGetResponse2BulkStateItem(&responses[i]))
-		}
-		return bulkResp, nil
-	}
-
-	// 3. Simulate the method if the store doesn't support it
-	n := len(reqs)
-	pool := workerpool.New(int(in.Parallelism))
-	resultCh := make(chan *runtimev1pb.BulkStateItem, n)
-	for i := 0; i < n; i++ {
-		pool.Submit(generateGetStateTask(store, &reqs[i], resultCh))
-	}
-	pool.StopWait()
-	for {
-		select {
-		case item, ok := <-resultCh:
-			if !ok {
-				return bulkResp, nil
-			}
-			bulkResp.Items = append(bulkResp.Items, item)
-		default:
-			return bulkResp, nil
-		}
-	}
 }
 
 func generateGetStateTask(store state.Store, req *state.GetRequest, resultCh chan *runtimev1pb.BulkStateItem) func() {
@@ -611,33 +518,6 @@ func generateGetStateTask(store state.Store, req *state.GetRequest, resultCh cha
 			log.DefaultLogger.Errorf("[api.generateGetStateTask] can not push result to the resultCh. item: %+v", item)
 		}
 	}
-}
-
-func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (*emptypb.Empty, error) {
-	// 1. get store
-	store, err := a.getStateStore(in.StoreName)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	// 2. convert requests
-	reqs := []state.SetRequest{}
-	for _, s := range in.States {
-		key, err := runtime_state.GetModifiedStateKey(s.Key, in.StoreName, a.appId)
-		if err != nil {
-			return &emptypb.Empty{}, err
-		}
-		reqs = append(reqs, *converter.StateItem2SetRequest(s, key))
-	}
-	// 3. query
-	err = store.BulkSet(reqs)
-	// 4. check result
-	if err != nil {
-		err = a.wrapDaprComponentError(err, messages.ErrStateSave, in.StoreName, err.Error())
-		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	return &emptypb.Empty{}, nil
 }
 
 // wrapDaprComponentError parse and wrap error from dapr component
