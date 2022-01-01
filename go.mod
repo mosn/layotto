@@ -36,6 +36,7 @@ require (
 
 replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
+	github.com/google/cel-go => github.com/google/cel-go v0.5.1
 	github.com/klauspost/compress => github.com/klauspost/compress v1.13.0
 	mosn.io/layotto/components => ./components
 	mosn.io/layotto/spec => ./spec
