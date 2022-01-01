@@ -15,7 +15,6 @@ package mongo
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
@@ -54,23 +53,30 @@ func TestMongoSequencer_GetNextId(t *testing.T) {
 	_ = comp.Init(cfg)
 
 	// mock
-	result := make(map[string]bson.M)
 	mockMongoClient := utils.MockMongoSequencerClient{}
 	mockMongoSession := utils.NewMockMongoSequencerSession()
+	mockMongoFactory := utils.NewMockMongoSequencerFactory()
 	insertOneResult := &mongo.InsertOneResult{}
 	mockMongoCollection := utils.MockMongoSequencerCollection{
-		Result:          result,
 		InsertOneResult: insertOneResult,
 	}
 
 	comp.session = mockMongoSession
 	comp.collection = &mockMongoCollection
 	comp.client = &mockMongoClient
+	comp.factory = mockMongoFactory
 
-	v, err := comp.GetNextId(&sequencer.GetNextIdRequest{
+	v1, err1 := comp.GetNextId(&sequencer.GetNextIdRequest{
 		Key: key,
 	})
-	var expected int64 = 0
-	assert.Equal(t, expected, v.NextId)
-	assert.NoError(t, err)
+	var expected1 int64 = 1
+	assert.Equal(t, expected1, v1.NextId)
+	assert.NoError(t, err1)
+
+	v2, err2 := comp.GetNextId(&sequencer.GetNextIdRequest{
+		Key: key,
+	})
+	var expected2 int64 = 2
+	assert.Equal(t, expected2, v2.NextId)
+	assert.NoError(t, err2)
 }

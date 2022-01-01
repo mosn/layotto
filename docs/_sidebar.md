@@ -60,6 +60,7 @@
       - [Etcd](en/component_specs/sequencer/etcd.md)
       - [Redis](en/component_specs/sequencer/redis.md)
       - [Zookeeper](en/component_specs/sequencer/zookeeper.md)
+      - [MongoDB](en/component_specs/sequencer/mongo.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)

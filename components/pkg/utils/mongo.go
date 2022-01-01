@@ -76,6 +76,7 @@ type Item struct {
 type MongoFactory interface {
 	NewMongoClient(m MongoMetadata) (MongoClient, error)
 	NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) MongoCollection
+	NewSingleResult(sr *mongo.SingleResult) MongoSingleResult
 }
 
 type MongoClient interface {
@@ -110,6 +111,10 @@ type MongoSingleResult interface {
 }
 
 type MongoFactoryImpl struct{}
+
+func (c *MongoFactoryImpl) NewSingleResult(sr *mongo.SingleResult) MongoSingleResult {
+	return sr
+}
 
 func (c *MongoFactoryImpl) NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) MongoCollection {
 	collection := m.Collection(collectionName, opts)

@@ -1,8 +1,7 @@
 # MongoDB
 
-## 配置项说明     
-
-示例：configs/config_lock_mongo.json
+## 配置项说明
+示例：configs/config_sequencer_mongo.json
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
@@ -12,7 +11,6 @@
 | databaseName | N | MongoDB数据库名称 |
 | collecttionName | N | MongoDB集合名称 |
 | params | N | 自定义参数 |
-
 
 ## 怎么启动 MongoDB
 

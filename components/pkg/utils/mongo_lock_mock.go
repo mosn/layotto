@@ -65,6 +65,10 @@ func (f *MockMongoFactory) NewMongoCollection(m *mongo.Database, collectionName 
 	return &MockMongoCollection{}
 }
 
+func (f *MockMongoFactory) NewSingleResult(sr *mongo.SingleResult) MongoSingleResult {
+	return nil
+}
+
 func (mc *MockMongoCollection) FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) *mongo.SingleResult {
 	result := mongo.SingleResult{}
 	return &result

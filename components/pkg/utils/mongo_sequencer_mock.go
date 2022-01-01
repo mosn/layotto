@@ -16,10 +16,16 @@ package utils
 import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/bsoncodec"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"reflect"
+	"unsafe"
 )
+
+var Result = make(map[string]bson.M)
+var id string
 
 type MockMongoSequencerFactory struct{}
 
@@ -34,16 +40,21 @@ type MockMongoSequencerSession struct {
 // MockMongoCollection is a mock of MongoCollection interface
 type MockMongoSequencerCollection struct {
 	// '_id' document
-	Result          map[string]bson.M
 	InsertOneResult *mongo.InsertOneResult
 }
 
-type MockMongoSequencerSingleResult struct {
-	mongo.SingleResult
+type MockMongoSequencerSingleResult struct{}
+
+func NewMockMongoSequencerFactory() *MockMongoSequencerFactory {
+	return &MockMongoSequencerFactory{}
 }
 
 func NewMockMongoSequencerSession() *MockMongoSequencerSession {
 	return &MockMongoSequencerSession{}
+}
+
+func (f *MockMongoSequencerFactory) NewSingleResult(sr *mongo.SingleResult) MongoSingleResult {
+	return &MockMongoSequencerSingleResult{}
 }
 
 func (f *MockMongoSequencerFactory) NewMongoClient(m MongoMetadata) (MongoClient, error) {
@@ -55,18 +66,35 @@ func (f *MockMongoSequencerFactory) NewMongoCollection(m *mongo.Database, collec
 }
 
 func (mc *MockMongoSequencerCollection) FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) *mongo.SingleResult {
-	res := mongo.SingleResult{}
-	return &res
+	result := new(mongo.SingleResult)
+	value := reflect.ValueOf(result)
+	doc := filter.(bson.M)
+	id = doc["_id"].(string)
+	if value.Kind() == reflect.Ptr {
+		elem := value.Elem()
+		err := elem.FieldByName("err")
+		*(*error)(unsafe.Pointer(err.Addr().Pointer())) = nil
+
+		cur := elem.FieldByName("cur")
+		*(**mongo.Cursor)(unsafe.Pointer(cur.Addr().Pointer())) = &mongo.Cursor{}
+
+		rdr := elem.FieldByName("rdr")
+		*(*bson.Raw)(unsafe.Pointer(rdr.Addr().Pointer())) = bson.Raw{}
+
+		reg := elem.FieldByName("reg")
+		*(**bsoncodec.Registry)(unsafe.Pointer(reg.Addr().Pointer())) = &bsoncodec.Registry{}
+	}
+	return result
 }
 
 func (mc *MockMongoSequencerCollection) InsertOne(ctx context.Context, document interface{}, opts ...*options.InsertOneOptions) (*mongo.InsertOneResult, error) {
 	doc := document.(bson.M)
 	value := doc["_id"].(string)
-	if _, ok := mc.Result[value]; ok {
+	if _, ok := Result[value]; ok {
 		return nil, nil
 	} else {
 		// insert cache
-		mc.Result[value] = doc
+		Result[value] = doc
 		mc.InsertOneResult.InsertedID = value
 		return mc.InsertOneResult, nil
 	}
@@ -88,8 +116,8 @@ func (mc *MockMongoSequencerCollection) Indexes() mongo.IndexView {
 func (mc *MockMongoSequencerCollection) UpdateOne(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	doc := filter.(bson.M)
 	value := doc["_id"].(string)
-	if res, ok := mc.Result[value]; ok {
-		mc.Result[value] = bson.M{"_id": res["_id"], "sequencer_value": res["sequencer_value"].(int) + 1}
+	if res, ok := Result[value]; ok {
+		Result[value] = bson.M{"_id": res["_id"], "sequencer_value": res["sequencer_value"].(int) + 1}
 		return nil, nil
 	}
 	return nil, nil
@@ -128,10 +156,25 @@ func (s *MockMongoSequencerSession) WithTransaction(ctx context.Context, fn func
 func (s *MockMongoSequencerSession) EndSession(context.Context) {}
 
 func (d *MockMongoSequencerSingleResult) Decode(v interface{}) error {
+	b := Result[id]
+	id := b["_id"].(string)
+	value := b["sequencer_value"].(int)
+	ref := reflect.ValueOf(v)
+	if ref.Kind() == reflect.Ptr {
+		elem := ref.Elem()
+		Id := elem.FieldByName("Id")
+		*(*string)(unsafe.Pointer(Id.Addr().Pointer())) = id
+
+		v := elem.FieldByName("Sequencer_value")
+		*(*int)(unsafe.Pointer(v.Addr().Pointer())) = value
+	}
 	return nil
 }
 
 func (d *MockMongoSequencerSingleResult) Err() error {
+	if Result[id] == nil {
+		return mongo.ErrNoDocuments
+	}
 	return nil
 }
 

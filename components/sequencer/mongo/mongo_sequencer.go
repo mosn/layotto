@@ -140,7 +140,7 @@ func (e *MongoSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.
 	status, err := e.session.WithTransaction(e.ctx, func(sessionContext mongo.SessionContext) (interface{}, error) {
 		var err error
 		// find document
-		e.singResult = e.collection.FindOne(e.ctx, bson.M{"_id": req.Key})
+		e.singResult = e.factory.NewSingleResult(e.collection.FindOne(e.ctx, bson.M{"_id": req.Key}))
 
 		// update sequencer value
 		// An error will be reported if the document is empty
@@ -155,7 +155,7 @@ func (e *MongoSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.
 
 		// get new sequencer value
 		if err == nil {
-			e.singResult = e.collection.FindOne(e.ctx, bson.M{"_id": req.Key})
+			e.singResult = e.factory.NewSingleResult(e.collection.FindOne(e.ctx, bson.M{"_id": req.Key}))
 			e.singResult.Decode(&document)
 		}
 
