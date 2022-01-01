@@ -69,6 +69,9 @@ func (d *daprGrpcAPI) GetState(ctx context.Context, request *dapr_v1pb.GetStateR
 		return nil, err
 	}
 	key, err := state2.GetModifiedStateKey(request.Key, request.StoreName, d.appId)
+	if err != nil {
+		return &dapr_v1pb.GetStateResponse{}, err
+	}
 	req := &state.GetRequest{
 		Key:      key,
 		Metadata: request.GetMetadata(),

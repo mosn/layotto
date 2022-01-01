@@ -131,10 +131,16 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 // some code for converting from runtimev1pb to dapr_common_v1pb
 
 func convertEtagToDaprPB(etag *runtimev1pb.Etag) *dapr_common_v1pb.Etag {
+	if etag == nil {
+		return &dapr_common_v1pb.Etag{}
+	}
 	return &dapr_common_v1pb.Etag{Value: etag.GetValue()}
 }
 
 func convertOptionsToDaprPB(op *runtimev1pb.StateOptions) *dapr_common_v1pb.StateOptions {
+	if op == nil {
+		return &dapr_common_v1pb.StateOptions{}
+	}
 	return &dapr_common_v1pb.StateOptions{
 		Concurrency: dapr_common_v1pb.StateOptions_StateConcurrency(op.Concurrency),
 		Consistency: dapr_common_v1pb.StateOptions_StateConsistency(op.Consistency),
@@ -164,19 +170,23 @@ func convertStatesToDaprPB(states []*runtimev1pb.StateItem) []*dapr_common_v1pb.
 }
 
 func convertTransactionalStateOperationToDaprPB(ops []*runtimev1pb.TransactionalStateOperation) []*dapr_v1pb.TransactionalStateOperation {
-	ret := make([]*dapr_v1pb.TransactionalStateOperation, len(ops))
+	ret := make([]*dapr_v1pb.TransactionalStateOperation, 0)
 	for i := 0; i < len(ops); i++ {
 		op := ops[i]
-		ret[i] = &dapr_v1pb.TransactionalStateOperation{
-			OperationType: op.OperationType,
-			Request: &dapr_common_v1pb.StateItem{
+		var req *dapr_common_v1pb.StateItem
+		if op.Request != nil {
+			req = &dapr_common_v1pb.StateItem{
 				Key:      op.GetRequest().GetKey(),
 				Value:    op.GetRequest().GetValue(),
 				Etag:     convertEtagToDaprPB(op.GetRequest().GetEtag()),
 				Metadata: op.GetRequest().GetMetadata(),
 				Options:  convertOptionsToDaprPB(op.GetRequest().GetOptions()),
-			},
+			}
 		}
+		ret = append(ret, &dapr_v1pb.TransactionalStateOperation{
+			OperationType: op.OperationType,
+			Request:       req,
+		})
 	}
 	return ret
 }
