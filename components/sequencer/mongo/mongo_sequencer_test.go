@@ -80,3 +80,69 @@ func TestMongoSequencer_GetNextId(t *testing.T) {
 	assert.Equal(t, expected2, v2.NextId)
 	assert.NoError(t, err2)
 }
+
+func TestMongoSequencer_Close(t *testing.T) {
+	var mongoUrl = "localhost:xxxxx"
+
+	comp := NewMongoSequencer(log.DefaultLogger)
+
+	cfg := sequencer.Configuration{
+		BiggerThan: nil,
+		Properties: make(map[string]string),
+	}
+
+	cfg.Properties["mongoHost"] = mongoUrl
+	_ = comp.Init(cfg)
+
+	// mock
+	mockMongoClient := utils.MockMongoSequencerClient{}
+	mockMongoSession := utils.NewMockMongoSequencerSession()
+	mockMongoFactory := utils.NewMockMongoSequencerFactory()
+	insertOneResult := &mongo.InsertOneResult{}
+	mockMongoCollection := utils.MockMongoSequencerCollection{
+		InsertOneResult: insertOneResult,
+	}
+
+	comp.session = mockMongoSession
+	comp.collection = &mockMongoCollection
+	comp.client = &mockMongoClient
+	comp.factory = mockMongoFactory
+
+	err := comp.Close()
+	assert.NoError(t, err)
+}
+
+func TestMongoSequencer_GetSegment(t *testing.T) {
+	var mongoUrl = "localhost:xxxxx"
+
+	comp := NewMongoSequencer(log.DefaultLogger)
+
+	cfg := sequencer.Configuration{
+		BiggerThan: nil,
+		Properties: make(map[string]string),
+	}
+
+	cfg.Properties["mongoHost"] = mongoUrl
+	_ = comp.Init(cfg)
+
+	// mock
+	mockMongoClient := utils.MockMongoSequencerClient{}
+	mockMongoSession := utils.NewMockMongoSequencerSession()
+	mockMongoFactory := utils.NewMockMongoSequencerFactory()
+	insertOneResult := &mongo.InsertOneResult{}
+	mockMongoCollection := utils.MockMongoSequencerCollection{
+		InsertOneResult: insertOneResult,
+	}
+
+	comp.session = mockMongoSession
+	comp.collection = &mockMongoCollection
+	comp.client = &mockMongoClient
+	comp.factory = mockMongoFactory
+
+	support, res, err := comp.GetSegment(&sequencer.GetSegmentRequest{
+		Key: key,
+	})
+	assert.Equal(t, support, false)
+	assert.NoError(t, err)
+	assert.Empty(t, res, nil)
+}

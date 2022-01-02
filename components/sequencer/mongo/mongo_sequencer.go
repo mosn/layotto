@@ -69,11 +69,11 @@ func (e *MongoSequencer) Init(config sequencer.Configuration) error {
 	e.factory = &utils.MongoFactoryImpl{}
 
 	// 2. construct client
+	e.ctx, e.cancel = context.WithCancel(context.Background())
+
 	if e.client, err = e.factory.NewMongoClient(m); err != nil {
 		return err
 	}
-
-	e.ctx, e.cancel = context.WithCancel(context.Background())
 
 	if err := e.client.Ping(e.ctx, nil); err != nil {
 		return err
