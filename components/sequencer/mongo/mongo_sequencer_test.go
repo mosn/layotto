@@ -40,7 +40,7 @@ func TestMongoSequencer_Init(t *testing.T) {
 }
 
 func TestMongoSequencer_GetNextId(t *testing.T) {
-	var mongoUrl = "localhost:xxxxx"
+	var mongoUrl = "localhost:27017"
 
 	comp := NewMongoSequencer(log.DefaultLogger)
 
