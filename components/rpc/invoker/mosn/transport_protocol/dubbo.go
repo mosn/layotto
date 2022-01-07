@@ -17,10 +17,11 @@
 package transport_protocol
 
 import (
+	"context"
+
 	"mosn.io/api"
-	"mosn.io/layotto/components/rpc"
 	common "mosn.io/layotto/components/pkg/common"
-	"mosn.io/mosn/pkg/protocol/xprotocol"
+	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol/dubbo"
 	"mosn.io/pkg/buffer"
 )
@@ -32,7 +33,7 @@ func init() {
 
 // newDubboProtocol is create dubbo TransportProtocol
 func newDubboProtocol() TransportProtocol {
-	return &dubboProtocol{XProtocol: xprotocol.GetProtocol(dubbo.ProtocolName)}
+	return &dubboProtocol{XProtocol: (&dubbo.XCodec{}).NewXProtocol(context.TODO())}
 }
 
 type dubboProtocol struct {

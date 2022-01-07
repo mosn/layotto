@@ -50,7 +50,7 @@ type fromFrame struct{}
 func (f *fromFrame) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	rpcResp := &rpc.RPCResponse{}
 	if boltResp, ok := resp.(*bolt.Response); ok {
-		rpcResp.Header = make(map[string][]string, len(boltResp.Header.Kvs))
+		rpcResp.Header = make(map[string][]string, len(boltResp.BytesHeader.Kvs))
 	}
 	resp.GetHeader().Range(func(Key, Value string) bool {
 		if rpcResp.Header == nil {

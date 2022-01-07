@@ -15,7 +15,7 @@ jobs:
       # If you want to matrix build , you can append the following list.
       matrix:
         go_version:
-          - 1.15
+          - 1.14.13
         hdfs-version:
           - 3.2.2
           - 3.3.0
@@ -89,6 +89,17 @@ jobs:
       - name: Post Coverage
         run: bash <(curl -s https://codecov.io/bash)
 
-      - name: integrate
-        run: make wasm-integrate
+  integrate:
+    name: integrate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.14.13
 
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Run Integrate tests.
+        run: make wasm-integrate

@@ -34,6 +34,7 @@ var (
 	factories = make(map[string]*FilterConfigFactory)
 )
 
+// Init watcher
 func init() {
 	var err error
 	watcher, err = fsnotify.NewWatcher()
@@ -44,6 +45,7 @@ func init() {
 	utils.GoWithRecover(runWatcher, nil)
 }
 
+// Watching wasm
 func runWatcher() {
 	for {
 		select {
@@ -82,8 +84,10 @@ func runWatcher() {
 	}
 }
 
+// Add watching file
 func addWatchFile(cfg *filterConfigItem, factory *FilterConfigFactory) {
 	path := cfg.VmConfig.Path
+	// Add starts watching the named file or directory (non-recursively).
 	if err := watcher.Add(path); err != nil {
 		log.DefaultLogger.Errorf("[proxywasm] [watcher] addWatchFile fail to watch wasm file, err: %v", err)
 	}
@@ -99,6 +103,7 @@ func addWatchFile(cfg *filterConfigItem, factory *FilterConfigFactory) {
 	log.DefaultLogger.Infof("[proxywasm] [watcher] addWatchFile start to watch wasm file and its dir: %s", path)
 }
 
+// Reload Wasm's configuration file
 func reloadWasm(fullPath string) {
 	found := false
 
@@ -118,7 +123,7 @@ func reloadWasm(fullPath string) {
 				log.DefaultLogger.Errorf("[proxywasm] [watcher] reloadWasm fail to add plugin, err: %v", err)
 				return
 			}
-
+			// get WasmPluginWrapper
 			pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(config.PluginName)
 			if pw == nil {
 				log.DefaultLogger.Errorf("[proxywasm] [watcher] reloadWasm plugin not found")
@@ -136,7 +141,7 @@ func reloadWasm(fullPath string) {
 				config:        config,
 			}
 			factory.plugins[config.PluginName] = wasmPlugin
-
+			// register plugin
 			pw.RegisterPluginHandler(factory)
 
 			for _, plugin := range factory.plugins {
@@ -153,6 +158,7 @@ func reloadWasm(fullPath string) {
 	}
 }
 
+// Check if the file exists
 func fileExist(file string) bool {
 	_, err := os.Stat(file)
 	if err != nil && !os.IsExist(err) {
@@ -161,6 +167,7 @@ func fileExist(file string) bool {
 	return true
 }
 
+// Check the file suffix of wasm
 func pathIsWasmFile(fullPath string) bool {
 	for path, _ := range configs {
 		if strings.HasSuffix(fullPath, path) {
