@@ -148,7 +148,7 @@ func convertOptionsToDaprPB(op *runtimev1pb.StateOptions) *dapr_common_v1pb.Stat
 }
 
 func convertStatesToDaprPB(states []*runtimev1pb.StateItem) []*dapr_common_v1pb.StateItem {
-	dStates := make([]*dapr_common_v1pb.StateItem, 0)
+	dStates := make([]*dapr_common_v1pb.StateItem, 0, len(states))
 	if states == nil {
 		return dStates
 	}
@@ -170,7 +170,7 @@ func convertStatesToDaprPB(states []*runtimev1pb.StateItem) []*dapr_common_v1pb.
 }
 
 func convertTransactionalStateOperationToDaprPB(ops []*runtimev1pb.TransactionalStateOperation) []*dapr_v1pb.TransactionalStateOperation {
-	ret := make([]*dapr_v1pb.TransactionalStateOperation, 0)
+	ret := make([]*dapr_v1pb.TransactionalStateOperation, 0, len(ops))
 	for i := 0; i < len(ops); i++ {
 		op := ops[i]
 		var req *dapr_common_v1pb.StateItem
