@@ -44,6 +44,7 @@ var (
 	ErrInvalidConfig      error = errors.New("invalid hdfs config")
 	ErrNotSpecifyEndpoint error = errors.New("other error happend in metadata")
 	ErrHdfsListFail       error = errors.New("hdfs list opt failed")
+	ErrInitFailed         error = errors.New("hdfs client init failed")
 )
 
 type hdfs struct {
@@ -76,7 +77,7 @@ func (h *hdfs) Init(ctx context.Context, config *file.FileConfig) error {
 		client, err := h.createHdfsClient(data)
 
 		if err != nil {
-			continue
+			return ErrInitFailed
 		}
 
 		h.client[data.EndPoint] = client

@@ -46,7 +46,7 @@ func TestHdfs_Init(t *testing.T) {
 
 	err = hdfs.Init(context.TODO(), c)
 
-	assert.Nil(t, err)
+	assert.Equal(t, err, ErrInitFailed)
 }
 
 func TestHdfs_selectClient(t *testing.T) {
@@ -59,12 +59,12 @@ func TestHdfs_selectClient(t *testing.T) {
 		Metadata: json.RawMessage(config),
 	}
 	err := hdfs.Init(context.TODO(), c)
-	assert.Nil(t, err)
+	assert.Equal(t, err, ErrInitFailed)
 
 	meta := make(map[string]string)
 	meta["endpoint"] = "tcp:127.0.0.1:9000"
 	_, err = hdfs.selectClient(meta)
-	assert.Nil(t, err)
+	assert.NotNil(t, err)
 
 	meta["endpoint"] = "tcp:127.0.0.1:9001"
 	_, err = hdfs.selectClient(meta)
@@ -86,7 +86,7 @@ func TestHdfs_Put(t *testing.T) {
 		Metadata: json.RawMessage(config),
 	}
 	err := hdfs.Init(context.TODO(), c)
-	assert.Nil(t, err)
+	assert.Equal(t, err, ErrInitFailed)
 
 	f, _ := os.Open("hdfs.go")
 
@@ -114,7 +114,7 @@ func TestHdfs_Put(t *testing.T) {
 	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
 	req.Metadata["fileSize"] = "123"
 	err = hdfs.Put(context.TODO(), req)
-	assert.Nil(t, err)
+	assert.NotNil(t, err)
 
 }
 
@@ -126,7 +126,7 @@ func TestHdfs_Get(t *testing.T) {
 	}
 
 	err := hdfs.Init(context.TODO(), c)
-	assert.Nil(t, err)
+	assert.Equal(t, err, ErrInitFailed)
 
 	req := &file.GetFileStu{
 		FileName: "test_put",
@@ -143,7 +143,7 @@ func TestHdfs_Get(t *testing.T) {
 
 	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
 	_, err = hdfs.Get(context.TODO(), req)
-	assert.Nil(t, err)
+	assert.NotNil(t, err)
 
 	//TODO
 	//Test checksum content with Get file
@@ -157,7 +157,7 @@ func TestHdfs_Del(t *testing.T) {
 	}
 
 	err := hdfs.Init(context.TODO(), c)
-	assert.Nil(t, err)
+	assert.Equal(t, err, ErrInitFailed)
 
 	req := &file.DelRequest{
 		FileName: "test_put",
@@ -173,5 +173,5 @@ func TestHdfs_Del(t *testing.T) {
 
 	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
 	err = hdfs.Del(context.TODO(), req)
-	assert.Nil(t, err)
+	assert.NotNil(t, err)
 }
