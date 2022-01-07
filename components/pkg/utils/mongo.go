@@ -102,6 +102,8 @@ type MongoCollection interface {
 	Indexes() mongo.IndexView
 	UpdateOne(ctx context.Context, filter interface{}, update interface{},
 		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
+	FindOneAndUpdate(ctx context.Context, filter interface{},
+		update interface{}, opts ...*options.FindOneAndUpdateOptions) *mongo.SingleResult
 }
 
 type MongoSingleResult interface {

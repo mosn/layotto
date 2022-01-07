@@ -15,6 +15,7 @@ package mongo
 
 import (
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
@@ -95,12 +96,14 @@ func TestMongoSequencer_Close(t *testing.T) {
 	_ = comp.Init(cfg)
 
 	// mock
+	result := make(map[string]bson.M)
 	mockMongoClient := utils.MockMongoSequencerClient{}
 	mockMongoSession := utils.NewMockMongoSequencerSession()
 	mockMongoFactory := utils.NewMockMongoSequencerFactory()
 	insertOneResult := &mongo.InsertOneResult{}
 	mockMongoCollection := utils.MockMongoSequencerCollection{
 		InsertOneResult: insertOneResult,
+		Result:          result,
 	}
 
 	comp.session = mockMongoSession
@@ -140,9 +143,13 @@ func TestMongoSequencer_GetSegment(t *testing.T) {
 	comp.factory = mockMongoFactory
 
 	support, res, err := comp.GetSegment(&sequencer.GetSegmentRequest{
-		Key: key,
+		Size: 20,
+		Key:  key,
 	})
-	assert.Equal(t, support, false)
+	var expected1 int64 = 3
+	var expected2 int64 = 22
+	assert.Equal(t, support, true)
+	assert.Equal(t, expected1, res.From)
+	assert.Equal(t, expected2, res.To)
 	assert.NoError(t, err)
-	assert.Empty(t, res, nil)
 }

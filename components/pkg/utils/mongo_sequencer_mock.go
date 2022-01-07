@@ -41,6 +41,7 @@ type MockMongoSequencerSession struct {
 type MockMongoSequencerCollection struct {
 	// '_id' document
 	InsertOneResult *mongo.InsertOneResult
+	Result          map[string]bson.M
 }
 
 type MockMongoSequencerSingleResult struct{}
@@ -121,6 +122,24 @@ func (mc *MockMongoSequencerCollection) UpdateOne(ctx context.Context, filter in
 		return nil, nil
 	}
 	return nil, nil
+}
+
+func (mc *MockMongoSequencerCollection) FindOneAndUpdate(ctx context.Context, filter interface{},
+	update interface{}, opts ...*options.FindOneAndUpdateOptions) *mongo.SingleResult {
+	doc := filter.(bson.M)
+	id = doc["_id"].(string)
+	upDoc := update.(bson.M)
+	value := doc["_id"].(string)
+	up := upDoc["$inc"].(bson.M)
+	num := up["sequencer_value"].(int)
+	if res, ok := Result[value]; ok {
+		Result[value] = bson.M{"_id": res["_id"], "sequencer_value": res["sequencer_value"].(int) + num}
+		return nil
+	} else {
+		bm := bson.M{"_id": doc["_id"], "sequencer_value": num}
+		mc.InsertOne(ctx, bm)
+	}
+	return nil
 }
 
 func (c *MockMongoSequencerClient) StartSession(opts ...*options.SessionOptions) (mongo.Session, error) {

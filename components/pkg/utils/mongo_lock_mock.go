@@ -113,6 +113,10 @@ func (mc *MockMongoCollection) UpdateOne(ctx context.Context, filter interface{}
 	return nil, nil
 }
 
+func (mc *MockMongoCollection) FindOneAndUpdate(ctx context.Context, filter interface{}, update interface{}, opts ...*options.FindOneAndUpdateOptions) *mongo.SingleResult {
+	return nil
+}
+
 func (c *MockMongoClient) StartSession(opts ...*options.SessionOptions) (mongo.Session, error) {
 	return &MockMongoSession{}, nil
 }

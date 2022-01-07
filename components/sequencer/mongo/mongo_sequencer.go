@@ -139,28 +139,17 @@ func (e *MongoSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.
 
 	status, err := e.session.WithTransaction(e.ctx, func(sessionContext mongo.SessionContext) (interface{}, error) {
 		var err error
-		// find document
-		e.singResult = e.factory.NewSingleResult(e.collection.FindOne(e.ctx, bson.M{"_id": req.Key}))
-
-		// update sequencer value
-		// An error will be reported if the document is empty
-		if e.singResult.Err() != nil {
-			if e.singResult.Err() == mongo.ErrNoDocuments {
-				// if empty insert sequencer id and sequencer value
-				_, err = e.collection.InsertOne(e.ctx, bson.M{"_id": req.Key, "sequencer_value": 1})
-			}
-		} else {
-			_, err = e.collection.UpdateOne(e.ctx, bson.M{"_id": req.Key}, bson.M{"$inc": bson.M{"sequencer_value": 1}})
+		after := options.After
+		upsert := true
+		opt := options.FindOneAndUpdateOptions{
+			ReturnDocument: &after,
+			Upsert:         &upsert,
 		}
 
-		// get new sequencer value
-		if err == nil {
-			e.singResult = e.factory.NewSingleResult(e.collection.FindOne(e.ctx, bson.M{"_id": req.Key}))
-			e.singResult.Decode(&document)
-		}
+		e.singResult = e.factory.NewSingleResult(e.collection.FindOneAndUpdate(e.ctx, bson.M{"_id": req.Key}, bson.M{"$inc": bson.M{"sequencer_value": 1}}, &opt))
 
 		// rollback
-		if err != nil || (e.singResult.Err() != nil && e.singResult.Err() != mongo.ErrNoDocuments) {
+		if e.singResult.Err() != nil && e.singResult.Err() != mongo.ErrNoDocuments {
 			_ = sessionContext.AbortTransaction(sessionContext)
 			return nil, err
 		}
@@ -169,19 +158,72 @@ func (e *MongoSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.
 		if err = sessionContext.CommitTransaction(sessionContext); err != nil {
 			return nil, err
 		}
-
+		e.singResult.Decode(&document)
 		return document, nil
 	}, txnOpts)
 	if err != nil || status == nil {
 		return nil, err
 	}
+
 	return &sequencer.GetNextIdResponse{
 		NextId: document.Sequencer_value,
 	}, nil
 }
 
 func (e *MongoSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support bool, result *sequencer.GetSegmentResponse, err error) {
-	return false, nil, nil
+	var document SequencerDocument
+
+	// size=0 only check support
+	if req.Size == 0 {
+		return true, nil, nil
+	}
+
+	// create mongo session
+	e.session, err = e.client.StartSession()
+	txnOpts := options.Transaction().SetReadConcern(readconcern.Snapshot()).
+		SetWriteConcern(writeconcern.New(writeconcern.WMajority()))
+
+	// check session
+	if err != nil {
+		return true, nil, fmt.Errorf("[mongoSequencer]: Create Session return error: %s key: %s", err, req.Key)
+	}
+
+	// close mongo session
+	defer e.session.EndSession(e.ctx)
+
+	status, err := e.session.WithTransaction(e.ctx, func(sessionContext mongo.SessionContext) (interface{}, error) {
+		var err error
+		after := options.After
+		upsert := true
+		opt := options.FindOneAndUpdateOptions{
+			ReturnDocument: &after,
+			Upsert:         &upsert,
+		}
+
+		// find and upsert
+		e.singResult = e.factory.NewSingleResult(e.collection.FindOneAndUpdate(e.ctx, bson.M{"_id": req.Key}, bson.M{"$inc": bson.M{"sequencer_value": req.Size}}, &opt))
+
+		// rollback
+		if e.singResult.Err() != nil && e.singResult.Err() != mongo.ErrNoDocuments {
+			_ = sessionContext.AbortTransaction(sessionContext)
+			return nil, err
+		}
+
+		// commit
+		if err = sessionContext.CommitTransaction(sessionContext); err != nil {
+			return nil, err
+		}
+		e.singResult.Decode(&document)
+		return document, nil
+	}, txnOpts)
+	if err != nil || status == nil {
+		return true, nil, err
+	}
+
+	return true, &sequencer.GetSegmentResponse{
+		From: document.Sequencer_value - int64(req.Size) + 1,
+		To:   document.Sequencer_value,
+	}, nil
 }
 
 func (e *MongoSequencer) Close() error {
