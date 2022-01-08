@@ -77,6 +77,7 @@ func TestMongoSequencer_GetNextId(t *testing.T) {
 	v2, err2 := comp.GetNextId(&sequencer.GetNextIdRequest{
 		Key: key,
 	})
+	delete(utils.Result, key)
 	var expected2 int64 = 2
 	assert.Equal(t, expected2, v2.NextId)
 	assert.NoError(t, err2)
@@ -146,8 +147,8 @@ func TestMongoSequencer_GetSegment(t *testing.T) {
 		Size: 20,
 		Key:  key,
 	})
-	var expected1 int64 = 3
-	var expected2 int64 = 22
+	var expected1 int64 = 1
+	var expected2 int64 = 20
 	assert.Equal(t, support, true)
 	assert.Equal(t, expected1, res.From)
 	assert.Equal(t, expected2, res.To)

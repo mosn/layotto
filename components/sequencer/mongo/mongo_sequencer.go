@@ -149,7 +149,7 @@ func (e *MongoSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.
 		e.singResult = e.factory.NewSingleResult(e.collection.FindOneAndUpdate(e.ctx, bson.M{"_id": req.Key}, bson.M{"$inc": bson.M{"sequencer_value": 1}}, &opt))
 
 		// rollback
-		if e.singResult.Err() != nil && e.singResult.Err() != mongo.ErrNoDocuments {
+		if e.singResult.Err() != nil {
 			_ = sessionContext.AbortTransaction(sessionContext)
 			return nil, err
 		}
@@ -204,7 +204,7 @@ func (e *MongoSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support b
 		e.singResult = e.factory.NewSingleResult(e.collection.FindOneAndUpdate(e.ctx, bson.M{"_id": req.Key}, bson.M{"$inc": bson.M{"sequencer_value": req.Size}}, &opt))
 
 		// rollback
-		if e.singResult.Err() != nil && e.singResult.Err() != mongo.ErrNoDocuments {
+		if e.singResult.Err() != nil {
 			_ = sessionContext.AbortTransaction(sessionContext)
 			return nil, err
 		}
