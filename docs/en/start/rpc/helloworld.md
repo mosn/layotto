@@ -1,6 +1,7 @@
 # Hello World
 
 ## Quick Start
+![](https://user-images.githubusercontent.com/26001097/148895424-b286feb5-a122-4fe5-9012-0c235f16b9c7.png)
 
 1. compile and start layotto
 ```sh
