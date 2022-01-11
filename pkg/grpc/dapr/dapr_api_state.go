@@ -20,7 +20,6 @@ import (
 	"context"
 
 	"github.com/dapr/components-contrib/state"
-	"github.com/dapr/dapr/pkg/encryption"
 	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
 	jsoniter "github.com/json-iterator/go"
@@ -185,7 +184,6 @@ func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *dapr_v1pb.Q
 		return ret, nil
 	}
 
-	encrypted := encryption.EncryptedStateStore(request.StoreName)
 	ret.Results = make([]*dapr_v1pb.QueryStateItem, len(resp.Results))
 	ret.Token = resp.Token
 	ret.Metadata = resp.Metadata
@@ -194,13 +192,6 @@ func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *dapr_v1pb.Q
 		ret.Results[i] = &dapr_v1pb.QueryStateItem{
 			Key:  state2.GetOriginalStateKey(resp.Results[i].Key),
 			Data: resp.Results[i].Data,
-		}
-		if encrypted {
-			ret.Results[i].Data, err = encryption.TryDecryptValue(request.StoreName, resp.Results[i].Data)
-			if err != nil {
-				log.DefaultLogger.Errorf("[runtime] [grpc.QueryStateAlpha1] query error: %v", err)
-				ret.Results[i].Error = err.Error()
-			}
 		}
 	}
 
