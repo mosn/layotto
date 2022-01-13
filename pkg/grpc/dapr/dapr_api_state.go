@@ -63,11 +63,13 @@ func (d *daprGrpcAPI) SaveState(ctx context.Context, in *dapr_v1pb.SaveStateRequ
 
 // GetState obtains the state for a specific key.
 func (d *daprGrpcAPI) GetState(ctx context.Context, request *dapr_v1pb.GetStateRequest) (*dapr_v1pb.GetStateResponse, error) {
+	// 1. get store
 	store, err := d.getStateStore(request.StoreName)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.GetState] error: %v", err)
 		return nil, err
 	}
+	// 2. generate the actual key
 	key, err := state2.GetModifiedStateKey(request.Key, request.StoreName, d.appId)
 	if err != nil {
 		return &dapr_v1pb.GetStateResponse{}, err
@@ -154,12 +156,14 @@ func (d *daprGrpcAPI) GetBulkState(ctx context.Context, request *dapr_v1pb.GetBu
 func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *dapr_v1pb.QueryStateRequest) (*dapr_v1pb.QueryStateResponse, error) {
 	ret := &dapr_v1pb.QueryStateResponse{}
 
+	// 1. get state store component
 	store, err := d.getStateStore(request.StoreName)
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.QueryStateAlpha1] error: %v", err)
 		return ret, err
 	}
 
+	// 2. check if this store has the query feature
 	querier, ok := store.(state.Querier)
 	if !ok {
 		err = status.Errorf(codes.Unimplemented, messages.ErrNotFound, "Query")
@@ -167,6 +171,7 @@ func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *dapr_v1pb.Q
 		return ret, err
 	}
 
+	// 3. Unmarshal query dsl
 	var req state.QueryRequest
 	if err = jsoniter.Unmarshal([]byte(request.GetQuery()), &req.Query); err != nil {
 		err = status.Errorf(codes.InvalidArgument, messages.ErrMalformedRequest, err.Error())
@@ -175,7 +180,9 @@ func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *dapr_v1pb.Q
 	}
 	req.Metadata = request.GetMetadata()
 
+	// 4. delegate to the store
 	resp, err := querier.Query(&req)
+	// 5. convert response
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrStateQuery, request.GetStoreName(), err.Error())
 		log.DefaultLogger.Errorf("[runtime] [grpc.QueryStateAlpha1] error: %v", err)
@@ -195,7 +202,6 @@ func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *dapr_v1pb.Q
 			Data: resp.Results[i].Data,
 		}
 	}
-
 	return ret, nil
 }
 
