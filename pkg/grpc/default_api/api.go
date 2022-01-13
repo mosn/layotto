@@ -62,7 +62,6 @@ import (
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/messages"
-	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
@@ -494,30 +493,6 @@ func (a *api) getStateStore(name string) (state.Store, error) {
 		return nil, status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, name)
 	}
 	return a.stateStores[name], nil
-}
-
-func generateGetStateTask(store state.Store, req *state.GetRequest, resultCh chan *runtimev1pb.BulkStateItem) func() {
-	return func() {
-		// get
-		r, err := store.Get(req)
-		// convert
-		var item *runtimev1pb.BulkStateItem
-		if err != nil {
-			item = &runtimev1pb.BulkStateItem{
-				Key:   runtime_state.GetOriginalStateKey(req.Key),
-				Error: err.Error(),
-			}
-		} else {
-			item = converter.GetResponse2BulkStateItem(r, runtime_state.GetOriginalStateKey(req.Key))
-		}
-		// collect result
-		select {
-		case resultCh <- item:
-		default:
-			//never happen
-			log.DefaultLogger.Errorf("[api.generateGetStateTask] can not push result to the resultCh. item: %+v", item)
-		}
-	}
 }
 
 // wrapDaprComponentError parse and wrap error from dapr component

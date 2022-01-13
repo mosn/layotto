@@ -61,6 +61,7 @@ func (d *daprGrpcAPI) SaveState(ctx context.Context, in *dapr_v1pb.SaveStateRequ
 	return &emptypb.Empty{}, nil
 }
 
+// GetState obtains the state for a specific key.
 func (d *daprGrpcAPI) GetState(ctx context.Context, request *dapr_v1pb.GetStateRequest) (*dapr_v1pb.GetStateResponse, error) {
 	store, err := d.getStateStore(request.StoreName)
 	if err != nil {
