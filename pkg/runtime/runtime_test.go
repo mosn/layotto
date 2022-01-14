@@ -305,16 +305,16 @@ func TestMosnRuntime_initLocks(t *testing.T) {
 type MockBindings struct {
 }
 
-func (h *MockBindings) Init(metadata bindings.Metadata) error {
+func (m *MockBindings) Init(metadata bindings.Metadata) error {
 	//do nothing
 	return nil
 }
 
-func (h *MockBindings) Invoke(req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
+func (m *MockBindings) Invoke(req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
 	return nil, nil
 }
 
-func (h *MockBindings) Operations() []bindings.OperationKind {
+func (m *MockBindings) Operations() []bindings.OperationKind {
 	return nil
 }
 
