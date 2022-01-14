@@ -45,6 +45,9 @@
 									}
 								]
 							}
+						},
+						{
+							"type": "grpc_metric"
 						}
 					]
 				}
@@ -58,5 +61,15 @@
 			"generator": "mosntracing",
 			"exporter": ["stdout"]
 		}
+	},
+	"metrics": {
+		"sinks": [
+			{
+				"type": "prometheus",
+				"config": {
+					"port": 34903
+				}
+			}
+		]
 	}
 }
