@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package utils
+package mock
 
 import (
 	"context"
@@ -19,6 +19,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"mosn.io/layotto/components/pkg/utils"
 )
 
 type MockMongoFactory struct{}
@@ -57,15 +58,15 @@ func NewMockMongoSession() *MockMongoSession {
 	return &MockMongoSession{}
 }
 
-func (f *MockMongoFactory) NewMongoClient(m MongoMetadata) (MongoClient, error) {
+func (f *MockMongoFactory) NewMongoClient(m utils.MongoMetadata) (utils.MongoClient, error) {
 	return &MockMongoClient{}, nil
 }
 
-func (f *MockMongoFactory) NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) MongoCollection {
+func (f *MockMongoFactory) NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) utils.MongoCollection {
 	return &MockMongoCollection{}
 }
 
-func (f *MockMongoFactory) NewSingleResult(sr *mongo.SingleResult) MongoSingleResult {
+func (f *MockMongoFactory) NewSingleResult(sr *mongo.SingleResult) utils.MongoSingleResult {
 	return nil
 }
 

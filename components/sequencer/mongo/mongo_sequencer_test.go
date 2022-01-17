@@ -17,7 +17,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"mosn.io/layotto/components/pkg/utils"
+	"mosn.io/layotto/components/pkg/mock"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/pkg/log"
 	"testing"
@@ -54,11 +54,11 @@ func TestMongoSequencer_GetNextId(t *testing.T) {
 	_ = comp.Init(cfg)
 
 	// mock
-	mockMongoClient := utils.MockMongoSequencerClient{}
-	mockMongoSession := utils.NewMockMongoSequencerSession()
-	mockMongoFactory := utils.NewMockMongoSequencerFactory()
+	mockMongoClient := mock.MockMongoSequencerClient{}
+	mockMongoSession := mock.NewMockMongoSequencerSession()
+	mockMongoFactory := mock.NewMockMongoSequencerFactory()
 	insertOneResult := &mongo.InsertOneResult{}
-	mockMongoCollection := utils.MockMongoSequencerCollection{
+	mockMongoCollection := mock.MockMongoSequencerCollection{
 		InsertOneResult: insertOneResult,
 	}
 
@@ -77,7 +77,7 @@ func TestMongoSequencer_GetNextId(t *testing.T) {
 	v2, err2 := comp.GetNextId(&sequencer.GetNextIdRequest{
 		Key: key,
 	})
-	delete(utils.Result, key)
+	delete(mock.Result, key)
 	var expected2 int64 = 2
 	assert.Equal(t, expected2, v2.NextId)
 	assert.NoError(t, err2)
@@ -98,11 +98,11 @@ func TestMongoSequencer_Close(t *testing.T) {
 
 	// mock
 	result := make(map[string]bson.M)
-	mockMongoClient := utils.MockMongoSequencerClient{}
-	mockMongoSession := utils.NewMockMongoSequencerSession()
-	mockMongoFactory := utils.NewMockMongoSequencerFactory()
+	mockMongoClient := mock.MockMongoSequencerClient{}
+	mockMongoSession := mock.NewMockMongoSequencerSession()
+	mockMongoFactory := mock.NewMockMongoSequencerFactory()
 	insertOneResult := &mongo.InsertOneResult{}
-	mockMongoCollection := utils.MockMongoSequencerCollection{
+	mockMongoCollection := mock.MockMongoSequencerCollection{
 		InsertOneResult: insertOneResult,
 		Result:          result,
 	}
@@ -130,11 +130,11 @@ func TestMongoSequencer_GetSegment(t *testing.T) {
 	_ = comp.Init(cfg)
 
 	// mock
-	mockMongoClient := utils.MockMongoSequencerClient{}
-	mockMongoSession := utils.NewMockMongoSequencerSession()
-	mockMongoFactory := utils.NewMockMongoSequencerFactory()
+	mockMongoClient := mock.MockMongoSequencerClient{}
+	mockMongoSession := mock.NewMockMongoSequencerSession()
+	mockMongoFactory := mock.NewMockMongoSequencerFactory()
 	insertOneResult := &mongo.InsertOneResult{}
-	mockMongoCollection := utils.MockMongoSequencerCollection{
+	mockMongoCollection := mock.MockMongoSequencerCollection{
 		InsertOneResult: insertOneResult,
 	}
 

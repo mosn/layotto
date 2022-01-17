@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package utils
+package mock
 
 import (
 	"context"
@@ -20,6 +20,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"mosn.io/layotto/components/pkg/utils"
 	"reflect"
 	"unsafe"
 )
@@ -54,15 +55,15 @@ func NewMockMongoSequencerSession() *MockMongoSequencerSession {
 	return &MockMongoSequencerSession{}
 }
 
-func (f *MockMongoSequencerFactory) NewSingleResult(sr *mongo.SingleResult) MongoSingleResult {
+func (f *MockMongoSequencerFactory) NewSingleResult(sr *mongo.SingleResult) utils.MongoSingleResult {
 	return &MockMongoSequencerSingleResult{}
 }
 
-func (f *MockMongoSequencerFactory) NewMongoClient(m MongoMetadata) (MongoClient, error) {
+func (f *MockMongoSequencerFactory) NewMongoClient(m utils.MongoMetadata) (utils.MongoClient, error) {
 	return &MockMongoSequencerClient{}, nil
 }
 
-func (f *MockMongoSequencerFactory) NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) MongoCollection {
+func (f *MockMongoSequencerFactory) NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) utils.MongoCollection {
 	return &MockMongoSequencerCollection{}
 }
 

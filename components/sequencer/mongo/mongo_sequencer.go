@@ -79,24 +79,11 @@ func (e *MongoSequencer) Init(config sequencer.Configuration) error {
 		return err
 	}
 
-	wc, err := utils.GetWriteConcernObject(e.metadata.WriteConcern)
+	// Connections Collection
+	e.collection, err = utils.SetCollection(e.client, e.factory, e.metadata)
 	if err != nil {
 		return err
 	}
-
-	rc, err := utils.GetReadConcrenObject(e.metadata.ReadConcern)
-	if err != nil {
-		return err
-	}
-
-	// set mongo options of collection
-	opts := options.Collection().SetWriteConcern(wc).SetReadConcern(rc)
-
-	// Connections database
-	database := e.client.Database(e.metadata.DatabaseName)
-
-	// Connections collection
-	e.collection = e.factory.NewMongoCollection(database, e.metadata.CollectionName, opts)
 
 	if len(e.biggerThan) > 0 {
 		for k, bt := range e.biggerThan {

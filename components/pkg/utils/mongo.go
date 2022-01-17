@@ -246,3 +246,29 @@ func GetReadConcrenObject(cn string) (*readconcern.ReadConcern, error) {
 	}
 	return nil, nil
 }
+
+func SetConcern(m MongoMetadata) (*options.CollectionOptions, error) {
+
+	wc, err := GetWriteConcernObject(m.WriteConcern)
+	if err != nil {
+		return nil, err
+	}
+
+	rc, err := GetReadConcrenObject(m.ReadConcern)
+	if err != nil {
+		return nil, err
+	}
+
+	// set mongo options of collection
+	opts := options.Collection().SetWriteConcern(wc).SetReadConcern(rc)
+
+	return opts, err
+}
+
+func SetCollection(c MongoClient, f MongoFactory, m MongoMetadata) (MongoCollection, error) {
+	opts, err := SetConcern(m)
+	if err != nil {
+		return nil, err
+	}
+	return f.NewMongoCollection(c.Database(m.DatabaseName), m.CollectionName, opts), err
+}

@@ -84,24 +84,11 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 		return err
 	}
 
-	wc, err := utils.GetWriteConcernObject(e.metadata.WriteConcern)
+	// Connections Collection
+	e.collection, err = utils.SetCollection(e.client, e.factory, e.metadata)
 	if err != nil {
 		return err
 	}
-
-	rc, err := utils.GetReadConcrenObject(e.metadata.ReadConcern)
-	if err != nil {
-		return err
-	}
-
-	// set mongo options of collection
-	opts := options.Collection().SetWriteConcern(wc).SetReadConcern(rc)
-
-	// create database
-	database := client.Database(e.metadata.DatabaseName)
-
-	// create collection
-	e.collection = e.factory.NewMongoCollection(database, e.metadata.CollectionName, opts)
 
 	// create exprie time index
 	indexModel := mongo.IndexModel{
