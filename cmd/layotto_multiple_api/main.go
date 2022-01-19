@@ -397,6 +397,7 @@ func ExtensionsRegister(c *cli.Context) {
 	// A: MOSN implement a group of trace drivers, but only a configured driver will be loaded.
 	//	A tracer driver can create different tracer by different protocol.
 	//	When MOSN receive a request stream, MOSN will try to start a tracer according to the request protocol
+	// 	For more details,see https://mosn.io/blog/posts/skywalking-support/
 	trace.RegisterDriver("SOFATracer", trace.NewDefaultDriverImpl())
 
 	// 2. xprotocol action register

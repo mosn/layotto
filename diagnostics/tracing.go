@@ -49,7 +49,9 @@ func (tracer *grpcTracer) Start(ctx context.Context, request interface{}, startT
 }
 
 func NewSpan(ctx context.Context, startTime time.Time, config map[string]interface{}) api.Span {
+	// construct span
 	span := &ltrace.Span{StartTime: startTime}
+	// get generator according to configuration
 	generator := DefaultGenerator
 	if v, ok := config[Generator]; ok {
 		generator = v.(string)
@@ -59,12 +61,14 @@ func NewSpan(ctx context.Context, startTime time.Time, config map[string]interfa
 		log.DefaultLogger.Errorf("not support trace type: %+v", generator)
 		return nil
 	}
+	// use generator to extract the span/trace/parentSpan IDs
 	spanId := ge.GetSpanId(ctx)
 	traceId := ge.GetTraceId(ctx)
 	parentSpanId := ge.GetParentSpanId(ctx)
 	span.SetSpanId(spanId)
 	span.SetTraceId(traceId)
 	span.SetParentSpanId(parentSpanId)
+	// tagging generator type
 	span.SetTag(ltrace.LAYOTTO_GENERATOR_TYPE, generator)
 	return span
 }
