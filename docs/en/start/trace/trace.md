@@ -117,10 +117,10 @@ You can refer to the implementation of [OpenGenerator](../../../../diagnostics/g
 ##### Component side
 
 On the Component side, you can insert component information through [SetExtraComponentInfo](../../../../components/trace/utils.go),
-For example, the following operations are performed on the interface [Hello](../../../../components/hello/helloworld/helloworld.go):
+For example, the following operations are performed in the [etcd configStore component](../../../../components/configstores/etcdv3/etcdv3.go):
 
 ```go
-trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v", "hello"))
+trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v, store: %+v", "Get", "etcd"))
 ```
 
 The results printed by trace are as follows:

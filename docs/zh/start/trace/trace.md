@@ -119,10 +119,10 @@ ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
 ##### Component侧
 
 在Component侧可以通过[SetExtraComponentInfo](../../../../components/trace/utils.go)塞入component的信息，
-比如在接口[Hello](../../../../components/hello/helloworld/helloworld.go)执行了以下操作：
+比如在[etcd configStore组件](../../../../components/configstores/etcdv3/etcdv3.go)执行了以下操作：
 
 ```go
-	trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v", "hello"))
+	trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v, store: %+v", "Get", "etcd"))
 ```
 
 trace打印的结果如下：
