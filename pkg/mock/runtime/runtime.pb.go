@@ -2,7 +2,7 @@
 // Source: runtime.pb.go
 
 // Package mock_runtime is a generated GoMock package.
-package mock
+package runtime
 
 import (
 	context "context"

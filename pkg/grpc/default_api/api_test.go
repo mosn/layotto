@@ -29,6 +29,7 @@ import (
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	l8grpc "mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/mock/runtime"
 	"net"
 	"testing"
 
@@ -1005,7 +1006,7 @@ func TestGetFile(t *testing.T) {
 	r, w := net.Pipe()
 	ctrl := gomock.NewController(t)
 	mockFile := mock.NewMockFile(ctrl)
-	mockStream := mock.NewMockRuntime_GetFileServer(ctrl)
+	mockStream := runtime.NewMockRuntime_GetFileServer(ctrl)
 	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil)
 	err := api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock1"}, mockStream)
 	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not supported store type: mock1"))
@@ -1020,7 +1021,7 @@ func TestGetFile(t *testing.T) {
 func TestPutFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockFile := mock.NewMockFile(ctrl)
-	mockStream := mock.NewMockRuntime_PutFileServer(ctrl)
+	mockStream := runtime.NewMockRuntime_PutFileServer(ctrl)
 	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil)
 
 	mockStream.EXPECT().Recv().Return(nil, io.EOF).Times(1)
