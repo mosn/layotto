@@ -53,6 +53,7 @@
             - [Etcd](zh/component_specs/lock/etcd.md)
             - [Zookeeper](zh/component_specs/lock/zookeeper.md)
             - [Consul](zh/component_specs/lock/consul.md)
+            - [MongoDB](zh/component_specs/lock/mongo.md)
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)
             - [Apollo](zh/component_specs/configuration/apollo.md)
@@ -62,6 +63,7 @@
             - [Etcd](zh/component_specs/sequencer/etcd.md)
             - [Redis](zh/component_specs/sequencer/redis.md)
             - [Zookeeper](zh/component_specs/sequencer/zookeeper.md)
+            - [MongoDB](zh/component_specs/sequencer/mongo.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
