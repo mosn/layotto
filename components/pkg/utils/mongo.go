@@ -17,6 +17,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readconcern"
@@ -75,6 +76,7 @@ type Item struct {
 type MongoFactory interface {
 	NewMongoClient(m MongoMetadata) (MongoClient, error)
 	NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) MongoCollection
+	NewSingleResult(sr *mongo.SingleResult) MongoSingleResult
 }
 
 type MongoClient interface {
@@ -98,9 +100,23 @@ type MongoCollection interface {
 	DeleteOne(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error)
 	Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (*mongo.Cursor, error)
 	Indexes() mongo.IndexView
+	UpdateOne(ctx context.Context, filter interface{}, update interface{},
+		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
+	FindOneAndUpdate(ctx context.Context, filter interface{},
+		update interface{}, opts ...*options.FindOneAndUpdateOptions) *mongo.SingleResult
+}
+
+type MongoSingleResult interface {
+	Decode(v interface{}) error
+	Err() error
+	DecodeBytes() (bson.Raw, error)
 }
 
 type MongoFactoryImpl struct{}
+
+func (c *MongoFactoryImpl) NewSingleResult(sr *mongo.SingleResult) MongoSingleResult {
+	return sr
+}
 
 func (c *MongoFactoryImpl) NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) MongoCollection {
 	collection := m.Collection(collectionName, opts)
@@ -229,4 +245,30 @@ func GetReadConcrenObject(cn string) (*readconcern.ReadConcern, error) {
 		return readconcern.Local(), nil
 	}
 	return nil, nil
+}
+
+func SetConcern(m MongoMetadata) (*options.CollectionOptions, error) {
+
+	wc, err := GetWriteConcernObject(m.WriteConcern)
+	if err != nil {
+		return nil, err
+	}
+
+	rc, err := GetReadConcrenObject(m.ReadConcern)
+	if err != nil {
+		return nil, err
+	}
+
+	// set mongo options of collection
+	opts := options.Collection().SetWriteConcern(wc).SetReadConcern(rc)
+
+	return opts, err
+}
+
+func SetCollection(c MongoClient, f MongoFactory, m MongoMetadata) (MongoCollection, error) {
+	opts, err := SetConcern(m)
+	if err != nil {
+		return nil, err
+	}
+	return f.NewMongoCollection(c.Database(m.DatabaseName), m.CollectionName, opts), err
 }
