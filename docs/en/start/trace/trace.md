@@ -135,7 +135,7 @@ Tracing in Layotto is mainly to record grpc calls, which relies on two intercept
 The interceptor will start tracing every time the grpc method is called, generate traceId spanId, a new context, record the method name, time, and pass the tracing information through the context, and finally export the span information when the method returns.
 
 
-###Metric
+### Metric
 
 Layotto's metric reuses mosn's metric, and connects to prometheus. An example of metric configuration is provided in [runtime_config.json](../../../../configs/runtime_config.json), follow the above steps to start layotto After that, you can read the metric information through the following command:
 

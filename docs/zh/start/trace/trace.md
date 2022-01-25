@@ -1,6 +1,6 @@
 ## 可观测性
 
-###Trace管理
+### Trace管理
 
 #### 功能介绍
 
@@ -138,9 +138,9 @@ Layotto中的tracing主要是对grpc调用进行记录，依赖于在grpc里添�
 拦截器在每次grpc方法调用时都会开启一次tracing，生成traceId spanId、新的context，记录方法名、时间，并且会将tracing信息通过context透传下去，方法返回时将span信息导出。
 
 
-###Metric管理
+### Metric管理
 
-layotto的metric复用的mosn的metric，对接prometheus，[runtime_config.json](../../../../configs/runtime_config.json)中提供了metric配置的示例，按照上述步骤启动layotto后，可以通过一下指令读取metric信息：
+layotto的metric复用的mosn的metric，对接prometheus，[runtime_config.json](../../../../configs/runtime_config.json)中提供了metric配置的示例，按照上述步骤启动layotto后，可以通过以下指令读取metric信息：
 
 
 ```shell
