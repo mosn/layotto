@@ -90,7 +90,7 @@ type Generator interface {
 ```
 
 该接口对应上面的generator配置，该接口主要用来根据收到的context生成traceId,spanId,获得父spanId以及传递给组件的context的功能，用户
-可以实现自己的Generator，可以参考代码中的[OpenGenerator](../../../../diagnostics/genetator.go)的实现。
+可以实现自己的Generator，可以参考代码中的[OpenGenerator](https://github.com/mosn/layotto/blob/main/diagnostics/genetator.go) 的实现。
 
 ##### Exporter接口：
 
@@ -101,7 +101,7 @@ ExportSpan(s *Span)
 ```
 
 exporter接口定了如何将Span的信息上报给远端，对应配置中的exporter字段，该字段是个数组，可以上报给多个服务端。可以
-参照[StdoutExporter](../../../../diagnostics/exporter_iml/stdout.go)的实现,该实现将trace的信息打印到标准输出。
+参照[StdoutExporter](https://github.com/mosn/layotto/blob/main/diagnostics/exporter_iml/stdout.go) 的实现,该实现将trace的信息打印到标准输出。
 
 
 ##### Span的上下文传递：
@@ -116,12 +116,12 @@ GenerateNewContext用于生成新的context，我们通过mosnctx可以将该con
 ```go
 ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
 ```
-可以参考代码中的[OpenGenerator](../../../../diagnostics/genetator.go)的实现
+可以参考代码中的[OpenGenerator](https://github.com/mosn/layotto/blob/main/diagnostics/genetator.go) 的实现
 
 ###### Component侧
 
-在Component侧可以通过[SetExtraComponentInfo](../../../../components/trace/utils.go)塞入component的信息，
-比如在接口[Hello](../../../../components/hello/helloworld/helloworld.go)执行了以下操作：
+在Component侧可以通过[SetExtraComponentInfo](https://github.com/mosn/layotto/blob/main/components/trace/utils.go) 塞入component的信息，
+比如在接口[Hello](https://github.com/mosn/layotto/blob/main/components/hello/helloworld/helloworld.go) 执行了以下操作：
 
 ```go
 	trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v", "hello"))
@@ -133,14 +133,14 @@ trace打印的结果如下：
 
 #### Trace原理
 
-Layotto中的tracing主要是对grpc调用进行记录，依赖于在grpc里添加的两个拦截器： [UnaryInterceptorFilter](../../../../diagnostics/grpc_tracing.go)、 [StreamInterceptorFilter](../../../../diagnostics/grpc_tracing.go)
+Layotto中的tracing主要是对grpc调用进行记录，依赖于在grpc里添加的两个拦截器： [UnaryInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go) 、 [StreamInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go)
 
 拦截器在每次grpc方法调用时都会开启一次tracing，生成traceId spanId、新的context，记录方法名、时间，并且会将tracing信息通过context透传下去，方法返回时将span信息导出。
 
 
 ### Metric管理
 
-layotto的metric复用的mosn的metric，对接prometheus，[runtime_config.json](../../../../configs/runtime_config.json)中提供了metric配置的示例，按照上述步骤启动layotto后，可以通过以下指令读取metric信息：
+layotto的metric复用的mosn的metric，对接prometheus，[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 中提供了metric配置的示例，按照上述步骤启动layotto后，可以通过以下指令读取metric信息：
 
 
 ```shell
