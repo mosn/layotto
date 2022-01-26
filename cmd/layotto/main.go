@@ -127,6 +127,7 @@ import (
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	_ "mosn.io/mosn/pkg/filter/network/proxy"
 	_ "mosn.io/mosn/pkg/filter/stream/flowcontrol"
+	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
 	_ "mosn.io/mosn/pkg/metrics/sink"
 	_ "mosn.io/mosn/pkg/metrics/sink/prometheus"
 	"mosn.io/mosn/pkg/mosn"
