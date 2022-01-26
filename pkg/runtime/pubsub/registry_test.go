@@ -32,7 +32,7 @@ func TestNewRegistry(t *testing.T) {
 	if _, err := r.Create("mock"); err != nil {
 		t.Fatalf("create mock store failed: %v", err)
 	}
-	if _, err := r.Create("not exists"); !strings.Contains(err.Error(), "not regsitered") {
+	if _, err := r.Create("not exists"); !strings.Contains(err.Error(), "not registered") {
 		t.Fatalf("create mock store failed: %v", err)
 	}
 }

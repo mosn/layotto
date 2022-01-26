@@ -315,7 +315,7 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 			m.errInt(err, "create pubsub component %s failed", name)
 			return err
 		}
-		// check config
+		// check consumerID
 		consumerID := strings.TrimSpace(config.Metadata["consumerID"])
 		if consumerID == "" {
 			config.Metadata["consumerID"] = m.runtimeConfig.AppManagement.AppId
