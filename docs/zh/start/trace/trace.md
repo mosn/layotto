@@ -138,9 +138,11 @@ Layotto中的tracing主要是对grpc调用进行记录，依赖于在grpc里添�
 拦截器在每次grpc方法调用时都会开启一次tracing，生成traceId spanId、新的context，记录方法名、时间，并且会将tracing信息通过context透传下去，方法返回时将span信息导出。
 
 
-### Metric管理
+### Metrics管理
 
-layotto的metric复用的mosn的metric，对接prometheus，[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 中提供了metric配置的示例，按照上述步骤启动layotto后，可以通过以下指令读取metric信息：
+layotto的metrics复用的mosn的metrics，对接prometheus。
+
+[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 中提供了metric配置的示例，按照上述步骤启动layotto后，可以通过以下指令读取 metrics 信息：
 
 
 ```shell
@@ -151,4 +153,35 @@ curl --location --request GET 'http://127.0.0.1:34903/metrics'
 
 ![img.png](../../../img/trace/metric.png)
 
-mosn的metric原理可以参照[mosn官方文档](https://mosn.io/blog/code/mosn-log/)
+#### 配置解释
+解释一下[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 里 metrics 相关配置
+##### 埋点
+```json
+          "stream_filters": [
+            //......
+            {
+              "type": "grpc_metric"
+            }
+          ]
+```
+这段配置会启用mosn的"grpc_metric" filter。这个filter会在每次处理完grpc请求后，统计服务名、成功还是失败等信息。 
+
+详见 [mosn代码](https://github.com/mosn/mosn/blob/70751eae7a13dd1b3ac84c31b1ba85c45945ef69/pkg/filter/stream/grpcmetric/metric.go#L54)
+
+##### 展示metrics数据
+```json
+  "metrics": {
+    "sinks": [
+      {
+        "type": "prometheus",
+        "config": {
+          "port": 34903
+        }
+      }
+    ]
+  }
+```
+这段其实也是mosn的配置，会打开34903端口，按 prometheus 的数据格式返回 metrics 指标。
+
+#### 更多细节
+mosn的 metrics 原理可以参照 [mosn官方文档](https://mosn.io/blog/code/mosn-log/)
