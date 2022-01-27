@@ -156,15 +156,8 @@ curl --location --request GET 'http://127.0.0.1:34903/metrics'
 #### 配置解释
 解释一下[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 里 metrics 相关配置
 ##### 埋点
-```json
-          "stream_filters": [
-            //......
-            {
-              "type": "grpc_metric"
-            }
-          ]
-```
-这段配置会启用mosn的"grpc_metric" filter。这个filter会在每次处理完grpc请求后，统计服务名、成功还是失败等信息。 
+![](https://user-images.githubusercontent.com/26001097/151318373-632e93bc-108d-47ae-b401-6092ed66bcdc.png)
+图中标红的这段配置会启用mosn的"grpc_metric" filter。这个filter的作用是在每次处理完grpc请求后，统计服务名、成功还是失败等信息。 
 
 详见 [mosn代码](https://github.com/mosn/mosn/blob/70751eae7a13dd1b3ac84c31b1ba85c45945ef69/pkg/filter/stream/grpcmetric/metric.go#L54)
 
