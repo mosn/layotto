@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	Generator        = "generator"
-	Exporter         = "exporter"
-	DefaultGenerator = "mosntracing"
+	generatorConfigKey = "generator"
+	exporterConfigKey  = "exporter"
+	defaultGenerator   = "mosntracing"
 )
 
 //grpcTracer  is used to start a new Span
@@ -30,7 +30,7 @@ func NewTracer(config map[string]interface{}) (api.Tracer, error) {
 
 func getActiveExportersFromConfig(config map[string]interface{}) []string {
 	var exporters []string
-	if v, ok := config[Exporter]; ok {
+	if v, ok := config[exporterConfigKey]; ok {
 		data, err := json.Marshal(v)
 		if err != nil {
 			return nil
@@ -48,17 +48,19 @@ func (tracer *grpcTracer) Start(ctx context.Context, request interface{}, startT
 	return span
 }
 
+// NewSpan constructs a span and tag it with span/trace/parentSpan IDs.
+// These IDs are generated using the Generator
 func NewSpan(ctx context.Context, startTime time.Time, config map[string]interface{}) api.Span {
 	// construct span
 	span := &ltrace.Span{StartTime: startTime}
 	// get generator according to configuration
-	generator := DefaultGenerator
-	if v, ok := config[Generator]; ok {
-		generator = v.(string)
+	generatorName := defaultGenerator
+	if v, ok := config[generatorConfigKey]; ok {
+		generatorName = v.(string)
 	}
-	ge := ltrace.GetGenerator(generator)
+	ge := ltrace.GetGenerator(generatorName)
 	if ge == nil {
-		log.DefaultLogger.Errorf("not support trace type: %+v", generator)
+		log.DefaultLogger.Errorf("not support trace type: %+v", generatorName)
 		return nil
 	}
 	// use generator to extract the span/trace/parentSpan IDs
@@ -69,7 +71,7 @@ func NewSpan(ctx context.Context, startTime time.Time, config map[string]interfa
 	span.SetTraceId(traceId)
 	span.SetParentSpanId(parentSpanId)
 	// tagging generator type
-	span.SetTag(ltrace.LAYOTTO_GENERATOR_TYPE, generator)
+	span.SetTag(ltrace.LAYOTTO_GENERATOR_TYPE, generatorName)
 	return span
 }
 
