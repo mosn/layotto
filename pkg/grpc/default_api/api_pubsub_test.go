@@ -28,6 +28,7 @@ import (
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
 	"net"
 	"testing"
+	"time"
 
 	"encoding/json"
 	rawGRPC "google.golang.org/grpc"
@@ -144,6 +145,34 @@ func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
 		apiForTest.AppCallbackConn = callbackClient
 		apiForTest.json = jsoniter.ConfigFastest
 		err = apiForTest.publishMessageGRPC(context.Background(), msg)
+		assert.Nil(t, err)
+	})
+	t.Run("drop it when publishing an expired message", func(t *testing.T) {
+		cloudEvent := map[string]interface{}{
+			pubsub.IDField:              "id",
+			pubsub.SourceField:          "source",
+			pubsub.DataContentTypeField: "content-type",
+			pubsub.TypeField:            "type",
+			pubsub.SpecVersionField:     "v1.0.0",
+			pubsub.DataBase64Field:      "bGF5b3R0bw==",
+			pubsub.ExpirationField:      time.Now().Add(-time.Minute).Format(time.RFC3339),
+		}
+
+		data, err := json.Marshal(cloudEvent)
+		assert.Nil(t, err)
+
+		msg := &pubsub.NewMessage{
+			Data:     data,
+			Topic:    "layotto",
+			Metadata: make(map[string]string),
+		}
+		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil)
+
+		var apiForTest = a.(*api)
+		apiForTest.json = jsoniter.ConfigFastest
+		// execute
+		err = apiForTest.publishMessageGRPC(context.Background(), msg)
+		// validate
 		assert.Nil(t, err)
 	})
 }
