@@ -503,7 +503,7 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFa
 	// 2. loop initializing
 	for name, config := range m.runtimeConfig.SecretStoresManagement {
 		// 2.1. create the component
-		comp, err := m.secretStoresRegistry.Create(name, "v1")
+		comp, err := m.secretStoresRegistry.Create(name)
 		if err != nil {
 			m.errInt(err, "create secretStore component %s failed", name)
 			return err
