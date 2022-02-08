@@ -18,37 +18,10 @@ package dapr
 
 import (
 	"context"
+
 	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 )
-
-func (d *daprGrpcAPI) GetState(ctx context.Context, request *runtime.GetStateRequest) (*runtime.GetStateResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) GetBulkState(ctx context.Context, request *runtime.GetBulkStateRequest) (*runtime.GetBulkStateResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) SaveState(ctx context.Context, request *runtime.SaveStateRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *runtime.QueryStateRequest) (*runtime.QueryStateResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) DeleteState(ctx context.Context, request *runtime.DeleteStateRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) DeleteBulkState(ctx context.Context, request *runtime.DeleteBulkStateRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) ExecuteStateTransaction(ctx context.Context, request *runtime.ExecuteStateTransactionRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
 
 func (d *daprGrpcAPI) PublishEvent(ctx context.Context, request *runtime.PublishEventRequest) (*emptypb.Empty, error) {
 	panic("implement me")

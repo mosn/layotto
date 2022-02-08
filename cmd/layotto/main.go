@@ -28,14 +28,13 @@ import (
 	sercetstores_kubernetes "github.com/dapr/components-contrib/secretstores/kubernetes"
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
+	"mosn.io/api"
+	"mosn.io/layotto/diagnostics"
+	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
 	"os"
 	"strconv"
 	"time"
-
-	"mosn.io/api"
-	"mosn.io/layotto/diagnostics"
-	"mosn.io/layotto/pkg/grpc/default_api"
 
 	"mosn.io/layotto/components/file/local"
 	"mosn.io/layotto/components/file/s3/alicloud"
@@ -116,6 +115,7 @@ import (
 
 	// Sequencer
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
+	sequencer_mongo "mosn.io/layotto/components/sequencer/mongo"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 
@@ -136,6 +136,7 @@ import (
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	_ "mosn.io/mosn/pkg/filter/network/proxy"
 	_ "mosn.io/mosn/pkg/filter/stream/flowcontrol"
+	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
 	_ "mosn.io/mosn/pkg/metrics/sink"
 	_ "mosn.io/mosn/pkg/metrics/sink/prometheus"
 	"mosn.io/mosn/pkg/mosn"
@@ -344,6 +345,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
 				return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
 			}),
+			runtime_sequencer.NewFactory("mongo", func() sequencer.Store {
+				return sequencer_mongo.NewMongoSequencer(log.DefaultLogger)
+			}),
 		),
 		// secretstores
 		runtime.WithSecretStoresFactory(
@@ -372,7 +376,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return secretstore_env.NewEnvSecretStore(loggerForDaprComp)
 			}),
 		))
-
 	// 4. check if unhealthy
 	if err != nil {
 		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(err.Error())

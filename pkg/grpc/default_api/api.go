@@ -24,20 +24,20 @@ import (
 	"github.com/dapr/components-contrib/secretstores"
 	"io"
 	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
+	"strings"
+	"sync"
+
 	grpc_api "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
-	"strings"
-	"sync"
 
 	"mosn.io/pkg/utils"
 
 	_ "net/http/pprof"
 
 	"github.com/dapr/components-contrib/state"
-	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
 	"mosn.io/layotto/components/file"
 
@@ -61,7 +61,6 @@ import (
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/messages"
-	runtime_state "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
@@ -491,38 +490,6 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 	return &emptypb.Empty{}, nil
 }
 
-// GetState obtains the state for a specific key.
-func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*runtimev1pb.GetStateResponse, error) {
-	// 1. get store
-	store, err := a.getStateStore(in.StoreName)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.GetState] error: %v", err)
-		return nil, err
-	}
-	// 2. generate the actual key
-	key, err := runtime_state.GetModifiedStateKey(in.Key, in.StoreName, a.appId)
-	if err != nil {
-		return &runtimev1pb.GetStateResponse{}, err
-	}
-	req := state.GetRequest{
-		Key:      key,
-		Metadata: in.Metadata,
-		Options: state.GetStateOption{
-			Consistency: runtime_state.StateConsistencyToString(in.Consistency),
-		},
-	}
-	// 3. query
-	compResp, err := store.Get(&req)
-	// 4. check result
-	if err != nil {
-		err = status.Errorf(codes.Internal, messages.ErrStateGet, in.Key, in.StoreName, err.Error())
-		log.DefaultLogger.Errorf("[runtime] [grpc.GetState] %v", err)
-		return &runtimev1pb.GetStateResponse{}, err
-	}
-
-	return converter.GetResponse2GetStateResponse(compResp), nil
-}
-
 func (a *api) getStateStore(name string) (state.Store, error) {
 	if a.stateStores == nil || len(a.stateStores) == 0 {
 		return nil, status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
@@ -532,118 +499,6 @@ func (a *api) getStateStore(name string) (state.Store, error) {
 		return nil, status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, name)
 	}
 	return a.stateStores[name], nil
-}
-
-func (a *api) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequest) (*runtimev1pb.GetBulkStateResponse, error) {
-	// 1. get store
-	store, err := a.getStateStore(in.StoreName)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.GetBulkState] error: %v", err)
-		return &runtimev1pb.GetBulkStateResponse{}, err
-	}
-
-	bulkResp := &runtimev1pb.GetBulkStateResponse{}
-	if len(in.Keys) == 0 {
-		return bulkResp, nil
-	}
-
-	// 2. store.BulkGet
-	// 2.1. convert reqs
-	reqs := make([]state.GetRequest, len(in.Keys))
-	for i, k := range in.Keys {
-		key, err := runtime_state.GetModifiedStateKey(k, in.StoreName, a.appId)
-		if err != nil {
-			return &runtimev1pb.GetBulkStateResponse{}, err
-		}
-		r := state.GetRequest{
-			Key:      key,
-			Metadata: in.Metadata,
-		}
-		reqs[i] = r
-	}
-	// 2.2. query
-	support, responses, err := store.BulkGet(reqs)
-	if err != nil {
-		return bulkResp, err
-	}
-	// 2.3. parse and return result if store supports this method
-	if support {
-		for i := 0; i < len(responses); i++ {
-			bulkResp.Items = append(bulkResp.Items, converter.BulkGetResponse2BulkStateItem(&responses[i]))
-		}
-		return bulkResp, nil
-	}
-
-	// 3. Simulate the method if the store doesn't support it
-	n := len(reqs)
-	pool := workerpool.New(int(in.Parallelism))
-	resultCh := make(chan *runtimev1pb.BulkStateItem, n)
-	for i := 0; i < n; i++ {
-		pool.Submit(generateGetStateTask(store, &reqs[i], resultCh))
-	}
-	pool.StopWait()
-	for {
-		select {
-		case item, ok := <-resultCh:
-			if !ok {
-				return bulkResp, nil
-			}
-			bulkResp.Items = append(bulkResp.Items, item)
-		default:
-			return bulkResp, nil
-		}
-	}
-}
-
-func generateGetStateTask(store state.Store, req *state.GetRequest, resultCh chan *runtimev1pb.BulkStateItem) func() {
-	return func() {
-		// get
-		r, err := store.Get(req)
-		// convert
-		var item *runtimev1pb.BulkStateItem
-		if err != nil {
-			item = &runtimev1pb.BulkStateItem{
-				Key:   runtime_state.GetOriginalStateKey(req.Key),
-				Error: err.Error(),
-			}
-		} else {
-			item = converter.GetResponse2BulkStateItem(r, runtime_state.GetOriginalStateKey(req.Key))
-		}
-		// collect result
-		select {
-		case resultCh <- item:
-		default:
-			//never happen
-			log.DefaultLogger.Errorf("[api.generateGetStateTask] can not push result to the resultCh. item: %+v", item)
-		}
-	}
-}
-
-func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (*emptypb.Empty, error) {
-	// 1. get store
-	store, err := a.getStateStore(in.StoreName)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	// 2. convert requests
-	reqs := []state.SetRequest{}
-	for _, s := range in.States {
-		key, err := runtime_state.GetModifiedStateKey(s.Key, in.StoreName, a.appId)
-		if err != nil {
-			return &emptypb.Empty{}, err
-		}
-		reqs = append(reqs, *converter.StateItem2SetRequest(s, key))
-	}
-	// 3. query
-	err = store.BulkSet(reqs)
-	// 4. check result
-	if err != nil {
-		err = a.wrapDaprComponentError(err, messages.ErrStateSave, in.StoreName, err.Error())
-		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	return &emptypb.Empty{}, nil
 }
 
 // wrapDaprComponentError parse and wrap error from dapr component
@@ -660,123 +515,6 @@ func (a *api) wrapDaprComponentError(err error, format string, args ...interface
 	}
 
 	return status.Errorf(codes.Internal, format, args...)
-}
-
-func (a *api) DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateRequest) (*emptypb.Empty, error) {
-	// 1. get store
-	store, err := a.getStateStore(in.StoreName)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteState] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	// 2. generate the actual key
-	key, err := runtime_state.GetModifiedStateKey(in.Key, in.StoreName, a.appId)
-	if err != nil {
-		return &empty.Empty{}, err
-	}
-	// 3. convert and send request
-	err = store.Delete(converter.DeleteStateRequest2DeleteRequest(in, key))
-	// 4. check result
-	if err != nil {
-		err = a.wrapDaprComponentError(err, messages.ErrStateDelete, in.Key, err.Error())
-		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteState] error: %v", err)
-		return &empty.Empty{}, err
-	}
-	return &empty.Empty{}, nil
-}
-
-func (a *api) DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkStateRequest) (*empty.Empty, error) {
-	// 1. get store
-	store, err := a.getStateStore(in.StoreName)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteBulkState] error: %v", err)
-		return &empty.Empty{}, err
-	}
-	// 2. convert request
-	reqs := make([]state.DeleteRequest, 0, len(in.States))
-	for _, item := range in.States {
-		key, err := runtime_state.GetModifiedStateKey(item.Key, in.StoreName, a.appId)
-		if err != nil {
-			return &empty.Empty{}, err
-		}
-		reqs = append(reqs, *converter.StateItem2DeleteRequest(item, key))
-	}
-	// 3. send request
-	err = store.BulkDelete(reqs)
-	// 4. check result
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteBulkState] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	return &emptypb.Empty{}, nil
-}
-
-func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*emptypb.Empty, error) {
-	// 1. check params
-	if a.stateStores == nil || len(a.stateStores) == 0 {
-		err := status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
-		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	storeName := in.StoreName
-	if a.stateStores[storeName] == nil {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, storeName)
-		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	// 2. find store
-	store, ok := a.transactionalStateStores[storeName]
-	if !ok {
-		err := status.Errorf(codes.Unimplemented, messages.ErrStateStoreNotSupported, storeName)
-		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	// 3. convert request
-	operations := []state.TransactionalStateOperation{}
-	for _, op := range in.Operations {
-		// 3.1. extract and validate fields
-		var operation state.TransactionalStateOperation
-		var req = op.Request
-		// tolerant npe
-		if req == nil {
-			log.DefaultLogger.Warnf("[runtime] [grpc.ExecuteStateTransaction] one of TransactionalStateOperation.Request is nil")
-			continue
-		}
-		key, err := runtime_state.GetModifiedStateKey(req.Key, in.StoreName, a.appId)
-		if err != nil {
-			return &emptypb.Empty{}, err
-		}
-		// 3.2. prepare TransactionalStateOperation struct according to the operation type
-		switch state.OperationType(op.OperationType) {
-		case state.Upsert:
-			operation = state.TransactionalStateOperation{
-				Operation: state.Upsert,
-				Request:   *converter.StateItem2SetRequest(req, key),
-			}
-		case state.Delete:
-			operation = state.TransactionalStateOperation{
-				Operation: state.Delete,
-				Request:   *converter.StateItem2DeleteRequest(req, key),
-			}
-		default:
-			err := status.Errorf(codes.Unimplemented, messages.ErrNotSupportedStateOperation, op.OperationType)
-			log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
-			return &emptypb.Empty{}, err
-		}
-		operations = append(operations, operation)
-	}
-	// 4. submit transactional request
-	err := store.Multi(&state.TransactionalStateRequest{
-		Operations: operations,
-		Metadata:   in.Metadata,
-	})
-	// 5. check result
-	if err != nil {
-		err = status.Errorf(codes.Internal, messages.ErrStateTransaction, err.Error())
-		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
-		return &emptypb.Empty{}, err
-	}
-	return &emptypb.Empty{}, nil
 }
 
 func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtime_GetFileServer) error {

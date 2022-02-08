@@ -1,6 +1,8 @@
-## trace跟踪
+## 可观测性
 
-### 功能介绍
+### Trace管理
+
+#### 功能介绍
 
 在[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 中，有一段关于trace的配置如下：
 
@@ -36,7 +38,7 @@
 ![img.png](../../../img/trace/trace.png)
 
 
-### 配置参数说明
+#### 配置参数说明
 
 trace配置：
 
@@ -56,7 +58,7 @@ trace拓展配置：
 
 
 
-### Trace设计和拓展
+#### Trace设计和拓展
 整体结构图:
 ![img.png](../../../img/trace/structure.png)
 
@@ -76,7 +78,7 @@ type Span struct {
 Span结构定义了layotto和其component之间传递的数据结构，如下图所示，component可以通过tags将自己的信息传递到layotto，layotto做
 统一的trace上报：
 
-#### Generator接口：
+##### Generator接口：
 
 ```go
 type Generator interface {
@@ -88,9 +90,9 @@ type Generator interface {
 ```
 
 该接口对应上面的generator配置，该接口主要用来根据收到的context生成traceId,spanId,获得父spanId以及传递给组件的context的功能，用户
-可以实现自己的Generator，可以参考代码中的[OpenGenerator](../../../../diagnostics/genetator.go)的实现。
+可以实现自己的Generator，可以参考代码中的[OpenGenerator](https://github.com/mosn/layotto/blob/main/diagnostics/genetator.go) 的实现。
 
-#### Exporter接口：
+##### Exporter接口：
 
 ```go
 type Exporter interface {
@@ -99,12 +101,12 @@ ExportSpan(s *Span)
 ```
 
 exporter接口定了如何将Span的信息上报给远端，对应配置中的exporter字段，该字段是个数组，可以上报给多个服务端。可以
-参照[StdoutExporter](../../../../diagnostics/exporter_iml/stdout.go)的实现,该实现将trace的信息打印到标准输出。
+参照[StdoutExporter](https://github.com/mosn/layotto/blob/main/diagnostics/exporter_iml/stdout.go) 的实现,该实现将trace的信息打印到标准输出。
 
 
-#### Span的上下文传递：
+##### Span的上下文传递：
 
-##### Layotto侧
+###### Layotto侧
 ```go
 GenerateNewContext(ctx context.Context, span api.Span) context.Context
 ```
@@ -114,12 +116,12 @@ GenerateNewContext用于生成新的context，我们通过mosnctx可以将该con
 ```go
 ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
 ```
-可以参考代码中的[OpenGenerator](../../../../diagnostics/genetator.go)的实现
+可以参考代码中的[OpenGenerator](https://github.com/mosn/layotto/blob/main/diagnostics/genetator.go) 的实现
 
-##### Component侧
+###### Component侧
 
-在Component侧可以通过[SetExtraComponentInfo](../../../../components/trace/utils.go)塞入component的信息，
-比如在接口[Hello](../../../../components/hello/helloworld/helloworld.go)执行了以下操作：
+在Component侧可以通过[SetExtraComponentInfo](https://github.com/mosn/layotto/blob/main/components/trace/utils.go) 塞入component的信息，
+比如在接口[Hello](https://github.com/mosn/layotto/blob/main/components/hello/helloworld/helloworld.go) 执行了以下操作：
 
 ```go
 	trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v", "hello"))
@@ -129,8 +131,50 @@ trace打印的结果如下：
 
 ![img.png](../../../img/trace/trace.png)
 
-### Trace原理
+#### Trace原理
 
-Layotto中的tracing主要是对grpc调用进行记录，依赖于在grpc里添加的两个拦截器： [UnaryInterceptorFilter](../../../../diagnostics/grpc_tracing.go)、 [StreamInterceptorFilter](../../../../diagnostics/grpc_tracing.go)
+Layotto中的tracing主要是对grpc调用进行记录，依赖于在grpc里添加的两个拦截器： [UnaryInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go) 、 [StreamInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go)
 
 拦截器在每次grpc方法调用时都会开启一次tracing，生成traceId spanId、新的context，记录方法名、时间，并且会将tracing信息通过context透传下去，方法返回时将span信息导出。
+
+
+### Metrics管理
+
+layotto的metrics复用的mosn的metrics，对接prometheus。
+
+[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 中提供了metric配置的示例，按照上述步骤启动layotto后，可以通过以下指令读取 metrics 信息：
+
+
+```shell
+curl --location --request GET 'http://127.0.0.1:34903/metrics' 
+```
+
+结果如下图所示：
+
+![img.png](../../../img/trace/metric.png)
+
+#### 配置解释
+解释一下[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 里 metrics 相关配置
+##### 埋点、统计
+![](https://user-images.githubusercontent.com/26001097/151318373-632e93bc-108d-47ae-b401-6092ed66bcdc.png)
+图中标红的这段配置会启用mosn的"grpc_metric" filter。这个filter的作用是在每次处理完grpc请求后，统计服务名、成功还是失败等信息，存在内存中。
+
+详见 [mosn代码](https://github.com/mosn/mosn/blob/70751eae7a13dd1b3ac84c31b1ba85c45945ef69/pkg/filter/stream/grpcmetric/metric.go#L54)
+
+##### 展示metrics数据
+```json
+  "metrics": {
+    "sinks": [
+      {
+        "type": "prometheus",
+        "config": {
+          "port": 34903
+        }
+      }
+    ]
+  }
+```
+这段其实也是mosn的配置，会打开34903端口，按 prometheus 的数据格式返回内存中的 metrics 指标。
+
+#### 更多细节
+mosn的 metrics 原理可以参照 [mosn官方文档](https://mosn.io/blog/code/mosn-log/)

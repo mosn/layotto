@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package utils
+package mock
 
 import (
 	"context"
@@ -19,6 +19,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"mosn.io/layotto/components/pkg/utils"
 )
 
 type MockMongoFactory struct{}
@@ -57,12 +58,16 @@ func NewMockMongoSession() *MockMongoSession {
 	return &MockMongoSession{}
 }
 
-func (f *MockMongoFactory) NewMongoClient(m MongoMetadata) (MongoClient, error) {
+func (f *MockMongoFactory) NewMongoClient(m utils.MongoMetadata) (utils.MongoClient, error) {
 	return &MockMongoClient{}, nil
 }
 
-func (f *MockMongoFactory) NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) MongoCollection {
+func (f *MockMongoFactory) NewMongoCollection(m *mongo.Database, collectionName string, opts *options.CollectionOptions) utils.MongoCollection {
 	return &MockMongoCollection{}
+}
+
+func (f *MockMongoFactory) NewSingleResult(sr *mongo.SingleResult) utils.MongoSingleResult {
+	return nil
 }
 
 func (mc *MockMongoCollection) FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) *mongo.SingleResult {
@@ -103,6 +108,14 @@ func (mc *MockMongoCollection) Find(ctx context.Context, filter interface{}, opt
 
 func (mc *MockMongoCollection) Indexes() mongo.IndexView {
 	return mongo.IndexView{}
+}
+
+func (mc *MockMongoCollection) UpdateOne(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
+	return nil, nil
+}
+
+func (mc *MockMongoCollection) FindOneAndUpdate(ctx context.Context, filter interface{}, update interface{}, opts ...*options.FindOneAndUpdateOptions) *mongo.SingleResult {
+	return nil
 }
 
 func (c *MockMongoClient) StartSession(opts ...*options.SessionOptions) (mongo.Session, error) {

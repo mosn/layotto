@@ -17,7 +17,7 @@
     - [Dump TCP Traffic](en/start/network_filter/tcpcopy.md)
   - Flow Control on the 7th layer network
     - [Method Level Flow Control](en/start/stream_filter/flow_control.md)
-  - [Trace management](en/start/trace/trace.md)
+  - [Observability (trace, metric)](en/start/trace/trace.md)
   - [Health check and metadata query](en/start/actuator/start.md)
   - [Run business logic in Layotto using WASM](en/start/wasm/start.md)
   - [FaaS model based on WASM and Runtime](en/start/faas/start.md)
@@ -33,10 +33,10 @@
     - [RPC API](en/building_blocks/rpc/reference.md)    
   - [API reference](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
   - SDK reference
-    - [go sdk](en/sdk_reference/go/start.md)
-    - [java sdk](https://github.com/mosn/layotto/tree/main/sdk/java-sdk)
+    - [java sdk](https://github.com/layotto/java-sdk)
     - [.net sdk](https://github.com/layotto/dotnet-sdk)
     - [js sdk](https://github.com/layotto/js-sdk)
+    - [go sdk](en/sdk_reference/go/start.md)
   - [Configuration reference](en/configuration/overview.md)  
   - [Component specs](en/component_specs/overview.md)
     - [State](en/component_specs/state/common.md)
@@ -60,6 +60,7 @@
       - [Etcd](en/component_specs/sequencer/etcd.md)
       - [Redis](en/component_specs/sequencer/redis.md)
       - [Zookeeper](en/component_specs/sequencer/zookeeper.md)
+      - [MongoDB](en/component_specs/sequencer/mongo.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)

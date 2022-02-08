@@ -20,7 +20,7 @@
     - 在七层网络进行流量干预
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
-    - [trace管理](zh/start/trace/trace.md)
+    - [可观测性(trace,metric)](zh/start/trace/trace.md)
     - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - 用户手册
@@ -36,10 +36,10 @@
         - [RPC API](zh/building_blocks/rpc/reference.md)
     - [grpc API 文档](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
     - SDK文档    
-        - [go sdk](zh/sdk_reference/go/start.md)
-        - [java sdk](https://github.com/mosn/layotto/blob/main/sdk/java-sdk/README-zh.md)
+        - [java sdk](https://github.com/layotto/java-sdk)
         - [.net sdk](https://github.com/layotto/dotnet-sdk)
         - [js sdk](https://github.com/layotto/js-sdk)
+        - [go sdk](zh/sdk_reference/go/start.md)
     - [配置文档](zh/configuration/overview.md)
     - [组件文档](zh/component_specs/overview.md)
         - [State](zh/component_specs/state/common.md)
@@ -53,6 +53,7 @@
             - [Etcd](zh/component_specs/lock/etcd.md)
             - [Zookeeper](zh/component_specs/lock/zookeeper.md)
             - [Consul](zh/component_specs/lock/consul.md)
+            - [MongoDB](zh/component_specs/lock/mongo.md)
         - Configuration
             - [Etcd](zh/component_specs/configuration/etcd.md)
             - [Apollo](zh/component_specs/configuration/apollo.md)
@@ -62,6 +63,7 @@
             - [Etcd](zh/component_specs/sequencer/etcd.md)
             - [Redis](zh/component_specs/sequencer/redis.md)
             - [Zookeeper](zh/component_specs/sequencer/zookeeper.md)
+            - [MongoDB](zh/component_specs/sequencer/mongo.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)

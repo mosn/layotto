@@ -19,7 +19,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/pkg/utils"
+	"mosn.io/layotto/components/pkg/mock"
 	"mosn.io/pkg/log"
 	"sync"
 	"testing"
@@ -71,9 +71,9 @@ func TestMongoLock_TryLock(t *testing.T) {
 	insertOneResult := &mongo.InsertOneResult{}
 	singleResult := &mongo.SingleResult{}
 	result := make(map[string]bson.M)
-	mockMongoClient := utils.MockMongoClient{}
-	mockMongoSession := utils.NewMockMongoSession()
-	mockMongoCollection := utils.MockMongoCollection{
+	mockMongoClient := mock.MockMongoClient{}
+	mockMongoSession := mock.NewMockMongoSession()
+	mockMongoCollection := mock.MockMongoCollection{
 		InsertManyResult: insertManyResult,
 		InsertOneResult:  insertOneResult,
 		SingleResult:     singleResult,
@@ -148,9 +148,9 @@ func TestMongoLock_Unlock(t *testing.T) {
 	insertOneResult := &mongo.InsertOneResult{}
 	singleResult := &mongo.SingleResult{}
 	result := make(map[string]bson.M)
-	mockMongoClient := utils.MockMongoClient{}
-	mockMongoSession := utils.NewMockMongoSession()
-	mockMongoCollection := utils.MockMongoCollection{
+	mockMongoClient := mock.MockMongoClient{}
+	mockMongoSession := mock.NewMockMongoSession()
+	mockMongoCollection := mock.MockMongoCollection{
 		InsertManyResult: insertManyResult,
 		InsertOneResult:  insertOneResult,
 		SingleResult:     singleResult,
