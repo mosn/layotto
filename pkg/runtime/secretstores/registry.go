@@ -18,16 +18,13 @@ package secretstores
 
 import (
 	"github.com/dapr/components-contrib/secretstores"
-	"mosn.io/layotto/components/pkg/info"
-	"strings"
-
 	"github.com/pkg/errors"
+	"mosn.io/layotto/components/pkg/info"
 )
 
 const ServiceName = "secretStore"
 
 type (
-
 	// Registry is used to get registered secret store implementations.
 	Registry interface {
 		Register(ss ...*SecretStoresFactory)
@@ -65,21 +62,4 @@ func (s *secretStoreRegistry) Create(name string) (secretstores.SecretStore, err
 	}
 
 	return nil, errors.Errorf("couldn't find secret store %s", name)
-}
-
-func (s *secretStoreRegistry) getSecretStore(name, version string) (func() secretstores.SecretStore, bool) {
-	nameLower := strings.ToLower(name)
-	versionLower := strings.ToLower(version)
-	secretStoreFn, ok := s.secretStores[nameLower+"/"+versionLower]
-	if ok {
-		return secretStoreFn, true
-	}
-	if versionLower == "" || versionLower == "v0" || versionLower == "v1" {
-		secretStoreFn, ok = s.secretStores[nameLower]
-	}
-	return secretStoreFn, ok
-}
-
-func createFullName(name string) string {
-	return strings.ToLower("secretstores." + name)
 }
