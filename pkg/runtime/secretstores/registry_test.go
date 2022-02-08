@@ -13,79 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package secretstores_test
+package secretstores
 
 import (
 	"mosn.io/layotto/components/pkg/info"
 	"strings"
 	"testing"
 
-	"github.com/pkg/errors"
-	"github.com/stretchr/testify/assert"
-
 	ss "github.com/dapr/components-contrib/secretstores"
-
-	"mosn.io/layotto/pkg/runtime/secretstores"
 )
 
-type mockSecretStore struct {
-	ss.SecretStore
-}
-
-func TestRegistry(t *testing.T) {
-	info := info.NewRuntimeInfo()
-	testRegistry := secretstores.NewRegistry(info)
-
-	t.Run("secret store is registered", func(t *testing.T) {
-		const (
-			secretStoreName   = "mockSecretStore"
-			secretStoreNameV2 = "mockSecretStore/v2"
-			componentName     = "secretstores." + secretStoreName
-		)
-
-		// Initiate mock object
-		mock := &mockSecretStore{}
-		mockV2 := &mockSecretStore{}
-
-		// act
-		testRegistry.Register(secretstores.NewFactory(secretStoreName, func() ss.SecretStore {
-			return mock
-		}))
-		testRegistry.Register(secretstores.NewFactory(secretStoreNameV2, func() ss.SecretStore {
-			return mockV2
-		}))
-
-		// assert v0 and v1
-		p, e := testRegistry.Create(componentName, "v0")
-		assert.NoError(t, e)
-		assert.Same(t, mock, p)
-		p, e = testRegistry.Create(componentName, "v1")
-		assert.NoError(t, e)
-		assert.Same(t, mock, p)
-
-		// assert v2
-		pV2, e := testRegistry.Create(componentName, "v2")
-		assert.NoError(t, e)
-		assert.Same(t, mockV2, pV2)
-
-		// check case-insensitivity
-		pV2, e = testRegistry.Create(strings.ToUpper(componentName), "V2")
-		assert.NoError(t, e)
-		assert.Same(t, mockV2, pV2)
-	})
-
-	t.Run("secret store is not registered", func(t *testing.T) {
-		const (
-			resolverName  = "fakeSecretStore"
-			componentName = "secretstores." + resolverName
-		)
-
-		// act
-		p, actualError := testRegistry.Create(componentName, "v1")
-		expectedError := errors.Errorf("couldn't find secret store %s/v1", componentName)
-
-		// assert
-		assert.Nil(t, p)
-		assert.Equal(t, expectedError.Error(), actualError.Error())
-	})
+func TestNewRegistry(t *testing.T) {
+	r := NewRegistry(info.NewRuntimeInfo())
+	r.Register(NewFactory("mock", func() ss.SecretStore {
+		return nil
+	}),
+	)
+	if _, err := r.Create("mock"); err != nil {
+		t.Fatalf("create mock store failed: %v", err)
+	}
+	if _, err := r.Create("not exists"); !strings.Contains(err.Error(), "not exists") {
+		t.Fatalf("create mock store failed: %v", err)
+	}
 }
