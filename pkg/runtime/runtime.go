@@ -473,20 +473,23 @@ func (m *MosnRuntime) initAppCallbackConnection() error {
 }
 
 func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFactory) error {
-	// 1. init components
 	log.DefaultLogger.Infof("[runtime] start initializing OutputBinding components")
-	// register all config store services implementation
+	// 1. register all factory methods.
 	m.bindingsRegistry.RegisterOutputBinding(factorys...)
+	// 2. loop initializing
 	for name, config := range m.runtimeConfig.Bindings {
+		// 2.1. create the component
 		comp, err := m.bindingsRegistry.CreateOutputBinding(name)
 		if err != nil {
 			m.errInt(err, "create outbinding component %s failed", name)
 			return err
 		}
+		// 2.2. init
 		if err := comp.Init(bindings.Metadata{Name: name, Properties: config.Metadata}); err != nil {
 			m.errInt(err, "init outbinding component %s failed", name)
 			return err
 		}
+		// 2.3. put it into the runtime component pool
 		m.outputBindings[name] = comp
 	}
 	return nil
@@ -499,6 +502,7 @@ func (m *MosnRuntime) initInputBinding(factorys ...*mbindings.InputBindingFactor
 
 func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFactory) error {
 	log.DefaultLogger.Infof("[runtime] start initializing SecretStores components")
+	// 1. register all factory methods.
 	m.secretStoresRegistry.Register(factorys...)
 	// 2. loop initializing
 	for name, config := range m.runtimeConfig.SecretStoresManagement {
