@@ -21,6 +21,7 @@ import (
 	"errors"
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"
+	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/state"
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc"
@@ -63,6 +64,7 @@ type daprGrpcAPI struct {
 	lockStores               map[string]lock.LockStore
 	sequencers               map[string]sequencer.Store
 	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
+	secretStores             map[string]secretstores.SecretStore
 	// app callback
 	AppCallbackConn *grpc.ClientConn
 	// json
@@ -161,6 +163,11 @@ func (d *daprGrpcAPI) InvokeBinding(ctx context.Context, in *runtime.InvokeBindi
 	return r, nil
 }
 
+func (d *daprGrpcAPI) isSecretAllowed(storeName string, key string) bool {
+	// TODO: add permission control
+	return true
+}
+
 // NewDaprAPI_Alpha construct a grpc_api.GrpcAPI which implements DaprServer.
 // Currently it only support Dapr's InvokeService and InvokeBinding API.
 // Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.
@@ -175,7 +182,7 @@ func NewDaprAPI_Alpha(ac *grpc_api.ApplicationContext) grpc_api.GrpcAPI {
 	return NewDaprServer(ac.AppId,
 		ac.Hellos, ac.ConfigStores, ac.Rpcs, ac.PubSubs, ac.StateStores, transactionalStateStores,
 		ac.Files, ac.LockStores, ac.Sequencers,
-		ac.SendToOutputBindingFn)
+		ac.SendToOutputBindingFn, ac.SecretStores)
 }
 
 func NewDaprServer(
@@ -190,6 +197,7 @@ func NewDaprServer(
 	lockStores map[string]lock.LockStore,
 	sequencers map[string]sequencer.Store,
 	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
+	secretStores map[string]secretstores.SecretStore,
 ) DaprGrpcAPI {
 	// construct
 	return &daprGrpcAPI{
@@ -205,5 +213,6 @@ func NewDaprServer(
 		sequencers:               sequencers,
 		sendToOutputBindingFn:    sendToOutputBindingFn,
 		json:                     jsoniter.ConfigFastest,
+		secretStores:             secretStores,
 	}
 }

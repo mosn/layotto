@@ -19,16 +19,23 @@ package default_api
 import (
 	"context"
 	"fmt"
+	"github.com/dapr/components-contrib/secretstores"
+	moke_secret "mosn.io/layotto/pkg/mock/components/secret"
+
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/golang/mock/gomock"
 	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
+	rawGRPC "google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/test/bufconn"
 	l8grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/mock/runtime"
 	"net"
 	"testing"
 
 	"errors"
+	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"io"
@@ -153,7 +160,7 @@ func startTestRuntimeAPIServer(port int, testAPIServer API) *grpc.Server {
 func TestGetConfiguration(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockConfigStore := mock.NewMockStore(ctrl)
-	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil)
+	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
 	mockConfigStore.EXPECT().Get(gomock.Any(), gomock.Any()).Return([]*configstores.ConfigurationItem{
 		{Key: "sofa", Content: "sofa1"},
 	}, nil).Times(1)
@@ -191,7 +198,7 @@ func TestSaveConfiguration(t *testing.T) {
 			},
 			Metadata: nil,
 		}
-		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
 		_, err := api.SaveConfiguration(context.Background(), req)
 		assert.Nil(t, err)
 	})
@@ -199,7 +206,7 @@ func TestSaveConfiguration(t *testing.T) {
 	t.Run("unsupport configstore", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockConfigStore := mock.NewMockStore(ctrl)
-		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
 		_, err := api.SaveConfiguration(context.Background(), &runtimev1pb.SaveConfigurationRequest{StoreName: "etcd"})
 		assert.Equal(t, err.Error(), "configure store [etcd] don't support now")
 	})
@@ -222,7 +229,7 @@ func TestDeleteConfiguration(t *testing.T) {
 			Keys:      []string{"key"},
 			Metadata:  nil,
 		}
-		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
 		_, err := api.DeleteConfiguration(context.Background(), req)
 		assert.Nil(t, err)
 	})
@@ -230,7 +237,7 @@ func TestDeleteConfiguration(t *testing.T) {
 	t.Run("unsupport configstore", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockConfigStore := mock.NewMockStore(ctrl)
-		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
 		_, err := api.DeleteConfiguration(context.Background(), &runtimev1pb.DeleteConfigurationRequest{StoreName: "etcd"})
 		assert.Equal(t, err.Error(), "configure store [etcd] don't support now")
 	})
@@ -242,7 +249,7 @@ func TestSubscribeConfiguration(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockConfigStore := mock.NewMockStore(ctrl)
-	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil)
+	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
 
 	//test not support store type
 	grpcServer := &MockGrpcServer{req: &runtimev1pb.SubscribeConfigurationRequest{}, err: nil}
@@ -306,7 +313,7 @@ func TestInvokeService(t *testing.T) {
 		a := NewAPI("", nil, nil,
 			map[string]rpc.Invoker{
 				mosninvoker.Name: mockInvoker,
-			}, nil, nil, nil, nil, nil, nil)
+			}, nil, nil, nil, nil, nil, nil, nil)
 
 		_, err := a.InvokeService(context.Background(), in)
 		assert.Nil(t, err)
@@ -315,7 +322,7 @@ func TestInvokeService(t *testing.T) {
 
 func TestTryLock(t *testing.T) {
 	t.Run("lock store not configured", func(t *testing.T) {
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.TryLockRequest{
 			StoreName: "abc",
 		}
@@ -325,7 +332,7 @@ func TestTryLock(t *testing.T) {
 
 	t.Run("resourceid empty", func(t *testing.T) {
 		mockLockStore := mock_lock.NewMockLockStore(gomock.NewController(t))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil, nil)
 		req := &runtimev1pb.TryLockRequest{
 			StoreName: "abc",
 		}
@@ -335,7 +342,7 @@ func TestTryLock(t *testing.T) {
 
 	t.Run("lock owner empty", func(t *testing.T) {
 		mockLockStore := mock_lock.NewMockLockStore(gomock.NewController(t))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil, nil)
 		req := &runtimev1pb.TryLockRequest{
 			StoreName:  "abc",
 			ResourceId: "resource",
@@ -346,7 +353,7 @@ func TestTryLock(t *testing.T) {
 
 	t.Run("lock expire is not positive", func(t *testing.T) {
 		mockLockStore := mock_lock.NewMockLockStore(gomock.NewController(t))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil, nil)
 		req := &runtimev1pb.TryLockRequest{
 			StoreName:  "abc",
 			ResourceId: "resource",
@@ -358,7 +365,7 @@ func TestTryLock(t *testing.T) {
 
 	t.Run("lock store not found", func(t *testing.T) {
 		mockLockStore := mock_lock.NewMockLockStore(gomock.NewController(t))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil, nil)
 		req := &runtimev1pb.TryLockRequest{
 			StoreName:  "abc",
 			ResourceId: "resource",
@@ -379,7 +386,7 @@ func TestTryLock(t *testing.T) {
 				Success: true,
 			}, nil
 		})
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil, nil)
 		req := &runtimev1pb.TryLockRequest{
 			StoreName:  "mock",
 			ResourceId: "resource",
@@ -395,7 +402,7 @@ func TestTryLock(t *testing.T) {
 
 func TestUnlock(t *testing.T) {
 	t.Run("lock store not configured", func(t *testing.T) {
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.UnlockRequest{
 			StoreName: "abc",
 		}
@@ -405,7 +412,7 @@ func TestUnlock(t *testing.T) {
 
 	t.Run("resourceid empty", func(t *testing.T) {
 		mockLockStore := mock_lock.NewMockLockStore(gomock.NewController(t))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil, nil)
 		req := &runtimev1pb.UnlockRequest{
 			StoreName: "abc",
 		}
@@ -415,7 +422,7 @@ func TestUnlock(t *testing.T) {
 
 	t.Run("lock owner empty", func(t *testing.T) {
 		mockLockStore := mock_lock.NewMockLockStore(gomock.NewController(t))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil, nil)
 		req := &runtimev1pb.UnlockRequest{
 			StoreName:  "abc",
 			ResourceId: "resource",
@@ -426,7 +433,7 @@ func TestUnlock(t *testing.T) {
 
 	t.Run("lock store not found", func(t *testing.T) {
 		mockLockStore := mock_lock.NewMockLockStore(gomock.NewController(t))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil, nil)
 		req := &runtimev1pb.UnlockRequest{
 			StoreName:  "abc",
 			ResourceId: "resource",
@@ -445,7 +452,7 @@ func TestUnlock(t *testing.T) {
 				Status: lock.SUCCESS,
 			}, nil
 		})
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, map[string]lock.LockStore{"mock": mockLockStore}, nil, nil, nil)
 		req := &runtimev1pb.UnlockRequest{
 			StoreName:  "mock",
 			ResourceId: "resource",
@@ -459,7 +466,7 @@ func TestUnlock(t *testing.T) {
 
 func TestGetNextId(t *testing.T) {
 	t.Run("sequencers not configured", func(t *testing.T) {
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.GetNextIdRequest{
 			StoreName: "abc",
 		}
@@ -469,7 +476,7 @@ func TestGetNextId(t *testing.T) {
 
 	t.Run("seq key empty", func(t *testing.T) {
 		mockSequencerStore := mock_sequencer.NewMockStore(gomock.NewController(t))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
 		req := &runtimev1pb.GetNextIdRequest{
 			StoreName: "abc",
 		}
@@ -479,7 +486,7 @@ func TestGetNextId(t *testing.T) {
 
 	t.Run("sequencer store not found", func(t *testing.T) {
 		mockSequencerStore := mock_sequencer.NewMockStore(gomock.NewController(t))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
 		req := &runtimev1pb.GetNextIdRequest{
 			StoreName: "abc",
 			Key:       "next key",
@@ -498,7 +505,7 @@ func TestGetNextId(t *testing.T) {
 					NextId: 10,
 				}, nil
 			})
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
 		req := &runtimev1pb.GetNextIdRequest{
 			StoreName: "mock",
 			Key:       "next key",
@@ -514,7 +521,7 @@ func TestGetNextId(t *testing.T) {
 	t.Run("net error", func(t *testing.T) {
 		mockSequencerStore := mock_sequencer.NewMockStore(gomock.NewController(t))
 		mockSequencerStore.EXPECT().GetNextId(gomock.Any()).Return(nil, fmt.Errorf("net error"))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil)
+		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
 		req := &runtimev1pb.GetNextIdRequest{
 			StoreName: "mock",
 			Key:       "next key",
@@ -537,7 +544,7 @@ func TestGetFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockFile := mock.NewMockFile(ctrl)
 	mockStream := runtime.NewMockRuntime_GetFileServer(ctrl)
-	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil, nil)
 	err := api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock1"}, mockStream)
 	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not supported store type: mock1"))
 	metadata := make(map[string]string)
@@ -552,7 +559,7 @@ func TestPutFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockFile := mock.NewMockFile(ctrl)
 	mockStream := runtime.NewMockRuntime_PutFileServer(ctrl)
-	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil, nil)
 
 	mockStream.EXPECT().Recv().Return(nil, io.EOF).Times(1)
 	err := api.PutFile(mockStream)
@@ -575,7 +582,7 @@ func TestPutFile(t *testing.T) {
 func TestListFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockFile := mock.NewMockFile(ctrl)
-	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil, nil)
 	request := &runtimev1pb.FileRequest{StoreName: "mock1"}
 	request.Metadata = make(map[string]string)
 	resp, err := api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
@@ -603,7 +610,7 @@ func TestListFile(t *testing.T) {
 func TestDelFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockFile := mock.NewMockFile(ctrl)
-	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil, nil)
 	request := &runtimev1pb.FileRequest{StoreName: "mock1"}
 	request.Metadata = make(map[string]string)
 	resp, err := api.DelFile(context.Background(), &runtimev1pb.DelFileRequest{Request: request})
@@ -622,7 +629,7 @@ func TestDelFile(t *testing.T) {
 func TestGetFileMeta(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockFile := mock.NewMockFile(ctrl)
-	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil)
+	api := NewAPI("", nil, nil, nil, nil, nil, map[string]file.File{"mock": mockFile}, nil, nil, nil, nil)
 	request := &runtimev1pb.GetFileMetaRequest{Request: nil}
 	resp, err := api.GetFileMeta(context.Background(), request)
 	assert.Nil(t, resp)
@@ -643,6 +650,137 @@ func TestGetFileMeta(t *testing.T) {
 	assert.Equal(t, int(resp.Size), 10)
 }
 
+func createTestClient(port int) *grpc.ClientConn {
+	conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", port), grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	return conn
+}
+
+func TestGetSecret(t *testing.T) {
+	fakeStore := moke_secret.FakeSecretStore{}
+	fakeStores := map[string]secretstores.SecretStore{
+		"store1": fakeStore,
+		"store2": fakeStore,
+	}
+	testCases := []struct {
+		testName         string
+		storeName        string
+		key              string
+		errorExcepted    bool
+		expectedResponse string
+		expectedError    codes.Code
+	}{
+		{
+			testName:         "Good Key from store",
+			storeName:        "store1",
+			key:              "good-key",
+			errorExcepted:    false,
+			expectedResponse: "life is good",
+			expectedError:    codes.OK,
+		},
+		{
+			testName:         "error occur with error-key",
+			storeName:        "store2",
+			key:              "error-key",
+			errorExcepted:    true,
+			expectedResponse: "null",
+			expectedError:    codes.Internal,
+		},
+	}
+	// Setup API server
+	fakeAPI := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil,
+		nil, fakeStores)
+
+	// Run test server
+	port, _ := freeport.GetFreePort()
+	server := startTestRuntimeAPIServer(port, fakeAPI)
+	defer server.Stop()
+
+	// Create gRPC test client
+	clientConn := createTestClient(port)
+	defer clientConn.Close()
+	// act
+	client := runtimev1pb.NewRuntimeClient(clientConn)
+	for _, tt := range testCases {
+		t.Run(tt.testName, func(t *testing.T) {
+			req := &runtimev1pb.GetSecretRequest{
+				StoreName: tt.storeName,
+				Key:       tt.key,
+			}
+			resp, err := client.GetSecret(context.Background(), req)
+
+			if !tt.errorExcepted {
+				assert.NoError(t, err, "Expected no error")
+				assert.Equal(t, resp.Data[tt.key], tt.expectedResponse, "Expected responses to be same")
+			} else {
+				assert.Error(t, err, "Expected error")
+				assert.Equal(t, tt.expectedError, status.Code(err))
+			}
+		})
+	}
+}
+
+func TestGetBulkSecret(t *testing.T) {
+
+	fakeStore := moke_secret.FakeSecretStore{}
+	fakeStores := map[string]secretstores.SecretStore{
+		"store1": fakeStore,
+	}
+	expectedResponse := "life is good"
+
+	testCases := []struct {
+		testName         string
+		storeName        string
+		key              string
+		errorExcepted    bool
+		expectedResponse string
+		expectedError    codes.Code
+	}{
+		{
+			testName:         "Good Key from unrestricted store",
+			storeName:        "store1",
+			key:              "good-key",
+			errorExcepted:    false,
+			expectedResponse: expectedResponse,
+		},
+	}
+	// Setup API server
+	fakeAPI := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil,
+		nil, fakeStores)
+
+	// Run test server
+	port, _ := freeport.GetFreePort()
+	server := startTestRuntimeAPIServer(port, fakeAPI)
+	defer server.Stop()
+
+	// Create gRPC test client
+	clientConn := createTestClient(port)
+	defer clientConn.Close()
+
+	// act
+	client := runtimev1pb.NewRuntimeClient(clientConn)
+
+	for _, tt := range testCases {
+		t.Run(tt.testName, func(t *testing.T) {
+			req := &runtimev1pb.GetBulkSecretRequest{
+				StoreName: tt.storeName,
+			}
+			resp, err := client.GetBulkSecret(context.Background(), req)
+
+			if !tt.errorExcepted {
+				assert.NoError(t, err, "Expected no error")
+				assert.Equal(t, resp.Data[tt.key].Secrets[tt.key], tt.expectedResponse, "Expected responses to be same")
+			} else {
+				assert.Error(t, err, "Expected error")
+				assert.Equal(t, tt.expectedError, status.Code(err))
+			}
+		})
+	}
+
+}
+
 func TestNewGrpcServer(t *testing.T) {
 	apiInterface := &api{}
 	_, err := l8grpc.NewGrpcServer(l8grpc.WithGrpcAPIs([]l8grpc.GrpcAPI{apiInterface}), l8grpc.WithNewServer(l8grpc.NewDefaultServer), l8grpc.WithGrpcOptions())
@@ -660,7 +798,7 @@ func TestInvokeBinding(t *testing.T) {
 				return nil, errors.New("error when invoke binding")
 			}
 			return &bindings.InvokeResponse{Data: []byte("ok")}, nil
-		})
+		}, nil)
 	server := startTestServerAPI(port, srv)
 	defer server.Stop()
 
@@ -689,12 +827,4 @@ func startTestServerAPI(port int, srv runtimev1pb.RuntimeServer) *grpc.Server {
 	time.Sleep(maxGRPCServerUptime)
 
 	return server
-}
-
-func createTestClient(port int) *grpc.ClientConn {
-	conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", port), grpc.WithInsecure())
-	if err != nil {
-		panic(err)
-	}
-	return conn
 }
