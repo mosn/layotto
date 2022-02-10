@@ -39,7 +39,7 @@ func TestPublishEvent(t *testing.T) {
 	t.Run("invalid pubsub name", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockPubSub := mock_pubsub.NewMockPubSub(ctrl)
-		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil, nil)
 		_, err := api.PublishEvent(context.Background(), &runtimev1pb.PublishEventRequest{})
 		assert.Equal(t, "rpc error: code = InvalidArgument desc = pubsub name is empty", err.Error())
 	})
@@ -47,7 +47,7 @@ func TestPublishEvent(t *testing.T) {
 	t.Run("invalid topic", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockPubSub := mock_pubsub.NewMockPubSub(ctrl)
-		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.PublishEventRequest{
 			PubsubName: "mock",
 		}
@@ -58,7 +58,7 @@ func TestPublishEvent(t *testing.T) {
 	t.Run("component not found", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockPubSub := mock_pubsub.NewMockPubSub(ctrl)
-		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.PublishEventRequest{
 			PubsubName: "abc",
 			Topic:      "abc",
@@ -72,7 +72,7 @@ func TestPublishEvent(t *testing.T) {
 		mockPubSub := mock_pubsub.NewMockPubSub(ctrl)
 		mockPubSub.EXPECT().Publish(gomock.Any()).Return(nil)
 		mockPubSub.EXPECT().Features().Return(nil)
-		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.PublishEventRequest{
 			PubsubName: "mock",
 			Topic:      "abc",
@@ -86,7 +86,7 @@ func TestPublishEvent(t *testing.T) {
 		mockPubSub := mock_pubsub.NewMockPubSub(ctrl)
 		mockPubSub.EXPECT().Publish(gomock.Any()).Return(fmt.Errorf("net error"))
 		mockPubSub.EXPECT().Features().Return(nil)
-		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil)
+		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.PublishEventRequest{
 			PubsubName: "mock",
 			Topic:      "abc",
@@ -136,7 +136,7 @@ func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
 			Topic:    "layotto",
 			Metadata: make(map[string]string),
 		}
-		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 		var apiForTest = a.(*api)
 		//apiForTest.errInt = func(err error, format string, args ...interface{}) {
@@ -166,7 +166,7 @@ func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
 			Topic:    "layotto",
 			Metadata: make(map[string]string),
 		}
-		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 		var apiForTest = a.(*api)
 		apiForTest.json = jsoniter.ConfigFastest

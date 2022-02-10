@@ -23,7 +23,6 @@ import (
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/secretstores"
 	"io"
-	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 	"strings"
 	"sync"
 
@@ -32,8 +31,6 @@ import (
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
-
-	"github.com/dapr/components-contrib/bindings"
 
 	"mosn.io/pkg/utils"
 
