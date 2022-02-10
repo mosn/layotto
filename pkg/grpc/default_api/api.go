@@ -32,16 +32,10 @@ import (
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 
-	"mosn.io/pkg/utils"
-
-	_ "net/http/pprof"
-
 	"github.com/dapr/components-contrib/state"
 	"github.com/golang/protobuf/ptypes/empty"
 	"mosn.io/layotto/components/file"
-
-	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
-	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
+	"mosn.io/pkg/utils"
 
 	"github.com/dapr/components-contrib/pubsub"
 	jsoniter "github.com/json-iterator/go"
@@ -55,7 +49,6 @@ import (
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
-	"mosn.io/layotto/pkg/messages"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
@@ -417,33 +410,6 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 	return subErr
 }
 
-func (a *api) getStateStore(name string) (state.Store, error) {
-	if a.stateStores == nil || len(a.stateStores) == 0 {
-		return nil, status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
-	}
-
-	if a.stateStores[name] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, name)
-	}
-	return a.stateStores[name], nil
-}
-
-// wrapDaprComponentError parse and wrap error from dapr component
-func (a *api) wrapDaprComponentError(err error, format string, args ...interface{}) error {
-	e, ok := err.(*state.ETagError)
-	if !ok {
-		return status.Errorf(codes.Internal, format, args...)
-	}
-	switch e.Kind() {
-	case state.ETagMismatch:
-		return status.Errorf(codes.Aborted, format, args...)
-	case state.ETagInvalid:
-		return status.Errorf(codes.InvalidArgument, format, args...)
-	}
-
-	return status.Errorf(codes.Internal, format, args...)
-}
-
 func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtime_GetFileServer) error {
 	if a.fileOps[req.StoreName] == nil {
 		return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
@@ -619,162 +585,6 @@ func (a *api) GetFileMeta(ctx context.Context, in *runtimev1pb.GetFileMetaReques
 		meta.Metadata[k].Value = append(meta.Metadata[k].Value, v...)
 	}
 	return &runtimev1pb.GetFileMetaResponse{Size: resp.Size, LastModified: resp.LastModified, Response: meta}, nil
-}
-
-func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error) {
-	// 1. validate
-	if a.lockStores == nil || len(a.lockStores) == 0 {
-		err := status.Error(codes.FailedPrecondition, messages.ErrLockStoresNotConfigured)
-		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
-		return &runtimev1pb.TryLockResponse{}, err
-	}
-	if req.ResourceId == "" {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrResourceIdEmpty, req.StoreName)
-		return &runtimev1pb.TryLockResponse{}, err
-	}
-	if req.LockOwner == "" {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrLockOwnerEmpty, req.StoreName)
-		return &runtimev1pb.TryLockResponse{}, err
-	}
-	if req.Expire <= 0 {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrExpireNotPositive, req.StoreName)
-		return &runtimev1pb.TryLockResponse{}, err
-	}
-	// 2. find store component
-	store, ok := a.lockStores[req.StoreName]
-	if !ok {
-		return &runtimev1pb.TryLockResponse{}, status.Errorf(codes.InvalidArgument, messages.ErrLockStoreNotFound, req.StoreName)
-	}
-	// 3. convert request
-	compReq := TryLockRequest2ComponentRequest(req)
-	// modify key
-	var err error
-	compReq.ResourceId, err = runtime_lock.GetModifiedLockKey(compReq.ResourceId, req.StoreName, a.appId)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
-		return &runtimev1pb.TryLockResponse{}, err
-	}
-	// 4. delegate to the component
-	compResp, err := store.TryLock(compReq)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
-		return &runtimev1pb.TryLockResponse{}, err
-	}
-	// 5. convert response
-	resp := TryLockResponse2GrpcResponse(compResp)
-	return resp, nil
-}
-
-func (a *api) Unlock(ctx context.Context, req *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error) {
-	// 1. validate
-	if a.lockStores == nil || len(a.lockStores) == 0 {
-		err := status.Error(codes.FailedPrecondition, messages.ErrLockStoresNotConfigured)
-		log.DefaultLogger.Errorf("[runtime] [grpc.Unlock] error: %v", err)
-		return newInternalErrorUnlockResponse(), err
-	}
-	if req.ResourceId == "" {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrResourceIdEmpty, req.StoreName)
-		return newInternalErrorUnlockResponse(), err
-	}
-	if req.LockOwner == "" {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrLockOwnerEmpty, req.StoreName)
-		return newInternalErrorUnlockResponse(), err
-	}
-	// 2. find store component
-	store, ok := a.lockStores[req.StoreName]
-	if !ok {
-		return newInternalErrorUnlockResponse(), status.Errorf(codes.InvalidArgument, messages.ErrLockStoreNotFound, req.StoreName)
-	}
-	// 3. convert request
-	compReq := UnlockGrpc2ComponentRequest(req)
-	// modify key
-	var err error
-	compReq.ResourceId, err = runtime_lock.GetModifiedLockKey(compReq.ResourceId, req.StoreName, a.appId)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
-		return newInternalErrorUnlockResponse(), err
-	}
-	// 4. delegate to the component
-	compResp, err := store.Unlock(compReq)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.Unlock] error: %v", err)
-		return newInternalErrorUnlockResponse(), err
-	}
-	// 5. convert response
-	resp := UnlockComp2GrpcResponse(compResp)
-	return resp, nil
-}
-
-func newInternalErrorUnlockResponse() *runtimev1pb.UnlockResponse {
-	return &runtimev1pb.UnlockResponse{
-		Status: runtimev1pb.UnlockResponse_INTERNAL_ERROR,
-	}
-}
-
-func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error) {
-	// 1. validate
-	if len(a.sequencers) == 0 {
-		err := status.Error(codes.FailedPrecondition, messages.ErrSequencerStoresNotConfigured)
-		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
-		return &runtimev1pb.GetNextIdResponse{}, err
-	}
-	if req.Key == "" {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrSequencerKeyEmpty, req.StoreName)
-		return &runtimev1pb.GetNextIdResponse{}, err
-	}
-	// 2. convert
-	compReq, err := GetNextIdRequest2ComponentRequest(req)
-	if err != nil {
-		return &runtimev1pb.GetNextIdResponse{}, err
-	}
-	// modify key
-	compReq.Key, err = runtime_sequencer.GetModifiedSeqKey(compReq.Key, req.StoreName, a.appId)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
-		return &runtimev1pb.GetNextIdResponse{}, err
-	}
-	// 3. find store component
-	store, ok := a.sequencers[req.StoreName]
-	if !ok {
-		return &runtimev1pb.GetNextIdResponse{}, status.Errorf(codes.InvalidArgument, messages.ErrSequencerStoreNotFound, req.StoreName)
-	}
-	var next int64
-	// 4. invoke component
-	if compReq.Options.AutoIncrement == sequencer.WEAK {
-		// WEAK
-		next, err = a.getNextIdWithWeakAutoIncrement(ctx, store, compReq)
-	} else {
-		// STRONG
-		next, err = a.getNextIdFromComponent(ctx, store, compReq)
-	}
-	// 5. convert response
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
-		return &runtimev1pb.GetNextIdResponse{}, err
-	}
-	return &runtimev1pb.GetNextIdResponse{
-		NextId: next,
-	}, nil
-}
-
-func (a *api) getNextIdWithWeakAutoIncrement(ctx context.Context, store sequencer.Store, compReq *sequencer.GetNextIdRequest) (int64, error) {
-	// 1. try to get from cache
-	support, next, err := runtime_sequencer.GetNextIdFromCache(ctx, store, compReq)
-
-	if !support {
-		// 2. get from component
-		return a.getNextIdFromComponent(ctx, store, compReq)
-	}
-	return next, err
-}
-
-func (a *api) getNextIdFromComponent(ctx context.Context, store sequencer.Store, compReq *sequencer.GetNextIdRequest) (int64, error) {
-	var next int64
-	resp, err := store.GetNextId(compReq)
-	if err == nil {
-		next = resp.NextId
-	}
-	return next, err
 }
 
 func (a *api) InvokeBinding(ctx context.Context, in *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error) {

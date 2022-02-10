@@ -22,7 +22,6 @@ import (
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	_ "net/http/pprof"
 )
 
 // GetState obtains the state for a specific key.

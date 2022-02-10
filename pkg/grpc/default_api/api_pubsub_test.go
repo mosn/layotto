@@ -17,22 +17,23 @@ package default_api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/golang/mock/gomock"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
+	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
+	"google.golang.org/protobuf/types/known/emptypb"
 	mock_pubsub "mosn.io/layotto/pkg/mock/components/pubsub"
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
+	"mosn.io/pkg/log"
 	"net"
 	"testing"
 	"time"
-
-	"encoding/json"
-	rawGRPC "google.golang.org/grpc"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 func TestPublishEvent(t *testing.T) {
@@ -175,4 +176,20 @@ func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
 		// validate
 		assert.Nil(t, err)
 	})
+}
+
+type mockClient struct {
+}
+
+func (m *mockClient) ListTopicSubscriptions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*runtimev1pb.ListTopicSubscriptionsResponse, error) {
+	return nil, fmt.Errorf("mock failure")
+}
+
+func (m *mockClient) OnTopicEvent(ctx context.Context, in *runtimev1pb.TopicEventRequest, opts ...grpc.CallOption) (*runtimev1pb.TopicEventResponse, error) {
+	panic("implement me")
+}
+
+func Test_listTopicSubscriptions(t *testing.T) {
+	topics := listTopicSubscriptions(&mockClient{}, log.DefaultLogger)
+	assert.True(t, topics != nil && len(topics) == 0)
 }

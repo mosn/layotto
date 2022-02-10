@@ -20,10 +20,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
-
-	_ "net/http/pprof"
-
 	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
 	contrib_pubsub "github.com/dapr/components-contrib/pubsub"
@@ -32,6 +28,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 
 	"encoding/base64"
 	"github.com/dapr/components-contrib/contenttype"
@@ -293,4 +290,16 @@ func retryStrategy(err error, res *runtimev1pb.TopicEventResponse, cloudEvent ma
 	}
 	// Consider unknown status field as error and retry
 	return errors.New(fmt.Sprintf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus()))
+}
+
+func listTopicSubscriptions(client runtimev1pb.AppCallbackClient, log log.ErrorLogger) []*runtimev1pb.TopicSubscription {
+	resp, err := client.ListTopicSubscriptions(context.Background(), &emptypb.Empty{})
+	if err != nil {
+		log.Errorf("[runtime][listTopicSubscriptions]error after callback: %s", err)
+		return make([]*runtimev1pb.TopicSubscription, 0)
+	}
+	if resp != nil && len(resp.Subscriptions) > 0 {
+		return resp.Subscriptions
+	}
+	return make([]*runtimev1pb.TopicSubscription, 0)
 }
