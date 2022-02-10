@@ -32,6 +32,7 @@ The corresponding client code is in [client.go](https://github.com/mosn/layotto/
  ./client
 ``` 
 Check the log of layotto, you will see the detailed tracking log printed out:
+
 ![img.png](../../../img/trace/trace.png)
 
 
@@ -57,6 +58,7 @@ Trace expansion configuration:
 
 ### Trace design and expansion
 Overall  diagram:
+
 ![img.png](../../../img/trace/structure.png)
 
 #### Span structure:
