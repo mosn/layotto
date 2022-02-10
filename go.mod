@@ -19,7 +19,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/json-iterator/go v1.1.11
-	github.com/phayes/freeport v0.0.0-20171002181615-b8543db493a5
+	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0

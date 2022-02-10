@@ -27,14 +27,6 @@ func (d *daprGrpcAPI) PublishEvent(ctx context.Context, request *runtime.Publish
 	panic("implement me")
 }
 
-func (d *daprGrpcAPI) GetSecret(ctx context.Context, request *runtime.GetSecretRequest) (*runtime.GetSecretResponse, error) {
-	panic("implement me")
-}
-
-func (d *daprGrpcAPI) GetBulkSecret(ctx context.Context, request *runtime.GetBulkSecretRequest) (*runtime.GetBulkSecretResponse, error) {
-	panic("implement me")
-}
-
 func (d *daprGrpcAPI) RegisterActorTimer(ctx context.Context, request *runtime.RegisterActorTimerRequest) (*emptypb.Empty, error) {
 	panic("implement me")
 }

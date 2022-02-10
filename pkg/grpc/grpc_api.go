@@ -19,6 +19,7 @@ package grpc
 import (
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"
+	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/state"
 	"google.golang.org/grpc"
 	"mosn.io/layotto/components/configstores"
@@ -52,4 +53,5 @@ type ApplicationContext struct {
 	LockStores            map[string]lock.LockStore
 	Sequencers            map[string]sequencer.Store
 	SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
+	SecretStores          map[string]secretstores.SecretStore
 }
