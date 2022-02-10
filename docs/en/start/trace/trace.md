@@ -19,19 +19,19 @@ In [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runti
 ```
 This configuration can turn on the trace capability of layotto, allowing layotto to print the tracing log after receiving the request. The user can specify the way of exporting the trace log and generating fields such as spanId and traceId through configuration.
 
-You can start a layotto server as follows:  
+You can start a layotto server as follows:
 ```
 ./layotto start -c ../../configs/runtime_config.json
 ```
 
 
-The corresponding client code is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), running it will call the SayHello API of layotto: 
+The corresponding client code is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), running it will call the SayHello API of layotto:
 ```
  cd ${projectpath}/demo/flowcontrol/
  go build -o client
  ./client
 ``` 
-Check the log of layotto, you will see the detailed tracking log printed out: 
+Check the log of layotto, you will see the detailed tracking log printed out:
 ![img.png](../../../img/trace/trace.png)
 
 
@@ -63,13 +63,13 @@ Overall  diagram:
 
 ```go
 type Span struct {
-    StartTime time.Time //The time when the request was received
-    EndTime time.Time //Returned time
-    traceId string //traceId
-    spanId string //spanId
-    parentSpanId string // parent spanId
-    tags [xprotocol.TRACE_END]string //Expand the field, the component can store its own information in this field
-    operationName string
+StartTime time.Time //The time when the request was received
+EndTime time.Time //Returned time
+traceId string //traceId
+spanId string //spanId
+parentSpanId string // parent spanId
+tags [xprotocol.TRACE_END]string //Expand the field, the component can store its own information in this field
+operationName string
 }
 ```
 The Span structure defines the data structure passed between layotto and its component, as shown in the following figure, component can pass its own information to layotto through tags, and layotto does
@@ -79,10 +79,10 @@ Unified trace report:
 
 ```go
 type Generator interface {
-    GetTraceId(ctx context.Context) string
-    GetSpanId(ctx context.Context) string
-    GenerateNewContext(ctx context.Context, span api.Span) context.Context
-    GetParentSpanId(ctx context.Context) string
+GetTraceId(ctx context.Context) string
+GetSpanId(ctx context.Context) string
+GenerateNewContext(ctx context.Context, span api.Span) context.Context
+GetParentSpanId(ctx context.Context) string
 }
 ```
 
@@ -117,8 +117,8 @@ You can refer to the implementation of [OpenGenerator](https://github.com/mosn/l
 
 ##### Component side
 
-On the Component side, you can insert component information through [SetExtraComponentInfo](../../../../components/trace/utils.go),
-For example, the following operations are performed on the interface [Hello](../../../../components/hello/helloworld/helloworld.go):
+On the Component side, you can insert component information through [SetExtraComponentInfo](https://github.com/mosn/layotto/blob/main/components/trace/utils.go),
+For example, the following operations are performed in the [etcd configStore component](https://github.com/mosn/layotto/blob/main/components/configstores/etcdv3/etcdv3.go):
 
 ```go
 trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v, store: %+v", "Get", "etcd"))
@@ -133,3 +133,17 @@ The results printed by trace are as follows:
 Tracing in Layotto is mainly to record grpc calls, which relies on two interceptors added in grpc： [UnaryInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go) 、 [StreamInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go)
 
 The interceptor will start tracing every time the grpc method is called, generate traceId spanId, a new context, record the method name, time, and pass the tracing information through the context, and finally export the span information when the method returns.
+
+
+## Metric
+
+Layotto's metric reuses mosn's metric, and connects to prometheus. An example of metric configuration is provided in [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json), follow the above steps to start layotto After that, you can read the metric information through the following command:
+
+```shell
+curl --location --request GET 'http://127.0.0.1:34903/metrics'
+````
+The result is shown below:
+
+![img.png](../../../img/trace/metric.png)
+
+For the metric principle of mosn, please refer to [mosn official document](https://mosn.io/blog/code/mosn-log/)
