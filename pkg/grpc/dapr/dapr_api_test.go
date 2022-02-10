@@ -25,6 +25,7 @@ import (
 	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
 	grpc_api "mosn.io/layotto/pkg/grpc"
+	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	"net"
 	"testing"
@@ -126,4 +127,63 @@ func createTestClient(port int) *grpc.ClientConn {
 		panic(err)
 	}
 	return conn
+}
+
+func TestStateItem2SetRequest(t *testing.T) {
+	req := StateItem2SetRequest(&dapr_common_v1pb.StateItem{
+		Key:      "",
+		Value:    []byte("v"),
+		Etag:     nil,
+		Metadata: nil,
+		Options: &dapr_common_v1pb.StateOptions{
+			Concurrency: dapr_common_v1pb.StateOptions_CONCURRENCY_UNSPECIFIED,
+			Consistency: dapr_common_v1pb.StateOptions_CONSISTENCY_UNSPECIFIED,
+		},
+	}, "appid||key")
+	assert.Equal(t, req.Key, "appid||key")
+	assert.Equal(t, req.Value, []byte("v"))
+	assert.Nil(t, req.ETag)
+	assert.Equal(t, req.Options.Consistency, "")
+	assert.Equal(t, req.Options.Concurrency, "")
+}
+
+func TestDeleteStateRequest2DeleteRequest(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		req := DeleteStateRequest2DeleteRequest(nil, "")
+		assert.NotNil(t, req)
+	})
+	t.Run("normal", func(t *testing.T) {
+		req := DeleteStateRequest2DeleteRequest(&dapr_v1pb.DeleteStateRequest{
+			StoreName: "redis",
+			Key:       "",
+			Etag:      nil,
+			Options: &dapr_common_v1pb.StateOptions{
+				Concurrency: dapr_common_v1pb.StateOptions_CONCURRENCY_LAST_WRITE,
+				Consistency: dapr_common_v1pb.StateOptions_CONSISTENCY_EVENTUAL,
+			},
+			Metadata: nil,
+		}, "appid||key")
+		assert.Equal(t, req.Key, "appid||key")
+		assert.Nil(t, req.ETag)
+		assert.Equal(t, req.Options.Consistency, "eventual")
+		assert.Equal(t, req.Options.Concurrency, "last-write")
+	})
+}
+
+func TestStateItem2DeleteRequest(t *testing.T) {
+	req := StateItem2DeleteRequest(&dapr_common_v1pb.StateItem{
+		Key:      "",
+		Value:    []byte("v"),
+		Etag:     nil,
+		Metadata: nil,
+		Options: &dapr_common_v1pb.StateOptions{
+			Concurrency: dapr_common_v1pb.StateOptions_CONCURRENCY_LAST_WRITE,
+			Consistency: dapr_common_v1pb.StateOptions_CONSISTENCY_EVENTUAL,
+		},
+	}, "appid||key")
+	assert.Equal(t, req.Key, "appid||key")
+	assert.Nil(t, req.ETag)
+	assert.Nil(t, req.ETag)
+	assert.Equal(t, req.Options.Consistency, "eventual")
+	assert.Equal(t, req.Options.Concurrency, "last-write")
 }
