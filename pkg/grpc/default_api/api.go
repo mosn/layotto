@@ -20,28 +20,23 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/dapr/components-contrib/secretstores"
 	"io"
 	"strings"
 	"sync"
 
+	"github.com/dapr/components-contrib/bindings"
 	grpc_api "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
-	"strings"
-	"sync"
-
-	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
-
-	"github.com/dapr/components-contrib/bindings"
 
 	"mosn.io/pkg/utils"
 
 	_ "net/http/pprof"
 
 	"github.com/dapr/components-contrib/state"
-	"github.com/gammazero/workerpool"
 	"github.com/golang/protobuf/ptypes/empty"
 	"mosn.io/layotto/components/file"
 
