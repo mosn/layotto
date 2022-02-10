@@ -117,8 +117,8 @@ You can refer to the implementation of [OpenGenerator](https://github.com/mosn/l
 
 ##### Component side
 
-On the Component side, you can insert component information through [SetExtraComponentInfo](https://github.com/mosn/layotto/blob/main/components/trace/utils.go),
-For example, the following operations are performed in the [etcd configStore component](https://github.com/mosn/layotto/blob/main/components/configstores/etcdv3/etcdv3.go):
+On the Component side, you can insert component information through [SetExtraComponentInfo](../../../../components/trace/utils.go),
+For example, the following operations are performed on the interface [Hello](../../../../components/hello/helloworld/helloworld.go):
 
 ```go
 trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v, store: %+v", "Get", "etcd"))
@@ -133,17 +133,3 @@ The results printed by trace are as follows:
 Tracing in Layotto is mainly to record grpc calls, which relies on two interceptors added in grpc： [UnaryInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go) 、 [StreamInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go)
 
 The interceptor will start tracing every time the grpc method is called, generate traceId spanId, a new context, record the method name, time, and pass the tracing information through the context, and finally export the span information when the method returns.
-
-
-## Metric
-
-Layotto's metric reuses mosn's metric, and connects to prometheus. An example of metric configuration is provided in [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json), follow the above steps to start layotto After that, you can read the metric information through the following command:
-
-```shell
-curl --location --request GET 'http://127.0.0.1:34903/metrics'
-````
-The result is shown below:
-
-![img.png](../../../img/trace/metric.png)
-
-For the metric principle of mosn, please refer to [mosn official document](https://mosn.io/blog/code/mosn-log/)
