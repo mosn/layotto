@@ -18,9 +18,10 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"mosn.io/api"
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
+	component_actuators "mosn.io/layotto/components/pkg/actuators"
+	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	"os"
@@ -157,10 +158,19 @@ func init() {
 }
 
 func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
+	server, err := newRuntimeGrpcServer(data, opts...)
+	if err != nil {
+		go func() {
+			panic(err)
+		}()
+	}
+	return server, err
+}
+
+func newRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
 	// 1. parse config
 	cfg, err := runtime.ParseRuntimeConfig(data)
 	if err != nil {
-		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(fmt.Sprintf("parse config error.%v", err))
 		return nil, err
 	}
 	// 2. new instance
@@ -168,6 +178,14 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	// 3. run
 	server, err := rt.Run(
 		runtime.WithGrpcOptions(opts...),
+		// wrap the grpc server with actuator
+		runtime.WithNewServer(func(apis []l8_grpc.GrpcAPI, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
+			server, err := l8_grpc.NewDefaultServer(apis, opts...)
+			if err != nil {
+				return nil, err
+			}
+			return actuator.NewGrpcServerWithActuator(server)
+		}),
 		// register your grpc API here
 		runtime.WithGrpcAPI(
 			// default grpc API
@@ -340,11 +358,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
 			}),
 		))
-	// 4. check if unhealthy
-	if err != nil {
-		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(err.Error())
-		actuator.GetRuntimeLivenessIndicator().SetUnhealthy(err.Error())
-	}
 	return server, err
 }
 
@@ -380,6 +393,8 @@ var cmdStart = cli.Command{
 
 		stm.AppendStartStage(mosn.DefaultStartStage)
 
+		stm.AppendAfterStartStage(SetActuatorAfterStart)
+
 		stm.Run()
 
 		actuator.GetRuntimeReadinessIndicator().SetStarted()
@@ -388,6 +403,21 @@ var cmdStart = cli.Command{
 		stm.WaitFinish()
 		return nil
 	},
+}
+
+func SetActuatorAfterStart(m *mosn.Mosn) {
+	// register component actuator
+	component_actuators.Range(
+		func(name string, v *component_actuators.ComponentsIndicator) bool {
+			if v != nil {
+				health.AddLivenessIndicator(name, v.LivenessIndicator)
+				health.AddReadinessIndicator(name, v.ReadinessIndicator)
+			}
+			return true
+		})
+	// set started
+	actuator.GetRuntimeReadinessIndicator().SetStarted()
+	actuator.GetRuntimeLivenessIndicator().SetStarted()
 }
 
 // ExtensionsRegister for register mosn rpc extensions
