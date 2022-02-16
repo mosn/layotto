@@ -86,6 +86,7 @@
         - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
     - [解释一下Layotto的github workflow](zh/development/explanation-for-github-workflow.md)
+    - [发布手册](zh/development/release-guide.md)
     - [待解决的问题](zh/development/problems-to-solve.md)
 - 社区
     - [SOFAStack & MOSN 社区角色说明](zh/community/governance.md)
