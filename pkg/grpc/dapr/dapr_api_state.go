@@ -42,7 +42,7 @@ func (d *daprGrpcAPI) SaveState(ctx context.Context, in *dapr_v1pb.SaveStateRequ
 		return &emptypb.Empty{}, err
 	}
 	// 2. convert requests
-	var reqs []state.SetRequest
+	reqs := []state.SetRequest{}
 	for _, s := range in.States {
 		key, err := state2.GetModifiedStateKey(s.Key, in.StoreName, d.appId)
 		if err != nil {
@@ -333,22 +333,6 @@ func (d *daprGrpcAPI) getStateStore(name string) (state.Store, error) {
 	return d.stateStores[name], nil
 }
 
-// wrapDaprComponentError parse and wrap error from dapr component
-func (d *daprGrpcAPI) wrapDaprComponentError(err error, format string, args ...interface{}) error {
-	e, ok := err.(*state.ETagError)
-	if !ok {
-		return status.Errorf(codes.Internal, format, args...)
-	}
-	switch e.Kind() {
-	case state.ETagMismatch:
-		return status.Errorf(codes.Aborted, format, args...)
-	case state.ETagInvalid:
-		return status.Errorf(codes.InvalidArgument, format, args...)
-	}
-
-	return status.Errorf(codes.Internal, format, args...)
-}
-
 func StateItem2SetRequest(grpcReq *dapr_common_v1pb.StateItem, key string) *state.SetRequest {
 	req := &state.SetRequest{
 		Key: key,
@@ -399,6 +383,22 @@ func StateConcurrencyToString(c dapr_common_v1pb.StateOptions_StateConcurrency) 
 	}
 
 	return ""
+}
+
+// wrapDaprComponentError parse and wrap error from dapr component
+func (d *daprGrpcAPI) wrapDaprComponentError(err error, format string, args ...interface{}) error {
+	e, ok := err.(*state.ETagError)
+	if !ok {
+		return status.Errorf(codes.Internal, format, args...)
+	}
+	switch e.Kind() {
+	case state.ETagMismatch:
+		return status.Errorf(codes.Aborted, format, args...)
+	case state.ETagInvalid:
+		return status.Errorf(codes.InvalidArgument, format, args...)
+	}
+
+	return status.Errorf(codes.Internal, format, args...)
 }
 
 func generateGetStateTask(store state.Store, req *state.GetRequest, resultCh chan *dapr_v1pb.BulkStateItem) func() {

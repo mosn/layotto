@@ -19,16 +19,21 @@ package runtime
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/dapr/components-contrib/bindings"
 	"google.golang.org/grpc/test/bufconn"
+	"mosn.io/layotto/components/hello/helloworld"
+	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
+	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
+	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
+	mbindings "mosn.io/layotto/pkg/runtime/bindings"
+	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"net"
 	"testing"
-
-	"github.com/dapr/components-contrib/bindings"
-	mbindings "mosn.io/layotto/pkg/runtime/bindings"
 
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
@@ -95,6 +100,63 @@ func TestMosnRuntime_Run(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, "[runtime] init error:no runtimeConfig", err.Error())
 		rt.Stop()
+	})
+	t.Run("component init error", func(t *testing.T) {
+		// mock pubsub component
+		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
+		errExpected := errors.New("init error")
+		mockPubSub.EXPECT().Init(gomock.Any()).Return(errExpected)
+		//mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).Return(nil)
+		f := func() pubsub.PubSub {
+			return mockPubSub
+		}
+
+		// 2. construct runtime
+		cfg := &MosnRuntimeConfig{
+			PubSubManagement: map[string]mpubsub.Config{
+				"mock": {
+					Metadata: map[string]string{
+						"target": "layotto",
+					},
+				},
+			},
+		}
+		rt := NewMosnRuntime(cfg)
+
+		rt.errInt = func(err error, format string, args ...interface{}) {
+			panic(err)
+		}
+		// 3. Run
+		_, err := rt.Run(
+			// Hello
+			WithHelloFactory(
+				hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),
+			),
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+			// PubSub
+			WithPubSubFactory(
+				mpubsub.NewFactory("mock", f),
+			),
+			// Sequencer
+			WithSequencerFactory(
+				runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
+					return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
+				}),
+				runtime_sequencer.NewFactory("redis", func() sequencer.Store {
+					return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
+				}),
+				runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
+					return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+				}),
+			),
+		)
+		// 4. assert
+		assert.NotNil(t, err)
+		assert.True(t, err == errExpected)
+
 	})
 }
 
@@ -301,16 +363,16 @@ func TestMosnRuntime_initLocks(t *testing.T) {
 type MockBindings struct {
 }
 
-func (h *MockBindings) Init(metadata bindings.Metadata) error {
+func (m *MockBindings) Init(metadata bindings.Metadata) error {
 	//do nothing
 	return nil
 }
 
-func (h *MockBindings) Invoke(req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
+func (m *MockBindings) Invoke(req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
 	return nil, nil
 }
 
-func (h *MockBindings) Operations() []bindings.OperationKind {
+func (m *MockBindings) Operations() []bindings.OperationKind {
 	return nil
 }
 
@@ -349,6 +411,10 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 		}
 		// 3. Run
 		server, err := rt.Run(
+			// Hello
+			WithHelloFactory(
+				hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),
+			),
 			// register your grpc API here
 			WithGrpcAPI(
 				default_api.NewGrpcAPI,
@@ -356,6 +422,18 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			// PubSub
 			WithPubSubFactory(
 				mpubsub.NewFactory("mock", f),
+			),
+			// Sequencer
+			WithSequencerFactory(
+				runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
+					return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
+				}),
+				runtime_sequencer.NewFactory("redis", func() sequencer.Store {
+					return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
+				}),
+				runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
+					return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+				}),
 			),
 		)
 		// 4. assert

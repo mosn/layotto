@@ -18,10 +18,7 @@ package helloworld
 
 import (
 	"context"
-	"fmt"
-
 	"mosn.io/layotto/components/hello"
-	"mosn.io/layotto/components/trace"
 )
 
 type HelloWorld struct {
@@ -40,8 +37,11 @@ func (hw *HelloWorld) Init(config *hello.HelloConfig) error {
 }
 
 func (hw *HelloWorld) Hello(ctx context.Context, req *hello.HelloRequest) (*hello.HelloReponse, error) {
-	trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v", "hello"))
+	greetings := hw.Say
+	if req.Name != "" {
+		greetings = greetings + ", " + req.Name
+	}
 	return &hello.HelloReponse{
-		HelloString: hw.Say + ", " + req.Name,
+		HelloString: greetings,
 	}, nil
 }

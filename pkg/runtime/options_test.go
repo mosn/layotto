@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package pubsub
+package runtime
 
 import (
-	"github.com/dapr/components-contrib/pubsub"
-	"mosn.io/layotto/components/pkg/info"
-	"strings"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestNewRegistry(t *testing.T) {
-	r := NewRegistry(info.NewRuntimeInfo())
-	r.Register(NewFactory("mock", func() pubsub.PubSub {
-		return nil
-	}),
-	)
-	if _, err := r.Create("mock"); err != nil {
-		t.Fatalf("create mock store failed: %v", err)
+func TestWithErrInterceptor(t *testing.T) {
+	cnt := 0
+	var f ErrInterceptor = func(err error, format string, args ...interface{}) {
+		cnt++
 	}
-	if _, err := r.Create("not exists"); !strings.Contains(err.Error(), "not registered") {
-		t.Fatalf("create mock store failed: %v", err)
+	rt := &runtimeOptions{
+		services:    services{},
+		srvMaker:    nil,
+		errInt:      nil,
+		options:     nil,
+		apiFactorys: nil,
 	}
+	WithErrInterceptor(f)(rt)
+	rt.errInt(nil, "")
+	assert.True(t, cnt == 1)
 }

@@ -61,17 +61,18 @@ type MosnRuntime struct {
 	rpcRegistry          rpc.Registry
 	pubSubRegistry       runtime_pubsub.Registry
 	stateRegistry        runtime_state.Registry
-	fileRegistry         file.Registry
 	lockRegistry         runtime_lock.Registry
 	sequencerRegistry    runtime_sequencer.Registry
+	fileRegistry         file.Registry
 	bindingsRegistry     mbindings.Registry
 	secretStoresRegistry msecretstores.Registry
-
 	// component pool
-	hellos         map[string]hello.HelloService
-	configStores   map[string]configstores.Store
-	rpcs           map[string]rpc.Invoker
-	pubSubs        map[string]pubsub.PubSub
+	hellos map[string]hello.HelloService
+	// config management system component
+	configStores map[string]configstores.Store
+	rpcs         map[string]rpc.Invoker
+	pubSubs      map[string]pubsub.PubSub
+	// state implementations store here are already initialized
 	states         map[string]state.Store
 	files          map[string]file.File
 	locks          map[string]lock.LockStore
@@ -218,13 +219,16 @@ func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
 	if err := m.initConfigStores(o.services.configStores...); err != nil {
 		return err
 	}
+	if err := m.initStates(o.services.states...); err != nil {
+		return err
+	}
 	if err := m.initRpcs(o.services.rpcs...); err != nil {
 		return err
 	}
-	if err := m.initPubSubs(o.services.pubSubs...); err != nil {
+	if err := m.initOutputBinding(o.services.outputBinding...); err != nil {
 		return err
 	}
-	if err := m.initStates(o.services.states...); err != nil {
+	if err := m.initPubSubs(o.services.pubSubs...); err != nil {
 		return err
 	}
 	if err := m.initFiles(o.services.files...); err != nil {
@@ -237,9 +241,6 @@ func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
 		return err
 	}
 	if err := m.initInputBinding(o.services.inputBinding...); err != nil {
-		return err
-	}
-	if err := m.initOutputBinding(o.services.outputBinding...); err != nil {
 		return err
 	}
 	if err := m.initSecretStores(o.services.secretStores...); err != nil {
@@ -294,7 +295,7 @@ func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactor
 
 func (m *MosnRuntime) initRpcs(rpcs ...*rpc.Factory) error {
 	log.DefaultLogger.Infof("[runtime] init rpc service")
-	// register all config store services implementation
+	// register all rpc components
 	m.rpcRegistry.Register(rpcs...)
 	for name, config := range m.runtimeConfig.RpcManagement {
 		c, err := m.rpcRegistry.Create(name)
@@ -323,7 +324,7 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 			m.errInt(err, "create pubsub component %s failed", name)
 			return err
 		}
-		// check config
+		// check consumerID
 		consumerID := strings.TrimSpace(config.Metadata["consumerID"])
 		if consumerID == "" {
 			config.Metadata["consumerID"] = m.runtimeConfig.AppManagement.AppId

@@ -18,19 +18,92 @@ package default_api
 
 import (
 	"context"
-	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/dapr/components-contrib/contenttype"
+	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
+	contrib_pubsub "github.com/dapr/components-contrib/pubsub"
+	"github.com/google/uuid"
+	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	_ "net/http/pprof"
+	"google.golang.org/protobuf/types/known/emptypb"
+	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 
+	"encoding/base64"
+	"github.com/dapr/components-contrib/contenttype"
+	"mosn.io/layotto/pkg/messages"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
+
+func (a *api) PublishEvent(ctx context.Context, in *runtimev1pb.PublishEventRequest) (*emptypb.Empty, error) {
+	result, err := a.doPublishEvent(ctx, in.PubsubName, in.Topic, in.Data, in.DataContentType, in.Metadata)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
+	}
+	return result, err
+}
+
+// doPublishEvent is a protocal irrelevant function to do event publishing.
+// It's easy to add APIs for other protocals.Just move this func to a separate layer if you need.
+func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic string, data []byte, contentType string, metadata map[string]string) (*emptypb.Empty, error) {
+	// 1. validate
+	if pubsubName == "" {
+		err := status.Error(codes.InvalidArgument, messages.ErrPubsubEmpty)
+		return &emptypb.Empty{}, err
+	}
+	if topic == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrTopicEmpty, pubsubName)
+		return &emptypb.Empty{}, err
+	}
+	// 2. get component
+	component, ok := a.pubSubs[pubsubName]
+	if !ok {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrPubsubNotFound, pubsubName)
+		return &emptypb.Empty{}, err
+	}
+
+	// 3. new cloudevent request
+	if data == nil {
+		data = []byte{}
+	}
+	var envelope map[string]interface{}
+	var err error = nil
+	if contrib_contenttype.IsCloudEventContentType(contentType) {
+		envelope, err = contrib_pubsub.FromCloudEvent(data, topic, pubsubName, "")
+		if err != nil {
+			err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
+			return &emptypb.Empty{}, err
+		}
+	} else {
+		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", topic, pubsubName,
+			contentType, data, "")
+	}
+	features := component.Features()
+	pubsub.ApplyMetadata(envelope, features, metadata)
+
+	b, err := jsoniter.ConfigFastest.Marshal(envelope)
+	if err != nil {
+		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventsSer, topic, pubsubName, err.Error())
+		return &emptypb.Empty{}, err
+	}
+	// 4. publish
+	req := pubsub.PublishRequest{
+		PubsubName: pubsubName,
+		Topic:      topic,
+		Data:       b,
+		Metadata:   metadata,
+	}
+
+	// TODO limit topic scope
+	err = component.Publish(&req)
+	if err != nil {
+		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, topic, pubsubName, err.Error())
+		return &emptypb.Empty{}, nerr
+	}
+	return &emptypb.Empty{}, nil
+}
 
 func (a *api) startSubscribing() error {
 	// 1. check if there is no need to do it
@@ -105,7 +178,7 @@ func (a *api) getInterestedTopics() (map[string]TopicSubscriptions, error) {
 
 	// 2. handle app subscriptions
 	client := runtimev1pb.NewAppCallbackClient(a.AppCallbackConn)
-	subscriptions = runtime_pubsub.ListTopicSubscriptions(client, log.DefaultLogger)
+	subscriptions = listTopicSubscriptions(client, log.DefaultLogger)
 	// TODO handle declarative subscriptions
 
 	// 3. prepare result
@@ -217,4 +290,16 @@ func retryStrategy(err error, res *runtimev1pb.TopicEventResponse, cloudEvent ma
 	}
 	// Consider unknown status field as error and retry
 	return errors.New(fmt.Sprintf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus()))
+}
+
+func listTopicSubscriptions(client runtimev1pb.AppCallbackClient, log log.ErrorLogger) []*runtimev1pb.TopicSubscription {
+	resp, err := client.ListTopicSubscriptions(context.Background(), &emptypb.Empty{})
+	if err != nil {
+		log.Errorf("[runtime][listTopicSubscriptions]error after callback: %s", err)
+		return make([]*runtimev1pb.TopicSubscription, 0)
+	}
+	if resp != nil && len(resp.Subscriptions) > 0 {
+		return resp.Subscriptions
+	}
+	return make([]*runtimev1pb.TopicSubscription, 0)
 }

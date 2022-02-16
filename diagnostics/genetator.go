@@ -45,7 +45,10 @@ func (o *OpenGenerator) GetSpanId(ctx context.Context) string {
 	return spanId
 }
 
+// GetParentSpanId returns the same id as GetSpanId.
+// It's because currently Layotto don't know the parent id.
 func (o *OpenGenerator) GetParentSpanId(ctx context.Context) string {
+	// TODO: need some design to get the parent id
 	var spanId string
 	md, _ := metadata.FromIncomingContext(ctx)
 	if v, ok := md[strings.ToLower(sofa.RPC_ID_KEY)]; ok {

@@ -18,8 +18,6 @@ package default_api
 
 import (
 	"context"
-	_ "net/http/pprof"
-
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
