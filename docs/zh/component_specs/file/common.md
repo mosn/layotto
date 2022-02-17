@@ -26,7 +26,7 @@ json配置文件有如下结构：
 
 ```golang
     type FileConfig struct {
-	Metadata json.RawMessage
+	    Metadata json.RawMessage
     }
 
     Files   map[string]file.FileConfig          `json:"file"`
