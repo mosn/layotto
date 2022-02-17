@@ -174,6 +174,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			// fail fast if error occurs during startup.
 			// The reason we panic in a new goroutine is to prevent mosn from recovering.
 			go func() {
+				log.DefaultLogger.Errorf("An error occurred during startup : %v", err)
 				panic(err)
 			}()
 		}
