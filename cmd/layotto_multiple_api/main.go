@@ -158,16 +158,16 @@ func init() {
 }
 
 func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
-	server, err := newRuntimeGrpcServer(data, opts...)
-	if err != nil {
-		go func() {
-			panic(err)
-		}()
-	}
-	return server, err
-}
-
-func newRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
+	var err error
+	defer func() {
+		if err != nil {
+			// fail fast if error occurs during startup.
+			// The reason we panic in a new goroutine is to prevent mosn from recovering.
+			go func() {
+				panic(err)
+			}()
+		}
+	}()
 	// 1. parse config
 	cfg, err := runtime.ParseRuntimeConfig(data)
 	if err != nil {
@@ -407,7 +407,7 @@ var cmdStart = cli.Command{
 
 func SetActuatorAfterStart(m *mosn.Mosn) {
 	// register component actuator
-	component_actuators.Range(
+	component_actuators.RangeAllIndicators(
 		func(name string, v *component_actuators.ComponentsIndicator) bool {
 			if v != nil {
 				health.AddLivenessIndicator(name, v.LivenessIndicator)
