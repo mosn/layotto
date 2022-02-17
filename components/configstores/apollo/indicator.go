@@ -35,7 +35,7 @@ func init() {
 	readinessIndicator = newHealthIndicator()
 	livenessIndicator = newHealthIndicator()
 	indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
-	actuators.SetComponentsActuators("apollo", indicators)
+	actuators.SetComponentsIndicator("apollo", indicators)
 }
 
 func newHealthIndicator() *healthIndicator {

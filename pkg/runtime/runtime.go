@@ -35,13 +35,10 @@ import (
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/info"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
-	"mosn.io/layotto/pkg/actuator/health"
 	"mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/pkg/integrate/actuator"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
@@ -200,8 +197,6 @@ func (m *MosnRuntime) Stop() {
 	if m.srv != nil {
 		m.srv.Stop()
 	}
-	actuator.GetRuntimeReadinessIndicator().SetUnhealthy("shutdown")
-	actuator.GetRuntimeLivenessIndicator().SetUnhealthy("shutdown")
 }
 
 func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
@@ -283,12 +278,6 @@ func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactor
 			return err
 		}
 		m.configStores[name] = c
-		v := actuators.GetIndicatorWithName(name)
-		//Now don't force user implement actuator of components
-		if v != nil {
-			health.AddLivenessIndicator(name, v.LivenessIndicator)
-			health.AddReadinessIndicator(name, v.ReadinessIndicator)
-		}
 	}
 	return nil
 }
@@ -383,12 +372,6 @@ func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
 			return err
 		}
 		m.files[name] = c
-		v := actuators.GetIndicatorWithName(name)
-		//Now don't force user implement actuator of components
-		if v != nil {
-			health.AddLivenessIndicator(name, v.LivenessIndicator)
-			health.AddReadinessIndicator(name, v.ReadinessIndicator)
-		}
 	}
 	return nil
 }

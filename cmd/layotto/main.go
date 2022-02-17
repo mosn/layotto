@@ -18,7 +18,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
 	"github.com/dapr/components-contrib/secretstores/aws/secretmanager"
@@ -29,6 +28,7 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 	"mosn.io/api"
+	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
@@ -129,6 +129,7 @@ import (
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
+	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/runtime"
 	_ "mosn.io/layotto/pkg/wasm"
 	"mosn.io/mosn/pkg/featuregate"
@@ -167,10 +168,20 @@ func init() {
 }
 
 func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
+	var err error
+	defer func() {
+		if err != nil {
+			// fail fast if error occurs during startup.
+			// The reason we panic in a new goroutine is to prevent mosn from recovering.
+			go func() {
+				log.DefaultLogger.Errorf("An error occurred during startup : %v", err)
+				panic(err)
+			}()
+		}
+	}()
 	// 1. parse config
 	cfg, err := runtime.ParseRuntimeConfig(data)
 	if err != nil {
-		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(fmt.Sprintf("parse config error.%v", err))
 		return nil, err
 	}
 	// 2. new instance
@@ -178,6 +189,14 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	// 3. run
 	server, err := rt.Run(
 		runtime.WithGrpcOptions(opts...),
+		// wrap the grpc server with actuator
+		runtime.WithNewServer(func(apis []l8_grpc.GrpcAPI, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
+			server, err := l8_grpc.NewDefaultServer(apis, opts...)
+			if err != nil {
+				return nil, err
+			}
+			return actuator.NewGrpcServerWithActuator(server)
+		}),
 		// register your grpc API here
 		runtime.WithGrpcAPI(
 			default_api.NewGrpcAPI,
@@ -376,11 +395,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return secretstore_env.NewEnvSecretStore(loggerForDaprComp)
 			}),
 		))
-	// 4. check if unhealthy
-	if err != nil {
-		actuator.GetRuntimeReadinessIndicator().SetUnhealthy(err.Error())
-		actuator.GetRuntimeLivenessIndicator().SetUnhealthy(err.Error())
-	}
 	return server, err
 }
 
@@ -417,14 +431,29 @@ var cmdStart = cli.Command{
 
 		stm.AppendStartStage(mosn.DefaultStartStage)
 
+		stm.AppendAfterStartStage(SetActuatorAfterStart)
+
 		stm.Run()
 
-		actuator.GetRuntimeReadinessIndicator().SetStarted()
-		actuator.GetRuntimeLivenessIndicator().SetStarted()
 		// wait mosn finished
 		stm.WaitFinish()
 		return nil
 	},
+}
+
+func SetActuatorAfterStart(m *mosn.Mosn) {
+	// register component actuator
+	component_actuators.RangeAllIndicators(
+		func(name string, v *component_actuators.ComponentsIndicator) bool {
+			if v != nil {
+				health.AddLivenessIndicator(name, v.LivenessIndicator)
+				health.AddReadinessIndicator(name, v.ReadinessIndicator)
+			}
+			return true
+		})
+	// set started
+	actuator.GetRuntimeReadinessIndicator().SetStarted()
+	actuator.GetRuntimeLivenessIndicator().SetStarted()
 }
 
 // ExtensionsRegister for register mosn rpc extensions

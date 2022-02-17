@@ -50,6 +50,12 @@ func GetIndicatorWithName(name string) *ComponentsIndicator {
 	return nil
 }
 
-func SetComponentsActuators(name string, indicator *ComponentsIndicator) {
+func SetComponentsIndicator(name string, indicator *ComponentsIndicator) {
 	componentsActutors.Store(name, indicator)
+}
+
+func RangeAllIndicators(f func(key string, value *ComponentsIndicator) bool) {
+	componentsActutors.Range(func(k, v interface{}) bool {
+		return f(k.(string), v.(*ComponentsIndicator))
+	})
 }
