@@ -3,10 +3,13 @@
 
 ## 1. Member
 ### 成为Member的条件
-贡献过**一个有价值的PR**，并且有意愿一起维护社区
+满足以下条件可以申请成为Member:
+- 贡献过一个有价值的PR，例如一个 Easy 级别的社区开发任务
+- 有意愿一起维护社区
+
 
 ### 职责
-member需要一起帮忙回复issue/pr，triage（把issue分配给对应模块的负责人）
+Member 需要一起帮忙回复issue/pr，triage（把issue分配给对应模块的负责人）
 
 ### 权限
 Triage权限。有权限操作issue和pr，例如打label、分配问题。
@@ -32,7 +35,7 @@ Triage权限。有权限操作issue和pr，例如打label、分配问题。
 ### 成为Committer的条件
 贡献过的PR满足下列条件:
 - 合并的 PR 达到 10个；
-- 完成至少一个 Hard 任务；
+- 其中至少包含1个 Hard 级别PR, 或者4个 Medium 级别PR；
 
 ### 职责
 - 社区咨询支持；
