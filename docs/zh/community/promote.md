@@ -3,10 +3,14 @@
 
 ## 1. Member
 ### 成为Member的条件
-贡献过**一个有价值的PR**、有意愿一起维护社区
+贡献过**一个有价值的PR**，并且有意愿一起维护社区
 
 ### 职责
-回复issue和pr等。频次无要求，空闲时来参与下就行
+member需要一起帮忙回复issue/pr，triage（把issue分配给对应模块的负责人）
+
+### 权限
+Triage权限。有权限操作issue和pr，例如打label、分配问题。
+详细的权限说明见 [permissions-for-each-role](https://docs.github.com/en/organizations/managing-access-to-your-organizations-repositories/repository-roles-for-an-organization#permissions-for-each-role)
 
 ## 2. Reviewer
 ### 成为Reviewer的条件
@@ -19,7 +23,7 @@
 
 设计这个规则的逻辑是： Reviewer要对某个模块很懂，才能对这个模块把关。那怎么判断他很懂呢？就是看他做过的PR，1个hard级别的pr，或者2个medium级别的pr，或者1个medium+2个easy级别的pr
 
-这么设计的缺点：没有把大家做review的贡献纳入进来，没有激励参与者做review。也考虑了把review次数纳入晋升条件的话，但是仔细想想不太好统计，这方面大家有啥建议欢迎提出来。
+这么设计的缺点：没有把大家做review的贡献纳入进来，没有激励参与者做review。也考虑了把review次数纳入晋升条件的话，但是仔细想想不太好统计，这方面大家有啥建议欢迎讨论。
 
 ### 职责
 负责某个模块的issue review和code review,给出技术建议。有该模块相关的重大变更会request review模块Reviewer。
@@ -51,5 +55,12 @@
 
 [恭喜 赵延 成为 SOFAJRaft committer！](https://mp.weixin.qq.com/s/BKJ0bcaGBeYNErDhpjk42Q)
 
-## 4. PMC Member
-成为PMC Member的条件：由PMC Member为某位Committer提名，然后PMC 投票，投票过半即可晋升为PMC Member
+## 4. PMC
+项目管理委员会，为项目核心管理团队，参与 roadmap 制定与社区相关的重大决议；
+
+### 加入 PMC 的条件
+由PMC Member为某位Committer提名，然后PMC 投票，投票过半即可晋升为PMC Member
+
+### 职责
+积极参与社区讨论，对社区重大决策给予指导；
+负责保证开源项目的社区活动都能运转良好；
