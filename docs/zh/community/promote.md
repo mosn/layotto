@@ -1,5 +1,5 @@
 # Layotto社区晋升规则
-![](https://user-images.githubusercontent.com/26001097/129858616-ab38972e-0f91-4687-98df-81e1fce3c298.png)
+![](https://gw.alipayobjects.com/mdn/rms_95b965/afts/img/A*DpjGQqAcRyQAAAAAAAAAAAAAARQnAQ)
 
 ## 1. Member
 ### 成为Member的条件
@@ -26,11 +26,30 @@
 
 ## 3. Committer
 ### 成为Committer的条件
-贡献过的PR满足**下列条件之一**:
-- 2个Hard级别的PR
-- 4个Medium级别的PR
-- 1个Hard+2个Medium级别的PR
+贡献过的PR满足下列条件:
+- 合并的 PR 达到 10个；
+- 完成至少一个 Hard 任务；
 
-注：相当于`Hard:Medium`的换算关系是`1:2`
+### 职责
+- 社区咨询支持；
+- 积极响应 assign 给您的 Issue 或 PR；
+- 对于社区重大决定的投票权；
+- Review 社区的 PR；
+
+### 认证、运营宣传
+- 在Discussion区颁发电子证书
+
+示例： [Welcome new committer: Zhang Li Bin](https://github.com/mosn/layotto/discussions/352)
+  
+- 邮寄实体证书
+
+- 公众号宣传
+
+示例：
+
+[恭喜 张立斌 成为 Layotto committer！](https://mp.weixin.qq.com/s/no6mDymNEGxH3uoZbl1YTQ)
+
+[恭喜 赵延 成为 SOFAJRaft committer！](https://mp.weixin.qq.com/s/BKJ0bcaGBeYNErDhpjk42Q)
+
 ## 4. PMC Member
 成为PMC Member的条件：由PMC Member为某位Committer提名，然后PMC 投票，投票过半即可晋升为PMC Member
