@@ -108,8 +108,7 @@ func (t *TencentCloudOSS) checkMetadata(m *OssMetadata) bool {
 }
 
 func (t *TencentCloudOSS) getClient(metadata *OssMetadata) (*cos.Client, error) {
-	u, _ := url.Parse("https://" + metadata.Endpoint)
-	b := &cos.BaseURL{BucketURL: u}
+	b := &cos.BaseURL{BucketURL: metadata.bucketUrl}
 	client := cos.NewClient(b, &http.Client{
 		//set timeout
 		Timeout: time.Duration(metadata.Timeout) * time.Millisecond,
