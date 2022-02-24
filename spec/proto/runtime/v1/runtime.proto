@@ -294,6 +294,7 @@ message HTTPExtension {
     CONNECT = 6;
     OPTIONS = 7;
     TRACE = 8;
+    PATCH = 9;
   }
 
   Verb verb = 1;
