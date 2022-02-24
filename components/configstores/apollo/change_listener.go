@@ -20,7 +20,6 @@ import (
 	"github.com/zouyx/agollo/v4/storage"
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/pkg/log"
-	"mosn.io/pkg/utils"
 	"time"
 )
 
@@ -62,8 +61,6 @@ func (lis *changeListener) OnChange(changeEvent *storage.ChangeEvent) {
 
 func (lis *changeListener) OnNewestChange(event *storage.FullChangeEvent) {
 }
-
-var goWithRecover = utils.GoWithRecover
 
 func (lis *changeListener) notify(s *subscriber, keyWithLabel string, change *storage.ConfigChange) {
 	if s == nil || s.respChan == nil || change == nil {

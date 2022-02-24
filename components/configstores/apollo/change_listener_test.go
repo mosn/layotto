@@ -164,10 +164,6 @@ func Test_changeListener_writeToClosedChan(t *testing.T) {
 		Changes: changes,
 	}
 	event.Namespace = ns
-	// mock goroutine
-	tmp := goWithRecover
-	defer func() { goWithRecover = tmp }()
-	goWithRecover = mockGoWithRecover
 	// execute
 	lis.OnChange(event)
 	//	 assert no panic
