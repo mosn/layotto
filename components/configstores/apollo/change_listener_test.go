@@ -168,19 +168,3 @@ func Test_changeListener_writeToClosedChan(t *testing.T) {
 	lis.OnChange(event)
 	//	 assert no panic
 }
-
-func mockGoWithRecover(handler func(), recoverHandler func(r interface{})) {
-	defer func() {
-		if r := recover(); r != nil {
-			if recoverHandler != nil {
-				go func() {
-					defer func() {
-						recover()
-					}()
-					recoverHandler(r)
-				}()
-			}
-		}
-	}()
-	handler()
-}
