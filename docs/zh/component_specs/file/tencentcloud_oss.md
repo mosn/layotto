@@ -19,7 +19,7 @@
 
 访问 https://console.cloud.tencent.com/cos/bucket 创建存储桶
 
-![](images/create_tencent_oss_bucket.png)
+![](../../../img/file/create_tencent_oss_bucket.png)
 
 3.创建 AK 和 SK
 
