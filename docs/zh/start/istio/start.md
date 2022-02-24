@@ -19,7 +19,7 @@ MOSN作为Istio官方认可的数据面实现，这里就对Layotto如何跟Isti
 
 3. [Istio-1.5.x](https://github.com/istio/istio/releases/tag/1.5.2)
 
-    当前mosn只支持`istio 1.5.x`（对i`stio 1.10.x`的支持已经在CR了），因此需要下载对应版本的`istio`，解压后进行如下配置方便后续操作。
+    当前mosn只支持`istio 1.5.x`（对`istio 1.10.x`的支持已经在CR了），因此需要下载对应版本的`istio`，解压后进行如下配置方便后续操作。
     ```
     export PATH=$PATH:${你的istio目录}/bin
     ```
