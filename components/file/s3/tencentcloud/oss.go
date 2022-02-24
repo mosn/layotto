@@ -238,10 +238,6 @@ func (t *TencentCloudOSS) Stat(ctx context.Context, st *file.FileMetaRequest) (*
 	var clientResp *cos.Response
 	clientResp, err = client.Object.Head(ctx, st.FileName, nil)
 	if err != nil {
-		if err.(*cos.ErrorResponse).Code == "404" {
-			return nil, file.ErrNotExist
-		}
-
 		return nil, err
 	}
 

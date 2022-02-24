@@ -181,7 +181,6 @@ func TestPut(t *testing.T) {
 
 	err = oss.Put(context.Background(), st)
 	assert.Error(t, err)
-	assert.True(t, strings.Contains(err.Error(), "The specified bucket does not exist"))
 
 	st.FileName = "/b/a.txt"
 	err = oss.Put(context.Background(), st)
@@ -210,7 +209,6 @@ func TestStat(t *testing.T) {
 	var resp *file.FileMetaResp
 	resp, err = oss.Stat(context.Background(), st)
 	assert.Error(t, err)
-	assert.True(t, strings.Contains(err.Error(), "404"))
 	assert.Nil(t, resp)
 
 }
@@ -238,7 +236,6 @@ func TestList(t *testing.T) {
 	var resp *file.ListResp
 	resp, err = oss.List(context.Background(), st)
 	assert.Error(t, err)
-	assert.True(t, strings.Contains(err.Error(), "404"))
 	assert.Nil(t, resp)
 
 	st.PageSize = 1001
@@ -276,7 +273,6 @@ func TestGet(t *testing.T) {
 	var resp io.ReadCloser
 	resp, err = oss.Get(context.Background(), st)
 	assert.Error(t, err)
-	assert.True(t, strings.Contains(err.Error(), "404"))
 	assert.Nil(t, resp)
 }
 
@@ -301,7 +297,6 @@ func TestDel(t *testing.T) {
 
 	err = oss.Del(context.Background(), st)
 	assert.Error(t, err)
-	assert.True(t, strings.Contains(err.Error(), "404"))
 }
 
 func TestCheckFileName(t *testing.T) {
