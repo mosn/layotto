@@ -180,7 +180,7 @@ func (t *TencentCloudOSS) List(ctx context.Context, st *file.ListRequest) (*file
 		return nil, errors.New("PageSize must be <=1000")
 	}
 
-	if st.PageSize < 0 {
+	if st.PageSize <= 0 {
 		return nil, errors.New("PageSize must be >0")
 	}
 
