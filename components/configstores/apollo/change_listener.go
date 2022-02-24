@@ -76,11 +76,6 @@ func (lis *changeListener) notify(s *subscriber, keyWithLabel string, change *st
 			// make sure unused chan are all deleted
 			if lis != nil && lis.subscribers != nil {
 				goWithRecover(func() {
-					defer func() {
-						if r := recover(); r != nil {
-							log.DefaultLogger.Errorf("panic when removing subscribers after panic. %v", r)
-						}
-					}()
 					lis.subscribers.remove(s)
 				}, nil)
 			}
