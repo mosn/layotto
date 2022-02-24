@@ -56,7 +56,7 @@ func (s *testserver) handleRequest(frame api.XFrame) ([]byte, error) {
 		case "deformity":
 			return []byte("deformity"), nil
 		case "timeout":
-			time.Sleep(time.Second)
+			time.Sleep(2 * time.Second)
 		case "close":
 			return nil, errors.New("trigger close")
 		default:
@@ -132,6 +132,14 @@ func TestChannel(t *testing.T) {
 	assert.Equal(t, "ok", string(resp.Data))
 }
 
+func TestInvalidProtocal(t *testing.T) {
+	config := ChannelConfig{Size: 1, Protocol: "dubbogo", Ext: map[string]interface{}{"class": "xxx"}}
+	_, err := newXChannel(config)
+	assert.NotNil(t, err)
+
+	assert.Equal(t, err.Error(), "protocol dubbogo not found")
+}
+
 func TestChannelTimeout(t *testing.T) {
 	startTestServer()
 
@@ -139,7 +147,7 @@ func TestChannelTimeout(t *testing.T) {
 	channel, err := newXChannel(config)
 	assert.Nil(t, err)
 
-	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("timeout"), Timeout: 500}
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("timeout"), Timeout: 1000}
 	_, err = channel.Do(req)
 	t.Log(err)
 	assert.True(t, strings.Contains(err.Error(), ErrTimeout.Error()))

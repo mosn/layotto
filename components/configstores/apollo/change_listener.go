@@ -63,6 +63,8 @@ func (lis *changeListener) OnChange(changeEvent *storage.ChangeEvent) {
 func (lis *changeListener) OnNewestChange(event *storage.FullChangeEvent) {
 }
 
+var goWithRecover = utils.GoWithRecover
+
 func (lis *changeListener) notify(s *subscriber, keyWithLabel string, change *storage.ConfigChange) {
 	if s == nil || s.respChan == nil || change == nil {
 		return
@@ -73,7 +75,7 @@ func (lis *changeListener) notify(s *subscriber, keyWithLabel string, change *st
 			log.DefaultLogger.Errorf("panic when notify subscriber. %v", r)
 			// make sure unused chan are all deleted
 			if lis != nil && lis.subscribers != nil {
-				utils.GoWithRecover(func() {
+				goWithRecover(func() {
 					defer func() {
 						if r := recover(); r != nil {
 							log.DefaultLogger.Errorf("panic when removing subscribers after panic. %v", r)
