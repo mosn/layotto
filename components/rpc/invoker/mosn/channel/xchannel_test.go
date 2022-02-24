@@ -56,7 +56,7 @@ func (s *testserver) handleRequest(frame api.XFrame) ([]byte, error) {
 		case "deformity":
 			return []byte("deformity"), nil
 		case "timeout":
-			time.Sleep(2 * time.Second)
+			time.Sleep(time.Second)
 		case "close":
 			return nil, errors.New("trigger close")
 		default:
@@ -147,7 +147,7 @@ func TestChannelTimeout(t *testing.T) {
 	channel, err := newXChannel(config)
 	assert.Nil(t, err)
 
-	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("timeout"), Timeout: 1000}
+	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("timeout"), Timeout: 990}
 	_, err = channel.Do(req)
 	t.Log(err)
 	assert.True(t, strings.Contains(err.Error(), ErrTimeout.Error()))
