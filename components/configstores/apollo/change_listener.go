@@ -20,7 +20,6 @@ import (
 	"github.com/zouyx/agollo/v4/storage"
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/pkg/log"
-	"mosn.io/pkg/utils"
 	"time"
 )
 
@@ -73,14 +72,7 @@ func (lis *changeListener) notify(s *subscriber, keyWithLabel string, change *st
 			log.DefaultLogger.Errorf("panic when notify subscriber. %v", r)
 			// make sure unused chan are all deleted
 			if lis != nil && lis.subscribers != nil {
-				utils.GoWithRecover(func() {
-					defer func() {
-						if r := recover(); r != nil {
-							log.DefaultLogger.Errorf("panic when removing subscribers after panic. %v", r)
-						}
-					}()
-					lis.subscribers.remove(s)
-				}, nil)
+				lis.subscribers.remove(s)
 			}
 		}
 	}()

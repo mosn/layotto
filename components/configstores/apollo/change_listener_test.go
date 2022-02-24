@@ -164,6 +164,7 @@ func Test_changeListener_writeToClosedChan(t *testing.T) {
 		Changes: changes,
 	}
 	event.Namespace = ns
+	// execute
 	lis.OnChange(event)
 	//	 assert no panic
 }
