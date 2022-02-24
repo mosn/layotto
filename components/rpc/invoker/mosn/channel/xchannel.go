@@ -42,7 +42,7 @@ func init() {
 func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	proto := transport_protocol.GetProtocol(config.Protocol)
 	if proto == nil {
-		return nil, fmt.Errorf("protocol %s not found", proto)
+		return nil, fmt.Errorf("protocol %s not found", config.Protocol)
 	}
 	if err := proto.Init(config.Ext); err != nil {
 		return nil, err
