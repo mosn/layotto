@@ -1,0 +1,50 @@
+{
+  "servers": [
+    {
+      "default_log_path": "stdout",
+      "default_log_level": "DEBUG",
+      "listeners": [
+        {
+          "name": "grpc",
+          "address": "127.0.0.1:34904",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "hellos": {
+                        "helloworld": {
+                          "hello": "greeting"
+                        }
+                      },
+                      "files": {
+                        "tencentCloudOSS": {
+                          "metadata": [
+                            {
+                              "endpoint": "<get endpoint from https://console.cloud.tencent.com/cos/bucket configuration management>",
+                              "accessKeyID": "<get ak from https://console.cloud.tencent.com/cam/capi>",
+                              "accessKeySecret": "<get sk from https://console.cloud.tencent.com/cam/capi>",
+                              "timeout": 10000
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pprof": {
+    "debug": true,
+    "port_value": 34902
+  }
+}

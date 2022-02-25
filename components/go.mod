@@ -22,6 +22,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/stretchr/testify v1.7.0
+	github.com/tencentyun/cos-go-sdk-v5 v0.7.33 // indirect
 	github.com/valyala/fasthttp v1.26.0
 	github.com/zouyx/agollo/v4 v4.0.7
 	go.beyondstorage.io/services/hdfs v0.3.0

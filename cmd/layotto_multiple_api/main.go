@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"mosn.io/api"
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
+	"mosn.io/layotto/components/file/s3/tencentcloud"
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
@@ -218,6 +219,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			file.NewFileFactory("aliOSS", alicloud.NewAliCloudOSS),
 			file.NewFileFactory("minioOSS", minio.NewMinioOss),
 			file.NewFileFactory("awsOSS", aws.NewAwsOss),
+			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
 			file.NewFileFactory("local", local.NewLocalStore),
 		),
 
