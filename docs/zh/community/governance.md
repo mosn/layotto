@@ -1,5 +1,5 @@
 # SOFAStack & MOSN 社区角色说明 v2.0
-![](https://user-images.githubusercontent.com/26001097/129858616-ab38972e-0f91-4687-98df-81e1fce3c298.png)
+![](https://gw.alipayobjects.com/mdn/rms_95b965/afts/img/A*DpjGQqAcRyQAAAAAAAAAAAAAARQnAQ)
 
 Layotto是MOSN社区的一个子项目，本文介绍SOFAStack & MOSN社区角色的 v2.0提案
 
