@@ -175,3 +175,96 @@ func TestHdfs_Del(t *testing.T) {
 	err = hdfs.Del(context.TODO(), req)
 	assert.NotNil(t, err)
 }
+
+func TestHdfs_List(t *testing.T) {
+	hdfs := NewHdfs()
+
+	c := &file.FileConfig{
+		Metadata: json.RawMessage(config),
+	}
+
+	err := hdfs.Init(context.TODO(), c)
+	assert.Equal(t, err, ErrInitFailed)
+
+	req := &file.ListRequest{
+		DirectoryName: "/",
+		PageSize:      1,
+		Metadata:      map[string]string{"": ""},
+	}
+
+	var resp *file.ListResp
+	resp, err = hdfs.List(context.TODO(), req)
+	assert.Equal(t, ErrMissingEndPoint, err)
+	assert.Nil(t, resp)
+
+	req.Metadata["endpoint"] = "127.0.0.1:9000"
+	resp, err = hdfs.List(context.TODO(), req)
+	assert.Equal(t, ErrClientNotExist, err)
+
+	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
+	resp, err = hdfs.List(context.TODO(), req)
+	assert.NotNil(t, err)
+}
+
+func TestHdfs_Stat(t *testing.T) {
+	hdfs := NewHdfs()
+
+	c := &file.FileConfig{
+		Metadata: json.RawMessage(config),
+	}
+
+	err := hdfs.Init(context.TODO(), c)
+	assert.Equal(t, err, ErrInitFailed)
+
+	req := &file.FileMetaRequest{
+		FileName: "a.txt",
+		Metadata: map[string]string{"": ""},
+	}
+
+	var resp *file.FileMetaResp
+	resp, err = hdfs.Stat(context.TODO(), req)
+	assert.Equal(t, ErrNotSpecifyEndpoint, err)
+	assert.Nil(t, resp)
+
+	req.Metadata["endpoint"] = "127.0.0.1:9000"
+	resp, err = hdfs.Stat(context.TODO(), req)
+	assert.Equal(t, ErrClientNotExist, err)
+
+	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
+	resp, err = hdfs.Stat(context.TODO(), req)
+	assert.NotNil(t, err)
+}
+
+func TestHdfs_CreateHdfsClient(t *testing.T) {
+	oss := NewHdfs()
+
+	c := &file.FileConfig{
+		Metadata: json.RawMessage(config),
+	}
+
+	err := oss.Init(context.TODO(), c)
+	assert.Equal(t, err, ErrInitFailed)
+
+	mt := &HdfsMetaData{
+		EndPoint: "a",
+	}
+	store, err := oss.(*hdfs).createHdfsClient(mt)
+	assert.Nil(t, store)
+	assert.Error(t, err)
+
+	mt.EndPoint = "tcp:127.0.0.1:9000"
+	store, err = oss.(*hdfs).createHdfsClient(mt)
+	assert.Nil(t, store)
+	assert.Error(t, err)
+}
+
+func TestHdfs_IsHdfsMetaValid(t *testing.T) {
+	mt := &HdfsMetaData{
+		EndPoint: "",
+	}
+
+	assert.False(t, mt.isHdfsMetaValid())
+
+	mt.EndPoint = "a"
+	assert.True(t, mt.isHdfsMetaValid())
+}

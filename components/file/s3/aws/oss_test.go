@@ -70,3 +70,32 @@ func TestAwsOss_SelectClient(t *testing.T) {
 	client, _ = oss.selectClient(meta)
 	assert.NotNil(t, client)
 }
+
+func TestAwsOss_IsAwsMetaValid(t *testing.T) {
+	mt := &AwsOssMetaData{}
+	assert.False(t, mt.isAwsMetaValid())
+	mt.AccessKeyID = "a"
+	assert.False(t, mt.isAwsMetaValid())
+	mt.EndPoint = "a"
+	assert.False(t, mt.isAwsMetaValid())
+	mt.AccessKeySecret = "a"
+	assert.True(t, mt.isAwsMetaValid())
+
+}
+
+func TestAwsOss_Put(t *testing.T) {
+	oss := NewAwsOss()
+	err := oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
+	assert.Equal(t, nil, err)
+
+	req := &file.PutFileStu{
+		FileName: "",
+	}
+	err = oss.Put(context.Background(), req)
+	assert.Equal(t, err.Error(), "awsoss put file[] fail,err: invalid fileName format")
+
+	req.FileName = "/a.txt"
+	err = oss.Put(context.Background(), req)
+	assert.Equal(t, err.Error(), "awsoss put file[/a.txt] fail,err: invalid fileName format")
+
+}
