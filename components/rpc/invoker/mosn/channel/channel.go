@@ -27,8 +27,6 @@ import (
 	"mosn.io/mosn/pkg/server"
 )
 
-const directConnect = "directConnect"
-
 var (
 	ErrTimeout = errors.New("request timeout")
 

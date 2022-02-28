@@ -70,6 +70,10 @@ func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 		config.Size,
 		// dialFunc
 		func() (net.Conn, error) {
+			_, _, err := net.SplitHostPort(config.Listener)
+			if err == nil {
+				return net.Dial("tcp", config.Listener)
+			}
 			local, remote := net.Pipe()
 			localTcpConn := &fakeTcpConn{c: local}
 			remoteTcpConn := &fakeTcpConn{c: remote}
@@ -94,20 +98,6 @@ func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 		hc.onData,
 		hc.cleanup,
 	)
-	//if user config connect direct, use net.Dial directly,
-	//configuration is only required when layotto and mosn are developed and deployed.
-	if v, ok := config.Ext[directConnect]; ok {
-		value, ok := v.(bool)
-		if ok && value == true {
-			hc.pool.dialFunc = func() (net.Conn, error) {
-				conn, err := net.Dial("tcp", config.Listener)
-				if err != nil {
-					return nil, err
-				}
-				return conn, err
-			}
-		}
-	}
 	return hc, nil
 }
 
