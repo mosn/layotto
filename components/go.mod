@@ -18,11 +18,11 @@ require (
 	github.com/hashicorp/consul/api v1.3.0
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/minio/minio-go/v7 v7.0.15
-	github.com/mitchellh/mapstructure v1.4.1
+	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/stretchr/testify v1.7.0
-	github.com/tencentyun/cos-go-sdk-v5 v0.7.33 // indirect
+	github.com/tencentyun/cos-go-sdk-v5 v0.7.33
 	github.com/valyala/fasthttp v1.26.0
 	github.com/zouyx/agollo/v4 v4.0.7
 	go.beyondstorage.io/services/hdfs v0.3.0
@@ -31,6 +31,7 @@ require (
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.etcd.io/etcd/server/v3 v3.5.0
 	go.mongodb.org/mongo-driver v1.8.0
+	go.uber.org/atomic v1.7.0
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
 	google.golang.org/grpc v1.38.0
