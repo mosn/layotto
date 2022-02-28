@@ -30,6 +30,7 @@ import (
 	"mosn.io/api"
 	"mosn.io/layotto/components/file/s3/tencentcloud"
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
+	in_memory "mosn.io/layotto/components/sequencer/in-memory"
 	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
@@ -368,6 +369,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("mongo", func() sequencer.Store {
 				return sequencer_mongo.NewMongoSequencer(log.DefaultLogger)
+			}),
+			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
+				return in_memory.NewInMemorySequencer()
 			}),
 		),
 		// secretstores
