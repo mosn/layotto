@@ -22,10 +22,12 @@ import (
 	"net"
 	"time"
 
-	"mosn.io/layotto/components/rpc"
 	common "mosn.io/layotto/components/pkg/common"
+	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/server"
 )
+
+const directConnect = "directConnect"
 
 var (
 	ErrTimeout = errors.New("request timeout")

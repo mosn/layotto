@@ -47,7 +47,6 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	if err := proto.Init(config.Ext); err != nil {
 		return nil, err
 	}
-
 	m := &xChannel{proto: proto}
 	m.pool = newConnPool(
 		config.Size,
@@ -69,6 +68,20 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 		m.cleanup,
 	)
 
+	//if user config connect direct, use net.Dial directly,
+	//configuration is only required when layotto and mosn are developed and deployed.
+	if v, ok := config.Ext[directConnect]; ok {
+		value, ok := v.(bool)
+		if ok && value == true {
+			m.pool.dialFunc = func() (net.Conn, error) {
+				conn, err := net.Dial("tcp", config.Listener)
+				if err != nil {
+					return nil, err
+				}
+				return conn, err
+			}
+		}
+	}
 	return m, nil
 }
 
