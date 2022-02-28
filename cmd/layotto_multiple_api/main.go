@@ -22,7 +22,6 @@ import (
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
 	"mosn.io/layotto/components/file/s3/tencentcloud"
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
-	in_memory "mosn.io/layotto/components/sequencer/in-memory"
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/grpc/default_api"
@@ -110,6 +109,7 @@ import (
 
 	// Sequencer
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
+	sequencer_inmemory "mosn.io/layotto/components/sequencer/in-memory"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 
@@ -362,7 +362,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
 			}),
 			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
-				return in_memory.NewInMemorySequencer()
+				return sequencer_inmemory.NewInMemorySequencer()
 			}),
 		))
 	return server, err
