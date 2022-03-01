@@ -17,7 +17,6 @@
 package in_memory
 
 import (
-	"go.uber.org/atomic"
 	"mosn.io/layotto/components/lock"
 	"sync"
 	"time"
@@ -25,21 +24,27 @@ import (
 
 type InMemoryLock struct {
 	features []lock.Feature
-	data     *sync.Map
-	wLock    sync.Mutex
+	data     *lockMap
 }
 
-type lockData struct {
+type memoryLock struct {
 	key        string
 	owner      string
 	expireTime time.Time
-	lock       *atomic.Int32
+	lock       int
+}
+
+type lockMap struct {
+	sync.Mutex
+	locks map[string]*memoryLock
 }
 
 func NewInMemoryLock() *InMemoryLock {
 	return &InMemoryLock{
 		features: make([]lock.Feature, 0),
-		data:     &sync.Map{},
+		data: &lockMap{
+			locks: make(map[string]*memoryLock),
+		},
 	}
 }
 
@@ -52,49 +57,49 @@ func (s *InMemoryLock) Features() []lock.Feature {
 }
 
 func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
-	item, ok := s.data.Load(req.ResourceId)
+	s.data.Lock()
+	defer s.data.Unlock()
+	item, ok := s.data.locks[req.ResourceId]
 	if !ok {
-		newItem := &lockData{
+		item = &memoryLock{
 			key:  req.ResourceId,
-			lock: &atomic.Int32{},
+			lock: 0,
 		}
-		s.wLock.Lock()
-		item, _ = s.data.LoadOrStore(req.ResourceId, newItem)
-		s.wLock.Unlock()
+		s.data.locks[req.ResourceId] = item
 	}
 
 	//0 unlock, 1 lock
-	d := item.(*lockData)
 
 	//check expire
-	if d.owner != "" && time.Now().Before(d.expireTime) {
-		s.wLock.Lock()
-		//double check
-		s.data.Delete(req.ResourceId)
-		item = &lockData{
+	if item.owner != "" && time.Now().Before(item.expireTime) {
+		newItem := &memoryLock{
 			key:  req.ResourceId,
-			lock: &atomic.Int32{},
+			lock: 0,
 		}
-		s.data.Store(req.ResourceId, item)
-		s.wLock.Unlock()
+		s.data.locks[req.ResourceId] = newItem
 	}
 
-	if !d.lock.CAS(0, 1) {
+	if item.lock == 1 {
 		//lock failed
 		return &lock.TryLockResponse{
 			Success: false,
 		}, nil
 	}
 
-	d.owner = req.LockOwner
-	d.expireTime = time.Now().Add(time.Second * time.Duration(req.Expire))
+	item.lock = 1
+	item.owner = req.LockOwner
+	item.expireTime = time.Now().Add(time.Second * time.Duration(req.Expire))
+
 	return &lock.TryLockResponse{
 		Success: true,
 	}, nil
 }
 
 func (s *InMemoryLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
-	item, ok := s.data.Load(req.ResourceId)
+	s.data.Lock()
+	defer s.data.Unlock()
+
+	item, ok := s.data.locks[req.ResourceId]
 
 	if !ok {
 		return &lock.UnlockResponse{
@@ -102,26 +107,20 @@ func (s *InMemoryLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, er
 		}, nil
 	}
 
-	d := item.(*lockData)
-	if d.lock.Load() != 1 {
-		return &lock.UnlockResponse{
-			Status: lock.SUCCESS,
-		}, nil
-	}
-
-	if d.owner != req.LockOwner {
-		return &lock.UnlockResponse{
-			Status: lock.LOCK_BELONG_TO_OTHERS,
-		}, nil
-	}
-
-	if !d.lock.CAS(1, 0) {
+	if item.lock != 1 {
 		return &lock.UnlockResponse{
 			Status: lock.LOCK_UNEXIST,
 		}, nil
 	}
 
-	d.owner = ""
+	if item.owner != req.LockOwner {
+		return &lock.UnlockResponse{
+			Status: lock.LOCK_BELONG_TO_OTHERS,
+		}, nil
+	}
+
+	item.owner = ""
+	item.lock = 0
 	return &lock.UnlockResponse{
 		Status: lock.SUCCESS,
 	}, nil

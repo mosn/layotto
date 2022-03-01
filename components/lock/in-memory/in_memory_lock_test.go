@@ -89,7 +89,7 @@ func TestTryLock(t *testing.T) {
 	assert.NotNil(t, req)
 	assert.False(t, resp.Success)
 
-	time.Sleep(2 * time.Second)
+	s.data.locks["key112"].expireTime = time.Now().Add(-2 * time.Second)
 
 	resp, err = s.TryLock(req)
 	assert.NoError(t, err)
@@ -151,13 +151,15 @@ func TestUnLock(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, req)
 	assert.True(t, lockResp.Success)
+
 	resp, err = s.Unlock(req)
 	assert.NoError(t, err)
 	assert.NotNil(t, req)
 	assert.Equal(t, lock.SUCCESS, resp.Status)
+
 	resp, err = s.Unlock(req)
 	assert.NoError(t, err)
 	assert.NotNil(t, req)
-	assert.Equal(t, lock.SUCCESS, resp.Status)
+	assert.Equal(t, lock.LOCK_UNEXIST, resp.Status)
 
 }

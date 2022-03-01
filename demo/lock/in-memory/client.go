@@ -61,16 +61,13 @@ func main() {
 	wg.Wait()
 	// 3. client 1 unlock
 	fmt.Println("client1 prepare to unlock...")
-	unlockResp, err := cli.Unlock(ctx, &runtimev1pb.UnlockRequest{
+	_, err = cli.Unlock(ctx, &runtimev1pb.UnlockRequest{
 		StoreName:  storeName,
 		ResourceId: resourceId,
 		LockOwner:  owner1,
 	})
 	if err != nil {
 		panic(err)
-	}
-	if unlockResp.Status != 0 {
-		panic("client1 failed to unlock!")
 	}
 	fmt.Println("client1 succeeded in unlocking")
 	// 4. client 2 get lock
