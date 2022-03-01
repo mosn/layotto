@@ -28,7 +28,7 @@ const (
 	strategyAppid     = "appid"
 	strategyStoreName = "name"
 	strategyNone      = "none"
-	strategyDefault   = strategyAppid
+	strategyDefault   = strategyNone
 
 	daprSeparator = "||"
 )
