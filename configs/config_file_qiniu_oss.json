@@ -29,7 +29,6 @@
                               "accessKeyID": "<require>",
                               "accessKeySecret": "<require>",
                               "bucket": "<require>",
-                              "domain": "<require>",
                               "private": false
                             }
                           ]

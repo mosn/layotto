@@ -41,7 +41,6 @@ func TestInit(t *testing.T) {
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
-					"domain": "https://example.com",
 					"bucket": "xc2022"
 				}
 			]`
@@ -50,8 +49,8 @@ func TestInit(t *testing.T) {
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
-					"domain": "https://example.com",
 					"bucket": ""
+					"useHTTPS": true
 				}
 			]`
 	fc := file.FileConfig{}
@@ -76,9 +75,6 @@ func TestCheckMetadata(t *testing.T) {
 
 	assert.False(t, m.checkMetadata())
 
-	m.Domain = "1"
-	assert.False(t, m.checkMetadata())
-
 	m.Bucket = "1"
 	assert.False(t, m.checkMetadata())
 
@@ -86,9 +82,6 @@ func TestCheckMetadata(t *testing.T) {
 	assert.False(t, m.checkMetadata())
 
 	m.AccessKeySecret = "1"
-	assert.False(t, m.checkMetadata())
-
-	m.Domain = "1"
 	assert.False(t, m.checkMetadata())
 
 	m.Endpoint = "1"
@@ -103,7 +96,6 @@ func TestSelectClient(t *testing.T) {
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
-					"domain": "https://example.com",
 					"bucket": "xc2022"
 				}
 			]`
@@ -136,14 +128,12 @@ func TestSelectClientWithMulti(t *testing.T) {
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
-					"domain": "https://example.com",
 					"bucket": "xc2022"
 				},
 				{
 					"endpoint": "endpoint_address2",
 					"accessKeyID": "accessKey2",
 					"accessKeySecret": "secret2",
-					"domain": "https://example2.com",
 					"bucket": "xc20222"
 				}
 			]`
@@ -166,7 +156,6 @@ func TestPut(t *testing.T) {
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
-					"domain": "https://example.com",
 					"bucket": "xc2022"
 				}
 			]`
@@ -202,10 +191,9 @@ func TestGet(t *testing.T) {
 	oss := NewQiniuOSS()
 	data := `[
 				{
-					"endpoint": "endpoint_address",
+					"endpoint": "example.com",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
-					"domain": "https://example.com",
 					"bucket": "xc2022"
 				}
 			]`
@@ -225,7 +213,7 @@ func TestGet(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, resp)
 
-	st.Metadata[endpointKey] = "endpoint_address"
+	st.Metadata[endpointKey] = "example.com"
 	resp, err = oss.Get(context.Background(), st)
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
@@ -238,7 +226,6 @@ func TestDel(t *testing.T) {
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
-					"domain": "https://example.com",
 					"bucket": "xc2022"
 				}
 			]`
@@ -268,7 +255,6 @@ func TestStat(t *testing.T) {
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
-					"domain": "https://example.com",
 					"bucket": "xc2022"
 				}
 			]`
@@ -315,7 +301,6 @@ func TestList(t *testing.T) {
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
-					"domain": "https://example.com",
 					"bucket": "xc2022"
 				}
 			]`

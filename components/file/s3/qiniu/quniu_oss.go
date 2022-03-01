@@ -46,7 +46,6 @@ type OssMetadata struct {
 	AccessKeyID     string `json:"accessKeyID"`     // SecretID
 	AccessKeySecret string `json:"accessKeySecret"` // SecretKey
 	Bucket          string `json:"bucket"`
-	Domain          string `json:"domain"`
 	Private         bool   `json:"private"`
 	UseHTTPS        bool   `json:"useHTTPS"`
 	UseCdnDomains   bool   `json:"useCdnDomains"`
@@ -70,11 +69,18 @@ func (q *QiniuOSS) Init(ctx context.Context, metadata *file.FileConfig) error {
 		if !v.checkMetadata() {
 			return file.ErrInvalid
 		}
+
+		var domain string
+		if v.UseHTTPS {
+			domain = "https://" + v.Endpoint
+		} else {
+			domain = "http://" + v.Endpoint
+		}
 		client := newQiniuOSSClient(
 			v.AccessKeyID,
 			v.AccessKeySecret,
 			v.Bucket,
-			v.Domain,
+			domain,
 			v.Private,
 			v.UseHTTPS,
 			v.UseCdnDomains,
@@ -86,7 +92,7 @@ func (q *QiniuOSS) Init(ctx context.Context, metadata *file.FileConfig) error {
 }
 
 func (m *OssMetadata) checkMetadata() bool {
-	if m.AccessKeySecret == "" || m.Endpoint == "" || m.AccessKeyID == "" || m.Bucket == "" || m.Domain == "" {
+	if m.AccessKeySecret == "" || m.Endpoint == "" || m.AccessKeyID == "" || m.Bucket == "" {
 		return false
 	}
 
