@@ -144,9 +144,20 @@ func TestUnLock(t *testing.T) {
 	assert.Equal(t, lock.LOCK_BELONG_TO_OTHERS, resp.Status)
 
 	req.ResourceId = "11"
+	lockReq.ResourceId = "11"
+	req.LockOwner = "own1"
+	lockReq.LockOwner = "own1"
+	lockResp, err = s.TryLock(lockReq)
+	assert.NoError(t, err)
+	assert.NotNil(t, req)
+	assert.True(t, lockResp.Success)
 	resp, err = s.Unlock(req)
 	assert.NoError(t, err)
 	assert.NotNil(t, req)
-	assert.Equal(t, lock.LOCK_UNEXIST, resp.Status)
+	assert.Equal(t, lock.SUCCESS, resp.Status)
+	resp, err = s.Unlock(req)
+	assert.NoError(t, err)
+	assert.NotNil(t, req)
+	assert.Equal(t, lock.SUCCESS, resp.Status)
 
 }
