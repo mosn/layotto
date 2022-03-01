@@ -53,7 +53,7 @@ func (s *InMemoryLock) Features() []lock.Feature {
 	return s.features
 }
 
-// Currently this is a non-reentrant lock
+// Try to add a lock. Currently this is a non-reentrant lock
 func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	// 1. Find the lockData for this resourceId
 	item, ok := s.data.Load(req.ResourceId)
