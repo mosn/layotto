@@ -49,7 +49,7 @@ func TestInit(t *testing.T) {
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
-					"bucket": ""
+					"bucket": "",
 					"useHTTPS": true
 				}
 			]`
@@ -68,6 +68,32 @@ func TestInit(t *testing.T) {
 	fc.Metadata = []byte(data + ",")
 	err = oss.Init(context.Background(), &fc)
 	assert.Error(t, err)
+
+	data3 := `[
+				{
+					"endpoint": "",
+					"accessKeyID": "accessKey",
+					"accessKeySecret": "secret",
+					"bucket": "",
+					"useHTTPS": true
+				}
+			]`
+	fc.Metadata = []byte(data3)
+	err = oss.Init(context.Background(), &fc)
+	assert.Error(t, err)
+
+	data4 := `[
+				{
+					"endpoint": "xxxxx",
+					"accessKeyID": "accessKey",
+					"accessKeySecret": "secret",
+					"bucket": "cc",
+					"useHTTPS": true
+				}
+			]`
+	fc.Metadata = []byte(data4)
+	err = oss.Init(context.Background(), &fc)
+	assert.Nil(t, err)
 }
 
 func TestCheckMetadata(t *testing.T) {
