@@ -21,6 +21,7 @@ import (
 	"context"
 	"errors"
 	"github.com/golang/mock/gomock"
+	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -191,6 +192,7 @@ func newMockQiniuOSSClient(ak, sk, bucket, domain string, private bool, fu FormU
 		Domain:    domain,
 		Private:   private,
 		bm:        bm,
+		mac:       qbox.NewMac("a", "b"),
 	}
 
 	return s

@@ -36,8 +36,9 @@ type QiniuOSSClient struct {
 	Domain    string
 	Private   bool
 
-	fu FormUploader
-	bm BucketManager
+	mac *qbox.Mac
+	fu  FormUploader
+	bm  BucketManager
 }
 
 type FormUploader interface {
@@ -57,6 +58,7 @@ func newQiniuOSSClient(ak, sk, bucket, domain string, private bool, useHttps, us
 		UseCdnDomains: userCdnDomains,
 	}
 
+	mac := qbox.NewMac(ak, sk)
 	s := &QiniuOSSClient{
 		AccessKey: ak,
 		SecretKey: sk,
@@ -64,7 +66,8 @@ func newQiniuOSSClient(ak, sk, bucket, domain string, private bool, useHttps, us
 		fu:        storage.NewFormUploader(&cfg),
 		Domain:    domain,
 		Private:   private,
-		bm:        storage.NewBucketManager(qbox.NewMac(ak, sk), &cfg),
+		mac:       mac,
+		bm:        storage.NewBucketManager(mac, &cfg),
 	}
 	return s
 }
@@ -97,9 +100,8 @@ func (s *QiniuOSSClient) get(_ context.Context, fileName string) (io.ReadCloser,
 		accessUrl = storage.MakePublicURL(s.Domain, fileName)
 
 	} else {
-		mac := qbox.NewMac(s.AccessKey, s.SecretKey)
 		deadline := time.Now().Add(time.Second * 60).Unix() //1小时有效期
-		accessUrl = storage.MakePrivateURL(mac, s.Domain, fileName, deadline)
+		accessUrl = storage.MakePrivateURL(s.mac, s.Domain, fileName, deadline)
 	}
 
 	resp, err := http.Get(accessUrl)
