@@ -25,10 +25,12 @@ import (
 
 type InMemoryLock struct {
 	features []lock.Feature
+	// <key,lockData>
 	data     *sync.Map
 	wLock    sync.Mutex
 }
 
+// lockData is a lock holder
 type lockData struct {
 	key        string
 	owner      string
@@ -51,7 +53,9 @@ func (s *InMemoryLock) Features() []lock.Feature {
 	return s.features
 }
 
+// Currently this is a non-reentrant lock
 func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
+	// 1. Find the lockData for this resourceId
 	item, ok := s.data.Load(req.ResourceId)
 	if !ok {
 		newItem := &lockData{
@@ -66,6 +70,7 @@ func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse,
 	//0 unlock, 1 lock
 	d := item.(*lockData)
 
+	// 2. Construct a new one if the lockData has expired
 	//check expire
 	if d.owner != "" && time.Now().Before(d.expireTime) {
 		s.wLock.Lock()
@@ -79,6 +84,7 @@ func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse,
 		s.wLock.Unlock()
 	}
 
+	// 3. lock using cas. Currently this is a non-reentrant lock
 	if !d.lock.CAS(0, 1) {
 		//lock failed
 		return &lock.TryLockResponse{
@@ -86,6 +92,7 @@ func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse,
 		}, nil
 	}
 
+	// 4. update owner information
 	d.owner = req.LockOwner
 	d.expireTime = time.Now().Add(time.Second * time.Duration(req.Expire))
 	return &lock.TryLockResponse{
@@ -94,6 +101,7 @@ func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse,
 }
 
 func (s *InMemoryLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
+	// 1. Find the lockData for this resourceId
 	item, ok := s.data.Load(req.ResourceId)
 
 	if !ok {
@@ -103,6 +111,7 @@ func (s *InMemoryLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, er
 	}
 
 	d := item.(*lockData)
+	// 2. check the owner information
 	if d.lock.Load() != 1 {
 		return &lock.UnlockResponse{
 			Status: lock.SUCCESS,
