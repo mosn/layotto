@@ -18,7 +18,7 @@
 // Source: qiniu_oss_client.go
 
 // Package qiniu is a generated GoMock package.
-package qiniu
+package mock
 
 import (
 	context "context"

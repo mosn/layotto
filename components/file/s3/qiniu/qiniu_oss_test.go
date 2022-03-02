@@ -23,6 +23,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"io"
 	"mosn.io/layotto/components/file"
+	"mosn.io/layotto/components/pkg/mock"
 	"strings"
 	"testing"
 	"time"
@@ -307,8 +308,8 @@ func TestStat(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	fu := NewMockFormUploader(ctrl)
-	bm := NewMockBucketManager(ctrl)
+	fu := mock.NewMockFormUploader(ctrl)
+	bm := mock.NewMockBucketManager(ctrl)
 	defer ctrl.Finish()
 	bm.EXPECT().Stat(gomock.Eq("xc2022"), gomock.Eq("a.txt")).Return(storage.FileInfo{}, nil)
 	mockOss(oss, bm, fu)
@@ -354,8 +355,8 @@ func TestList(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	fu := NewMockFormUploader(ctrl)
-	bm := NewMockBucketManager(ctrl)
+	fu := mock.NewMockFormUploader(ctrl)
+	bm := mock.NewMockBucketManager(ctrl)
 	defer ctrl.Finish()
 
 	items := make([]storage.ListItem, 1)

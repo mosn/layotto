@@ -24,6 +24,7 @@ import (
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/stretchr/testify/assert"
+	"mosn.io/layotto/components/pkg/mock"
 	"testing"
 )
 
@@ -40,8 +41,8 @@ func TestNewClient(t *testing.T) {
 func TestClientPut(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := NewMockFormUploader(ctrl)
-	bm := NewMockBucketManager(ctrl)
+	m := mock.NewMockFormUploader(ctrl)
+	bm := mock.NewMockBucketManager(ctrl)
 
 	m.EXPECT().Put(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Eq("b/a.txt"), gomock.Any(), gomock.Any(), nil).Return(nil)
 	m.EXPECT().Put(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Eq("a.txt"), gomock.Any(), gomock.Any(), nil).Return(nil)
@@ -67,8 +68,8 @@ func TestClientPut(t *testing.T) {
 func TestGetFromPrivate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := NewMockFormUploader(ctrl)
-	bm := NewMockBucketManager(ctrl)
+	m := mock.NewMockFormUploader(ctrl)
+	bm := mock.NewMockBucketManager(ctrl)
 	defer ctrl.Finish()
 
 	s := newMockQiniuOSSClient("ak", "sk", "xc2022", "https://example.com", true, m, bm)
@@ -90,8 +91,8 @@ func TestGetFromPrivate(t *testing.T) {
 func TestGetFromPublic(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := NewMockFormUploader(ctrl)
-	bm := NewMockBucketManager(ctrl)
+	m := mock.NewMockFormUploader(ctrl)
+	bm := mock.NewMockBucketManager(ctrl)
 	defer ctrl.Finish()
 
 	s := newMockQiniuOSSClient("ak", "sk", "xc2022", "https://example.com", false, m, bm)
@@ -113,8 +114,8 @@ func TestGetFromPublic(t *testing.T) {
 func TestStatFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	fu := NewMockFormUploader(ctrl)
-	bm := NewMockBucketManager(ctrl)
+	fu := mock.NewMockFormUploader(ctrl)
+	bm := mock.NewMockBucketManager(ctrl)
 	defer ctrl.Finish()
 
 	bm.EXPECT().Stat(gomock.Eq("xc2022"), gomock.Eq("a.txt")).Return(storage.FileInfo{}, nil)
@@ -132,8 +133,8 @@ func TestStatFile(t *testing.T) {
 func TestDeleteFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	fu := NewMockFormUploader(ctrl)
-	bm := NewMockBucketManager(ctrl)
+	fu := mock.NewMockFormUploader(ctrl)
+	bm := mock.NewMockBucketManager(ctrl)
 	defer ctrl.Finish()
 
 	bm.EXPECT().Delete(gomock.Eq("xc2022"), gomock.Eq("a.txt")).Return(nil)
@@ -153,8 +154,8 @@ func TestDeleteFile(t *testing.T) {
 func TestListFile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	fu := NewMockFormUploader(ctrl)
-	bm := NewMockBucketManager(ctrl)
+	fu := mock.NewMockFormUploader(ctrl)
+	bm := mock.NewMockBucketManager(ctrl)
 	defer ctrl.Finish()
 
 	bm.EXPECT().ListFiles(gomock.Eq("xc2022"), gomock.Eq("b/"), gomock.Any(), gomock.Any(), gomock.Any()).Return(make([]storage.ListItem, 0), make([]string, 0), "", false, nil)
