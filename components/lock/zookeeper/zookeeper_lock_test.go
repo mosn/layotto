@@ -18,7 +18,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/pkg/utils"
+	"mosn.io/layotto/components/pkg/mock"
 	"mosn.io/pkg/log"
 	"testing"
 	"time"
@@ -49,9 +49,9 @@ func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
 
 	//mock
 	ctrl := gomock.NewController(t)
-	unlockConn := utils.NewMockZKConnection(ctrl)
-	lockConn := utils.NewMockZKConnection(ctrl)
-	factory := utils.NewMockConnectionFactory(ctrl)
+	unlockConn := mock.NewMockZKConnection(ctrl)
+	lockConn := mock.NewMockZKConnection(ctrl)
+	factory := mock.NewMockConnectionFactory(ctrl)
 	path := "/" + resouseId
 	factory.EXPECT().NewConnection(time.Duration(expireTime)*time.Second, comp.metadata).Return(lockConn, nil).Times(1)
 	lockConn.EXPECT().Create(path, []byte(lockOwerA), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
@@ -85,9 +85,9 @@ func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
 
 	//mock
 	ctrl := gomock.NewController(t)
-	unlockConn := utils.NewMockZKConnection(ctrl)
-	lockConn := utils.NewMockZKConnection(ctrl)
-	factory := utils.NewMockConnectionFactory(ctrl)
+	unlockConn := mock.NewMockZKConnection(ctrl)
+	lockConn := mock.NewMockZKConnection(ctrl)
+	factory := mock.NewMockConnectionFactory(ctrl)
 	path := "/" + resouseId
 	factory.EXPECT().NewConnection(time.Duration(expireTime)*time.Second, comp.metadata).Return(lockConn, nil).Times(1)
 	lockConn.EXPECT().Create(path, []byte(lockOwerA), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
@@ -120,9 +120,9 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 
 	//mock
 	ctrl := gomock.NewController(t)
-	unlockConn := utils.NewMockZKConnection(ctrl)
-	lockConn := utils.NewMockZKConnection(ctrl)
-	factory := utils.NewMockConnectionFactory(ctrl)
+	unlockConn := mock.NewMockZKConnection(ctrl)
+	lockConn := mock.NewMockZKConnection(ctrl)
+	factory := mock.NewMockConnectionFactory(ctrl)
 	path := "/" + resouseId
 
 	factory.EXPECT().NewConnection(time.Duration(expireTime)*time.Second, comp.metadata).Return(lockConn, nil).Times(3)

@@ -15,9 +15,10 @@
 // Source: zookeeper.go
 
 // Package utils is a generated GoMock package.
-package utils
+package mock
 
 import (
+	"mosn.io/layotto/components/pkg/utils"
 	reflect "reflect"
 	time "time"
 
@@ -49,10 +50,10 @@ func (m *MockConnectionFactory) EXPECT() *MockConnectionFactoryMockRecorder {
 }
 
 // NewConnection mocks base method.
-func (m *MockConnectionFactory) NewConnection(expire time.Duration, meta ZookeeperMetadata) (ZKConnection, error) {
+func (m *MockConnectionFactory) NewConnection(expire time.Duration, meta utils.ZookeeperMetadata) (utils.ZKConnection, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NewConnection", expire, meta)
-	ret0, _ := ret[0].(ZKConnection)
+	ret0, _ := ret[0].(utils.ZKConnection)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
