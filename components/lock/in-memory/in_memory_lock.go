@@ -27,6 +27,7 @@ type InMemoryLock struct {
 	data     *lockMap
 }
 
+// memoryLock is a lock holder
 type memoryLock struct {
 	key        string
 	owner      string
@@ -56,20 +57,21 @@ func (s *InMemoryLock) Features() []lock.Feature {
 	return s.features
 }
 
+// Try to add a lock. Currently this is a non-reentrant lock
 func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	s.data.Lock()
 	defer s.data.Unlock()
+	// 1. Find the memoryLock for this resourceId
 	item, ok := s.data.locks[req.ResourceId]
 	if !ok {
 		item = &memoryLock{
 			key:  req.ResourceId,
+			//0 unlock, 1 lock
 			lock: 0,
 		}
 		s.data.locks[req.ResourceId] = item
 	}
-
-	//0 unlock, 1 lock
-
+	// 2. Construct a new one if the lockData has expired
 	//check expire
 	if item.owner != "" && time.Now().Before(item.expireTime) {
 		newItem := &memoryLock{
@@ -79,6 +81,8 @@ func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse,
 		s.data.locks[req.ResourceId] = newItem
 	}
 
+	// 3. Check if it has been locked by others.
+	// Currently this is a non-reentrant lock
 	if item.lock == 1 {
 		//lock failed
 		return &lock.TryLockResponse{
@@ -86,6 +90,7 @@ func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse,
 		}, nil
 	}
 
+	// 4. Update owner information
 	item.lock = 1
 	item.owner = req.LockOwner
 	item.expireTime = time.Now().Add(time.Second * time.Duration(req.Expire))
@@ -98,7 +103,7 @@ func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse,
 func (s *InMemoryLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	s.data.Lock()
 	defer s.data.Unlock()
-
+	// 1. Find the memoryLock for this resourceId
 	item, ok := s.data.locks[req.ResourceId]
 
 	if !ok {
@@ -106,19 +111,18 @@ func (s *InMemoryLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, er
 			Status: lock.LOCK_UNEXIST,
 		}, nil
 	}
-
+	// 2. check the owner information
 	if item.lock != 1 {
 		return &lock.UnlockResponse{
 			Status: lock.LOCK_UNEXIST,
 		}, nil
 	}
-
 	if item.owner != req.LockOwner {
 		return &lock.UnlockResponse{
 			Status: lock.LOCK_BELONG_TO_OTHERS,
 		}, nil
 	}
-
+	// 3. unlock and reset the owner information
 	item.owner = ""
 	item.lock = 0
 	return &lock.UnlockResponse{
