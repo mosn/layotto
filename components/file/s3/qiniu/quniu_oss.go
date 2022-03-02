@@ -163,7 +163,7 @@ func (q *QiniuOSS) List(ctx context.Context, st *file.ListRequest) (*file.ListRe
 
 	resp := &file.ListResp{
 		Marker:      nextMarker,
-		IsTruncated: !hasNext,
+		IsTruncated: hasNext,
 		Files:       make([]*file.FilesInfo, len(items)),
 	}
 
