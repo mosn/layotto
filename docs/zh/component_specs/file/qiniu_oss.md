@@ -4,15 +4,15 @@
 
 示例：configs/config_file_qiniu_oss.json
 
-| 字段 | 必填  | 说明                                        |
-| --- |-----|-------------------------------------------|
-| endpoint | Y   | 七牛云对象存储空间绑定的域名 不需要带协议 http:// 或者 https:// |
-| accessKeyID | Y   | 通行ID                                      |
+| 字段              | 必填  | 说明                                        |
+|-----------------|-----|-------------------------------------------|
+| endpoint        | Y   | 七牛云对象存储空间绑定的域名 不需要带协议 http:// 或者 https:// |
+| accessKeyID     | Y   | 通行ID                                      |
 | accessKeySecret | Y   | 通行密码                                      |
-| bucket | Y   | 存储空间名称                                    |
-| private | N   | 是否为私有空间                                   |
-| UseHTTPS | N   | 是否使用 http                                 |
-| UseCdnDomains | N   | 是否使用 cdn 加速                               |
+| bucket          | Y   | 存储空间名称                                    |
+| private         | N   | 是否为私有空间                                   |
+| useHTTPS        | N   | 是否使用 http                                 |
+| useCdnDomains   | N   | 是否使用 cdn 加速                               |
 
 ## 启动准备
 
