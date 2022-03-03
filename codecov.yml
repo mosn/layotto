@@ -27,3 +27,4 @@ ignore:
   - "cmd/**/*"
   - "components/lock/consul/consul_lock_task.go"
   - "components/rpc/invoker/mosn/channel/xchannel.go"
+  - "diagnostics/**/*"
