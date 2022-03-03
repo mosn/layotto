@@ -51,6 +51,7 @@ func (span *Span) SpanId() string {
 func (span *Span) SetParentSpanId(id string) {
 	span.parentSpanId = id
 }
+
 func (span *Span) ParentSpanId() string {
 	return span.parentSpanId
 }
