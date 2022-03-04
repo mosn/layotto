@@ -1,7 +1,7 @@
 # 使用Configuration API调用Etcd配置中心
 
 该示例展示了如何通过Layotto，对etcd配置中心进行增删改查以及watch的过程。请提前在本机上安装[Docker](https://www.docker.com/get-started) 软件。
-[config文件](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 在config_stores中定义了etcd，用户可以更改配置文件为自己想要的配置中心（目前支持etcd和apollo）。
+[config文件](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 在config_store中定义了etcd，用户可以更改配置文件为自己想要的配置中心（目前支持etcd和apollo）。
 
 ### 生成镜像
 
