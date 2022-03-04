@@ -27,7 +27,7 @@ func TestConfig(t *testing.T) {
 					"hello": "greeting"
 					}
 				},
-				"files": {
+				"file": {
 					"aliOSS": {
                           "metadata":[
                             {

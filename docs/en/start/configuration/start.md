@@ -4,7 +4,7 @@ This example shows how to add, delete, modify, and watch the etcd configuration 
 
 Please install [Docker](https://www.docker.com/get-started) software on your machine in advance.
 
-[Config file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) defines using etcd in config_stores section, and users can change the configuration file to the configuration center they want (currently supports etcd and apollo).
+[Config file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) defines using etcd in config_store section, and users can change the configuration file to the configuration center they want (currently supports etcd and apollo).
 
 ### Build docker image
 

@@ -5,7 +5,7 @@
 json配置文件有如下结构：
 
 ```json
-"files": {
+"file": {
     "aliOSS": {
         "metadata":[
                 {
@@ -26,16 +26,16 @@ json配置文件有如下结构：
 
 ```golang
     type FileConfig struct {
-	Metadata json.RawMessage
+	    Metadata json.RawMessage
     }
 
-    Files   map[string]file.FileConfig          `json:"files"`
+    Files   map[string]file.FileConfig          `json:"file"`
 ```
 
 上面的Files是一个map,key为component的名字，比如上述json的aliOSS，component的配置没有具体的格式限制，不同component可以根据需求自己定义，比如:
 
 ```json
-"files": {
+"file": {
     "localFile": {
       "group":{
         "name": "group1"

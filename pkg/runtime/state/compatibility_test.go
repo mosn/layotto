@@ -109,7 +109,7 @@ func TestDefaultPrefix(t *testing.T) {
 	var key = "state-key-1234567"
 
 	modifiedStateKey, _ := GetModifiedStateKey(key, "store3", "appid1")
-	require.Equal(t, "appid1||state-key-1234567", modifiedStateKey)
+	require.Equal(t, "state-key-1234567", modifiedStateKey)
 
 	originalStateKey := GetOriginalStateKey(modifiedStateKey)
 	require.Equal(t, key, originalStateKey)
@@ -139,7 +139,7 @@ func TestLegacyPrefix(t *testing.T) {
 	var key = "state-key-1234567"
 
 	modifiedStateKey, _ := GetModifiedStateKey(key, "store6", "appid1")
-	require.Equal(t, "appid1||state-key-1234567", modifiedStateKey)
+	require.Equal(t, "state-key-1234567", modifiedStateKey)
 
 	originalStateKey := GetOriginalStateKey(modifiedStateKey)
 	require.Equal(t, key, originalStateKey)
@@ -150,7 +150,7 @@ func TestPrefix_StoreNotInitial(t *testing.T) {
 
 	// no config for store999
 	modifiedStateKey, _ := GetModifiedStateKey(key, "store999", "appid99")
-	require.Equal(t, "appid99||state-key-1234567", modifiedStateKey)
+	require.Equal(t, "state-key-1234567", modifiedStateKey)
 
 	originalStateKey := GetOriginalStateKey(modifiedStateKey)
 	require.Equal(t, key, originalStateKey)
