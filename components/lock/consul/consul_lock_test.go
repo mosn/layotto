@@ -18,7 +18,7 @@ import (
 	"github.com/hashicorp/consul/api"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/pkg/utils"
+	"mosn.io/layotto/components/pkg/mock"
 	"mosn.io/pkg/log"
 	"testing"
 )
@@ -51,9 +51,9 @@ func TestConsulLock_Features(t *testing.T) {
 func TestConsulLock_TryLock(t *testing.T) {
 	//mock
 	ctrl := gomock.NewController(t)
-	client := utils.NewMockConsulClient(ctrl)
-	factory := utils.NewMockSessionFactory(ctrl)
-	kv := utils.NewMockConsulKV(ctrl)
+	client := mock.NewMockConsulClient(ctrl)
+	factory := mock.NewMockSessionFactory(ctrl)
+	kv := mock.NewMockConsulKV(ctrl)
 
 	comp := NewConsulLock(log.DefaultLogger)
 	cfg := lock.Metadata{
@@ -96,9 +96,9 @@ func TestConsulLock_ALock_BLock(t *testing.T) {
 
 	//mock
 	ctrl := gomock.NewController(t)
-	client := utils.NewMockConsulClient(ctrl)
-	factory := utils.NewMockSessionFactory(ctrl)
-	kv := utils.NewMockConsulKV(ctrl)
+	client := mock.NewMockConsulClient(ctrl)
+	factory := mock.NewMockSessionFactory(ctrl)
+	kv := mock.NewMockConsulKV(ctrl)
 
 	comp := NewConsulLock(log.DefaultLogger)
 	cfg := lock.Metadata{
@@ -142,9 +142,9 @@ func TestConsulLock_ALock_BLock(t *testing.T) {
 func TestConsulLock_ALock_BUnlock(t *testing.T) {
 	//mock
 	ctrl := gomock.NewController(t)
-	client := utils.NewMockConsulClient(ctrl)
-	factory := utils.NewMockSessionFactory(ctrl)
-	kv := utils.NewMockConsulKV(ctrl)
+	client := mock.NewMockConsulClient(ctrl)
+	factory := mock.NewMockSessionFactory(ctrl)
+	kv := mock.NewMockConsulKV(ctrl)
 
 	comp := NewConsulLock(log.DefaultLogger)
 	cfg := lock.Metadata{
