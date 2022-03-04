@@ -58,6 +58,7 @@ header:
     - '.github/'
     - '**/.idea/'
     - 'sdk/java-sdk/.idea/'
+    - 'components/pkg/mock/'
 
   comment: on-failure
 
