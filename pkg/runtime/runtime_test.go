@@ -27,11 +27,13 @@ import (
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
+	"mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
+	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"net"
 	"testing"
 
@@ -74,6 +76,17 @@ func TestMosnRuntime_GetInfo(t *testing.T) {
 	rt.Stop()
 }
 
+type mockGrpcAPI struct {
+}
+
+func (m *mockGrpcAPI) Init(conn *rawGRPC.ClientConn) error {
+	return nil
+}
+
+func (m mockGrpcAPI) Register(s *rawGRPC.Server, registeredServer mgrpc.RegisteredServer) (mgrpc.RegisteredServer, error) {
+	return registeredServer, nil
+}
+
 func TestMosnRuntime_Run(t *testing.T) {
 	t.Run("run succ", func(t *testing.T) {
 		runtimeConfig := &MosnRuntimeConfig{}
@@ -87,6 +100,50 @@ func TestMosnRuntime_Run(t *testing.T) {
 		assert.Nil(t, err)
 		assert.NotNil(t, server)
 		rt.Stop()
+	})
+	t.Run("run succesfully with InitRuntimeHandler", func(t *testing.T) {
+		runtimeConfig := &MosnRuntimeConfig{}
+		rt := NewMosnRuntime(runtimeConfig)
+		etcdCustomComponent := struct{}{}
+		compType := "xxx_store"
+		compName := "etcd"
+		rt.AppendInitRuntimeHandler(func(o *runtimeOptions, m *MosnRuntime) error {
+			m.SetCustomComponent(compType, compName, etcdCustomComponent)
+			return nil
+		})
+		expect := false
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+				func(ac *grpc.ApplicationContext) grpc.GrpcAPI {
+					if ac.CustomComponent[compType][compName] == etcdCustomComponent {
+						expect = true
+					}
+					return &mockGrpcAPI{}
+				},
+			),
+		)
+		assert.True(t, expect)
+		assert.Nil(t, err)
+		assert.NotNil(t, server)
+		rt.Stop()
+	})
+	t.Run("run with InitRuntimeHandler error", func(t *testing.T) {
+		runtimeConfig := &MosnRuntimeConfig{}
+		rt := NewMosnRuntime(runtimeConfig)
+		rt.AppendInitRuntimeHandler(nil)
+		var expectErr error = errors.New("expected")
+		rt.AppendInitRuntimeHandler(func(o *runtimeOptions, m *MosnRuntime) error {
+			return expectErr
+		})
+		_, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+		)
+		assert.Equal(t, err, expectErr)
 	})
 
 	t.Run("no runtime config", func(t *testing.T) {
@@ -385,7 +442,7 @@ func TestMosnRuntime_initOutputBinding(t *testing.T) {
 		return &MockBindings{}
 	})
 	mdata := make(map[string]string)
-	m.runtimeConfig.Bindings = make(map[string]mbindings.Metadata)
+	m.RuntimeConfig().Bindings = make(map[string]mbindings.Metadata)
 	m.runtimeConfig.Bindings["mockOutbindings"] = mbindings.Metadata{
 		Metadata: mdata,
 	}
