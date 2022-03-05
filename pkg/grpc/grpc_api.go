@@ -23,6 +23,7 @@ import (
 	"github.com/dapr/components-contrib/state"
 	"google.golang.org/grpc"
 	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
@@ -54,4 +55,5 @@ type ApplicationContext struct {
 	Sequencers            map[string]sequencer.Store
 	SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 	SecretStores          map[string]secretstores.SecretStore
+	CustomComponent       map[string]map[string]custom.Component
 }

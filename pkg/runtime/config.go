@@ -49,6 +49,13 @@ type MosnRuntimeConfig struct {
 	SequencerManagement    map[string]sequencer.Config         `json:"sequencer"`
 	Bindings               map[string]bindings.Metadata        `json:"bindings"`
 	SecretStoresManagement map[string]bindings.Metadata        `json:"secretStores"`
+	Extends                []ExtendConfig                      `json:"extends,omitempty"` // extend config
+}
+
+// ExtendConfig for any extends
+type ExtendConfig struct {
+	Type   string          `json:"type"`
+	Config json.RawMessage `json:"config"`
 }
 
 func ParseRuntimeConfig(data json.RawMessage) (*MosnRuntimeConfig, error) {

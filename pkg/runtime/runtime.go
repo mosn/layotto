@@ -21,8 +21,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dapr/components-contrib/secretstores"
+	"mosn.io/layotto/components/custom"
 	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
 	"strings"
+	"time"
 
 	"github.com/dapr/components-contrib/bindings"
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
@@ -70,17 +72,30 @@ type MosnRuntime struct {
 	rpcs         map[string]rpc.Invoker
 	pubSubs      map[string]pubsub.PubSub
 	// state implementations store here are already initialized
-	states         map[string]state.Store
-	files          map[string]file.File
-	locks          map[string]lock.LockStore
-	sequencers     map[string]sequencer.Store
-	outputBindings map[string]bindings.OutputBinding
-	secretStores   map[string]secretstores.SecretStore
+	states          map[string]state.Store
+	files           map[string]file.File
+	locks           map[string]lock.LockStore
+	sequencers      map[string]sequencer.Store
+	outputBindings  map[string]bindings.OutputBinding
+	secretStores    map[string]secretstores.SecretStore
+	customComponent map[string]map[string]custom.Component
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
 	// extends
-	errInt ErrInterceptor
+	errInt              ErrInterceptor
+	started             bool
+	initRuntimeHandlers []InitRuntimeHandler
 }
+
+func (m *MosnRuntime) RuntimeConfig() *MosnRuntimeConfig {
+	return m.runtimeConfig
+}
+
+func (m *MosnRuntime) SetRuntimeConfig(runtimeConfig *MosnRuntimeConfig) {
+	m.runtimeConfig = runtimeConfig
+}
+
+type InitRuntimeHandler func(o *runtimeOptions, m *MosnRuntime) error
 
 func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 	info := info.NewRuntimeInfo()
@@ -107,6 +122,8 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		sequencers:           make(map[string]sequencer.Store),
 		outputBindings:       make(map[string]bindings.OutputBinding),
 		secretStores:         make(map[string]secretstores.SecretStore),
+		customComponent:      make(map[string]map[string]custom.Component),
+		started:              false,
 	}
 }
 
@@ -136,6 +153,9 @@ func (m *MosnRuntime) sendToOutputBinding(name string, req *bindings.InvokeReque
 }
 
 func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
+	// 0. mark already started
+	m.started = true
+	// 1. init runtime stage
 	// prepare runtimeOptions
 	var o runtimeOptions
 	for _, opt := range opts {
@@ -158,7 +178,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	if o.srvMaker != nil {
 		grpcOpts = append(grpcOpts, grpc.WithNewServer(o.srvMaker))
 	}
-	// create GrpcAPIs
+	// 2. init GrpcAPI stage
 	var apis []grpc.GrpcAPI
 	ac := &grpc.ApplicationContext{
 		m.runtimeConfig.AppManagement.AppId,
@@ -172,6 +192,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		m.sequencers,
 		m.sendToOutputBinding,
 		m.secretStores,
+		m.customComponent,
 	}
 
 	for _, apiFactory := range o.apiFactorys {
@@ -187,7 +208,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		grpc.WithGrpcOptions(o.options...),
 		grpc.WithGrpcAPIs(apis),
 	)
-	// create grpc server
+	// 3. create grpc server
 	var err error = nil
 	m.srv, err = grpc.NewGrpcServer(grpcOpts...)
 	return m.srv, err
@@ -199,7 +220,7 @@ func (m *MosnRuntime) Stop() {
 	}
 }
 
-func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
+func DefaultInitRuntimeHandler(o *runtimeOptions, m *MosnRuntime) error {
 	if m.runtimeConfig == nil {
 		return errors.New("[runtime] init error:no runtimeConfig")
 	}
@@ -506,4 +527,37 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFa
 		m.secretStores[name] = comp
 	}
 	return nil
+}
+
+func (m *MosnRuntime) AppendInitRuntimeHandler(f InitRuntimeHandler) {
+	if f == nil || m.started {
+		log.DefaultLogger.Errorf("[stage] invalid InitRuntimeHandler or already started")
+		return
+	}
+	m.initRuntimeHandlers = append(m.initRuntimeHandlers, f)
+}
+
+func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
+	st := time.Now()
+	// check default handler
+	if len(m.initRuntimeHandlers) == 0 {
+		m.initRuntimeHandlers = append(m.initRuntimeHandlers, DefaultInitRuntimeHandler)
+	}
+	// do initialization
+	for _, f := range m.initRuntimeHandlers {
+		err := f(r, m)
+		if err != nil {
+			return err
+		}
+	}
+
+	log.DefaultLogger.Infof("init stage cost: %v", time.Since(st))
+	return nil
+}
+
+func (m *MosnRuntime) SetCustomComponent(componentType string, name string, component custom.Component) {
+	if _, ok := m.customComponent[componentType]; !ok {
+		m.customComponent[componentType] = make(map[string]custom.Component)
+	}
+	m.customComponent[componentType][name] = component
 }
