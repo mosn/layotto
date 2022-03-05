@@ -145,6 +145,8 @@ import (
 	tracebolt "mosn.io/mosn/pkg/trace/sofa/xprotocol/bolt"
 	_ "mosn.io/mosn/pkg/wasm/runtime/wasmer"
 	_ "mosn.io/pkg/buffer"
+
+	_ "mosn.io/layotto/diagnostics/exporter_iml"
 )
 
 // loggerForDaprComp is constructed for reusing dapr's components.
