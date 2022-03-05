@@ -91,10 +91,6 @@ func (m *MosnRuntime) RuntimeConfig() *MosnRuntimeConfig {
 	return m.runtimeConfig
 }
 
-func (m *MosnRuntime) SetRuntimeConfig(runtimeConfig *MosnRuntimeConfig) {
-	m.runtimeConfig = runtimeConfig
-}
-
 type InitRuntimeHandler func(o *runtimeOptions, m *MosnRuntime) error
 
 func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
