@@ -105,6 +105,9 @@ func WithErrInterceptor(i ErrInterceptor) Option {
 
 func WithCustomComponentFactory(componentType string, factorys ...*custom.ComponentFactory) Option {
 	return func(o *runtimeOptions) {
+		if len(factorys) == 0 {
+			return
+		}
 		o.services.custom[componentType] = append(o.services.custom[componentType], factorys...)
 	}
 }
