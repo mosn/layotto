@@ -206,9 +206,6 @@ func TestMosnRuntime_Run(t *testing.T) {
 
 		// 3. Run
 		_, err := rt.Run(
-			WithErrInterceptor(func(err error, format string, args ...interface{}) {
-				panic(err)
-			}),
 			// Hello
 			WithHelloFactory(
 				hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),
