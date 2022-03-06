@@ -101,13 +101,13 @@ func TestMosnRuntime_Run(t *testing.T) {
 		assert.NotNil(t, server)
 		rt.Stop()
 	})
-	t.Run("run succesfully with InitRuntimeHandler", func(t *testing.T) {
+	t.Run("run succesfully with initRuntimeStage", func(t *testing.T) {
 		runtimeConfig := &MosnRuntimeConfig{}
 		rt := NewMosnRuntime(runtimeConfig)
 		etcdCustomComponent := struct{}{}
 		compType := "xxx_store"
 		compName := "etcd"
-		rt.AppendInitRuntimeHandler(func(o *runtimeOptions, m *MosnRuntime) error {
+		rt.AppendInitRuntimeStage(func(o *runtimeOptions, m *MosnRuntime) error {
 			m.SetCustomComponent(compType, compName, etcdCustomComponent)
 			return nil
 		})
@@ -129,12 +129,12 @@ func TestMosnRuntime_Run(t *testing.T) {
 		assert.NotNil(t, server)
 		rt.Stop()
 	})
-	t.Run("run with InitRuntimeHandler error", func(t *testing.T) {
+	t.Run("run with initRuntimeStage error", func(t *testing.T) {
 		runtimeConfig := &MosnRuntimeConfig{}
 		rt := NewMosnRuntime(runtimeConfig)
-		rt.AppendInitRuntimeHandler(nil)
+		rt.AppendInitRuntimeStage(nil)
 		var expectErr error = errors.New("expected")
-		rt.AppendInitRuntimeHandler(func(o *runtimeOptions, m *MosnRuntime) error {
+		rt.AppendInitRuntimeStage(func(o *runtimeOptions, m *MosnRuntime) error {
 			return expectErr
 		})
 		_, err := rt.Run(

@@ -189,7 +189,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	}
 	// 2. new instance
 	rt := runtime.NewMosnRuntime(cfg)
-	rt.AppendInitRuntimeHandler(runtime.DefaultInitRuntimeHandler)
+	rt.AppendInitRuntimeStage(runtime.DefaultInitRuntimeStage)
 	// 3. run
 	server, err := rt.Run(
 		runtime.WithGrpcOptions(opts...),

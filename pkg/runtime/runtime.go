@@ -82,16 +82,16 @@ type MosnRuntime struct {
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
 	// extends
-	errInt              ErrInterceptor
-	started             bool
-	initRuntimeHandlers []InitRuntimeHandler
+	errInt            ErrInterceptor
+	started           bool
+	initRuntimeStages []initRuntimeStage
 }
 
 func (m *MosnRuntime) RuntimeConfig() *MosnRuntimeConfig {
 	return m.runtimeConfig
 }
 
-type InitRuntimeHandler func(o *runtimeOptions, m *MosnRuntime) error
+type initRuntimeStage func(o *runtimeOptions, m *MosnRuntime) error
 
 func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 	info := info.NewRuntimeInfo()
@@ -216,7 +216,7 @@ func (m *MosnRuntime) Stop() {
 	}
 }
 
-func DefaultInitRuntimeHandler(o *runtimeOptions, m *MosnRuntime) error {
+func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if m.runtimeConfig == nil {
 		return errors.New("[runtime] init error:no runtimeConfig")
 	}
@@ -525,22 +525,22 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFa
 	return nil
 }
 
-func (m *MosnRuntime) AppendInitRuntimeHandler(f InitRuntimeHandler) {
+func (m *MosnRuntime) AppendInitRuntimeStage(f initRuntimeStage) {
 	if f == nil || m.started {
-		log.DefaultLogger.Errorf("[stage] invalid InitRuntimeHandler or already started")
+		log.DefaultLogger.Errorf("[stage] invalid initRuntimeStage or already started")
 		return
 	}
-	m.initRuntimeHandlers = append(m.initRuntimeHandlers, f)
+	m.initRuntimeStages = append(m.initRuntimeStages, f)
 }
 
 func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	st := time.Now()
 	// check default handler
-	if len(m.initRuntimeHandlers) == 0 {
-		m.initRuntimeHandlers = append(m.initRuntimeHandlers, DefaultInitRuntimeHandler)
+	if len(m.initRuntimeStages) == 0 {
+		m.initRuntimeStages = append(m.initRuntimeStages, DefaultInitRuntimeStage)
 	}
 	// do initialization
-	for _, f := range m.initRuntimeHandlers {
+	for _, f := range m.initRuntimeStages {
 		err := f(r, m)
 		if err != nil {
 			return err
