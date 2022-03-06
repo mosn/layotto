@@ -19,6 +19,7 @@ package runtime
 import (
 	"google.golang.org/grpc"
 	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/rpc"
@@ -45,6 +46,9 @@ type services struct {
 	outputBinding []*mbindings.OutputBindingFactory
 	inputBinding  []*mbindings.InputBindingFactory
 	secretStores  []*msecretstores.SecretStoresFactory
+	// Custom components.
+	// The key is component type
+	custom map[string][]*custom.ComponentFactory
 }
 
 type runtimeOptions struct {
@@ -56,6 +60,14 @@ type runtimeOptions struct {
 	options  []grpc.ServerOption
 	// new grpc api
 	apiFactorys []rgrpc.NewGrpcAPI
+}
+
+func newRuntimeOptions() *runtimeOptions {
+	return &runtimeOptions{
+		services: services{
+			custom: make(map[string][]*custom.ComponentFactory),
+		},
+	}
 }
 
 type Option func(o *runtimeOptions)
@@ -90,6 +102,12 @@ func WithErrInterceptor(i ErrInterceptor) Option {
 }
 
 // services options
+
+func WithCustomComponentFactory(componentType string, factorys ...*custom.ComponentFactory) Option {
+	return func(o *runtimeOptions) {
+		o.services.custom[componentType] = append(o.services.custom[componentType], factorys...)
+	}
+}
 
 func WithHelloFactory(hellos ...*hello.HelloFactory) Option {
 	return func(o *runtimeOptions) {

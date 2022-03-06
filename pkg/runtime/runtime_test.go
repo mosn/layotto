@@ -47,6 +47,7 @@ import (
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
+	mock_component "mosn.io/layotto/components/pkg/mock"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/mock"
@@ -104,7 +105,7 @@ func TestMosnRuntime_Run(t *testing.T) {
 	t.Run("run succesfully with initRuntimeStage", func(t *testing.T) {
 		runtimeConfig := &MosnRuntimeConfig{}
 		rt := NewMosnRuntime(runtimeConfig)
-		etcdCustomComponent := struct{}{}
+		etcdCustomComponent := mock_component.NewCustomComponentMock()
 		compType := "xxx_store"
 		compName := "etcd"
 		rt.AppendInitRuntimeStage(func(o *runtimeOptions, m *MosnRuntime) error {

@@ -13,8 +13,7 @@
 // limitations under the License.
 package custom
 
-import "context"
-
-type Component interface {
-	Initialize(ctx context.Context, config Config) error
+type Config struct {
+	Version  string            `json:"version"`
+	Metadata map[string]string `json:"metadata"`
 }
