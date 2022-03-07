@@ -76,7 +76,7 @@ func MyFunc(_ json.RawMessage) *grpc.Server {
 												"hello": "greeting"
 											}
 										},
-										"config_stores": {
+										"config_store": {
 											"etcd": {
 												"address": ["127.0.0.1:2379"],
 												"timeout": "10"
