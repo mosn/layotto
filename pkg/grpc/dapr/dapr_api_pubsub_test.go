@@ -21,10 +21,14 @@ import (
 	"fmt"
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/golang/mock/gomock"
+	"github.com/golang/protobuf/ptypes/empty"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc"
+	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	mock_pubsub "mosn.io/layotto/pkg/mock/components/pubsub"
+	"mosn.io/pkg/log"
 	"testing"
 	"time"
 )
@@ -127,4 +131,32 @@ func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
 		// validate
 		assert.Nil(t, err)
 	})
+}
+
+type mockClient struct {
+}
+
+func (m *mockClient) OnInvoke(ctx context.Context, in *dapr_common_v1pb.InvokeRequest, opts ...grpc.CallOption) (*dapr_common_v1pb.InvokeResponse, error) {
+	return nil, nil
+}
+
+func (m *mockClient) ListInputBindings(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*dapr_v1pb.ListInputBindingsResponse, error) {
+	return nil, nil
+}
+
+func (m *mockClient) OnBindingEvent(ctx context.Context, in *dapr_v1pb.BindingEventRequest, opts ...grpc.CallOption) (*dapr_v1pb.BindingEventResponse, error) {
+	return nil, nil
+}
+
+func (m *mockClient) ListTopicSubscriptions(arg0 context.Context, arg1 *empty.Empty, opts ...grpc.CallOption) (*dapr_v1pb.ListTopicSubscriptionsResponse, error) {
+	return nil, nil
+}
+
+func (m *mockClient) OnTopicEvent(ctx context.Context, in *dapr_v1pb.TopicEventRequest, opts ...grpc.CallOption) (*dapr_v1pb.TopicEventResponse, error) {
+	return nil, nil
+}
+
+func Test_listTopicSubscriptions(t *testing.T) {
+	topics := listTopicSubscriptions(&mockClient{}, log.DefaultLogger)
+	assert.True(t, topics != nil && len(topics) == 0)
 }
