@@ -119,7 +119,7 @@ Put接口入参主要有三个，多了一个data字段用来传输文件内容�
 ```protobuf
 
 {
-    "files": {
+    "file": {
       "aliOSS": {
         "metadata":[
           {
