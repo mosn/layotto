@@ -60,7 +60,7 @@ func StreamInterceptorFilter(srv interface{}, ss grpc.ServerStream, info *grpc.S
 	ctx = GetNewContext(ctx, span)
 	wrapped.WrappedContext = ctx
 	// handle request
-	err := handler(ctx, ss)
+	err := handler(ctx, wrapped)
 	if err != nil {
 		span.SetTag(ltrace.LAYOTTO_REQUEST_RESULT, "1")
 	}
