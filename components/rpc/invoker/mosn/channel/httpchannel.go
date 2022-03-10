@@ -70,6 +70,10 @@ func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 		config.Size,
 		// dialFunc
 		func() (net.Conn, error) {
+			_, _, err := net.SplitHostPort(config.Listener)
+			if err == nil {
+				return net.Dial("tcp", config.Listener)
+			}
 			local, remote := net.Pipe()
 			localTcpConn := &fakeTcpConn{c: local}
 			remoteTcpConn := &fakeTcpConn{c: remote}

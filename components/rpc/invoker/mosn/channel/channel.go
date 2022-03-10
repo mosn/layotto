@@ -22,8 +22,8 @@ import (
 	"net"
 	"time"
 
-	"mosn.io/layotto/components/rpc"
 	common "mosn.io/layotto/components/pkg/common"
+	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/server"
 )
 
