@@ -5,13 +5,14 @@ MAJOR_VERSION    = $(shell cat VERSION)
 TARGET           = layotto
 ARM_TARGET       = layotto.aarch64
 PROJECT_NAME     = mosn.io/layotto
-CONFIG_FILE     = runtime_config.json
-BUILD_IMAGE     = godep-builder
-IMAGE_NAME      = layotto
-GIT_VERSION     = $(shell git log -1 --pretty=format:%h)
-REPOSITORY      = layotto/${IMAGE_NAME}
+CONFIG_FILE      = runtime_config.json
+BUILD_IMAGE      = godep-builder
+IMAGE_NAME       = layotto
+GIT_VERSION      = $(shell git log -1 --pretty=format:%h)
+REPOSITORY       = layotto/${IMAGE_NAME}
 
-SCRIPT_DIR      = $(shell pwd)/etc/script
+SCRIPT_DIR       = $(shell pwd)/etc/script
+IMAGE_BUILD_DIR  = IMAGEBUILD
 
 build-local:
 	@rm -rf build/bundles/${MAJOR_VERSION}/binary
@@ -35,15 +36,13 @@ build-arm64:
 	mv ${ARM_TARGET} build/bundles/${MAJOR_VERSION}/binary
 	@cd build/bundles/${MAJOR_VERSION}/binary && $(shell which md5sum) -b ${ARM_TARGET} | cut -d' ' -f1  > ${ARM_TARGET}.md5
 
-image:
-	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/binary
-	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} make build-local
-	@rm -rf IMAGEBUILD
-	cp -r build/contrib/builder/image IMAGEBUILD && cp build/bundles/${MAJOR_VERSION}/binary/${TARGET} IMAGEBUILD && cp -r configs IMAGEBUILD && cp -r etc IMAGEBUILD
-	docker build --rm -t ${REPOSITORY}:${MAJOR_VERSION}-${GIT_VERSION} IMAGEBUILD
-	rm -rf IMAGEBUILD
+image: build-local
+	@rm -rf ${IMAGE_BUILD_DIR}
+	cp -r build/contrib/builder/image ${IMAGE_BUILD_DIR} && cp build/bundles/${MAJOR_VERSION}/binary/${TARGET} ${IMAGE_BUILD_DIR} && cp -r configs ${IMAGE_BUILD_DIR} && cp -r etc ${IMAGE_BUILD_DIR}
+	docker build --rm -t ${REPOSITORY}:${MAJOR_VERSION}-${GIT_VERSION} ${IMAGE_BUILD_DIR}
+	rm -rf ${IMAGE_BUILD_DIR}
 
-wasm-integrate:
+wasm-integrate-ci:
 	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/faas
 	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -v $(shell pwd)/test/test.sh:/go/src/${PROJECT_NAME}/test.sh -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} sh ./test.sh
 
@@ -51,10 +50,4 @@ coverage:
 	sh ${SCRIPT_DIR}/report.sh
 
 build-linux-wasm-layotto:
-	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/faas
-	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} go build -tags wasmer -o layotto /go/src/${PROJECT_NAME}/cmd/layotto
-
-license-checker:
-	docker run -it --rm -v $(pwd):/github/workspace apache/skywalking-eyes header fix
-
-.PHONY: build
+	go build -tags wasmer -o layotto $(shell pwd)/cmd/layotto
