@@ -7,12 +7,18 @@ ARM_TARGET       = layotto.aarch64
 PROJECT_NAME     = mosn.io/layotto
 CONFIG_FILE      = runtime_config.json
 BUILD_IMAGE      = godep-builder
-IMAGE_NAME       = layotto
 GIT_VERSION      = $(shell git log -1 --pretty=format:%h)
-REPOSITORY       = layotto/${IMAGE_NAME}
-
 SCRIPT_DIR       = $(shell pwd)/etc/script
+
+IMAGE_NAME       = layotto
+REPOSITORY       = layotto/${IMAGE_NAME}
 IMAGE_BUILD_DIR  = IMAGEBUILD
+
+IMAGE_TAG := $(tag)
+
+ifeq ($(IMAGE_TAG),)
+IMAGE_TAG := dev-${MAJOR_VERSION}-${GIT_VERSION}
+endif
 
 build-local:
 	@rm -rf build/bundles/${MAJOR_VERSION}/binary
@@ -39,7 +45,7 @@ build-arm64:
 image: build-local
 	@rm -rf ${IMAGE_BUILD_DIR}
 	cp -r build/contrib/builder/image ${IMAGE_BUILD_DIR} && cp build/bundles/${MAJOR_VERSION}/binary/${TARGET} ${IMAGE_BUILD_DIR} && cp -r configs ${IMAGE_BUILD_DIR} && cp -r etc ${IMAGE_BUILD_DIR}
-	docker build --rm -t ${REPOSITORY}:${MAJOR_VERSION}-${GIT_VERSION} ${IMAGE_BUILD_DIR}
+	docker build --rm -t ${REPOSITORY}:${IMAGE_TAG} ${IMAGE_BUILD_DIR}
 	rm -rf ${IMAGE_BUILD_DIR}
 
 wasm-integrate-ci:
