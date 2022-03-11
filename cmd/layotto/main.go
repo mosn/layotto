@@ -28,7 +28,6 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 	"mosn.io/api"
-	"mosn.io/layotto/components/file/s3/tencentcloud"
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/pkg/grpc/default_api"
@@ -120,6 +119,10 @@ import (
 	sequencer_mongo "mosn.io/layotto/components/sequencer/mongo"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
+
+	// File
+	"mosn.io/layotto/components/file/s3/qiniu"
+	"mosn.io/layotto/components/file/s3/tencentcloud"
 
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
@@ -227,6 +230,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			file.NewFileFactory("awsOSS", aws.NewAwsOss),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
 			file.NewFileFactory("local", local.NewLocalStore),
+			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
 		),
 
 		// PubSub
