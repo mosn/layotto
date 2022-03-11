@@ -52,10 +52,6 @@ type DaprGrpcAPI interface {
 	grpc_api.GrpcAPI
 }
 
-const (
-	Metadata_key_pubsubName = "pubsubName"
-)
-
 type daprGrpcAPI struct {
 	appId                    string
 	hellos                   map[string]hello.HelloService

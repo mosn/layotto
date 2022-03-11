@@ -35,6 +35,10 @@ import (
 	"mosn.io/pkg/log"
 )
 
+const (
+	Metadata_key_pubsubName = "pubsubName"
+)
+
 type Details struct {
 	metadata map[string]string
 }
