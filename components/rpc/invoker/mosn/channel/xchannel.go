@@ -47,12 +47,15 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	if err := proto.Init(config.Ext); err != nil {
 		return nil, err
 	}
-
 	m := &xChannel{proto: proto}
 	m.pool = newConnPool(
 		config.Size,
 		// dialFunc
 		func() (net.Conn, error) {
+			_, _, err := net.SplitHostPort(config.Listener)
+			if err == nil {
+				return net.Dial("tcp", config.Listener)
+			}
 			local, remote := net.Pipe()
 			localTcpConn := &fakeTcpConn{c: local}
 			remoteTcpConn := &fakeTcpConn{c: remote}
@@ -68,7 +71,6 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 		m.onData,
 		m.cleanup,
 	)
-
 	return m, nil
 }
 
