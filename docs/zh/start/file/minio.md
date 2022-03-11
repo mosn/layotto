@@ -6,9 +6,23 @@ Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blo
 
 ### 第一步：启动layotto
 
-layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/blob/main/configs/config_file.json) ，如下图所示
+layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/blob/main/configs/config_file.json) ，如下所示
 
-![img.png](../../../img/file/minio.png)
+```
+                      "file": {
+                        "minioOSS": {
+                          "metadata":[
+                            {
+                              "endpoint": "play.min.io",
+                              "accessKeyID": "Q3AM3UQ867SPQQA43P2F",
+                              "accessKeySecret": "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG",
+                              "SSL":true,
+                              "region":"us-west-2"
+                            }
+                          ]
+                        }
+                      }
+```
 
 ### 第二步：启动MinIO服务
 访问[MinIO示例服务](play.min.io)

@@ -40,11 +40,11 @@ type AppConfig struct {
 type MosnRuntimeConfig struct {
 	AppManagement          AppConfig                           `json:"app"`
 	HelloServiceManagement map[string]hello.HelloConfig        `json:"hellos"`
-	ConfigStoreManagement  map[string]configstores.StoreConfig `json:"config_stores"`
+	ConfigStoreManagement  map[string]configstores.StoreConfig `json:"config_store"`
 	RpcManagement          map[string]rpc.RpcConfig            `json:"rpcs"`
 	PubSubManagement       map[string]pubsub.Config            `json:"pub_subs"`
 	StateManagement        map[string]state.Config             `json:"state"`
-	Files                  map[string]file.FileConfig          `json:"files"`
+	Files                  map[string]file.FileConfig          `json:"file"`
 	LockManagement         map[string]lock.Config              `json:"lock"`
 	SequencerManagement    map[string]sequencer.Config         `json:"sequencer"`
 	Bindings               map[string]bindings.Metadata        `json:"bindings"`

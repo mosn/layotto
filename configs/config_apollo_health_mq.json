@@ -38,7 +38,7 @@
                           "hello": "greeting"
                         }
                       },
-                      "config_stores": {
+                      "config_store": {
                         "apollo": {
                           "address": [
                             "http://106.54.227.205:8080"
