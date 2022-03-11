@@ -32,6 +32,12 @@
                           }
                         }
                       },
+                      "lock": {
+                        "in-memory": {
+                          "metadata": {
+                          }
+                        }
+                      },
                       "pub_subs": {
                         "in-memory": {
                           "metadata": {
