@@ -42,7 +42,7 @@ Layotto provides sdks in various languages. The sdk interacts with Layotto throu
 
 ### Get started with Layotto
 
-You can try the [configuration demo with apollo](en/start/configuration/start-apollo.md) to get started with Layotto.
+You can try the [configuration demo with apollo](https://mosn.io/layotto/#/en/start/configuration/start-apollo.md) to get started with Layotto.
 
 For other features,see the demos below:
 

@@ -32,11 +32,22 @@
                           }
                         }
                       },
+                      "lock": {
+                        "in-memory": {
+                          "metadata": {
+                          }
+                        }
+                      },
                       "pub_subs": {
                         "in-memory": {
                           "metadata": {
                             "consumerID": "1"
                           }
+                        }
+                      },
+                      "sequencer": {
+                        "in-memory": {
+                          "metadata": {}
                         }
                       },
                       "app": {
