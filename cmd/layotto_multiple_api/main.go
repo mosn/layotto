@@ -109,6 +109,7 @@ import (
 
 	// Sequencer
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
+	sequencer_inmemory "mosn.io/layotto/components/sequencer/in-memory"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 
@@ -369,6 +370,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
 				return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+			}),
+			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
+				return sequencer_inmemory.NewInMemorySequencer()
 			}),
 		))
 	return server, err
