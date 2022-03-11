@@ -20,7 +20,6 @@ import (
 	"encoding/json"
 	"mosn.io/api"
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
-	"mosn.io/layotto/components/file/s3/tencentcloud"
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
@@ -111,6 +110,10 @@ import (
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
+
+	// File
+	"mosn.io/layotto/components/file/s3/qiniu"
+	"mosn.io/layotto/components/file/s3/tencentcloud"
 
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
@@ -223,6 +226,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			file.NewFileFactory("awsOSS", aws.NewAwsOss),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
 			file.NewFileFactory("local", local.NewLocalStore),
+			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
 		),
 
 		// PubSub
