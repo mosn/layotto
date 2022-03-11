@@ -21,7 +21,7 @@
                           "hello": "greeting"
                         }
                       },
-                      "files": {
+                      "file": {
                         "qiniuOSS": {
                           "metadata": [
                             {
