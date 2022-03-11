@@ -65,15 +65,16 @@ func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse,
 	item, ok := s.data.locks[req.ResourceId]
 	if !ok {
 		item = &memoryLock{
-			key:  req.ResourceId,
+			key: req.ResourceId,
 			//0 unlock, 1 lock
 			lock: 0,
 		}
 		s.data.locks[req.ResourceId] = item
 	}
+
 	// 2. Construct a new one if the lockData has expired
 	//check expire
-	if item.owner != "" && time.Now().Before(item.expireTime) {
+	if item.owner != "" && time.Now().After(item.expireTime) {
 		item = &memoryLock{
 			key:  req.ResourceId,
 			lock: 0,
