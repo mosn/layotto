@@ -107,7 +107,7 @@ func startDaprServerForTest(port int, srv DaprGrpcAPI) *grpc.Server {
 
 	server := grpc.NewServer()
 	go func() {
-		srv.Register(server, server)
+		srv.Register(server)
 		if err := server.Serve(lis); err != nil {
 			panic(err)
 		}

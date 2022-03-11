@@ -34,7 +34,6 @@ import (
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"net"
 	"testing"
 
@@ -103,8 +102,8 @@ func (m *mockGrpcAPI) Init(conn *rawGRPC.ClientConn) error {
 	return nil
 }
 
-func (m mockGrpcAPI) Register(s *rawGRPC.Server, registeredServer mgrpc.RegisteredServer) (mgrpc.RegisteredServer, error) {
-	return registeredServer, nil
+func (m mockGrpcAPI) Register(rawGrpcServer *rawGRPC.Server) error {
+	return nil
 }
 
 func (m *mockGrpcAPI) sayGoodBye() string {
