@@ -25,10 +25,14 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
+	rawGRPC "google.golang.org/grpc"
+	"google.golang.org/grpc/test/bufconn"
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	mock_pubsub "mosn.io/layotto/pkg/mock/components/pubsub"
+	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
 	"mosn.io/pkg/log"
+	"net"
 	"testing"
 	"time"
 )
@@ -102,6 +106,56 @@ func TestDaprGrpcAPIPublishEvent(t *testing.T) {
 }
 
 func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
+	t.Run("publish success", func(t *testing.T) {
+		subResp := &dapr_v1pb.TopicEventResponse{
+			Status: dapr_v1pb.TopicEventResponse_SUCCESS,
+		}
+		// init grpc server
+		mockAppCallbackServer := mock_appcallback.NewMockDaprAppCallbackServer(gomock.NewController(t))
+		mockAppCallbackServer.EXPECT().OnTopicEvent(gomock.Any(), gomock.Any()).Return(subResp, nil)
+
+		lis := bufconn.Listen(1024 * 1024)
+		s := grpc.NewServer()
+		dapr_v1pb.RegisterAppCallbackServer(s, mockAppCallbackServer)
+		go func() {
+			s.Serve(lis)
+		}()
+
+		// init callback client
+		callbackClient, err := grpc.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
+			return lis.Dial()
+		}))
+		assert.Nil(t, err)
+
+		cloudEvent := map[string]interface{}{
+			pubsub.IDField:              "id",
+			pubsub.SourceField:          "source",
+			pubsub.DataContentTypeField: "content-type",
+			pubsub.TypeField:            "type",
+			pubsub.SpecVersionField:     "v1.0.0",
+			pubsub.DataBase64Field:      "bGF5b3R0bw==",
+		}
+
+		data, err := json.Marshal(cloudEvent)
+		assert.Nil(t, err)
+
+		msg := &pubsub.NewMessage{
+			Data:     data,
+			Topic:    "layotto",
+			Metadata: make(map[string]string),
+		}
+		a := NewDaprServer("", nil, nil, nil, nil,
+			nil, nil, nil, nil, nil, nil, nil)
+
+		var apiForTest = a.(*daprGrpcAPI)
+		//apiForTest.errInt = func(err error, format string, args ...interface{}) {
+		//	log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+		//}
+		apiForTest.AppCallbackConn = callbackClient
+		apiForTest.json = jsoniter.ConfigFastest
+		err = apiForTest.publishMessageGRPC(context.Background(), msg)
+		assert.Nil(t, err)
+	})
 	t.Run("drop it when publishing an expired message", func(t *testing.T) {
 		cloudEvent := map[string]interface{}{
 			pubsub.IDField:              "id",
