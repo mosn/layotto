@@ -70,9 +70,10 @@ jobs:
       - name: Post Coverage
         run: bash <(curl -s https://codecov.io/bash)
 
-  integrate:
-    name: integrate
+  wasm-integrate:
+    name: wasm-integrate
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -84,3 +85,19 @@ jobs:
 
       - name: Run Integrate tests.
         run: make wasm-integrate
+
+  runtime-integrate:
+    name: runtime-integrate
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.14.13
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Run Integrate tests.
+        run: make runtime-integrate

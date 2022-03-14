@@ -45,7 +45,11 @@ image:
 
 wasm-integrate:
 	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/faas
-	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -v $(shell pwd)/test/test.sh:/go/src/${PROJECT_NAME}/test.sh -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} sh ./test.sh
+	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -v $(shell pwd)/test/wasm/wasm_test.sh:/go/src/${PROJECT_NAME}/wasm_test.sh -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} sh ./wasm_test.sh
+
+runtime-integrate:
+	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/integrate
+	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -v $(shell pwd)/test/runtime/integrate_test.sh:/go/src/${PROJECT_NAME}/integrate_test.sh -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} sh ./integrate_test.sh
 
 coverage:
 	sh ${SCRIPT_DIR}/report.sh

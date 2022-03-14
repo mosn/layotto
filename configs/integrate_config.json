@@ -1,0 +1,58 @@
+{
+  "servers": [
+    {
+      "default_log_path": "stdout",
+      "default_log_level": "INFO",
+      "listeners": [
+        {
+          "name": "grpc",
+          "address": "0.0.0.0:34904",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "hellos": {
+                        "helloworld": {
+                          "hello": "welcome layotto"
+                        }
+                      },
+                      "state": {
+                        "redis": {
+                          "metadata": {
+                            "redisHost": "localhost:6379",
+                            "redisPassword": ""
+                          }
+                        }
+                      },
+                      "lock": {
+                        "redis": {
+                          "metadata": {
+                            "redisHost": "localhost:6379",
+                            "redisPassword": ""
+                          }
+                        }
+                      },
+                      "sequencer": {
+                        "redis": {
+                          "metadata": {
+                            "redisHost": "127.0.0.1:6379",
+                            "redisPassword": ""
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
