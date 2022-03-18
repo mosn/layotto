@@ -1,7 +1,7 @@
 # Redis
 
 ## 配置项说明
-示例：configs/config_apollo_health_mq.json
+示例：configs/config_redis.json
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
