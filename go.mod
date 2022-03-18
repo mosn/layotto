@@ -3,6 +3,7 @@ module mosn.io/layotto
 go 1.14
 
 require (
+	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/Azure/go-autorest/autorest/azure/cli v0.4.2 // indirect
 	github.com/Azure/go-autorest/autorest/validation v0.3.1 // indirect
 	github.com/Azure/go-autorest/logger v0.2.1 // indirect

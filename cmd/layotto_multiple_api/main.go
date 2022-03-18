@@ -102,12 +102,14 @@ import (
 	"mosn.io/layotto/components/lock"
 	lock_consul "mosn.io/layotto/components/lock/consul"
 	lock_etcd "mosn.io/layotto/components/lock/etcd"
+	lock_inmemory "mosn.io/layotto/components/lock/in-memory"
 	lock_redis "mosn.io/layotto/components/lock/redis"
 	lock_zookeeper "mosn.io/layotto/components/lock/zookeeper"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 
 	// Sequencer
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
+	sequencer_inmemory "mosn.io/layotto/components/sequencer/in-memory"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 
@@ -346,6 +348,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_lock.NewFactory("consul", func() lock.LockStore {
 				return lock_consul.NewConsulLock(log.DefaultLogger)
 			}),
+			runtime_lock.NewFactory("in-memory", func() lock.LockStore {
+				return lock_inmemory.NewInMemoryLock()
+			}),
 		),
 
 		// bindings
@@ -365,6 +370,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
 				return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+			}),
+			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
+				return sequencer_inmemory.NewInMemorySequencer()
 			}),
 		))
 	return server, err

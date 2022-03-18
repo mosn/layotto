@@ -82,7 +82,7 @@ go build
 完成后目录下会生成layotto文件，运行它：
 
 ```bash
-./layotto start -c ../../configs/config_apollo_health_mq.json
+./layotto start -c ../../configs/config_redis.json
 ```
 
 ### 第四步：运行Publisher程序，调用Layotto发布事件
