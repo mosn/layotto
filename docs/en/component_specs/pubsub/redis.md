@@ -1,7 +1,7 @@
 # Redis
 
 ## metadata fields
-Example: configs/config_apollo_health_mq.json
+Example: configs/config_redis.json
 
 | Field | Required | Description |
 | --- | --- | --- |
