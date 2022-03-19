@@ -24,6 +24,11 @@ go build
 ./layotto start -c ../../configs/config_apollo_health.json
 ```
 
+>Q: demo启动报错？
+>
+>A: 默认配置会连接 apollo 的演示服务器，但是演示服务器的配置可能被其他人随意修改。报错可能是因为某些配置被修改了。
+>
+> 遇到这种情况，您可以先尝试其他 demo
 ### 访问健康检查接口
 
 访问 /actuator/health/liveness

@@ -468,7 +468,7 @@ func (c *ConfigStore) setItem(appId string, item *configstores.ConfigurationItem
 }
 
 func (c *ConfigStore) addHeaderForOpenAPI(req *http.Request) {
-	//https://ctripcorp.github.io/apollo/#/zh/usage/apollo-open-api-platform?id=_3211-%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3
+	//https://www.apolloconfig.com/apollo/#/zh/usage/apollo-open-api-platform?id=_3211-%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3
 	//Http Header中增加一个Authorization字段，字段值为申请的token
 	//Http Header的Content-Type字段需要设置成application/json;charset=UTF-8
 	req.Header.Add("Authorization", c.openAPIToken)
@@ -557,7 +557,7 @@ func (c *ConfigStore) initTagsClient(tagCfg *RepoConfig) error {
 	return c.tagsRepo.Connect()
 }
 
-//refer to https://ctripcorp.github.io/apollo/#/zh/usage/apollo-open-api-platform?id=_327-%e5%88%9b%e5%bb%banamespace
+//refer to https://www.apolloconfig.com/#/zh/usage/apollo-open-api-platform?id=_327-%e5%88%9b%e5%bb%banamespace
 func (c *ConfigStore) createNamespace(env string, appId string, cluster string, namespace string) error {
 	// 1. request
 	url := fmt.Sprintf(createNamespaceUrlTpl, c.openAPIAddress, appId)
@@ -576,6 +576,7 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 	req, err := http.NewRequest("POST", url, strings.NewReader(string(reqBodyJson)))
 	// add headers
 	c.addHeaderForOpenAPI(req)
+	log.DefaultLogger.Debugf("createNamespace url: %v, request body: %s, request: %+v", url, reqBodyJson, req)
 	// do request
 	resp, err := c.openAPIClient.Do(req)
 	// 2. parse
@@ -586,6 +587,14 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 	if resp.StatusCode == http.StatusOK {
 		// 4. commit
 		return c.commit(env, appId, cluster, namespace)
+	}
+	// log debug information if status code is not 200
+	if log.DefaultLogger.GetLogLevel() >= log.DEBUG {
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		log.DefaultLogger.Debugf("createNamespace not ok. StatusCode: %v, response body: %s", resp.StatusCode, b)
 	}
 	return nil
 }
