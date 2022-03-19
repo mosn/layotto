@@ -592,6 +592,7 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 	if log.DefaultLogger.GetLogLevel() >= log.DEBUG {
 		b, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
+			log.DefaultLogger.Errorf("An error occurred when parsing createNamespace response: %v", err)
 			return err
 		}
 		log.DefaultLogger.Debugf("createNamespace not ok. StatusCode: %v, response body: %s", resp.StatusCode, b)
