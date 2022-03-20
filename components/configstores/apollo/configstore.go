@@ -19,6 +19,7 @@ package apollo
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -551,7 +552,10 @@ func (c *ConfigStore) deleteItem(env string, appId string, cluster string, group
 
 func (c *ConfigStore) initTagsClient(tagCfg *RepoConfig) error {
 	// 1. create if not exist
-	c.createNamespace(c.env, tagCfg.appId, tagCfg.cluster, c.tagsNamespace)
+	err := c.createNamespace(c.env, tagCfg.appId, tagCfg.cluster, c.tagsNamespace)
+	if err != nil {
+		return err
+	}
 	// 2. Connect
 	c.tagsRepo.SetConfig(tagCfg)
 	return c.tagsRepo.Connect()
@@ -588,14 +592,24 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 		// 4. commit
 		return c.commit(env, appId, cluster, namespace)
 	}
-	// log debug information if status code is not 200
-	if log.DefaultLogger.GetLogLevel() >= log.DEBUG {
-		b, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.DefaultLogger.Errorf("An error occurred when parsing createNamespace response: %v", err)
-			return err
+	// if the namespace already exists, the status code will be 400
+	if resp.StatusCode == http.StatusBadRequest {
+		// log debug information
+		if log.DefaultLogger.GetLogLevel() >= log.DEBUG {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				log.DefaultLogger.Errorf("An error occurred when parsing createNamespace response. statusCode: %v ,error: %v", resp.StatusCode, err)
+				return err
+			}
+			log.DefaultLogger.Debugf("createNamespace not ok. StatusCode: %v, response body: %s", resp.StatusCode, b)
 		}
-		log.DefaultLogger.Debugf("createNamespace not ok. StatusCode: %v, response body: %s", resp.StatusCode, b)
+		return nil
 	}
-	return nil
+	// Fail fast and take it as an startup error if the status code is neither 200 nor 400
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.DefaultLogger.Errorf("An error occurred when parsing createNamespace response. statusCode: %v ,error: %v", resp.StatusCode, err)
+		return err
+	}
+	return errors.New(fmt.Sprintf("createNamespace error. StatusCode: %v, response body: %s", resp.StatusCode, b))
 }
