@@ -40,12 +40,6 @@ cd diagnostics/skywalking
 docker-compose -f skywalking-docker-compose.yaml up -d
 ````
 
-清理资源：
-
-````shell
-docker-compose -f skywalking-docker-compose.yaml down
-````
-
 ## 运行 Demo
 
 ````shell
@@ -56,3 +50,11 @@ go run client.go
 访问 http://127.0.0.1:8080
 
 ![](../../../img/trace/sky.png)
+
+## 清理资源
+
+````shell
+cd diagnostics/skywalking
+
+docker-compose -f skywalking-docker-compose.yaml down
+````
