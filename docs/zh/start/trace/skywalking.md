@@ -24,20 +24,20 @@
 | backend_service | Y   | skywalking oap server 地址 |
 | service_name | Y   | 服务名称                     |
 
-## 运行 layotto
-
-````shell
-cd cmd/layotto_multiple_api/
-go build -o layotto
-./layotto start -c ../../configs/config_trace_skywalking.json
-````
-
 ## 运行 skywalking
 
 ````shell
 cd diagnostics/skywalking
 
 docker-compose -f skywalking-docker-compose.yaml up -d
+````
+
+## 运行 layotto
+
+````shell
+cd cmd/layotto_multiple_api/
+go build -o layotto
+./layotto start -c ../../configs/config_trace_skywalking.json
 ````
 
 ## 运行 Demo
