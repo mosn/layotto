@@ -24,6 +24,7 @@ import (
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/grpc/default_api"
+	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
 	"mosn.io/mosn/pkg/trace/skywalking"
 	"os"
 	"strconv"
