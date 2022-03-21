@@ -63,17 +63,17 @@ Layotto 新增若干扩展点。
 
 企业用户在使用 Layotto 时，可以自己维护一个项目、import Layotto。自己的项目里存放各种扩展插件、组件。如果您熟悉 Java，这就类似于 Java 社区想要用 [Eureka](https://github.com/Netflix/eureka) 时，可以 import Eureka、然后做扩展。 
 
-当用户想新增一类 API 时，可以在自己的项目里开发一个 package（包括自己的 proto,pb文件，自己的 grpc API实现)，然后在 `main.go` 里调用 Layotto 的扩展点、将自己的 API 注册进 Layotto。
+当用户想新增一类 API 时，可以在自己的项目里开发一个 package（包括自己的 proto,pb文件，自己的 API实现)，然后在 `main.go` 里调用 Layotto 的扩展点、将自己的 API 注册进 Layotto。
 
 ### 2.4. 使用指南
 如何添加自己的 proto、添加自己的私有API？
 
-一个示例是 [项目中提供的 helloworld 包](https://github.com/mosn/layotto/tree/main/cmd/layotto_multiple_api/helloworld) ，实现了自定义的 grpc API, `SayHello`
+一个示例是 [项目中提供的 helloworld 包](https://github.com/mosn/layotto/tree/main/cmd/layotto_multiple_api/helloworld) ，实现了自定义的 API, `SayHello`
 
 以此为例，解释下写 API 插件的步骤: 
 
 #### step 0. 定义自己的 proto 文件、编译成 pb
-比如用户想新增一个自己的 `Greeter` grpc API，提供 `SayHello` 方法，那么需要先写个 proto:
+比如用户想新增一个自己的 `Greeter` API，提供 `SayHello` 方法，那么需要先写个 proto:
 （这个例子是我从 [grpc 官方示例](https://github.com/grpc/grpc-go/blob/master/examples/helloworld/helloworld/helloworld.proto) 粘贴过来的）
 ```protobuf
 syntax = "proto3";
@@ -108,7 +108,7 @@ message HelloReply {
 
  <img src="https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*9VnARJimj90AAAAAAAAAAAAAARQnAQ" width = "40%" height = "40%" alt="score" align=center />
 
-#### step 1. 为刚才定义的 grpc API 编写实现
+#### step 1. 为刚才定义的 API 编写实现
 protoc 编译工具会根据 proto 文件帮你编译出 go 语言的 interface `helloworld.GreeterServer`，但是 interface 的具体实现还是需要自己写。
 
 比如，示例中我们编写的 `server` 实现了 `helloworld.GreeterServer` interface, 有 `SayHello` 方法:
@@ -214,11 +214,11 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
     // 3. run
     server, err := rt.Run(
         runtime.WithGrpcOptions(opts...),
-        // register your grpc API here
+        // register your GrpcAPI here
         runtime.WithGrpcAPI(
-            // default grpc API
+            // default GrpcAPI
             default_api.NewGrpcAPI,
-            // a demo to show how to register your own API
+            // a demo to show how to register your own GrpcAPI
             helloworld_api.NewHelloWorldAPI,
         ),
         // Hello
