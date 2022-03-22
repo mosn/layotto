@@ -199,11 +199,11 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}
 			return actuator.NewGrpcServerWithActuator(server)
 		}),
-		// register your grpc API here
+		// register your gRPC API here
 		runtime.WithGrpcAPI(
-			// default grpc API
+			// default GrpcAPI
 			default_api.NewGrpcAPI,
-			// a demo to show how to register your own API
+			// a demo to show how to register your own gRPC API
 			helloworld_api.NewHelloWorldAPI,
 			// support Dapr API
 			// Currently it only support Dapr's InvokeService and InvokeBinding API.

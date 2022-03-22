@@ -36,6 +36,8 @@
         - [Pub/Sub API](zh/building_blocks/pubsub/reference.md)
         - [Configuration API](zh/building_blocks/configuration/reference.md)
         - [RPC API](zh/building_blocks/rpc/reference.md)
+        - 可扩展性
+            - [API插件](zh/design/api_plugin/design.md)
     - [grpc API 文档](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
     - SDK文档    
         - [java sdk](https://github.com/layotto/java-sdk)
@@ -74,7 +76,7 @@
     - [RPC设计文档](zh/design/rpc/rpc设计文档.md)
     - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)    
     - [Sequencer API设计文档](zh/design/sequencer/design.md)
-    - [file API设计文档](zh/design/file/file-design.md)
+    - [File API设计文档](zh/design/file/file-design.md)
     - [FaaS 设计文档](zh/design/faas/faas-poc-design.md)
     - [API插件](zh/design/api_plugin/design.md)
     - [支持Dapr API](zh/design/api_plugin/dapr_api.md)
