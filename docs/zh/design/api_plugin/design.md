@@ -152,10 +152,15 @@ type GrpcAPI interface {
 ```
 
 - 实现相应的构造函数 `NewGrpcAPI`，用来创建你的 `GrpcAPI`。
+
 ```go
 // NewGrpcAPI is the constructor of GrpcAPI
 type NewGrpcAPI func(applicationContext *ApplicationContext) GrpcAPI
+```
 
+其中传入的参数`*ApplicationContext`定义为：
+
+```go
 // ApplicationContext contains all you need to construct your GrpcAPI, such as all the components.
 // For example, your `SuperState` GrpcAPI can hold the `StateStores` components and use them to implement your own `Super State API` logic.
 type ApplicationContext struct {
@@ -173,7 +178,7 @@ type ApplicationContext struct {
 }
 ```
 
-举个例子，在[helloworld 示例中](https://github.com/mosn/layotto/blob/main/cmd/layotto_multiple_api/helloworld/grpc_api.go), `*server` 实现了 `Init` 和 `Register` 方法:
+看个具体的例子，在[helloworld 示例中](https://github.com/mosn/layotto/blob/main/cmd/layotto_multiple_api/helloworld/grpc_api.go), `*server` 实现了 `Init` 和 `Register` 方法:
 
 ```go
 func (s *server) Init(conn *rawGRPC.ClientConn) error {
