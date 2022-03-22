@@ -46,7 +46,7 @@ Dapr 的扩展性是通过 Binding API 解决，但是这种非结构化的 API 
 
 参考 OS 领域当年是怎么定 API 的，我们可以把 Runtime API 设计成多层：
 
-![img.png](../../../img/api_plugin/img.png)
+![img.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*bWnHR7yhiF4AAAAAAAAAAAAAARQnAQ)
 
 分别对应 OS 领域的：
 
