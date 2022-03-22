@@ -205,7 +205,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}
 			return actuator.NewGrpcServerWithActuator(server)
 		}),
-		// register your GrpcAPI here
+		// register your gRPC API here
 		runtime.WithGrpcAPI(
 			default_api.NewGrpcAPI,
 		),
