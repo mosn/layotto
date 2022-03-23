@@ -9,13 +9,11 @@ The architecture of this demo is shown in the figure below. The processes starte
 [Then config file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) claims `etcd` in the `config_store` section, but users can change it to other configuration center they want (currently only support etcd and apollo).
 
 ## Start etcd
-If you want to run the etcd demo, you need to start a etcd server.
+If you want to run this demo, you need to start a etcd server first.
 
-Steps：
+You can download etcd from `https://github.com/etcd-io/etcd/releases` （You can also use docker.）
 
-download etcd from `https://github.com/etcd-io/etcd/releases` （You can also use docker.）
-
-start：
+start it：
 ````shell
 ./etcd
 ````
@@ -23,13 +21,14 @@ start：
 Then you can access etcd with the address `localhost:2379`.
 
 ## Start Layotto
+Build Layotto:
 
 ````shell
 cd ${your project path}/cmd/layotto
 go build
 ````
 
-Execute after the compilation is successful:
+Run it:
 ````shell
 ./layotto start -c ../../configs/runtime_config.json
 ````
@@ -42,7 +41,7 @@ go build
 ./etcd
 ```
 
-If the following information is printed out, it means the startup is complete and Layotto is running now：
+If the following information is printed out, it means the client app has done all the CRUD operations successfully：
 
 ```bash
 runtime client initializing for: 127.0.0.1:34904
@@ -54,7 +53,7 @@ receive watch event, &{Key:hello1 Content: Group:default Label:default Tags:map[
 ```
 
 ## Next step
-### What did this client Demo do?
+### What did this demo do?
 The demo client uses the golang version SDK provided by Layotto, and invokes Layotto's Configuration API to add, delete, modify, and subscribe to configuration data.
 
 The sdk is located in the `sdk` directory. Users can invoke the Layotto API using the sdk.
