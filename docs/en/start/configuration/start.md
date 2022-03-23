@@ -6,9 +6,9 @@ The architecture of this demo is shown in the figure below. The processes starte
 
 ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*dzGaSb78UCoAAAAAAAAAAAAAARQnAQ)
 
-[Then config file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) claims `etcd` in the `config_store` section, and users can change the file to the configuration center they want (currently supports etcd and apollo).
+[Then config file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) claims `etcd` in the `config_store` section, but users can change it to other configuration center they want (currently only support etcd and apollo).
 
-## How to start etcd
+## Start etcd
 If you want to run the etcd demo, you need to start a etcd server.
 
 Steps：
@@ -22,7 +22,7 @@ start：
 
 Then you can access etcd with the address `localhost:2379`.
 
-## Run layotto
+## Start Layotto
 
 ````shell
 cd ${your project path}/cmd/layotto
@@ -34,7 +34,7 @@ Execute after the compilation is successful:
 ./layotto start -c ../../configs/runtime_config.json
 ````
 
-### Start client
+## Start client APP
 
 ```bash
 cd ${your project path}/demo/configuration/etcd
