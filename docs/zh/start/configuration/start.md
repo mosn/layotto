@@ -5,8 +5,6 @@
 
 ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*dzGaSb78UCoAAAAAAAAAAAAAARQnAQ)
 
-[config文件](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 在config_store中定义了 etcd，用户可以更改配置文件为自己想要的配置中心（目前支持 etcd 和 apollo）。
-
 ## 启动 etcd
 
 etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/quickstart/)
@@ -37,6 +35,7 @@ go build
 ````shell
 ./layotto start -c ../../configs/runtime_config.json
 ````
+> 解释：[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 是 Layotto 的配置文件，它在 `config_store` 中声明了使用 etcd 作为配置中心。用户可以更改配置文件，改成使用自己想要用的其他配置中心（目前支持 etcd 和 apollo）。
 
 ## 启动本地client
 
