@@ -25,7 +25,7 @@ Then you can access etcd with the address `localhost:2379`.
 ## Run layotto
 
 ````shell
-cd ${projectpath}/cmd/layotto
+cd ${your project path}/cmd/layotto
 go build
 ````
 
@@ -37,7 +37,7 @@ Execute after the compilation is successful:
 ### Start client
 
 ```bash
-cd layotto/demo/configuration/etcd
+cd ${your project path}/demo/configuration/etcd
 go build
 ./etcd
 ```
