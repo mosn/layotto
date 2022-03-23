@@ -1,44 +1,38 @@
 # Configuration API demo with Etcd
 
-This example shows how to add, delete, modify, and watch the etcd configuration center through Layotto. 
+This example shows that when you are using etcd as a configuration center, how to add, delete, modify, and watch the etcd through Layotto. 
 
-Please install [Docker](https://www.docker.com/get-started) software on your machine in advance.
+The architecture of this demo is shown in the figure below. The processes started are: client APP, Layotto, etcd
 
-[Config file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) defines using etcd in config_store section, and users can change the configuration file to the configuration center they want (currently supports etcd and apollo).
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*dzGaSb78UCoAAAAAAAAAAAAAARQnAQ)
 
-### Build docker image
+[Then config file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) claims `etcd` in the `config_store` section, and users can change the file to the configuration center they want (currently supports etcd and apollo).
 
-At first, please make sure your layotto PATH is same as below:
+## How to start etcd
+If you want to run the etcd demo, you need to start a etcd server.
 
-```
-$GOPATH/src/github/layotto/layotto
-```
+Steps：
 
-then execute `CMD` below:
+download etcd from `https://github.com/etcd-io/etcd/releases` （You can also use docker.）
 
-```bash
-cd $GOPATH/src/github/layotto/layotto  
-make image
-```
+start：
+````shell
+./etcd
+````
 
-After make success, you can see two images with docker images command：
+Then you can access etcd with the address `localhost:2379`.
 
-```bash
+## Run layotto
 
-xxx@B-P59QMD6R-2102 img % docker images
-REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-layotto/layotto     0.1.0-662eab0       0370527a51a1        10 minutes ago      431MB
-```
+````shell
+cd ${projectpath}/cmd/layotto
+go build
+````
 
-### Start Layotto
-
-```bash
-docker run -p 34904:34904 layotto/layotto:0.1.0-662eab0
-```
-
-
-Mac and Windows do not support --net=host, if it is on linux, you can directly replace -p 34904:34904 with --net=host.
-
+Execute after the compilation is successful:
+````shell
+./layotto start -c ../../configs/runtime_config.json
+````
 
 ### Start client
 
@@ -59,7 +53,16 @@ receive watch event, &{Key:hello1 Content:world1 Group:default Label:default Tag
 receive watch event, &{Key:hello1 Content: Group:default Label:default Tags:map[] Metadata:map[]}
 ```
 
-### Next step
+## Next step
+### What did this client Demo do?
+The demo client uses the golang version SDK provided by Layotto, and invokes Layotto's Configuration API to add, delete, modify, and subscribe to configuration data.
 
-Layotto provides the golang version of the SDK, which is located in the runtime/sdk directory. Users can directly call the services provided by Layotto through the corresponding SDK.
+The sdk is located in the `sdk` directory. Users can invoke the Layotto API using the sdk.
 
+In addition to using sdk, you can also interact with Layotto directly through grpc in any language you like.
+
+In fact, sdk is only a very thin package for grpc, using sdk is about equal to directly using grpc.
+
+
+### Let's continue to experience other APIs
+Explore other Quickstarts through the navigation bar on the left.

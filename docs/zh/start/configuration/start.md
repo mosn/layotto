@@ -1,45 +1,47 @@
 # 使用Configuration API调用Etcd配置中心
+本示例展示了使用 etcd 作为配置中心时，如何通过Layotto，对 etcd 配置中心进行增删改查以及 watch。
 
-该示例展示了如何通过Layotto，对etcd配置中心进行增删改查以及watch的过程。请提前在本机上安装[Docker](https://www.docker.com/get-started) 软件。
-[config文件](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 在config_store中定义了etcd，用户可以更改配置文件为自己想要的配置中心（目前支持etcd和apollo）。
+本示例架构如下图，启动的进程有：客户端程程序、Layotto、etcd 。
 
-### 生成镜像
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*dzGaSb78UCoAAAAAAAAAAAAAARQnAQ)
 
-首先请确认把layotto项目放在如下目录：
+[config文件](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 在config_store中定义了 etcd，用户可以更改配置文件为自己想要的配置中心（目前支持 etcd 和 apollo）。
 
-```
-$GOPATH/src/github/layotto/layotto
-```
+## 启动 etcd
 
-然后执行如下命令：
+etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/quickstart/)
+
+简单说明：
+
+访问 https://github.com/etcd-io/etcd/releases 下载对应操作系统的 etcd（也可以用 docker，但是下载官方编译好的 etcd 更简单）
+
+例如，如果是 macOS amd64 用户，可以点击下载：
+
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*sc_HQaMXg4YAAAAAAAAAAAAAARQnAQ)
+
+下载完成执行命令启动：
+````shell
+./etcd
+````
+
+默认监听地址为 `localhost:2379`
+
+## 启动 layotto
+
+````shell
+cd ${projectpath}/cmd/layotto
+go build
+````
+
+编译成功后执行:
+````shell
+./layotto start -c ../../configs/runtime_config.json
+````
+
+## 启动本地client
 
 ```bash
-cd $GOPATH/src/github/layotto/layotto  
-make image
-```
-
-运行结束后本地会生成两个镜像：
-
-```bash
-
-xxx@B-P59QMD6R-2102 img % docker images
-REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-layotto/layotto     0.1.0-662eab0       0370527a51a1        10 minutes ago      431MB
-```
-
-### 运行Layotto
-
-```bash
-docker run -p 34904:34904 layotto/layotto:0.1.0-662eab0
-```
-
-Mac和Windows不支持--net=host, 如果是在linux上可以直接把 -p 34904:34904 替换成 --net=host。
-
-
-### 启动本地client
-
-```bash
-cd layotto/demo/configuration/etcd
+cd ${projectpath}/demo/configuration/etcd
 go build
 ./etcd
 ```
@@ -54,8 +56,16 @@ get configuration after save, &{Key:hello2 Content:world2 Group:default Label:de
 receive watch event, &{Key:hello1 Content:world1 Group:default Label:default Tags:map[] Metadata:map[]}
 receive watch event, &{Key:hello1 Content: Group:default Label:default Tags:map[] Metadata:map[]}
 ```
+## 下一步
+### 这个客户端Demo做了什么？
+示例客户端程序中使用了Layotto提供的golang版本sdk，调用Layotto 的Configuration API对配置数据进行增删改查、订阅变更。
 
-### 拓展
+sdk位于`sdk`目录下，用户可以通过sdk调用Layotto提供的API。
 
-Layotto 提供了golang版本的sdk，位于runtime/sdk目录下，用户可以通过对应的sdk直接调用Layotto提供的服务。
+除了使用sdk，您也可以用任何您喜欢的语言、通过grpc直接和Layotto交互。
 
+其实sdk只是对grpc很薄的封装，用sdk约等于直接用grpc调。
+
+
+### 细节以后再说，继续体验其他API
+通过左侧的导航栏，继续体验别的API吧！
