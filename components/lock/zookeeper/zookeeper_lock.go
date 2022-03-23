@@ -113,7 +113,7 @@ func (p *ZookeeperLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, e
 	owner, state, err := conn.Get(path)
 
 	if err != nil {
-		//node does not exist, indicates this lock has expired
+		//node does not exist, indicates this lock has expired.
 		if err == zk.ErrNoNode {
 			return &lock.UnlockResponse{Status: lock.LOCK_UNEXIST}, nil
 		}
