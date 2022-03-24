@@ -1,93 +1,16 @@
 # Protocol Documentation
 <a name="top"></a>
 
-## Table of Contents
+This document is automaticallly generated from the `.proto` files.
+
+## gRPC Services
 
 - [appcallback.proto](#appcallback.proto)
-    - [ListTopicSubscriptionsResponse](#spec.proto.runtime.v1.ListTopicSubscriptionsResponse)
-    - [TopicEventRequest](#spec.proto.runtime.v1.TopicEventRequest)
-    - [TopicEventResponse](#spec.proto.runtime.v1.TopicEventResponse)
-    - [TopicSubscription](#spec.proto.runtime.v1.TopicSubscription)
-    - [TopicSubscription.MetadataEntry](#spec.proto.runtime.v1.TopicSubscription.MetadataEntry)
-  
-    - [TopicEventResponse.TopicEventResponseStatus](#spec.proto.runtime.v1.TopicEventResponse.TopicEventResponseStatus)
-  
     - [AppCallback](#spec.proto.runtime.v1.AppCallback)
   
 - [runtime.proto](#runtime.proto)
-    - [BulkStateItem](#spec.proto.runtime.v1.BulkStateItem)
-    - [BulkStateItem.MetadataEntry](#spec.proto.runtime.v1.BulkStateItem.MetadataEntry)
-    - [CommonInvokeRequest](#spec.proto.runtime.v1.CommonInvokeRequest)
-    - [ConfigurationItem](#spec.proto.runtime.v1.ConfigurationItem)
-    - [ConfigurationItem.MetadataEntry](#spec.proto.runtime.v1.ConfigurationItem.MetadataEntry)
-    - [ConfigurationItem.TagsEntry](#spec.proto.runtime.v1.ConfigurationItem.TagsEntry)
-    - [DelFileRequest](#spec.proto.runtime.v1.DelFileRequest)
-    - [DeleteBulkStateRequest](#spec.proto.runtime.v1.DeleteBulkStateRequest)
-    - [DeleteConfigurationRequest](#spec.proto.runtime.v1.DeleteConfigurationRequest)
-    - [DeleteConfigurationRequest.MetadataEntry](#spec.proto.runtime.v1.DeleteConfigurationRequest.MetadataEntry)
-    - [DeleteStateRequest](#spec.proto.runtime.v1.DeleteStateRequest)
-    - [DeleteStateRequest.MetadataEntry](#spec.proto.runtime.v1.DeleteStateRequest.MetadataEntry)
-    - [Etag](#spec.proto.runtime.v1.Etag)
-    - [ExecuteStateTransactionRequest](#spec.proto.runtime.v1.ExecuteStateTransactionRequest)
-    - [ExecuteStateTransactionRequest.MetadataEntry](#spec.proto.runtime.v1.ExecuteStateTransactionRequest.MetadataEntry)
-    - [FileRequest](#spec.proto.runtime.v1.FileRequest)
-    - [FileRequest.MetadataEntry](#spec.proto.runtime.v1.FileRequest.MetadataEntry)
-    - [GetBulkStateRequest](#spec.proto.runtime.v1.GetBulkStateRequest)
-    - [GetBulkStateRequest.MetadataEntry](#spec.proto.runtime.v1.GetBulkStateRequest.MetadataEntry)
-    - [GetBulkStateResponse](#spec.proto.runtime.v1.GetBulkStateResponse)
-    - [GetConfigurationRequest](#spec.proto.runtime.v1.GetConfigurationRequest)
-    - [GetConfigurationRequest.MetadataEntry](#spec.proto.runtime.v1.GetConfigurationRequest.MetadataEntry)
-    - [GetConfigurationResponse](#spec.proto.runtime.v1.GetConfigurationResponse)
-    - [GetFileRequest](#spec.proto.runtime.v1.GetFileRequest)
-    - [GetFileRequest.MetadataEntry](#spec.proto.runtime.v1.GetFileRequest.MetadataEntry)
-    - [GetFileResponse](#spec.proto.runtime.v1.GetFileResponse)
-    - [GetNextIdRequest](#spec.proto.runtime.v1.GetNextIdRequest)
-    - [GetNextIdRequest.MetadataEntry](#spec.proto.runtime.v1.GetNextIdRequest.MetadataEntry)
-    - [GetNextIdResponse](#spec.proto.runtime.v1.GetNextIdResponse)
-    - [GetStateRequest](#spec.proto.runtime.v1.GetStateRequest)
-    - [GetStateRequest.MetadataEntry](#spec.proto.runtime.v1.GetStateRequest.MetadataEntry)
-    - [GetStateResponse](#spec.proto.runtime.v1.GetStateResponse)
-    - [GetStateResponse.MetadataEntry](#spec.proto.runtime.v1.GetStateResponse.MetadataEntry)
-    - [HTTPExtension](#spec.proto.runtime.v1.HTTPExtension)
-    - [InvokeBindingRequest](#spec.proto.runtime.v1.InvokeBindingRequest)
-    - [InvokeBindingRequest.MetadataEntry](#spec.proto.runtime.v1.InvokeBindingRequest.MetadataEntry)
-    - [InvokeBindingResponse](#spec.proto.runtime.v1.InvokeBindingResponse)
-    - [InvokeBindingResponse.MetadataEntry](#spec.proto.runtime.v1.InvokeBindingResponse.MetadataEntry)
-    - [InvokeResponse](#spec.proto.runtime.v1.InvokeResponse)
-    - [InvokeServiceRequest](#spec.proto.runtime.v1.InvokeServiceRequest)
-    - [ListFileRequest](#spec.proto.runtime.v1.ListFileRequest)
-    - [ListFileResp](#spec.proto.runtime.v1.ListFileResp)
-    - [PublishEventRequest](#spec.proto.runtime.v1.PublishEventRequest)
-    - [PublishEventRequest.MetadataEntry](#spec.proto.runtime.v1.PublishEventRequest.MetadataEntry)
-    - [PutFileRequest](#spec.proto.runtime.v1.PutFileRequest)
-    - [PutFileRequest.MetadataEntry](#spec.proto.runtime.v1.PutFileRequest.MetadataEntry)
-    - [SaveConfigurationRequest](#spec.proto.runtime.v1.SaveConfigurationRequest)
-    - [SaveConfigurationRequest.MetadataEntry](#spec.proto.runtime.v1.SaveConfigurationRequest.MetadataEntry)
-    - [SaveStateRequest](#spec.proto.runtime.v1.SaveStateRequest)
-    - [SayHelloRequest](#spec.proto.runtime.v1.SayHelloRequest)
-    - [SayHelloResponse](#spec.proto.runtime.v1.SayHelloResponse)
-    - [SequencerOptions](#spec.proto.runtime.v1.SequencerOptions)
-    - [StateItem](#spec.proto.runtime.v1.StateItem)
-    - [StateItem.MetadataEntry](#spec.proto.runtime.v1.StateItem.MetadataEntry)
-    - [StateOptions](#spec.proto.runtime.v1.StateOptions)
-    - [SubscribeConfigurationRequest](#spec.proto.runtime.v1.SubscribeConfigurationRequest)
-    - [SubscribeConfigurationRequest.MetadataEntry](#spec.proto.runtime.v1.SubscribeConfigurationRequest.MetadataEntry)
-    - [SubscribeConfigurationResponse](#spec.proto.runtime.v1.SubscribeConfigurationResponse)
-    - [TransactionalStateOperation](#spec.proto.runtime.v1.TransactionalStateOperation)
-    - [TryLockRequest](#spec.proto.runtime.v1.TryLockRequest)
-    - [TryLockResponse](#spec.proto.runtime.v1.TryLockResponse)
-    - [UnlockRequest](#spec.proto.runtime.v1.UnlockRequest)
-    - [UnlockResponse](#spec.proto.runtime.v1.UnlockResponse)
-  
-    - [HTTPExtension.Verb](#spec.proto.runtime.v1.HTTPExtension.Verb)
-    - [SequencerOptions.AutoIncrement](#spec.proto.runtime.v1.SequencerOptions.AutoIncrement)
-    - [StateOptions.StateConcurrency](#spec.proto.runtime.v1.StateOptions.StateConcurrency)
-    - [StateOptions.StateConsistency](#spec.proto.runtime.v1.StateOptions.StateConsistency)
-    - [UnlockResponse.Status](#spec.proto.runtime.v1.UnlockResponse.Status)
-  
     - [Runtime](#spec.proto.runtime.v1.Runtime)
   
-- [Scalar Value Types](#scalar-value-types)
 
 
 
@@ -96,6 +19,21 @@
 
 ## appcallback.proto
 
+
+
+<a name="spec.proto.runtime.v1.AppCallback"></a>
+
+### AppCallback
+AppCallback V1 allows user application to interact with runtime.
+User application needs to implement AppCallback service if it needs to
+receive message from runtime.
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListTopicSubscriptions | [.google.protobuf.Empty](#google.protobuf.Empty) | [ListTopicSubscriptionsResponse](#spec.proto.runtime.v1.ListTopicSubscriptionsResponse) | Lists all topics subscribed by this app. |
+| OnTopicEvent | [TopicEventRequest](#spec.proto.runtime.v1.TopicEventRequest) | [TopicEventResponse](#spec.proto.runtime.v1.TopicEventResponse) | Subscribes events from Pubsub |
+
+ <!-- end services -->
 
 
 <a name="spec.proto.runtime.v1.ListTopicSubscriptionsResponse"></a>
@@ -122,7 +60,7 @@ https://github.com/cloudevents/spec/blob/v1.0/spec.md
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | id identifies the event. Producers MUST ensure that source &#43; id is unique for each distinct event. If a duplicate event is re-sent (e.g. due to a network error) it MAY have the same id. |
+| id | [string](#string) |  | id identifies the event. Producers MUST ensure that source + id is unique for each distinct event. If a duplicate event is re-sent (e.g. due to a network error) it MAY have the same id. |
 | source | [string](#string) |  | source identifies the context in which an event happened. Often this will include information such as the type of the event source, the organization publishing the event or the process that produced the event. The exact syntax and semantics behind the data encoded in the URI is defined by the event producer. |
 | type | [string](#string) |  | The type of event related to the originating occurrence. |
 | spec_version | [string](#string) |  | The version of the CloudEvents specification. |
@@ -130,6 +68,23 @@ https://github.com/cloudevents/spec/blob/v1.0/spec.md
 | data | [bytes](#bytes) |  | The content of the event. |
 | topic | [string](#string) |  | The pubsub topic which publisher sent to. |
 | pubsub_name | [string](#string) |  | The name of the pubsub the publisher sent to. |
+| metadata | [TopicEventRequest.MetadataEntry](#spec.proto.runtime.v1.TopicEventRequest.MetadataEntry) | repeated | add a map to pass some extra properties. |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.TopicEventRequest.MetadataEntry"></a>
+
+### TopicEventRequest.MetadataEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
 
 
 
@@ -161,7 +116,7 @@ TopicSubscription represents topic and metadata.
 | ----- | ---- | ----- | ----------- |
 | pubsub_name | [string](#string) |  | Required. The name of the pubsub containing the topic below to subscribe to. |
 | topic | [string](#string) |  | Required. The name of topic which will be subscribed |
-| metadata | [TopicSubscription.MetadataEntry](#spec.proto.runtime.v1.TopicSubscription.MetadataEntry) | repeated | The optional properties used for this topic&#39;s subscription e.g. session id |
+| metadata | [TopicSubscription.MetadataEntry](#spec.proto.runtime.v1.TopicSubscription.MetadataEntry) | repeated | The optional properties used for this topic's subscription e.g. session id |
 
 
 
@@ -183,7 +138,7 @@ TopicSubscription represents topic and metadata.
 
 
 
- 
+ <!-- end messages -->
 
 
 <a name="spec.proto.runtime.v1.TopicEventResponse.TopicEventResponseStatus"></a>
@@ -198,27 +153,9 @@ TopicEventResponseStatus allows apps to have finer control over handling of the 
 | DROP | 2 | DROP status signals runtime to drop the message as part of an unexpected scenario (warning is logged). |
 
 
- 
+ <!-- end enums -->
 
- 
-
-
-<a name="spec.proto.runtime.v1.AppCallback"></a>
-
-### AppCallback
-AppCallback V1 allows user application to interact with runtime.
-User application needs to implement AppCallback service if it needs to
-receive message from runtime.
-
-// Invokes service method with InvokeRequest.
- rpc OnInvoke (InvokeRequest) returns (InvokeResponse) {}
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| ListTopicSubscriptions | [.google.protobuf.Empty](#google.protobuf.Empty) | [ListTopicSubscriptionsResponse](#spec.proto.runtime.v1.ListTopicSubscriptionsResponse) | Lists all topics subscribed by this app. |
-| OnTopicEvent | [TopicEventRequest](#spec.proto.runtime.v1.TopicEventRequest) | [TopicEventResponse](#spec.proto.runtime.v1.TopicEventResponse) | Subscribes events from Pubsub |
-
- 
+ <!-- end HasExtensions -->
 
 
 
@@ -227,6 +164,41 @@ receive message from runtime.
 
 ## runtime.proto
 
+
+
+<a name="spec.proto.runtime.v1.Runtime"></a>
+
+### Runtime
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| SayHello | [SayHelloRequest](#spec.proto.runtime.v1.SayHelloRequest) | [SayHelloResponse](#spec.proto.runtime.v1.SayHelloResponse) | SayHello used for test |
+| InvokeService | [InvokeServiceRequest](#spec.proto.runtime.v1.InvokeServiceRequest) | [InvokeResponse](#spec.proto.runtime.v1.InvokeResponse) | InvokeService do rpc calls |
+| GetConfiguration | [GetConfigurationRequest](#spec.proto.runtime.v1.GetConfigurationRequest) | [GetConfigurationResponse](#spec.proto.runtime.v1.GetConfigurationResponse) | GetConfiguration gets configuration from configuration store. |
+| SaveConfiguration | [SaveConfigurationRequest](#spec.proto.runtime.v1.SaveConfigurationRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | SaveConfiguration saves configuration into configuration store. |
+| DeleteConfiguration | [DeleteConfigurationRequest](#spec.proto.runtime.v1.DeleteConfigurationRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | DeleteConfiguration deletes configuration from configuration store. |
+| SubscribeConfiguration | [SubscribeConfigurationRequest](#spec.proto.runtime.v1.SubscribeConfigurationRequest) stream | [SubscribeConfigurationResponse](#spec.proto.runtime.v1.SubscribeConfigurationResponse) stream | SubscribeConfiguration gets configuration from configuration store and subscribe the updates. |
+| TryLock | [TryLockRequest](#spec.proto.runtime.v1.TryLockRequest) | [TryLockResponse](#spec.proto.runtime.v1.TryLockResponse) | Distributed Lock API A non-blocking method trying to get a lock with ttl. |
+| Unlock | [UnlockRequest](#spec.proto.runtime.v1.UnlockRequest) | [UnlockResponse](#spec.proto.runtime.v1.UnlockResponse) |  |
+| GetNextId | [GetNextIdRequest](#spec.proto.runtime.v1.GetNextIdRequest) | [GetNextIdResponse](#spec.proto.runtime.v1.GetNextIdResponse) | Sequencer API Get next unique id with some auto-increment guarantee |
+| GetState | [GetStateRequest](#spec.proto.runtime.v1.GetStateRequest) | [GetStateResponse](#spec.proto.runtime.v1.GetStateResponse) | Gets the state for a specific key. |
+| GetBulkState | [GetBulkStateRequest](#spec.proto.runtime.v1.GetBulkStateRequest) | [GetBulkStateResponse](#spec.proto.runtime.v1.GetBulkStateResponse) | Gets a bulk of state items for a list of keys |
+| SaveState | [SaveStateRequest](#spec.proto.runtime.v1.SaveStateRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Saves an array of state objects |
+| DeleteState | [DeleteStateRequest](#spec.proto.runtime.v1.DeleteStateRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Deletes the state for a specific key. |
+| DeleteBulkState | [DeleteBulkStateRequest](#spec.proto.runtime.v1.DeleteBulkStateRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Deletes a bulk of state items for a list of keys |
+| ExecuteStateTransaction | [ExecuteStateTransactionRequest](#spec.proto.runtime.v1.ExecuteStateTransactionRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Executes transactions for a specified store |
+| PublishEvent | [PublishEventRequest](#spec.proto.runtime.v1.PublishEventRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Publishes events to the specific topic |
+| GetFile | [GetFileRequest](#spec.proto.runtime.v1.GetFileRequest) | [GetFileResponse](#spec.proto.runtime.v1.GetFileResponse) stream | Get file with stream |
+| PutFile | [PutFileRequest](#spec.proto.runtime.v1.PutFileRequest) stream | [.google.protobuf.Empty](#google.protobuf.Empty) | Put file with stream |
+| ListFile | [ListFileRequest](#spec.proto.runtime.v1.ListFileRequest) | [ListFileResp](#spec.proto.runtime.v1.ListFileResp) | List all files |
+| DelFile | [DelFileRequest](#spec.proto.runtime.v1.DelFileRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Delete specific file |
+| GetFileMeta | [GetFileMetaRequest](#spec.proto.runtime.v1.GetFileMetaRequest) | [GetFileMetaResponse](#spec.proto.runtime.v1.GetFileMetaResponse) | Get file meta data, if file not exist,return code.NotFound error |
+| InvokeBinding | [InvokeBindingRequest](#spec.proto.runtime.v1.InvokeBindingRequest) | [InvokeBindingResponse](#spec.proto.runtime.v1.InvokeBindingResponse) | Invokes binding data to specific output bindings |
+| GetSecret | [GetSecretRequest](#spec.proto.runtime.v1.GetSecretRequest) | [GetSecretResponse](#spec.proto.runtime.v1.GetSecretResponse) | Gets secrets from secret stores. |
+| GetBulkSecret | [GetBulkSecretRequest](#spec.proto.runtime.v1.GetBulkSecretRequest) | [GetBulkSecretResponse](#spec.proto.runtime.v1.GetBulkSecretResponse) | Gets a bulk of secrets |
+
+ <!-- end services -->
 
 
 <a name="spec.proto.runtime.v1.BulkStateItem"></a>
@@ -485,6 +457,86 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 
 
 
+<a name="spec.proto.runtime.v1.FileInfo"></a>
+
+### FileInfo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| file_name | [string](#string) |  | The name of file |
+| size | [int64](#int64) |  | The size of file |
+| last_modified | [string](#string) |  | The modified time of file |
+| metadata | [FileInfo.MetadataEntry](#spec.proto.runtime.v1.FileInfo.MetadataEntry) | repeated | The metadata for user extension. |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.FileInfo.MetadataEntry"></a>
+
+### FileInfo.MetadataEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.FileMeta"></a>
+
+### FileMeta
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| metadata | [FileMeta.MetadataEntry](#spec.proto.runtime.v1.FileMeta.MetadataEntry) | repeated |  |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.FileMeta.MetadataEntry"></a>
+
+### FileMeta.MetadataEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [FileMetaValue](#spec.proto.runtime.v1.FileMetaValue) |  |  |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.FileMetaValue"></a>
+
+### FileMetaValue
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| value | [string](#string) | repeated |  |
+
+
+
+
+
+
 <a name="spec.proto.runtime.v1.FileRequest"></a>
 
 ### FileRequest
@@ -512,6 +564,69 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 | ----- | ---- | ----- | ----------- |
 | key | [string](#string) |  |  |
 | value | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.GetBulkSecretRequest"></a>
+
+### GetBulkSecretRequest
+GetBulkSecretRequest is the message to get the secrets from secret store.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| store_name | [string](#string) |  | The name of secret store. |
+| metadata | [GetBulkSecretRequest.MetadataEntry](#spec.proto.runtime.v1.GetBulkSecretRequest.MetadataEntry) | repeated | The metadata which will be sent to secret store components. |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.GetBulkSecretRequest.MetadataEntry"></a>
+
+### GetBulkSecretRequest.MetadataEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.GetBulkSecretResponse"></a>
+
+### GetBulkSecretResponse
+GetBulkSecretResponse is the response message to convey the requested secrets.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| data | [GetBulkSecretResponse.DataEntry](#spec.proto.runtime.v1.GetBulkSecretResponse.DataEntry) | repeated | data hold the secret values. Some secret store, such as kubernetes secret store, can save multiple secrets for single secret key. |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.GetBulkSecretResponse.DataEntry"></a>
+
+### GetBulkSecretResponse.DataEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [SecretResponse](#spec.proto.runtime.v1.SecretResponse) |  |  |
 
 
 
@@ -619,6 +734,38 @@ GetConfigurationResponse is the response conveying the list of configuration val
 
 
 
+<a name="spec.proto.runtime.v1.GetFileMetaRequest"></a>
+
+### GetFileMetaRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| request | [FileRequest](#spec.proto.runtime.v1.FileRequest) |  |  |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.GetFileMetaResponse"></a>
+
+### GetFileMetaResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| size | [int64](#int64) |  | The size of file |
+| last_modified | [string](#string) |  | The modified time of file |
+| response | [FileMeta](#spec.proto.runtime.v1.FileMeta) |  |  |
+
+
+
+
+
+
 <a name="spec.proto.runtime.v1.GetFileRequest"></a>
 
 ### GetFileRequest
@@ -676,7 +823,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | store_name | [string](#string) |  | Required. Name of sequencer storage |
-| key | [string](#string) |  | Required. key is the identifier of a sequencer namespace,e.g. &#34;order_table&#34;. |
+| key | [string](#string) |  | Required. key is the identifier of a sequencer namespace,e.g. "order_table". |
 | options | [SequencerOptions](#spec.proto.runtime.v1.SequencerOptions) |  | (optional) SequencerOptions configures requirements for auto-increment guarantee |
 | metadata | [GetNextIdRequest.MetadataEntry](#spec.proto.runtime.v1.GetNextIdRequest.MetadataEntry) | repeated | (optional) The metadata which will be sent to the component. |
 
@@ -709,7 +856,71 @@ GetConfigurationResponse is the response conveying the list of configuration val
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| next_id | [int64](#int64) |  | The next unique id |
+| next_id | [int64](#int64) |  | The next unique id Fixed int64 overflow problems on JavaScript https://github.com/improbable-eng/ts-protoc-gen#gotchas |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.GetSecretRequest"></a>
+
+### GetSecretRequest
+GetSecretRequest is the message to get secret from secret store.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| store_name | [string](#string) |  | The name of secret store. |
+| key | [string](#string) |  | The name of secret key. |
+| metadata | [GetSecretRequest.MetadataEntry](#spec.proto.runtime.v1.GetSecretRequest.MetadataEntry) | repeated | The metadata which will be sent to secret store components. Contains version, status, and so on... |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.GetSecretRequest.MetadataEntry"></a>
+
+### GetSecretRequest.MetadataEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.GetSecretResponse"></a>
+
+### GetSecretResponse
+GetSecretResponse is the response message to convey the requested secret.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| data | [GetSecretResponse.DataEntry](#spec.proto.runtime.v1.GetSecretResponse.DataEntry) | repeated | data is the secret value. Some secret store, such as kubernetes secret store, can save multiple secrets for single secret key. |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.GetSecretResponse.DataEntry"></a>
+
+### GetSecretResponse.DataEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
 
 
 
@@ -906,6 +1117,8 @@ InvokeBindingResponse is the message returned from an output binding invocation
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | request | [FileRequest](#spec.proto.runtime.v1.FileRequest) |  |  |
+| page_size | [int32](#int32) |  |  |
+| marker | [string](#string) |  |  |
 
 
 
@@ -920,7 +1133,9 @@ InvokeBindingResponse is the message returned from an output binding invocation
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| file_name | [string](#string) | repeated |  |
+| files | [FileInfo](#spec.proto.runtime.v1.FileInfo) | repeated |  |
+| marker | [string](#string) |  |  |
+| is_truncated | [bool](#bool) |  |  |
 
 
 
@@ -1081,6 +1296,37 @@ SaveStateRequest is the message to save multiple states into state store.
 
 
 
+<a name="spec.proto.runtime.v1.SecretResponse"></a>
+
+### SecretResponse
+SecretResponse is a map of decrypted string/string values
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| secrets | [SecretResponse.SecretsEntry](#spec.proto.runtime.v1.SecretResponse.SecretsEntry) | repeated |  |
+
+
+
+
+
+
+<a name="spec.proto.runtime.v1.SecretResponse.SecretsEntry"></a>
+
+### SecretResponse.SecretsEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="spec.proto.runtime.v1.SequencerOptions"></a>
 
 ### SequencerOptions
@@ -1208,7 +1454,7 @@ TransactionalStateOperation is the message to execute a specified operation with
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| operationType | [string](#string) |  | Required. The type of operation to be executed |
+| operationType | [string](#string) |  | Required. The type of operation to be executed. Legal values include: "upsert" represents an update or create operation "delete" represents a delete operation |
 | request | [StateItem](#spec.proto.runtime.v1.StateItem) |  | Required. State values to be operated on |
 
 
@@ -1225,8 +1471,8 @@ TransactionalStateOperation is the message to execute a specified operation with
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | store_name | [string](#string) |  | Required. The lock store name,e.g. `redis`. |
-| resource_id | [string](#string) |  | Required. resource_id is the lock key. e.g. `order_id_111` It stands for &#34;which resource I want to protect&#34; |
-| lock_owner | [string](#string) |  | Required. lock_owner indicate the identifier of lock owner. You can generate a uuid as lock_owner.For example,in golang: req.LockOwner = uuid.New().String() This field is per request,not per process,so it is different for each request, which aims to prevent multi-thread in the same process trying the same lock concurrently. The reason why we don&#39;t make it automatically generated is: 1. If it is automatically generated,there must be a &#39;my_lock_owner_id&#39; field in the response. This name is so weird that we think it is inappropriate to put it into the api spec 2. If we change the field &#39;my_lock_owner_id&#39; in the response to &#39;lock_owner&#39;,which means the current lock owner of this lock, we find that in some lock services users can&#39;t get the current lock owner.Actually users don&#39;t need it at all. 3. When reentrant lock is needed,the existing lock_owner is required to identify client and check &#34;whether this client can reenter this lock&#34;. So this field in the request shouldn&#39;t be removed. |
+| resource_id | [string](#string) |  | Required. resource_id is the lock key. e.g. `order_id_111` It stands for "which resource I want to protect" |
+| lock_owner | [string](#string) |  | Required. lock_owner indicate the identifier of lock owner. You can generate a uuid as lock_owner.For example,in golang: req.LockOwner = uuid.New().String() This field is per request,not per process,so it is different for each request, which aims to prevent multi-thread in the same process trying the same lock concurrently. The reason why we don't make it automatically generated is: 1. If it is automatically generated,there must be a 'my_lock_owner_id' field in the response. This name is so weird that we think it is inappropriate to put it into the api spec 2. If we change the field 'my_lock_owner_id' in the response to 'lock_owner',which means the current lock owner of this lock, we find that in some lock services users can't get the current lock owner.Actually users don't need it at all. 3. When reentrant lock is needed,the existing lock_owner is required to identify client and check "whether this client can reenter this lock". So this field in the request shouldn't be removed. |
 | expire | [int32](#int32) |  | Required. expire is the time before expire.The time unit is second. |
 
 
@@ -1280,7 +1526,7 @@ TransactionalStateOperation is the message to execute a specified operation with
 
 
 
- 
+ <!-- end messages -->
 
 
 <a name="spec.proto.runtime.v1.HTTPExtension.Verb"></a>
@@ -1299,6 +1545,7 @@ TransactionalStateOperation is the message to execute a specified operation with
 | CONNECT | 6 |  |
 | OPTIONS | 7 |  |
 | TRACE | 8 |  |
+| PATCH | 9 |  |
 
 
 
@@ -1309,8 +1556,8 @@ requirements for auto-increment guarantee
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| WEAK | 0 | (default) WEAK means a &#34;best effort&#34; incrementing service.But there is no strict guarantee of global monotonically increasing. The next id is &#34;probably&#34; greater than current id. |
-| STRONG | 1 | STRONG means a strict guarantee of global monotonically increasing. The next id &#34;must&#34; be greater than current id. |
+| WEAK | 0 | (default) WEAK means a "best effort" incrementing service.But there is no strict guarantee of global monotonically increasing. The next id is "probably" greater than current id. |
+| STRONG | 1 | STRONG means a strict guarantee of global monotonically increasing. The next id "must" be greater than current id. |
 
 
 
@@ -1356,61 +1603,7 @@ Enum describing the supported consistency for state.
 | INTERNAL_ERROR | 3 |  |
 
 
- 
+ <!-- end enums -->
 
- 
-
-
-<a name="spec.proto.runtime.v1.Runtime"></a>
-
-### Runtime
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| SayHello | [SayHelloRequest](#spec.proto.runtime.v1.SayHelloRequest) | [SayHelloResponse](#spec.proto.runtime.v1.SayHelloResponse) | SayHello used for test |
-| InvokeService | [InvokeServiceRequest](#spec.proto.runtime.v1.InvokeServiceRequest) | [InvokeResponse](#spec.proto.runtime.v1.InvokeResponse) | InvokeService do rpc calls |
-| GetConfiguration | [GetConfigurationRequest](#spec.proto.runtime.v1.GetConfigurationRequest) | [GetConfigurationResponse](#spec.proto.runtime.v1.GetConfigurationResponse) | GetConfiguration gets configuration from configuration store. |
-| SaveConfiguration | [SaveConfigurationRequest](#spec.proto.runtime.v1.SaveConfigurationRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | SaveConfiguration saves configuration into configuration store. |
-| DeleteConfiguration | [DeleteConfigurationRequest](#spec.proto.runtime.v1.DeleteConfigurationRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | DeleteConfiguration deletes configuration from configuration store. |
-| SubscribeConfiguration | [SubscribeConfigurationRequest](#spec.proto.runtime.v1.SubscribeConfigurationRequest) stream | [SubscribeConfigurationResponse](#spec.proto.runtime.v1.SubscribeConfigurationResponse) stream | SubscribeConfiguration gets configuration from configuration store and subscribe the updates. |
-| TryLock | [TryLockRequest](#spec.proto.runtime.v1.TryLockRequest) | [TryLockResponse](#spec.proto.runtime.v1.TryLockResponse) | Distributed Lock API A non-blocking method trying to get a lock with ttl. |
-| Unlock | [UnlockRequest](#spec.proto.runtime.v1.UnlockRequest) | [UnlockResponse](#spec.proto.runtime.v1.UnlockResponse) |  |
-| GetNextId | [GetNextIdRequest](#spec.proto.runtime.v1.GetNextIdRequest) | [GetNextIdResponse](#spec.proto.runtime.v1.GetNextIdResponse) | Sequencer API Get next unique id with some auto-increment guarantee |
-| GetState | [GetStateRequest](#spec.proto.runtime.v1.GetStateRequest) | [GetStateResponse](#spec.proto.runtime.v1.GetStateResponse) | Gets the state for a specific key. |
-| GetBulkState | [GetBulkStateRequest](#spec.proto.runtime.v1.GetBulkStateRequest) | [GetBulkStateResponse](#spec.proto.runtime.v1.GetBulkStateResponse) | Gets a bulk of state items for a list of keys |
-| SaveState | [SaveStateRequest](#spec.proto.runtime.v1.SaveStateRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Saves an array of state objects |
-| DeleteState | [DeleteStateRequest](#spec.proto.runtime.v1.DeleteStateRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Deletes the state for a specific key. |
-| DeleteBulkState | [DeleteBulkStateRequest](#spec.proto.runtime.v1.DeleteBulkStateRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Deletes a bulk of state items for a list of keys |
-| ExecuteStateTransaction | [ExecuteStateTransactionRequest](#spec.proto.runtime.v1.ExecuteStateTransactionRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Executes transactions for a specified store |
-| PublishEvent | [PublishEventRequest](#spec.proto.runtime.v1.PublishEventRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Publishes events to the specific topic |
-| GetFile | [GetFileRequest](#spec.proto.runtime.v1.GetFileRequest) | [GetFileResponse](#spec.proto.runtime.v1.GetFileResponse) stream | Get file with stream |
-| PutFile | [PutFileRequest](#spec.proto.runtime.v1.PutFileRequest) stream | [.google.protobuf.Empty](#google.protobuf.Empty) | Put file with stream |
-| ListFile | [ListFileRequest](#spec.proto.runtime.v1.ListFileRequest) | [ListFileResp](#spec.proto.runtime.v1.ListFileResp) | List all files |
-| DelFile | [DelFileRequest](#spec.proto.runtime.v1.DelFileRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Delete specific file |
-| InvokeBinding | [InvokeBindingRequest](#spec.proto.runtime.v1.InvokeBindingRequest) | [InvokeBindingResponse](#spec.proto.runtime.v1.InvokeBindingResponse) | Invokes binding data to specific output bindings |
-
- 
-
-
-
-## Scalar Value Types
-
-| .proto Type | Notes | C++ | Java | Python | Go | C# | PHP | Ruby |
-| ----------- | ----- | --- | ---- | ------ | -- | -- | --- | ---- |
-| <a name="double" /> double |  | double | double | float | float64 | double | float | Float |
-| <a name="float" /> float |  | float | float | float | float32 | float | float | Float |
-| <a name="int32" /> int32 | Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead. | int32 | int | int | int32 | int | integer | Bignum or Fixnum (as required) |
-| <a name="int64" /> int64 | Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead. | int64 | long | int/long | int64 | long | integer/string | Bignum |
-| <a name="uint32" /> uint32 | Uses variable-length encoding. | uint32 | int | int/long | uint32 | uint | integer | Bignum or Fixnum (as required) |
-| <a name="uint64" /> uint64 | Uses variable-length encoding. | uint64 | long | int/long | uint64 | ulong | integer/string | Bignum or Fixnum (as required) |
-| <a name="sint32" /> sint32 | Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s. | int32 | int | int | int32 | int | integer | Bignum or Fixnum (as required) |
-| <a name="sint64" /> sint64 | Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s. | int64 | long | int/long | int64 | long | integer/string | Bignum |
-| <a name="fixed32" /> fixed32 | Always four bytes. More efficient than uint32 if values are often greater than 2^28. | uint32 | int | int | uint32 | uint | integer | Bignum or Fixnum (as required) |
-| <a name="fixed64" /> fixed64 | Always eight bytes. More efficient than uint64 if values are often greater than 2^56. | uint64 | long | int/long | uint64 | ulong | integer/string | Bignum |
-| <a name="sfixed32" /> sfixed32 | Always four bytes. | int32 | int | int | int32 | int | integer | Bignum or Fixnum (as required) |
-| <a name="sfixed64" /> sfixed64 | Always eight bytes. | int64 | long | int/long | int64 | long | integer/string | Bignum |
-| <a name="bool" /> bool |  | bool | boolean | boolean | bool | bool | boolean | TrueClass/FalseClass |
-| <a name="string" /> string | A string must always contain UTF-8 encoded or 7-bit ASCII text. | string | String | str/unicode | string | string | string | String (UTF-8) |
-| <a name="bytes" /> bytes | May contain any arbitrary sequence of bytes. | string | ByteString | str | []byte | ByteString | string | String (ASCII-8BIT) |
+ <!-- end HasExtensions -->
 
