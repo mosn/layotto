@@ -1,7 +1,7 @@
 # Protocol Documentation
 <a name="top"></a>
 
-This document is automaticallly generated from the `.proto` files.
+This document is automaticallly generated from the [`.proto`](https://github.com/mosn/layotto/tree/main/spec/proto/runtime/v1) files.
 
 ## gRPC Services
 
