@@ -55,6 +55,9 @@ func StreamInterceptorFilter(srv interface{}, ss grpc.ServerStream, info *grpc.S
 	}, time.Now())
 	defer span.FinishSpan()
 
+	span.SetTag(ltrace.LAYOTTO_METHOD_NAME, info.FullMethod)
+	span.SetTag(ltrace.LAYOTTO_REQUEST_RESULT, "0")
+
 	// construct a new context which contains the span
 	wrapped := grpc_middleware.WrapServerStream(ss)
 	ctx = GetNewContext(ctx, span)

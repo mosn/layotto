@@ -9,7 +9,6 @@ import (
 
 	"mosn.io/api"
 	ltrace "mosn.io/layotto/components/trace"
-	lgrpc "mosn.io/layotto/diagnostics/grpc"
 )
 
 const (
@@ -47,10 +46,6 @@ func getActiveExportersFromConfig(config map[string]interface{}) []string {
 func (tracer *grpcTracer) Start(ctx context.Context, request interface{}, startTime time.Time) api.Span {
 	span := NewSpan(ctx, startTime, tracer.config)
 
-	if reqInfo, ok := request.(*lgrpc.RequestInfo); ok {
-		span.SetTag(ltrace.LAYOTTO_METHOD_NAME, reqInfo.FullMethod)
-		span.SetTag(ltrace.LAYOTTO_REQUEST_RESULT, "0")
-	}
 	return span
 }
 
