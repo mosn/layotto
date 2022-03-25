@@ -8,6 +8,8 @@ import (
 
 	"google.golang.org/grpc"
 	ltrace "mosn.io/layotto/components/trace"
+	lgrpc "mosn.io/layotto/diagnostics/grpc"
+	"mosn.io/layotto/diagnostics/protocol"
 	"mosn.io/mosn/pkg/trace"
 )
 
@@ -18,14 +20,19 @@ func UnaryInterceptorFilter(ctx context.Context, req interface{}, info *grpc.Una
 		return resp, err
 	}
 	// get tracer
-	tracer := trace.Tracer("layotto")
+	tracer := trace.Tracer(protocol.Layotto)
 	// start a span
-	span := tracer.Start(ctx, req, time.Now())
+	span := tracer.Start(ctx, &lgrpc.RequestInfo{
+		FullMethod: info.FullMethod,
+	}, time.Now())
 	defer span.FinishSpan()
+
 	span.SetTag(ltrace.LAYOTTO_METHOD_NAME, info.FullMethod)
 	span.SetTag(ltrace.LAYOTTO_REQUEST_RESULT, "0")
+
 	// construct a new context which contains the span
 	ctx = GetNewContext(ctx, span)
+
 	// handle request
 	resp, err = handler(ctx, req)
 	if err != nil {
@@ -40,13 +47,17 @@ func StreamInterceptorFilter(srv interface{}, ss grpc.ServerStream, info *grpc.S
 		return err
 	}
 	// get tracer
-	tracer := trace.Tracer("layotto")
+	tracer := trace.Tracer(protocol.Layotto)
 	ctx := ss.Context()
 	// start a span
-	span := tracer.Start(ctx, nil, time.Now())
+	span := tracer.Start(ctx, &lgrpc.RequestInfo{
+		FullMethod: info.FullMethod,
+	}, time.Now())
 	defer span.FinishSpan()
+
 	span.SetTag(ltrace.LAYOTTO_METHOD_NAME, info.FullMethod)
 	span.SetTag(ltrace.LAYOTTO_REQUEST_RESULT, "0")
+
 	// construct a new context which contains the span
 	wrapped := grpc_middleware.WrapServerStream(ss)
 	ctx = GetNewContext(ctx, span)
@@ -56,5 +67,6 @@ func StreamInterceptorFilter(srv interface{}, ss grpc.ServerStream, info *grpc.S
 	if err != nil {
 		span.SetTag(ltrace.LAYOTTO_REQUEST_RESULT, "1")
 	}
+
 	return err
 }
