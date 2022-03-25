@@ -20,7 +20,9 @@
     - 在七层网络进行流量干预
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
-    - [可观测性(trace,metric)](zh/start/trace/trace.md)
+    - 可观测性  
+        - [Trace, Metrics](zh/start/trace/trace.md)
+        - [Trace 接入 Skywalking](zh/start/trace/skywalking.md)
     - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - [用户手册](zh/building_blocks/)
