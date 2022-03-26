@@ -1,29 +1,18 @@
-# Protocol Documentation
+{{range .Files}}
+{{$file_name := .Name}}
+<a name="{{.Name}}"></a>
+
+# {{.Name}}
 <a name="top"></a>
 
 This document is automaticallly generated from the [`.proto`](https://github.com/mosn/layotto/tree/main/spec/proto/runtime/v1) files.
 
-## gRPC Services
-{{range .Files}}
-{{$file_name := .Name}}- [{{.Name}}](#{{.Name}})
-  {{- if .Services }}
-  {{range .Services}}  - [{{.Name}}](#{{.FullName}})
-  {{end}}
-  {{- end -}}
-{{end}}
-
-{{range .Files}}
-{{$file_name := .Name}}
-<a name="{{.Name}}"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## {{.Name}}
 {{.Description}}
 
 {{range .Services}}
 <a name="{{.FullName}}"></a>
 
-### {{.Name}}
+### [gRPC Service] {{.Name}}
 {{.Description}}
 
 | Method Name | Request Type | Response Type | Description |
@@ -35,6 +24,7 @@ This document is automaticallly generated from the [`.proto`](https://github.com
 
 {{range .Messages}}
 <a name="{{.FullName}}"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### {{.LongName}}
 {{.Description}}

@@ -1,174 +1,18 @@
-# Protocol Documentation
+
+
+<a name="runtime.proto"></a>
+
+# runtime.proto
 <a name="top"></a>
 
 This document is automaticallly generated from the [`.proto`](https://github.com/mosn/layotto/tree/main/spec/proto/runtime/v1) files.
 
-## gRPC Services
-
-- [appcallback.proto](#appcallback.proto)
-    - [AppCallback](#spec.proto.runtime.v1.AppCallback)
-  
-- [runtime.proto](#runtime.proto)
-    - [Runtime](#spec.proto.runtime.v1.Runtime)
-  
-
-
-
-<a name="appcallback.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## appcallback.proto
-
-
-
-<a name="spec.proto.runtime.v1.AppCallback"></a>
-
-### AppCallback
-AppCallback V1 allows user application to interact with runtime.
-User application needs to implement AppCallback service if it needs to
-receive message from runtime.
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| ListTopicSubscriptions | [.google.protobuf.Empty](#google.protobuf.Empty) | [ListTopicSubscriptionsResponse](#spec.proto.runtime.v1.ListTopicSubscriptionsResponse) | Lists all topics subscribed by this app. |
-| OnTopicEvent | [TopicEventRequest](#spec.proto.runtime.v1.TopicEventRequest) | [TopicEventResponse](#spec.proto.runtime.v1.TopicEventResponse) | Subscribes events from Pubsub |
-
- <!-- end services -->
-
-
-<a name="spec.proto.runtime.v1.ListTopicSubscriptionsResponse"></a>
-
-### ListTopicSubscriptionsResponse
-ListTopicSubscriptionsResponse is the message including the list of the subscribing topics.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| subscriptions | [TopicSubscription](#spec.proto.runtime.v1.TopicSubscription) | repeated | The list of topics. |
-
-
-
-
-
-
-<a name="spec.proto.runtime.v1.TopicEventRequest"></a>
-
-### TopicEventRequest
-TopicEventRequest message is compatible with CloudEvent spec v1.0
-https://github.com/cloudevents/spec/blob/v1.0/spec.md
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  | id identifies the event. Producers MUST ensure that source + id is unique for each distinct event. If a duplicate event is re-sent (e.g. due to a network error) it MAY have the same id. |
-| source | [string](#string) |  | source identifies the context in which an event happened. Often this will include information such as the type of the event source, the organization publishing the event or the process that produced the event. The exact syntax and semantics behind the data encoded in the URI is defined by the event producer. |
-| type | [string](#string) |  | The type of event related to the originating occurrence. |
-| spec_version | [string](#string) |  | The version of the CloudEvents specification. |
-| data_content_type | [string](#string) |  | The content type of data value. |
-| data | [bytes](#bytes) |  | The content of the event. |
-| topic | [string](#string) |  | The pubsub topic which publisher sent to. |
-| pubsub_name | [string](#string) |  | The name of the pubsub the publisher sent to. |
-| metadata | [TopicEventRequest.MetadataEntry](#spec.proto.runtime.v1.TopicEventRequest.MetadataEntry) | repeated | add a map to pass some extra properties. |
-
-
-
-
-
-
-<a name="spec.proto.runtime.v1.TopicEventRequest.MetadataEntry"></a>
-
-### TopicEventRequest.MetadataEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  |  |
-| value | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="spec.proto.runtime.v1.TopicEventResponse"></a>
-
-### TopicEventResponse
-TopicEventResponse is response from app on published message
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| status | [TopicEventResponse.TopicEventResponseStatus](#spec.proto.runtime.v1.TopicEventResponse.TopicEventResponseStatus) |  | The list of output bindings. |
-
-
-
-
-
-
-<a name="spec.proto.runtime.v1.TopicSubscription"></a>
-
-### TopicSubscription
-TopicSubscription represents topic and metadata.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pubsub_name | [string](#string) |  | Required. The name of the pubsub containing the topic below to subscribe to. |
-| topic | [string](#string) |  | Required. The name of topic which will be subscribed |
-| metadata | [TopicSubscription.MetadataEntry](#spec.proto.runtime.v1.TopicSubscription.MetadataEntry) | repeated | The optional properties used for this topic's subscription e.g. session id |
-
-
-
-
-
-
-<a name="spec.proto.runtime.v1.TopicSubscription.MetadataEntry"></a>
-
-### TopicSubscription.MetadataEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  |  |
-| value | [string](#string) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="spec.proto.runtime.v1.TopicEventResponse.TopicEventResponseStatus"></a>
-
-### TopicEventResponse.TopicEventResponseStatus
-TopicEventResponseStatus allows apps to have finer control over handling of the message.
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| SUCCESS | 0 | SUCCESS is the default behavior: message is acknowledged and not retried or logged. |
-| RETRY | 1 | RETRY status signals runtime to retry the message as part of an expected scenario (no warning is logged). |
-| DROP | 2 | DROP status signals runtime to drop the message as part of an unexpected scenario (warning is logged). |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-
-<a name="runtime.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## runtime.proto
 
 
 
 <a name="spec.proto.runtime.v1.Runtime"></a>
 
-### Runtime
+### [gRPC Service] Runtime
 
 
 | Method Name | Request Type | Response Type | Description |
@@ -202,6 +46,7 @@ TopicEventResponseStatus allows apps to have finer control over handling of the 
 
 
 <a name="spec.proto.runtime.v1.BulkStateItem"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### BulkStateItem
 BulkStateItem is the response item for a bulk get operation.
@@ -222,6 +67,7 @@ Return values include the item key, data and etag.
 
 
 <a name="spec.proto.runtime.v1.BulkStateItem.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### BulkStateItem.MetadataEntry
 
@@ -238,6 +84,7 @@ Return values include the item key, data and etag.
 
 
 <a name="spec.proto.runtime.v1.CommonInvokeRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### CommonInvokeRequest
 
@@ -256,6 +103,7 @@ Return values include the item key, data and etag.
 
 
 <a name="spec.proto.runtime.v1.ConfigurationItem"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### ConfigurationItem
 ConfigurationItem represents a configuration item with key, content and other information.
@@ -276,6 +124,7 @@ ConfigurationItem represents a configuration item with key, content and other in
 
 
 <a name="spec.proto.runtime.v1.ConfigurationItem.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### ConfigurationItem.MetadataEntry
 
@@ -292,6 +141,7 @@ ConfigurationItem represents a configuration item with key, content and other in
 
 
 <a name="spec.proto.runtime.v1.ConfigurationItem.TagsEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### ConfigurationItem.TagsEntry
 
@@ -308,6 +158,7 @@ ConfigurationItem represents a configuration item with key, content and other in
 
 
 <a name="spec.proto.runtime.v1.DelFileRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### DelFileRequest
 
@@ -323,6 +174,7 @@ ConfigurationItem represents a configuration item with key, content and other in
 
 
 <a name="spec.proto.runtime.v1.DeleteBulkStateRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### DeleteBulkStateRequest
 DeleteBulkStateRequest is the message to delete a list of key-value states from specific state store.
@@ -339,6 +191,7 @@ DeleteBulkStateRequest is the message to delete a list of key-value states from 
 
 
 <a name="spec.proto.runtime.v1.DeleteConfigurationRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### DeleteConfigurationRequest
 DeleteConfigurationRequest is the message to delete a list of key-value configuration from specified configuration store.
@@ -359,6 +212,7 @@ DeleteConfigurationRequest is the message to delete a list of key-value configur
 
 
 <a name="spec.proto.runtime.v1.DeleteConfigurationRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### DeleteConfigurationRequest.MetadataEntry
 
@@ -375,6 +229,7 @@ DeleteConfigurationRequest is the message to delete a list of key-value configur
 
 
 <a name="spec.proto.runtime.v1.DeleteStateRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### DeleteStateRequest
 DeleteStateRequest is the message to delete key-value states in the specific state store.
@@ -394,6 +249,7 @@ DeleteStateRequest is the message to delete key-value states in the specific sta
 
 
 <a name="spec.proto.runtime.v1.DeleteStateRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### DeleteStateRequest.MetadataEntry
 
@@ -410,6 +266,7 @@ DeleteStateRequest is the message to delete key-value states in the specific sta
 
 
 <a name="spec.proto.runtime.v1.Etag"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### Etag
 Etag represents a state item version
@@ -425,6 +282,7 @@ Etag represents a state item version
 
 
 <a name="spec.proto.runtime.v1.ExecuteStateTransactionRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### ExecuteStateTransactionRequest
 ExecuteStateTransactionRequest is the message to execute multiple operations on a specified store.
@@ -442,6 +300,7 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 
 
 <a name="spec.proto.runtime.v1.ExecuteStateTransactionRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### ExecuteStateTransactionRequest.MetadataEntry
 
@@ -458,6 +317,7 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 
 
 <a name="spec.proto.runtime.v1.FileInfo"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### FileInfo
 
@@ -476,6 +336,7 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 
 
 <a name="spec.proto.runtime.v1.FileInfo.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### FileInfo.MetadataEntry
 
@@ -492,6 +353,7 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 
 
 <a name="spec.proto.runtime.v1.FileMeta"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### FileMeta
 
@@ -507,6 +369,7 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 
 
 <a name="spec.proto.runtime.v1.FileMeta.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### FileMeta.MetadataEntry
 
@@ -523,6 +386,7 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 
 
 <a name="spec.proto.runtime.v1.FileMetaValue"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### FileMetaValue
 
@@ -538,6 +402,7 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 
 
 <a name="spec.proto.runtime.v1.FileRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### FileRequest
 
@@ -555,6 +420,7 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 
 
 <a name="spec.proto.runtime.v1.FileRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### FileRequest.MetadataEntry
 
@@ -571,6 +437,7 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 
 
 <a name="spec.proto.runtime.v1.GetBulkSecretRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetBulkSecretRequest
 GetBulkSecretRequest is the message to get the secrets from secret store.
@@ -587,6 +454,7 @@ GetBulkSecretRequest is the message to get the secrets from secret store.
 
 
 <a name="spec.proto.runtime.v1.GetBulkSecretRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetBulkSecretRequest.MetadataEntry
 
@@ -603,6 +471,7 @@ GetBulkSecretRequest is the message to get the secrets from secret store.
 
 
 <a name="spec.proto.runtime.v1.GetBulkSecretResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetBulkSecretResponse
 GetBulkSecretResponse is the response message to convey the requested secrets.
@@ -618,6 +487,7 @@ GetBulkSecretResponse is the response message to convey the requested secrets.
 
 
 <a name="spec.proto.runtime.v1.GetBulkSecretResponse.DataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetBulkSecretResponse.DataEntry
 
@@ -634,6 +504,7 @@ GetBulkSecretResponse is the response message to convey the requested secrets.
 
 
 <a name="spec.proto.runtime.v1.GetBulkStateRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetBulkStateRequest
 GetBulkStateRequest is the message to get a list of key-value states from specific state store.
@@ -652,6 +523,7 @@ GetBulkStateRequest is the message to get a list of key-value states from specif
 
 
 <a name="spec.proto.runtime.v1.GetBulkStateRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetBulkStateRequest.MetadataEntry
 
@@ -668,6 +540,7 @@ GetBulkStateRequest is the message to get a list of key-value states from specif
 
 
 <a name="spec.proto.runtime.v1.GetBulkStateResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetBulkStateResponse
 GetBulkStateResponse is the response conveying the list of state values.
@@ -683,6 +556,7 @@ GetBulkStateResponse is the response conveying the list of state values.
 
 
 <a name="spec.proto.runtime.v1.GetConfigurationRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetConfigurationRequest
 GetConfigurationRequest is the message to get a list of key-value configuration from specified configuration store.
@@ -704,6 +578,7 @@ GetConfigurationRequest is the message to get a list of key-value configuration 
 
 
 <a name="spec.proto.runtime.v1.GetConfigurationRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetConfigurationRequest.MetadataEntry
 
@@ -720,6 +595,7 @@ GetConfigurationRequest is the message to get a list of key-value configuration 
 
 
 <a name="spec.proto.runtime.v1.GetConfigurationResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetConfigurationResponse
 GetConfigurationResponse is the response conveying the list of configuration values.
@@ -735,6 +611,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 
 
 <a name="spec.proto.runtime.v1.GetFileMetaRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetFileMetaRequest
 
@@ -750,6 +627,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 
 
 <a name="spec.proto.runtime.v1.GetFileMetaResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetFileMetaResponse
 
@@ -767,6 +645,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 
 
 <a name="spec.proto.runtime.v1.GetFileRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetFileRequest
 
@@ -784,6 +663,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 
 
 <a name="spec.proto.runtime.v1.GetFileRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetFileRequest.MetadataEntry
 
@@ -800,6 +680,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 
 
 <a name="spec.proto.runtime.v1.GetFileResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetFileResponse
 
@@ -815,6 +696,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 
 
 <a name="spec.proto.runtime.v1.GetNextIdRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetNextIdRequest
 
@@ -833,6 +715,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 
 
 <a name="spec.proto.runtime.v1.GetNextIdRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetNextIdRequest.MetadataEntry
 
@@ -849,6 +732,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 
 
 <a name="spec.proto.runtime.v1.GetNextIdResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetNextIdResponse
 
@@ -864,6 +748,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 
 
 <a name="spec.proto.runtime.v1.GetSecretRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetSecretRequest
 GetSecretRequest is the message to get secret from secret store.
@@ -881,6 +766,7 @@ GetSecretRequest is the message to get secret from secret store.
 
 
 <a name="spec.proto.runtime.v1.GetSecretRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetSecretRequest.MetadataEntry
 
@@ -897,6 +783,7 @@ GetSecretRequest is the message to get secret from secret store.
 
 
 <a name="spec.proto.runtime.v1.GetSecretResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetSecretResponse
 GetSecretResponse is the response message to convey the requested secret.
@@ -912,6 +799,7 @@ GetSecretResponse is the response message to convey the requested secret.
 
 
 <a name="spec.proto.runtime.v1.GetSecretResponse.DataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetSecretResponse.DataEntry
 
@@ -928,6 +816,7 @@ GetSecretResponse is the response message to convey the requested secret.
 
 
 <a name="spec.proto.runtime.v1.GetStateRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetStateRequest
 GetStateRequest is the message to get key-value states from specific state store.
@@ -946,6 +835,7 @@ GetStateRequest is the message to get key-value states from specific state store
 
 
 <a name="spec.proto.runtime.v1.GetStateRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetStateRequest.MetadataEntry
 
@@ -962,6 +852,7 @@ GetStateRequest is the message to get key-value states from specific state store
 
 
 <a name="spec.proto.runtime.v1.GetStateResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetStateResponse
 GetStateResponse is the response conveying the state value and etag.
@@ -979,6 +870,7 @@ GetStateResponse is the response conveying the state value and etag.
 
 
 <a name="spec.proto.runtime.v1.GetStateResponse.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### GetStateResponse.MetadataEntry
 
@@ -995,6 +887,7 @@ GetStateResponse is the response conveying the state value and etag.
 
 
 <a name="spec.proto.runtime.v1.HTTPExtension"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### HTTPExtension
 
@@ -1011,6 +904,7 @@ GetStateResponse is the response conveying the state value and etag.
 
 
 <a name="spec.proto.runtime.v1.InvokeBindingRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### InvokeBindingRequest
 InvokeBindingRequest is the message to send data to output bindings
@@ -1029,6 +923,7 @@ InvokeBindingRequest is the message to send data to output bindings
 
 
 <a name="spec.proto.runtime.v1.InvokeBindingRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### InvokeBindingRequest.MetadataEntry
 
@@ -1045,6 +940,7 @@ InvokeBindingRequest is the message to send data to output bindings
 
 
 <a name="spec.proto.runtime.v1.InvokeBindingResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### InvokeBindingResponse
 InvokeBindingResponse is the message returned from an output binding invocation
@@ -1061,6 +957,7 @@ InvokeBindingResponse is the message returned from an output binding invocation
 
 
 <a name="spec.proto.runtime.v1.InvokeBindingResponse.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### InvokeBindingResponse.MetadataEntry
 
@@ -1077,6 +974,7 @@ InvokeBindingResponse is the message returned from an output binding invocation
 
 
 <a name="spec.proto.runtime.v1.InvokeResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### InvokeResponse
 
@@ -1093,6 +991,7 @@ InvokeBindingResponse is the message returned from an output binding invocation
 
 
 <a name="spec.proto.runtime.v1.InvokeServiceRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### InvokeServiceRequest
 
@@ -1109,6 +1008,7 @@ InvokeBindingResponse is the message returned from an output binding invocation
 
 
 <a name="spec.proto.runtime.v1.ListFileRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### ListFileRequest
 
@@ -1126,6 +1026,7 @@ InvokeBindingResponse is the message returned from an output binding invocation
 
 
 <a name="spec.proto.runtime.v1.ListFileResp"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### ListFileResp
 
@@ -1143,6 +1044,7 @@ InvokeBindingResponse is the message returned from an output binding invocation
 
 
 <a name="spec.proto.runtime.v1.PublishEventRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### PublishEventRequest
 PublishEventRequest is the message to publish event data to pubsub topic
@@ -1164,6 +1066,7 @@ metadata property: - key : the key of the message. |
 
 
 <a name="spec.proto.runtime.v1.PublishEventRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### PublishEventRequest.MetadataEntry
 
@@ -1180,6 +1083,7 @@ metadata property: - key : the key of the message. |
 
 
 <a name="spec.proto.runtime.v1.PutFileRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### PutFileRequest
 
@@ -1198,6 +1102,7 @@ metadata property: - key : the key of the message. |
 
 
 <a name="spec.proto.runtime.v1.PutFileRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### PutFileRequest.MetadataEntry
 
@@ -1214,6 +1119,7 @@ metadata property: - key : the key of the message. |
 
 
 <a name="spec.proto.runtime.v1.SaveConfigurationRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### SaveConfigurationRequest
 SaveConfigurationRequest is the message to save a list of key-value configuration into specified configuration store.
@@ -1232,6 +1138,7 @@ SaveConfigurationRequest is the message to save a list of key-value configuratio
 
 
 <a name="spec.proto.runtime.v1.SaveConfigurationRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### SaveConfigurationRequest.MetadataEntry
 
@@ -1248,6 +1155,7 @@ SaveConfigurationRequest is the message to save a list of key-value configuratio
 
 
 <a name="spec.proto.runtime.v1.SaveStateRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### SaveStateRequest
 SaveStateRequest is the message to save multiple states into state store.
@@ -1264,6 +1172,7 @@ SaveStateRequest is the message to save multiple states into state store.
 
 
 <a name="spec.proto.runtime.v1.SayHelloRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### SayHelloRequest
 
@@ -1281,6 +1190,7 @@ SaveStateRequest is the message to save multiple states into state store.
 
 
 <a name="spec.proto.runtime.v1.SayHelloResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### SayHelloResponse
 
@@ -1297,6 +1207,7 @@ SaveStateRequest is the message to save multiple states into state store.
 
 
 <a name="spec.proto.runtime.v1.SecretResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### SecretResponse
 SecretResponse is a map of decrypted string/string values
@@ -1312,6 +1223,7 @@ SecretResponse is a map of decrypted string/string values
 
 
 <a name="spec.proto.runtime.v1.SecretResponse.SecretsEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### SecretResponse.SecretsEntry
 
@@ -1328,6 +1240,7 @@ SecretResponse is a map of decrypted string/string values
 
 
 <a name="spec.proto.runtime.v1.SequencerOptions"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### SequencerOptions
 SequencerOptions configures requirements for auto-increment guarantee
@@ -1343,6 +1256,7 @@ SequencerOptions configures requirements for auto-increment guarantee
 
 
 <a name="spec.proto.runtime.v1.StateItem"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### StateItem
 StateItem represents state key, value, and additional options to save state.
@@ -1362,6 +1276,7 @@ StateItem represents state key, value, and additional options to save state.
 
 
 <a name="spec.proto.runtime.v1.StateItem.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### StateItem.MetadataEntry
 
@@ -1378,6 +1293,7 @@ StateItem represents state key, value, and additional options to save state.
 
 
 <a name="spec.proto.runtime.v1.StateOptions"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### StateOptions
 StateOptions configures concurrency and consistency for state operations
@@ -1394,6 +1310,7 @@ StateOptions configures concurrency and consistency for state operations
 
 
 <a name="spec.proto.runtime.v1.SubscribeConfigurationRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### SubscribeConfigurationRequest
 SubscribeConfigurationRequest is the message to get a list of key-value configuration from specified configuration store.
@@ -1414,6 +1331,7 @@ SubscribeConfigurationRequest is the message to get a list of key-value configur
 
 
 <a name="spec.proto.runtime.v1.SubscribeConfigurationRequest.MetadataEntry"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### SubscribeConfigurationRequest.MetadataEntry
 
@@ -1430,6 +1348,7 @@ SubscribeConfigurationRequest is the message to get a list of key-value configur
 
 
 <a name="spec.proto.runtime.v1.SubscribeConfigurationResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### SubscribeConfigurationResponse
 SubscribeConfigurationResponse is the response conveying the list of configuration values.
@@ -1447,6 +1366,7 @@ SubscribeConfigurationResponse is the response conveying the list of configurati
 
 
 <a name="spec.proto.runtime.v1.TransactionalStateOperation"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### TransactionalStateOperation
 TransactionalStateOperation is the message to execute a specified operation with a key-value pair.
@@ -1463,6 +1383,7 @@ TransactionalStateOperation is the message to execute a specified operation with
 
 
 <a name="spec.proto.runtime.v1.TryLockRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### TryLockRequest
 
@@ -1481,6 +1402,7 @@ TransactionalStateOperation is the message to execute a specified operation with
 
 
 <a name="spec.proto.runtime.v1.TryLockResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### TryLockResponse
 
@@ -1496,6 +1418,7 @@ TransactionalStateOperation is the message to execute a specified operation with
 
 
 <a name="spec.proto.runtime.v1.UnlockRequest"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### UnlockRequest
 
@@ -1513,6 +1436,7 @@ TransactionalStateOperation is the message to execute a specified operation with
 
 
 <a name="spec.proto.runtime.v1.UnlockResponse"></a>
+<p align="right"><a href="#top">Top</a></p>
 
 ### UnlockResponse
 
