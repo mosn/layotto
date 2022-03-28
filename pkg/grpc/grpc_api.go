@@ -33,8 +33,10 @@ import (
 
 // GrpcAPI is the interface of API plugin. It has lifecycle related methods
 type GrpcAPI interface {
-	// init this API before binding it to the grpc server. For example,you can call app to query their subscriptions.
+	// init this API before binding it to the grpc server.
+	// For example,you can call app to query their subscriptions.
 	Init(conn *grpc.ClientConn) error
+
 	// Bind this API to the grpc server
 	Register(rawGrpcServer *grpc.Server) error
 }
@@ -42,6 +44,8 @@ type GrpcAPI interface {
 // NewGrpcAPI is the constructor of GrpcAPI
 type NewGrpcAPI func(applicationContext *ApplicationContext) GrpcAPI
 
+// ApplicationContext contains all you need to construct your GrpcAPI, such as all the components.
+// For example, your `SuperState` GrpcAPI can hold the `StateStores` components and use them to implement your own `Super State API` logic.
 type ApplicationContext struct {
 	AppId                 string
 	Hellos                map[string]hello.HelloService

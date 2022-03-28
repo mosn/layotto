@@ -32,6 +32,7 @@ import (
 	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
+	"mosn.io/mosn/pkg/trace/skywalking"
 	"os"
 	"strconv"
 	"time"
@@ -162,6 +163,8 @@ import (
 	_ "mosn.io/pkg/buffer"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
+	lprotocol "mosn.io/layotto/diagnostics/protocol"
+	lsky "mosn.io/layotto/diagnostics/skywalking"
 )
 
 // loggerForDaprComp is constructed for reusing dapr's components.
@@ -206,7 +209,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}
 			return actuator.NewGrpcServerWithActuator(server)
 		}),
-		// register your grpc API here
+		// register your gRPC API here
 		runtime.WithGrpcAPI(
 			default_api.NewGrpcAPI,
 		),
@@ -499,7 +502,8 @@ func ExtensionsRegister(c *cli.Context) {
 	// 4. register tracer
 	xtrace.RegisterDelegate(bolt.ProtocolName, tracebolt.Boltv1Delegate)
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
-	trace.RegisterTracerBuilder("SOFATracer", "layotto", diagnostics.NewTracer)
+	trace.RegisterTracerBuilder("SOFATracer", lprotocol.Layotto, diagnostics.NewTracer)
+	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
 
 }
 

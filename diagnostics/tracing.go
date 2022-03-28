@@ -45,6 +45,7 @@ func getActiveExportersFromConfig(config map[string]interface{}) []string {
 
 func (tracer *grpcTracer) Start(ctx context.Context, request interface{}, startTime time.Time) api.Span {
 	span := NewSpan(ctx, startTime, tracer.config)
+
 	return span
 }
 
