@@ -60,7 +60,20 @@ The ignore list is in `.licenserc.yaml`. You can add new types into it.
 ##### For more details of this tool
 See https://github.com/marketplace/actions/license-eye#docker-image for details
 
-#### TODO: PR title lint
+#### PR title lint
+In order to  standardize PR title, we add this check action. You can learn more in https://github.com/thehanimo/pr-title-checker.
+
+##### config the pr title check
+If the title is in either `prefixes` or `regexp`, the check will pass. Otherwise , a label `title needs formatting` will be added to that pull request.
+`regexpFlags` mean regular expression flags, such as : `i`(Case-insensitive search) `g`(Global search) .
+```
+"CHECKS": {
+"prefixes": ["fix: ", "feat: ","doc: "], 
+"regexp": "docs\\(v[0-9]\\): ",
+"regexpFlags": "i",
+"ignoreLabels" : ["dont-check-PRs-with-this-label", "meta"]
+}
+```
 ~~#### TODO: PR body lint?~~
 #### TODO: Code style lint
 For example,find out `go xxx()` without `recover`

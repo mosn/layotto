@@ -1,4 +1,4 @@
-# Configuration reference
+# Introduction to Layotto configuration file
 Example: configs/config_apollo.json
 
 Currently, Layotto uses a MOSN layer 4 filter to integrate with MOSN and run on MOSN, so the configuration file used by Layotto is actually a MOSN configuration file.
