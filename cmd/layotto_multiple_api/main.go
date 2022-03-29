@@ -20,11 +20,12 @@ import (
 	"encoding/json"
 	"mosn.io/api"
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
-	"mosn.io/layotto/components/file/s3/tencentcloud"
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/grpc/default_api"
+	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
+	"mosn.io/mosn/pkg/trace/skywalking"
 	"os"
 	"strconv"
 	"time"
@@ -103,14 +104,20 @@ import (
 	"mosn.io/layotto/components/lock"
 	lock_consul "mosn.io/layotto/components/lock/consul"
 	lock_etcd "mosn.io/layotto/components/lock/etcd"
+	lock_inmemory "mosn.io/layotto/components/lock/in-memory"
 	lock_redis "mosn.io/layotto/components/lock/redis"
 	lock_zookeeper "mosn.io/layotto/components/lock/zookeeper"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 
 	// Sequencer
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
+	sequencer_inmemory "mosn.io/layotto/components/sequencer/in-memory"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
+
+	// File
+	"mosn.io/layotto/components/file/s3/qiniu"
+	"mosn.io/layotto/components/file/s3/tencentcloud"
 
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
@@ -147,6 +154,8 @@ import (
 	_ "mosn.io/pkg/buffer"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
+	lprotocol "mosn.io/layotto/diagnostics/protocol"
+	lsky "mosn.io/layotto/diagnostics/skywalking"
 )
 
 // loggerForDaprComp is constructed for reusing dapr's components.
@@ -190,11 +199,11 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}
 			return actuator.NewGrpcServerWithActuator(server)
 		}),
-		// register your grpc API here
+		// register your gRPC API here
 		runtime.WithGrpcAPI(
-			// default grpc API
+			// default GrpcAPI
 			default_api.NewGrpcAPI,
-			// a demo to show how to register your own API
+			// a demo to show how to register your own gRPC API
 			helloworld_api.NewHelloWorldAPI,
 			// support Dapr API
 			// Currently it only support Dapr's InvokeService and InvokeBinding API.
@@ -223,6 +232,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			file.NewFileFactory("awsOSS", aws.NewAwsOss),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
 			file.NewFileFactory("local", local.NewLocalStore),
+			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
 		),
 
 		// PubSub
@@ -342,6 +352,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_lock.NewFactory("consul", func() lock.LockStore {
 				return lock_consul.NewConsulLock(log.DefaultLogger)
 			}),
+			runtime_lock.NewFactory("in-memory", func() lock.LockStore {
+				return lock_inmemory.NewInMemoryLock()
+			}),
 		),
 
 		// bindings
@@ -361,6 +374,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
 				return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+			}),
+			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
+				return sequencer_inmemory.NewInMemorySequencer()
 			}),
 		))
 	return server, err
@@ -452,6 +468,7 @@ func ExtensionsRegister(c *cli.Context) {
 	xtrace.RegisterDelegate(bolt.ProtocolName, tracebolt.Boltv1Delegate)
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
 	trace.RegisterTracerBuilder("SOFATracer", "layotto", diagnostics.NewTracer)
+	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
 
 }
 

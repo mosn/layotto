@@ -28,11 +28,11 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 	"mosn.io/api"
-	"mosn.io/layotto/components/file/s3/tencentcloud"
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
+	"mosn.io/mosn/pkg/trace/skywalking"
 	"os"
 	"strconv"
 	"time"
@@ -109,6 +109,7 @@ import (
 	"mosn.io/layotto/components/lock"
 	lock_consul "mosn.io/layotto/components/lock/consul"
 	lock_etcd "mosn.io/layotto/components/lock/etcd"
+	lock_inmemory "mosn.io/layotto/components/lock/in-memory"
 	lock_mongo "mosn.io/layotto/components/lock/mongo"
 	lock_redis "mosn.io/layotto/components/lock/redis"
 	lock_zookeeper "mosn.io/layotto/components/lock/zookeeper"
@@ -116,9 +117,14 @@ import (
 
 	// Sequencer
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
+	sequencer_inmemory "mosn.io/layotto/components/sequencer/in-memory"
 	sequencer_mongo "mosn.io/layotto/components/sequencer/mongo"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
+
+	// File
+	"mosn.io/layotto/components/file/s3/qiniu"
+	"mosn.io/layotto/components/file/s3/tencentcloud"
 
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
@@ -157,6 +163,8 @@ import (
 	_ "mosn.io/pkg/buffer"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
+	lprotocol "mosn.io/layotto/diagnostics/protocol"
+	lsky "mosn.io/layotto/diagnostics/skywalking"
 )
 
 // loggerForDaprComp is constructed for reusing dapr's components.
@@ -200,7 +208,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}
 			return actuator.NewGrpcServerWithActuator(server)
 		}),
-		// register your grpc API here
+		// register your gRPC API here
 		runtime.WithGrpcAPI(
 			default_api.NewGrpcAPI,
 		),
@@ -226,6 +234,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			file.NewFileFactory("awsOSS", aws.NewAwsOss),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
 			file.NewFileFactory("local", local.NewLocalStore),
+			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
 		),
 
 		// PubSub
@@ -348,6 +357,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_lock.NewFactory("mongo", func() lock.LockStore {
 				return lock_mongo.NewMongoLock(log.DefaultLogger)
 			}),
+			runtime_lock.NewFactory("in-memory", func() lock.LockStore {
+				return lock_inmemory.NewInMemoryLock()
+			}),
 		),
 
 		// bindings
@@ -370,6 +382,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("mongo", func() sequencer.Store {
 				return sequencer_mongo.NewMongoSequencer(log.DefaultLogger)
+			}),
+			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
+				return sequencer_inmemory.NewInMemorySequencer()
 			}),
 		),
 		// secretstores
@@ -486,7 +501,8 @@ func ExtensionsRegister(c *cli.Context) {
 	// 4. register tracer
 	xtrace.RegisterDelegate(bolt.ProtocolName, tracebolt.Boltv1Delegate)
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
-	trace.RegisterTracerBuilder("SOFATracer", "layotto", diagnostics.NewTracer)
+	trace.RegisterTracerBuilder("SOFATracer", lprotocol.Layotto, diagnostics.NewTracer)
+	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
 
 }
 

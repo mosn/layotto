@@ -3,9 +3,11 @@ module mosn.io/layotto
 go 1.14
 
 require (
+	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/Azure/go-autorest/autorest/azure/cli v0.4.2 // indirect
 	github.com/Azure/go-autorest/autorest/validation v0.3.1 // indirect
 	github.com/Azure/go-autorest/logger v0.2.1 // indirect
+	github.com/SkyAPM/go2sky v0.5.0
 	github.com/agrea/ptr v0.0.0-20180711073057-77a518d99b7b
 	github.com/alicebob/miniredis/v2 v2.16.0
 	github.com/dapr/components-contrib v1.5.1-rc.1
@@ -26,9 +28,7 @@ require (
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.28.0
 	go.uber.org/automaxprocs v1.4.0 // indirect
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20211005001312-d4b1ae081e3b // indirect
-	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
 	google.golang.org/protobuf v1.27.1

@@ -82,7 +82,7 @@ go build
 After completion, the layotto file will be generated in the directory, run it:
 
 ```bash
-./layotto start -c ../../configs/config_apollo_health_mq.json
+./layotto start -c ../../configs/config_redis.json
 ```
 
 ### Step 4. Run the Publisher program and call Layotto to publish events
