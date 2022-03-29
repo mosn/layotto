@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package integrate
+package wasm
 
 import (
 	"context"

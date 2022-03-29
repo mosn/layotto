@@ -14,28 +14,16 @@
  * limitations under the License.
  */
 
-package client
+package runtime
 
 import (
-	"context"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
+	"testing"
 )
 
-type SayHelloRequest struct {
-	ServiceName string
-}
+func TestAllApiWithOtherComponents(t *testing.T) {
 
-type SayHelloResp struct {
-	Hello string
-}
+	//======================= Other Component Start =======================
+	// TODO
+	//======================= Other Component End =======================
 
-func (c *GRPCClient) SayHello(ctx context.Context, in *SayHelloRequest) (*SayHelloResp, error) {
-	req := &runtimev1pb.SayHelloRequest{
-		ServiceName: in.ServiceName,
-	}
-	resp, err := c.protoClient.SayHello(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return &SayHelloResp{Hello: resp.Hello}, nil
 }
