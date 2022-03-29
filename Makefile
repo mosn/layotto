@@ -56,4 +56,8 @@ coverage:
 	sh ${SCRIPT_DIR}/report.sh
 
 build-linux-wasm-layotto:
+	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/faas
+	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} go build -tags wasmer -o layotto /go/src/${PROJECT_NAME}/cmd/layotto
+
+build-linux-wasm-local:
 	go build -tags wasmer -o layotto $(shell pwd)/cmd/layotto
