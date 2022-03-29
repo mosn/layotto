@@ -17,5 +17,5 @@
 go build -tags wasmer ./cmd/layotto
 nohup ./layotto start -c ./demo/faas/config.json &
 nohup redis-server &
-go test -p 1 -v ./test/integrate/...
+go test -p 1 -v ./test/wasm/...
 
