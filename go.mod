@@ -26,9 +26,8 @@ require (
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0
 	github.com/urfave/cli v1.22.1
-	github.com/valyala/fasthttp v1.28.0
+	github.com/valyala/fasthttp v1.34.0
 	go.uber.org/automaxprocs v1.4.0 // indirect
-	golang.org/x/net v0.0.0-20211005001312-d4b1ae081e3b // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
 	google.golang.org/protobuf v1.27.1
