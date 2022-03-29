@@ -83,4 +83,4 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run Integrate tests.
-        run: make wasm-integrate
+        run: make wasm-integrate-ci
