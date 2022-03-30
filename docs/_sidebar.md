@@ -24,14 +24,16 @@
 - Developer guide
   - Building blocks
     - [File API](en/building_blocks/file/file.md)
-    - [Configuration API](en/building_blocks/configuration/reference.md)
     - [Actuator API](en/building_blocks/actuator/actuator.md)
     - [State API](en/building_blocks/state/reference.md)
     - [Sequencer API](en/building_blocks/sequencer/reference.md)
     - [Distributed Lock API](en/building_blocks/lock/reference.md)
     - [Pub/Sub API](en/building_blocks/pubsub/reference.md)
     - [RPC API](en/building_blocks/rpc/reference.md)    
-  - [API reference](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
+    - [Configuration API](en/building_blocks/configuration/reference.md)
+  - API reference
+    - [spec/proto/runtime/v1/runtime.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/runtime_v1.md)
+    - [spec/proto/runtime/v1/appcallback.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
   - SDK reference
     - [java sdk](https://github.com/layotto/java-sdk)
     - [.net sdk](https://github.com/layotto/dotnet-sdk)
