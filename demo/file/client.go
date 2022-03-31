@@ -165,7 +165,7 @@ func CreateBucket(bn string) {
 
 	// Make a new bucket called mymusic.
 	bucketName := bn
-	location := "us-west-2"
+	location := "us-east-1"
 
 	err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
 	if err != nil {
