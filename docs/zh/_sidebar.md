@@ -28,17 +28,18 @@
 - [用户手册](zh/building_blocks/)
     - 功能介绍
         - [File API](zh/building_blocks/file/file.md)
-        - [Configuration API](zh/building_blocks/configuration/reference.md)
         - [Actuator API](zh/building_blocks/actuator/actuator.md)
         - [State API](zh/building_blocks/state/reference.md)
         - [Sequencer API](zh/building_blocks/sequencer/reference.md)
         - [Distributed Lock API](zh/building_blocks/lock/reference.md)
         - [Pub/Sub API](zh/building_blocks/pubsub/reference.md)
-        - [Configuration API](zh/building_blocks/configuration/reference.md)
         - [RPC API](zh/building_blocks/rpc/reference.md)
+        - [Configuration API](zh/building_blocks/configuration/reference.md)
         - 可扩展性
             - [API插件](zh/design/api_plugin/design.md)
-    - [gRPC API 文档](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
+    - [gRPC API 接口文档](zh/api_reference/README.md)
+        - [spec/proto/runtime/v1/runtime.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/runtime_v1.md)
+        - [spec/proto/runtime/v1/appcallback.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
     - SDK文档    
         - [java sdk](https://github.com/layotto/java-sdk)
         - [.net sdk](https://github.com/layotto/dotnet-sdk)
