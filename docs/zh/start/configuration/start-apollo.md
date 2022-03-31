@@ -35,6 +35,11 @@ go env -w GOPROXY="https://goproxy.cn,direct"
 ./layotto start -c ../../configs/config_apollo.json
 ```
 
+>Q: 使用默认配置时，demo启动报错？
+>
+>A: 默认配置会连接 apollo 的演示服务器，但是演示服务器的配置可能被其他人随意修改。报错可能是因为某些配置被修改了。
+> 
+> 遇到这种情况，您可以先尝试其他 demo，例如 [etcd demo](zh/start/configuration/start)
 ### 第三步：启动客户端Demo，调用Layotto增删改查
 
 ```bash
