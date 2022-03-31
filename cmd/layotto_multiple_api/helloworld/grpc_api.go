@@ -37,9 +37,11 @@ func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
 	// 1. convert custom components
 	name2component := make(map[string]component.HelloWorld)
 	if len(ac.CustomComponent) != 0 {
+		// we only care about those components of type "helloworld"
 		name2comp, ok := ac.CustomComponent[componentType]
 		if ok && len(name2comp) > 0 {
 			for name, v := range name2comp {
+				// convert them using type assertion
 				comp, ok := v.(component.HelloWorld)
 				if !ok {
 					errMsg := fmt.Sprintf("custom component %s does not implement HelloWorld interface", name)
@@ -49,10 +51,13 @@ func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
 			}
 		}
 	}
-
+	// 2. construct your API implementation
 	return &server{
-		appId:          ac.AppId,
+		appId: ac.AppId,
+		// Your API plugin can store and use all the components.
+		// For example,this demo set all the LockStore components here.
 		name2LockStore: ac.LockStores,
+		// Custom components of type "helloworld"
 		name2component: name2component,
 	}
 }
@@ -67,16 +72,7 @@ type server struct {
 	pb.UnimplementedGreeterServer
 }
 
-func (s *server) Init(conn *rawGRPC.ClientConn) error {
-	return nil
-}
-
-func (s *server) Register(rawGrpcServer *rawGRPC.Server) error {
-	pb.RegisterGreeterServer(rawGrpcServer, s)
-	return nil
-}
-
-// SayHello implements helloworld.GreeterServer
+// SayHello implements helloworld.GreeterServer.SayHello
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	if _, ok := s.name2component[componentName]; !ok {
 		return &pb.HelloReply{Message: "We don't want to talk with you!"}, nil
@@ -86,4 +82,13 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 		return nil, err
 	}
 	return &pb.HelloReply{Message: message}, nil
+}
+
+func (s *server) Init(conn *rawGRPC.ClientConn) error {
+	return nil
+}
+
+func (s *server) Register(rawGrpcServer *rawGRPC.Server) error {
+	pb.RegisterGreeterServer(rawGrpcServer, s)
+	return nil
 }

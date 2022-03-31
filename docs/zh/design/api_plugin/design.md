@@ -133,12 +133,24 @@ protoc 编译工具会根据 proto 文件帮你编译出 go 语言的 interface 
 ```go
 // server is used to implement helloworld.GreeterServer.
 type server struct {
-    pb.UnimplementedGreeterServer
+	appId string
+	// custom components which implements the `HelloWorld` interface
+	name2component map[string]component.HelloWorld
+	// LockStore components. They are not used in this demo, we put them here as a demo.
+	name2LockStore map[string]lock.LockStore
+	pb.UnimplementedGreeterServer
 }
 
-// SayHello implements helloworld.GreeterServer
+// SayHello implements helloworld.GreeterServer.SayHello
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
+	if _, ok := s.name2component[componentName]; !ok {
+		return &pb.HelloReply{Message: "We don't want to talk with you!"}, nil
+	}
+	message, err := s.name2component[componentName].SayHello(in.GetName())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.HelloReply{Message: message}, nil
 }
 ```
 
@@ -194,9 +206,55 @@ type ApplicationContext struct {
     Sequencers            map[string]sequencer.Store
     SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
     SecretStores          map[string]secretstores.SecretStore
+    CustomComponent       map[string]map[string]custom.Component
 }
 ```
 
+##### 解释：`CustomComponent`是什么?
+是"自定义组件"。
+
+Layotto 中的组件分为两种：
+- 预置组件
+
+比如 `pubsub` 组件，比如 `state` 组件
+
+- 自定义组件
+
+允许您自己扩展自己的组件，比如下面示例中的 `HelloWorld` 组件。
+
+##### 解释：如何配置自定义组件?
+在 json 配置文件中按以下格式配置：
+```json
+  "custom_component": {
+    "<Component Type>": {
+      "<Component A Name>": {
+        "metadata": {
+          "<KEY>": "<VALUE>",
+          "<KEY>": "<VALUE>"
+        }
+      },
+      "<Component B Name>": {
+        "metadata": {
+          "<KEY>": "<VALUE>",
+          "<KEY>": "<VALUE>"
+        }
+      }
+    }
+  },
+```
+
+例如，在`configs/config_in_memory.json` 中，配置了类型是`helloworld` 的 `CustomComponent`，只有一个组件，其组件名是 `in-memory`:
+```json
+  "custom_component": {
+    "helloworld": {
+      "in-memory": {
+        "metadata": {}
+      }
+    }
+  },
+```
+
+##### 看个例子
 看个具体的例子，在[helloworld 示例中](https://github.com/mosn/layotto/blob/main/cmd/layotto_multiple_api/helloworld/grpc_api.go), `*server` 实现了 `Init`
 和 `Register` 方法:
 
@@ -215,13 +273,37 @@ func (s *server) Register(grpcServer *rawGRPC.Server, registeredServer mgrpc.Reg
 
 ```go
 func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
-	return &server{}
+	// 1. convert custom components
+	name2component := make(map[string]component.HelloWorld)
+	if len(ac.CustomComponent) != 0 {
+		// we only care about those components of type "helloworld"
+		name2comp, ok := ac.CustomComponent[componentType]
+		if ok && len(name2comp) > 0 {
+			for name, v := range name2comp {
+				// convert them using type assertion
+				comp, ok := v.(component.HelloWorld)
+				if !ok {
+					errMsg := fmt.Sprintf("custom component %s does not implement HelloWorld interface", name)
+					log.DefaultLogger.Errorf(errMsg)
+				}
+				name2component[name] = comp
+			}
+		}
+	}
+	// 2. construct your API implementation
+	return &server{
+		appId: ac.AppId,
+		// Your API plugin can store and use all the components.
+		// For example,this demo set all the LockStore components here.
+		name2LockStore: ac.LockStores,
+		// Custom components of type "helloworld"
+		name2component: name2component,
+	}
 }
 ```
 
+##### 解释：这些回调函数、构造函数是干嘛的？
 看了这个例子，你也许会问：这些回调函数、构造函数是干嘛的?
-
-##### `GrpcAPI` 的生命周期
 
 上述钩子用于给用户扩展自定义启动逻辑。Layotto 会在启动过程中回调上述生命周期钩子和构造函数。调用顺序大致为：
 
