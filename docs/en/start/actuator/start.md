@@ -27,6 +27,11 @@ After completion, the layotto file will be generated in the directory, run it:
 ./layotto start -c ../../configs/config_apollo_health.json
 ```
 
+>Q: The demo report an error?
+>
+>A: With the default configuration, Layotto will connect to apollo's demo server, but the configuration in that demo server may be modified by others. So the error may be because some configuration has been modified.
+>
+> In this case, you can try other demos.
 ### Access the health check API
 
 Visit /actuator/health/liveness

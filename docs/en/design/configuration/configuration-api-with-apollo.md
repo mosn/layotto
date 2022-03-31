@@ -72,7 +72,7 @@ A: Legacy systems using apollo can't migrate to our sidecar if we design like th
 ### Which Go SDK for apollo should I Use?
 https://github.com/zouyx/agollo
 
-There isn't any official apollo sdk for Go,so I choose the repo with most stars [from community](https://ctripcorp.github.io/apollo/#/zh/usage/third-party-sdks-user-guide).
+There isn't any official apollo sdk for Go,so I choose the repo with most stars [from community](https://www.apolloconfig.com/apollo/#/zh/usage/third-party-sdks-user-guide).
 
 Some problems with the sdk: 
 1. Users must declare all namespaces in AppConfig before connecting to the server and constructing a client,like:
@@ -98,7 +98,7 @@ Some problems with the sdk:
 
 5. No sure about the concurrent safety. 
 
-6. Nowhere to configurate or use [Apollo Meta Server](https://ctripcorp.github.io/apollo/#/zh/usage/java-sdk-user-guide?id=_122-apollo-meta-server)
+6. Nowhere to configurate or use [Apollo Meta Server](https://www.apolloconfig.com/apollo/#/zh/usage/java-sdk-user-guide?id=_122-apollo-meta-server)
 
 7. Not sure about the consistency property between local cache and backend database.
 
@@ -109,8 +109,8 @@ Some problems with the sdk:
 |  Configuration API | apollo sdk API |
 |  ----  | ----  |
 | GetConfiguration  |     cache := client.GetConfigCache(c.NamespaceName)  <br> value,_ := client.Get("key") |
-| SaveConfiguration  | use open API via http. [update](https://ctripcorp.github.io/apollo/#/zh/usage/apollo-open-api-platform?id=_3211-%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3) + [commit](https://ctripcorp.github.io/apollo/#/zh/usage/apollo-open-api-platform?id=_3213-%e5%8f%91%e5%b8%83%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3) |
-| DeleteConfiguration  | use open API via http. [delete](https://ctripcorp.github.io/apollo/#/zh/usage/apollo-open-api-platform?id=_3212-%e5%88%a0%e9%99%a4%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3) + [commit](https://ctripcorp.github.io/apollo/#/zh/usage/apollo-open-api-platform?id=_3213-%e5%8f%91%e5%b8%83%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3)|
+| SaveConfiguration  | use open API via http. [update](https://www.apolloconfig.com/apollo/#/zh/usage/apollo-open-api-platform?id=_3211-%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3) + [commit](https://www.apolloconfig.com/apollo/#/zh/usage/apollo-open-api-platform?id=_3213-%e5%8f%91%e5%b8%83%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3) |
+| DeleteConfiguration  | use open API via http. [delete](https://www.apolloconfig.com/apollo/#/zh/usage/apollo-open-api-platform?id=_3212-%e5%88%a0%e9%99%a4%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3) + [commit](https://www.apolloconfig.com/apollo/#/zh/usage/apollo-open-api-platform?id=_3213-%e5%8f%91%e5%b8%83%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3)|
 | SubscribeConfiguration |  https://github.com/zouyx/agollo/wiki/%E7%9B%91%E5%90%AC%E5%8F%98%E6%9B%B4%E4%BA%8B%E4%BB%B6 |
 
 ### How to subscribe all config changes of the specified app
