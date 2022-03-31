@@ -22,7 +22,6 @@ import (
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 	"mosn.io/layotto/pkg/grpc"
 	grpc_api "mosn.io/layotto/pkg/grpc"
-	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 )
 
 func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
@@ -39,7 +38,7 @@ func (s *server) Init(conn *rawGRPC.ClientConn) error {
 }
 
 func (s *server) Register(rawGrpcServer *rawGRPC.Server) error {
-	pb.RegisterGreeterServer(grpcServer, s)
+	pb.RegisterGreeterServer(rawGrpcServer, s)
 	return nil
 }
 
