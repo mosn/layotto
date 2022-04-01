@@ -62,6 +62,7 @@ func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (
 	return a.daprAPI.SaveState(ctx, daprReq)
 }
 
+// GetBulkState gets a batch of state data
 func (a *api) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequest) (*runtimev1pb.GetBulkStateResponse, error) {
 	if in == nil {
 		return &runtimev1pb.GetBulkStateResponse{}, status.Error(codes.InvalidArgument, "GetBulkStateRequest is nil")

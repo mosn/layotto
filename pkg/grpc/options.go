@@ -29,6 +29,7 @@ type grpcOptions struct {
 
 type Option func(o *grpcOptions)
 
+// apis CANNOT be nil.
 func WithGrpcAPIs(apis []GrpcAPI) Option {
 	return func(o *grpcOptions) {
 		o.apis = apis

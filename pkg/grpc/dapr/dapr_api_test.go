@@ -65,14 +65,13 @@ func TestNewDaprAPI_Alpha(t *testing.T) {
 	}
 	// construct API
 	grpcAPI := NewDaprAPI_Alpha(&grpc_api.ApplicationContext{
-		"", nil, nil, nil, nil,
-		map[string]state.Store{"mock": store}, nil, nil, nil,
-		func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
+		StateStores: map[string]state.Store{"mock": store},
+		SendToOutputBindingFn: func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
 			if name == "error-binding" {
 				return nil, errors.New("error when invoke binding")
 			}
 			return &bindings.InvokeResponse{Data: []byte("ok")}, nil
-		}, nil})
+		}})
 	err := grpcAPI.Init(nil)
 	if err != nil {
 		t.Errorf("grpcAPI.Init error")
@@ -108,7 +107,7 @@ func startDaprServerForTest(port int, srv DaprGrpcAPI) *grpc.Server {
 
 	server := grpc.NewServer()
 	go func() {
-		srv.Register(server, server)
+		srv.Register(server)
 		if err := server.Serve(lis); err != nil {
 			panic(err)
 		}

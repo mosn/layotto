@@ -37,6 +37,7 @@ import (
 	"mosn.io/pkg/log"
 )
 
+// Publishes events to the specific topic.
 func (a *api) PublishEvent(ctx context.Context, in *runtimev1pb.PublishEventRequest) (*emptypb.Empty, error) {
 	result, err := a.doPublishEvent(ctx, in.PubsubName, in.Topic, in.Data, in.DataContentType, in.Metadata)
 	if err != nil {
