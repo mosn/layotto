@@ -18,32 +18,77 @@ package helloworld
 
 import (
 	"context"
+	"fmt"
 	rawGRPC "google.golang.org/grpc"
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
+	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
+	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/pkg/grpc"
 	grpc_api "mosn.io/layotto/pkg/grpc"
-	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
+	"mosn.io/pkg/log"
 )
 
+const componentType = "helloworld"
+
+// This demo will always use this component name.
+const componentName = "in-memory"
+
 func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
-	return &server{}
+	// 1. convert custom components
+	name2component := make(map[string]component.HelloWorld)
+	if len(ac.CustomComponent) != 0 {
+		// we only care about those components of type "helloworld"
+		name2comp, ok := ac.CustomComponent[componentType]
+		if ok && len(name2comp) > 0 {
+			for name, v := range name2comp {
+				// convert them using type assertion
+				comp, ok := v.(component.HelloWorld)
+				if !ok {
+					errMsg := fmt.Sprintf("custom component %s does not implement HelloWorld interface", name)
+					log.DefaultLogger.Errorf(errMsg)
+				}
+				name2component[name] = comp
+			}
+		}
+	}
+	// 2. construct your API implementation
+	return &server{
+		appId: ac.AppId,
+		// Your API plugin can store and use all the components.
+		// For example,this demo set all the LockStore components here.
+		name2LockStore: ac.LockStores,
+		// Custom components of type "helloworld"
+		name2component: name2component,
+	}
 }
 
 // server is used to implement helloworld.GreeterServer.
 type server struct {
+	appId string
+	// custom components which implements the `HelloWorld` interface
+	name2component map[string]component.HelloWorld
+	// LockStore components. They are not used in this demo, we put them here as a demo.
+	name2LockStore map[string]lock.LockStore
 	pb.UnimplementedGreeterServer
+}
+
+// SayHello implements helloworld.GreeterServer.SayHello
+func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
+	if _, ok := s.name2component[componentName]; !ok {
+		return &pb.HelloReply{Message: "We don't want to talk with you!"}, nil
+	}
+	message, err := s.name2component[componentName].SayHello(in.GetName())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.HelloReply{Message: message}, nil
 }
 
 func (s *server) Init(conn *rawGRPC.ClientConn) error {
 	return nil
 }
 
-func (s *server) Register(grpcServer *rawGRPC.Server, registeredServer mgrpc.RegisteredServer) (mgrpc.RegisteredServer, error) {
-	pb.RegisterGreeterServer(grpcServer, s)
-	return registeredServer, nil
-}
-
-// SayHello implements helloworld.GreeterServer
-func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
+func (s *server) Register(rawGrpcServer *rawGRPC.Server) error {
+	pb.RegisterGreeterServer(rawGrpcServer, s)
+	return nil
 }

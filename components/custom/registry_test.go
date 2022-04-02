@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package runtime
+package custom
 
 import (
-	"github.com/stretchr/testify/assert"
+	"mosn.io/layotto/components/pkg/info"
+	"strings"
 	"testing"
 )
 
-func TestWithErrInterceptor(t *testing.T) {
-	cnt := 0
-	var f ErrInterceptor = func(err error, format string, args ...interface{}) {
-		cnt++
+func TestNewRegistry(t *testing.T) {
+	r := NewRegistry(info.NewRuntimeInfo())
+	compType := "my_component"
+	compName := "etcd"
+	r.Register(compType,
+		NewComponentFactory(compName, func() Component {
+			return nil
+		}),
+	)
+	_, err := r.Create(compType, compName)
+	if err != nil {
+		t.Fatalf("create mock store failed: %v", err)
 	}
-	rt := newRuntimeOptions()
-	WithErrInterceptor(f)(rt)
-	rt.errInt(nil, "")
-	assert.True(t, cnt == 1)
+	if _, err := r.Create(compType, "not exists"); !strings.Contains(err.Error(), "not regsitered") {
+		t.Fatalf("create mock store failed: %v", err)
+	}
 }
