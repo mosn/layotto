@@ -42,7 +42,6 @@ import (
 	"mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	"mosn.io/layotto/pkg/messages"
-	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"mosn.io/pkg/log"
 	"strings"
 )
@@ -82,9 +81,9 @@ func (d *daprGrpcAPI) startSubscribing() error {
 	return nil
 }
 
-func (d *daprGrpcAPI) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) (mgrpc.RegisteredServer, error) {
-	dapr_v1pb.RegisterDaprServer(s, d)
-	return registeredServer, nil
+func (d *daprGrpcAPI) Register(rawGrpcServer *grpc.Server) error {
+	dapr_v1pb.RegisterDaprServer(rawGrpcServer, d)
+	return nil
 }
 
 func (d *daprGrpcAPI) InvokeService(ctx context.Context, in *runtime.InvokeServiceRequest) (*dapr_common_v1pb.InvokeResponse, error) {

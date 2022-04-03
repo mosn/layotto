@@ -21,8 +21,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dapr/components-contrib/secretstores"
+	"mosn.io/layotto/components/custom"
 	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
 	"strings"
+	"time"
 
 	"github.com/dapr/components-contrib/bindings"
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
@@ -53,16 +55,17 @@ type MosnRuntime struct {
 	info          *info.RuntimeInfo
 	srv           mgrpc.RegisteredServer
 	// component registry
-	helloRegistry        hello.Registry
-	configStoreRegistry  configstores.Registry
-	rpcRegistry          rpc.Registry
-	pubSubRegistry       runtime_pubsub.Registry
-	stateRegistry        runtime_state.Registry
-	lockRegistry         runtime_lock.Registry
-	sequencerRegistry    runtime_sequencer.Registry
-	fileRegistry         file.Registry
-	bindingsRegistry     mbindings.Registry
-	secretStoresRegistry msecretstores.Registry
+	helloRegistry           hello.Registry
+	configStoreRegistry     configstores.Registry
+	rpcRegistry             rpc.Registry
+	pubSubRegistry          runtime_pubsub.Registry
+	stateRegistry           runtime_state.Registry
+	lockRegistry            runtime_lock.Registry
+	sequencerRegistry       runtime_sequencer.Registry
+	fileRegistry            file.Registry
+	bindingsRegistry        mbindings.Registry
+	secretStoresRegistry    msecretstores.Registry
+	customComponentRegistry custom.Registry
 	// component pool
 	hellos map[string]hello.HelloService
 	// config management system component
@@ -70,43 +73,55 @@ type MosnRuntime struct {
 	rpcs         map[string]rpc.Invoker
 	pubSubs      map[string]pubsub.PubSub
 	// state implementations store here are already initialized
-	states         map[string]state.Store
-	files          map[string]file.File
-	locks          map[string]lock.LockStore
-	sequencers     map[string]sequencer.Store
-	outputBindings map[string]bindings.OutputBinding
-	secretStores   map[string]secretstores.SecretStore
+	states          map[string]state.Store
+	files           map[string]file.File
+	locks           map[string]lock.LockStore
+	sequencers      map[string]sequencer.Store
+	outputBindings  map[string]bindings.OutputBinding
+	secretStores    map[string]secretstores.SecretStore
+	customComponent map[string]map[string]custom.Component
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
 	// extends
-	errInt ErrInterceptor
+	errInt            ErrInterceptor
+	started           bool
+	initRuntimeStages []initRuntimeStage
 }
+
+func (m *MosnRuntime) RuntimeConfig() *MosnRuntimeConfig {
+	return m.runtimeConfig
+}
+
+type initRuntimeStage func(o *runtimeOptions, m *MosnRuntime) error
 
 func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 	info := info.NewRuntimeInfo()
 	return &MosnRuntime{
-		runtimeConfig:        runtimeConfig,
-		info:                 info,
-		helloRegistry:        hello.NewRegistry(info),
-		configStoreRegistry:  configstores.NewRegistry(info),
-		rpcRegistry:          rpc.NewRegistry(info),
-		pubSubRegistry:       runtime_pubsub.NewRegistry(info),
-		stateRegistry:        runtime_state.NewRegistry(info),
-		bindingsRegistry:     mbindings.NewRegistry(info),
-		fileRegistry:         file.NewRegistry(info),
-		lockRegistry:         runtime_lock.NewRegistry(info),
-		sequencerRegistry:    runtime_sequencer.NewRegistry(info),
-		secretStoresRegistry: msecretstores.NewRegistry(info),
-		hellos:               make(map[string]hello.HelloService),
-		configStores:         make(map[string]configstores.Store),
-		rpcs:                 make(map[string]rpc.Invoker),
-		pubSubs:              make(map[string]pubsub.PubSub),
-		states:               make(map[string]state.Store),
-		files:                make(map[string]file.File),
-		locks:                make(map[string]lock.LockStore),
-		sequencers:           make(map[string]sequencer.Store),
-		outputBindings:       make(map[string]bindings.OutputBinding),
-		secretStores:         make(map[string]secretstores.SecretStore),
+		runtimeConfig:           runtimeConfig,
+		info:                    info,
+		helloRegistry:           hello.NewRegistry(info),
+		configStoreRegistry:     configstores.NewRegistry(info),
+		rpcRegistry:             rpc.NewRegistry(info),
+		pubSubRegistry:          runtime_pubsub.NewRegistry(info),
+		stateRegistry:           runtime_state.NewRegistry(info),
+		bindingsRegistry:        mbindings.NewRegistry(info),
+		fileRegistry:            file.NewRegistry(info),
+		lockRegistry:            runtime_lock.NewRegistry(info),
+		sequencerRegistry:       runtime_sequencer.NewRegistry(info),
+		secretStoresRegistry:    msecretstores.NewRegistry(info),
+		customComponentRegistry: custom.NewRegistry(info),
+		hellos:                  make(map[string]hello.HelloService),
+		configStores:            make(map[string]configstores.Store),
+		rpcs:                    make(map[string]rpc.Invoker),
+		pubSubs:                 make(map[string]pubsub.PubSub),
+		states:                  make(map[string]state.Store),
+		files:                   make(map[string]file.File),
+		locks:                   make(map[string]lock.LockStore),
+		sequencers:              make(map[string]sequencer.Store),
+		outputBindings:          make(map[string]bindings.OutputBinding),
+		secretStores:            make(map[string]secretstores.SecretStore),
+		customComponent:         make(map[string]map[string]custom.Component),
+		started:                 false,
 	}
 }
 
@@ -136,10 +151,13 @@ func (m *MosnRuntime) sendToOutputBinding(name string, req *bindings.InvokeReque
 }
 
 func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
+	// 0. mark already started
+	m.started = true
+	// 1. init runtime stage
 	// prepare runtimeOptions
-	var o runtimeOptions
+	o := newRuntimeOptions()
 	for _, opt := range opts {
-		opt(&o)
+		opt(o)
 	}
 	// set ErrInterceptor
 	if o.errInt != nil {
@@ -150,7 +168,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		}
 	}
 	// init runtime with runtimeOptions
-	if err := m.initRuntime(&o); err != nil {
+	if err := m.initRuntime(o); err != nil {
 		return nil, err
 	}
 	// prepare grpcOpts
@@ -158,7 +176,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	if o.srvMaker != nil {
 		grpcOpts = append(grpcOpts, grpc.WithNewServer(o.srvMaker))
 	}
-	// create GrpcAPIs
+	// 2. init GrpcAPI stage
 	var apis []grpc.GrpcAPI
 	ac := &grpc.ApplicationContext{
 		m.runtimeConfig.AppManagement.AppId,
@@ -172,6 +190,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		m.sequencers,
 		m.sendToOutputBinding,
 		m.secretStores,
+		m.customComponent,
 	}
 
 	for _, apiFactory := range o.apiFactorys {
@@ -187,7 +206,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		grpc.WithGrpcOptions(o.options...),
 		grpc.WithGrpcAPIs(apis),
 	)
-	// create grpc server
+	// 3. create grpc server
 	var err error = nil
 	m.srv, err = grpc.NewGrpcServer(grpcOpts...)
 	return m.srv, err
@@ -199,7 +218,7 @@ func (m *MosnRuntime) Stop() {
 	}
 }
 
-func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
+func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if m.runtimeConfig == nil {
 		return errors.New("[runtime] init error:no runtimeConfig")
 	}
@@ -208,6 +227,9 @@ func (m *MosnRuntime) initRuntime(o *runtimeOptions) error {
 		return err
 	}
 	// init all kinds of components with config
+	if err := m.initCustomComponents(o.services.custom); err != nil {
+		return err
+	}
 	if err := m.initHellos(o.services.hellos...); err != nil {
 		return err
 	}
@@ -504,6 +526,83 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFa
 
 		// 2.3. save runtime related configs
 		m.secretStores[name] = comp
+	}
+	return nil
+}
+
+func (m *MosnRuntime) AppendInitRuntimeStage(f initRuntimeStage) {
+	if f == nil || m.started {
+		log.DefaultLogger.Errorf("[runtime] invalid initRuntimeStage or already started")
+		return
+	}
+	m.initRuntimeStages = append(m.initRuntimeStages, f)
+}
+
+func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
+	st := time.Now()
+	// check default handler
+	if len(m.initRuntimeStages) == 0 {
+		m.initRuntimeStages = append(m.initRuntimeStages, DefaultInitRuntimeStage)
+	}
+	// do initialization
+	for _, f := range m.initRuntimeStages {
+		err := f(r, m)
+		if err != nil {
+			return err
+		}
+	}
+
+	log.DefaultLogger.Infof("[runtime] initRuntime stages cost: %v", time.Since(st))
+	return nil
+}
+
+func (m *MosnRuntime) SetCustomComponent(componentType string, name string, component custom.Component) {
+	if _, ok := m.customComponent[componentType]; !ok {
+		m.customComponent[componentType] = make(map[string]custom.Component)
+	}
+	m.customComponent[componentType][name] = component
+}
+
+func (m *MosnRuntime) initCustomComponents(type2factorys map[string][]*custom.ComponentFactory) error {
+	log.DefaultLogger.Infof("[runtime] start initializing custom components")
+	// 1. validation
+	if len(type2factorys) == 0 {
+		log.DefaultLogger.Infof("[runtime] no custom component factorys compiled")
+		return nil
+	}
+	if len(m.runtimeConfig.CustomComponent) == 0 {
+		log.DefaultLogger.Infof("[runtime] no custom components in configuration")
+		return nil
+	}
+	// 2. loop registering all types of components.
+	for compType, factorys := range type2factorys {
+		// 2.0. check empty
+		if len(factorys) == 0 {
+			continue
+		}
+		name2Config, ok := m.runtimeConfig.CustomComponent[compType]
+		if !ok {
+			log.DefaultLogger.Errorf("[runtime] Your required component type %s is not supported.Please check your configuration", compType)
+			continue
+		}
+		// 2.1. register all the factorys
+		m.customComponentRegistry.Register(compType, factorys...)
+		// 2.2. loop initializing component instances
+		for name, config := range name2Config {
+			// create the component
+			comp, err := m.customComponentRegistry.Create(compType, name)
+			if err != nil {
+				m.errInt(err, "create custom component %s failed", name)
+				return err
+			}
+			// init
+			if err := comp.Initialize(context.TODO(), config); err != nil {
+				m.errInt(err, "init custom component %s failed", name)
+				return err
+			}
+			// initialization finish
+			m.SetCustomComponent(compType, name, comp)
+		}
 	}
 	return nil
 }
