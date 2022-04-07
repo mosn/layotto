@@ -7,15 +7,15 @@
   "replacementPatterns": [
     {
       "pattern": "^/",
-      "replacement": "http://localhost:6789/#/"
+      "replacement": "http://localhost:3000/#/"
     },
     {
       "pattern": "^zh/",
-      "replacement": "http://localhost:6789/#/zh/"
+      "replacement": "http://localhost:3000/#/zh/"
     },
     {
       "pattern": "^en/",
-      "replacement": "http://localhost:6789/#/en/"
+      "replacement": "http://localhost:3000/#/en/"
     }
   ],
   "timeout": "2s",
