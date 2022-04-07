@@ -28,6 +28,7 @@ docker pull redis:latest
 ```shell
 docker images
 ```
+
 ![img.png](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/mq/start/img.png)
 
 3. 运行容器
@@ -46,8 +47,9 @@ docker run -itd --name redis-test -p 6380:6379 redis
 
 将项目代码下载到本地后，切换代码目录、编译：
 
-```bash
-cd ${projectpath}/cmd/layotto
+```shell
+# change directory to ${your project path}/cmd/layotto
+cd cmd/layotto
 go build
 ```
 
@@ -57,28 +59,49 @@ go build
 ./layotto start -c ../../configs/config_state_redis.json
 ```
 
+<!-- The command below will be run when testing this file 
+```shell
+nohup ./layotto start -c ../../configs/config_state_redis.json &
+```
+-->
+
 ### 第三步：运行客户端程序，调用Layotto进行增删改查
 
-```bash
- cd ${projectpath}/demo/state/redis/
- go build -o client
- ./client
+<!-- The command below will be run when testing this file 
+```shell
+cd ../../
+# if we should wait for layotto start, we can:
+# sleep 1s 
+```
+-->
+
+```shell
+# open a new terminal tab
+# change directory to ${your project path}/demo/state/redis/
+ cd demo/state/redis/
+ go run .
 ```
 
 打印出如下信息则代表调用成功：
 
 ```bash
 SaveState succeeded.key:key1 , value: hello world 
-GetState succeeded.[key:key1 etag:1]: hello world
+GetState succeeded.[key:key1 etag:3]: hello world
 SaveBulkState succeeded.[key:key1 etag:2]: hello world
 SaveBulkState succeeded.[key:key2 etag:2]: hello world
-GetBulkState succeeded.key:key1,value:hello world
-GetBulkState succeeded.key:key3,value:
-GetBulkState succeeded.key:key2,value:hello world
-GetBulkState succeeded.key:key5,value:
-GetBulkState succeeded.key:key4,value:
+GetBulkState succeeded.key:key1 ,value:hello world ,etag:4 ,metadata:map[] 
+GetBulkState succeeded.key:key4 ,value: ,etag: ,metadata:map[] 
+GetBulkState succeeded.key:key2 ,value:hello world ,etag:2 ,metadata:map[] 
+GetBulkState succeeded.key:key3 ,value: ,etag: ,metadata:map[] 
+GetBulkState succeeded.key:key5 ,value: ,etag: ,metadata:map[] 
 DeleteState succeeded.key:key1
 DeleteState succeeded.key:key2
+```
+
+### step 4. 销毁 redis 容器，释放资源
+
+```shell
+docker rm -f redis-test
 ```
 
 ### 下一步
