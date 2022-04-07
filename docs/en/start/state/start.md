@@ -44,8 +44,9 @@ Parameter Description:
 
 After downloading the project code to the local, enter the code directory and compile:
 
-```bash
-cd ${projectpath}/cmd/layotto
+```shell
+# change directory to ${your project path}/cmd/layotto
+cd cmd/layotto
 go build
 ```
 
@@ -55,29 +56,51 @@ The layotto file will be generated in the directory, run it:
 ./layotto start -c ../../configs/config_state_redis.json
 ```
 
+<!-- The command below will be run when testing this file 
+```shell
+nohup ./layotto start -c ../../configs/config_state_redis.json &
+```
+-->
+
 ### step 3. Run the client program, call Layotto to add, delete, modify and query
 
-```bash
- cd ${projectpath}/demo/state/redis/
- go build -o client
- ./client
+<!-- 
+```shell
+cd ../../
+# if we should wait for layotto start, we can:
+# sleep 1s 
+```
+-->
+
+```shell
+# open a new terminal tab
+# change directory to ${your project path}/demo/state/redis/
+ cd demo/state/redis/
+ go run .
 ```
 
-If the following information is printed, the call is successful:
+If the following information is printed, the demo succeeded:
 
 ```bash
 SaveState succeeded.key:key1 , value: hello world 
-GetState succeeded.[key:key1 etag:1]: hello world
+GetState succeeded.[key:key1 etag:3]: hello world
 SaveBulkState succeeded.[key:key1 etag:2]: hello world
 SaveBulkState succeeded.[key:key2 etag:2]: hello world
-GetBulkState succeeded.key:key1,value:hello world
-GetBulkState succeeded.key:key3,value:
-GetBulkState succeeded.key:key2,value:hello world
-GetBulkState succeeded.key:key5,value:
-GetBulkState succeeded.key:key4,value:
+GetBulkState succeeded.key:key1 ,value:hello world ,etag:4 ,metadata:map[] 
+GetBulkState succeeded.key:key4 ,value: ,etag: ,metadata:map[] 
+GetBulkState succeeded.key:key2 ,value:hello world ,etag:2 ,metadata:map[] 
+GetBulkState succeeded.key:key3 ,value: ,etag: ,metadata:map[] 
+GetBulkState succeeded.key:key5 ,value: ,etag: ,metadata:map[] 
 DeleteState succeeded.key:key1
 DeleteState succeeded.key:key2
 ```
+
+### step 4. Stop redis and release resources
+
+```shell
+docker rm -f redis-test
+```
+
 ### Next step
 #### What did this client Demo do?
 The demo client program uses the golang version SDK provided by Layotto, and calls Layotto's State API to add, delete, modify, and read status data.
