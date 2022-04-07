@@ -469,7 +469,7 @@ func (c *ConfigStore) setItem(appId string, item *configstores.ConfigurationItem
 }
 
 func (c *ConfigStore) addHeaderForOpenAPI(req *http.Request) {
-	//https://www.apolloconfig.com/apollo/#/zh/usage/apollo-open-api-platform?id=_3211-%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3
+	//https://www.apolloconfig.com/#/zh/usage/apollo-open-api-platform?id=_3211-%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%8e%a5%e5%8f%a3
 	//Http Header中增加一个Authorization字段，字段值为申请的token
 	//Http Header的Content-Type字段需要设置成application/json;charset=UTF-8
 	req.Header.Add("Authorization", c.openAPIToken)

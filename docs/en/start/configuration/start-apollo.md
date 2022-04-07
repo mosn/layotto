@@ -1,5 +1,5 @@
 # Configuration API demo with apollo
-This example shows how to add, delete, modify, and watch the [apollo configuration center](https://github.com/ctripcorp/apollo) through Layotto.
+This example shows how to add, delete, modify, and watch the [apollo configuration center](https://github.com/apolloconfig/apollo) through Layotto.
 
 The architecture of this example is shown in the figure below. The processes started are: client APP, Layotto, Apollo server
 
@@ -7,7 +7,7 @@ The architecture of this example is shown in the figure below. The processes sta
 
 ## Step 1.Deploy Apollo (optional)
 
-You can skip this step, you don't need to deploy the apollo server yourself to use this demo. This demo will use the demo environment provided by [apollo official](https://github.com/ctripcorp/apollo): http://106.54.227.205/
+You can skip this step, you don't need to deploy the apollo server yourself to use this demo. This demo will use the demo environment provided by [apollo official](https://github.com/apolloconfig/apollo): http://106.54.227.205/
 
 If you have deployed apollo yourself, you can modify Layotto's config file (e.g. configs/config_apollo.json in the project) to change the apollo server address to your own.
 
