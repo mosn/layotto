@@ -27,7 +27,7 @@
       "replacement": "http://localhost:3000/#/en/"
     }
   ],
-  "timeout": "2s",
+  "timeout": "3s",
   "retryOn429": true,
   "retryCount": 2,
   "fallbackRetryDelay": "1s",
