@@ -64,7 +64,7 @@ see [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runt
 
 文档中引用图片建议就用完整路径，免得遇到一堆乱七八糟的路径问题。
 
-例如，如果是引用main分支的图片，图片Url的前缀是https://raw.githubusercontent.com/mosn/layotto/main/docs/img
+例如，如果是引用main分支的图片，图片Url的前缀是`https://raw.githubusercontent.com/mosn/layotto/main/docs/img`
 
 Markdown写法如下：
 
