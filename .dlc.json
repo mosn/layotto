@@ -2,6 +2,9 @@
   "ignorePatterns": [
     {
       "pattern": "^http://localhost"
+    },
+    {
+      "pattern": "^https://console.cloud.tencent.com/cos/bucket"
     }
   ],
   "replacementPatterns": [
