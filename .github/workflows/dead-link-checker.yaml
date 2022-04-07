@@ -17,7 +17,8 @@ jobs:
         run: sudo npm install -g markdown-link-check@3.8.7
 
       - name: Install and start docsify server
-        run: sudo npm i docsify-cli -g |
+        run: |
+             sudo npm i docsify-cli -g
              nohup docsify serve docs -p 3000 &
 
       - name: Check dead links in all the .md files
