@@ -18,10 +18,10 @@
       "replacement": "http://localhost:3000/#/en/"
     }
   ],
-  "timeout": "10s",
+  "timeout": "2s",
   "retryOn429": true,
-  "retryCount": 10,
-  "fallbackRetryDelay": "1000s",
+  "retryCount": 2,
+  "fallbackRetryDelay": "1s",
   "aliveStatusCodes": [
     200,
     401
