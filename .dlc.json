@@ -4,6 +4,9 @@
       "pattern": "^http://localhost"
     },
     {
+      "pattern": "^http://127.0.0.1"
+    },
+    {
       "pattern": "^https://console.cloud.tencent.com/cos/bucket"
     }
   ],
