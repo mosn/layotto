@@ -73,7 +73,6 @@ jobs:
   wasm-integrate:
     name: wasm-integrate
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -89,7 +88,6 @@ jobs:
   runtime-integrate:
     name: runtime-integrate
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Set up Go
         uses: actions/setup-go@v2
