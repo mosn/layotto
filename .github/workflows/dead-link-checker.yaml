@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: sudo npm install -g markdown-link-check@3.8.7
       - run: sudo npm i docsify-cli -g
-      - run: docsify serve docs -p 3000
+      - run: docsify serve docs -p 6789
       - run: |
           for file in $(find . -name "*.md"); do
             markdown-link-check -c .dlc.json -q "$file"
