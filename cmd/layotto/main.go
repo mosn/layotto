@@ -32,6 +32,7 @@ import (
 	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
+	"mosn.io/mosn/pkg/stagemanager"
 	"mosn.io/mosn/pkg/trace/skywalking"
 	"os"
 	"strconv"
@@ -434,7 +435,8 @@ var cmdStart = cli.Command{
 		},
 	},
 	Action: func(c *cli.Context) error {
-		stm := mosn.NewStageManager(c, c.String("config"))
+		app := mosn.NewMosn()
+		stm := stagemanager.InitStageManager(c, c.String("config"), app)
 
 		stm.AppendParamsParsedStage(ExtensionsRegister)
 
@@ -461,7 +463,7 @@ var cmdStart = cli.Command{
 	},
 }
 
-func SetActuatorAfterStart(m *mosn.Mosn) {
+func SetActuatorAfterStart(_ stagemanager.Application) {
 	// register component actuator
 	component_actuators.RangeAllIndicators(
 		func(name string, v *component_actuators.ComponentsIndicator) bool {
@@ -477,7 +479,7 @@ func SetActuatorAfterStart(m *mosn.Mosn) {
 }
 
 // ExtensionsRegister for register mosn rpc extensions
-func ExtensionsRegister(c *cli.Context) {
+func ExtensionsRegister(_ *cli.Context) {
 	// 1. tracer driver register
 	// Q: What is a tracer driver ?
 	// A: MOSN implement a group of trace drivers, but only a configured driver will be loaded.
