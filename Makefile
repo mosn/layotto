@@ -65,3 +65,9 @@ build-linux-wasm-layotto:
 
 build-linux-wasm-local:
 	go build -tags wasmer -o layotto $(shell pwd)/cmd/layotto
+
+check-dead-link:
+	sh ${SCRIPT_DIR}/check-dead-link.sh
+
+test-quickstart:
+	sh ${SCRIPT_DIR}/test-quickstart.sh
