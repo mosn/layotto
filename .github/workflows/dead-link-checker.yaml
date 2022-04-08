@@ -22,7 +22,4 @@ jobs:
              nohup docsify serve docs -p 3000 &
 
       - name: Check dead links in all the .md files
-        run: |
-          for file in $(find . -name "*.md"); do
-            markdown-link-check -c .dlc.json -q "$file"
-          done
+        run: make check-dead-link
