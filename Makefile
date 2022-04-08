@@ -68,3 +68,6 @@ build-linux-wasm-local:
 
 check-dead-link:
 	sh ${SCRIPT_DIR}/check-dead-link.sh
+
+test-quickstart:
+	sh ${SCRIPT_DIR}/test-quickstart.sh

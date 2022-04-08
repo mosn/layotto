@@ -100,6 +100,11 @@ DeleteState succeeded.key:key2
 ```shell
 docker rm -f redis-test
 ```
+<!--
+```shell
+killall layotto
+```
+-->
 
 ### Next step
 #### What did this client Demo do?
