@@ -49,9 +49,9 @@ jobs:
           fi
 
       - name: Download mdsh
-          run: |
+        run: |
             curl -o mdsh.sh https://raw.githubusercontent.com/seeflood/mdsh/master/bin/mdsh
             chmod +x mdsh.sh
-            
+
       - name: Test quickstart
-          run: make test-quickstart
+        run: make test-quickstart
