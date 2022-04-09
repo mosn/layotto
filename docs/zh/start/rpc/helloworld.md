@@ -3,19 +3,25 @@
 ## 快速开始
 ![](https://user-images.githubusercontent.com/26001097/148895424-b286feb5-a122-4fe5-9012-0c235f16b9c7.png)
 
-1. 编译运行layotto
-```sh
+### step 1. 编译运行layotto
+构建:
+```shell
 go build -o layotto cmd/layotto/main.go
+```
+
+运行：
+```shell background
 ./layotto -c demo/rpc/http/example.json
 ```
 
-2. 启动echoserver服务端
-```sh
+### step 2. 启动echoserver服务端
+```shell background
 go run demo/rpc/http/echoserver/echoserver.go
 ```
 
-3. 通过GPRC接口发起调用
-```sh
+### step 3. 通过GPRC接口发起调用
+
+```shell
 go run demo/rpc/http/echoclient/echoclient.go -d 'hello layotto'
 ```
 
