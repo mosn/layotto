@@ -1,19 +1,18 @@
-
-quickstarts=(docs/en/start/state/start.md
-  docs/zh/start/state/start.md
-  docs/en/start/lock/start.md
-  docs/zh/start/lock/start.md
-  docs/zh/start/file/minio.md
-  docs/en/start/api_plugin/helloworld.md
-  docs/zh/start/api_plugin/helloworld.md
-  docs/zh/start/actuator/start.md
-  docs/en/start/actuator/start.md
-  docs/zh/start/trace/trace.md
-  docs/en/start/trace/trace.md
-  docs/zh/start/trace/skywalking.md
-  docs/en/start/wasm/start.md
-  docs/zh/start/wasm/start.md
-)
+quickstarts=(docs/en/start/state/start.md)
+#  docs/zh/start/state/start.md
+#  docs/en/start/lock/start.md
+#  docs/zh/start/lock/start.md
+#  docs/zh/start/file/minio.md
+#  docs/en/start/api_plugin/helloworld.md
+#  docs/zh/start/api_plugin/helloworld.md
+#  docs/zh/start/actuator/start.md
+#  docs/en/start/actuator/start.md
+#  docs/zh/start/trace/trace.md
+#  docs/en/start/trace/trace.md
+#  docs/zh/start/trace/skywalking.md
+#  docs/en/start/wasm/start.md
+#  docs/zh/start/wasm/start.md
+#)
 
 export projectpath=$(pwd)
 export project_path=$(pwd)
