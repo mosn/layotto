@@ -21,7 +21,8 @@ export projectpath=$(pwd)
 export project_path=$(pwd)
 
 # release all resources
-function release_resource {
+release_resource()
+{
   killall layotto
   if [ $(docker ps -a -q | wc -l) -gt 0 ]; then
     docker rm -f $(docker ps -a -q)
