@@ -1,4 +1,4 @@
-export quickstarts=("docs/en/start/state/start.md")
+#quickstarts=(docs/en/start/state/start.md
 #  docs/zh/start/state/start.md
 #  docs/en/start/lock/start.md
 #  docs/zh/start/lock/start.md
@@ -13,6 +13,9 @@ export quickstarts=("docs/en/start/state/start.md")
 #  docs/en/start/wasm/start.md
 #  docs/zh/start/wasm/start.md
 #)
+
+quickstarts[0]=docs/en/start/state/start.md
+quickstarts[1]=docs/zh/start/state/start.md
 
 export projectpath=$(pwd)
 export project_path=$(pwd)
