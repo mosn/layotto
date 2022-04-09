@@ -1,4 +1,4 @@
-quickstarts=(docs/en/start/state/start.md
+quickstarts="docs/en/start/state/start.md
   docs/zh/start/state/start.md
   docs/en/start/lock/start.md
   docs/zh/start/lock/start.md
@@ -12,7 +12,7 @@ quickstarts=(docs/en/start/state/start.md
   docs/zh/start/trace/skywalking.md
   docs/en/start/wasm/start.md
   docs/zh/start/wasm/start.md
-)
+"
 
 #quickstarts[0]=docs/en/start/state/start.md
 #quickstarts[1]=docs/zh/start/state/start.md
@@ -30,7 +30,7 @@ function release_resource {
 
 release_resource
 
-for doc in "${quickstarts[@]}"; do
+for doc in ${quickstarts}; do
   echo "Start testing $doc......"
 
   #./mdsh.sh docs/en/start/state/start.md
