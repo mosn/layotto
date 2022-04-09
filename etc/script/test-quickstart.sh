@@ -4,6 +4,8 @@ quickstarts="docs/en/start/state/start.md
   docs/zh/start/lock/start.md
   docs/en/start/rpc/helloworld.md
   docs/zh/start/rpc/helloworld.md
+  docs/en/start/rpc/dubbo_json_rpc.md
+  docs/zh/start/rpc/dubbo_json_rpc.md
   docs/zh/start/file/minio.md
   docs/en/start/api_plugin/helloworld.md
   docs/zh/start/api_plugin/helloworld.md

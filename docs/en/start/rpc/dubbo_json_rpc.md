@@ -1,22 +1,25 @@
 # Dubbo JSON RPC Example
 
 ## Quick Start
-1. Edit config file，add `dubbo_json_rpc` filter
+### step 1. Edit config file，add `dubbo_json_rpc` filter
 
 ![jsonrpc.jpg](../../../img/rpc/jsonrpc.jpg)
 
-2. Compile and start layotto
-```sh
+### step 2. Compile and start layotto
+```shell
 go build -o layotto cmd/layotto/main.go
+```
+
+```shell background
 ./layotto -c demo/rpc/dubbo_json_rpc/example.json
 ```
 
-3. Start dubbo server
+### step 3. Start dubbo server
 
 use `dubbo-go-samples` repo's example server.
 
-```sh
-git clone git@github.com:apache/dubbo-go-samples.git
+```shell
+git clone https://github.com/apache/dubbo-go-samples.git
 cd dubbo-go-samples
 
 # start zookeeper
@@ -30,11 +33,14 @@ sh assembly/mac/dev.sh
 
 # start dubbo server
 cd target/darwin/{generate_folder}/
+```
+
+```shell background
 sh ./bin/load.sh start
 ```
 
-4. call runtime InvokerService api.
-```sh
+### step 4. call runtime InvokerService api.
+```shell
 go run demo/rpc/dubbo_json_rpc/dubbo_json_client/client.go -d '{"jsonrpc":"2.0","method":"GetUser","params":["A003"],"id":9527}'
 ```
 

@@ -1,21 +1,24 @@
 # Dubbo JSON RPC Example
 
 ## 快速开始
-1. 修改配置文件，加入`dubbo_json_rpc`插件
+### step 1. 修改配置文件，加入`dubbo_json_rpc`插件
 
 ![jsonrpc.jpg](../../../img/rpc/jsonrpc.jpg)
 
-2. 编译运行layotto
-```sh
+### step 2. 编译运行layotto
+```shell
 go build -o layotto cmd/layotto/main.go
+```
+
+```shell background
 ./layotto -c demo/rpc/dubbo_json_rpc/example.json
 ```
 
-3. 启动dubbo服务端
+### step 3. 启动dubbo服务端
 
 这里使用了`dubbo-go-samples`提供的示例服务
-```sh
-git clone git@github.com:apache/dubbo-go-samples.git
+```shell
+git clone https://github.com/apache/dubbo-go-samples.git
 cd dubbo-go-samples
 
 # start zookeeper
@@ -29,11 +32,14 @@ sh assembly/mac/dev.sh
 
 # start dubbo server
 cd target/darwin/{generate_folder}/
+```
+
+```shell background
 sh ./bin/load.sh start
 ```
 
-4. 通过GPRC接口发起调用
-```sh
+### step 4. 通过GPRC接口发起调用
+```shell
 go run demo/rpc/dubbo_json_rpc/dubbo_json_client/client.go -d '{"jsonrpc":"2.0","method":"GetUser","params":["A003"],"id":9527}'
 ```
 
