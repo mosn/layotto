@@ -4,16 +4,26 @@ This is a demo to show you how to register your own API.
 Layotto has the api-plugin feature to let you add your own API based on your need.
 
 ## step 1. start Layotto with a new helloworld API
-Build and run Layotto :
+Build Layotto :
 
 ```shell
 # change directory 
 cd ${projectpath}/cmd/layotto_multiple_api
 # build it
 go build -o layotto
+```
+
+Run Layotto:
+```bash
 # run it
 ./layotto start -c ../../configs/config_in_memory.json
 ```
+
+<!--
+```shell
+nohup ./layotto start -c ../../configs/config_in_memory.json &
+```
+-->
 
 Q: What happened?
 
@@ -38,7 +48,7 @@ go run client/main.go
 ```
 The result will be:
 
-```shell
+```bash
 Greeting: Hello world
 ```
 

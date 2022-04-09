@@ -14,13 +14,14 @@ If you have deployed apollo yourself, you can modify Layotto's config file (e.g.
 ## Step 2. Run Layotto server
 
 Download the project code to the local:
+
 ```bash
 git clone https://github.com/mosn/layotto.git
 ```
 
 Switch the code directory and compile:
 
-```bash
+```shell
 cd ${projectpath}/cmd/layotto
 go build
 ```
@@ -30,6 +31,11 @@ After success, a new layotto file will be generated in the directory. Let's run 
 ```bash
 ./layotto start -c ../../configs/config_apollo.json
 ```
+<!--
+```shell
+nohup ./layotto start -c ../../configs/config_apollo.json &
+```
+-->
 
 >Q: The demo report an error?
 >
@@ -40,7 +46,7 @@ After success, a new layotto file will be generated in the directory. Let's run 
 
 The client demo calls Layotto to add, delete, modify, and query configuration
 
-```bash
+```shell
  cd ${projectpath}/demo/configuration/apollo
  go build -o apolloClientDemo
  ./apolloClientDemo

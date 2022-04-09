@@ -10,7 +10,8 @@ Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blo
 但是因为示例服务可能被别人修改配置、出现存储空间满了等问题，导致 demo 跑不通，因此我们更建议您自己搭 MinIO。
 
 您可以使用 Docker 启动本地MinIO服务, 参考[官方文档](http://docs.minio.org.cn/docs/master/minio-docker-quickstart-guide)
-```
+
+```bash
 docker pull minio/minio
 docker run -p 9000:9000 minio/minio server /data --console-address ":9000" --address ":9090"
 ```
@@ -20,7 +21,7 @@ docker run -p 9000:9000 minio/minio server /data --console-address ":9000" --add
 
 layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/blob/main/configs/config_file.json) ，如下所示
 
-```
+```json
                       "file": {
                         "minioOSS": {
                           "metadata":[
@@ -38,30 +39,48 @@ layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/
 
 默认配置会连接`play.min.io`, 如果您自己部署了 Minio, 可以按需修改其中的配置。
 
-配置好后，启动 Layotto:
+配置好后，构建 Layotto:
 
 ```shell
+#备注 请将${projectpath}替换成你的项目路径
 cd ${projectpath}/cmd/layotto
-# 如果没编译过，记得先用 go build 编译
+go build
+#备注 如果发现构建失败无法下载,请进行如先设置
+go env -w GOPROXY="https://goproxy.cn,direct"
+```
+
+启动 Layotto: 
+
+```bash
 ./layotto start -c ../../configs/config_file.json
 ```
+
+<!--
+```shell
+nohup ./layotto start -c ../../configs/config_file.json &
+```
+-->
 
 ### 第三步：启动测试demo
 
 Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/file/client.go)
 
-```go
-
+```shell
 cd ${projectpath}/demo/file
 go build client.go
 
-./client bucket test //创建名为test的bucket
-./client put test/hello/layotto.txt "hello layotto" //上传文件到test bucket，前缀为hello，内容为"hello layotto"
-./client get test/hello/layotto.txt //获取 layotto.txt的内容
-./client list test/hello // 获取test bucket下的前缀为hello的所有文件列表
-./client stat test/hello/layotto.txt //获取layotto.txt文件的元数据
-./client del test/hello/layotto.txt //删除layotto.txt文件
-
+# 创建名为test的bucket
+./client bucket test
+# 上传文件到test bucket，前缀为hello，内容为"hello layotto"
+./client put test/hello/layotto.txt "hello layotto"
+# 获取 layotto.txt的内容
+./client get test/hello/layotto.txt
+# 获取test bucket下的前缀为hello的所有文件列表
+./client list test/hello
+# 获取layotto.txt文件的元数据
+./client stat test/hello/layotto.txt
+# 删除layotto.txt文件
+./client del test/hello/layotto.txt
 ```
 
 > Q: 运行报错？

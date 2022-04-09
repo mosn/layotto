@@ -13,7 +13,7 @@
 
 将项目代码下载到本地后，切换代码目录、编译：
 
-```bash
+```shell
 cd ${projectpath}/cmd/layotto
 go build
 ```
@@ -24,6 +24,13 @@ go build
 ./layotto start -c ../../configs/config_apollo_health.json
 ```
 
+<!--
+```shell
+nohup ./layotto start -c ../../configs/config_apollo_health.json &
+sleep 1s
+```
+-->
+
 >Q: demo启动报错？
 >
 >A: 默认配置会连接 apollo 的演示服务器，但是演示服务器的配置可能被其他人随意修改。报错可能是因为某些配置被修改了。
@@ -33,7 +40,7 @@ go build
 
 访问 /actuator/health/liveness
 
-```bash
+```shell
 curl http://127.0.0.1:34999/actuator/health/liveness
 ```
 
@@ -56,7 +63,7 @@ curl http://127.0.0.1:34999/actuator/health/liveness
 }
 ```
 
-其中"status": "UP"代表状态健康。此时返回的Http状态码是200。
+其中"status": "UP"代表状态健康。此时返回的Http状态码是200。 如果状态不健康，这个值会返回"DOWN"，返回的Http状态码是503。
 
 ### 查询元数据
 
@@ -78,47 +85,69 @@ curl http://127.0.0.1:34999/actuator/info
 }
 ```
 
-### 模拟配置错误的场景
+[comment]: <> (### 模拟配置错误的场景)
 
-如果Layotto配置错误导致启动后不能正常提供服务，通过健康检查功能可以及时发现。
+[comment]: <> (如果Layotto配置错误导致启动后不能正常提供服务，通过健康检查功能可以及时发现。)
 
-我们可以模拟一下配置错误的场景，使用一个错误的配置文件启动Layotto:
+[comment]: <> (我们可以模拟一下配置错误的场景，使用一个错误的配置文件启动Layotto:)
 
-```shell
-./layotto start -c ../../configs/wrong/config_apollo_health.json
-```
+[comment]: <> (```bash)
 
-该配置文件中忘记配置了访问apollo需要的open_api_token。
+[comment]: <> (./layotto start -c ../../configs/wrong/config_apollo_health.json)
 
-访问健康检查接口（注意这里配置的端口是34888，和上一个例子中不一样）：
+[comment]: <> (```)
 
-```shell
-curl http://127.0.0.1:34888/actuator/health/liveness
-```
+[comment]: <> (该配置文件中忘记配置了访问apollo需要的open_api_token。)
 
-返回：
+[comment]: <> (访问健康检查接口（注意这里配置的端口是34888，和上一个例子中不一样）：)
 
-```json
-{
-  "components": {
-    "apollo": {
-      "status": "DOWN",
-      "details": {
-        "reason": "configuration illegal:no open_api_token"
-      }
-    },
-    "runtime_startup": {
-      "status": "DOWN",
-      "details": {
-        "reason": "configuration illegal:no open_api_token"
-      }
-    }
-  },
-  "status": "DOWN"
-}
-```
+[comment]: <> (```bash)
 
-json中"status": "DOWN"代表当前状态不健康。此时返回的Http状态码是503。
+[comment]: <> (curl http://127.0.0.1:34888/actuator/health/liveness)
+
+[comment]: <> (```)
+
+[comment]: <> (返回：)
+
+[comment]: <> (```json)
+
+[comment]: <> ({)
+
+[comment]: <> (  "components": {)
+
+[comment]: <> (    "apollo": {)
+
+[comment]: <> (      "status": "DOWN",)
+
+[comment]: <> (      "details": {)
+
+[comment]: <> (        "reason": "configuration illegal:no open_api_token")
+
+[comment]: <> (      })
+
+[comment]: <> (    },)
+
+[comment]: <> (    "runtime_startup": {)
+
+[comment]: <> (      "status": "DOWN",)
+
+[comment]: <> (      "details": {)
+
+[comment]: <> (        "reason": "configuration illegal:no open_api_token")
+
+[comment]: <> (      })
+
+[comment]: <> (    })
+
+[comment]: <> (  },)
+
+[comment]: <> (  "status": "DOWN")
+
+[comment]: <> (})
+
+[comment]: <> (```)
+
+[comment]: <> (json中"status": "DOWN"代表当前状态不健康。此时返回的Http状态码是503。)
 
 
 ## 下一步

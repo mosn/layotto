@@ -22,6 +22,7 @@ Use the following command to check if redis is installed:
 ```shell
 docker images
 ```
+
 ![img.png](../../../img/mq/start/img.png)
 
 3. Run the container
@@ -40,7 +41,7 @@ Parameter Description:
 
 After downloading the project code to the local, enter the code directory and compile:
 
-```bash
+```shell
 cd ${projectpath}/cmd/layotto
 go build
 ```
@@ -51,9 +52,15 @@ The layotto file will be generated in the directory, run it:
 ./layotto start -c ../../configs/config_lock_redis.json
 ```
 
+<!--
+```shell
+nohup ./layotto start -c ../../configs/config_lock_redis.json &
+```
+-->
+
 ### Step 3. Run the client program, call Layotto to add, delete, modify and query
 
-```bash
+```shell
  cd ${projectpath}/demo/lock/redis/
  go build -o client
  ./client
