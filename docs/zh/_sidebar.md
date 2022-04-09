@@ -87,7 +87,9 @@
     - [支持Dapr API](zh/design/api_plugin/dapr_api.md)
 - 贡献指南
     - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
-    - [文档贡献指南](zh/development/contributing-doc.md)
+    - 文档相关  
+        - [文档贡献指南](zh/development/contributing-doc.md)
+        - [使用工具自动测试 Quickstart 文档](zh/development/test-quickstart.md)
     - [组件开发指南](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
         - [新增API时的开发规范](zh/development/developing-api.md)
