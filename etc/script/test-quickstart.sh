@@ -1,27 +1,27 @@
-#quickstarts=(docs/en/start/state/start.md
-#  docs/zh/start/state/start.md
-#  docs/en/start/lock/start.md
-#  docs/zh/start/lock/start.md
-#  docs/zh/start/file/minio.md
-#  docs/en/start/api_plugin/helloworld.md
-#  docs/zh/start/api_plugin/helloworld.md
-#  docs/zh/start/actuator/start.md
-#  docs/en/start/actuator/start.md
-#  docs/zh/start/trace/trace.md
-#  docs/en/start/trace/trace.md
-#  docs/zh/start/trace/skywalking.md
-#  docs/en/start/wasm/start.md
-#  docs/zh/start/wasm/start.md
-#)
+quickstarts=(docs/en/start/state/start.md
+  docs/zh/start/state/start.md
+  docs/en/start/lock/start.md
+  docs/zh/start/lock/start.md
+  docs/zh/start/file/minio.md
+  docs/en/start/api_plugin/helloworld.md
+  docs/zh/start/api_plugin/helloworld.md
+  docs/zh/start/actuator/start.md
+  docs/en/start/actuator/start.md
+  docs/zh/start/trace/trace.md
+  docs/en/start/trace/trace.md
+  docs/zh/start/trace/skywalking.md
+  docs/en/start/wasm/start.md
+  docs/zh/start/wasm/start.md
+)
 
-quickstarts[0]=docs/en/start/state/start.md
-quickstarts[1]=docs/zh/start/state/start.md
+#quickstarts[0]=docs/en/start/state/start.md
+#quickstarts[1]=docs/zh/start/state/start.md
 
 export projectpath=$(pwd)
 export project_path=$(pwd)
 
 # release all resources
-function release_resource() {
+function release_resource {
   killall layotto
   if [ $(docker ps -a -q | wc -l) -gt 0 ]; then
     docker rm -f $(docker ps -a -q)
