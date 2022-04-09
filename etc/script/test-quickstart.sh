@@ -1,4 +1,4 @@
-quickstarts=(docs/en/start/state/start.md)
+export quickstarts=(docs/en/start/state/start.md)
 #  docs/zh/start/state/start.md
 #  docs/en/start/lock/start.md
 #  docs/zh/start/lock/start.md
