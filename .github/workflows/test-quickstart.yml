@@ -54,4 +54,5 @@ jobs:
             chmod +x mdsh.sh
 
       - name: Test quickstart
-        run: make test-quickstart
+        run: |
+            make test-quickstart
