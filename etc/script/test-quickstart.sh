@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 
-docs=(
-#  docs/en/start/configuration/start-apollo.md
-#  docs/zh/start/configuration/start-apollo.md
- docs/en/start/state/start.md
+docs=(docs/en/start/state/start.md
  docs/zh/start/state/start.md
  docs/en/start/lock/start.md
  docs/zh/start/lock/start.md
