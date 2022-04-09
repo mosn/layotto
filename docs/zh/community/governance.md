@@ -107,9 +107,9 @@ A: 目前想法是参考vue社区，如果review通过可以回复LGTM，但是�
 
 ## 4. 参考资料
 Apollo
-[https://github.com/ctripcorp/apollo/pull/3670](https://github.com/ctripcorp/apollo/pull/3670)
-[https://github.com/ctripcorp/apollo/issues/3684](https://github.com/ctripcorp/apollo/issues/3684)
-[https://github.com/ctripcorp/apollo/discussions/categories/announcements](https://github.com/ctripcorp/apollo/discussions/categories/announcements)
+[https://github.com/apolloconfig/apollo/pull/3670](https://github.com/apolloconfig/apollo/pull/3670)
+[https://github.com/apolloconfig/apollo/issues/3684](https://github.com/apolloconfig/apollo/issues/3684)
+[https://github.com/apolloconfig/apollo/discussions/categories/announcements](https://github.com/apolloconfig/apollo/discussions/categories/announcements)
 
 
 Tidb的社区组织架构 [https://pingcap.com/blog-cn/tidb-community-upgrade/](https://pingcap.com/blog-cn/tidb-community-upgrade/)

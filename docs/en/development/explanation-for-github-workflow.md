@@ -25,9 +25,7 @@ check if the contributor has signed cla
 
 Currently [we have to do it manually](https://mosn.io/layotto/#/en/api_reference/how_to_generate_api_doc) .
 
-The generated document is [here](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
-
-![img_2.png](../../img/development/workflow/img_2.png)
+The generated documents are [here](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/runtime_v1.md) and [here](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
 
 ### 2.2. Test
 #### <5> Run unit tests

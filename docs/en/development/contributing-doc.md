@@ -64,7 +64,7 @@ Images are stored under docs/img/ directory for the purpose that the Docsify sit
 
 It is recommended to use the full path when referencing images in documents, to avoid a bunch of messy path problems.
 
-For example, when referencing the images under the main branch, the prefix of the image Url is https://raw.githubusercontent.com/mosn/layotto/main/docs/img
+For example, when referencing the images under the main branch, the prefix of the image url is `raw.githubusercontent.com/mosn/layotto/main/docs/img/xxx`
 
 and the Markdown phrase refering to an image will be ：
 
