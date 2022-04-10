@@ -14,7 +14,7 @@ If you want to run this demo, you need to start a etcd server first.
 You can download etcd from `https://github.com/etcd-io/etcd/releases` （You can also use docker.）
 
 start it:
-```shell background
+```shell @background
 ./etcd
 ```
 
@@ -25,18 +25,21 @@ Build Layotto:
 
 ```shell
 cd ${project_path}/cmd/layotto
+```
+
+```shell @if.not.exit layotto
 go build
 ```
 
 Run it:
-```shell background
+```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
 
 ## Start client APP
 
 ```shell
- cd ${projectpath}/demo/configuration/common
+ cd ${project_path}/demo/configuration/common
  go run . -s "etcd"
 ```
 

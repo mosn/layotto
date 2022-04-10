@@ -64,16 +64,9 @@ go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
 ```
 
 Run it:
-```bash
+```shell @background
 ./layotto start -c ./demo/faas/config.json
 ```
-
-<!--
-```shell
-nohup ./layotto start -c ./demo/faas/config.json &
-sleep 1s
-```
--->
 
 **Note: You need to modify the redis address as needed, the default address is: localhost:6379**
 

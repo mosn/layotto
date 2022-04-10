@@ -16,8 +16,6 @@ quickstarts="docs/en/start/configuration/start-apollo.md
   docs/zh/start/sequencer/start.md
   docs/en/start/rpc/helloworld.md
   docs/zh/start/rpc/helloworld.md
-  docs/en/start/rpc/dubbo_json_rpc.md
-  docs/zh/start/rpc/dubbo_json_rpc.md
   docs/zh/start/file/minio.md
   docs/en/start/api_plugin/helloworld.md
   docs/zh/start/api_plugin/helloworld.md
@@ -28,10 +26,9 @@ quickstarts="docs/en/start/configuration/start-apollo.md
   docs/zh/start/trace/skywalking.md
   docs/en/start/wasm/start.md
   docs/zh/start/wasm/start.md
+  docs/en/start/rpc/dubbo_json_rpc.md
+  docs/zh/start/rpc/dubbo_json_rpc.md
 "
-
-export projectpath=$(pwd)
-export project_path=$(pwd)
 
 # release all resources
 release_resource() {
@@ -57,14 +54,8 @@ sh etc/script/download_etcd.sh
 for doc in ${quickstarts}; do
   echo "Start testing $doc......"
 
-  #./mdsh.sh docs/en/start/state/start.md
-  ./mdsh.sh $doc
-
-  code=$?
-  if test $code -ne 0; then
-    echo "Error when running " $doc " code:" $code
-    exit $code
-  fi
+  #./mdx.sh docs/en/start/state/start.md
+  ./mdx.sh $doc
 
   echo "End testing $doc......"
   release_resource

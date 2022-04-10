@@ -22,13 +22,16 @@ git clone https://github.com/mosn/layotto.git
 Switch the code directory and compile:
 
 ```shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
+```
+
+```shell @if.not.exit layotto
 go build
 ```
 
 After success, a new layotto file will be generated in the directory. Let's run it:
 
-```shell background
+```shell @background
 ./layotto start -c ../../configs/config_apollo.json
 ```
 
@@ -43,7 +46,7 @@ After success, a new layotto file will be generated in the directory. Let's run 
 The client demo calls Layotto to add, delete, modify, and query configuration
 
 ```shell
- cd ${projectpath}/demo/configuration/common
+ cd ${project_path}/demo/configuration/common
  go build -o client
  ./client -s "apollo"
 ```

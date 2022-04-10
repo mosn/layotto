@@ -42,8 +42,8 @@ layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/
 配置好后，构建 Layotto:
 
 ```shell
-#备注 请将${projectpath}替换成你的项目路径
-cd ${projectpath}/cmd/layotto
+#备注 请将${project_path}替换成你的项目路径
+cd ${project_path}/cmd/layotto
 go build
 #备注 如果发现构建失败无法下载,请进行如先设置
 go env -w GOPROXY="https://goproxy.cn,direct"
@@ -51,22 +51,16 @@ go env -w GOPROXY="https://goproxy.cn,direct"
 
 启动 Layotto: 
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/config_file.json
 ```
-
-<!--
-```shell
-nohup ./layotto start -c ../../configs/config_file.json &
-```
--->
 
 ### 第三步：启动测试demo
 
 Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/file/client.go)
 
 ```shell
-cd ${projectpath}/demo/file
+cd ${project_path}/demo/file
 go build client.go
 
 # 创建名为test的bucket

@@ -31,20 +31,14 @@ go build -o layotto
 
 运行:
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
-
-<!--
-```shell
-nohup ./layotto start -c ../../configs/runtime_config.json &
-```
--->
 
 对应的调用端代码在[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go) 中，运行它会调用layotto的SayHello接口：
 
 ```shell
- cd ${projectpath}/demo/flowcontrol/
+ cd ${project_path}/demo/flowcontrol/
  go build -o client
  ./client
 ```

@@ -42,26 +42,23 @@ Parameter Description:
 After downloading the project code to the local, enter the code directory and compile:
 
 ```shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
+```
+
+```shell @if.not.exit layotto
 go build
 ```
 
 The layotto file will be generated in the directory, run it:
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/config_lock_redis.json
 ```
-
-<!--
-```shell
-nohup ./layotto start -c ../../configs/config_lock_redis.json &
-```
--->
 
 ### Step 3. Run the client program, call Layotto to add, delete, modify and query
 
 ```shell
- cd ${projectpath}/demo/lock/redis/
+ cd ${project_path}/demo/lock/redis/
  go build -o client
  ./client
 ```

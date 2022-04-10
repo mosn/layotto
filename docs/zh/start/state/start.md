@@ -55,7 +55,7 @@ go build
 
 完成后目录下会生成layotto文件，运行它：
 
-```shell background
+```shell @background
 ./layotto start -c ../../configs/config_state_redis.json
 ```
 

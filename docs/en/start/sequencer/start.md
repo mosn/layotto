@@ -22,7 +22,7 @@ Visit https://github.com/etcd-io/etcd/releases to download etcd of the correspon
 
 Once the download is finished,execute the command to start:
 
-```shell background
+```shell @background
 ./etcd
 ```
 
@@ -32,20 +32,23 @@ The default listening address is `localhost:2379`
 After downloading the project code to the local, switch the code directory and compile:
 
 ```shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
+```
+
+```shell @if.not.exit layotto
 go build
 ```
 
 Once finished, the layotto file will be generated in the directory, run it:
 
-```shell background
+```shell @background
 ./layotto start -c ../../configs/config_sequencer_etcd.json
 ```
 
 ### Step 3: Run the client program and call Layotto to generate a unique id
 
 ```shell
- cd ${projectpath}/demo/sequencer/common/
+ cd ${project_path}/demo/sequencer/common/
  go build -o client
  ./client -s "etcd"
 ```

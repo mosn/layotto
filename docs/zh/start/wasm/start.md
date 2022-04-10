@@ -62,16 +62,10 @@ go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
 ```
 
 运行:
-```bash
+
+```shell @background
 ./layotto start -c ./demo/faas/config.json
 ```
-
-<!--
-```shell
-nohup ./layotto start -c ./demo/faas/config.json &
-sleep 1s
-```
--->
 
 **注：需要把`./demo/faas/config.json`中的 redis 地址修改为实际地址，默认地址为：localhost:6379。**
 

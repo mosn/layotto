@@ -48,13 +48,13 @@ Parameter Description:
 Build:
 
 ```shell
- cd ${projectpath}/demo/pubsub/redis/server/
+ cd ${project_path}/demo/pubsub/redis/server/
  go build -o subscriber
  ```
 
 Start subscriber:
 
-```shell background
+```shell @background
  ./subscriber
 ```
 If the following information is printed out, it means the startup is successful:
@@ -82,20 +82,23 @@ After the program receives a new event, it will print the event to the command l
 After downloading the project code to the local, switch the code directory and compile:
 
 ```shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
+```
+
+```shell @if.not.exit layotto
 go build
 ```
 
 After completion, the layotto file will be generated in the directory, run it:
 
-```shell background
+```shell @background
 ./layotto start -c ../../configs/config_redis.json
 ```
 
 ### Step 4. Run the Publisher program and call Layotto to publish events
 
 ```shell
- cd ${projectpath}/demo/pubsub/redis/client/
+ cd ${project_path}/demo/pubsub/redis/client/
  go build -o publisher
  ./publisher
 ```

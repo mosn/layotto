@@ -19,7 +19,7 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 
 下载完成执行命令启动：
 
-```shell background
+```shell @background
 ./etcd
 ```
 
@@ -28,12 +28,12 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 ## 启动 layotto
 
 ```shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
 go build
 ```
 
 编译成功后执行:
-```shell background
+```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
 
@@ -42,7 +42,7 @@ go build
 ## 启动本地client
 
 ```shell
- cd ${projectpath}/demo/configuration/common
+ cd ${project_path}/demo/configuration/common
  go build -o client
  ./client -s "etcd"
 ```

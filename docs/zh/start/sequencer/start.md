@@ -21,7 +21,7 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 
 下载完成执行命令启动：
 
-```shell background
+```shell @background
 ./etcd
 ```
 
@@ -32,20 +32,20 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 将项目代码下载到本地后，切换代码目录、编译：
 
 ```shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
 go build
 ```
 
 完成后目录下会生成layotto文件，运行它：
 
-```shell background
+```shell @background
 ./layotto start -c ../../configs/config_sequencer_etcd.json
 ```
 
 ### 第三步：运行客户端程序，调用Layotto生成唯一id
 
 ```shell
- cd ${projectpath}/demo/sequencer/common/
+ cd ${project_path}/demo/sequencer/common/
  go build -o client
  ./client -s "etcd"
 ```

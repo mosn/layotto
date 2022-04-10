@@ -17,13 +17,16 @@ All these features can be accessed through the HTTP API.
 After downloading the project source code, change directory and compile:
 
 ```shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
+```
+
+```shell @if.not.exit layotto
 go build
 ```
 
 After completion, the layotto file will be generated in the directory, run it:
 
-```shell background
+```shell @background
 ./layotto start -c ../../configs/config_apollo_health.json
 ```
 

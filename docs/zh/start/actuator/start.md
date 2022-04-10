@@ -14,22 +14,15 @@
 将项目代码下载到本地后，切换代码目录、编译：
 
 ```shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
 go build
 ```
 
 完成后目录下会生成layotto文件，运行它：
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/config_apollo_health.json
 ```
-
-<!--
-```shell
-nohup ./layotto start -c ../../configs/config_apollo_health.json &
-sleep 1s
-```
--->
 
 >Q: demo启动报错？
 >

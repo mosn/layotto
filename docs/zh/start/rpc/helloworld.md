@@ -10,12 +10,12 @@ go build -o layotto cmd/layotto/main.go
 ```
 
 运行：
-```shell background
+```shell @background
 ./layotto -c demo/rpc/http/example.json
 ```
 
 ### step 2. 启动echoserver服务端
-```shell background
+```shell @background
 go run demo/rpc/http/echoserver/echoserver.go
 ```
 

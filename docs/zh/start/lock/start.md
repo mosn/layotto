@@ -41,25 +41,20 @@ docker run -itd --name redis-test -p 6380:6379 redis
 将项目代码下载到本地后，切换代码目录、编译：
 
 ```shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
 go build
 ```
 
 完成后目录下会生成layotto文件，运行它：
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/config_lock_redis.json
 ```
-<!--
-```shell
-nohup ./layotto start -c ../../configs/config_lock_redis.json &
-```
--->
 
 ### 第三步：运行客户端程序，调用Layotto抢锁/解锁
 
 ```shell
- cd ${projectpath}/demo/lock/redis/
+ cd ${project_path}/demo/lock/redis/
  go build -o client
  ./client
 ```

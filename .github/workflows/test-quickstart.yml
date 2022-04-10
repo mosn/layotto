@@ -50,8 +50,8 @@ jobs:
 
       - name: Download mdsh
         run: |
-            curl -o mdsh.sh https://raw.githubusercontent.com/seeflood/mdsh/master/bin/mdsh
-            chmod +x mdsh.sh
+            curl -o mdx.sh https://raw.githubusercontent.com/seeflood/mdx/main/mdx.sh
+            chmod +x mdx.sh
 
       - name: Test quickstart
         run: |

@@ -23,8 +23,8 @@ git clone https://github.com/mosn/layotto.git
 切换代码目录、编译：
 
 ```shell
-#备注 请将${projectpath}替换成你的项目路径
-cd ${projectpath}/cmd/layotto
+#备注 请将${project_path}替换成你的项目路径
+cd ${project_path}/cmd/layotto
 go build
 #备注 如果发现构建失败无法下载,请进行如先设置
 go env -w GOPROXY="https://goproxy.cn,direct"
@@ -32,7 +32,7 @@ go env -w GOPROXY="https://goproxy.cn,direct"
 
 完成后目录下会生成layotto文件，运行它：
 
-```shell background
+```shell @background
 ./layotto start -c ../../configs/config_apollo.json
 ```
 
@@ -45,7 +45,7 @@ go env -w GOPROXY="https://goproxy.cn,direct"
 ### 第三步：启动客户端Demo，调用Layotto增删改查
 
 ```shell
- cd ${projectpath}/demo/configuration/common
+ cd ${project_path}/demo/configuration/common
  go build -o client
  ./client -s "apollo"
 ```

@@ -10,7 +10,7 @@
 go build -o layotto cmd/layotto/main.go
 ```
 
-```shell background
+```shell @background
 ./layotto -c demo/rpc/dubbo_json_rpc/example.json
 ```
 
@@ -34,7 +34,7 @@ sh assembly/mac/dev.sh
 cd target/darwin/{generate_folder}/
 ```
 
-```shell background
+```shell @background
 sh ./bin/load.sh start
 ```
 

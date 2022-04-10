@@ -8,22 +8,15 @@ Build Layotto :
 
 ```shell
 # change directory 
-cd ${projectpath}/cmd/layotto_multiple_api
+cd ${project_path}/cmd/layotto_multiple_api
 # build it
 go build -o layotto
 ```
 
 Run Layotto:
-```bash
-# run it
+```shell @background
 ./layotto start -c ../../configs/config_in_memory.json
 ```
-
-<!--
-```shell
-nohup ./layotto start -c ../../configs/config_in_memory.json &
-```
--->
 
 Q: What happened?
 
@@ -42,7 +35,7 @@ Check the code in [`main.go`](https://github.com/mosn/layotto/blob/d74ff0e8940e0
 ## step 2. invoke the helloworld API
 ```shell
 # change directory 
-cd ${projectpath}/cmd/layotto_multiple_api
+cd ${project_path}/cmd/layotto_multiple_api
 # run demo client
 go run client/main.go
 ```

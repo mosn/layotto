@@ -45,11 +45,11 @@ docker run -itd --name redis-test -p 6380:6379 redis
 
 ### 第二步：启动Subscriber程序,订阅事件
 ```shell
- cd ${projectpath}/demo/pubsub/redis/server/
+ cd ${project_path}/demo/pubsub/redis/server/
  go build -o subscriber
 ```
 
-```shell background
+```shell @background
  ./subscriber
 ```
 打印出如下信息则代表启动成功：
@@ -77,20 +77,20 @@ Start listening on port 9999 ......
 将项目代码下载到本地后，切换代码目录、编译：
 
 ```shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
 go build
 ```
 
 完成后目录下会生成layotto文件，运行它：
 
-```shell background
+```shell @background
 ./layotto start -c ../../configs/config_redis.json
 ```
 
 ### 第四步：运行Publisher程序，调用Layotto发布事件
 
 ```shell
- cd ${projectpath}/demo/pubsub/redis/client/
+ cd ${project_path}/demo/pubsub/redis/client/
  go build -o publisher
  ./publisher
 ```

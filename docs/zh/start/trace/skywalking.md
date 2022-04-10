@@ -40,15 +40,9 @@ go build -o layotto
 
 运行:
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/config_trace_skywalking.json
 ```
-
-<!--
-```shell
-nohup ./layotto start -c ../../configs/config_trace_skywalking.json &
-```
--->
 
 ## 运行 Demo
 

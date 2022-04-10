@@ -31,20 +31,14 @@ go build -o layotto
 
 - Run it
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
-
-<!--
-```shell
-nohup ./layotto start -c ../../configs/runtime_config.json &
-```
--->
 
 The corresponding client demo is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), running it will call the SayHello API of layotto:
 
 ```shell
- cd ${projectpath}/demo/flowcontrol/
+ cd ${project_path}/demo/flowcontrol/
  go build -o client
  ./client
 ```

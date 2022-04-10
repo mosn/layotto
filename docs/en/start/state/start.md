@@ -52,7 +52,7 @@ go build
 
 The layotto file will be generated in the directory, run it:
 
-```shell background
+```shell @background
 ./layotto start -c ../../configs/config_state_redis.json
 ```
 
