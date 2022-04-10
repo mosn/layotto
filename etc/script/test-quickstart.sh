@@ -38,10 +38,12 @@ release_resource() {
 release_resource
 
 # download etcd
-if [ "$(uname)" == "Darwin" ]; then
+if test "$(uname)" = "Darwin"
+then
   # Mac OS X
   sh etc/script/download_etcd_mac.sh
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+elif test "$(expr substr $(uname -s) 1 5)" = "Linux"
+then
   # GNU/Linux
   sh etc/script/download_etcd_linux.sh
 else
