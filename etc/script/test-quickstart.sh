@@ -1,9 +1,13 @@
-quickstarts="docs/en/start/state/start.md
+quickstarts="docs/en/start/configuration/start.md
+  docs/zh/start/configuration/start.md
+  docs/en/start/state/start.md
   docs/zh/start/state/start.md
   docs/en/start/pubsub/start.md
   docs/zh/start/pubsub/start.md
   docs/en/start/lock/start.md
   docs/zh/start/lock/start.md
+  docs/en/start/sequencer/start.md
+  docs/zh/start/sequencer/start.md
   docs/en/start/rpc/helloworld.md
   docs/zh/start/rpc/helloworld.md
   docs/en/start/rpc/dubbo_json_rpc.md
@@ -20,7 +24,7 @@ quickstarts="docs/en/start/state/start.md
   docs/zh/start/wasm/start.md
 "
 
-quickstarts="docs/zh/start/sequencer/start.md"
+quickstarts="docs/en/start/sequencer/start.md"
 
 export projectpath=$(pwd)
 export project_path=$(pwd)
@@ -38,19 +42,7 @@ release_resource() {
 release_resource
 
 # download etcd
-if test "$(uname)" = "Darwin"
-then
-  # Mac OS X
-  sh etc/script/download_etcd_mac.sh
-elif test "$(expr substr $(uname -s) 1 5)" = "Linux"
-then
-  # GNU/Linux
-  sh etc/script/download_etcd_linux.sh
-else
-  # Windows or other OS
-  echo "Your OS is not supported!"
-  exit 1
-fi
+sh etc/script/download_etcd.sh
 
 # test quickstarts
 for doc in ${quickstarts}; do
