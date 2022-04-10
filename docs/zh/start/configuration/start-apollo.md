@@ -26,7 +26,11 @@ git clone https://github.com/mosn/layotto.git
 #备注 请将${project_path}替换成你的项目路径
 cd ${project_path}/cmd/layotto
 go build
-#备注 如果发现构建失败无法下载,请进行如先设置
+```
+
+备注: 如果发现构建失败无法下载,请进行如下设置
+
+```bash
 go env -w GOPROXY="https://goproxy.cn,direct"
 ```
 
