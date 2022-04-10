@@ -1,5 +1,5 @@
 # Dubbo JSON RPC Example
-
+*Note: This demo needs to run under go v1.17*
 ## 快速开始
 1. 修改配置文件，加入`dubbo_json_rpc`插件
 
@@ -19,17 +19,12 @@ git clone git@github.com:apache/dubbo-go-samples.git
 cd dubbo-go-samples
 
 # start zookeeper
-cd attachment/go-server
-make -f ../../build/Makefile docker-up 
-cd -
+cd rpc/jsonrpc/go-server
+docker-compose -f docker/docker-compose.yml up -d
 
-# build dubbo server
-cd general/jsonrpc/go-server
-sh assembly/mac/dev.sh
-
-# start dubbo server
-cd target/darwin/{generate_folder}/
-sh ./bin/load.sh start
+# build && start dubbo server
+cd cmd
+go run .
 ```
 
 4. 通过GPRC接口发起调用
