@@ -22,9 +22,9 @@ Visit https://github.com/etcd-io/etcd/releases to download etcd of the correspon
 
 Once the download is finished,execute the command to start:
 
-````shell
+```shell background
 ./etcd
-````
+```
 
 The default listening address is `localhost:2379`
 ### Step 2: Run Layotto
@@ -38,7 +38,7 @@ go build
 
 Once finished, the layotto file will be generated in the directory, run it:
 
-```bash
+```shell background
 ./layotto start -c ../../configs/config_sequencer_etcd.json
 ```
 

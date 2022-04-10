@@ -44,16 +44,18 @@ docker run -itd --name redis-test -p 6380:6379 redis
 -p 6380:6379：映射容器服务的 6379 端口到宿主机的 6380 端口。外部可以直接通过宿主机ip:6380 访问到 Redis 的服务。
 
 ### 第二步：启动Subscriber程序,订阅事件
-```bash
+```shell
  cd ${projectpath}/demo/pubsub/redis/server/
  go build -o subscriber
+```
+
+```shell background
  ./subscriber
 ```
 打印出如下信息则代表启动成功：
 
-```shell
+```bash
 Start listening on port 9999 ...... 
-
 ```
 
 解释：
@@ -74,20 +76,20 @@ Start listening on port 9999 ......
 
 将项目代码下载到本地后，切换代码目录、编译：
 
-```bash
+```shell
 cd ${projectpath}/cmd/layotto
 go build
 ```
 
 完成后目录下会生成layotto文件，运行它：
 
-```bash
+```shell background
 ./layotto start -c ../../configs/config_redis.json
 ```
 
 ### 第四步：运行Publisher程序，调用Layotto发布事件
 
-```bash
+```shell
  cd ${projectpath}/demo/pubsub/redis/client/
  go build -o publisher
  ./publisher
@@ -102,7 +104,8 @@ Published a new event.Topic: topic1 ,Data: value1
 ### 第五步：检查Subscriber收到的事件消息
 
 回到subscriber的命令行，会看到接收到了新消息：
-```shell
+
+```bash
 Start listening on port 9999 ...... 
 Received a new event.Topic: topic1 , Data:value1 
 ```
