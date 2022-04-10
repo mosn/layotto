@@ -55,31 +55,18 @@ go build
 
 完成后目录下会生成layotto文件，运行它：
 
-```bash
+```shell background
 ./layotto start -c ../../configs/config_state_redis.json
 ```
 
-<!-- The command below will be run when testing this file 
-```shell
-nohup ./layotto start -c ../../configs/config_state_redis.json &
-```
--->
-
 ### 第三步：运行客户端程序，调用Layotto进行增删改查
-
-<!-- The command below will be run when testing this file 
-```shell
-cd ../../
-# if we should wait for layotto start, we can:
-# sleep 1s 
-```
--->
 
 ```shell
 # open a new terminal tab
 # change directory to ${your project path}/demo/state/redis/
- cd demo/state/redis/
- go run .
+ cd ${project_path}/demo/state/common/
+ go build -o client
+ ./client -s "redis"
 ```
 
 打印出如下信息则代表调用成功：

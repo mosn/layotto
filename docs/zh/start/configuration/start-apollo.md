@@ -32,15 +32,9 @@ go env -w GOPROXY="https://goproxy.cn,direct"
 
 完成后目录下会生成layotto文件，运行它：
 
-```bash
+```shell background
 ./layotto start -c ../../configs/config_apollo.json
 ```
-
-<!--
-```shell
-nohup ./layotto start -c ../../configs/config_apollo.json &
-```
--->
 
 >Q: 使用默认配置时，demo启动报错？
 >
@@ -51,9 +45,9 @@ nohup ./layotto start -c ../../configs/config_apollo.json &
 ### 第三步：启动客户端Demo，调用Layotto增删改查
 
 ```shell
- cd ${projectpath}/demo/configuration/apollo
- go build -o apolloClientDemo
- ./apolloClientDemo
+ cd ${projectpath}/demo/configuration/common
+ go build -o client
+ ./client -s "apollo"
 ```
 
 打印出如下信息则代表调用成功：

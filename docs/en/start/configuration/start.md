@@ -15,7 +15,7 @@ You can download etcd from `https://github.com/etcd-io/etcd/releases` （You can
 
 start it:
 
-```shell
+```shell background
 ./etcd
 ```
 
@@ -37,20 +37,20 @@ Run it:
 ## Start client APP
 
 ```shell
-cd ${project_path}/demo/configuration/etcd
-go build
-./etcd
+ cd ${projectpath}/demo/configuration/common
+ go build -o client
+ ./client -s "etcd"
 ```
 
 If the following information is printed out, it means the client app has done all the CRUD operations successfully：
 
 ```bash
-runtime client initializing for: 127.0.0.1:34904
-receive hello response: greeting
-get configuration after save, &{Key:hello1 Content:world1 Group:default Label:default Tags:map[] Metadata:map[]}
-get configuration after save, &{Key:hello2 Content:world2 Group:default Label:default Tags:map[] Metadata:map[]}
-receive watch event, &{Key:hello1 Content:world1 Group:default Label:default Tags:map[] Metadata:map[]}
-receive watch event, &{Key:hello1 Content: Group:default Label:default Tags:map[] Metadata:map[]}
+save key success
+get configuration after save, &{Key:key1 Content:value1 Group:application Label:prod Tags:map[feature:print release:1.0.0] Metadata:map[]} 
+get configuration after save, &{Key:haha Content:heihei Group:application Label:prod Tags:map[feature:haha release:1.0.0] Metadata:map[]} 
+delete keys success
+write start
+receive subscribe resp store_name:"apollo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
 ```
 
 ## Next step

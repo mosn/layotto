@@ -28,28 +28,24 @@ go build
 
 After success, a new layotto file will be generated in the directory. Let's run it:
 
-```bash
+```shell background
 ./layotto start -c ../../configs/config_apollo.json
 ```
-<!--
-```shell
-nohup ./layotto start -c ../../configs/config_apollo.json &
-```
--->
 
 >Q: The demo report an error?
 >
 >A: With the default configuration, Layotto will connect to apollo's demo server, but the configuration in that demo server may be modified by others. So the error may be because some configuration has been modified.
 >
 > In this case, you can try other demos, such as [the etcd demo](en/start/configuration/start.md)
+
 ## Step 3. Run the client demo 
 
 The client demo calls Layotto to add, delete, modify, and query configuration
 
 ```shell
- cd ${projectpath}/demo/configuration/apollo
- go build -o apolloClientDemo
- ./apolloClientDemo
+ cd ${projectpath}/demo/configuration/common
+ go build -o client
+ ./client -s "apollo"
 ```
 
 If the following information is printed, the call is successful：

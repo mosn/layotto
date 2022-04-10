@@ -1,4 +1,6 @@
-quickstarts="docs/en/start/configuration/start.md
+quickstarts="docs/en/start/configuration/start-apollo.md
+  docs/zh/start/configuration/start-apollo.md
+  docs/en/start/configuration/start.md
   docs/zh/start/configuration/start.md
   docs/en/start/state/start.md
   docs/zh/start/state/start.md
@@ -24,7 +26,8 @@ quickstarts="docs/en/start/configuration/start.md
   docs/zh/start/wasm/start.md
 "
 
-quickstarts="docs/en/start/sequencer/start.md"
+quickstarts="docs/en/start/configuration/start.md
+docs/zh/start/wasm/start.md"
 
 export projectpath=$(pwd)
 export project_path=$(pwd)
@@ -51,5 +54,12 @@ for doc in ${quickstarts}; do
   #./mdsh.sh docs/en/start/state/start.md
   ./mdsh.sh $doc
 
+  code=$?
+  if test $code -ne 0; then
+    echo "Error when running " $doc " code:" $code
+    exit $code
+  fi
+
+  echo "End testing $doc......"
   release_resource
 done

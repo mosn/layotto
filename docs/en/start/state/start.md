@@ -52,31 +52,18 @@ go build
 
 The layotto file will be generated in the directory, run it:
 
-```bash
+```shell background
 ./layotto start -c ../../configs/config_state_redis.json
 ```
 
-<!-- The command below will be run when testing this file 
-```shell
-nohup ./layotto start -c ../../configs/config_state_redis.json &
-```
--->
-
 ### step 3. Run the client program, call Layotto to add, delete, modify and query
-
-<!-- 
-```shell
-cd ../../
-# if we should wait for layotto start, we can:
-# sleep 1s 
-```
--->
 
 ```shell
 # open a new terminal tab
-# change directory to ${your project path}/demo/state/redis/
- cd demo/state/redis/
- go run .
+# change directory to ${your project path}/demo/state/common/
+ cd ${project_path}/demo/state/common/
+ go build -o client
+ ./client -s "redis"
 ```
 
 If the following information is printed, the demo succeeded:

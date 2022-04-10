@@ -38,7 +38,13 @@ func init() {
 }
 
 func main() {
+	// parse command arguments
 	flag.Parse()
+	if storeName == "" {
+		panic("storeName is empty.")
+	}
+
+	// create a layotto client
 	cli, err := client.NewClient()
 	if err != nil {
 		panic(err)
@@ -47,6 +53,7 @@ func main() {
 
 	ctx := context.Background()
 	value := []byte("hello world")
+	fmt.Printf("Start testing %v\n", storeName)
 
 	// Belows are CRUD examples.
 	// save state
@@ -58,26 +65,28 @@ func main() {
 	// SaveBulkState with options and metadata
 	testSaveBulkState(ctx, cli, storeName, key1, value, key2)
 
-	// GetBulkState
-	testGetBulkStateKey12345(ctx, cli, storeName)
+	keyTostate := testGetBulkState(ctx, cli, storeName, key1, key2)
 
 	// delete state
-	testDelete(ctx, cli, storeName, key1)
-	testDelete(ctx, cli, storeName, key2)
+	testDelete(ctx, cli, storeName, key1, keyTostate[key1].Etag)
+	testDelete(ctx, cli, storeName, key2, keyTostate[key2].Etag)
 }
 
-func testGetBulkStateKey12345(ctx context.Context, cli client.Client, store string) {
+func testGetBulkState(ctx context.Context, cli client.Client, store string, key1 string, key2 string) map[string]*client.BulkStateItem {
 	state, err := cli.GetBulkState(ctx, store, []string{key1, key2, key3, key4, key5}, nil, 3)
 	if err != nil {
 		panic(err)
 	}
+	m := make(map[string]*client.BulkStateItem)
 	for _, item := range state {
-		fmt.Printf("GetBulkState succeeded.key:%v,value:%v\n", item.Key, string(item.Value))
+		fmt.Printf("GetBulkState succeeded.key:%v ,value:%v ,etag:%v ,metadata:%v \n", item.Key, string(item.Value), item.Etag, item.Metadata)
+		m[item.Key] = item
 	}
+	return m
 }
 
-func testDelete(ctx context.Context, cli client.Client, store string, key string) {
-	if err := cli.DeleteState(ctx, store, key); err != nil {
+func testDelete(ctx context.Context, cli client.Client, store string, key string, etag string) {
+	if err := cli.DeleteStateWithETag(ctx, store, key, &client.ETag{Value: etag}, nil, nil); err != nil {
 		panic(err)
 	}
 	fmt.Printf("DeleteState succeeded.key:%v\n", key)
@@ -85,6 +94,8 @@ func testDelete(ctx context.Context, cli client.Client, store string, key string
 
 func testSaveBulkState(ctx context.Context, cli client.Client, store string, key string, value []byte, key2 string) {
 	item := &client.SetStateItem{
+		// etag is used to implement Optimistic Concurrency Control (OCC)
+		//	see https://docs.dapr.io/developing-applications/building-blocks/state-management/state-management-overview/#concurrency
 		Etag: &client.ETag{
 			Value: "2",
 		},

@@ -19,6 +19,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"google.golang.org/grpc"
 	client "mosn.io/layotto/sdk/go-sdk/client"
@@ -29,13 +30,25 @@ import (
 )
 
 const (
-	storeName  = "apollo"
 	appid      = "testApplication_yang"
 	group      = "application"
 	writeTimes = 4
 )
 
+var storeName string
+
+func init() {
+	flag.StringVar(&storeName, "s", "", "set `storeName`")
+}
+
 func main() {
+	panic("testssss")
+	// parse command arguments
+	flag.Parse()
+	if storeName == "" {
+		panic("storeName is empty.")
+	}
+
 	// create a layotto client
 	cli, err := client.NewClient()
 	if err != nil {
@@ -49,7 +62,7 @@ func main() {
 	testSet(ctx, cli)
 
 	// 2. get after set
-	// Since configuration data in apollo cache is eventual-consistent,we need to sleep a while before querying new data
+	// Since configuration data might be cached and eventual-consistent,we need to sleep a while before querying new data
 	time.Sleep(time.Second * 2)
 	testGet(ctx, cli)
 
