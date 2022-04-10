@@ -14,7 +14,6 @@ If you want to run this demo, you need to start a etcd server first.
 You can download etcd from `https://github.com/etcd-io/etcd/releases` （You can also use docker.）
 
 start it:
-
 ```shell background
 ./etcd
 ```
@@ -38,8 +37,7 @@ Run it:
 
 ```shell
  cd ${projectpath}/demo/configuration/common
- go build -o client
- ./client -s "etcd"
+ go run . -s "etcd"
 ```
 
 If the following information is printed out, it means the client app has done all the CRUD operations successfully：

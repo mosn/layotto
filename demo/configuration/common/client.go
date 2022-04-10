@@ -42,12 +42,14 @@ func init() {
 }
 
 func main() {
-	panic("testssss")
 	// parse command arguments
 	flag.Parse()
 	if storeName == "" {
 		panic("storeName is empty.")
 	}
+
+	// FIXME
+	panic("testssss")
 
 	// create a layotto client
 	cli, err := client.NewClient()

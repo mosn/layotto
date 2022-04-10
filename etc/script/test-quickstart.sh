@@ -1,3 +1,7 @@
+#!/bin/bash -e
+
+set -e
+
 quickstarts="docs/en/start/configuration/start-apollo.md
   docs/zh/start/configuration/start-apollo.md
   docs/en/start/configuration/start.md
@@ -34,8 +38,13 @@ export project_path=$(pwd)
 
 # release all resources
 release_resource() {
-  killall layotto
-  killall etcd
+  if killall layotto; then
+    echo "layotto released"
+  fi
+  if killall etcd; then
+    echo "etcd released"
+  fi
+
   # remove all the docker containers
   if [ $(docker ps -a -q | wc -l) -gt 0 ]; then
     docker rm -f $(docker ps -a -q)
