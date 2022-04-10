@@ -20,7 +20,7 @@ quickstarts="docs/en/start/state/start.md
   docs/zh/start/wasm/start.md
 "
 
-quickstarts=("docs/zh/start/sequencer/start.md")
+quickstarts="docs/zh/start/sequencer/start.md"
 
 export projectpath=$(pwd)
 export project_path=$(pwd)
