@@ -13,30 +13,31 @@ If you want to run this demo, you need to start a etcd server first.
 
 You can download etcd from `https://github.com/etcd-io/etcd/releases` （You can also use docker.）
 
-start it：
-````shell
+start it:
+
+```shell
 ./etcd
-````
+```
 
 Then you can access etcd with the address `localhost:2379`.
 
 ## Start Layotto
 Build Layotto:
 
-````shell
-cd ${your project path}/cmd/layotto
+```shell
+cd ${project_path}/cmd/layotto
 go build
-````
+```
 
 Run it:
-````shell
+```shell background
 ./layotto start -c ../../configs/runtime_config.json
-````
+```
 
 ## Start client APP
 
-```bash
-cd ${your project path}/demo/configuration/etcd
+```shell
+cd ${project_path}/demo/configuration/etcd
 go build
 ./etcd
 ```

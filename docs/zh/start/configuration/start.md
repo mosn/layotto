@@ -18,28 +18,30 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*sc_HQaMXg4YAAAAAAAAAAAAAARQnAQ)
 
 下载完成执行命令启动：
-````shell
+
+```shell
 ./etcd
-````
+```
 
 默认监听地址为 `localhost:2379`
 
 ## 启动 layotto
 
-````shell
+```shell
 cd ${projectpath}/cmd/layotto
 go build
-````
+```
 
 编译成功后执行:
-````shell
+```shell background
 ./layotto start -c ../../configs/runtime_config.json
-````
+```
+
 > 解释：[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 是 Layotto 的配置文件，它在 `config_store` 中声明了使用 etcd 作为配置中心。用户可以更改配置文件，改成使用自己想要用的其他配置中心（目前支持 etcd 和 apollo）。
 
 ## 启动本地client
 
-```bash
+```shell
 cd ${projectpath}/demo/configuration/etcd
 go build
 ./etcd
@@ -55,6 +57,7 @@ get configuration after save, &{Key:hello2 Content:world2 Group:default Label:de
 receive watch event, &{Key:hello1 Content:world1 Group:default Label:default Tags:map[] Metadata:map[]}
 receive watch event, &{Key:hello1 Content: Group:default Label:default Tags:map[] Metadata:map[]}
 ```
+
 ## 下一步
 ### 这个客户端Demo做了什么？
 示例客户端程序中使用了Layotto提供的golang版本sdk，调用Layotto 的Configuration API对配置数据进行增删改查、订阅变更。
