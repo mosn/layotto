@@ -30,9 +30,6 @@ quickstarts="docs/en/start/configuration/start-apollo.md
   docs/zh/start/wasm/start.md
 "
 
-quickstarts="docs/en/start/configuration/start.md
-docs/zh/start/wasm/start.md"
-
 export projectpath=$(pwd)
 export project_path=$(pwd)
 

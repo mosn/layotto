@@ -48,9 +48,6 @@ func main() {
 		panic("storeName is empty.")
 	}
 
-	// FIXME
-	panic("testssss")
-
 	// create a layotto client
 	cli, err := client.NewClient()
 	if err != nil {

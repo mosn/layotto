@@ -9,13 +9,14 @@
       "feat: ",
       "doc: ",
       "ci: ",
-      "chore: ",
-      "[WIP]"
+      "chore: "
     ],
     "regexp": "docs\\(v[0-9]\\): ",
     "regexpFlags": "i",
     "ignoreLabels": [
       "dont-check-PRs-with-this-label",
+      "do-not-merge",
+      "WIP",
       "meta"
     ]
   },
