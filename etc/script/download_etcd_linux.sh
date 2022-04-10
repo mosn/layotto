@@ -15,5 +15,5 @@ rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
 mv /tmp/etcd-download-test/etcd etcd
 mv /tmp/etcd-download-test/etcdctl etcdctl
 
-etcd --version
-etcdctl version
+./etcd --version
+./etcdctl version

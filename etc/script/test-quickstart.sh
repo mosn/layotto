@@ -37,7 +37,7 @@ release_resource() {
 
 release_resource
 
-# download and start etcd
+# download etcd
 if [ "$(uname)" == "Darwin" ]; then
   # Mac OS X
   sh etc/script/download_etcd_mac.sh
