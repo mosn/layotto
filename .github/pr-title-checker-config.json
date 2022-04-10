@@ -9,7 +9,8 @@
       "feat: ",
       "doc: ",
       "ci: ",
-      "chore: "
+      "chore: ",
+      "[WIP]"
     ],
     "regexp": "docs\\(v[0-9]\\): ",
     "regexpFlags": "i",
