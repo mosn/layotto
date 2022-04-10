@@ -23,16 +23,9 @@ go build
 
 After completion, the layotto file will be generated in the directory, run it:
 
-```bash
+```shell background
 ./layotto start -c ../../configs/config_apollo_health.json
 ```
-
-<!--
-```shell
-nohup ./layotto start -c ../../configs/config_apollo_health.json &
-sleep 1s
-```
--->
 
 >Q: The demo report an error?
 >

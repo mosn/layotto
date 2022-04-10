@@ -1,5 +1,5 @@
 # check if you already have an etcd
-if [ test -e etcd ]; then
+if test -e etcd; then
   exit 0
 elif [ $(which etcd | wc -l) -gt 0 ]; then
   cp $(which etcd) ./etcd

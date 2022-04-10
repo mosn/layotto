@@ -29,12 +29,14 @@ import (
 )
 
 const (
-	storeName = "apollo"
-	appid     = "testApplication_yang"
-	group     = "application"
+	storeName  = "apollo"
+	appid      = "testApplication_yang"
+	group      = "application"
+	writeTimes = 4
 )
 
 func main() {
+	// create a layotto client
 	cli, err := client.NewClient()
 	if err != nil {
 		panic(err)
@@ -45,6 +47,7 @@ func main() {
 	// Belows are CRUD examples
 	// 1. set
 	testSet(ctx, cli)
+
 	// 2. get after set
 	// Since configuration data in apollo cache is eventual-consistent,we need to sleep a while before querying new data
 	time.Sleep(time.Second * 2)
@@ -62,7 +65,7 @@ func main() {
 	// with sdk
 	//testSubscribeWithSDK(ctx, cli)
 
-	// besides sdk,u can also call our server with grpc
+	// besides sdk,u can also call layotto with grpc
 	testSubscribeWithGrpc(ctx)
 }
 
@@ -116,7 +119,7 @@ func testSubscribeWithGrpc(ctx context.Context) {
 
 	// get client for subscribe
 	var wg sync.WaitGroup
-	wg.Add(1)
+	wg.Add(2)
 	cli, err := c.SubscribeConfiguration(ctx)
 	// client receive changes
 	go func() {
@@ -127,8 +130,12 @@ func testSubscribeWithGrpc(ctx context.Context) {
 				continue
 			}
 			fmt.Println("receive subscribe resp", data)
-
+			// if it's the last item, break and end this demo
+			if data.Items[0].Content == "heihei4" {
+				break
+			}
 		}
+		wg.Done()
 	}()
 	// client send subscribe request
 	go func() {
@@ -138,15 +145,14 @@ func testSubscribeWithGrpc(ctx context.Context) {
 
 	// loop write in another gorountine
 	go func() {
-		idx := 0
-		for {
+		for idx := 1; idx <= writeTimes; idx++ {
 			time.Sleep(1 * time.Second)
-			idx++
 			newItmes := make([]*runtimev1pb.ConfigurationItem, 0, 10)
 			newItmes = append(newItmes, &runtimev1pb.ConfigurationItem{Group: "application", Label: "prod", Key: "heihei", Content: "heihei" + strconv.Itoa(idx)})
 			fmt.Println("write start")
 			c.SaveConfiguration(ctx, &runtimev1pb.SaveConfigurationRequest{StoreName: storeName, AppId: appid, Items: newItmes})
 		}
+		wg.Done()
 	}()
 	wg.Wait()
 }
