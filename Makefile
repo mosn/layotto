@@ -54,7 +54,7 @@ wasm-integrate-ci:
 
 runtime-integrate-ci:
 	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/integrate
-	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -v $(shell pwd)/test/runtime/integrate_test.sh:/go/src/${PROJECT_NAME}/integrate_test.sh -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} sh ./integrate_test.sh
+	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -v $(shell pwd)/sdk/go-sdk/test/runtime/integrate_test.sh:/go/src/${PROJECT_NAME}/integrate_test.sh -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} sh ./integrate_test.sh
 
 coverage:
 	sh ${SCRIPT_DIR}/report.sh
