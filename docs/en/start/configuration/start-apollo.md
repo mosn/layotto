@@ -25,7 +25,7 @@ Switch the code directory and compile:
 cd ${project_path}/cmd/layotto
 ```
 
-```shell @if.not.exit layotto
+```shell @if.not.exist layotto
 go build
 ```
 
@@ -47,7 +47,12 @@ The client demo calls Layotto to add, delete, modify, and query configuration
 
 ```shell
  cd ${project_path}/demo/configuration/common
+```
+```shell @if.not.exist client
  go build -o client
+```
+
+```shell
  ./client -s "apollo"
 ```
 

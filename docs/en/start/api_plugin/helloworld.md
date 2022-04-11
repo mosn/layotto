@@ -11,7 +11,7 @@ Build Layotto :
 cd ${project_path}/cmd/layotto_multiple_api
 ```
 
-```shell @if.not.exit layotto
+```shell @if.not.exist layotto
 # build it
 go build
 ```

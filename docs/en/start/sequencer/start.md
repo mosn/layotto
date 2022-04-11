@@ -35,7 +35,7 @@ After downloading the project code to the local, switch the code directory and c
 cd ${project_path}/cmd/layotto
 ```
 
-```shell @if.not.exit layotto
+```shell @if.not.exist layotto
 go build
 ```
 

@@ -20,7 +20,7 @@ After downloading the project source code, change directory and compile:
 cd ${project_path}/cmd/layotto
 ```
 
-```shell @if.not.exit layotto
+```shell @if.not.exist layotto
 go build
 ```
 

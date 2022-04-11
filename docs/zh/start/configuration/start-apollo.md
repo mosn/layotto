@@ -50,7 +50,13 @@ go env -w GOPROXY="https://goproxy.cn,direct"
 
 ```shell
  cd ${project_path}/demo/configuration/common
+```
+
+```shell @if.not.exist client
  go build -o client
+```
+
+```shell
  ./client -s "apollo"
 ```
 

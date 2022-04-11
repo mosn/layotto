@@ -45,7 +45,7 @@ After downloading the project code to the local, enter the code directory and co
 cd ${project_path}/cmd/layotto
 ```
 
-```shell @if.not.exit layotto
+```shell @if.not.exist layotto
 go build
 ```
 

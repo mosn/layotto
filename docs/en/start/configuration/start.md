@@ -27,7 +27,7 @@ Build Layotto:
 cd ${project_path}/cmd/layotto
 ```
 
-```shell @if.not.exit layotto
+```shell @if.not.exist layotto
 go build
 ```
 
@@ -40,7 +40,14 @@ Run it:
 
 ```shell
  cd ${project_path}/demo/configuration/common
- go run . -s "etcd"
+```
+
+```shell @if.not.exist client
+ go build -o client
+```
+
+```shell
+ ./client -s "etcd"
 ```
 
 If the following information is printed out, it means the client app has done all the CRUD operations successfully：
