@@ -32,17 +32,22 @@ import (
 
 	"encoding/base64"
 	"github.com/dapr/components-contrib/contenttype"
+	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	"mosn.io/layotto/pkg/messages"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
 
 func (a *api) PublishEvent(ctx context.Context, in *runtimev1pb.PublishEventRequest) (*emptypb.Empty, error) {
-	result, err := a.doPublishEvent(ctx, in.PubsubName, in.Topic, in.Data, in.DataContentType, in.Metadata)
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
+	p := &dapr_v1pb.PublishEventRequest{
+		Topic:           in.GetTopic(),
+		PubsubName:      in.GetPubsubName(),
+		Data:            in.GetData(),
+		DataContentType: in.GetDataContentType(),
+		Metadata:        in.GetMetadata(),
 	}
-	return result, err
+
+	return a.daprAPI.PublishEvent(ctx, p)
 }
 
 // doPublishEvent is a protocal irrelevant function to do event publishing.
