@@ -88,6 +88,7 @@ This http request will access the wasm module in Layotto. The wasm module will c
 
 ```shell
 docker rm -f redis-test
+rm ./layotto
 ```
 
 ### Note

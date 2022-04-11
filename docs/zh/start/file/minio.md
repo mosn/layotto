@@ -39,12 +39,17 @@ layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/
 
 默认配置会连接`play.min.io`, 如果您自己部署了 Minio, 可以按需修改其中的配置。
 
-配置好后，构建 Layotto:
+配置好后，切换目录:
 
 ```shell
 #备注 请将${project_path}替换成你的项目路径
 cd ${project_path}/cmd/layotto
-go build
+```
+
+构建:
+
+```shell @if.not.exist layotto
+go build -o layotto
 ```
 
 备注: 如果发现构建失败无法下载,请进行如下设置

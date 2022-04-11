@@ -42,12 +42,17 @@ Parameter Description:
 
 ### step 2. Run Layotto
 
-After downloading the project code to the local, enter the code directory and compile:
+After downloading the project code to the local, change the code directory:
 
 ```shell
 # change directory to ${your project path}/cmd/layotto
 cd cmd/layotto
-go build
+```
+
+and then build layotto:
+
+```shell @if.not.exist layotto
+go build -o layotto
 ```
 
 The layotto file will be generated in the directory, run it:

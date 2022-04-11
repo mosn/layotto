@@ -83,10 +83,11 @@ There are 100 inventories for book1.
 
 该http请求会访问 Layotto 中的wasm模块。该wasm模块会调用redis进行逻辑处理
 
-#### step 4. 销毁 redis 容器，释放资源
+#### step 4. 销毁容器，释放资源
 
 ```shell
 docker rm -f redis-test
+rm ./layotto
 ```
 
 ### 说明

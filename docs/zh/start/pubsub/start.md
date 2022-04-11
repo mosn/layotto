@@ -74,11 +74,16 @@ Start listening on port 9999 ......
 
 ### 第三步：运行Layotto
 
-将项目代码下载到本地后，切换代码目录、编译：
+将项目代码下载到本地后，切换代码目录：
 
 ```shell
 cd ${project_path}/cmd/layotto
-go build
+```
+
+构建:
+
+```shell @if.not.exist layotto
+go build -o layotto
 ```
 
 完成后目录下会生成layotto文件，运行它：

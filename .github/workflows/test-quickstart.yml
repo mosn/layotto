@@ -48,7 +48,7 @@ jobs:
               go get -v -t -d ./...
           fi
 
-      - name: Download mdsh
+      - name: Download mdx
         run: |
             curl -o mdx.sh https://raw.githubusercontent.com/seeflood/mdx/main/mdx.sh
             chmod +x mdx.sh

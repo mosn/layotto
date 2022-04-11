@@ -26,6 +26,10 @@ You can start a layotto server as follows:
 - Build
 ```shell
 cd cmd/layotto_multiple_api/
+```
+
+```shell @if.not.exist layotto
+# build it
 go build -o layotto
 ```
 

@@ -26,6 +26,10 @@
 
 ```shell
 cd cmd/layotto_multiple_api/
+```
+
+```shell @if.not.exist layotto
+# build it
 go build -o layotto
 ```
 

@@ -29,7 +29,12 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 
 ```shell
 cd ${project_path}/cmd/layotto
-go build
+```
+
+构建:
+
+```shell @if.not.exist layotto
+go build -o layotto
 ```
 
 编译成功后执行:

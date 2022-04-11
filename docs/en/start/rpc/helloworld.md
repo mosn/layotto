@@ -4,24 +4,35 @@
 ![](https://user-images.githubusercontent.com/26001097/148895424-b286feb5-a122-4fe5-9012-0c235f16b9c7.png)
 
 ### step 1. compile and start layotto
-build:
+
+After downloading the project source code, change directory:
+
 ```shell
-go build -o layotto cmd/layotto/main.go
+cd ${project_path}/cmd/layotto
 ```
 
-run:
+and compile:
+
+```shell @if.not.exist layotto
+go build
+```
+
+Once finished, the layotto binary file will be generated in the directory.
+
+Let's run it:
+
 ```shell @background
-./layotto -c demo/rpc/http/example.json
+./layotto start -c ../../demo/rpc/http/example.json
 ```
 
 ### step 2. start echoserver
 ```shell @background
-go run demo/rpc/http/echoserver/echoserver.go
+go run ${project_path}/demo/rpc/http/echoserver/echoserver.go
 ```
 
 ### step 3. call runtime InvokerService api.
 ```shell
-go run demo/rpc/http/echoclient/echoclient.go -d 'hello layotto'
+go run ${project_path}/demo/rpc/http/echoclient/echoclient.go -d 'hello layotto'
 ```
 
 ![rpchello.png](../../../img/rpc/rpchello.png)

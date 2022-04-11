@@ -11,14 +11,19 @@
 
 ### 运行Layotto server 端
 
-将项目代码下载到本地后，切换代码目录、编译：
+将项目代码下载到本地后，切换代码目录：
 
 ```shell
 cd ${project_path}/cmd/layotto
-go build
 ```
 
-完成后目录下会生成layotto文件，运行它：
+构建:
+
+```shell @if.not.exist layotto
+go build -o layotto
+```
+
+完成后目录下会生成 layotto 文件，运行它：
 
 ```shell @background
 ./layotto start -c ../../configs/config_apollo_health.json

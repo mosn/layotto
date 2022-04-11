@@ -35,6 +35,10 @@ docker-compose -f diagnostics/skywalking/skywalking-docker-compose.yaml up -d
 
 ```shell
 cd cmd/layotto_multiple_api/
+```
+
+```shell @if.not.exist layotto
+# build it
 go build -o layotto
 ```
 

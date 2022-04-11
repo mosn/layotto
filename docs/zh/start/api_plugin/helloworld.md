@@ -9,6 +9,9 @@ Build Layotto :
 ```shell
 # change directory 
 cd ${project_path}/cmd/layotto_multiple_api
+```
+
+```shell @if.not.exist layotto
 # build it
 go build -o layotto
 ```

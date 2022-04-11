@@ -41,6 +41,9 @@ release_resource() {
   if killall etcd; then
     echo "etcd released"
   fi
+  if killall go; then
+    echo "golang processes released"
+  fi
 
   # remove all the docker containers
   if [ $(docker ps -a -q | wc -l) -gt 0 ]; then
