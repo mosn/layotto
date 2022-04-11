@@ -2,9 +2,12 @@
 
 set -e
 
-quickstarts="docs/en/start/configuration/start-apollo.md
-  docs/zh/start/configuration/start-apollo.md
-  docs/en/start/configuration/start.md
+# won't test:
+# docs/en/start/configuration/start-apollo.md
+# docs/zh/start/configuration/start-apollo.md
+# because the github workflow can not connect to the apollo server due to the great firewall
+
+quickstarts="docs/en/start/configuration/start.md
   docs/zh/start/configuration/start.md
   docs/en/start/state/start.md
   docs/zh/start/state/start.md
