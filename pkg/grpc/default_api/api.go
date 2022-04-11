@@ -23,18 +23,16 @@ import (
 	"sync"
 
 	"github.com/dapr/components-contrib/bindings"
-	grpc_api "mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/pkg/grpc/dapr"
-	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
-	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
-	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
-
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/layotto/components/file"
+	grpc_api "mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/grpc/dapr"
+	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
+	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
@@ -136,10 +134,10 @@ func (a *api) Init(conn *grpc.ClientConn) error {
 	return a.startSubscribing()
 }
 
-func (a *api) Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) (mgrpc.RegisteredServer, error) {
+func (a *api) Register(rawGrpServer *grpc.Server) error {
 	LayottoAPISingleton = a
-	runtimev1pb.RegisterRuntimeServer(s, a)
-	return registeredServer, nil
+	runtimev1pb.RegisterRuntimeServer(rawGrpServer, a)
+	return nil
 }
 
 func NewGrpcAPI(ac *grpc_api.ApplicationContext) grpc_api.GrpcAPI {
