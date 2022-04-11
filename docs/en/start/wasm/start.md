@@ -59,13 +59,13 @@ The result is:
 #### step 2. start Layotto server
 Build:
 
-```shell
-go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
+```shell @if.not.exist layotto_wasmer
+go build -tags wasmer -o ./layotto_wasmer ./cmd/layotto/main.go
 ```
 
 Run it:
 ```shell @background
-./layotto start -c ./demo/faas/config.json
+./layotto_wasmer start -c ./demo/faas/config.json
 ```
 
 **Note: You need to modify the redis address as needed, the default address is: localhost:6379**
@@ -88,7 +88,6 @@ This http request will access the wasm module in Layotto. The wasm module will c
 
 ```shell
 docker rm -f redis-test
-rm ./layotto
 ```
 
 ### Note

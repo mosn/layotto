@@ -57,14 +57,13 @@ docker exec -it redis-test redis-cli get book1
 
 构建:
 
-```shell
-go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
+```shell @if.not.exist layotto_wasmer
+go build -tags wasmer -o ./layotto_wasmer ./cmd/layotto/main.go
 ```
 
 运行:
-
 ```shell @background
-./layotto start -c ./demo/faas/config.json
+./layotto_wasmer start -c ./demo/faas/config.json
 ```
 
 **注：需要把`./demo/faas/config.json`中的 redis 地址修改为实际地址，默认地址为：localhost:6379。**
@@ -87,7 +86,6 @@ There are 100 inventories for book1.
 
 ```shell
 docker rm -f redis-test
-rm ./layotto
 ```
 
 ### 说明
