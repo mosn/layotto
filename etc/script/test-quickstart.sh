@@ -60,8 +60,8 @@ sh etc/script/download_etcd.sh
 for doc in ${quickstarts}; do
   echo "Start testing $doc......"
 
-  #./mdx.sh docs/en/start/state/start.md
-  ./mdx.sh $doc
+  #./mdx docs/en/start/state/start.md
+  ./mdx $doc
 
   echo "End testing $doc......"
   release_resource
