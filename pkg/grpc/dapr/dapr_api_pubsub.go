@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package default_api
+package dapr
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
+	"github.com/dapr/components-contrib/contenttype"
 	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
 	contrib_pubsub "github.com/dapr/components-contrib/pubsub"
@@ -30,100 +31,91 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
-
-	"encoding/base64"
-	"github.com/dapr/components-contrib/contenttype"
 	"mosn.io/layotto/pkg/messages"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
 )
 
-// Publishes events to the specific topic.
-func (a *api) PublishEvent(ctx context.Context, in *runtimev1pb.PublishEventRequest) (*emptypb.Empty, error) {
-	p := &dapr_v1pb.PublishEventRequest{
-		Topic:           in.GetTopic(),
-		PubsubName:      in.GetPubsubName(),
-		Data:            in.GetData(),
-		DataContentType: in.GetDataContentType(),
-		Metadata:        in.GetMetadata(),
-	}
+const (
+	Metadata_key_pubsubName = "pubsubName"
+)
 
-	result, err := a.daprAPI.PublishEvent(ctx, p)
-
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
-	}
-
-	return result, err
+type Details struct {
+	metadata map[string]string
 }
 
-// doPublishEvent is a protocal irrelevant function to do event publishing.
-// It's easy to add APIs for other protocals.Just move this func to a separate layer if you need.
-func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic string, data []byte, contentType string, metadata map[string]string) (*emptypb.Empty, error) {
+type TopicSubscriptions struct {
+	topic2Details map[string]Details
+}
+
+func (d *daprGrpcAPI) PublishEvent(ctx context.Context, in *dapr_v1pb.PublishEventRequest) (*emptypb.Empty, error) {
 	// 1. validate
-	if pubsubName == "" {
+	if in.PubsubName == "" {
 		err := status.Error(codes.InvalidArgument, messages.ErrPubsubEmpty)
 		return &emptypb.Empty{}, err
 	}
-	if topic == "" {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrTopicEmpty, pubsubName)
-		return &emptypb.Empty{}, err
-	}
-	// 2. get component
-	component, ok := a.pubSubs[pubsubName]
-	if !ok {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrPubsubNotFound, pubsubName)
+	if in.Topic == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrTopicEmpty, in.PubsubName)
 		return &emptypb.Empty{}, err
 	}
 
-	// 3. new cloudevent request
-	if data == nil {
-		data = []byte{}
+	component, ok := d.pubSubs[in.PubsubName]
+
+	if ok == false {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrPubsubNotFound, in.PubsubName)
+		return &emptypb.Empty{}, err
+	}
+
+	// 2. new cloudevent request
+	if in.Data == nil {
+		in.Data = []byte{}
 	}
 	var envelope map[string]interface{}
 	var err error = nil
-	if contrib_contenttype.IsCloudEventContentType(contentType) {
-		envelope, err = contrib_pubsub.FromCloudEvent(data, topic, pubsubName, "")
+	if contrib_contenttype.IsCloudEventContentType(in.DataContentType) {
+		envelope, err = contrib_pubsub.FromCloudEvent(in.Data, in.Topic, in.PubsubName, "")
 		if err != nil {
 			err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
 			return &emptypb.Empty{}, err
 		}
 	} else {
-		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", topic, pubsubName,
-			contentType, data, "")
+		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", in.Topic, in.PubsubName,
+			in.DataContentType, in.Data, "")
 	}
 	features := component.Features()
-	pubsub.ApplyMetadata(envelope, features, metadata)
+	pubsub.ApplyMetadata(envelope, features, in.Metadata)
 
 	b, err := jsoniter.ConfigFastest.Marshal(envelope)
 	if err != nil {
-		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventsSer, topic, pubsubName, err.Error())
+		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventsSer, in.Topic, in.PubsubName, err.Error())
 		return &emptypb.Empty{}, err
 	}
-	// 4. publish
-	req := pubsub.PublishRequest{
-		PubsubName: pubsubName,
-		Topic:      topic,
+
+	// 3. convert requests
+	req := &pubsub.PublishRequest{
 		Data:       b,
-		Metadata:   metadata,
+		Topic:      in.Topic,
+		PubsubName: in.PubsubName,
+		Metadata:   in.Metadata,
 	}
 
-	// TODO limit topic scope
-	err = component.Publish(&req)
+	// 4. send request
+	err = component.Publish(req)
+
+	// 5. check request
 	if err != nil {
-		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, topic, pubsubName, err.Error())
+		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, in.Topic, in.PubsubName, err.Error())
 		return &emptypb.Empty{}, nerr
 	}
 	return &emptypb.Empty{}, nil
 }
 
-func (a *api) startSubscribing() error {
+func (d *daprGrpcAPI) startSubscribing() error {
 	// 1. check if there is no need to do it
-	if len(a.pubSubs) == 0 {
+	if len(d.pubSubs) == 0 {
 		return nil
 	}
 	// 2. list topics
-	topicRoutes, err := a.getInterestedTopics()
+	topicRoutes, err := d.getInterestedTopics()
 	if err != nil {
 		return err
 	}
@@ -132,15 +124,58 @@ func (a *api) startSubscribing() error {
 		return nil
 	}
 	// 3. loop subscribe
-	for name, pubsub := range a.pubSubs {
-		if err := a.beginPubSub(name, pubsub, topicRoutes); err != nil {
+	for name, pubsub := range d.pubSubs {
+		if err := d.beginPubSub(name, pubsub, topicRoutes); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (a *api) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[string]TopicSubscriptions) error {
+func (d *daprGrpcAPI) getInterestedTopics() (map[string]TopicSubscriptions, error) {
+	// 1. check
+	if d.topicPerComponent != nil {
+		return d.topicPerComponent, nil
+	}
+	if d.AppCallbackConn == nil {
+		return make(map[string]TopicSubscriptions), nil
+	}
+	comp2Topic := make(map[string]TopicSubscriptions)
+	var subscriptions []*dapr_v1pb.TopicSubscription
+
+	// 2. handle app subscriptions
+	client := dapr_v1pb.NewAppCallbackClient(d.AppCallbackConn)
+	subscriptions = listTopicSubscriptions(client, log.DefaultLogger)
+
+	// 3. prepare result
+	for _, s := range subscriptions {
+		if s == nil {
+			continue
+		}
+		if _, ok := comp2Topic[s.PubsubName]; !ok {
+			comp2Topic[s.PubsubName] = TopicSubscriptions{make(map[string]Details)}
+		}
+		comp2Topic[s.PubsubName].topic2Details[s.Topic] = Details{metadata: s.Metadata}
+	}
+
+	// 4. log
+	if len(comp2Topic) > 0 {
+		for pubsubName, v := range comp2Topic {
+			topics := []string{}
+			for topic := range v.topic2Details {
+				topics = append(topics, topic)
+			}
+			log.DefaultLogger.Infof("[runtime][getInterestedTopics]app is subscribed to the following topics: %v through pubsub=%s", topics, pubsubName)
+		}
+	}
+
+	// 5. cache the result
+	d.topicPerComponent = comp2Topic
+
+	return comp2Topic, nil
+}
+
+func (d *daprGrpcAPI) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[string]TopicSubscriptions) error {
 	// 1. call app to find topic topic2Details.
 	v, ok := topicRoutes[pubsubName]
 	if !ok {
@@ -159,83 +194,32 @@ func (a *api) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[s
 				msg.Metadata = make(map[string]string, 1)
 			}
 			msg.Metadata[Metadata_key_pubsubName] = pubsubName
-			return a.publishMessageGRPC(ctx, msg)
+			return d.publishMessageGRPC(ctx, msg)
 		}); err != nil {
 			log.DefaultLogger.Warnf("[runtime][beginPubSub]failed to subscribe to topic %s: %s", topic, err)
 			return err
 		}
 	}
-
 	return nil
 }
 
-type Details struct {
-	metadata map[string]string
-}
-
-type TopicSubscriptions struct {
-	topic2Details map[string]Details
-}
-
-func (a *api) getInterestedTopics() (map[string]TopicSubscriptions, error) {
-	// 1. check
-	if a.topicPerComponent != nil {
-		return a.topicPerComponent, nil
-	}
-	if a.AppCallbackConn == nil {
-		return make(map[string]TopicSubscriptions), nil
-	}
-	comp2Topic := make(map[string]TopicSubscriptions)
-	var subscriptions []*runtimev1pb.TopicSubscription
-
-	// 2. handle app subscriptions
-	client := runtimev1pb.NewAppCallbackClient(a.AppCallbackConn)
-	subscriptions = listTopicSubscriptions(client, log.DefaultLogger)
-	// TODO handle declarative subscriptions
-
-	// 3. prepare result
-	for _, s := range subscriptions {
-		if s == nil {
-			continue
-		}
-		if _, ok := comp2Topic[s.PubsubName]; !ok {
-			comp2Topic[s.PubsubName] = TopicSubscriptions{topic2Details: make(map[string]Details)}
-		}
-		comp2Topic[s.PubsubName].topic2Details[s.Topic] = Details{metadata: s.Metadata}
-	}
-
-	// 4. log
-	if len(comp2Topic) > 0 {
-		for pubsubName, v := range comp2Topic {
-			topics := []string{}
-			for topic := range v.topic2Details {
-				topics = append(topics, topic)
-			}
-			log.DefaultLogger.Infof("[runtime][getInterestedTopics]app is subscribed to the following topics: %v through pubsub=%s", topics, pubsubName)
-		}
-	}
-	// 5. cache the result
-	a.topicPerComponent = comp2Topic
-	return comp2Topic, nil
-}
-
-func (a *api) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMessage) error {
-	// 1. Unmarshal to cloudEvent model
+func (d *daprGrpcAPI) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMessage) error {
+	// 1. unmarshal to cloudEvent model
 	var cloudEvent map[string]interface{}
-	err := a.json.Unmarshal(msg.Data, &cloudEvent)
+	err := d.json.Unmarshal(msg.Data, &cloudEvent)
 	if err != nil {
 		log.DefaultLogger.Debugf("[runtime]error deserializing cloud events proto: %s", err)
 		return err
 	}
 
-	// 2. Drop msg if the current cloud event has expired
+	// 2. drop msg if the current cloud event has expired
 	if pubsub.HasExpired(cloudEvent) {
 		log.DefaultLogger.Warnf("[runtime]dropping expired pub/sub event %v as of %v", cloudEvent[pubsub.IDField].(string), cloudEvent[pubsub.ExpirationField].(string))
 		return nil
 	}
 
-	// 3. Convert to proto domain struct
-	envelope := &runtimev1pb.TopicEventRequest{
+	// 3. convert request
+	envelope := &dapr_v1pb.TopicEventRequest{
 		Id:              cloudEvent[pubsub.IDField].(string),
 		Source:          cloudEvent[pubsub.SourceField].(string),
 		DataContentType: cloudEvent[pubsub.DataContentTypeField].(string),
@@ -260,21 +244,19 @@ func (a *api) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMessage) er
 		if contenttype.IsStringContentType(envelope.DataContentType) {
 			envelope.Data = []byte(data.(string))
 		} else if contenttype.IsJSONContentType(envelope.DataContentType) {
-			envelope.Data, _ = a.json.Marshal(data)
+			envelope.Data, _ = d.json.Marshal(data)
 		}
 	}
-	// TODO tracing
 
-	// 4. Call appcallback
-	clientV1 := runtimev1pb.NewAppCallbackClient(a.AppCallbackConn)
+	// 4. call appcallback
+	clientV1 := dapr_v1pb.NewAppCallbackClient(d.AppCallbackConn)
 	res, err := clientV1.OnTopicEvent(ctx, envelope)
 
-	// 5. Check result
+	// 5. check result
 	return retryStrategy(err, res, cloudEvent)
 }
 
-// retryStrategy returns error when the message should be redelivered
-func retryStrategy(err error, res *runtimev1pb.TopicEventResponse, cloudEvent map[string]interface{}) error {
+func retryStrategy(err error, res *dapr_v1pb.TopicEventResponse, cloudEvent map[string]interface{}) error {
 	if err != nil {
 		errStatus, hasErrStatus := status.FromError(err)
 		if hasErrStatus && (errStatus.Code() == codes.Unimplemented) {
@@ -290,13 +272,11 @@ func retryStrategy(err error, res *runtimev1pb.TopicEventResponse, cloudEvent ma
 	}
 
 	switch res.GetStatus() {
-	case runtimev1pb.TopicEventResponse_SUCCESS:
-		// on uninitialized status, this is the case it defaults to as an uninitialized status defaults to 0 which is
-		// success from protobuf definition
+	case dapr_v1pb.TopicEventResponse_SUCCESS:
 		return nil
-	case runtimev1pb.TopicEventResponse_RETRY:
+	case dapr_v1pb.TopicEventResponse_RETRY:
 		return errors.New(fmt.Sprintf("RETRY status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string)))
-	case runtimev1pb.TopicEventResponse_DROP:
+	case dapr_v1pb.TopicEventResponse_DROP:
 		log.DefaultLogger.Warnf("[runtime]DROP status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
 		return nil
 	}
@@ -304,14 +284,15 @@ func retryStrategy(err error, res *runtimev1pb.TopicEventResponse, cloudEvent ma
 	return errors.New(fmt.Sprintf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus()))
 }
 
-func listTopicSubscriptions(client runtimev1pb.AppCallbackClient, log log.ErrorLogger) []*runtimev1pb.TopicSubscription {
+func listTopicSubscriptions(client dapr_v1pb.AppCallbackClient, log log.ErrorLogger) []*dapr_v1pb.TopicSubscription {
 	resp, err := client.ListTopicSubscriptions(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		log.Errorf("[runtime][listTopicSubscriptions]error after callback: %s", err)
-		return make([]*runtimev1pb.TopicSubscription, 0)
+		return make([]*dapr_v1pb.TopicSubscription, 0)
 	}
+
 	if resp != nil && len(resp.Subscriptions) > 0 {
 		return resp.Subscriptions
 	}
-	return make([]*runtimev1pb.TopicSubscription, 0)
+	return make([]*dapr_v1pb.TopicSubscription, 0)
 }
