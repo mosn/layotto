@@ -25,6 +25,7 @@ docker-compose -f docker/docker-compose.yml up -d
 
 # build && start dubbo server
 cd cmd
+export DUBBO_GO_CONFIG_PATH="../conf/dubbogo.yml"
 go run .
 ```
 
