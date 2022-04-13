@@ -1,69 +1,75 @@
-This document explain each component of Layotto's github workflow.
+本文档解释了Layotto的github工作流的每个组件。
 
-Note: configuration files of Layotto github workflow are [here](https://github.com/mosn/layotto/tree/main/.github/workflows)
+注意：Layotto的github工作流的配置文档在[这里](https://github.com/mosn/layotto/tree/main/.github/workflows)
 
-## 1. Cron jobs
+## 1. 定时任务
 ### stale bot 
 ![img_1.png](../../img/development/workflow/img_1.png)
-  
-We use [Close Stale Issues](https://github.com/marketplace/actions/close-stale-issues) .
 
-An issue or PR will be automatically marked as stale if it has not had recent activity in the last 30 days. It will be closed in the next 7 days unless it is tagged (pinned, security, good first issue or help wanted) or other activity occurs.  
+我们将会[关闭超时的Issues](https://github.com/marketplace/actions/close-stale-issues)
 
-**If a community task issue was closed by this bot,then the task can be assigned to others.**  
+如果一个issue或PR在过去30天内没有最近的活动，它将自动标记为陈旧的。它将关闭在未来7天，除非它是被标记的(pinned，security，good first issue或help wanted)或有其他活动发生。
 
-Merged in https://github.com/mosn/layotto/pull/246
+**如果这个社区任务issue被这个自动程序关闭，那么这个任务将会被分配给其他人。**
 
-## 2. CI/CD
+合并于 https://github.com/mosn/layotto/pull/246
+
+## 2. 持续集成/持续交付
 ![img.png](../../img/development/workflow/img.png)
 ### 2.1. Chore
-#### <1> cla bot
+#### <1> cla bot	
 
-check if the contributor has signed cla
+检查贡献者是否签署了贡献许可协议
 
-#### TODO: Automatically generate new API reference when proto files are modified
+#### TODO: 在修改proto文件时自动生成新的API引用
 
-Currently [we have to do it manually](https://mosn.io/layotto/#/en/api_reference/how_to_generate_api_doc) .
+目前[我们必须手动完成](https://mosn.io/layotto/#/en/api_reference/how_to_generate_api_doc)。
 
-The generated documents are [here](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/runtime_v1.md) and [here](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
+生成的文件在[这里](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/runtime_v1.md)或者[这里](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
 
-### 2.2. Test
-#### <5> Run unit tests
-#### <5> Check if you have done `go fmt`  
-#### <2><3> Make sure ut coverage ratio won't decrease
+### 2.2. Test	
+#### <5> 执行单元测试
+#### <5> 检查你是否完成了`go fmt`
+#### <2><3> 确保单元测试的覆盖率不会下降
 
-See https://docs.codecov.com/docs/commit-status#branches
+具体请查看 https://docs.codecov.com/docs/commit-status#branches
 
-#### TODO: Integration tests
-  
+#### TODO: 综合测试
 
-### 2.3. Lint
-#### <4> License checker
-We use https://github.com/marketplace/actions/license-eye
 
-Merged in https://github.com/mosn/layotto/pull/247
+### 2.3. Lint	
+#### <4> License checker		
+我们使用https://github.com/marketplace/actions/license-eye
 
-##### How to add license headers for all files automatically?
+合并于https://github.com/mosn/layotto/pull/247
+
+##### 如何为所有文件自动添加许可证头文件
+
 In Layotto directory:
+
+在Layotto目录下执行:
 
 ```shell
 docker run -it --rm -v $(pwd):/github/workspace apache/skywalking-eyes header fix
 ```
 
-It will add license headers for code files recursively.
+它将递归地为代码文件添加许可头。
 
-##### How to configurate the License checker to ignore files of specified types?
-The ignore list is in `.licenserc.yaml`. You can add new types into it.
+##### 如何配置许可证检查器忽略指定类型的文件
 
-##### For more details of this tool
-See https://github.com/marketplace/actions/license-eye#docker-image for details
+忽略检查列表在 `.licenserc.yaml`中，你可以添加新的类型进去。
 
-#### PR title lint
-In order to  standardize PR title, we add this check action. You can learn more in https://github.com/thehanimo/pr-title-checker.
+##### 有关此工具的更多详细信息
+请查看 https://github.com/marketplace/actions/license-eye#docker-image 来获取详细信息。
 
-##### config the pr title check
-If the title is in either `prefixes` or `regexp`, the check will pass. Otherwise , a label `title needs formatting` will be added to that pull request.
-`regexpFlags` mean regular expression flags, such as : `i`(Case-insensitive search) `g`(Global search) .
+#### PR title lint	
+为了规范PR标题，我们添加了这个检查操作。你可以在https://github.com/thehanimo/pr-title-checker获取更多详细信息。
+
+##### 配置pr标题检查
+对于一个 pull request 如果标题在 `prefixes` 或 `regexp` 中，则检查通过。否则，一个标签`title needs formatting`将被添加到那个pull request中。
+
+`regexpFlags` 意味着正则表达式, 例如 : `i`(Case-insensitive search) `g`(Global search) .
+
 ```
 "CHECKS": {
 "prefixes": ["fix: ", "feat: ","doc: "], 
@@ -73,9 +79,11 @@ If the title is in either `prefixes` or `regexp`, the check will pass. Otherwise
 }
 ```
 ~~#### TODO: PR body lint?~~
+
 #### TODO: Code style lint
-For example,find out `go xxx()` without `recover`
-We can use go lint and refer to MOSN's configuration  
+举个例子，找出 `go xxx()` 没有 `recover`
+
+我们可以使用 go lint 和 参考MOSN的配置
 
 ####  ~~- Commit message lint~~ (reverted)
-see https://github.com/mosn/layotto/issues/243
+具体请查看 https://github.com/mosn/layotto/issues/243
