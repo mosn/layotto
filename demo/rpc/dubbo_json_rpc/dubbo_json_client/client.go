@@ -44,7 +44,7 @@ func main() {
 	resp, err := cli.InvokeService(
 		ctx,
 		&runtimev1pb.InvokeServiceRequest{
-			Id: "com.ikurento.user.UserProvider",
+			Id: "org.apache.dubbo.samples.UserProvider",
 			Message: &runtimev1pb.CommonInvokeRequest{
 				Method:        "GetUser",
 				ContentType:   "",
