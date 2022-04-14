@@ -31,8 +31,6 @@ quickstarts="docs/en/start/configuration/start.md
   docs/zh/start/wasm/start.md
 "
 
-quickstarts="docs/zh/start/file/minio.md"
-
 # release all resources
 release_resource() {
   if killall layotto; then
