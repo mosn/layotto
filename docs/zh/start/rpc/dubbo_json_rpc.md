@@ -17,9 +17,13 @@ go build -o layotto cmd/layotto/main.go
 ### step 3. 启动dubbo服务端
 
 这里使用了`dubbo-go-samples`提供的示例服务
-```shell
+```shell @catch
 git clone https://github.com/apache/dubbo-go-samples.git
+```
+
+```shell
 cd dubbo-go-samples
+git reset --hard f0d1e1076397a4736de080ffb16cd0963c8c2f9d
 
 # start zookeeper
 cd rpc/jsonrpc/go-server
@@ -35,7 +39,7 @@ go run .
 ```
 
 ### step 4. 通过GPRC接口发起调用
-```shell
+```shell @cd ${project_path}
 go run demo/rpc/dubbo_json_rpc/dubbo_json_client/client.go -d '{"jsonrpc":"2.0","method":"GetUser","params":["A003"],"id":9527}'
 ```
 

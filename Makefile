@@ -71,3 +71,6 @@ check-dead-link:
 
 test-quickstart:
 	sh ${SCRIPT_DIR}/test-quickstart.sh
+
+test-quickstart-17:
+	sh ${SCRIPT_DIR}/test-quickstart-17.sh

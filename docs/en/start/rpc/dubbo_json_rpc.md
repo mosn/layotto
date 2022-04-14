@@ -18,9 +18,13 @@ go build -o layotto cmd/layotto/main.go
 
 use `dubbo-go-samples` repo's example server.
 
-```shell
+```shell @catch
 git clone https://github.com/apache/dubbo-go-samples.git
+```
+
+```shell
 cd dubbo-go-samples
+git reset --hard f0d1e1076397a4736de080ffb16cd0963c8c2f9d
 
 # start zookeeper
 cd rpc/jsonrpc/go-server
@@ -36,7 +40,7 @@ go run .
 ```
 
 ### step 4. call runtime InvokerService api.
-```shell
+```shell @cd ${project_path}
 go run demo/rpc/dubbo_json_rpc/dubbo_json_client/client.go -d '{"jsonrpc":"2.0","method":"GetUser","params":["A003"],"id":9527}'
 ```
 
