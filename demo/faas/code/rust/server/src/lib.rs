@@ -1,12 +1,14 @@
 use proxy_wasm::{
     dispatcher, get_buffer, get_state, log, set_buffer,
-    traits::{Context, HttpContext, RootContext},
+    traits::{Context, DefaultRootContext, HttpContext, RootContext},
     types::*,
 };
 
 #[no_mangle]
 pub fn _start() {
-    dispatcher::set_root_context(|_| -> Box<dyn RootContext> { Box::new(ServerHttpRootContext) });
+    dispatcher::set_root_context(|_| -> Box<dyn RootContext> {
+        Box::new(DefaultRootContext::<ServerHttpContext>::default())
+    });
 }
 
 #[no_mangle]
@@ -15,20 +17,7 @@ pub extern "C" fn proxy_get_id() {
     set_buffer(BufferType::BufferTypeCallData, 0, b"id_2");
 }
 
-struct ServerHttpRootContext;
-
-impl Context for ServerHttpRootContext {}
-
-impl RootContext for ServerHttpRootContext {
-    fn create_http_context(&self, _context_id: u32) -> Option<Box<dyn HttpContext>> {
-        Some(Box::new(ServerHttpContext {}))
-    }
-
-    fn get_type(&self) -> Option<ContextType> {
-        Some(ContextType::HttpContext)
-    }
-}
-
+#[derive(Default)]
 struct ServerHttpContext {}
 
 impl Context for ServerHttpContext {}

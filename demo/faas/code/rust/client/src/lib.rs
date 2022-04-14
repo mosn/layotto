@@ -2,7 +2,7 @@ use std::str;
 
 use proxy_wasm::{
     dispatcher, get_buffer, invoke_service, log, set_buffer,
-    traits::{Context, HttpContext, RootContext},
+    traits::{Context, DefaultRootContext, HttpContext, RootContext},
     types::*,
 };
 
@@ -28,7 +28,9 @@ fn get_book_name(body: &Option<Bytes>) -> Option<String> {
 
 #[no_mangle]
 pub fn _start() {
-    dispatcher::set_root_context(|_| -> Box<dyn RootContext> { Box::new(ClientHttpRootContext) });
+    dispatcher::set_root_context(|_| -> Box<dyn RootContext> {
+        Box::new(DefaultRootContext::<ClientHttpContext>::default())
+    });
 }
 
 #[no_mangle]
@@ -37,20 +39,7 @@ pub extern "C" fn proxy_get_id() {
     set_buffer(BufferType::BufferTypeCallData, 0, b"id_1");
 }
 
-struct ClientHttpRootContext;
-
-impl Context for ClientHttpRootContext {}
-
-impl RootContext for ClientHttpRootContext {
-    fn create_http_context(&self, _context_id: u32) -> Option<Box<dyn HttpContext>> {
-        Some(Box::new(ClientHttpContext {}))
-    }
-
-    fn get_type(&self) -> Option<ContextType> {
-        Some(ContextType::HttpContext)
-    }
-}
-
+#[derive(Default)]
 struct ClientHttpContext {}
 
 impl Context for ClientHttpContext {}
