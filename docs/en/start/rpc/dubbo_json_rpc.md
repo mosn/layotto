@@ -1,5 +1,5 @@
 # Dubbo JSON RPC Example
-
+*Note: This demo needs to run under go v1.17*
 ## Quick Start
 ### step 1. Edit config file，add `dubbo_json_rpc` filter
 
@@ -23,20 +23,16 @@ git clone https://github.com/apache/dubbo-go-samples.git
 cd dubbo-go-samples
 
 # start zookeeper
-cd attachment/go-server
-make -f ../../build/Makefile docker-up 
-cd -
+cd rpc/jsonrpc/go-server
+docker-compose -f docker/docker-compose.yml up -d
 
-# build dubbo server
-cd general/jsonrpc/go-server
-sh assembly/mac/dev.sh
-
-# start dubbo server
-cd target/darwin/{generate_folder}/
+# build && start dubbo server
+cd cmd
+export DUBBO_GO_CONFIG_PATH="../conf/dubbogo.yml"
 ```
 
 ```shell @background
-sh ./bin/load.sh start
+go run .
 ```
 
 ### step 4. call runtime InvokerService api.

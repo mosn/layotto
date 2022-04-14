@@ -5,15 +5,14 @@
 Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/file/client.go) ,该示例实现了文件的增删改查操作。
 
 ### 第一步：启动 MinIO 服务
-您可以使用 [MinIO 示例服务](https://play.min.io/) , 账号密码见[官方文档](https://docs.min.io/minio/baremetal/console/minio-console.html#minio-console) ,这样就不用自己搭 MinIO 了。
-
-但是因为示例服务可能被别人修改配置、出现存储空间满了等问题，导致 demo 跑不通，因此我们更建议您自己搭 MinIO。
 
 您可以使用 Docker 启动本地MinIO服务, 参考[官方文档](http://docs.minio.org.cn/docs/master/minio-docker-quickstart-guide)
-
-```bash
-docker pull minio/minio
-docker run -p 9000:9000 minio/minio server /data --console-address ":9000" --address ":9090"
+```shell
+docker run -d -p 9000:9000 -p 9090:9090 --name minio \
+-e "MINIO_ROOT_USER=layotto" \
+-e "MINIO_ROOT_PASSWORD=layotto_secret" \
+--restart=always \
+minio/minio server /data --console-address ':9090'
 ```
 
 
@@ -52,12 +51,6 @@ cd ${project_path}/cmd/layotto
 go build -o layotto
 ```
 
-备注: 如果发现构建失败无法下载,请进行如下设置
-
-```bash
-go env -w GOPROXY="https://goproxy.cn,direct"
-```
-
 启动 Layotto: 
 
 ```shell @background
@@ -85,10 +78,6 @@ go build client.go
 # 删除layotto.txt文件
 ./client del test/hello/layotto.txt
 ```
-
-> Q: 运行报错？
-> 
-> A: 因为示例服务可能被其他人修改配置、出现存储空间满了等问题，导致 demo 跑不通，这种情况我们更建议您自己搭 MinIO
 
 #### 细节以后再说，继续体验其他API
 通过左侧的导航栏，继续体验别的API吧！

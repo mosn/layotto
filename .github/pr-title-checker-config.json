@@ -7,6 +7,7 @@
     "prefixes": [
       "fix: ",
       "feat: ",
+      "feature: ",
       "doc: ",
       "ci: ",
       "chore: ",
