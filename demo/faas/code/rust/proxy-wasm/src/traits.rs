@@ -1,9 +1,6 @@
 use crate::types::*;
-use crate::get_map_value;
 
-pub trait Context {
-
-}
+pub trait Context {}
 
 pub trait RootContext: Context {
     fn on_vm_start(&mut self, _vm_configuration_size: usize) -> bool {
@@ -26,9 +23,5 @@ pub trait HttpContext: Context {
 
     fn on_http_request_body(&mut self, _body_size: usize, _end_of_stream: bool) -> Action {
         Action::Continue
-    }
-
-    fn get_http_request_header(&self, name: &str) -> Option<String> {
-        get_map_value(MapType::HttpRequestHeaders, &name).unwrap()
     }
 }
