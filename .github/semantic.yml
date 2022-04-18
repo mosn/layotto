@@ -1,5 +1,6 @@
-titleOnly: true
-allowRevertCommits: true
+# Always validate the PR title AND all the commits
+titleAndCommits: true
+# allowRevertCommits: true
 types:
   - feat
   - fix
