@@ -1,4 +1,4 @@
-name: "Lint PR"
+name: "Semantic Checker"
 
 on:
   pull_request:
@@ -14,6 +14,29 @@ jobs:
     name: Validate PR title
     runs-on: ubuntu-latest
     steps:
-      - name: semantic-pull-request
-        uses: amannn/action-semantic-pull-request@v4.3.0
+      - uses: amannn/action-semantic-pull-request@v4.3.0
+        with:
+          # Configure which types are allowed.
+          # Default: https://github.com/commitizen/conventional-commit-types
+          types: |
+              feat
+              fix
+              docs
+              style
+              refactor
+              perf
+              test
+              build
+              ci
+              chore
+              revert
+              change
+          # For work-in-progress PRs you can typically use draft pull requests 
+          # from GitHub. However, private repositories on the free plan don't have 
+          # this option and therefore this action allows you to opt-in to using the 
+          # special "[WIP]" prefix to indicate this state. This will avoid the 
+          # validation of the PR title and the pull request checks remain pending.
+          # Note that a second check will be reported if this is enabled.
+          wip: true
+
 
