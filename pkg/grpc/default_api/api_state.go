@@ -29,15 +29,18 @@ import (
 
 // GetState obtains the state for a specific key.
 func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*runtimev1pb.GetStateResponse, error) {
+	// Check if the StateRequest is exists
 	if in == nil {
 		return &runtimev1pb.GetStateResponse{}, status.Error(codes.InvalidArgument, "GetStateRequest is nil")
 	}
+	// convert request
 	daprReq := &dapr_v1pb.GetStateRequest{
 		StoreName:   in.GetStoreName(),
 		Key:         in.GetKey(),
 		Consistency: dapr_common_v1pb.StateOptions_StateConsistency(in.GetConsistency()),
 		Metadata:    in.GetMetadata(),
 	}
+	// Generate response by request
 	resp, err := a.daprAPI.GetState(ctx, daprReq)
 	if err != nil {
 		return &runtimev1pb.GetStateResponse{}, err
@@ -50,6 +53,7 @@ func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*r
 }
 
 func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (*emptypb.Empty, error) {
+	// Check if the request is nil
 	if in == nil {
 		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "SaveStateRequest is nil")
 	}
@@ -66,12 +70,14 @@ func (a *api) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequ
 	if in == nil {
 		return &runtimev1pb.GetBulkStateResponse{}, status.Error(codes.InvalidArgument, "GetBulkStateRequest is nil")
 	}
+	// convert request
 	daprReq := &dapr_v1pb.GetBulkStateRequest{
 		StoreName:   in.GetStoreName(),
 		Keys:        in.GetKeys(),
 		Parallelism: in.GetParallelism(),
 		Metadata:    in.GetMetadata(),
 	}
+	// Generate response by request
 	resp, err := a.daprAPI.GetBulkState(ctx, daprReq)
 	if err != nil {
 		return &runtimev1pb.GetBulkStateResponse{}, err
@@ -93,6 +99,7 @@ func (a *api) DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateReques
 	if in == nil {
 		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "DeleteStateRequest is nil")
 	}
+	// convert request
 	daprReq := &dapr_v1pb.DeleteStateRequest{
 		StoreName: in.GetStoreName(),
 		Key:       in.GetKey(),
@@ -107,6 +114,7 @@ func (a *api) DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkSta
 	if in == nil {
 		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "DeleteBulkStateRequest is nil")
 	}
+	// convert request
 	daprReq := &dapr_v1pb.DeleteBulkStateRequest{
 		StoreName: in.GetStoreName(),
 		States:    convertStatesToDaprPB(in.States),
@@ -118,6 +126,7 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 	if in == nil {
 		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "ExecuteStateTransactionRequest is nil")
 	}
+	// convert request
 	daprReq := &dapr_v1pb.ExecuteStateTransactionRequest{
 		StoreName:  in.GetStoreName(),
 		Operations: convertTransactionalStateOperationToDaprPB(in.Operations),
@@ -134,7 +143,6 @@ func convertEtagToDaprPB(etag *runtimev1pb.Etag) *dapr_common_v1pb.Etag {
 	}
 	return &dapr_common_v1pb.Etag{Value: etag.GetValue()}
 }
-
 func convertOptionsToDaprPB(op *runtimev1pb.StateOptions) *dapr_common_v1pb.StateOptions {
 	if op == nil {
 		return &dapr_common_v1pb.StateOptions{}
