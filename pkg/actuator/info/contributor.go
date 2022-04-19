@@ -16,6 +16,7 @@
 
 package info
 
+// Contributor holds info and err for Endpoint.
 type Contributor interface {
 	GetInfo() (info interface{}, err error)
 }

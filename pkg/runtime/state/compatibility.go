@@ -39,27 +39,35 @@ type StoreConfiguration struct {
 	keyPrefixStrategy string
 }
 
+//Save StateConfiguration by storeName
 func SaveStateConfiguration(storeName string, metadata map[string]string) error {
+	// convert
 	strategy := metadata[strategyKey]
+	// Change strategy to lowercase
 	strategy = strings.ToLower(strategy)
+	//if strategy is "",use default values("none")
 	if strategy == "" {
 		strategy = strategyDefault
 	} else {
+		// Check if the secret key is legitimate
 		err := checkKeyIllegal(metadata[strategyKey])
 		if err != nil {
 			return err
 		}
 	}
-
+	// convert
 	statesConfiguration[storeName] = &StoreConfiguration{keyPrefixStrategy: strategy}
 	return nil
 }
 
 func GetModifiedStateKey(key, storeName, appID string) (string, error) {
+	// Check if the secret key is legitimate
 	if err := checkKeyIllegal(key); err != nil {
 		return "", err
 	}
+	// Get stateConfiguration by storeName
 	stateConfiguration := getStateConfiguration(storeName)
+	// Determine the keyPrefixStrategy type
 	switch stateConfiguration.keyPrefixStrategy {
 	case strategyNone:
 		return key, nil
@@ -76,6 +84,7 @@ func GetModifiedStateKey(key, storeName, appID string) (string, error) {
 }
 
 func GetOriginalStateKey(modifiedStateKey string) string {
+	// Split modifiedStateKey by daprSeparator("||")
 	splits := strings.Split(modifiedStateKey, daprSeparator)
 	if len(splits) <= 1 {
 		return modifiedStateKey
@@ -84,7 +93,9 @@ func GetOriginalStateKey(modifiedStateKey string) string {
 }
 
 func getStateConfiguration(storeName string) *StoreConfiguration {
+	// Get statesConfiguration by storeName
 	c := statesConfiguration[storeName]
+	// If statesConfiguration is empty, strategyDefault("none") is provided
 	if c == nil {
 		c = &StoreConfiguration{keyPrefixStrategy: strategyDefault}
 		statesConfiguration[storeName] = c
@@ -94,6 +105,7 @@ func getStateConfiguration(storeName string) *StoreConfiguration {
 }
 
 func checkKeyIllegal(key string) error {
+	// Determine if the key contains daprSeparator
 	if strings.Contains(key, daprSeparator) {
 		return errors.Errorf("input key/keyPrefix '%s' can't contain '%s'", key, daprSeparator)
 	}
