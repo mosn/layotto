@@ -36,6 +36,7 @@ var (
 	serviceInitError = errors.New("service is initializing")
 )
 
+// init health Endpoint.
 func init() {
 	actuator.GetDefault().AddEndpoint(health_key, NewEndpoint())
 }
