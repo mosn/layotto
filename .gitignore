@@ -38,3 +38,6 @@ application.pid
 
 # git
 *.orig
+
+# integrate test
+integrate_test.sh

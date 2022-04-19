@@ -23,10 +23,12 @@ import (
 	"fmt"
 	"github.com/dapr/components-contrib/bindings"
 	"google.golang.org/grpc/test/bufconn"
+	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/hello/helloworld"
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
+	"mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
@@ -45,6 +47,7 @@ import (
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
+	mock_component "mosn.io/layotto/components/pkg/mock"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/mock"
@@ -74,6 +77,39 @@ func TestMosnRuntime_GetInfo(t *testing.T) {
 	rt.Stop()
 }
 
+type superPubsub interface {
+	custom.Component
+	sayGoodBye() string
+}
+
+type superPubsubImpl struct {
+	custom.Component
+}
+
+func (s *superPubsubImpl) sayGoodBye() string {
+	return "good bye!"
+}
+
+func newSuperPubsub() custom.Component {
+	return &superPubsubImpl{mock_component.NewCustomComponentMock()}
+}
+
+type mockGrpcAPI struct {
+	comp superPubsub
+}
+
+func (m *mockGrpcAPI) Init(conn *rawGRPC.ClientConn) error {
+	return nil
+}
+
+func (m mockGrpcAPI) Register(rawGrpcServer *rawGRPC.Server) error {
+	return nil
+}
+
+func (m *mockGrpcAPI) sayGoodBye() string {
+	return m.comp.sayGoodBye()
+}
+
 func TestMosnRuntime_Run(t *testing.T) {
 	t.Run("run succ", func(t *testing.T) {
 		runtimeConfig := &MosnRuntimeConfig{}
@@ -87,6 +123,50 @@ func TestMosnRuntime_Run(t *testing.T) {
 		assert.Nil(t, err)
 		assert.NotNil(t, server)
 		rt.Stop()
+	})
+	t.Run("run succesfully with initRuntimeStage", func(t *testing.T) {
+		runtimeConfig := &MosnRuntimeConfig{}
+		rt := NewMosnRuntime(runtimeConfig)
+		etcdCustomComponent := mock_component.NewCustomComponentMock()
+		compType := "xxx_store"
+		compName := "etcd"
+		rt.AppendInitRuntimeStage(func(o *runtimeOptions, m *MosnRuntime) error {
+			m.SetCustomComponent(compType, compName, etcdCustomComponent)
+			return nil
+		})
+		expect := false
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+				func(ac *grpc.ApplicationContext) grpc.GrpcAPI {
+					if ac.CustomComponent[compType][compName] == etcdCustomComponent {
+						expect = true
+					}
+					return &mockGrpcAPI{}
+				},
+			),
+		)
+		assert.True(t, expect)
+		assert.Nil(t, err)
+		assert.NotNil(t, server)
+		rt.Stop()
+	})
+	t.Run("run with initRuntimeStage error", func(t *testing.T) {
+		runtimeConfig := &MosnRuntimeConfig{}
+		rt := NewMosnRuntime(runtimeConfig)
+		rt.AppendInitRuntimeStage(nil)
+		var expectErr error = errors.New("expected")
+		rt.AppendInitRuntimeStage(func(o *runtimeOptions, m *MosnRuntime) error {
+			return expectErr
+		})
+		_, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+		)
+		assert.Equal(t, err, expectErr)
 	})
 
 	t.Run("no runtime config", func(t *testing.T) {
@@ -123,9 +203,6 @@ func TestMosnRuntime_Run(t *testing.T) {
 		}
 		rt := NewMosnRuntime(cfg)
 
-		rt.errInt = func(err error, format string, args ...interface{}) {
-			panic(err)
-		}
 		// 3. Run
 		_, err := rt.Run(
 			// Hello
@@ -385,12 +462,76 @@ func TestMosnRuntime_initOutputBinding(t *testing.T) {
 		return &MockBindings{}
 	})
 	mdata := make(map[string]string)
-	m.runtimeConfig.Bindings = make(map[string]mbindings.Metadata)
+	m.RuntimeConfig().Bindings = make(map[string]mbindings.Metadata)
 	m.runtimeConfig.Bindings["mockOutbindings"] = mbindings.Metadata{
 		Metadata: mdata,
 	}
 	m.initOutputBinding(registry)
 	assert.NotNil(t, m.outputBindings["mockOutbindings"])
+}
+
+func TestMosnRuntime_runWithCustomComponentAndAPI(t *testing.T) {
+	t.Run("normal", func(t *testing.T) {
+		compType := "super_pubsub"
+		compName := "etcd"
+		// 1. construct config
+		cfg := &MosnRuntimeConfig{
+			CustomComponent: map[string]map[string]custom.Config{
+				compType: {
+					compName: custom.Config{
+						Version:  "",
+						Metadata: nil,
+					},
+				},
+			},
+		}
+		// 2. construct runtime
+		rt := NewMosnRuntime(cfg)
+		var customAPI *mockGrpcAPI
+		// 3. Run
+		server, err := rt.Run(
+			WithErrInterceptor(func(err error, format string, args ...interface{}) {
+				panic(err)
+			}),
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+				func(ac *grpc.ApplicationContext) grpc.GrpcAPI {
+					comp := ac.CustomComponent[compType][compName].(superPubsub)
+					customAPI = &mockGrpcAPI{comp: comp}
+					return customAPI
+				},
+			),
+			// Custom components
+			WithCustomComponentFactory(compType,
+				custom.NewComponentFactory(compName, newSuperPubsub),
+			),
+			// Hello
+			WithHelloFactory(
+				hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),
+			),
+			// Sequencer
+			WithSequencerFactory(
+				runtime_sequencer.NewFactory(compName, func() sequencer.Store {
+					return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
+				}),
+				runtime_sequencer.NewFactory("redis", func() sequencer.Store {
+					return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
+				}),
+				runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
+					return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+				}),
+			),
+		)
+		// 4. assert
+		assert.Nil(t, err)
+		assert.NotNil(t, server)
+		// 5. invoke customAPI
+		bye := customAPI.sayGoodBye()
+		assert.Equal(t, bye, "good bye!")
+		// 6. stop
+		rt.Stop()
+	})
 }
 
 func TestMosnRuntime_runWithPubsub(t *testing.T) {
@@ -406,11 +547,11 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 		// 2. construct runtime
 		rt, _ := runtimeWithCallbackConnection(t)
 
-		rt.errInt = func(err error, format string, args ...interface{}) {
-			panic(err)
-		}
 		// 3. Run
 		server, err := rt.Run(
+			WithErrInterceptor(func(err error, format string, args ...interface{}) {
+				panic(err)
+			}),
 			// Hello
 			WithHelloFactory(
 				hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),

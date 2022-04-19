@@ -20,10 +20,15 @@ import (
 	"encoding/json"
 	"mosn.io/api"
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
+	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
+	"mosn.io/layotto/components/custom"
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/grpc/default_api"
+	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
+	"mosn.io/mosn/pkg/stagemanager"
+	"mosn.io/mosn/pkg/trace/skywalking"
 	"os"
 	"strconv"
 	"time"
@@ -152,6 +157,8 @@ import (
 	_ "mosn.io/pkg/buffer"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
+	lprotocol "mosn.io/layotto/diagnostics/protocol"
+	lsky "mosn.io/layotto/diagnostics/skywalking"
 )
 
 // loggerForDaprComp is constructed for reusing dapr's components.
@@ -184,6 +191,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	}
 	// 2. new instance
 	rt := runtime.NewMosnRuntime(cfg)
+	rt.AppendInitRuntimeStage(runtime.DefaultInitRuntimeStage)
 	// 3. run
 	server, err := rt.Run(
 		runtime.WithGrpcOptions(opts...),
@@ -202,7 +210,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			// a demo to show how to register your own gRPC API
 			helloworld_api.NewHelloWorldAPI,
 			// support Dapr API
-			// Currently it only support Dapr's InvokeService and InvokeBinding API.
+			// Currently it only support Dapr's InvokeService,secret API,state API and InvokeBinding API.
 			// Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.
 			dapr.NewDaprAPI_Alpha,
 		),
@@ -374,7 +382,13 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
 				return sequencer_inmemory.NewInMemorySequencer()
 			}),
-		))
+		),
+		// Custom components
+		runtime.WithCustomComponentFactory("helloworld",
+			custom.NewComponentFactory("in-memory", component.NewInMemoryHelloWorld),
+			custom.NewComponentFactory("goodbye", component.NewSayGoodbyeHelloWorld),
+		),
+	)
 	return server, err
 }
 
@@ -394,7 +408,8 @@ var cmdStart = cli.Command{
 		},
 	},
 	Action: func(c *cli.Context) error {
-		stm := mosn.NewStageManager(c, c.String("config"))
+		app := mosn.NewMosn()
+		stm := stagemanager.InitStageManager(c, c.String("config"), app)
 
 		stm.AppendParamsParsedStage(ExtensionsRegister)
 		stm.AppendParamsParsedStage(func(c *cli.Context) {
@@ -422,7 +437,7 @@ var cmdStart = cli.Command{
 	},
 }
 
-func SetActuatorAfterStart(m *mosn.Mosn) {
+func SetActuatorAfterStart(_ stagemanager.Application) {
 	// register component actuator
 	component_actuators.RangeAllIndicators(
 		func(name string, v *component_actuators.ComponentsIndicator) bool {
@@ -438,7 +453,7 @@ func SetActuatorAfterStart(m *mosn.Mosn) {
 }
 
 // ExtensionsRegister for register mosn rpc extensions
-func ExtensionsRegister(c *cli.Context) {
+func ExtensionsRegister(_ *cli.Context) {
 	// 1. tracer driver register
 	// Q: What is a tracer driver ?
 	// A: MOSN implement a group of trace drivers, but only a configured driver will be loaded.
@@ -464,6 +479,7 @@ func ExtensionsRegister(c *cli.Context) {
 	xtrace.RegisterDelegate(bolt.ProtocolName, tracebolt.Boltv1Delegate)
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
 	trace.RegisterTracerBuilder("SOFATracer", "layotto", diagnostics.NewTracer)
+	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
 
 }
 

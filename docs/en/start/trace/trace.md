@@ -1,4 +1,5 @@
 # Observability (trace, metric)
+
 ## trace
 
 ### Features
@@ -17,47 +18,47 @@ In [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runti
   }
 ]
 ```
+
 This configuration can turn on the trace capability of layotto, allowing layotto to print the tracing log after receiving the request. The user can specify the way of exporting the trace log and generating fields such as spanId and traceId through configuration.
 
 You can start a layotto server as follows:
+
 ```
 ./layotto start -c ../../configs/runtime_config.json
 ```
 
-
 The corresponding client code is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), running it will call the SayHello API of layotto:
+
 ```
  cd ${projectpath}/demo/flowcontrol/
  go build -o client
  ./client
-``` 
+```
+
 Check the log of layotto, you will see the detailed tracking log printed out:
 
 ![img.png](../../../img/trace/trace.png)
-
 
 ### Configuration parameter description
 
 Trace configuration:
 
-| Field name | Field type | Description |
-| ---- | ---- | ---- |
-| enable | boolean | Global switch, whether to enable trace|
-| driver | String | driver represents the type of trace, mosn has SOFATracer and skywalking, users can expand |
-| config | Object | Trace expansion configuration |
+| Field name | Field type | Description                                                                               |
+| ---------- | ---------- | ----------------------------------------------------------------------------------------- |
+| enable     | boolean    | Global switch, whether to enable trace                                                    |
+| driver     | String     | driver represents the type of trace, mosn has SOFATracer and skywalking, users can expand |
+| config     | Object     | Trace expansion configuration                                                             |
 
 Trace expansion configuration:
 
-| Field name | Field type | Description |
-| ---- | ---- | ---- |
-| generator | String | SpanId, traceId and other resource generation methods, users can expand by themselves |
-| exporter | Array | The way users need to report by trace can be implemented and expanded by themselves |
-
-
-
+| Field name | Field type | Description                                                                           |
+| ---------- | ---------- | ------------------------------------------------------------------------------------- |
+| generator  | String     | SpanId, traceId and other resource generation methods, users can expand by themselves |
+| exporter   | Array      | The way users need to report by trace can be implemented and expanded by themselves   |
 
 ### Trace design and expansion
-Overall  diagram:
+
+Overall diagram:
 
 ![img.png](../../../img/trace/structure.png)
 
@@ -74,6 +75,7 @@ tags [xprotocol.TRACE_END]string //Expand the field, the component can store its
 operationName string
 }
 ```
+
 The Span structure defines the data structure passed between layotto and its component, as shown in the following figure, component can pass its own information to layotto through tags, and layotto does
 Unified trace report:
 
@@ -102,10 +104,10 @@ ExportSpan(s *Span)
 The exporter interface defines how to report Span information to the remote end, corresponding to the exporter field in the configuration, which is an array and can be reported to multiple servers. Can
 Refer to the implementation of [StdoutExporter](https://github.com/mosn/layotto/blob/main/diagnostics/exporter_iml/stdout.go), which will print trace information to standard output.
 
-
 #### Span context transfer:
 
 ##### Layotto side
+
 ```go
 GenerateNewContext(ctx context.Context, span api.Span) context.Context
 ```
@@ -115,6 +117,7 @@ GenerateNewContext is used to generate a new context, and we can pass the contex
 ```go
 ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
 ```
+
 You can refer to the implementation of [OpenGenerator](https://github.com/mosn/layotto/blob/main/diagnostics/genetator.go) in the code
 
 ##### Component side
@@ -136,14 +139,14 @@ Tracing in Layotto is mainly to record grpc calls, which relies on two intercept
 
 The interceptor will start tracing every time the grpc method is called, generate traceId spanId, a new context, record the method name, time, and pass the tracing information through the context, and finally export the span information when the method returns.
 
-
 ## Metric
 
 Layotto's metric reuses mosn's metric, and connects to prometheus. An example of metric configuration is provided in [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json), follow the above steps to start layotto After that, you can read the metric information through the following command:
 
 ```shell
 curl --location --request GET 'http://127.0.0.1:34903/metrics'
-````
+```
+
 The result is shown below:
 
 ![img.png](../../../img/trace/metric.png)

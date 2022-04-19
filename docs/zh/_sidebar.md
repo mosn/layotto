@@ -20,23 +20,26 @@
     - 在七层网络进行流量干预
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
-    - [可观测性(trace,metric)](zh/start/trace/trace.md)
+    - 可观测性  
+        - [Trace, Metrics](zh/start/trace/trace.md)
+        - [Trace 接入 Skywalking](zh/start/trace/skywalking.md)
     - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - [用户手册](zh/building_blocks/)
     - 功能介绍
         - [File API](zh/building_blocks/file/file.md)
-        - [Configuration API](zh/building_blocks/configuration/reference.md)
         - [Actuator API](zh/building_blocks/actuator/actuator.md)
         - [State API](zh/building_blocks/state/reference.md)
         - [Sequencer API](zh/building_blocks/sequencer/reference.md)
         - [Distributed Lock API](zh/building_blocks/lock/reference.md)
         - [Pub/Sub API](zh/building_blocks/pubsub/reference.md)
-        - [Configuration API](zh/building_blocks/configuration/reference.md)
         - [RPC API](zh/building_blocks/rpc/reference.md)
+        - [Configuration API](zh/building_blocks/configuration/reference.md)
         - 可扩展性
             - [API插件](zh/design/api_plugin/design.md)
-    - [gRPC API 文档](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
+    - [gRPC API 接口文档](zh/api_reference/README.md)
+        - [spec/proto/runtime/v1/runtime.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/runtime_v1.md)
+        - [spec/proto/runtime/v1/appcallback.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
     - SDK文档    
         - [java sdk](https://github.com/layotto/java-sdk)
         - [.net sdk](https://github.com/layotto/dotnet-sdk)
@@ -68,6 +71,7 @@
                 - [Redis](zh/component_specs/sequencer/redis.md)
                 - [Zookeeper](zh/component_specs/sequencer/zookeeper.md)
                 - [MongoDB](zh/component_specs/sequencer/mongo.md)
+            - [自定义组件](zh/component_specs/custom/common.md)
     - [如何部署、升级 Layotto](zh/operation/)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
@@ -83,7 +87,9 @@
     - [支持Dapr API](zh/design/api_plugin/dapr_api.md)
 - 贡献指南
     - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
-    - [文档贡献指南](zh/development/contributing-doc.md)
+    - 文档相关  
+        - [文档贡献指南](zh/development/contributing-doc.md)
+        - [使用工具自动测试 Quickstart 文档](zh/development/test-quickstart.md)
     - [组件开发指南](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
         - [新增API时的开发规范](zh/development/developing-api.md)

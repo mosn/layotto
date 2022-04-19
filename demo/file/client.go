@@ -149,10 +149,10 @@ func TestStat(fileName string) {
 func CreateBucket(bn string) {
 
 	ctx := context.Background()
-	endpoint := "play.min.io"
-	accessKeyID := "Q3AM3UQ867SPQQA43P2F"
-	secretAccessKey := "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
-	useSSL := true
+	endpoint := "127.0.0.1:9000"
+	accessKeyID := "layotto"
+	secretAccessKey := "layotto_secret"
+	useSSL := false
 
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, &minio.Options{
@@ -165,7 +165,7 @@ func CreateBucket(bn string) {
 
 	// Make a new bucket called mymusic.
 	bucketName := bn
-	location := "us-west-2"
+	location := "us-east-1"
 
 	err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
 	if err != nil {

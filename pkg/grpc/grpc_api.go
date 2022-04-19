@@ -23,12 +23,12 @@ import (
 	"github.com/dapr/components-contrib/state"
 	"google.golang.org/grpc"
 	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
-	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 )
 
 // GrpcAPI is the interface of API plugin. It has lifecycle related methods
@@ -38,7 +38,7 @@ type GrpcAPI interface {
 	Init(conn *grpc.ClientConn) error
 
 	// Bind this API to the grpc server
-	Register(s *grpc.Server, registeredServer mgrpc.RegisteredServer) (mgrpc.RegisteredServer, error)
+	Register(rawGrpcServer *grpc.Server) error
 }
 
 // NewGrpcAPI is the constructor of GrpcAPI
@@ -58,4 +58,5 @@ type ApplicationContext struct {
 	Sequencers            map[string]sequencer.Store
 	SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 	SecretStores          map[string]secretstores.SecretStore
+	CustomComponent       map[string]map[string]custom.Component
 }

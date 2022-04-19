@@ -23,7 +23,9 @@ import (
 )
 
 func TestSayHello(t *testing.T) {
-	item := &SayHelloRequest{"helloworld"}
+	item := &SayHelloRequest{
+		ServiceName: "helloworld",
+	}
 	resp, err := testClient.SayHello(context.Background(), item)
 	assert.Nil(t, err)
 	assert.Equal(t, resp.Hello, "world")

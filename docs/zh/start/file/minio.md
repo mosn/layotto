@@ -4,7 +4,19 @@
 
 Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/file/client.go) ,该示例实现了文件的增删改查操作。
 
-### 第一步：启动layotto
+### 第一步：启动 MinIO 服务
+
+您可以使用 Docker 启动本地MinIO服务, 参考[官方文档](http://docs.minio.org.cn/docs/master/minio-docker-quickstart-guide)
+```
+docker run -d -p 9000:9000 -p 9090:9090 --name minio \
+-e "MINIO_ROOT_USER=layotto" \
+-e "MINIO_ROOT_PASSWORD=layotto_secret" \
+--restart=always \
+minio/minio server /data --console-address ':9090'
+```
+
+
+### 第二步：启动layotto
 
 layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/blob/main/configs/config_file.json) ，如下所示
 
@@ -17,24 +29,21 @@ layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/
                               "accessKeyID": "Q3AM3UQ867SPQQA43P2F",
                               "accessKeySecret": "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG",
                               "SSL":true,
-                              "region":"us-west-2"
+                              "region":"us-east-1"
                             }
                           ]
                         }
                       }
 ```
 
-### 第二步：启动MinIO服务
-访问[MinIO示例服务](play.min.io)
+默认配置会连接`play.min.io`, 如果您自己部署了 Minio, 可以按需修改其中的配置。
 
-创建bucket，包含配置文件中的bucket
+配置好后，启动 Layotto:
 
-或者启动本地MinIO服务
-
-参考[官方文档](http://docs.minio.org.cn/docs/master/minio-docker-quickstart-guide)
-```
-docker pull minio/minio
-docker run -p 9000:9000 minio/minio server /data --console-address ":9000" --address ":9090"
+```shell
+cd ${projectpath}/cmd/layotto
+# 如果没编译过，记得先用 go build 编译
+./layotto start -c ../../configs/config_file.json
 ```
 
 ### 第三步：启动测试demo
@@ -54,6 +63,7 @@ go build client.go
 ./client del test/hello/layotto.txt //删除layotto.txt文件
 
 ```
+
 #### 细节以后再说，继续体验其他API
 通过左侧的导航栏，继续体验别的API吧！
 

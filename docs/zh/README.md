@@ -71,6 +71,14 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 | -------- | :----: | :--------------------------------------------------------------: | --------------------------- |
 | API 插件 |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/api_plugin/helloworld) | 为 Layotto 添加您自己的 API |
 
+### 可观测性
+
+
+| feature    | status |                         quick start                         | desc                  |
+|------------| :----: |:-----------------------------------------------------------:|-----------------------|
+| Skywalking |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/trace/skywalking) | Layotto 接入 Skywalking |
+
+
 ### Actuator
 
 | feature        | status |                        quick start                        | desc                                  |

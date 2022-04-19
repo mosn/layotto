@@ -50,6 +50,13 @@
                           "metadata": {}
                         }
                       },
+                      "custom_component": {
+                        "helloworld": {
+                          "in-memory": {
+                            "metadata": {}
+                          }
+                        }
+                      },
                       "app": {
                         "app_id": "app1",
                         "grpc_callback_port": 9999

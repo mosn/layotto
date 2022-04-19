@@ -7,6 +7,7 @@ require (
 	github.com/Azure/go-autorest/autorest/azure/cli v0.4.2 // indirect
 	github.com/Azure/go-autorest/autorest/validation v0.3.1 // indirect
 	github.com/Azure/go-autorest/logger v0.2.1 // indirect
+	github.com/SkyAPM/go2sky v0.5.0
 	github.com/agrea/ptr v0.0.0-20180711073057-77a518d99b7b
 	github.com/alicebob/miniredis/v2 v2.16.0
 	github.com/dapr/components-contrib v1.5.1-rc.1
@@ -31,11 +32,12 @@ require (
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
 	google.golang.org/protobuf v1.27.1
-	mosn.io/api v0.0.0-20211217011300-b851d129be01
-	mosn.io/layotto/components v0.0.0-20220119065745-4f03f6779399
-	mosn.io/layotto/spec v0.0.0-20220119065745-4f03f6779399
-	mosn.io/mosn v0.25.1-0.20211217125944-69b50c40af81
-	mosn.io/pkg v0.0.0-20211217101631-d914102d1baf
+	mosn.io/api v0.0.0-20220308091133-b233c56e98c7
+	mosn.io/layotto/components v0.0.0-20220413092851-55c58dbb1a23
+	mosn.io/layotto/sdk/go-sdk v0.0.0-20220311052659-a386713c7c13
+	mosn.io/layotto/spec v0.0.0-20220413092851-55c58dbb1a23
+	mosn.io/mosn v0.27.0
+	mosn.io/pkg v0.0.0-20220331064139-949046a47fa2
 	mosn.io/proxy-wasm-go-host v0.1.1-0.20210524020952-3fb13ba763a6
 	nhooyr.io/websocket v1.8.7 // indirect
 )

@@ -25,9 +25,7 @@ check if the contributor has signed cla
 
 Currently [we have to do it manually](https://mosn.io/layotto/#/en/api_reference/how_to_generate_api_doc) .
 
-The generated document is [here](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/api_reference_v1.md)
-
-![img_2.png](../../img/development/workflow/img_2.png)
+The generated documents are [here](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/runtime_v1.md) and [here](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
 
 ### 2.2. Test
 #### <5> Run unit tests
@@ -60,7 +58,20 @@ The ignore list is in `.licenserc.yaml`. You can add new types into it.
 ##### For more details of this tool
 See https://github.com/marketplace/actions/license-eye#docker-image for details
 
-#### TODO: PR title lint
+#### PR title lint
+In order to  standardize PR title, we add this check action. You can learn more in https://github.com/thehanimo/pr-title-checker.
+
+##### config the pr title check
+If the title is in either `prefixes` or `regexp`, the check will pass. Otherwise , a label `title needs formatting` will be added to that pull request.
+`regexpFlags` mean regular expression flags, such as : `i`(Case-insensitive search) `g`(Global search) .
+```
+"CHECKS": {
+"prefixes": ["fix: ", "feat: ","doc: "], 
+"regexp": "docs\\(v[0-9]\\): ",
+"regexpFlags": "i",
+"ignoreLabels" : ["dont-check-PRs-with-this-label", "meta"]
+}
+```
 ~~#### TODO: PR body lint?~~
 #### TODO: Code style lint
 For example,find out `go xxx()` without `recover`

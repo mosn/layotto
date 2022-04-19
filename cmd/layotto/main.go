@@ -32,6 +32,8 @@ import (
 	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
+	"mosn.io/mosn/pkg/stagemanager"
+	"mosn.io/mosn/pkg/trace/skywalking"
 	"os"
 	"strconv"
 	"time"
@@ -162,6 +164,8 @@ import (
 	_ "mosn.io/pkg/buffer"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
+	lprotocol "mosn.io/layotto/diagnostics/protocol"
+	lsky "mosn.io/layotto/diagnostics/skywalking"
 )
 
 // loggerForDaprComp is constructed for reusing dapr's components.
@@ -194,6 +198,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 	}
 	// 2. new instance
 	rt := runtime.NewMosnRuntime(cfg)
+	rt.AppendInitRuntimeStage(runtime.DefaultInitRuntimeStage)
 	// 3. run
 	server, err := rt.Run(
 		runtime.WithGrpcOptions(opts...),
@@ -430,7 +435,8 @@ var cmdStart = cli.Command{
 		},
 	},
 	Action: func(c *cli.Context) error {
-		stm := mosn.NewStageManager(c, c.String("config"))
+		app := mosn.NewMosn()
+		stm := stagemanager.InitStageManager(c, c.String("config"), app)
 
 		stm.AppendParamsParsedStage(ExtensionsRegister)
 
@@ -457,7 +463,7 @@ var cmdStart = cli.Command{
 	},
 }
 
-func SetActuatorAfterStart(m *mosn.Mosn) {
+func SetActuatorAfterStart(_ stagemanager.Application) {
 	// register component actuator
 	component_actuators.RangeAllIndicators(
 		func(name string, v *component_actuators.ComponentsIndicator) bool {
@@ -473,7 +479,7 @@ func SetActuatorAfterStart(m *mosn.Mosn) {
 }
 
 // ExtensionsRegister for register mosn rpc extensions
-func ExtensionsRegister(c *cli.Context) {
+func ExtensionsRegister(_ *cli.Context) {
 	// 1. tracer driver register
 	// Q: What is a tracer driver ?
 	// A: MOSN implement a group of trace drivers, but only a configured driver will be loaded.
@@ -498,7 +504,8 @@ func ExtensionsRegister(c *cli.Context) {
 	// 4. register tracer
 	xtrace.RegisterDelegate(bolt.ProtocolName, tracebolt.Boltv1Delegate)
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
-	trace.RegisterTracerBuilder("SOFATracer", "layotto", diagnostics.NewTracer)
+	trace.RegisterTracerBuilder("SOFATracer", lprotocol.Layotto, diagnostics.NewTracer)
+	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
 
 }
 

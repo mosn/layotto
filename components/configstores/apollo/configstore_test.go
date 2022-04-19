@@ -25,6 +25,7 @@ import (
 	"github.com/zouyx/agollo/v4"
 	"io/ioutil"
 	"mosn.io/layotto/components/configstores"
+	"mosn.io/mosn/pkg/log"
 	"net/http"
 	"reflect"
 	"testing"
@@ -189,6 +190,40 @@ func TestConfigStore_read(t *testing.T) {
 	}
 }
 
+func TestConfigStore_Init(t *testing.T) {
+	t.Run("when token invalid then error", func(t *testing.T) {
+		// 1. set up
+		// inject the MockRepository into a ConfigStore
+		store, cfg := setup(t)
+		store.openAPIClient = newMockHttpClient(http.StatusUnauthorized)
+		kvRepo := store.kvRepo.(*MockRepository)
+		kvRepo.Set("application", "sofa@$prod", "sofa@$prod")
+		kvRepo.Set("application", "apollo@$prod", "apollo@$prod")
+		kvRepo.Set("dubbo", "dubbo", "dubbo")
+
+		// 2. test the ConfigStore,which has a MockRepository in it
+		// init
+		log.DefaultLogger.SetLogLevel(log.DEBUG)
+		err := store.Init(cfg)
+		assert.NotNil(t, err)
+	})
+	t.Run("when namespace exist then succeed with debug information", func(t *testing.T) {
+		// 1. set up
+		// inject the MockRepository into a ConfigStore
+		store, cfg := setup(t)
+		store.openAPIClient = newMockHttpClient(http.StatusBadRequest)
+		kvRepo := store.kvRepo.(*MockRepository)
+		kvRepo.Set("application", "sofa@$prod", "sofa@$prod")
+		kvRepo.Set("application", "apollo@$prod", "apollo@$prod")
+		kvRepo.Set("dubbo", "dubbo", "dubbo")
+
+		// 2. test the ConfigStore,which has a MockRepository in it
+		// init
+		log.DefaultLogger.SetLogLevel(log.DEBUG)
+		err := store.Init(cfg)
+		assert.Nil(t, err)
+	})
+}
 func setup(t *testing.T) (*ConfigStore, *configstores.StoreConfig) {
 	store := NewStore().(*ConfigStore)
 	//mock read client
@@ -196,7 +231,7 @@ func setup(t *testing.T) (*ConfigStore, *configstores.StoreConfig) {
 	store.kvRepo = kvRepo
 	store.tagsRepo = newMockRepository()
 	// mock write client
-	store.openAPIClient = newMockHttpClient()
+	store.openAPIClient = newMockHttpClient(http.StatusOK)
 	// prepare config
 	cfgJson := `{
     "address": [
@@ -220,20 +255,23 @@ func setup(t *testing.T) (*ConfigStore, *configstores.StoreConfig) {
 	return store, cfg
 }
 
-func newMockHttpClient() *MockHttpClient {
-	return &MockHttpClient{}
+func newMockHttpClient(statusCode int) *MockHttpClient {
+	return &MockHttpClient{
+		statusCode: statusCode,
+	}
 }
 
 type MockHttpClient struct {
 	count      int
 	invokedUrl []string
+	statusCode int
 }
 
 func (m *MockHttpClient) Do(req *http.Request) (*http.Response, error) {
 	m.count++
 	m.invokedUrl = append(m.invokedUrl, req.URL.String())
 	return &http.Response{
-		StatusCode: http.StatusOK,
+		StatusCode: m.statusCode,
 		Body:       ioutil.NopCloser(bytes.NewReader(nil)),
 	}, nil
 }

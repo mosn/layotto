@@ -8,7 +8,7 @@
 
 ### 第一步：部署apollo配置中心（可选）
 
-您可以跳过这一步，使用本demo无需自己部署apollo服务器。本demo会使用[apollo官方](https://github.com/ctripcorp/apollo) 提供的演示环境http://106.54.227.205/
+您可以跳过这一步，使用本demo无需自己部署apollo服务器。本demo会使用[apollo官方](https://github.com/apolloconfig/apollo) 提供的演示环境http://106.54.227.205/
 
 如果您自己部署了apollo，可以修改Layotto的[config文件](https://github.com/mosn/layotto/blob/main/configs/config_apollo.json) ，将apollo服务器地址改成您自己的。
 
@@ -35,6 +35,11 @@ go env -w GOPROXY="https://goproxy.cn,direct"
 ./layotto start -c ../../configs/config_apollo.json
 ```
 
+>Q: 使用默认配置时，demo启动报错？
+>
+>A: 默认配置会连接 apollo 的演示服务器，但是演示服务器的配置可能被其他人随意修改。报错可能是因为某些配置被修改了。
+> 
+> 遇到这种情况，您可以先尝试其他 demo，例如 [etcd demo](zh/start/configuration/start)
 ### 第三步：启动客户端Demo，调用Layotto增删改查
 
 ```bash
