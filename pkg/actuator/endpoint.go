@@ -20,6 +20,7 @@ import (
 	"context"
 )
 
+// Endpoint is used to storage data.
 type Endpoint interface {
 	Handle(ctx context.Context, params ParamsScanner) (jsonObject map[string]interface{}, err error)
 }
