@@ -36,7 +36,7 @@ require (
 	mosn.io/layotto/components v0.0.0-20220413092851-55c58dbb1a23
 	mosn.io/layotto/sdk/go-sdk v0.0.0-20220311052659-a386713c7c13
 	mosn.io/layotto/spec v0.0.0-20220413092851-55c58dbb1a23
-	mosn.io/mosn v0.27.0
+	mosn.io/mosn v1.0.0
 	mosn.io/pkg v0.0.0-20220331064139-949046a47fa2
 	mosn.io/proxy-wasm-go-host v0.1.1-0.20210524020952-3fb13ba763a6
 	nhooyr.io/websocket v1.8.7 // indirect
