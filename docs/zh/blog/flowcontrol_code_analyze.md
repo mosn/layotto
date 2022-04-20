@@ -22,7 +22,7 @@ Mosn   d11b5a638a137045c2fbb03d9d8ca36ecc0def11（develop分支）
 
 Mosn 的 Stream Filter 扩展机制
 
-![01.png](../../img/blog/flowcontrol_code_analyze_01.png)
+![01.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*tSn4SpIkAa4AAAAAAAAAAAAAARQnAQ)
 
 ### 代码均在： [flowcontrol代码](https://github.com/mosn/mosn/tree/master/pkg/filter/stream/flowcontrol)
 
@@ -31,36 +31,36 @@ Mosn 的 Stream Filter 扩展机制
 
 定义了一些常量用作默认值
 
-![02.png](../../img/blog/flowcontrol_code_analyze_02.png)
+![02.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*PAWCTL6MS40AAAAAAAAAAAAAARQnAQ)
 
 定义了限流配置类用作加载yaml定义并且解析生产出对应的功能
 
-![03.png](../../img/blog/flowcontrol_code_analyze_03.png)
+![03.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*Ua32SokhILEAAAAAAAAAAAAAARQnAQ)
 
 init() 初始化内部就是将 name 和 对应构造函数存储到 filter拦截工厂的map中
 
-![04.png](../../img/blog/flowcontrol_code_analyze_04.png)
+![04.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*kb3qRqWnqxYAAAAAAAAAAAAAARQnAQ)
 
 着重讲一下 createRpcFlowControlFilterFactory  生产出rpc流控工厂
 
-![05.png](../../img/blog/flowcontrol_code_analyze_05.png)
+![05.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*u5rkS54zkgAAAAAAAAAAAAAAARQnAQ)
 
 在查看streamFilter之前我们来看看工厂类是如何生产出限流器的
 
-![06.png](../../img/blog/flowcontrol_code_analyze_06.png)
+![06.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*cj0nT5O69OYAAAAAAAAAAAAAARQnAQ)
 
 限流器加入到限流链路结构中按照设定顺序依次生效。
 
-CreateFilterChain 方法将多个filterr加入到链路结构中
+CreateFilterChain 方法将多个filter 加入到链路结构中
 
-![07.png](../../img/blog/flowcontrol_code_analyze_07.png)
+![07.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*a8ClQ76odpEAAAAAAAAAAAAAARQnAQ)
 
 我们可以看到有各种各样的工厂类包括我们今天研究的限流工厂类实现了此接口
 
-![08.png](../../img/blog/flowcontrol_code_analyze_08.png)
+![08.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*sBDbT44r2vgAAAAAAAAAAAAAARQnAQ)
 
 ### Stream_filter.go分析
-![09.png](../../img/blog/flowcontrol_code_analyze_09.png)
+![09.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*wsw3RKe1GH8AAAAAAAAAAAAAARQnAQ)
 
 ## 整体流程：
 最后我们再来回顾一下整体流程走向:
@@ -71,6 +71,6 @@ CreateFilterChain 方法将多个filterr加入到链路结构中
 
 3. 创建限流器 NewStreamFilter().
 
-4. 当流量通过mosn 将会进入到限流器的方法 OnReceive() 中并最终借助sentinel实现限流逻辑(是否已经达到阈值是放行流量还是拦截流量StreamFilterStop or StreamFilterContinue).
+4. 当流量通过mosn 将会进入到限流器的方法 OnReceive() 中并最终借助sentinel实现限流逻辑(是否已经达到阈值,是放行流量还是拦截流量, StreamFilterStop or StreamFilterContinue).
 
 
