@@ -2120,6 +2120,8 @@ mosn.io/layotto/sdk/go-sdk v0.0.0-20220311052659-a386713c7c13/go.mod h1:mMrIBDCM
 mosn.io/mosn v0.25.1-0.20211217125944-69b50c40af81/go.mod h1:JwLkls6oMaap0+P1uZ1d1ccdLPigdK8xH8gDSm3SEq4=
 mosn.io/mosn v0.27.0 h1:AZaMP01l3PkxHqAjrvenrclR5ZeXqdjh0Gj3ulCZcAU=
 mosn.io/mosn v0.27.0/go.mod h1:RLNWxwi80A+i7uh6/uQY9RaLohmNxO64YkKggwQb8ZU=
+mosn.io/mosn v1.0.0 h1:IJyhNJDhgWM9z1J8JOwbd9VRVr1ODOEEGg19ByigHEY=
+mosn.io/mosn v1.0.0/go.mod h1:RLNWxwi80A+i7uh6/uQY9RaLohmNxO64YkKggwQb8ZU=
 mosn.io/pkg v0.0.0-20211217101631-d914102d1baf/go.mod h1:tK3Vbw6CcVeJ9H/BGjJ1wn6hRXt4Oxjfq1+gkOM0zG8=
 mosn.io/pkg v0.0.0-20220331064139-949046a47fa2 h1:52mnWfQwsveaGzy9CgPt+zwcahBzSZN79n/y2uKARcA=
 mosn.io/pkg v0.0.0-20220331064139-949046a47fa2/go.mod h1:tK3Vbw6CcVeJ9H/BGjJ1wn6hRXt4Oxjfq1+gkOM0zG8=
