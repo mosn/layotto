@@ -29,7 +29,9 @@ func (m *MockEndpoint) Handle(ctx context.Context, params ParamsScanner) (map[st
 	return nil, nil
 }
 
+// TestActuator test AddEndpoint and GetEndpoint.
 func TestActuator(t *testing.T) {
+	// get singleton Actuator
 	act := GetDefault()
 	// reset before test
 	act.AddEndpoint("health", nil)
