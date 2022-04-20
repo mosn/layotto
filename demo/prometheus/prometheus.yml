@@ -12,4 +12,4 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets:
-          - 'docker.for.mac.localhost:34903'
+        - 'docker.for.mac.localhost:34903'
