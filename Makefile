@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 .PHONY: all
-all: lint test go.build
+all: go.lint go.test go.build
 
 # ==============================================================================
 # ROOT Options
