@@ -17,8 +17,9 @@
 package strategy
 
 import (
-	"mosn.io/pkg/log"
 	"testing"
+
+	"mosn.io/pkg/log"
 )
 
 func TestUpdateAppDumpConfig_invalid_value(t *testing.T) {

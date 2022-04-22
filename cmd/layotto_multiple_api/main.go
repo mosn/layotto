@@ -18,6 +18,10 @@ package main
 
 import (
 	"encoding/json"
+	"os"
+	"strconv"
+	"time"
+
 	"mosn.io/api"
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
 	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
@@ -29,9 +33,6 @@ import (
 	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
 	"mosn.io/mosn/pkg/stagemanager"
 	"mosn.io/mosn/pkg/trace/skywalking"
-	"os"
-	"strconv"
-	"time"
 
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	_ "mosn.io/layotto/pkg/wasm"

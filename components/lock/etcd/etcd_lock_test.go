@@ -15,12 +15,13 @@ package etcd
 
 import (
 	"fmt"
-	"mosn.io/pkg/log"
 	"net/url"
 	"os"
 	"sync"
 	"testing"
 	"time"
+
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
 

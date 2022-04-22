@@ -14,6 +14,7 @@ logs/
 /cover.out
 vendor/
 demo/state/redis/client
+_outputs
 
 # node
 node_modules/

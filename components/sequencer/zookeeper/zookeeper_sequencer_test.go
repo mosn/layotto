@@ -14,13 +14,14 @@
 package zookeeper
 
 import (
+	"testing"
+
 	"github.com/go-zookeeper/zk"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/pkg/mock"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/pkg/log"
-	"testing"
 )
 
 const key = "resoure_1"
