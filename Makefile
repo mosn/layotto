@@ -1,3 +1,42 @@
+# Layotto Commands: 
+# A fast and efficient cloud native application runtime
+
+# Usage: make <TARGETS> <OPTIONS> ...
+
+# Targets:
+#   go.build             Build layotto for host platform.
+#   go.build.multiarch   Build layotto for multiple platforms. See option PLATFORMS.
+#   go.wasm              Build layotto wasm for host platform.
+#   go.wasm.multiarch    Build layotto wasm for multiple platform.
+#   go.check.lint        Run go syntax and styling of go sources.
+#   go.check.unit        Run go unit test.
+#   app                  Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
+#   app.multiarch        Build app docker images for multiple platforms. See option PLATFORMS.
+#   image                Build docker images for host arch.
+#   image.multiarch      Build docker images for multiple platforms. See option PLATFORMS.
+#   push                 Push docker images to registry.
+#   push.multiarch       Push docker images for multiple platforms to registry.
+#   check.coverage       Run coverage analysis.
+#   check.deadlink       Run deadlink check test.
+#   check.quickstart     Run quickstart check test.
+#   integrate.wasm       Run integration test with wasm.
+#   integrate.runtime    Run integration test with runtime.
+#   clean                Remove all files that are created by building.
+#   help                 Show this help info.
+
+# Options:
+#   DEBUG        Whether to generate debug symbols. Default is 0.
+#   BINS         The binaries to build. Default is all of cmd.
+#                This option is available when using: make build/build.multiarch
+#                Example: make build BINS="layotto_multiple_api layotto"
+#   IMAGES       Backend images to make. Default is all of cmds.
+#                This option is available when using: make image/image.multiarch/push/push.multiarch
+#                Example: make image.multiarch IMAGES="layotto_multiple_api layotto"
+#   PLATFORMS    The multiple platforms to build. Default is linux_amd64 and linux_arm64.
+#                This option is available when using: make build.multiarch/image.multiarch/push.multiarch
+#                Example: make image.multiarch IMAGES="layotto_multiple_api layotto" PLATFORMS="linux_amd64 linux_arm64"
+#                Supported Platforms: linux_amd64 linux_arm64 darwin_amd64 darwin_arm64
+
 SHELL := /bin/bash
 
 .PHONY: all
@@ -78,11 +117,6 @@ push:
 push.multiarch:
 	@$(MAKE) image.push.multiarch
 
-## clean: Remove all files that are created by building.
-.PHONY: clean
-clean:
-	@$(MAKE) go.clean
-
 ## check.coverage: Run coverage analysis.
 .PHONY: check.coverage
 check.coverage:
@@ -107,6 +141,11 @@ integrate.wasm:
 .PHONY: integrate.runtime
 integrate.runtime:
 	@$(MAKE) integration.runtime
+
+## clean: Remove all files that are created by building.
+.PHONY: clean
+clean:
+	@$(MAKE) go.clean
 
 # ==============================================================================
 # Usage
@@ -133,7 +172,7 @@ export USAGE_OPTIONS
 ## help: Show this help info.
 .PHONY: help
 help: Makefile
-	@echo -e "Layotto: \nA fast and efficient cloud native application runtime\n"
+	@echo -e "Layotto Commands: \nA fast and efficient cloud native application runtime\n"
 	@echo -e "Usage: make <TARGETS> <OPTIONS> ...\n\nTargets:"
 	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
 	@echo "$$USAGE_OPTIONS"
