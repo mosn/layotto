@@ -45,7 +45,7 @@ jobs:
           fi
       - name: Format Go
         run: |
-           make go.check.lint
+           make go.check.style
   
   golangci-lint:
     name: Go CI Linter
@@ -57,10 +57,10 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.14.13
-    - name: Lint Golang
-      uses: golangci/golangci-lint-action@v3
-      with:
-        version: latest                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    # - name: Lint Golang
+    #   uses: golangci/golangci-lint-action@v3
+    #   with:
+    #     version: latest                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
   go-unit-test:
     name: Go Unit Test
@@ -72,8 +72,8 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.14.13
-    - name: Go Unit Test
-      run: make go.check.unit
+    # - name: Go Unit Test
+    #   run: make go.check.unit
 
   coverage:
     name: Coverage Analysis
