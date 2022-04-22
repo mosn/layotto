@@ -45,8 +45,7 @@ jobs:
           fi
       - name: Format Go
         run: |
-          go fmt ./... && git status && [[ -z `git status -s` ]]
-          # diff -u <(echo -n) <(gofmt -d -s .)
+           make go.check.lint
   
   golangci-lint:
     name: Go CI Linter
