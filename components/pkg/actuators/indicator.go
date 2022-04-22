@@ -17,6 +17,8 @@
 package actuators
 
 import (
+	"sync"
+
 	"mosn.io/layotto/components/pkg/common"
 )
 

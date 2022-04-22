@@ -2122,8 +2122,6 @@ mosn.io/holmes v0.0.0-20220314072258-139da3429e04/go.mod h1:pZjPamcZk4Z16xlZySG1
 mosn.io/layotto/sdk/go-sdk v0.0.0-20220422112241-cd96c75e590f h1:YlTX+AVcE1IoRhHrl56rJnO0zhwyNwPqsHexYWJgSW8=
 mosn.io/layotto/sdk/go-sdk v0.0.0-20220422112241-cd96c75e590f/go.mod h1:mMrIBDCM2kTSCFC5a7rog00FPxCVCSh5Qtq81X4f9f8=
 mosn.io/mosn v0.25.1-0.20211217125944-69b50c40af81/go.mod h1:JwLkls6oMaap0+P1uZ1d1ccdLPigdK8xH8gDSm3SEq4=
-mosn.io/mosn v0.27.0 h1:AZaMP01l3PkxHqAjrvenrclR5ZeXqdjh0Gj3ulCZcAU=
-mosn.io/mosn v0.27.0/go.mod h1:RLNWxwi80A+i7uh6/uQY9RaLohmNxO64YkKggwQb8ZU=
 mosn.io/mosn v1.0.0 h1:IJyhNJDhgWM9z1J8JOwbd9VRVr1ODOEEGg19ByigHEY=
 mosn.io/mosn v1.0.0/go.mod h1:RLNWxwi80A+i7uh6/uQY9RaLohmNxO64YkKggwQb8ZU=
 mosn.io/pkg v0.0.0-20211217101631-d914102d1baf/go.mod h1:tK3Vbw6CcVeJ9H/BGjJ1wn6hRXt4Oxjfq1+gkOM0zG8=
