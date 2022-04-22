@@ -87,6 +87,11 @@ go.check.lint:
 go.check.unit:
 	@$(MAKE) go.test
 
+## go.check.style: Run go style test.
+.PHONY: go.check.style
+go.check.style:
+	@$(MAKE) go.style.verify
+
 ## app: Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
 .PHONY: app
 app:
