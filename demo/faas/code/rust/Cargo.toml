@@ -1,0 +1,6 @@
+[profile.release]
+panic = "abort"
+lto = true
+
+[workspace]
+members = ["./client", "./proxy-wasm", "./server"]
