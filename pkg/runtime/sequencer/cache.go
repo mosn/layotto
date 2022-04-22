@@ -16,11 +16,12 @@ package sequencer
 import (
 	"context"
 	"errors"
+	"sync"
+	"time"
+
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
-	"sync"
-	"time"
 )
 
 const defaultSize = 10000

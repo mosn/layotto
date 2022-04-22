@@ -19,9 +19,10 @@ package wasm
 import (
 	"context"
 	"io/ioutil"
-	"mosn.io/layotto/components/pkg/utils"
 	"net/http"
 	"testing"
+
+	"mosn.io/layotto/components/pkg/utils"
 
 	"github.com/stretchr/testify/assert"
 )

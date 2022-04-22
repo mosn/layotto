@@ -1,16 +1,23 @@
 {
   "LABEL": {
-    "name": "title needs formatting",
-    "color": "EEEEEE"
+    "name": "pr title needs formatting",
+    "color": "B81616"
   },
   "CHECKS": {
     "prefixes": [
       "fix: ",
       "feat: ",
       "feature: ",
-      "doc: ",
+      "docs: ",
       "ci: ",
-      "chore: "
+      "chore: ",
+      "test: ",
+      "revert: ",
+      "style: ",
+      "refactor: ",
+      "sync: ",
+      "perf: ",
+      "merge: "
     ],
     "regexp": "docs\\(v[0-9]\\): ",
     "regexpFlags": "i",

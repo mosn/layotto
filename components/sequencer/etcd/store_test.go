@@ -15,14 +15,15 @@ package etcd
 
 import (
 	"fmt"
-	"mosn.io/layotto/components/sequencer"
-	"mosn.io/pkg/log"
 	"net"
 	"net/url"
 	"os"
 	"strconv"
 	"testing"
 	"time"
+
+	"mosn.io/layotto/components/sequencer"
+	"mosn.io/pkg/log"
 
 	"github.com/stretchr/testify/assert"
 	"go.etcd.io/etcd/server/v3/embed"

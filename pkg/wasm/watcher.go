@@ -14,10 +14,11 @@
 package wasm
 
 import (
-	"mosn.io/pkg/utils"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"mosn.io/pkg/utils"
 
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/log"

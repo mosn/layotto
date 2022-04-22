@@ -14,10 +14,11 @@
 package sequencer
 
 import (
-	"mosn.io/layotto/components/pkg/info"
-	"mosn.io/layotto/components/sequencer"
 	"strings"
 	"testing"
+
+	"mosn.io/layotto/components/pkg/info"
+	"mosn.io/layotto/components/sequencer"
 )
 
 func TestNewRegistry(t *testing.T) {

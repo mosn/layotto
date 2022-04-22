@@ -18,7 +18,6 @@ package actuators
 
 import (
 	"mosn.io/layotto/components/pkg/common"
-	"sync"
 )
 
 const (

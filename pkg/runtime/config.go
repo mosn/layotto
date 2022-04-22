@@ -18,6 +18,7 @@ package runtime
 
 import (
 	"encoding/json"
+
 	"mosn.io/layotto/components/custom"
 
 	"mosn.io/layotto/pkg/runtime/bindings"

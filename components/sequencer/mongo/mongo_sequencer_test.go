@@ -14,13 +14,14 @@
 package mongo
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"mosn.io/layotto/components/pkg/mock"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/pkg/log"
-	"testing"
 )
 
 const key = "resource_xxx"

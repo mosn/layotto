@@ -1,4 +1,4 @@
-name: test-quickstart
+name: Quickstart Checker
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.os }} - Go ${{ matrix.go_version }}
+    name: Quickstart Checker
     runs-on: ${{ matrix.os }}
     strategy:
       # If you want to matrix build , you can append the following list.

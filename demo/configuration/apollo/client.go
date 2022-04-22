@@ -20,12 +20,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"google.golang.org/grpc"
-	client "mosn.io/layotto/sdk/go-sdk/client"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"strconv"
 	"sync"
 	"time"
+
+	"google.golang.org/grpc"
+	client "mosn.io/layotto/sdk/go-sdk/client"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 const (
