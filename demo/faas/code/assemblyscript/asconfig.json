@@ -1,20 +1,23 @@
 {
   "targets": {
-    "debug": {
-      "binaryFile": "build/untouched.wasm",
-      "textFile": "build/untouched.wat",
-      "sourceMap": true,
-      "debug": true
+    "client": {
+      "outFile": "build/function_1.wasm",
+      "sourceMap": false,
+      "optimizeLevel": 3,
+      "shrinkLevel": 0,
+      "converge": false,
+      "noAssert": false
     },
-    "release": {
-      "binaryFile": "build/optimized.wasm",
-      "textFile": "build/optimized.wat",
-      "sourceMap": true,
+    "server": {
+      "outFile": "build/function_2.wasm",
+      "sourceMap": false,
       "optimizeLevel": 3,
       "shrinkLevel": 0,
       "converge": false,
       "noAssert": false
     }
   },
-  "options": {}
+  "options": {
+    "bindings": "esm"
+  }
 }
