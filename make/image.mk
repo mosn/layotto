@@ -99,7 +99,7 @@ image.push.%:
 	$(DOCKER) push $(REGISTRY_PREFIX)/$(IMAGE)-$(ARCH):$(VERSION)
 
 .PHONY: integration.wasm
-integration.wasm: app.image.linux_arm64.faas
+integration.wasm: app.image.linux_amd64.faas
 	@echo "===========> Integration Test With WASM"
 	$(eval ACTION := sh ./wasm_test.sh)
 	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
@@ -109,7 +109,7 @@ integration.wasm: app.image.linux_arm64.faas
 	$(DOCKER) run --rm $(INTEGRATE_SUFFIX) $(BUILD_IMAGE) $(ACTION)
 
 .PHONY: integration.runtime
-integration.runtime: app.image.linux_arm64.integrate
+integration.runtime: app.image.linux_amd64.integrate
 	@echo "===========> Integration Test With Runtime"
 	$(eval ACTION := sh ./integrate_test.sh)
 	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
