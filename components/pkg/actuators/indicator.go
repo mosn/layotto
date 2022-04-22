@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package apollo
+package actuators
 
 import (
-	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/common"
 	"sync"
 )
@@ -26,34 +25,14 @@ const (
 	reasonKey = "reason"
 )
 
-var (
-	readinessIndicator *healthIndicator
-	livenessIndicator  *healthIndicator
-)
-
-func init() {
-	readinessIndicator = newHealthIndicator()
-	livenessIndicator = newHealthIndicator()
-	indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
-	actuators.SetComponentsIndicator("apollo", indicators)
-}
-
-func newHealthIndicator() *healthIndicator {
-	return &healthIndicator{
+func NewHealthIndicator() *HealthIndicator {
+	return &HealthIndicator{
 		started: false,
 		isErr:   false,
 	}
 }
 
-func GetReadinessIndicator() *healthIndicator {
-	return readinessIndicator
-}
-
-func GetLivenessIndicator() *healthIndicator {
-	return livenessIndicator
-}
-
-type healthIndicator struct {
+type HealthIndicator struct {
 	mu sync.Mutex
 
 	started   bool
@@ -61,7 +40,7 @@ type healthIndicator struct {
 	errReason string
 }
 
-func (idc *healthIndicator) Report() (status actuators.Status, details map[string]interface{}) {
+func (idc *HealthIndicator) Report() (status Status, details map[string]interface{}) {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 	statusDetail := make(map[string]interface{})
@@ -77,7 +56,7 @@ func (idc *healthIndicator) Report() (status actuators.Status, details map[strin
 	return status, statusDetail
 }
 
-func (idc *healthIndicator) reportError(reason string) {
+func (idc *HealthIndicator) ReportError(reason string) {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 
@@ -88,7 +67,7 @@ func (idc *healthIndicator) reportError(reason string) {
 	idc.errReason = reason
 }
 
-func (idc *healthIndicator) setStarted() {
+func (idc *HealthIndicator) SetStarted() {
 	idc.mu.Lock()
 	defer idc.mu.Unlock()
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package apollo
+package actuators
 
 import (
 	"testing"
@@ -27,10 +27,10 @@ import (
 func TestGetHealthInitOrSuccess(t *testing.T) {
 	assert := testify.New(t)
 
-	hi := newHealthIndicator()
+	hi := NewHealthIndicator()
 	v, _ := hi.Report()
 	assert.Equal(v, common.INIT)
-	hi.setStarted()
+	hi.SetStarted()
 	h, _ := hi.Report()
 	assert.Equal(h, common.UP)
 }
@@ -38,8 +38,8 @@ func TestGetHealthInitOrSuccess(t *testing.T) {
 func TestGetHealthError(t *testing.T) {
 	assert := testify.New(t)
 
-	hi := newHealthIndicator()
-	hi.reportError("sub error")
+	hi := NewHealthIndicator()
+	hi.ReportError("sub error")
 	h, v := hi.Report()
 	assert.Equal(h, common.DOWN)
 	assert.Equal(v[reasonKey], "sub error")
