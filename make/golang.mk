@@ -78,6 +78,7 @@ go.lint: go.lint.verify
 	@echo "===========> Run golangci to lint source codes"
 	@golangci-lint run $(ROOT_DIR)/...
 
+
 .PHONY: go.test.verify
 go.test.verify:  
 ifeq ($(shell which go-junit-report), )
