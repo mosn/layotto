@@ -222,11 +222,11 @@ jobs:
           go-version: 1.14.13
       - name: Check out code
         uses: actions/checkout@v2
+      - name: Build Artifact
         run: |
           make go.build.darwin_amd64.layotto
       - name: Publish Artifact
         uses: actions/upload-artifact@v2.2.4
-      - name: Build Artifact
         with:
           name: layotto.darwin_amd64
           path: _output/darwin/amd64/layotto
