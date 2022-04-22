@@ -18,11 +18,12 @@ package tcpcopy
 
 import (
 	"encoding/json"
+	"testing"
+
 	"mosn.io/api"
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/pkg/buffer"
-	"testing"
 )
 
 func TestCreateTcpcopyFactory(t *testing.T) {

@@ -20,12 +20,13 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/pkg/mock"
-	"testing"
 )
 
 func TestNewClient(t *testing.T) {

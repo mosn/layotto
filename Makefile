@@ -12,12 +12,12 @@ SCRIPT_DIR       = $(shell pwd)/etc/script
 
 IMAGE_NAME       = layotto
 REPOSITORY       = layotto/${IMAGE_NAME}
-IMAGE_BUILD_DIR  = IMAGEBUILD
+IMAGE_BUILD_DIR  = _outputs
 
 IMAGE_TAG := $(tag)
 
 ifeq ($(IMAGE_TAG),)
-IMAGE_TAG := dev-${MAJOR_VERSION}-${GIT_VERSION}
+IMAGE_TAG := ${MAJOR_VERSION}-${GIT_VERSION}
 endif
 
 build-local:
@@ -47,6 +47,9 @@ image: build-local
 	cp -r build/contrib/builder/image ${IMAGE_BUILD_DIR} && cp build/bundles/${MAJOR_VERSION}/binary/${TARGET} ${IMAGE_BUILD_DIR} && cp -r configs ${IMAGE_BUILD_DIR} && cp -r etc ${IMAGE_BUILD_DIR}
 	docker build --rm -t ${REPOSITORY}:${IMAGE_TAG} ${IMAGE_BUILD_DIR}
 	rm -rf ${IMAGE_BUILD_DIR}
+
+image-push:
+	docker push ${REPOSITORY}:${IMAGE_TAG}
 
 wasm-integrate-ci:
 	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/faas

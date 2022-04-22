@@ -15,11 +15,12 @@ package redis
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/alicebob/miniredis/v2"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/pkg/log"
-	"testing"
 )
 
 const key = "resource_xxx"

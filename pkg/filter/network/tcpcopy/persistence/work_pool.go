@@ -18,11 +18,12 @@ package persistence
 
 import (
 	"math/rand"
+	"sync"
+	"time"
+
 	"mosn.io/layotto/pkg/common"
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
 	"mosn.io/pkg/utils"
-	"sync"
-	"time"
 )
 
 func init() {
@@ -49,12 +50,8 @@ func (g *WorkGoroutine) AddTask(key string, data *model.DumpUploadDynamicConfig)
 func (g *WorkGoroutine) Start() {
 	utils.GoWithRecover(func() {
 		tick := time.NewTicker(500 * time.Millisecond)
-		for {
-			select {
-			case <-tick.C:
-				g.work()
-			}
-		}
+		<-tick.C
+		g.work()
 	}, func(r interface{}) {
 		g.Start()
 	})

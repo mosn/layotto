@@ -1,6 +1,6 @@
-# Auto build and push docker image to docker hub when releasing tags
+# Auto build and release docker image to docker hub when releasing tags
 ---
-name: Auto Layotto Build and Push image
+name: Build and Release Layotto Image
 
 on:
   create
