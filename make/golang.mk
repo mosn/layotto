@@ -78,13 +78,17 @@ go.lint: go.lint.verify
 	@echo "===========> Run golangci to lint source codes"
 	@golangci-lint run $(ROOT_DIR)/...
 
-
 .PHONY: go.test.verify
 go.test.verify:  
 ifeq ($(shell which go-junit-report), )
 	@echo "===========> Installing go-junit-report"
 	@GO111MODULE=off $(GO) get -u github.com/jstemmer/go-junit-report
 endif
+
+.PHONY: go.style.verify
+go.style.verify:  
+	@echo "===========> Running go style check"
+	$(GO) fmt ./... && git status && [[ -z `git status -s` ]]
 
 .PHONY: go.test
 go.test: go.test.verify
