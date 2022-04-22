@@ -1,9 +1,8 @@
+use std::marker::PhantomData;
+
 use crate::types::*;
-use crate::get_map_value;
 
-pub trait Context {
-
-}
+pub trait Context {}
 
 pub trait RootContext: Context {
     fn on_vm_start(&mut self, _vm_configuration_size: usize) -> bool {
@@ -27,8 +26,22 @@ pub trait HttpContext: Context {
     fn on_http_request_body(&mut self, _body_size: usize, _end_of_stream: bool) -> Action {
         Action::Continue
     }
+}
 
-    fn get_http_request_header(&self, name: &str) -> Option<String> {
-        get_map_value(MapType::HttpRequestHeaders, &name).unwrap()
+#[derive(Default)]
+pub struct DefaultRootContext<T>(PhantomData<T>);
+
+impl<T> Context for DefaultRootContext<T> where T: HttpContext {}
+
+impl<T> RootContext for DefaultRootContext<T>
+where
+    T: HttpContext + Default + 'static,
+{
+    fn create_http_context(&self, _context_id: u32) -> Option<Box<dyn HttpContext>> {
+        Some(Box::new(T::default()))
+    }
+
+    fn get_type(&self) -> Option<ContextType> {
+        Some(ContextType::HttpContext)
     }
 }
