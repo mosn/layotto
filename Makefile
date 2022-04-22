@@ -38,7 +38,17 @@ go.wasm:
 go.wasm.multiarch:
 	@$(MAKE) build.wasm.multiarch
 
-## app: Build app docker images for host arch.
+## go.check.lint: Run go syntax and styling of go sources.
+.PHONY: go.check.lint
+go.check.lint:
+	@$(MAKE) go.lint
+
+## go.check.unit: Run go unit test.
+.PHONY: go.check.unit
+go.check.unit:
+	@$(MAKE) go.test
+
+## app: Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
 .PHONY: app
 app:
 	@$(MAKE) app.image
@@ -58,25 +68,15 @@ image:
 image.multiarch:
 	@$(MAKE) image.build.multiarch
 
-## push: Build docker images for host arch and push images to registry.
+## push: Push docker images to registry.
 .PHONY: push
 push:
 	@$(MAKE) image.push
 
-## push.multiarch: Build docker images for multiple platforms and push images to registry.
+## push.multiarch: Push docker images for multiple platforms to registry.
 .PHONY: push.multiarch
 push.multiarch:
 	@$(MAKE) image.push.multiarch
-
-## lint: Run go syntax and styling of go sources.
-.PHONY: lint
-lint:
-	@$(MAKE) go.lint
-
-## test: Run go unit test.
-.PHONY: test
-test:
-	@$(MAKE) go.test
 
 ## clean: Remove all files that are created by building.
 .PHONY: clean
