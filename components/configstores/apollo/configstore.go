@@ -22,9 +22,11 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"mosn.io/layotto/components/pkg/actuators"
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"mosn.io/layotto/components/configstores"
@@ -33,7 +35,17 @@ import (
 
 var (
 	openAPIClientSingleton = &http.Client{}
+	once                   sync.Once
+	readinessIndicator     *actuators.HealthIndicator
+	livenessIndicator      *actuators.HealthIndicator
 )
+
+const componentName = "apollo"
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type ConfigStore struct {
 	tagsNamespace  string
@@ -70,6 +82,7 @@ func (c *ConfigStore) GetDefaultLabel() string {
 }
 
 func NewStore() configstores.Store {
+	registerActuator()
 	return &ConfigStore{
 		tagsNamespace: defaultTagsNamespace,
 		delimiter:     defaultDelimiter,
@@ -78,6 +91,13 @@ func NewStore() configstores.Store {
 		tagsRepo:      newAgolloRepository(),
 		openAPIClient: newHttpClient(),
 	}
+}
+
+func registerActuator() {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 }
 
 func newHttpClient() httpClient {
@@ -90,11 +110,11 @@ func newHttpClient() httpClient {
 func (c *ConfigStore) Init(config *configstores.StoreConfig) error {
 	err := c.doInit(config)
 	if err != nil {
-		GetReadinessIndicator().reportError(err.Error())
-		GetLivenessIndicator().reportError(err.Error())
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 	}
-	GetReadinessIndicator().setStarted()
-	GetLivenessIndicator().setStarted()
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return err
 }
 
