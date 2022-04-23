@@ -48,4 +48,4 @@ jobs:
           fi
 
       - name: Test quickstart
-        run: make check.quickstart
+        run: make style.quickstart

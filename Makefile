@@ -10,18 +10,19 @@
 #   go.wasm.multiarch    Build layotto wasm for multiple platform.
 #   go.wasm.image        Build layotto wasm image for multiple platform.
 #   go.wasm.image.push   Push layotto wasm image for multiple platform.
+#   go.check             Run all go checks of code sources.
 #   go.check.lint        Run go syntax and styling of go sources.
 #   go.check.unit        Run go unit test.
 #   go.check.style       Run go style test.
-#   app                  Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
-#   app.multiarch        Build app docker images for multiple platforms. See option PLATFORMS.
 #   image                Build docker images for host arch.
 #   image.multiarch      Build docker images for multiple platforms. See option PLATFORMS.
 #   push                 Push docker images to registry.
 #   push.multiarch       Push docker images for multiple platforms to registry.
-#   check.coverage       Run coverage analysis.
-#   check.deadlink       Run deadlink check test.
-#   check.quickstart     Run quickstart check test.
+#   app                  Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
+#   app.multiarch        Build app docker images for multiple platforms. See option PLATFORMS.
+#   style.coverage       Run coverage analysis.
+#   style.deadlink       Run deadlink check test.
+#   style.quickstart     Run quickstart check test.
 #   integrate.wasm       Run integration test with wasm.
 #   integrate.runtime    Run integration test with runtime.
 #   clean                Remove all files that are created by building.
@@ -37,7 +38,7 @@
 #                Example: make image.multiarch IMAGES="layotto_multiple_api layotto"
 #   PLATFORMS    The multiple platforms to build. Default is linux_amd64 and linux_arm64.
 #                This option is available when using: make build.multiarch/image.multiarch/push.multiarch
-#                Example: make image.multiarch IMAGES="layotto_multiple_api layotto" PLATFORMS="linux_amd64 linux_arm64"
+#                Example: make image.multiarch IMAGES="layotto" PLATFORMS="linux_amd64 linux_arm64"
 #                Supported Platforms: linux_amd64 linux_arm64 darwin_amd64 darwin_arm64
 
 SHELL := /bin/bash
@@ -94,6 +95,10 @@ go.wasm.image:
 go.wasm.image.push:
 	@$(MAKE) wasm.image.push
 
+## go.check: Run all go checks of code sources.
+.PHONY: go.check
+go.check: go.check.style go.check.unit go.check.lint
+
 ## go.check.lint: Run go syntax and styling of go sources.
 .PHONY: go.check.lint
 go.check.lint:
@@ -108,16 +113,6 @@ go.check.unit:
 .PHONY: go.check.style
 go.check.style:
 	@$(MAKE) go.style
-
-## app: Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
-.PHONY: app
-app:
-	@$(MAKE) app.image
-
-## app.multiarch: Build app docker images for multiple platforms. See option PLATFORMS.
-.PHONY: app.multiarch
-app.multiarch:
-	@$(MAKE) app.image.multiarch
 
 ## image: Build docker images for host arch.
 .PHONY: image
@@ -139,18 +134,28 @@ push:
 push.multiarch:
 	@$(MAKE) image.push.multiarch
 
-## check.coverage: Run coverage analysis.
-.PHONY: check.coverage
+## app: Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
+.PHONY: app
+app:
+	@$(MAKE) app.image
+
+## app.multiarch: Build app docker images for multiple platforms. See option PLATFORMS.
+.PHONY: app.multiarch
+app.multiarch:
+	@$(MAKE) app.image.multiarch
+
+## style.coverage: Run coverage analysis.
+.PHONY: style.coverage
 check.coverage:
 	@$(MAKE) checker.coverage
 
-## check.deadlink: Run deadlink check test.
-.PHONY: check.deadlink
+## style.deadlink: Run deadlink check test.
+.PHONY: style.deadlink
 check.deadlink:
 	@$(MAKE) checker.deadlink
 
-## check.quickstart: Run quickstart check test.
-.PHONY: check.quickstart
+## style.quickstart: Run quickstart check test.
+.PHONY: style.quickstart
 check.quickstart:
 	@$(MAKE) checker.quickstart
 
@@ -184,7 +189,7 @@ Options:
                Example: make image.multiarch IMAGES="layotto_multiple_api layotto"
   PLATFORMS    The multiple platforms to build. Default is linux_amd64 and linux_arm64.
                This option is available when using: make build.multiarch/image.multiarch/push.multiarch
-               Example: make image.multiarch IMAGES="layotto_multiple_api layotto" PLATFORMS="linux_amd64 linux_arm64"
+               Example: make image.multiarch IMAGES="layotto" PLATFORMS="linux_amd64 linux_arm64"
                Supported Platforms: linux_amd64 linux_arm64 darwin_amd64 darwin_arm64
 endef
 export USAGE_OPTIONS
