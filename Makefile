@@ -6,10 +6,13 @@
 # Targets:
 #   go.build             Build layotto for host platform.
 #   go.build.multiarch   Build layotto for multiple platforms. See option PLATFORMS.
-#   go.wasm              Build layotto wasm for host platform.
+#   go.wasm              Build layotto wasm for linux arm64 platform.
 #   go.wasm.multiarch    Build layotto wasm for multiple platform.
+#   go.wasm.image        Build layotto wasm image for multiple platform.
+#   go.wasm.image.push   Push layotto wasm image for multiple platform.
 #   go.check.lint        Run go syntax and styling of go sources.
 #   go.check.unit        Run go unit test.
+#   go.check.style       Run go style test.
 #   app                  Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
 #   app.multiarch        Build app docker images for multiple platforms. See option PLATFORMS.
 #   image                Build docker images for host arch.
@@ -80,6 +83,16 @@ go.wasm:
 .PHONY: go.wasm.multiarch
 go.wasm.multiarch:
 	@$(MAKE) wasm.multiarch
+
+## go.wasm.image: Build layotto wasm image for multiple platform.
+.PHONY: go.wasm.image
+go.wasm.image:
+	@$(MAKE) wasm.image
+
+## go.wasm.image.push: Push layotto wasm image for multiple platform.
+.PHONY: go.wasm.image.push
+go.wasm.image.push:
+	@$(MAKE) wasm.image.push
 
 ## go.check.lint: Run go syntax and styling of go sources.
 .PHONY: go.check.lint
