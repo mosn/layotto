@@ -20,7 +20,7 @@ description: >
   * [0x08 Layotto 接收 RPC 响应并读取 Local 虚拟连接](#0x08-layotto-接收-rpc-响应并读取-local-虚拟连接)
   * [0x09 Grpc Sever 处理数据帧返回给客户端](#0x09-grpc-sever-处理数据帧返回给客户端)
   * [0x10 Dubbo-go-sample client 接收响应](#0x10-dubbo-go-sample-client-接收响应)
-
+- [总结](#总结)
 
 ## 概述
 Layotto 作为区别于网络代理 Service Mesh 的分布式原语集合且使用标准协议的 Runtime，具有明确和丰富的语义 API，而 RPC API 就是众多 API 中的一种。通过 RPC API 应用程序开发者可以通过与同样使用 Sidecar 架构的应用本地 Layotto 实例进行交互，从而间接的调用不同服务的方法，并可以利用内置能力完成分布式追踪和诊断，流量调控，错误处理，安全链路等操作。并且 Layotto 的 RPC API 基于 Mosn 的 Grpc handler 设计，除了 Http/Grpc，与其它服务通信时还可以利用Mosn的多协议机制，使用 X-Protocol 协议进行安全可靠通信。如下代码所示，RPC API 的接口与 Dapr 一致，通过 Grpc 接口 InvokeService 即可进行 RPC 调用。
@@ -34,11 +34,13 @@ type DaprClient interface {
 
 ## 源码分析
 
-为了便于理解，这里从外到内，再从内到外，由数据流转映射到源代码，也就是从Client发起请求，穿越一层一层的逻辑，到 Server 收到请求返回响应，再一层层的回到 Client 收到响应，一层层来分析 Layotto 的 RPC 流程，总共拆分成十步。另外因为 Grpc Client 和 Server 交互相关的内容不是本文重点，所以分析的相对简单一些，其它步骤内容相对详细一些，大家也可以根据自己的兴趣直接从目录跳转到相应步骤。
+为了便于理解，这里从外到内，再从内到外，由数据流转映射到源代码，也就是从Client发起请求，穿越一层一层的逻辑，到 Server 收到请求返回响应，再一层层的回到 Client 收到响应，一层层来分析 Layotto 的 RPC 流程，总共拆分成十步。另外因为 Grpc Client 和 Server 握手及交互相关的内容不是本文重点，所以分析的相对简略一些，其它步骤内容相对详细一些，大家也可以根据自己的情况直接从目录跳转到相应步骤。 
+
+备注：本文基于 commit hash：1d2bed68c3b2372c34a12aeed41be125a4fdd15a
 
 ### 0x00 Layotto 初始化 RPC
 
-Layotto 启动流程涉及众多本流程，在此只分析下跟 RPC 相关的及下述流程用的初始化，因为 Layotto 是建立在 Mosn 之上，所以从 Main 函数出发，urfave/cli 库会调用 Mosn 的 StageManager 初始化 Mosn, 进而在 Mosn NetworkFilter 中初始化 GrpcServer。
+Layotto 启动流程涉及众多本流程，在此只分析下跟 RPC 相关的及下述流程用的初始化，因为 Layotto 是建立在 Mosn 之上，所以从 Main 函数出发，urfave/cli 库会调用 Mosn 的 StageManager 初始化 Mosn, 进而在 Mosn NetworkFilter 中初始化 GrpcServer，具体流程如下。
 ```go
 mosn.io/mosn/pkg/stagemanager.(*StageManager).runInitStage at stage_manager.go
 =>
@@ -149,6 +151,7 @@ func (stm *StageManager) runStartStage() {
 
 根据 [Dubbo Json Rpc Example](https://mosn.io/layotto/#/zh/start/rpc/dubbo_json_rpc)例子运行如下命令
 go run demo/rpc/dubbo_json_rpc/dubbo_json_client/client.go -d '{"jsonrpc":"2.0","method":"GetUser","params":["A003"],"id":9527}'
+使用 Layotto 对 App 提供的 Grpc API InvokeService 发起 RPC 调用，经过数据填充和连接建立等流程，最终通过 Grpc clientStream 中调用 SendMsg 向 Layotto 发送数据，具体流程如下。
 ```go
 
 func main() {
@@ -185,11 +188,21 @@ func main() {
 
     fmt.Println(string(resp.Data.GetValue()))
 }
+=>
+mosn.io/layotto/spec/proto/runtime/v1.(*runtimeClient).InvokeService at runtime.pb.go
+=>
+google.golang.org/grpc.(*ClientConn).Invoke at call.go
+=>
+google.golang.org/grpc.(*clientStream).SendMsg at stream.go
+=>
+google.golang.org/grpc.(*csAttempt).sendMsg at stream.go
+=>
+google.golang.org/grpc/internal/transport.(*http2Client).Write at http2_client.go
 ```
 
 ### 0x02 Mosn EventLoop 读协程处理请求数据
 
-上文说过 Layotto 的内核相当于是 Mosn，所以当网络连接到达时，会先到达 Mosn 的 L4 网络层，进行读写。
+上文说过 Layotto 的内核相当于是 Mosn，所以当网络连接数据到达时，会先到 Mosn 的 L4 网络层进行读写，具体流程如下。
 ```go
 mosn.io/mosn/pkg/network.(*listener).accept at listener.go
 =>
@@ -202,8 +215,6 @@ mosn.io/mosn/pkg/server.(*activeListener).newConnection at handler.go
 mosn.io/mosn/pkg/network.(*connection).Start at connection.go
 =>
 mosn.io/mosn/pkg/network.(*connection).startRWLoop at connection.go
-```
-```go
 func (c *connection) startRWLoop(lctx context.Context) {
     c.internalLoopStarted = true
 
@@ -225,7 +236,7 @@ func (c *connection) startRWLoop(lctx context.Context) {
     }
 }
 ```
-在 startRWLoop 方法中我们可以看到会分别开启两个协程来分别处理该连接上的读写操作，即 startReadLoop 和 startWriteLoop，在 startReadLoop 中经过如下流转,把网络层读到的数据，由 filterManager 过滤器管理器把数据交由过滤器链进行处理。
+在 startRWLoop 方法中我们可以看到会分别开启两个协程来分别处理该连接上的读写操作，即 startReadLoop 和 startWriteLoop，在 startReadLoop 中经过如下流转，把网络层读到的数据，由 filterManager 过滤器管理器把数据交由过滤器链进行处理，具体流程如下。
 ```go
 mosn.io/mosn/pkg/network.(*connection).doRead at connection.go
 =>
@@ -246,7 +257,7 @@ func (fm *filterManager) onContinueReading(filter *activeReadFilter) {
     for ; index < len(fm.upstreamFilters); index++ {
         uf = fm.upstreamFilters[index]
         uf.index = index
-        //对没有初始化的过滤器调用其初始化方法 OnNewConnection，本例为func (f *grpcFilter) OnNewConnection() api.FilterStatus（向 Listener 发送 grpc 连接以唤醒 Listener 的 Accept）
+        // 对没有初始化的过滤器调用其初始化方法 OnNewConnection，本例为func (f *grpcFilter) OnNewConnection() api.FilterStatus（向 Listener 发送 grpc 连接以唤醒 Listener 的 Accept）
         if !uf.initialized {
             uf.initialized = true
 
@@ -287,7 +298,7 @@ func (f *grpcFilter) dispatch(buf buffer.IoBuffer) {
 
 ### 0x03 Grpc Sever 作为 NetworkFilter 处理请求
 
-第一阶段中从原始连接读取数据，会进入 Grpc Serve 处理，Serve 方法通过 net.Listener 监听连接，每次启动一个新的协程来处理新的连接（handleRawConn），建立一个基于Http2 的 Transport 进行传输层的 RPC 调用，具体如下。
+第一阶段中从原始连接读取数据，会进入 Grpc Serve 处理，Serve 方法通过 net.Listener 监听连接，每次启动一个新的协程来处理新的连接（handleRawConn），建立一个基于Http2 的 Transport 进行传输层的 RPC 调用，具体流程如下。
 ```go
 google.golang.org/grpc.(*Server).handleRawConn at server.go
 func (s *Server) handleRawConn(lisAddr string, rawConn net.Conn) {
@@ -373,6 +384,7 @@ func getChainUnaryHandler(interceptors []UnaryServerInterceptor, curr int, info 
 
 ### 0x04 Layotto 发送 RPC 请求并写入 Local 虚拟连接
 
+接上述 0x03 流程，从 Runtime_InvokeService_Handler 起，由 GRPC 默认 API 转换为 Dapr API，进入 Layotto 提供的对接 Mosn 的轻量 RPC 框架，具体流程如下。
 ```go
 mosn.io/layotto/spec/proto/runtime/v1._Runtime_InvokeService_Handler at runtime.pb.go
 =>
@@ -381,7 +393,7 @@ mosn.io/layotto/pkg/grpc/default_api.(*api).InvokeService at api.go
 mosn.io/layotto/pkg/grpc/dapr.(*daprGrpcAPI).InvokeService at dapr_api.go
 =>
 mosn.io/layotto/components/rpc/invoker/mosn.(*mosnInvoker).Invoke at mosninvoker.go
-// 并请求mosn底座和返回响应
+// 请求 Mosn 底座和返回响应
 func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rpc.RPCResponse, err error) {
     defer func() {
         if r := recover(); r != nil {
@@ -493,7 +505,7 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
     if p.stateFunc != nil {
         wc.state = p.stateFunc()
     }
-    // 3. 启动 readloop 独立协程处理读取和处理数据
+    // 3. 启动 readloop 独立协程读取 Mosn 返回的数据
     if p.onDataFunc != nil {
         utils.GoWithRecover(func() {
             p.readloop(wc)
@@ -555,7 +567,7 @@ func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 ...
 mosn.io/mosn/pkg/network.(*filterManager).onContinueReading at filtermanager.go
 =>
-mosn.io/mosn/pkg/proxy.(*proxy).OnData at proxy.go:199
+mosn.io/mosn/pkg/proxy.(*proxy).OnData at proxy.go
 func (p *proxy) OnData(buf buffer.IoBuffer) api.FilterStatus {
     if p.fallback {
         return api.Continue
@@ -572,7 +584,7 @@ func (p *proxy) OnData(buf buffer.IoBuffer) api.FilterStatus {
 }
 =>
 ```
-(2) serverStreamConnection.serve 监听并处理请求到 downstream OnReceive。
+(2) serverStreamConnection.serve 监听并处理请求到 downstream OnReceive，详见如下代码。
 ```go
 mosn.io/mosn/pkg/stream/http.(*serverStream).handleRequest at stream.go
 func (s *serverStream) handleRequest(ctx context.Context) {
@@ -625,7 +637,7 @@ func (s *downStream) OnReceive(ctx context.Context, headers types.HeaderMap, dat
 
 }
 ```
-(3)上述 ScheduleAuto 调度后，经过 downStream 的 reveive 的各个阶段处理，经过 upstreamRequest、http clientStream 等处理，最终从网络层的 connection.Write 发送数据并进入 WaitNotify 阻塞。
+(3)上述 ScheduleAuto 调度后，经过 downStream 的 reveive 的各个阶段处理，经过 upstreamRequest、http clientStream 等处理，最终从网络层的 connection.Write 发送数据并进入 WaitNotify 阶段阻塞，详见如下代码。
 ```go
 mosn.io/mosn/pkg/sync.(*workerPool).ScheduleAuto at workerpool.go
 =>
@@ -636,42 +648,114 @@ mosn.io/mosn/pkg/proxy.(*downStream).receive at downstream.go
 InitPhase=>DownFilter=>MatchRoute=>DownFilterAfterRoute=>ChooseHost=>DownFilterAfterChooseHost=>DownRecvHeader=>DownRecvData
 =>
 mosn.io/mosn/pkg/proxy.(*downStream).receiveData at downstream.go
+=>
 mosn.io/mosn/pkg/proxy.(*upstreamRequest).appendData at upstream.go
+=>
 mosn.io/mosn/pkg/stream/http.(*clientStream).doSend at stream.go
+=>
 github.com/valyala/fasthttp.(*Request).WriteTo at http.go
+=>
 mosn.io/mosn/pkg/stream/http.(*streamConnection).Write at stream.go
+>
 mosn.io/mosn/pkg/network.(*connection).Write at connection.go
 =>
 mosn.io/mosn/pkg/proxy.(*downStream).receive at downstream.go
+func (s *downStream) receive(ctx context.Context, id uint32, phase types.Phase) types.Phase {
+    for i := 0; i <= int(types.End-types.InitPhase); i++ {
+        s.phase = phase
+        
+        switch phase {
+        ...
+        case types.WaitNotify:
+            s.printPhaseInfo(phase, id)
+            if p, err := s.waitNotify(id); err != nil {
+                return p
+            }
+        
+            if log.Proxy.GetLogLevel() >= log.DEBUG {
+            	log.Proxy.Debugf(s.context, "[proxy] [downstream] OnReceive send downstream response %+v", s.downstreamRespHeaders)
+            }
+        ...
+} 
 =>
-WaitNotify(非oneway)
+func (s *downStream) waitNotify(id uint32) (phase types.Phase, err error) {
+    if atomic.LoadUint32(&s.ID) != id {
+        return types.End, types.ErrExit
+    }
+
+	if log.Proxy.GetLogLevel() >= log.DEBUG {
+		log.Proxy.Debugf(s.context, "[proxy] [downstream] waitNotify begin %p, proxyId = %d", s, s.ID)
+	}
+	select {
+	// 阻塞等待
+	case <-s.notify:
+	}
+	return s.processError(id)
+}
 ```
+
 ### 0x06 Dubbo-go-sample server 收到请求返回响应
+
 这里就是 dubbo-go-sample server的处理，暂不展开，贴下日志信息，感兴趣的同学可以回去翻看源码。
 ```
 [2022-04-18/21:03:18 github.com/apache/dubbo-go-samples/rpc/jsonrpc/go-server/pkg.(*UserProvider2).GetUser: user_provider2.go: 53] userID:"A003"
 [2022-04-18/21:03:18 github.com/apache/dubbo-go-samples/rpc/jsonrpc/go-server/pkg.(*UserProvider2).GetUser: user_provider2.go: 56] rsp:&pkg.User{ID:"113", Name:"Moorse", Age:30, sex:0, Birth:703394193, Sex:"MAN"}
 ```
+
 ### 0x07 Mosn 框架处理响应并写回 Remote 虚拟连接
-接上述 0x05 第三阶段，在 reveive 的循环阶段的 DownRecvData 阶段处理响应，写回 0x04 中的 remote 虚拟连接。
+
+接上述 0x05 第三阶段，在 reveive 的循环阶段的 UpRecvData 阶段进入处理响应逻辑，经过一系列处理最终 Response 写回 0x04 中的 remote 虚拟连接，具体流程如下。
 ```go
 mosn.io/mosn/pkg/proxy.(*downStream).receive at downstream.go
+func (s *downStream) waitNotify(id uint32) (phase types.Phase, err error) {
+    if atomic.LoadUint32(&s.ID) != id {
+        return types.End, types.ErrExit
+    }
+    
+    if log.Proxy.GetLogLevel() >= log.DEBUG {
+        log.Proxy.Debugf(s.context, "[proxy] [downstream] waitNotify begin %p, proxyId = %d", s, s.ID)
+    }
+    // 返回响应
+    select {
+    case <-s.notify:
+    }
+    return s.processError(id)
+}
 =>
 UpFilter
+=>
 UpRecvHeader
-DownRecvData
 =>
-mosn.io/mosn/pkg/proxy.(*downStream).receiveData at downstream.go
+func (s *downStream) receive(ctx context.Context, id uint32, phase types.Phase) types.Phase {
+    for i := 0; i <= int(types.End-types.InitPhase); i++ {
+        s.phase = phase
+
+        switch phase {
+        ...
+        case types.UpRecvData:
+            if s.downstreamRespDataBuf != nil {
+            	s.printPhaseInfo(phase, id)
+            	s.upstreamRequest.receiveData(s.downstreamRespTrailers == nil)
+                if p, err := s.processError(id); err != nil {
+              	   return p
+              }
+           }
+        ...
+}
 =>
-mosn.io/mosn/pkg/proxy.(*upstreamRequest).appendData at upstream.go
+mosn.io/mosn/pkg/proxy.(*upstreamRequest).receiveData at upstream.go
 =>
-mosn.io/mosn/pkg/stream/http.(*clientStream).AppendData at stream.go
+mosn.io/mosn/pkg/proxy.(*downStream).onUpstreamData at downstream.go
 =>
-mosn.io/mosn/pkg/stream/http.(*clientStream).endStream at stream.go
+mosn.io/mosn/pkg/proxy.(*downStream).appendData at downstream.go
 =>
-mosn.io/mosn/pkg/stream/http.(*clientStream).doSend at stream.go
+mosn.io/mosn/pkg/stream/http.(*serverStream).AppendData at stream.go
 =>
-github.com/valyala/fasthttp.(*Request).WriteTo at http.go
+mosn.io/mosn/pkg/stream/http.(*serverStream).endStream at stream.go
+=>
+mosn.io/mosn/pkg/stream/http.(*serverStream).doSend at stream.go
+=>
+github.com/valyala/fasthttp.(*Response).WriteTo at http.go
 =>
 github.com/valyala/fasthttp.writeBufio at http.go
 =>
@@ -682,6 +766,7 @@ mosn.io/mosn/pkg/stream/http.(*streamConnection).Write at stream.go
 
 ### 0x08 Layotto 接收 RPC 响应并读取 Local 虚拟连接
 
+上述0x04 启动的 readloop 协程读IO被激活，从连接读取数Mosn 传回的数据，然后交给 hstate 管道中转处理再返回给请求协程，具体流程如下。
 ```go
 mosn.io/layotto/components/rpc/invoker/mosn/channel.(*connPool).readloop at connpool.go
 // readloop is loop to read connected then exec onDataFunc
@@ -697,7 +782,7 @@ func (p *connPool) readloop(c *wrapConn) {
 
     c.buf = buffer.NewIoBuffer(defaultBufSize)
     for {
-        // read data from connection
+        // 从连接读取数据
         n, readErr := c.buf.ReadOnce(c)
         if readErr != nil {
             err = readErr
@@ -709,8 +794,7 @@ func (p *connPool) readloop(c *wrapConn) {
         }
 
         if n > 0 {
-            // handle data.
-            // it will delegate to hstate if it's constructed by httpchannel
+            // 在onDataFunc 委托给 hstate 处理数据
             if onDataErr := p.onDataFunc(c); onDataErr != nil {
                 err = onDataErr
                 log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", onDataErr.Error())
@@ -732,9 +816,9 @@ mosn.io/layotto/components/rpc/invoker/mosn/channel.(*httpChannel).onData at htt
 =>
 mosn.io/layotto/components/rpc/invoker/mosn/channel.(*hstate).onData at httpchannel.go
 =>
-net.(*pipe).Write at pipe.go:174
+net.(*pipe).Write at pipe.go
 =>
-mosn.io/layotto/components/rpc/invoker/mosn/channel.(*httpChannel).Do at httpchannel.go:161
+mosn.io/layotto/components/rpc/invoker/mosn/channel.(*httpChannel).Do at httpchannel.go
 func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
     ...
     // 接上述0x04阶段，mosn 数据返回后，从 hstate 读取 readloop 协程从 mosn 返回的数据
@@ -765,7 +849,7 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 
 ### 0x09 Grpc Sever 处理数据帧返回给客户端
 
-Grpc 并没有直接写入数据到连接，而是用协程异步 loop 循环从一个缓存结构里面获取帧然后写回到客户端，详见如下代码。
+Grpc 并没有直接写入数据到连接，而是用协程异步 loop 循环从一个缓存结构里面获取帧然后写回到客户端，具体流程如下。
 ```go
 google.golang.org/grpc/internal/transport.NewServerTransport at http2_server.go
 func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport, err error) {
@@ -802,7 +886,37 @@ mosn.io/mosn/pkg/network.(*connection).doWrite at connection.go
 
 ### 0x10 dubbo-go-sample client 接收响应
 
+接上述 0x01 发送数据之后会阻塞在 Client grpc 底层读IO中, Layotto经过上述一些列处理层层返回数据激活Client底层Read IO，具体流程如下。
+```go
+google.golang.org/grpc.(*ClientConn).Invoke at call.go
+=>
+google.golang.org/grpc.(*ClientConn).Invoke at call.go
+=>
+google.golang.org/grpc.(*clientStream).RecvMsg at stream.go
+=>
+google.golang.org/grpc.(*clientStream).withRetry at stream.go
+=>
+google.golang.org/grpc.(*csAttempt).recvMsg at stream.go
+=>
+google.golang.org/grpc.recvAndDecompress at rpc_util.go
+=>
+google.golang.org/grpc.recv at rpc_util.go
+=>
+google.golang.org/grpc.(*parser).recvMsg at rpc_util.go
+=>
+google.golang.org/grpc.(*csAttempt).recvMsg at stream.go
+func (p *parser) recvMsg(maxReceiveMessageSize int) (pf payloadFormat, msg []byte, err error) {
+    if _, err := p.r.Read(p.header[:]); err != nil {
+        return 0, nil, err
+    }
+    ...
+}
 ```
+最终收到返回数据：
 {"jsonrpc":"2.0","id":9527,"result":{"id":"113","name":"Moorse","age":30,"time":703394193,"sex":"MAN"}}
-```
+
+## 总结
+Layotto RPC 处理流程涉及 GRPC、Dapr、Mosn 等相关的知识，整体流程较长，不过单纯看 Layotto 针对 Mosn 抽象的轻量 RPC 框架还是比较清晰和简单的，与 Mosn 集成的方式也比较新颖，值得进一步研读。至此 Layotto RPC 请求处理就分析完了，
+时间有限，没有进行一些更全面和深入的剖析，如有纰漏之处，欢迎指正，联系方式：rayo.wangzl@gmail.com。另外在此也希望大家能踊跃参与源码分析和开源社区来，一起学习，共同进步。
+
 
