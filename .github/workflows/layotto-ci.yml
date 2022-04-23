@@ -99,7 +99,7 @@ jobs:
 
   build-binary-darwin-amd64-artifact:
     name:  "🧳 Darwin AMD64 Artifact"
-    needs: [runtime-integrate,wasm-integrate]
+    needs: [runtime-integrate]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -121,7 +121,7 @@ jobs:
 
   build-binary-darwin-arm64-artifact:
     name:  "🧳 Darwin ARM64 Artifact"
-    needs: [runtime-integrate,wasm-integrate]
+    needs: [runtime-integrate]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -143,7 +143,7 @@ jobs:
 
   build-binary-linux-amd64-artifact:
     name:  "🧳 Linux AMD64 Artifact"
-    needs: [runtime-integrate,wasm-integrate]
+    needs: [runtime-integrate]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -165,7 +165,7 @@ jobs:
 
   build-binary-linux-arm64-artifact:
     name:  "🧳 Linux ARM64 Artifact"
-    needs: [runtime-integrate,wasm-integrate]
+    needs: [runtime-integrate]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -210,6 +210,7 @@ jobs:
   build-push-wasm-image:
     name:  "🎉 WASM IMAGE"
     needs: [build-wasm-binary-linux-amd64-artifact]
+    # if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
