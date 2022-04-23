@@ -24,6 +24,14 @@ ifeq (${IMAGES},)
   $(error Could not determine IMAGES, set ROOT_DIR or run in source dir)
 endif
 
+.PHONY: image.daemon.verify
+image.daemon.verify:
+	$(eval PASS := $(shell $(DOCKER) version | grep -q -E 'Experimental: {1,5}true' && echo 1 || echo 0))
+	@if [ $(PASS) -ne 1 ]; then \
+		echo "Experimental features of Docker daemon is not enabled. Please add \"experimental\": true in '/etc/docker/daemon.json' and then restart Docker daemon."; \
+		exit 1; \
+	fi
+
 .PHONY: image.verify
 image.verify:
 	$(eval API_VERSION := $(shell $(DOCKER) version | grep -E 'API version: {1,6}[0-9]' | head -n1 | awk '{print $$3} END { if (NR==0) print 0}' ))
@@ -46,13 +54,8 @@ image.build.%: go.build.%
 	$(eval IMAGE_PLAT := $(subst _,/,$(PLATFORM)))
 	@echo "===========> Building docker image $(IMAGE) $(VERSION) for $(IMAGE_PLAT)"
 	@mkdir -p $(TMP_DIR)/$(IMAGE)
-	@mkdir -p $(TMP_DIR)/$(IMAGE)/etc
-	@mkdir -p $(TMP_DIR)/$(IMAGE)/configs
 	@cat $(ROOT_DIR)/docker/$(IMAGE)/Dockerfile\
 		>$(TMP_DIR)/$(IMAGE)/Dockerfile
-	@cp -r $(SCRIPT_DIR) $(TMP_DIR)/$(IMAGE)/etc
-	@cp -r $(SUPERVISOR_DIR) $(TMP_DIR)/$(IMAGE)/etc
-	@cp $(DEFAULT_CONFIG_FILE) $(TMP_DIR)/$(IMAGE)/configs
 	@cp $(OUTPUT_DIR)/$(IMAGE_PLAT)/$(IMAGE) $(TMP_DIR)/$(IMAGE)/
 	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(IMAGE)-$(ARCH):$(VERSION) $(TMP_DIR)/$(IMAGE))
 	$(DOCKER) build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX)
@@ -78,6 +81,28 @@ app.image.%:
 		>$(TMP_DIR)/$(APP)/Dockerfile
 	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(APP)-$(ARCH):$(VERSION) $(TMP_DIR)/$(APP))
 	$(DOCKER) build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX)
+
+.PHONY: wasm.image
+wasm.image: wasm
+	$(eval IMAGE := layotto)
+	$(eval IMAGE_PLAT := $(subst _,/,$(WASM_PLATFORM)))
+	$(eval ARCH := $(word 2,$(subst _, ,$(WASM_PLATFORM))))
+	@echo "===========> Building docker image $(IMAGE) $(VERSION) for $(IMAGE_PLAT)"
+	@mkdir -p $(TMP_DIR)/$(IMAGE)
+	@cat $(ROOT_DIR)/docker/$(IMAGE)/Dockerfile\
+		>$(TMP_DIR)/$(IMAGE)/Dockerfile
+	@cp $(OUTPUT_DIR)/$(IMAGE_PLAT)/layotto $(TMP_DIR)/$(IMAGE)/
+	$(MAKE) image.daemon.verify
+	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(IMAGE).wasm.$(ARCH):$(VERSION) $(TMP_DIR)/$(IMAGE))
+	$(DOCKER) buildx build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX)
+
+.PHONY: wasm.image.push
+wasm.image.push:
+	$(eval IMAGE := layotto)
+	$(eval ARCH := $(word 2,$(subst _, ,$(WASM_PLATFORM))))
+	$(eval IMAGE_PLAT := $(subst _,/,$(WASM_PLATFORM)))
+	@echo "===========> Pushing image $(IMAGE) $(VERSION) to $(REGISTRY_PREFIX)"
+	$(DOCKER) push $(REGISTRY_PREFIX)/$(IMAGE).wasm.$(ARCH):$(VERSION)
 
 .PHONY: image.push
 image.push: image.verify $(addprefix image.push., $(addprefix $(IMAGE_PLAT)., $(IMAGES)))
