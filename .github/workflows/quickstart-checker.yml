@@ -13,7 +13,6 @@ jobs:
     name: Quickstart Checker
     runs-on: ${{ matrix.os }}
     strategy:
-      # If you want to matrix build , you can append the following list.
       matrix:
         go_version:
           - 1.14.13
