@@ -1,7 +1,7 @@
 name: PR Title Checker
 
 on:
-  pull_requestt:
+  pull_request:
     types:
       - opened
       - edited
