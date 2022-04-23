@@ -39,7 +39,7 @@ endif
 # set the version number. you should not need to do this
 # for the majority of scenarios.
 ifeq ($(origin VERSION), undefined)
-VERSION := $(shell git describe --dirty --always --tags | sed 's/-/./g')
+VERSION := $(shell git describe --abbrev=0 --dirty --always --tags | sed 's/-/./g')
 endif
 # Check if the tree is dirty.  default to dirty
 GIT_TREE_STATE:="dirty"

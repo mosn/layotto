@@ -57,7 +57,7 @@ image.build.%: go.build.%
 	@cat $(ROOT_DIR)/docker/$(IMAGE)/Dockerfile\
 		>$(TMP_DIR)/$(IMAGE)/Dockerfile
 	@cp $(OUTPUT_DIR)/$(IMAGE_PLAT)/$(IMAGE) $(TMP_DIR)/$(IMAGE)/
-	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(IMAGE)-$(ARCH):$(VERSION) $(TMP_DIR)/$(IMAGE))
+	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(IMAGE).$(ARCH):$(VERSION) $(TMP_DIR)/$(IMAGE))
 	$(DOCKER) build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX)
 
 APPS ?= faas integrate
@@ -92,7 +92,6 @@ wasm.image: wasm
 	@cat $(ROOT_DIR)/docker/$(IMAGE)/Dockerfile\
 		>$(TMP_DIR)/$(IMAGE)/Dockerfile
 	@cp $(OUTPUT_DIR)/$(IMAGE_PLAT)/layotto $(TMP_DIR)/$(IMAGE)/
-	$(MAKE) image.daemon.verify
 	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(IMAGE).wasm.$(ARCH):$(VERSION) $(TMP_DIR)/$(IMAGE))
 	$(DOCKER) buildx build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX)
 
