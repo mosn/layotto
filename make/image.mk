@@ -56,7 +56,6 @@ image.build.%: go.build.%
 	@cp $(OUTPUT_DIR)/$(IMAGE_PLAT)/$(IMAGE) $(TMP_DIR)/$(IMAGE)/
 	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(IMAGE)-$(ARCH):$(VERSION) $(TMP_DIR)/$(IMAGE))
 	$(DOCKER) build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX)
-	@rm -rf $(TMP_DIR)/$(IMAGE)
 
 APPS ?= faas integrate
 APP_PLATFORMS = linux_amd64 linux_arm64 
@@ -70,9 +69,8 @@ app.image.multiarch: image.verify  $(foreach p,$(APP_PLATFORMS),$(addprefix app.
 .PHONY: app.image.%
 app.image.%:
 	$(eval PLATFORM := $(word 1,$(subst ., ,$*)))
+	$(eval APP := $(word 2,$(subst ., ,$*)))
 	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
-	$(eval COMMAND := $(word 2,$(subst ., ,$*)))
-	$(eval APP := $(COMMAND))
 	$(eval IMAGE_PLAT := $(subst _,/,$(PLATFORM)))
 	@echo "===========> Building docker image $(APP) $(VERSION) for $(IMAGE_PLAT)"
 	@mkdir -p $(TMP_DIR)/$(APP)
@@ -80,7 +78,6 @@ app.image.%:
 		>$(TMP_DIR)/$(APP)/Dockerfile
 	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(APP)-$(ARCH):$(VERSION) $(TMP_DIR)/$(APP))
 	$(DOCKER) build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX)
-	@rm -rf $(TMP_DIR)/$(APP)
 
 .PHONY: image.push
 image.push: image.verify $(addprefix image.push., $(addprefix $(IMAGE_PLAT)., $(IMAGES)))
