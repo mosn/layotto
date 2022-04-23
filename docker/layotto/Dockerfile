@@ -1,6 +1,6 @@
 FROM centos:centos7
 
-COPY .  /home/
+COPY ./layotto /home/
 
 RUN chmod +x  /home/layotto
 
