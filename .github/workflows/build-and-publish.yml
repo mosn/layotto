@@ -1,13 +1,13 @@
 # Auto build and release docker image to docker hub when releasing tags
 ---
-name: Build and Release Layotto Image
+name: Release Layotto Image
 
 on:
   create
 
 jobs:
   publish_image:
-    name: Build and Push Layotto image
+    name: Release Layotto image
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
