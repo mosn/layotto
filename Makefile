@@ -42,6 +42,10 @@ SHELL := /bin/bash
 .PHONY: all
 all: go.lint go.test go.build
 
+
+.PHONY: check
+check: go.check.style go.check.unit go.check.lint
+
 # ==============================================================================
 # ROOT Options
 
@@ -67,15 +71,15 @@ build:
 build.multiarch:
 	@$(MAKE) go.build.multiarch
 
-## go.wasm: Build layotto wasm for host platform.
+## go.wasm: Build layotto wasm for linux arm64 platform.
 .PHONY: go.wasm
 go.wasm:
-	@$(MAKE) build.wasm
+	@$(MAKE) wasm
 
 ## go.wasm.multiarch: Build layotto wasm for multiple platform.
 .PHONY: go.wasm.multiarch
 go.wasm.multiarch:
-	@$(MAKE) build.wasm.multiarch
+	@$(MAKE) wasm.multiarch
 
 ## go.check.lint: Run go syntax and styling of go sources.
 .PHONY: go.check.lint
@@ -90,7 +94,7 @@ go.check.unit:
 ## go.check.style: Run go style test.
 .PHONY: go.check.style
 go.check.style:
-	@$(MAKE) go.style.verify
+	@$(MAKE) go.style
 
 ## app: Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
 .PHONY: app
@@ -181,7 +185,3 @@ help: Makefile
 	@echo -e "Usage: make <TARGETS> <OPTIONS> ...\n\nTargets:"
 	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
 	@echo "$$USAGE_OPTIONS"
-
-build-linux-wasm-layotto:
-	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/faas
-	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} go build -tags wasmer -o layotto /go/src/${PROJECT_NAME}/cmd/layotto

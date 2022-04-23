@@ -185,31 +185,31 @@ jobs:
           retention-days: 5
           if-no-files-found: error
 
-  # build-wasm-binary-linux-amd64-artifact:
-  #   name:  "🧳 WASM Artifact"
-  #   needs: [wasm-integrate]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Set up Go
-  #       uses: actions/setup-go@v2
-  #       with:
-  #         go-version: 1.18.1
-  #     - name: Check out code
-  #       uses: actions/checkout@v2
-  #     - name: Build Artifact
-  #       run: |
-  #         make build.wasm.linux_arm64.layotto
-  #     - name: Publish Artifact
-  #       uses: actions/upload-artifact@v2.2.4
-  #       with:
-  #         name: layotto.wasm.linux_arm64
-  #         path: _output/linux/arm64/layotto
-  #         retention-days: 5
-  #         if-no-files-found: error
+  build-wasm-binary-linux-amd64-artifact:
+    name:  "🧳 WASM Artifact"
+    needs: [wasm-integrate]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18.1
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Build Artifact
+        run: |
+          make wasm
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: layotto.wasm.linux_amd64
+          path: _output/linux/amd64/faas
+          retention-days: 5
+          if-no-files-found: error
 
   build-push-linux-amd64-image:
     name: "🎉 Linux AMD64 Image"
-    needs: [build-binary-linux-amd64-artifact]
+    needs: [build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
     # if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
@@ -226,14 +226,14 @@ jobs:
       #     password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build Layotto Latest Image
         run: |
-          make image.build.linux_amd64.layotto
+          make image.build.linux_amd64.layotto VERSION=latest
       # - name: Push Image to DockerHub
       #   run: |
-      #     make image.push.linux_amd64.layotto
+      #     make image.push.linux_amd64.layotto VERSION=latest
 
   build-push-linux-arm64-image:
     name: "🎉 Linux ARMD64 Image"
-    needs: [build-binary-linux-arm64-artifact]
+    needs: [build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
     # if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
@@ -250,7 +250,7 @@ jobs:
       #     password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build Layotto Latest Image
         run: |
-          make image.build.linux_arm64.layotto
+          make image.build.linux_arm64.layotto VERSION=latest
       # - name: Push Image to DockerHub
       #   run: |
-      #     make image.push.linux_arm64.layotto
+      #     make image.push.linux_arm64.layotto VERSION=latest
