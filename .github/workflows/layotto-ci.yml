@@ -196,16 +196,39 @@ jobs:
           go-version: 1.18.1
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Build Artifact
-        run: |
-          make wasm
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: layotto.wasm.linux_amd64
-          path: _output/linux/amd64/layotto
-          retention-days: 5
-          if-no-files-found: error
+      # - name: Build Artifact
+      #   run: |
+      #     make wasm
+      # - name: Publish Artifact
+      #   uses: actions/upload-artifact@v2.2.4
+      #   with:
+      #     name: layotto.wasm.linux_amd64
+      #     path: _output/linux/amd64/layotto
+      #     retention-days: 5
+      #     if-no-files-found: error
+
+  build-push-wasm-image:
+    name:  "🧳 WASM IMAGE"
+    needs: [build-wasm-binary-linux-amd64-artifact]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      # - name: Login to DockerHub
+      #   uses: docker/login-action@v1 
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # - name: Build Layotto Latest Image
+      #   run: |
+      #     make wasm.image VERSION=latest
+      # - name: Push Image to DockerHub
+      #   run: |
+      #     make wasm.image.push VERSION=latest
 
   build-push-linux-amd64-image:
     name: "🎉 Linux AMD64 Image"
