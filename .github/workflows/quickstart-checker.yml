@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Quickstart Checker
+    name: "🧐 Validation"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
