@@ -242,7 +242,7 @@ jobs:
 
   build-push-linux-amd64-image:
     name: "🎉 Linux AMD64 Image"
-    needs: [build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
+    needs: [build-wasm-binary-linux-amd64-artifact,build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
     if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
@@ -266,7 +266,7 @@ jobs:
 
   build-push-linux-arm64-image:
     name: "🎉 Linux ARMD64 Image"
-    needs: [build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
+    needs: [build-wasm-binary-linux-amd64-artifact,build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
     if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:

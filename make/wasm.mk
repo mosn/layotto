@@ -1,3 +1,5 @@
+# COMMANDS Used in WASM
+
 WASM_PLATFORM ?= linux_amd64
 WASM_PLATFORMS ?= linux_amd64
 WASM_BUILD ?= faas

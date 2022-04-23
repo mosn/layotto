@@ -1,3 +1,5 @@
+# COMMANDS Used in Docker Image
+
 DOCKER := docker
 DOCKER_SUPPORTED_API_VERSION ?= 1.32
 

@@ -1,3 +1,5 @@
+# COMMANDS Used in CI
+
 APPS ?= faas integrate
 APP_PLATFORMS = linux_amd64 linux_arm64 
 
