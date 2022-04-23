@@ -1,4 +1,4 @@
-name: "CodeQL"
+name: PR Linter 👀
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   analyse:
-    name: Analyse
+    name: CodeQL
     runs-on: ubuntu-latest
 
     steps:

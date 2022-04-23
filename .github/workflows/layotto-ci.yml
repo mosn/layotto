@@ -106,7 +106,7 @@ jobs:
 
   build-binary-darwin-amd64-artifact:
     name:  "🧳 Darwin AMD64 Artifact"
-    needs: [runtime-integrate]
+    needs: [runtime-integrate,wasm-integrate]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -128,7 +128,7 @@ jobs:
 
   build-binary-darwin-arm64-artifact:
     name:  "🧳 Darwin ARM64 Artifact"
-    needs: [runtime-integrate]
+    needs: [runtime-integrate,wasm-integrate]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -150,7 +150,7 @@ jobs:
 
   build-binary-linux-amd64-artifact:
     name:  "🧳 Linux AMD64 Artifact"
-    needs: [runtime-integrate]
+    needs: [runtime-integrate,wasm-integrate]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -172,7 +172,7 @@ jobs:
 
   build-binary-linux-arm64-artifact:
     name:  "🧳 Linux ARM64 Artifact"
-    needs: [runtime-integrate]
+    needs: [runtime-integrate,wasm-integrate]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -203,6 +203,7 @@ jobs:
           go-version: 1.18.1
       - name: Check out code
         uses: actions/checkout@v2
+      # TODO(@Xunzhuo): open it after stabilizing wasm cmds
       # - name: Build Artifact
       #   run: |
       #     make wasm
@@ -216,8 +217,8 @@ jobs:
 
   build-push-wasm-image:
     name:  "🎉 Linux AMD64 WASM Image"
-    needs: [build-wasm-binary-linux-amd64-artifact]
-    # if: github.ref_name == 'main'
+    needs: [build-wasm-binary-linux-amd64-artifact,build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -226,6 +227,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+      # TODO(@Xunzhuo): open it after stabilizing wasm cmds
       # - name: Login to DockerHub
       #   uses: docker/login-action@v1 
       #   with:
@@ -240,8 +242,8 @@ jobs:
 
   build-push-linux-amd64-image:
     name: "🎉 Linux AMD64 Image"
-    needs: [build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
-    # if: github.ref_name == 'main'
+    needs: [build-wasm-binary-linux-amd64-artifact,build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -250,22 +252,22 @@ jobs:
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      # - name: Login to DockerHub
-      #   uses: docker/login-action@v1 
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build Layotto Latest Image
         run: |
           make image.build.linux_amd64.layotto VERSION=latest
-      # - name: Push Image to DockerHub
-      #   run: |
-      #     make image.push.linux_amd64.layotto VERSION=latest
+      - name: Push Image to DockerHub
+        run: |
+          make image.push.linux_amd64.layotto VERSION=latest
 
   build-push-linux-arm64-image:
     name: "🎉 Linux ARMD64 Image"
-    needs: [build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
-    # if: github.ref_name == 'main'
+    needs: [build-wasm-binary-linux-amd64-artifact,build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -274,14 +276,14 @@ jobs:
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      # - name: Login to DockerHub
-      #   uses: docker/login-action@v1 
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build Layotto Latest Image
         run: |
           make image.build.linux_arm64.layotto VERSION=latest
-      # - name: Push Image to DockerHub
-      #   run: |
-      #     make image.push.linux_arm64.layotto VERSION=latest
+      - name: Push Image to DockerHub
+        run: |
+          make image.push.linux_arm64.layotto VERSION=latest
