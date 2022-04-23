@@ -82,10 +82,10 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v2
-    - name: Test Coverage
-      run: make check.coverage 
-    - name: Post Coverage
-      run: bash <(curl -s https://codecov.io/bash)
+    # - name: Test Coverage
+    #   run: make check.coverage 
+    # - name: Post Coverage
+    #   run: bash <(curl -s https://codecov.io/bash)
 
   wasm-integrate:
     name: Integrate with WASM
@@ -112,8 +112,8 @@ jobs:
           go-version: 1.18.1
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Run Integrate tests.
-        run:  make integrate.runtime
+      # - name: Run Integrate tests.
+      #   run:  make integrate.runtime
 
   build-binary-darwin-amd64-artifact:
     name:  "[Darwin:AMD64] BASE Artifact"
@@ -126,16 +126,16 @@ jobs:
           go-version: 1.18.1
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Build Artifact
-        run: |
-          make go.build.darwin_amd64.layotto
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: layotto.darwin_amd64
-          path: _output/darwin/amd64/layotto
-          retention-days: 5
-          if-no-files-found: error
+      # - name: Build Artifact
+      #   run: |
+      #     make go.build.darwin_amd64.layotto
+      # - name: Publish Artifact
+      #   uses: actions/upload-artifact@v2.2.4
+      #   with:
+      #     name: layotto.darwin_amd64
+      #     path: _output/darwin/amd64/layotto
+      #     retention-days: 5
+      #     if-no-files-found: error
 
   build-binary-darwin-arm64-artifact:
     name:  "[Darwin:ARM64] BASE Artifact"
@@ -148,16 +148,16 @@ jobs:
           go-version: 1.18.1
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Build Artifact
-        run: |
-          make go.build.darwin_arm64.layotto
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: layotto.darwin_arm64
-          path: _output/darwin/arm64/layotto
-          retention-days: 5
-          if-no-files-found: error
+      # - name: Build Artifact
+      #   run: |
+      #     make go.build.darwin_arm64.layotto
+      # - name: Publish Artifact
+      #   uses: actions/upload-artifact@v2.2.4
+      #   with:
+      #     name: layotto.darwin_arm64
+      #     path: _output/darwin/arm64/layotto
+      #     retention-days: 5
+      #     if-no-files-found: error
 
   build-binary-linux-amd64-artifact:
     name:  "[Linux:AMD64] BASE Artifact"
@@ -170,16 +170,16 @@ jobs:
           go-version: 1.18.1
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Build Artifact
-        run: |
-          make go.build.linux_amd64.layotto
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: layotto.linux_amd64
-          path: _output/linux/amd64/layotto
-          retention-days: 5
-          if-no-files-found: error
+      # - name: Build Artifact
+      #   run: |
+      #     make go.build.linux_amd64.layotto
+      # - name: Publish Artifact
+      #   uses: actions/upload-artifact@v2.2.4
+      #   with:
+      #     name: layotto.linux_amd64
+      #     path: _output/linux/amd64/layotto
+      #     retention-days: 5
+      #     if-no-files-found: error
 
   build-binary-linux-arm64-artifact:
     name:  "[Linux:ARM64] BASE Artifact"
