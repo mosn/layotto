@@ -25,24 +25,24 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.18.1
-      - name: Cache dependencies
-        uses: actions/cache@v2.1.4
-        with:
-          # Cache
-          path: ~/go/pkg/mod
-          # Cache key
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          # An ordered list of keys to use for restoring the cache if no cache hit occurred for key
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: Get Go Dependencies
-        run: |
-          if [ -f Gopkg.toml ]; then
-              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-              dep ensure
-          else
-              go get -v -t -d ./...
-          fi
+      # - name: Cache dependencies
+      #   uses: actions/cache@v2.1.4
+      #   with:
+      #     # Cache
+      #     path: ~/go/pkg/mod
+      #     # Cache key
+      #     key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+      #     # An ordered list of keys to use for restoring the cache if no cache hit occurred for key
+      #     restore-keys: |
+      #       ${{ runner.os }}-go-
+      # - name: Get Go Dependencies
+      #   run: |
+      #     if [ -f Gopkg.toml ]; then
+      #         curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+      #         dep ensure
+      #     else
+      #         go get -v -t -d ./...
+      #     fi
       - name: Format Go
         run: |
            make go.check.style
@@ -98,8 +98,8 @@ jobs:
           go-version: 1.18.1
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Run Integrate tests.
-        run:  make integrate.wasm
+      # - name: Run Integrate tests.
+      #   run:  make integrate.wasm
 
   runtime-integrate:
     name: Integrate with Runtime
@@ -192,16 +192,16 @@ jobs:
           go-version: 1.18.1
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Build Artifact
-        run: |
-          make go.build.linux_arm64.layotto
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: layotto.linux_arm64
-          path: _output/linux/arm64/layotto
-          retention-days: 5
-          if-no-files-found: error
+      # - name: Build Artifact
+      #   run: |
+      #     make go.build.linux_arm64.layotto
+      # - name: Publish Artifact
+      #   uses: actions/upload-artifact@v2.2.4
+      #   with:
+      #     name: layotto.linux_arm64
+      #     path: _output/linux/arm64/layotto
+      #     retention-days: 5
+      #     if-no-files-found: error
 
   build-wasm-binary-darwin-amd64-artifact:
     name:  "[Darwin:AMD64] WASM Artifact"

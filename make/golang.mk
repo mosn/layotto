@@ -46,11 +46,13 @@ build.wasm:  $(addprefix build.wasm., $(addprefix $(PLATFORM)., $(BINS)))
 build.wasm.multiarch:  $(foreach p,$(PLATFORMS),$(addprefix build.wasm., $(addprefix $(p)., $(BINS))))
 
 .PHONY: build.wasm.%
-build.wasm.%: app.image.$(PLATFORM).faas
+build.wasm.%:
 	$(eval COMMAND := $(word 2,$(subst ., ,$*)))
 	$(eval PLATFORM := $(word 1,$(subst ., ,$*)))
 	$(eval OS := $(word 1,$(subst _, ,$(PLATFORM))))
 	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
+	@echo "===========> Building wasm base image $(COMMAND) $(VERSION) for $(OS) $(ARCH)"
+	@make app.image.$(PLATFORM).faas
 	@echo "===========> Building binary wasm $(COMMAND) $(VERSION) for $(OS) $(ARCH)"
 	@mkdir -p $(OUTPUT_DIR)/$(OS)/$(ARCH)
 	$(eval BUILD_IMAGE := $(REGISTRY_PREFIX)/faas-$(ARCH):$(VERSION))
