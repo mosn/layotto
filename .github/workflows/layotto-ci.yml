@@ -1,4 +1,9 @@
-name: Layotto Dev Pipeline
+name: Layotto Dev Pipeline 🌊
+
+# Ignore some changes of commits:
+# 1. changes in .ci/
+# 2. changes in docs/
+# 3. changes in markdown files
 
 on:
   push:
@@ -210,7 +215,7 @@ jobs:
       #     if-no-files-found: error
 
   build-push-wasm-image:
-    name:  "🎉 Linux AMD64 WASM IMAGE"
+    name:  "🎉 Linux AMD64 WASM Image"
     needs: [build-wasm-binary-linux-amd64-artifact]
     # if: github.ref_name == 'main'
     runs-on: ubuntu-latest

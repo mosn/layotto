@@ -1,4 +1,4 @@
-name: Layotto Release Pipeline
+name: Layotto Release Pipeline 🌊
 
 on:
   create
