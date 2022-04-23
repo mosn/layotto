@@ -1,4 +1,4 @@
-FROM centos:centos7 as builder
+FROM centos:centos7
 
 COPY .  /home/
 
