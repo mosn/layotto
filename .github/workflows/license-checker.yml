@@ -10,7 +10,7 @@ on:
 
 jobs:
   check:
-    name: "🧐  Validation"
+    name: "👀 Validation"
     runs-on: ubuntu-latest
 
     steps:
