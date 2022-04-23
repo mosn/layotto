@@ -637,7 +637,7 @@ func (s *downStream) OnReceive(ctx context.Context, headers types.HeaderMap, dat
 
 }
 ```
-(3)上述 ScheduleAuto 调度后，经过 downStream 的 reveive 的各个阶段处理，经过 upstreamRequest、http clientStream 等处理，最终从网络层的 connection.Write 发送数据并进入 WaitNotify 阶段阻塞，详见如下代码。
+(3) 上述 ScheduleAuto 调度后，经过 downStream 的 reveive 的各个阶段处理，经过 upstreamRequest、http clientStream 等处理，最终从网络层的 connection.Write 发送数据并进入 WaitNotify 阶段阻塞，详见如下代码。
 ```go
 mosn.io/mosn/pkg/sync.(*workerPool).ScheduleAuto at workerpool.go
 =>
@@ -766,7 +766,7 @@ mosn.io/mosn/pkg/stream/http.(*streamConnection).Write at stream.go
 
 ### 0x08 Layotto 接收 RPC 响应并读取 Local 虚拟连接
 
-上述0x04 启动的 readloop 协程读IO被激活，从连接读取数Mosn 传回的数据，然后交给 hstate 管道中转处理再返回给请求协程，具体流程如下。
+上述 0x04 启动的 readloop 协程读IO被激活，从连接读取数Mosn 传回的数据，然后交给 hstate 管道中转处理再返回给请求协程，具体流程如下。
 ```go
 mosn.io/layotto/components/rpc/invoker/mosn/channel.(*connPool).readloop at connpool.go
 // readloop is loop to read connected then exec onDataFunc
