@@ -64,7 +64,7 @@ wasm.%:
 	@echo "===========> Building wasm base image in $(VERSION) for $(OS) $(ARCH)"
 	$(DOCKER) build -f ${DOCKER_FILE} -t  ${BUILD_IMAGE} .
 	@echo "===========> Building binary wasm in $(VERSION) for $(OS) $(ARCH)"
-	$(eval OUTPUT_PATH := ./_output/$(OS)/$(ARCH)/$(COMMAND))
+	$(eval OUTPUT_PATH := ./_output/$(OS)/$(ARCH)/layotto)
 	$(eval ACTION := $(GO) build -o $(OUTPUT_PATH) -tags wasmer -ldflags "$(GO_LDFLAGS)" $(ROOT_PACKAGE)/cmd/layotto)
 	$(DOCKER) run --rm -v $(ROOT_DIR):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} ${ACTION}
 
@@ -92,7 +92,6 @@ ifeq ($(shell which go-junit-report), )
 	@echo "===========> Installing go-junit-report"
 	@GO111MODULE=off $(GO) get -u github.com/jstemmer/go-junit-report
 endif
-
 
 .PHONY: go.test
 go.test: go.test.verify

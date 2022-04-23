@@ -203,7 +203,7 @@ jobs:
         uses: actions/upload-artifact@v2.2.4
         with:
           name: layotto.wasm.linux_amd64
-          path: _output/linux/amd64/faas
+          path: _output/linux/amd64/layotto
           retention-days: 5
           if-no-files-found: error
 
