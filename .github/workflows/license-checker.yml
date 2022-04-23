@@ -1,4 +1,4 @@
-name: License Checker
+name: PR Linter 👀
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   check:
-    name: "👀 Validation"
+    name: "License Validation"
     runs-on: ubuntu-latest
 
     steps:
