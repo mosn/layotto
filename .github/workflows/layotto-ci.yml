@@ -185,27 +185,27 @@ jobs:
           retention-days: 5
           if-no-files-found: error
 
-  build-wasm-binary-linux-amd64-artifact:
-    name:  "🧳 WASM Artifact"
-    needs: [wasm-integrate]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.18.1
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: Build Artifact
-        run: |
-          make build.wasm.linux_arm64.layotto
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: layotto.wasm.linux_arm64
-          path: _output/linux/arm64/layotto
-          retention-days: 5
-          if-no-files-found: error
+  # build-wasm-binary-linux-amd64-artifact:
+  #   name:  "🧳 WASM Artifact"
+  #   needs: [wasm-integrate]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v2
+  #       with:
+  #         go-version: 1.18.1
+  #     - name: Check out code
+  #       uses: actions/checkout@v2
+  #     - name: Build Artifact
+  #       run: |
+  #         make build.wasm.linux_arm64.layotto
+  #     - name: Publish Artifact
+  #       uses: actions/upload-artifact@v2.2.4
+  #       with:
+  #         name: layotto.wasm.linux_arm64
+  #         path: _output/linux/arm64/layotto
+  #         retention-days: 5
+  #         if-no-files-found: error
 
   build-push-linux-amd64-image:
     name: "🎉 Linux AMD64 Image"
