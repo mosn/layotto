@@ -46,7 +46,7 @@ build.wasm:  $(addprefix build.wasm., $(addprefix $(PLATFORM)., $(BINS)))
 build.wasm.multiarch:  $(foreach p,$(PLATFORMS),$(addprefix build.wasm., $(addprefix $(p)., $(BINS))))
 
 .PHONY: build.wasm.%
-build.wasm.%: app.image.linux_arm64.faas
+build.wasm.%: app.image.$(PLATFORM).faas
 	$(eval COMMAND := $(word 2,$(subst ., ,$*)))
 	$(eval PLATFORM := $(word 1,$(subst ., ,$*)))
 	$(eval OS := $(word 1,$(subst _, ,$(PLATFORM))))
@@ -57,7 +57,7 @@ build.wasm.%: app.image.linux_arm64.faas
 	$(eval WORKDIR := -w /go/src/${PROJECT_NAME})
 	$(eval ENV := -e CGO_ENABLED=0 -e GOOS=$(OS) -e GOARCH=$(ARCH))
 	$(eval INTEGRATE_SUFFIX := -v $(ROOT_DIR):/go/src/${PROJECT_NAME} $(WORKDIR) $(ENV))
-	$(eval ACTION := $(GO) build -o $(OUTPUT_DIR)/$(OS)/$(ARCH)/$(COMMAND)$(GO_OUT_EXT) -ldflags "$(GO_LDFLAGS)" $(ROOT_PACKAGE)/cmd/$(COMMAND))
+	$(eval ACTION := $(GO) build -o $(OUTPUT_DIR)/$(OS)/$(ARCH)/$(COMMAND)$(GO_OUT_EXT) -tags wasmer -ldflags "$(GO_LDFLAGS)" $(ROOT_PACKAGE)/cmd/$(COMMAND))
 	$(DOCKER) run --rm $(INTEGRATE_SUFFIX) $(BUILD_IMAGE) $(ACTION)
 
 .PHONY: go.clean
