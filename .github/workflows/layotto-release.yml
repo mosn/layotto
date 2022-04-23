@@ -1,18 +1,7 @@
-name: Layotto Dev Pipeline
+name: Layotto Release Pipeline
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - '.ci/**'
-      - 'docs/**'
-      - '**/*.md'
-  pull_request:
-    branches: "*"
-    paths-ignore:
-      - '.ci/**'
-      - 'docs/**'
-      - '**/*.md'
+  create
 
 jobs:
   style-check:
@@ -39,10 +28,10 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.18.1
-    # - name: Lint Golang
-    #   uses: golangci/golangci-lint-action@v3
-    #   with:
-    #     version: latest                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    - name: Lint Golang
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: latest                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
   go-unit-test:
     name: "👀 Go Unit Test"
@@ -54,8 +43,8 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.18.1
-    # - name: Go Unit Test
-    #   run: make go.check.unit
+    - name: Go Unit Test
+      run: make go.check.unit
 
   coverage:
     name: "🤔 Coverage Analysis"
@@ -188,7 +177,7 @@ jobs:
   build-push-linux-amd64-image:
     name: "🎉 Linux AMD64 Image"
     needs: [build-binary-linux-amd64-artifact]
-    # if: github.ref_name == 'main'
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -205,14 +194,14 @@ jobs:
       - name: Build Layotto Latest Image
         run: |
           make image.build.linux_amd64.layotto
-      # - name: Push Image to DockerHub
-      #   run: |
-      #     make image.push.linux_amd64.layotto
+      - name: Push Image to DockerHub
+        run: |
+          make image.push.linux_amd64.layotto
 
   build-push-linux-arm64-image:
     name: "🎉 Linux ARMD64 Image"
     needs: [build-binary-linux-arm64-artifact]
-    # if: github.ref_name == 'main'
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -229,14 +218,14 @@ jobs:
       - name: Build Layotto Latest Image
         run: |
           make image.build.linux_arm64.layotto
-      # - name: Push Image to DockerHub
-      #   run: |
-      #     make image.push.linux_arm64.layotto
+      - name: Push Image to DockerHub
+        run: |
+          make image.push.linux_arm64.layotto
 
   build-push-darwin-amd64-image:
     name: "🎉 Darwin AMD64 Image"
     needs: [build-binary-darwin-amd64-artifact]
-    # if: github.ref_name == 'main'
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -253,14 +242,14 @@ jobs:
       - name: Build Layotto Latest Image
         run: |
           make image.build.darwin_amd64.layotto
-      # - name: Push Image to DockerHub
-      #   run: |
-      #     make image.push.darwin_amd64.layotto
+      - name: Push Image to DockerHub
+        run: |
+          make image.push.darwin_amd64.layotto
 
   build-push-darwin-arm64-image:
     name: "🎉 Darwin ARM64 Image"
     needs: [build-binary-darwin-arm64-artifact]
-    # if: github.ref_name == 'main'
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -277,6 +266,6 @@ jobs:
       - name: Build Layotto Latest Image
         run: |
           make image.build.darwin_arm64.layotto
-      # - name: Push Image to DockerHub
-      #   run: |
-      #     make image.push.darwin_arm64.layotto
+      - name: Push Image to DockerHub
+        run: |
+          make image.push.darwin_arm64.layotto
