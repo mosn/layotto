@@ -61,6 +61,8 @@ ROOT_PACKAGE=mosn.io/layotto
 include make/common.mk
 include make/golang.mk
 include make/image.mk
+include make/wasm.mk
+include make/ci.mk
 
 # ==============================================================================
 # Targets

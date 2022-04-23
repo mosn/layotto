@@ -39,35 +39,6 @@ go.build:  $(addprefix go.build., $(addprefix $(PLATFORM)., $(BINS)))
 .PHONY: go.build.multiarch
 go.build.multiarch:  $(foreach p,$(PLATFORMS),$(addprefix go.build., $(addprefix $(p)., $(BINS))))
 
-WASM_PLATFORM ?= linux_amd64
-WASM_PLATFORMS ?= linux_amd64
-WASM_BUILD ?= faas
-
-.PHONY: wasm
-wasm:  $(addprefix wasm., $(addprefix $(WASM_PLATFORM)., $(WASM_BUILD)))
-
-.PHONY: wasm.multiarch
-wasm.multiarch:  $(foreach p,$(WASM_PLATFORMS),$(addprefix wasm., $(addprefix $(p)., $(WASM_BUILD))))
-
-.PHONY: wasm.%
-wasm.%:
-	$(eval COMMAND := $(word 2,$(subst ., ,$*)))
-	$(eval PLATFORM := $(word 1,$(subst ., ,$*)))
-	$(eval OS := $(word 1,$(subst _, ,$(PLATFORM))))
-	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
-	$(eval BUILD_IMAGE := $(REGISTRY_PREFIX)/faas-$(ARCH):$(VERSION))
-	@mkdir -p $(TMP_DIR)/$(COMMAND)
-	@mkdir -p $(OUTPUT_DIR)/$(OS)/$(ARCH)
-	@cat $(ROOT_DIR)/docker/app/$(COMMAND)/Dockerfile\
-		>$(TMP_DIR)/$(COMMAND)/Dockerfile
-	$(eval DOCKER_FILE := $(TMP_DIR)/$(COMMAND)/Dockerfile)
-	@echo "===========> Building wasm base image in $(VERSION) for $(OS) $(ARCH)"
-	$(DOCKER) build -f ${DOCKER_FILE} -t  ${BUILD_IMAGE} .
-	@echo "===========> Building binary wasm in $(VERSION) for $(OS) $(ARCH)"
-	$(eval OUTPUT_PATH := ./_output/$(OS)/$(ARCH)/layotto)
-	$(eval ACTION := $(GO) build -o $(OUTPUT_PATH) -tags wasmer -ldflags "$(GO_LDFLAGS)" $(ROOT_PACKAGE)/cmd/layotto)
-	$(DOCKER) run --rm -v $(ROOT_DIR):/go/src/${PROJECT_NAME} -e GOOS=$(OS) -e GOARCH=$(ARCH) -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} ${ACTION}
-
 .PHONY: go.clean
 go.clean:
 	@echo "===========> Cleaning all build output"
@@ -102,21 +73,3 @@ go.test: go.test.verify
 go.style:  
 	@echo "===========> Running go style check"
 	$(GO) fmt ./... && git status && [[ -z `git status -s` ]]
-
-.PHONY: checker.deadlink
-checker.deadlink:
-	@echo "===========> Checking Dead Links"
-	sh ${SCRIPT_DIR}/check-dead-link.sh
-
-.PHONY: checker.quickstart
-checker.quickstart:
-	@echo "===========> Checking QuickStart Doc"
-	curl -o ${ROOT_DIR}/mdsh.sh https://raw.githubusercontent.com/seeflood/mdsh/master/bin/mdsh
-	mv ${ROOT_DIR}/mdsh.sh ${SCRIPT_DIR}
-	chmod +x  ${SCRIPT_DIR}/mdsh.sh
-	sh ${SCRIPT_DIR}/test-quickstart.sh
-
-.PHONY: checker.coverage
-checker.coverage:
-	@echo "===========> Coverage Analysis"
-	sh ${SCRIPT_DIR}/report.sh
