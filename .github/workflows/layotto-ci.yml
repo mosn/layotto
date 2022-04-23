@@ -16,7 +16,7 @@ on:
 
 jobs:
   style-check:
-    name: Go Style Check
+    name: "[🌈] Go Style Check"
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -48,7 +48,7 @@ jobs:
            make go.check.style
   
   golangci-lint:
-    name: Go CI Linter
+    name: "[👀] Go CI Linter"
     needs: [style-check]
     runs-on: ubuntu-20.04
     steps:
@@ -63,7 +63,7 @@ jobs:
     #     version: latest                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
   go-unit-test:
-    name: Go Unit Test
+    name: "[👀] Go Unit Test"
     needs: [style-check]
     runs-on: ubuntu-20.04
     steps:
@@ -76,7 +76,7 @@ jobs:
     #   run: make go.check.unit
 
   coverage:
-    name: Coverage Analysis
+    name: "[🤔] Coverage Analysis"
     needs: [go-unit-test,golangci-lint,style-check]
     runs-on: ubuntu-latest
     steps:
@@ -88,7 +88,7 @@ jobs:
     #   run: bash <(curl -s https://codecov.io/bash)
 
   wasm-integrate:
-    name: Integrate with WASM
+    name: "[🔨 ]Integrate with WASM"
     needs: [coverage]
     runs-on: ubuntu-latest
     steps:
@@ -102,7 +102,7 @@ jobs:
       #   run:  make integrate.wasm
 
   runtime-integrate:
-    name: Integrate with Runtime
+    name: "[🔨] Integrate with Runtime"
     needs: [coverage]
     runs-on: ubuntu-latest
     steps:
@@ -116,7 +116,7 @@ jobs:
       #   run:  make integrate.runtime
 
   build-binary-darwin-amd64-artifact:
-    name:  "[Darwin-AMD64-Artifact]"
+    name:  "[🍞] Darwin AMD64 Artifact"
     needs: [runtime-integrate]
     runs-on: ubuntu-latest
     steps:
@@ -138,7 +138,7 @@ jobs:
       #     if-no-files-found: error
 
   build-binary-darwin-arm64-artifact:
-    name:  "[Darwin-ARM64-Artifact]"
+    name:  "[🍞] Darwin ARM64 Artifact"
     needs: [runtime-integrate]
     runs-on: ubuntu-latest
     steps:
@@ -160,7 +160,7 @@ jobs:
       #     if-no-files-found: error
 
   build-binary-linux-amd64-artifact:
-    name:  "[Linux-AMD64-Artifact]"
+    name:  "[🍞] Linux AMD64 Artifact"
     needs: [runtime-integrate]
     runs-on: ubuntu-latest
     steps:
@@ -182,7 +182,7 @@ jobs:
       #     if-no-files-found: error
 
   build-binary-linux-arm64-artifact:
-    name:  "[Linux-ARM64-Artifact]"
+    name:  "[🍞] Linux ARM64 Artifact"
     needs: [runtime-integrate]
     runs-on: ubuntu-latest
     steps:
@@ -269,8 +269,8 @@ jobs:
   #         retention-days: 5
   #         if-no-files-found: error
 
-  build-wasm-binary-linux-arm64-artifact:
-    name:  "[Layotto-WASM-Artifact]"
+  build-wasm-binary-linux-amd64-artifact:
+    name:  "[🍞] Layotto WASM Artifact"
     needs: [wasm-integrate]
     runs-on: ubuntu-latest
     steps:
@@ -282,17 +282,17 @@ jobs:
         uses: actions/checkout@v2
       - name: Build Artifact
         run: |
-          make build.wasm.linux_arm64.layotto
+          make build.wasm.linux_amd64.layotto
       - name: Publish Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: layotto.wasm.linux_arm64
+          name: layotto.wasm.linux_amd64
           path: _output/linux/arm64/layotto
           retention-days: 5
           if-no-files-found: error
 
   build-push-linux-amd64-image:
-    name: "[Linux-AMD64-IMAGE]"
+    name: "[🌟] Linux AMD64 Image"
     needs: [build-binary-linux-amd64-artifact]
     if: github.ref_name == 'main'
     runs-on: ubuntu-latest
@@ -316,7 +316,7 @@ jobs:
           make image.push.linux_amd64.layotto
 
   build-push-linux-arm64-image:
-    name: "[Linux-ARMD64-IMAGE]"
+    name: "[🌟] Linux ARMD64 Image"
     needs: [build-binary-linux-arm64-artifact]
     if: github.ref_name == 'main'
     runs-on: ubuntu-latest
@@ -340,7 +340,7 @@ jobs:
           make image.push.linux_arm64.layotto
 
   build-push-darwin-amd64-image:
-    name: "[Darwin-AMD64-IMAGE]"
+    name: "[🌟] Darwin AMD64 Image"
     needs: [build-binary-darwin-amd64-artifact]
     if: github.ref_name == 'main'
     runs-on: ubuntu-latest
@@ -364,7 +364,7 @@ jobs:
           make image.push.darwin_amd64.layotto
 
   build-push-darwin-arm64-image:
-    name: "[Darwin-ARM64-IMAGE]"
+    name: "[🌟] Darwin ARM64 Image"
     needs: [build-binary-darwin-arm64-artifact]
     if: github.ref_name == 'main'
     runs-on: ubuntu-latest
