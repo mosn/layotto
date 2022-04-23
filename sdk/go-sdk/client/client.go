@@ -113,6 +113,7 @@ type Client interface {
 	GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest, opts ...grpc.CallOption) (*runtimev1pb.GetSecretResponse, error)
 	GetBulkSecret(ctx context.Context, in *runtimev1pb.GetBulkSecretRequest, opts ...grpc.CallOption) (*runtimev1pb.GetBulkSecretResponse, error)
 
+	// Close cleans up all resources created by the client.
 	Close()
 }
 
