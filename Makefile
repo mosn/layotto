@@ -148,7 +148,7 @@ app.multiarch:
 
 ## style.coverage: Run coverage analysis.
 .PHONY: style.coverage
-check.coverage:
+style.coverage:
 	@$(MAKE) checker.coverage
 
 ## style.deadlink: Run deadlink check test.

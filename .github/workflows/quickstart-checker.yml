@@ -1,4 +1,4 @@
-name: Quickstart Checker
+name: PR Linter 👀
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: "👀 Validation"
+    name: "Quickstart Validation"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
