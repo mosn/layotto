@@ -1,4 +1,4 @@
-# Layotto Commands: 
+# Layotto Commands 🌟🌟: 
 # A fast and efficient cloud native application runtime
 
 # Usage: make <TARGETS> <OPTIONS> ...
@@ -201,7 +201,7 @@ export USAGE_OPTIONS
 ## help: Show this help info.
 .PHONY: help
 help: Makefile
-	@echo -e "Layotto Commands: \nA fast and efficient cloud native application runtime\n"
+	@echo -e "Layotto Commands 🌟🌟: \nA fast and efficient cloud native application runtime\n"
 	@echo -e "Usage: make <TARGETS> <OPTIONS> ...\n\nTargets:"
 	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
 	@echo "$$USAGE_OPTIONS"
