@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: "🧐 Validation"
+    name: "👀 Validation"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
