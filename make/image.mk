@@ -18,7 +18,7 @@ endif
 IMAGES_DIR ?= $(wildcard ${ROOT_DIR}/docker/*)
 # Determine images names by stripping out the dir names
 IMAGES ?= layotto
-IMAGE_PLATFORMS ?= darwin_amd64 darwin_arm64 linux_amd64 linux_arm64 
+IMAGE_PLATFORMS ?= linux_amd64 linux_arm64 
 
 ifeq (${IMAGES},)
   $(error Could not determine IMAGES, set ROOT_DIR or run in source dir)
