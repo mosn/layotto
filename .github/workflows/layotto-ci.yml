@@ -208,7 +208,7 @@ jobs:
       #     if-no-files-found: error
 
   build-push-wasm-image:
-    name:  "🧳 WASM IMAGE"
+    name:  "🎉 WASM IMAGE"
     needs: [build-wasm-binary-linux-amd64-artifact]
     runs-on: ubuntu-latest
     steps:
