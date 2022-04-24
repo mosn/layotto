@@ -49,13 +49,13 @@ go.clean:
 go.lint.verify:
 ifeq (,$(shell which golangci-lint))
 	@echo "===========> Installing golangci lint"
-	@GO111MODULE=off $(GO) get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+	@curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(${GO} env GOPATH)/bin
 endif
 
 .PHONY: go.lint
 go.lint: go.lint.verify
 	@echo "===========> Run golangci to lint source codes"
-	@golangci-lint run $(ROOT_DIR)/...
+	@golangci-lint run  $(ROOT_DIR)/... --skip-files ".pb.go" --tests --timeout 5m
 
 .PHONY: go.test.verify
 go.test.verify:  
@@ -72,6 +72,7 @@ go.test: go.test.verify
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./diagnostics/...`
 	@echo "===========> Run unit test in pkg"
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./pkg/...`
+
 
 .PHONY: go.style
 go.style:  
