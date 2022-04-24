@@ -153,12 +153,12 @@ style.coverage:
 
 ## style.deadlink: Run deadlink check test.
 .PHONY: style.deadlink
-check.deadlink:
+style.deadlink:
 	@$(MAKE) checker.deadlink
 
 ## style.quickstart: Run quickstart check test.
 .PHONY: style.quickstart
-check.quickstart:
+style.quickstart:
 	@$(MAKE) checker.quickstart
 
 ## integrate.wasm: Run integration test with wasm.
