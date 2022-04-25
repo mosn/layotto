@@ -1,4 +1,4 @@
-name: PR Linter 👀
+name: Layotto Env Pipeline 🌊
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: "Quickstart Validation"
+    name: "🍀 Quickstart Validation"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

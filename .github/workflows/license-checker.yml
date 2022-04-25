@@ -1,4 +1,4 @@
-name: PR Linter 👀
+name: Layotto Env Pipeline 🌊
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   check:
-    name: "License Validation"
+    name: "🍀 License Validation"
     runs-on: ubuntu-latest
 
     steps:

@@ -1,4 +1,4 @@
-name: PR Linter 👀
+name: Layotto Env Pipeline 🌊
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   analyse:
-    name: CodeQL
+    name: 🍀 CodeQL
     runs-on: ubuntu-latest
 
     steps:
