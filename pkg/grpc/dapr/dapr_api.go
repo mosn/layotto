@@ -77,6 +77,10 @@ func (d *daprGrpcAPI) Init(conn *grpc.ClientConn) error {
 	return d.startSubscribing()
 }
 
+func (d *daprGrpcAPI) startSubscribing() error {
+	return d.StartSubscribing()
+}
+
 func (d *daprGrpcAPI) Register(rawGrpcServer *grpc.Server) error {
 	dapr_v1pb.RegisterDaprServer(rawGrpcServer, d)
 	return nil
