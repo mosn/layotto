@@ -109,6 +109,10 @@ type Client interface {
 	// Get next unique id with some auto-increment guarantee
 	GetNextId(ctx context.Context, in *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
 
+	// Secret API
+	GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest, opts ...grpc.CallOption) (*runtimev1pb.GetSecretResponse, error)
+	GetBulkSecret(ctx context.Context, in *runtimev1pb.GetBulkSecretRequest, opts ...grpc.CallOption) (*runtimev1pb.GetBulkSecretResponse, error)
+
 	// Close cleans up all resources created by the client.
 	Close()
 }
