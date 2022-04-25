@@ -1,9 +1,15 @@
-# Layotto (L8):To be the next layer of OSI layer 7
+<div align="center">
+  <h1>Layotto (L8): To be the next layer of OSI layer 7</h1>
+  <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
 
+[![GoDoc](https://godoc.org/mosn.io/layotto?status.svg)](https://godoc.org/mosn.io/layotto)
+[![Build Status](https://img.shields.io/github/workflow/status/mosn/layotto/test?branch=master)](https://github.com/mosn/layotto/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mosn/layotto)](https://goreportcard.com/report/mosn.io/layotto)
+[![CodeQL](https://github.com/mosn/layotto/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/codeql-analysis.yml)
 [![codecov](https://codecov.io/gh/mosn/layotto/branch/main/graph/badge.svg?token=10RxwSV6Sz)](https://codecov.io/gh/mosn/layotto)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mosn/layotto.svg)](http://isitmaintained.com/project/mosn/layotto "Average time to resolve an issue")
 
-<img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
+</div>
 
 Layotto(/leɪˈɒtəʊ/) 是一款使用 Golang 开发的应用运行时, 旨在帮助开发人员快速构建云原生应用，帮助应用和基础设施解耦。它为应用提供了各种分布式能力，比如状态管理，配置管理，事件发布订阅等能力，以简化应用的开发。
 
