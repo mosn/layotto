@@ -57,66 +57,6 @@ func (a *api) PublishEvent(ctx context.Context, in *runtimev1pb.PublishEventRequ
 	return result, err
 }
 
-// doPublishEvent is a protocal irrelevant function to do event publishing.
-// It's easy to add APIs for other protocals.Just move this func to a separate layer if you need.
-func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic string, data []byte, contentType string, metadata map[string]string) (*emptypb.Empty, error) {
-	// 1. validate
-	if pubsubName == "" {
-		err := status.Error(codes.InvalidArgument, messages.ErrPubsubEmpty)
-		return &emptypb.Empty{}, err
-	}
-	if topic == "" {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrTopicEmpty, pubsubName)
-		return &emptypb.Empty{}, err
-	}
-	// 2. get component
-	component, ok := a.pubSubs[pubsubName]
-	if !ok {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrPubsubNotFound, pubsubName)
-		return &emptypb.Empty{}, err
-	}
-
-	// 3. new cloudevent request
-	if data == nil {
-		data = []byte{}
-	}
-	var envelope map[string]interface{}
-	var err error = nil
-	if contrib_contenttype.IsCloudEventContentType(contentType) {
-		envelope, err = contrib_pubsub.FromCloudEvent(data, topic, pubsubName, "")
-		if err != nil {
-			err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
-			return &emptypb.Empty{}, err
-		}
-	} else {
-		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", topic, pubsubName,
-			contentType, data, "")
-	}
-	features := component.Features()
-	pubsub.ApplyMetadata(envelope, features, metadata)
-
-	b, err := jsoniter.ConfigFastest.Marshal(envelope)
-	if err != nil {
-		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventsSer, topic, pubsubName, err.Error())
-		return &emptypb.Empty{}, err
-	}
-	// 4. publish
-	req := pubsub.PublishRequest{
-		PubsubName: pubsubName,
-		Topic:      topic,
-		Data:       b,
-		Metadata:   metadata,
-	}
-
-	// TODO limit topic scope
-	err = component.Publish(&req)
-	if err != nil {
-		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, topic, pubsubName, err.Error())
-		return &emptypb.Empty{}, nerr
-	}
-	return &emptypb.Empty{}, nil
-}
-
 func (a *api) startSubscribing() error {
 	// 1. check if there is no need to do it
 	if len(a.pubSubs) == 0 {
