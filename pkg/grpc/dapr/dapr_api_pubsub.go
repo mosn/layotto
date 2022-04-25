@@ -109,7 +109,7 @@ func (d *daprGrpcAPI) PublishEvent(ctx context.Context, in *dapr_v1pb.PublishEve
 	return &emptypb.Empty{}, nil
 }
 
-func (d *daprGrpcAPI) startSubscribing() error {
+func (d *daprGrpcAPI) StartSubscribing() error {
 	// 1. check if there is no need to do it
 	if len(d.pubSubs) == 0 {
 		return nil
