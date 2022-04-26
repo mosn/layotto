@@ -57,8 +57,16 @@ image.build.%: go.build.%
 	@cat $(ROOT_DIR)/docker/$(IMAGE)/Dockerfile\
 		>$(TMP_DIR)/$(IMAGE)/Dockerfile
 	@cp $(OUTPUT_DIR)/$(IMAGE_PLAT)/$(IMAGE) $(TMP_DIR)/$(IMAGE)/
-	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(IMAGE).$(ARCH):$(VERSION) $(TMP_DIR)/$(IMAGE))
-	$(DOCKER) build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX)
+	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(IMAGE):$(VERSION) $(TMP_DIR)/$(IMAGE))
+	$(eval BUILD_SUFFIX_ARM := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(IMAGE).$(ARCH):$(VERSION) $(TMP_DIR)/$(IMAGE))
+	@if [ "$(ARCH)" == "amd64" ]; then \
+		echo "===========> Creating docker image tag $(REGISTRY_PREFIX)/$(IMAGE):$(VERSION) for $(ARCH)"; \
+		$(DOCKER) build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX); \
+	else \
+		echo "===========> Creating docker image tag $(REGISTRY_PREFIX)/$(IMAGE).$(ARCH):$(VERSION) for $(ARCH)"; \
+		$(DOCKER) build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX_ARM); \
+	fi
+	
 
 .PHONY: image.push
 image.push: image.verify $(addprefix image.push., $(addprefix $(IMAGE_PLAT)., $(IMAGES)))
