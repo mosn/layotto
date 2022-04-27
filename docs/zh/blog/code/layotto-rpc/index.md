@@ -916,7 +916,6 @@ func (p *parser) recvMsg(maxReceiveMessageSize int) (pf payloadFormat, msg []byt
 {"jsonrpc":"2.0","id":9527,"result":{"id":"113","name":"Moorse","age":30,"time":703394193,"sex":"MAN"}}
 
 ## 总结
-Layotto RPC 处理流程涉及 GRPC、Dapr、Mosn 等相关的知识，整体流程较长，不过单纯看 Layotto 针对 Mosn 抽象的轻量 RPC 框架还是比较清晰和简单的，与 Mosn 集成的方式也比较新颖，值得进一步研读。至此 Layotto RPC 请求处理就分析完了，
-时间有限，没有进行一些更全面和深入的剖析，如有纰漏之处，欢迎指正，联系方式：rayo.wangzl@gmail.com。另外在此也希望大家能踊跃参与源码分析和开源社区来，一起学习，共同进步。
+Layotto RPC 处理流程涉及 GRPC、Dapr、Mosn 等相关的知识，整体流程较长，不过单纯看 Layotto 针对 Mosn 抽象的轻量 RPC 框架还是比较清晰和简单的，与 Mosn 集成的方式也比较新颖，值得进一步研读。至此 Layotto RPC 请求处理就分析完了，时间有限，没有进行一些更全面和深入的剖析，如有纰漏之处，欢迎指正，联系方式：rayo.wangzl@gmail.com。另外在此也希望大家能踊跃参与源码分析和开源社区来，一起学习，共同进步。
 
 
