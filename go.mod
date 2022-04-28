@@ -7,6 +7,7 @@ require (
 	github.com/Azure/go-autorest/autorest/azure/cli v0.4.2 // indirect
 	github.com/Azure/go-autorest/autorest/validation v0.3.1 // indirect
 	github.com/Azure/go-autorest/logger v0.2.1 // indirect
+	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/agrea/ptr v0.0.0-20180711073057-77a518d99b7b
 	github.com/alicebob/miniredis/v2 v2.16.0
 	github.com/dapr/components-contrib v1.5.1-rc.1
@@ -14,6 +15,7 @@ require (
 	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gammazero/workerpool v1.1.2
+	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
