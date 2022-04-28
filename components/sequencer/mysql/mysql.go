@@ -1,3 +1,16 @@
+//
+// Copyright 2021 Layotto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package mysql
 
 import (
@@ -97,39 +110,6 @@ func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest, db *sql.DB) 
 	if _, err2 := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value) VALUES(?,?)", metadata.TableName, req.Key, Value+1); err2 != nil {
 		return nil, err2
 	}
-
-	//if Value == 0 {
-	//	Value += 1
-	//	//insert, inerr := metadata.Db.Exec(fmt.Sprintf(`INSERT INTO %s VALUES(?,?)`, metadata.TableName), req.Key, Value)
-	//
-	//	if _, err1 := begin.Exec("UPDATE ? SET sequencer_value = ? WHERE sequencer_key = ?", "test", Value, Key); err1 != nil {
-	//		return nil, err1
-	//	}
-	//
-	//	//if inerr != nil {
-	//	//	fmt.Println("insert into table fail", inerr.Error())
-	//	//	return nil, inerr
-	//	//}
-	//	////fmt.Sprint("insert success", insert)
-	//	//
-	//	//if uperr != nil {
-	//	//	fmt.Println("fetch row affected failed:", uperr.Error())
-	//	//	return nil, uperr
-	//	//}
-	//	//fmt.Println("update recors number", update)
-	//} else {
-	//	Value += 1
-	//	if _, err2 := begin.Exec("INSERT INTO test(sequencer_key, sequencer_value) VALUES(?,?)", "test1", Value); err2 != nil {
-	//		return nil, err2
-	//	}
-	//	////update, uperr := metadata.Db.Exec(fmt.Sprintf(`UPDATE %s SET sequencer_value = ? WHERE sequencer_key = ?`, metadata.TableName), Value, req.Key)
-	//	//update, uperr := metadata.Db.Exec(`UPDATE test SET sequencer_value = ? WHERE sequencer_key = ?`, 2, "test1")
-	//	//if uperr != nil {
-	//	//	fmt.Println("fetch row affected failed:", uperr.Error())
-	//	//	return nil, uperr
-	//	//}
-	//	//fmt.Println("update recors number", update)
-	//}
 
 	e.Close(metadata.Db)
 
