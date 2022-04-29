@@ -55,7 +55,7 @@ endif
 .PHONY: go.lint
 go.lint: go.lint.verify
 	@echo "===========> Run golangci to lint source codes"
-	@golangci-lint run  $(ROOT_DIR)/... --skip-files ".pb.go" --tests --timeout 5m
+	@golangci-lint run
 
 .PHONY: go.test.verify
 go.test.verify:  
