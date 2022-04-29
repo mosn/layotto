@@ -239,3 +239,26 @@ func (*testRuntimeServer) SayHello(ctx context.Context, req *runtimev1pb.SayHell
 	resp := &runtimev1pb.SayHelloResponse{Hello: "world"}
 	return resp, nil
 }
+
+func (*testRuntimeServer) GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest) (*runtimev1pb.GetSecretResponse, error) {
+
+	secrets := make(map[string]string)
+	secrets[secretKey] = secretValue
+	resp := &runtimev1pb.GetSecretResponse{
+		Data: secrets,
+	}
+	return resp, nil
+}
+func (*testRuntimeServer) GetBulkSecret(ctx context.Context, in *runtimev1pb.GetBulkSecretRequest) (*runtimev1pb.GetBulkSecretResponse, error) {
+
+	secrets := make(map[string]string)
+	secrets[secretKey] = secretValue
+	data := make(map[string]*runtimev1pb.SecretResponse)
+	data[secretKey] = &runtimev1pb.SecretResponse{
+		Secrets: secrets,
+	}
+	resp := &runtimev1pb.GetBulkSecretResponse{
+		Data: data,
+	}
+	return resp, nil
+}

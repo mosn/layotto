@@ -13,34 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package apollo
+package client
 
 import (
-	"testing"
-
-	"mosn.io/layotto/components/pkg/common"
-
-	testify "github.com/stretchr/testify/assert"
+	"context"
+	"google.golang.org/grpc"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
-func TestGetHealthInitOrSuccess(t *testing.T) {
-	assert := testify.New(t)
+func (c *GRPCClient) GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest, opts ...grpc.CallOption) (*runtimev1pb.GetSecretResponse, error) {
 
-	hi := newHealthIndicator()
-	v, _ := hi.Report()
-	assert.Equal(v, common.INIT)
-	hi.setStarted()
-	h, _ := hi.Report()
-	assert.Equal(h, common.UP)
+	return c.protoClient.GetSecret(ctx, in)
 }
+func (c *GRPCClient) GetBulkSecret(ctx context.Context, in *runtimev1pb.GetBulkSecretRequest, opts ...grpc.CallOption) (*runtimev1pb.GetBulkSecretResponse, error) {
 
-func TestGetHealthError(t *testing.T) {
-	assert := testify.New(t)
-
-	hi := newHealthIndicator()
-	hi.reportError("sub error")
-	h, v := hi.Report()
-	assert.Equal(h, common.DOWN)
-	assert.Equal(v[reasonKey], "sub error")
+	return c.protoClient.GetBulkSecret(ctx, in)
 }

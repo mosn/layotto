@@ -1,18 +1,22 @@
-use std::cell::{Cell, RefCell};
-use std::collections::HashMap;
-use crate::types::{NewRootContext, NewHttpContext, Action, ContextType};
-use crate::traits::{RootContext, HttpContext};
-use crate::dispatcher;
+use std::{
+    cell::{Cell, RefCell},
+    collections::HashMap,
+};
+
+use crate::{
+    traits::{HttpContext, RootContext},
+    types::{Action, ContextType, NewHttpContext, NewRootContext},
+};
 
 thread_local! {
-static DISPATCHER: Dispatcher = Dispatcher::new();
+    static DISPATCHER: Dispatcher = Dispatcher::new();
 }
 
-pub(crate) fn set_root_context(callback: NewRootContext) {
+pub fn set_root_context(callback: NewRootContext) {
     DISPATCHER.with(|dispatcher| dispatcher.set_root_context(callback));
 }
 
-pub(crate) fn set_http_context(callback: NewHttpContext) {
+pub fn set_http_context(callback: NewHttpContext) {
     DISPATCHER.with(|dispatcher| dispatcher.set_http_context(callback));
 }
 
@@ -24,7 +28,6 @@ struct Dispatcher {
 }
 
 impl Dispatcher {
-
     fn new() -> Dispatcher {
         Dispatcher {
             new_root: Cell::new(None),
@@ -116,13 +119,23 @@ impl Dispatcher {
 }
 
 #[no_mangle]
-pub extern "C" fn proxy_on_request_headers(context_id: u32, num_headers: usize, end_of_stream: usize) -> Action {
-    return DISPATCHER.with(|dispatcher| dispatcher.on_http_request_headers(context_id, num_headers));
+pub extern "C" fn proxy_on_request_headers(
+    context_id: u32,
+    num_headers: usize,
+    _end_of_stream: usize,
+) -> Action {
+    return DISPATCHER
+        .with(|dispatcher| dispatcher.on_http_request_headers(context_id, num_headers));
 }
 
 #[no_mangle]
-pub extern "C" fn proxy_on_request_body(context_id: u32, body_size: usize, end_of_stream: bool) -> Action {
-    DISPATCHER.with(|dispatcher| dispatcher.on_http_request_body(context_id, body_size, end_of_stream))
+pub extern "C" fn proxy_on_request_body(
+    context_id: u32,
+    body_size: usize,
+    end_of_stream: bool,
+) -> Action {
+    DISPATCHER
+        .with(|dispatcher| dispatcher.on_http_request_body(context_id, body_size, end_of_stream))
 }
 
 #[no_mangle]
