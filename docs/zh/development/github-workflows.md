@@ -71,6 +71,8 @@ Layotto Env Pipeline 流水线任务触发方式：
 
 ### Layotto Dev Pipeline 🌊 (Before Merged)
 
+![release.png](../../img/development/workflow/workflow-dev.png)
+
 #### Job 任务内容
 
 Layotto Dev Pipeline (Before Merged) 流水线主要负责 Layotto 提交 PR 后对代码的校验，其中目前包含以下若干任务：
@@ -104,6 +106,8 @@ Layotto Dev Pipeline (Before Merged) 流水线主要负责 Layotto 提交 PR 后
 ```
 
 ### Layotto Dev Pipeline 🌊 (After Merged)
+
+![release.png](../../img/development/workflow/workflow-merge.png)
 
 #### Job 任务内容
 
@@ -141,6 +145,8 @@ Layotto Dev Pipeline (After Merged) 流水线主要负责 Layotto 代码合并�
 ```
 
 ### Layotto Release Pipeline 🌊
+
+![release.png](../../img/development/workflow/workflow-release.png)
 
 #### Job 任务内容
 

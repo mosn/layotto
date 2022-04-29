@@ -12,7 +12,7 @@ Layotto 发布周期暂定为每季度发布一次。
 2. 检查未完成的任务
 3. 与负责人确认任务状态和发布内容
   
-#### Step2: 创建发布 tag，并 push 至 github
+#### Step2: 创建发布 tag， push 至 github 并检查工作流
 
 1. 规范：请按照 `v{majorVersion}.{subVersion}.{latestVersion}` 格式创建 tag。
 2. 等待 CI 结束，确认以下内容：
@@ -32,6 +32,8 @@ Layotto 发布周期暂定为每季度发布一次。
             + Image Tag 规范：
                 + AMD64/X86 架构的镜像：`layotto/layotto:{tag}`
                 + ARM64 架构的镜像：`layotto/layotto.arm64:{tag}`
+
+![release.png](../../img/development/workflow/release.png)
 
 #### Step3: Draft a new release 并编写发布报告
 

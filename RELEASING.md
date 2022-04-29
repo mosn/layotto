@@ -12,7 +12,7 @@ Layotto 发布周期暂定为每季度发布一次。
 2. 检查未完成的任务
 3. 与负责人确认任务状态和发布内容
   
-#### Step2: 创建发布 tag，并 push 至 github
+#### Step2: 创建发布 tag， push 至 github 并检查工作流
 
 1. 规范：请按照 `v{majorVersion}.{subVersion}.{latestVersion}` 格式创建 tag。
 2. 等待 CI 结束，确认以下内容：
@@ -33,6 +33,8 @@ Layotto 发布周期暂定为每季度发布一次。
                 + AMD64/X86 架构的镜像：`layotto/layotto:{tag}`
                 + ARM64 架构的镜像：`layotto/layotto.arm64:{tag}`
 
+![release.png](../../img/development/workflow/release.png)
+
 #### Step3: Draft a new release 并编写发布报告
 
 > 发布报告可以先用 github 的功能自动生成，再基于生成的内容做修改。
@@ -51,5 +53,7 @@ Layotto 发布周期暂定为每季度发布一次。
 
 1. 点击发布
 2. 社区周知
-3. 创建[下次迭代的 Roadmap](https://github.com/mosn/layotto/projects) ，迁移上个版本未完成的任务
+3. 检查 [Roadmap](https://github.com/mosn/layotto/projects)，修改上个版本未完成的任务，把 milestone 改为下个版本
 4. 如果有 SDK 发布，需在 SDK 仓库做发布，并上传中央仓库 (比如 Java SDK 需要上传到 Maven 中央仓库)。
+
+> TODO: need to translate.
