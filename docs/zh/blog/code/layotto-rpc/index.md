@@ -1,25 +1,22 @@
----
-title: "Layotto 源码解析 —— 处理 RPC 请求"
-linkTitle: "Layotto 源码解析 —— 处理 RPC 请求"
-date: 2022-04-21
-aliases: "zh/blog/code/layotto-rpc"
-author: "[王志龙](https://github.com/rayowang)"
-description: >
-  本文主要以 Dubbo Json RPC 为例来分析 Layotto RPC 处理流程
----
+# Layotto 源码解析 —— 处理 RPC 请求
+
+>本文主要以 Dubbo Json RPC 为例来分析 Layotto RPC 处理流程。
+> 
+>作者：[王志龙](https://github.com/rayowang) | 2022年4月21日
+
 - [概述](#概述)
 - [源码分析](#源码分析)
-  * [0x00 Layotto 初始化 RPC](#0x00-layotto-初始化-rpc)
-  * [0x01 Dubbo-go-sample client 发起请求](#0x01-dubbo-go-sample-client-发起请求)
-  * [0x02 Mosn EventLoop 读协程处理请求数据](#0x02-mosn-eventloop-读协程处理请求数据)
-  * [0x03 Grpc Sever 作为 NetworkFilter 处理请求](#0x03-grpc-sever-作为-networkfilter-处理请求)
-  * [0x04 Layotto 发送 RPC 请求并写入 Local 虚拟连接](#0x04-layotto-发送-rpc-请求并写入-local-虚拟连接)
-  * [0x05 Mosn 读取 Remote 并执行 Filter 和代理转发](#0x05-mosn-读取-remote-并执行-filter-和代理转发)
-  * [0x06 Dubbo-go-sample server 收到请求返回响应](#0x06-dubbo-go-sample-server-收到请求返回响应)
-  * [0x07 Mosn 框架处理响应并写回 Remote 虚拟连接](#0x07-mosn-框架处理响应并写回-remote-虚拟连接)
-  * [0x08 Layotto 接收 RPC 响应并读取 Local 虚拟连接](#0x08-layotto-接收-rpc-响应并读取-local-虚拟连接)
-  * [0x09 Grpc Sever 处理数据帧返回给客户端](#0x09-grpc-sever-处理数据帧返回给客户端)
-  * [0x10 Dubbo-go-sample client 接收响应](#0x10-dubbo-go-sample-client-接收响应)
+  * [0x00 Layotto 初始化 RPC](#_0x00-layotto-初始化-rpc)
+  * [0x01 Dubbo-go-sample client 发起请求](#_0x01-dubbo-go-sample-client-发起请求)
+  * [0x02 Mosn EventLoop 读协程处理请求数据](#_0x02-mosn-eventloop-读协程处理请求数据)
+  * [0x03 Grpc Sever 作为 NetworkFilter 处理请求](#_0x03-grpc-sever-作为-networkfilter-处理请求)
+  * [0x04 Layotto 发送 RPC 请求并写入 Local 虚拟连接](#_0x04-layotto-发送-rpc-请求并写入-local-虚拟连接)
+  * [0x05 Mosn 读取 Remote 并执行 Filter 和代理转发](#_0x05-mosn-读取-remote-并执行-filter-和代理转发)
+  * [0x06 Dubbo-go-sample server 收到请求返回响应](#_0x06-dubbo-go-sample-server-收到请求返回响应)
+  * [0x07 Mosn 框架处理响应并写回 Remote 虚拟连接](#_0x07-mosn-框架处理响应并写回-remote-虚拟连接)
+  * [0x08 Layotto 接收 RPC 响应并读取 Local 虚拟连接](#_0x08-layotto-接收-rpc-响应并读取-local-虚拟连接)
+  * [0x09 Grpc Sever 处理数据帧返回给客户端](#_0x09-grpc-sever-处理数据帧返回给客户端)
+  * [0x10 Dubbo-go-sample client 接收响应](#_0x10-dubbo-go-sample-client-接收响应)
 - [总结](#总结)
 
 ## 概述
