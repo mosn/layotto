@@ -1,6 +1,6 @@
 本文档解释了Layotto的github工作流的每个组件。
 
-注意：Layotto的github工作流的配置文档在[这里](https://github.com/mosn/layotto/tree/main/.github/workflows)
+注意：Layotto的github工作流的配置文件在[这里](https://github.com/mosn/layotto/tree/main/.github/workflows)
 
 ## 1. 定时任务
 ### stale bot 
