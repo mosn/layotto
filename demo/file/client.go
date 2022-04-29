@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	s3 "mosn.io/layotto/spec/proto/extension/v1"
 	"os"
+	"strconv"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -19,15 +21,15 @@ import (
 )
 
 func TestGet(fileName string) {
-	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+	conn, err := grpc.Dial("127.0.0.1:11004", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
 
-	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.GetFileRequest{StoreName: "minioOSS", Name: fileName}
-	cli, err := c.GetFile(context.Background(), req)
+	c := s3.NewS3OutBindingClient(conn)
+	req := &s3.GetObjectInput{Bucket: "antsys-wenxuwan", Key: fileName}
+	cli, err := c.GetObject(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)
 		return
@@ -39,13 +41,13 @@ func TestGet(fileName string) {
 			fmt.Errorf("recv file failed")
 			break
 		}
-		pic = append(pic, resp.Data...)
+		pic = append(pic, resp.Body...)
 	}
 	fmt.Println(string(pic))
 }
 
 func TestPut(fileName string, value string) {
-	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+	conn, err := grpc.Dial("127.0.0.1:11004", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
@@ -53,13 +55,14 @@ func TestPut(fileName string, value string) {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.PutFileRequest{StoreName: "minioOSS", Name: fileName, Metadata: meta}
+	req := &runtimev1pb.PutFileRequest{StoreName: "awsOSS", Name: fileName, Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
 	if err != nil {
 		fmt.Printf("put file failed:%+v", err)
 		return
 	}
 	req.Data = []byte(value)
+	meta["length"] = strconv.Itoa(len(value))
 	stream.Send(req)
 	_, err = stream.CloseAndRecv()
 	if err != nil {
@@ -68,7 +71,7 @@ func TestPut(fileName string, value string) {
 }
 
 func TestList(bucketName string) {
-	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+	conn, err := grpc.Dial("127.0.0.1:11004", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
@@ -78,7 +81,7 @@ func TestList(bucketName string) {
 	c := runtimev1pb.NewRuntimeClient(conn)
 	marker := ""
 	for {
-		req := &runtimev1pb.FileRequest{StoreName: "minioOSS", Name: bucketName, Metadata: meta}
+		req := &runtimev1pb.FileRequest{StoreName: "awsOSS", Name: bucketName, Metadata: meta}
 		listReq := &runtimev1pb.ListFileRequest{Request: req, PageSize: 2, Marker: marker}
 		resp, err := c.ListFile(context.Background(), listReq)
 		if err != nil {
@@ -97,7 +100,7 @@ func TestList(bucketName string) {
 }
 
 func TestDel(fileName string) {
-	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+	conn, err := grpc.Dial("127.0.0.1:11004", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
@@ -105,7 +108,7 @@ func TestDel(fileName string) {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.FileRequest{StoreName: "minioOSS", Name: fileName, Metadata: meta}
+	req := &runtimev1pb.FileRequest{StoreName: "awsOSS", Name: fileName, Metadata: meta}
 	listReq := &runtimev1pb.DelFileRequest{Request: req}
 	_, err = c.DelFile(context.Background(), listReq)
 	if err != nil {
@@ -116,7 +119,7 @@ func TestDel(fileName string) {
 }
 
 func TestStat(fileName string) {
-	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+	conn, err := grpc.Dial("127.0.0.1:11004", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
@@ -124,7 +127,7 @@ func TestStat(fileName string) {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.FileRequest{StoreName: "minioOSS", Name: fileName, Metadata: meta}
+	req := &runtimev1pb.FileRequest{StoreName: "awsOSS", Name: fileName, Metadata: meta}
 	statReq := &runtimev1pb.GetFileMetaRequest{Request: req}
 	data, err := c.GetFileMeta(context.Background(), statReq)
 	//here use grpc error code check file exist or not.

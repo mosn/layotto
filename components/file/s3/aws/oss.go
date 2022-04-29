@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"io"
 	"strings"
 
@@ -36,6 +37,7 @@ const (
 	endpointKey              = "endpoint"
 	bucketKey                = "bucket"
 	defaultCredentialsSource = "provider"
+	fileLength               = "length"
 )
 
 var (
@@ -94,6 +96,19 @@ func (am *AwsOssMetaData) isAwsMetaValid() bool {
 
 // createOssClient by input meta info.
 func (a *AwsOss) createOssClient(meta *AwsOssMetaData) (*s3.Client, error) {
+	customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+		if region == meta.Region {
+			return aws.Endpoint{
+				PartitionID:       "aliyun",
+				URL:               "https://" + meta.EndPoint,
+				SigningRegion:     meta.Region,
+				HostnameImmutable: true,
+			}, nil
+		}
+		// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
+		return aws.Endpoint{}, &aws.EndpointNotFoundError{}
+	})
+
 	optFunc := []func(options *aws_config.LoadOptions) error{
 		aws_config.WithRegion(meta.Region),
 		aws_config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
@@ -102,7 +117,9 @@ func (a *AwsOss) createOssClient(meta *AwsOssMetaData) (*s3.Client, error) {
 				Source: defaultCredentialsSource,
 			},
 		}),
+		aws_config.WithEndpointResolverWithOptions(customResolver),
 	}
+
 	cfg, err := aws_config.LoadDefaultConfig(context.TODO(), optFunc...)
 	if err != nil {
 		return nil, err
@@ -112,6 +129,7 @@ func (a *AwsOss) createOssClient(meta *AwsOssMetaData) (*s3.Client, error) {
 
 // Put file to aws oss.
 func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
+	//var bodySize int64
 	bucket, err := loss.GetBucketName(st.FileName)
 	if err != nil {
 		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
@@ -120,16 +138,35 @@ func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
 	if err != nil {
 		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	input := &s3.PutObjectInput{
-		Bucket: &bucket,
-		Key:    &key,
-		Body:   st.DataStream,
-	}
+	//if fileLen, ok := st.Metadata[fileLength]; !ok {
+	//	return errors.New("please specific the file lenth in metadata with length key")
+	//} else {
+	//	bodySize, err = strconv.ParseInt(fileLen, 10, 64)
+	//	if err != nil {
+	//		return errors.New("wrong value of length")
+	//	}
+	//}
+
+	//input := &s3.PutObjectInput{
+	//	Bucket:        &bucket,
+	//	Key:           &key,
+	//	Body:          st.DataStream,
+	//	ContentLength: bodySize,
+	//}
 	client, err := a.selectClient(st.Metadata)
 	if err != nil {
 		return err
 	}
-	_, err = client.PutObject(context.TODO(), input, nil)
+	uploader := manager.NewUploader(client)
+	_, err = uploader.Upload(context.TODO(), &s3.PutObjectInput{
+		Bucket: &bucket,
+		Key:    &key,
+		Body:   st.DataStream,
+	})
+
+	//_, err = client.PutObject(context.TODO(), input, s3.WithAPIOptions(
+	//	v4.SwapComputePayloadSHA256ForUnsignedPayloadMiddleware,
+	//))
 	if err != nil {
 		return err
 	}
@@ -171,7 +208,7 @@ func (a *AwsOss) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, e
 	if err != nil {
 		return nil, err
 	}
-	ob, err := client.GetObject(context.TODO(), input, nil)
+	ob, err := client.GetObject(context.TODO(), input)
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +232,7 @@ func (a *AwsOss) List(ctx context.Context, st *file.ListRequest) (*file.ListResp
 	if err != nil {
 		return nil, fmt.Errorf("list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
 	}
-	out, err := client.ListObjects(context.TODO(), input, nil)
+	out, err := client.ListObjects(context.TODO(), input)
 	if err != nil {
 		return nil, fmt.Errorf("list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
 	}
