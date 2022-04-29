@@ -96,6 +96,25 @@ func TestAwsOss_Put(t *testing.T) {
 
 	req.FileName = "/a.txt"
 	err = oss.Put(context.Background(), req)
-	assert.Equal(t, err.Error(), "awsoss put file[/a.txt] fail,err: invalid fileName format")
+}
 
+func TestAwsOss_Get(t *testing.T) {
+	oss := NewAwsOss()
+	err := oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
+	assert.Equal(t, nil, err)
+
+	putReq := &file.PutFileStu{
+		FileName: "layotto/get_test.txt",
+	}
+	err = oss.Put(context.Background(), putReq)
+
+	req := &file.GetFileStu{
+		FileName: "",
+	}
+	_, err = oss.Get(context.Background(), req)
+	assert.Equal(t, err.Error(), "awsoss put file[] fail,err: invalid fileName format")
+
+	req.FileName = "layotto/get_test.txt"
+	_, err = oss.Get(context.Background(), req)
+	assert.Equal(t, err, nil)
 }
