@@ -13,7 +13,7 @@
 #### Job 任务内容
 
 Layotto Env Pipeline 流水线主要负责 Layotto 的项目以及相关环境的规范，其中目前包含以下任务：
-+ Title Validation (PR Title 的规范)
++ Title Validation (基于 Semantic 风格 检查 PR Title 的规范)
 + Quickstart Validation (QuickStart 文档的校验)
 + Update Stale Status (Issue/PR 状态的更新)
 + License Validation (License 的校验)
