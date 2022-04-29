@@ -9,13 +9,11 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - '.ci/**'
       - 'docs/**'
       - '**/*.md'
   pull_request:
     branches: "*"
     paths-ignore:
-      - '.ci/**'
       - 'docs/**'
       - '**/*.md'
 
