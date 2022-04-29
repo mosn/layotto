@@ -49,7 +49,7 @@ Layotto 发布周期暂定为每季度发布一次。
 
 #### Step5: 确认发布
 
-1. 点击发布=
+1. 点击发布
 2. 社区周知
-3. 创建[下次迭代的 roadmap](https://github.com/mosn/layotto/projects) ，迁移上个版本未完成的任务
+3. 创建[下次迭代的 Roadmap](https://github.com/mosn/layotto/projects) ，迁移上个版本未完成的任务
 4. 如果有 SDK 发布，需在 SDK 仓库做发布，并上传中央仓库 (比如 Java SDK 需要上传到 Maven 中央仓库)。
