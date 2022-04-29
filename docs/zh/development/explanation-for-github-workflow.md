@@ -8,7 +8,7 @@
 
 我们将会[关闭超时的Issues](https://github.com/marketplace/actions/close-stale-issues)
 
-如果一个issue或PR在过去30天内没有最近的活动，它将自动标记为陈旧的。它将关闭在未来7天，除非它是被标记的(pinned，security，good first issue或help wanted)或有其他活动发生。
+如果一个issue或PR在过去30天内没有最近的活动，它将自动标记为陈旧的。它将在7天后关闭，除非它被特殊 label 标记 (pinned，security，good first issue或help wanted) 或有其他活动发生。
 
 **如果这个社区任务issue被这个自动程序关闭，那么这个任务将会被分配给其他人。**
 
@@ -21,7 +21,7 @@
 
 检查贡献者是否签署了贡献许可协议
 
-#### TODO: 在修改proto文件时自动生成新的API引用
+#### TODO: 在修改proto文件时自动生成新的 API 文档
 
 目前[我们必须手动完成](https://mosn.io/layotto/#/en/api_reference/how_to_generate_api_doc)。
 
@@ -34,7 +34,7 @@
 
 具体请查看 https://docs.codecov.com/docs/commit-status#branches
 
-#### TODO: 综合测试
+#### TODO: 集成测试
 
 
 ### 2.3. Lint	
@@ -44,8 +44,6 @@
 合并于https://github.com/mosn/layotto/pull/247
 
 ##### 如何为所有文件自动添加许可证头文件
-
-In Layotto directory:
 
 在Layotto目录下执行:
 
@@ -83,7 +81,7 @@ docker run -it --rm -v $(pwd):/github/workspace apache/skywalking-eyes header fi
 #### TODO: Code style lint
 举个例子，找出 `go xxx()` 没有 `recover`
 
-我们可以使用 go lint 和 参考MOSN的配置
+我们可以使用 go lint, 参考MOSN的配置
 
 ####  ~~- Commit message lint~~ (reverted)
 具体请查看 https://github.com/mosn/layotto/issues/243
