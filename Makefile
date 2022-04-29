@@ -44,11 +44,13 @@
 SHELL := /bin/bash
 
 .PHONY: all
-all: go.lint go.test go.build
-
+all: go.format go.check.style go.check.unit go.check.lint go.build
 
 .PHONY: check
 check: go.check.style go.check.unit go.check.lint
+
+.PHONY: format
+format: go.format
 
 # ==============================================================================
 # ROOT Options

@@ -12,6 +12,10 @@
 # limitations under the License.
 
 GO := go
+GO_FMT := gofmt
+GO_IMPORTS := goimports
+GO_MODULE := github.com/mosn.io/layotto
+
 GO_LDFLAGS += -X $(VERSION_PACKAGE).GitVersion=$(VERSION) \
 	-X $(VERSION_PACKAGE).GitCommit=$(GIT_COMMIT) \
 	-X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE) \
@@ -86,8 +90,20 @@ go.test: go.test.verify
 	@echo "===========> Run unit test in pkg"
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./pkg/...`
 
-
 .PHONY: go.style
 go.style:  
 	@echo "===========> Running go style check"
 	$(GO) fmt ./... && git status && [[ -z `git status -s` ]]
+
+.PHONY: go.format.verify
+go.format.verify:  
+ifeq ($(shell which goimports), )
+	@echo "===========> Installing missing goimports"
+	@GO111MODULE=off $(GO) get -u golang.org/x/tools/cmd/goimports
+endif
+
+.PHONY: go.format
+go.format: go.format.verify
+	@echo "===========> Running go codes format"
+	$(GO_FMT) -s -w .
+	$(GO_IMPORTS) -w -local $(GO_MODULE) .
