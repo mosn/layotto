@@ -106,7 +106,10 @@
 - 博客
     - [蚂蚁云原生应用运行时的探索和实践 - ArchSummit 上海](zh/blog/exploration-and-practice-of-antcloud-native-application-runtime-archsummit-shanghai.md)
     - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index.md)
-    - [源码解析 7层流量治理,接口限流](zh/blog/flowcontrol_code_analyze.md)
+    - 源码分析
+        - [处理 RPC 请求](zh/blog/code/layotto-rpc/index.md)
+        - [7层流量治理，接口限流](zh/blog/code/flowcontrol/flowcontrol_code_analyze.md)
+
 - 演讲视频
   - [Service Mesh落地之后：为 sidecar 注入灵魂](zh/video/inject-soul-into-sidecar.md)
   - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/video/a-new-chapter-in-service-mesh-application-runtime.md)
