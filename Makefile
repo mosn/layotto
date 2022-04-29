@@ -167,7 +167,7 @@ wasm.image.push:
 ## check: Run all go checks of code sources.
 # ==============================================================================
 .PHONY: check
-check: go.check.style go.check.unit go.check.lint
+check: check.style check.unit check.lint
 
 # ==============================================================================
 ## check.lint: Run go syntax and styling of go sources.
