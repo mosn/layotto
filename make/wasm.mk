@@ -15,14 +15,14 @@ WASM_PLATFORM ?= linux_amd64
 WASM_PLATFORMS ?= linux_amd64
 WASM_BUILD ?= faas
 
-.PHONY: wasm
-wasm:  $(addprefix wasm., $(addprefix $(WASM_PLATFORM)., $(WASM_BUILD)))
+.PHONY: go.wasm
+go.wasm:  $(addprefix go.wasm., $(addprefix $(WASM_PLATFORM)., $(WASM_BUILD)))
 
-.PHONY: wasm.multiarch
-wasm.multiarch:  $(foreach p,$(WASM_PLATFORMS),$(addprefix wasm., $(addprefix $(p)., $(WASM_BUILD))))
+.PHONY: go.wasm.multiarch
+go.wasm.multiarch:  $(foreach p,$(WASM_PLATFORMS),$(addprefix go.wasm., $(addprefix $(p)., $(WASM_BUILD))))
 
-.PHONY: wasm.%
-wasm.%:
+.PHONY: go.wasm.%
+go.wasm.%:
 	$(eval COMMAND := $(word 2,$(subst ., ,$*)))
 	$(eval PLATFORM := $(word 1,$(subst ., ,$*)))
 	$(eval OS := $(word 1,$(subst _, ,$(PLATFORM))))
@@ -40,8 +40,8 @@ wasm.%:
 	$(eval ACTION := $(GO) build -o $(OUTPUT_PATH) -tags wasmer -ldflags "$(GO_LDFLAGS)" $(ROOT_PACKAGE)/cmd/layotto)
 	$(DOCKER) run --rm -v $(ROOT_DIR):/go/src/${PROJECT_NAME} -e GOOS=$(OS) -e GOARCH=$(ARCH) -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} ${ACTION}
 
-.PHONY: wasm.image
-wasm.image: wasm
+.PHONY: go.wasm.image
+go.wasm.image: go.wasm
 	$(eval IMAGE := layotto)
 	$(eval IMAGE_PLAT := $(subst _,/,$(WASM_PLATFORM)))
 	$(eval ARCH := $(word 2,$(subst _, ,$(WASM_PLATFORM))))
@@ -53,8 +53,8 @@ wasm.image: wasm
 	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(IMAGE).wasm.$(ARCH):$(VERSION) $(TMP_DIR)/$(IMAGE))
 	$(DOCKER) buildx build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX)
 
-.PHONY: wasm.image.push
-wasm.image.push:
+.PHONY: go.wasm.image.push
+go.wasm.image.push:
 	$(eval IMAGE := layotto)
 	$(eval ARCH := $(word 2,$(subst _, ,$(WASM_PLATFORM))))
 	$(eval IMAGE_PLAT := $(subst _,/,$(WASM_PLATFORM)))
