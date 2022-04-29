@@ -32,7 +32,7 @@ jobs:
           go-version: 1.18.1
       - name: Format Go
         run: |
-           make go.check.style
+           make check.style
   
   golangci-lint:
     name: "👀 Go CI Linter"
@@ -46,7 +46,7 @@ jobs:
         go-version: 1.18.1
     # TODO(@Xunzhuo): open it after fixing lint errors
     # - name: Go Lint Test
-    #   run: make go.check.lint                                                                                                                                                                                                                                                                                                                                                                                                                                         
+    #   run: make check.lint                                                                                                                                                                                                                                                                                                                                                                                                                                         
 
   go-unit-test:
     name: "👀 Go Unit Test"
@@ -60,7 +60,7 @@ jobs:
         go-version: 1.18.1
     # TODO(@Xunzhuo): open it after fixing unit test errors
     # - name: Go Unit Test
-    #   run: make go.check.unit
+    #   run: make check.unit
 
   coverage:
     name: "🤔 Coverage Analysis"
