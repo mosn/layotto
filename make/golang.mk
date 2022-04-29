@@ -107,3 +107,4 @@ go.format: go.format.verify
 	@echo "===========> Running go codes format"
 	$(GO_FMT) -s -w .
 	$(GO_IMPORTS) -w -local $(GO_MODULE) .
+	$(GO) mod tidy
