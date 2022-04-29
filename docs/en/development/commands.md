@@ -21,9 +21,9 @@ Layotto commands 👀:
 A fast and efficient cloud native application runtime 🚀.
 Commands below are used in Development 💻 and GitHub workflow 🌊.
 
-Usage: make <TARGETS> <OPTIONS> ...
+Usage: make <COMMANDS> <ARGS> ...
 
-Targets:
+COMMANDS:
   build               Build layotto for host platform.
   build.multiarch     Build layotto for multiple platforms. See option PLATFORMS.
   image               Build docker images for host arch.
@@ -50,7 +50,7 @@ Targets:
   all                 Run format codes, check codes, build Layotto codes for host platform with one command
   help                Show this help info.
 
-Options:
+ARGS:
   BINS         The binaries to build. Default is all of cmd.
                This option is available when using: make build/build.multiarch
                Example: make build BINS="layotto_multiple_api layotto"

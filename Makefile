@@ -16,9 +16,9 @@
 # A fast and efficient cloud native application runtime 🚀.
 # Commands below are used in Development 💻 and GitHub workflow 🌊.
 
-# Usage: make <TARGETS> <OPTIONS> ...
+# Usage: make <COMMANDS> <ARGS> ...
 
-# Targets:
+# COMMANDS:
 #   build               Build layotto for host platform.
 #   build.multiarch     Build layotto for multiple platforms. See option PLATFORMS.
 #   image               Build docker images for host arch.
@@ -45,7 +45,7 @@
 #   all                 Run format codes, check codes, build Layotto codes for host platform with one command
 #   help                Show this help info.
 
-# Options:
+# ARGS:
 #   BINS         The binaries to build. Default is all of cmd.
 #                This option is available when using: make build/build.multiarch
 #                Example: make build BINS="layotto_multiple_api layotto"
@@ -56,6 +56,7 @@
 #                This option is available when using: make build.multiarch/image.multiarch/push.multiarch
 #                Example: make image.multiarch IMAGES="layotto" PLATFORMS="linux_amd64 linux_arm64"
 #                Supported Platforms: linux_amd64 linux_arm64 darwin_amd64 darwin_arm64
+
 
 SHELL := /bin/bash
 
@@ -250,7 +251,7 @@ all: format check.style check.unit check.lint build
 
 define USAGE_OPTIONS
 
-Options:
+ARGS:
   BINS         The binaries to build. Default is all of cmd.
                This option is available when using: make build/build.multiarch
                Example: make build BINS="layotto_multiple_api layotto"
@@ -273,6 +274,6 @@ export USAGE_OPTIONS
 help: Makefile
 	@echo -e "Layotto commands 👀: \n\nA fast and efficient cloud native application runtime 🚀."
 	@echo -e "Commands below are used in Development 💻 and GitHub workflow 🌊.\n"
-	@echo -e "Usage: make <TARGETS> <OPTIONS> ...\n\nTargets:"
+	@echo -e "Usage: make <COMMANDS> <ARGS> ...\n\nCOMMANDS:"
 	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
 	@echo "$$USAGE_OPTIONS"
