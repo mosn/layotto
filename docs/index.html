@@ -70,7 +70,12 @@
             position: "top",
             color: "var(--theme-color,#42b983)",
             height: "3px",
-        }
+        },
+        timeUpdater: {
+            text: ">last update time of this doc: {docsify-updated}",
+            formatUpdated: "{YYYY}/{MM}/{DD}",
+            whereToPlace: "bottom",  // "top" or "bottom", default to "bottom"
+        },
         // plugins: [
         //     EditOnGithubPlugin.create("https://github.com/mosn/layotto/tree/main/docs"
         //         , null
@@ -99,6 +104,8 @@
 
 <!-- https://github.com/HerbertHe/docsify-progress -->
 <script src="https://cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/docsify-updated/src/time-updater.min.js"></script>
 
 </body>
 </html>
