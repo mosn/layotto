@@ -18,6 +18,8 @@ package default_api
 
 import (
 	"context"
+	"testing"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
@@ -25,7 +27,6 @@ import (
 	"google.golang.org/grpc/status"
 	moke_secret "mosn.io/layotto/pkg/mock/components/secret"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"testing"
 )
 
 func TestGetSecret(t *testing.T) {

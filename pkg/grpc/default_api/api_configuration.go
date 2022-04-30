@@ -20,13 +20,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"sync"
+
 	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/layotto/components/configstores"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
-	"strings"
-	"sync"
 )
 
 // GetConfiguration gets configuration from configuration store.

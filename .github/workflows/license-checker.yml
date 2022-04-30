@@ -1,4 +1,4 @@
-name: Check License
+name: Layotto Env Pipeline 🌊
 
 on:
   push:
@@ -9,7 +9,8 @@ on:
       - main
 
 jobs:
-  check-license:
+  check:
+    name: "🍀 License Validation"
     runs-on: ubuntu-latest
 
     steps:

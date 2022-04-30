@@ -20,6 +20,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net"
+	"testing"
+	"time"
+
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/golang/mock/gomock"
 	jsoniter "github.com/json-iterator/go"
@@ -32,9 +36,6 @@ import (
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
-	"net"
-	"testing"
-	"time"
 )
 
 func TestPublishEvent(t *testing.T) {

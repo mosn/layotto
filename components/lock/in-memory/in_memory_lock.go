@@ -17,9 +17,10 @@
 package in_memory
 
 import (
-	"mosn.io/layotto/components/lock"
 	"sync"
 	"time"
+
+	"mosn.io/layotto/components/lock"
 )
 
 type InMemoryLock struct {
