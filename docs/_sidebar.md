@@ -79,6 +79,7 @@
     - [Development specification when adding API](en/development/developing-api.md)
     - [Comment specification of proto file](en/api_reference/comment_spec_of_proto.md)
     - [How to generate API document based on the proto files](en/api_reference/how_to_generate_api_doc.md)
-  - [Explanation for github workflow](en/development/explanation-for-github-workflow.md)
+  - [Layotto Github Workflows Guide](en/development/github-workflows.md)
+  - [Layotto Commands Guide](en/development/commands.md)
   - [Layotto contributor guide](en/development/CONTRIBUTING.md)
 
