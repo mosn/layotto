@@ -18,6 +18,8 @@ package wasm
 
 import (
 	"context"
+	"testing"
+
 	"github.com/dapr/components-contrib/state"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -27,7 +29,6 @@ import (
 	mock_invoker "mosn.io/layotto/pkg/mock/components/invoker"
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
-	"testing"
 )
 
 func TestImportsHandler(t *testing.T) {

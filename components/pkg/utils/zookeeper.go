@@ -16,10 +16,11 @@ package utils
 import (
 	"errors"
 	"fmt"
-	"github.com/go-zookeeper/zk"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/go-zookeeper/zk"
 )
 
 const (

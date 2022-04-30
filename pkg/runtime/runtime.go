@@ -20,11 +20,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"mosn.io/layotto/components/custom"
 	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
-	"strings"
-	"time"
 
 	"github.com/dapr/components-contrib/bindings"
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"

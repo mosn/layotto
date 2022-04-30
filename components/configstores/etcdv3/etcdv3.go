@@ -16,11 +16,12 @@ package etcdv3
 import (
 	"context"
 	"fmt"
-	"mosn.io/pkg/utils"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"mosn.io/pkg/utils"
 
 	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"

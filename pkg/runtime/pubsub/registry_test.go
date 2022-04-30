@@ -17,10 +17,11 @@
 package pubsub
 
 import (
-	"github.com/dapr/components-contrib/pubsub"
-	"mosn.io/layotto/components/pkg/info"
 	"strings"
 	"testing"
+
+	"github.com/dapr/components-contrib/pubsub"
+	"mosn.io/layotto/components/pkg/info"
 )
 
 func TestNewRegistry(t *testing.T) {

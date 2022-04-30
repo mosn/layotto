@@ -14,14 +14,15 @@
 package redis
 
 import (
+	"strings"
+	"sync"
+	"testing"
+
 	miniredis "github.com/alicebob/miniredis/v2"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/pkg/log"
-	"strings"
-	"sync"
-	"testing"
 )
 
 const cResourceId = "resource_red_lock"
