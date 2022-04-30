@@ -18,9 +18,10 @@
 package mock
 
 import (
-	"mosn.io/layotto/components/pkg/utils"
 	reflect "reflect"
 	time "time"
+
+	"mosn.io/layotto/components/pkg/utils"
 
 	zk "github.com/go-zookeeper/zk"
 	gomock "github.com/golang/mock/gomock"

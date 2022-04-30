@@ -19,8 +19,9 @@ package default_api
 import (
 	"context"
 	"errors"
-	"github.com/dapr/components-contrib/secretstores"
 	"sync"
+
+	"github.com/dapr/components-contrib/secretstores"
 
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"

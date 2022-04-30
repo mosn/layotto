@@ -19,10 +19,11 @@ package wasm
 import (
 	"context"
 	"fmt"
-	"mosn.io/mosn/pkg/variable"
 	"reflect"
 	"sync"
 	"sync/atomic"
+
+	"mosn.io/mosn/pkg/variable"
 
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/log"
