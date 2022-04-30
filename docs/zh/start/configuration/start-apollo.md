@@ -25,9 +25,13 @@ git clone https://github.com/mosn/layotto.git
 #备注 请将${projectpath}替换成你的项目路径
 cd ${projectpath}/cmd/layotto
 go build
-#备注 如果发现构建失败无法下载,请进行如先设置
-go env -w GOPROXY="https://goproxy.cn,direct"
 ```
+
+>[!NOTE]
+> 如果发现构建失败、无法下载,请进行如下设置
+> ```bash
+> go env -w GOPROXY="https://goproxy.cn,direct"
+> ```
 
 完成后目录下会生成layotto文件，运行它：
 
@@ -35,6 +39,7 @@ go env -w GOPROXY="https://goproxy.cn,direct"
 ./layotto start -c ../../configs/config_apollo.json
 ```
 
+> [!TIP]
 >Q: 使用默认配置时，demo启动报错？
 >
 >A: 默认配置会连接 apollo 的演示服务器，但是演示服务器的配置可能被其他人随意修改。报错可能是因为某些配置被修改了。

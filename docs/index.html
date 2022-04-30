@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta name="go-import" content="mosn.io/layotto git https://github.com/mosn/layotto">
-    <meta name="go-source" content="mosn.io/layotto     https://github.com/mosn/layotto https://github.com/mosn/layotto/tree/main{/dir} https://github.com/mosn/layotto/blob/main{/dir}/{file}#L{line}">
+    <meta name="go-source"
+          content="mosn.io/layotto     https://github.com/mosn/layotto https://github.com/mosn/layotto/tree/main{/dir} https://github.com/mosn/layotto/blob/main{/dir}/{file}#L{line}">
     <meta charset="UTF-8">
     <title>Layotto</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
@@ -56,11 +57,14 @@
             ),
         ],
         tabs: {
-            persist    : true,      // default
-            sync       : true,      // default
-            theme      : 'classic', // default
+            persist: true,      // default
+            sync: true,      // default
+            theme: 'classic', // default
             tabComments: true,      // default
             tabHeadings: true       // default
+        },
+        'flexible-alerts': {
+            style: 'flat'
         }
         // plugins: [
         //     EditOnGithubPlugin.create("https://github.com/mosn/layotto/tree/main/docs"
@@ -84,5 +88,8 @@
 
 <!-- docsify-tabs (latest v1.x.x) -->
 <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+
+<!-- https://github.com/fzankl/docsify-plugin-flexible-alerts -->
+<script src="https://unpkg.com/docsify-plugin-flexible-alerts"></script>
 </body>
 </html>
