@@ -15,12 +15,13 @@ package sequencer
 
 import (
 	"context"
+	"testing"
+
 	"github.com/alicebob/miniredis/v2"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/components/sequencer/redis"
 	"mosn.io/pkg/log"
-	"testing"
 )
 
 const keyXx = "resource_xxx"

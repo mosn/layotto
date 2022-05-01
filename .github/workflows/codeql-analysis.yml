@@ -1,17 +1,12 @@
-name: "CodeQL"
+name: Layotto Env Pipeline 🌊
 
 on:
-  push:
-    branches: [master, ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [master]
   schedule:
     - cron: '0 4 * * 5'
 
 jobs:
   analyse:
-    name: Analyse
+    name: 🍀 CodeQL
     runs-on: ubuntu-latest
 
     steps:

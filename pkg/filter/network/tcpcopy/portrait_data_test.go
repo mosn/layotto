@@ -17,10 +17,11 @@
 package tcpcopy
 
 import (
+	"testing"
+
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 	_type "mosn.io/layotto/pkg/filter/network/tcpcopy/type"
 	"mosn.io/pkg/log"
-	"testing"
 )
 
 func Test_isHandle_switch_off(t *testing.T) {

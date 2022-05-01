@@ -14,14 +14,15 @@
 package zookeeper
 
 import (
+	"testing"
+	"time"
+
 	"github.com/go-zookeeper/zk"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/mock"
 	"mosn.io/pkg/log"
-	"testing"
-	"time"
 )
 
 const resouseId = "resoure_1"

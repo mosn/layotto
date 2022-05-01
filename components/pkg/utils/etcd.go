@@ -19,11 +19,12 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	clientv3 "go.etcd.io/etcd/client/v3"
 	"io/ioutil"
 	"strconv"
 	"strings"
 	"time"
+
+	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 const (
