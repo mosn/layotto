@@ -27,8 +27,8 @@ cd ${projectpath}/cmd/layotto
 go build
 ```
 
->[!NOTE]
-> 如果发现构建失败、无法下载,请进行如下设置
+> [!TIP|label: 如果发现构建失败、无法下载]
+> 请进行如下设置
 > ```bash
 > go env -w GOPROXY="https://goproxy.cn,direct"
 > ```
