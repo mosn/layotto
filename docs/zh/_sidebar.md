@@ -96,7 +96,8 @@
         - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
         - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
-    - [解释一下Layotto的github workflow](zh/development/explanation-for-github-workflow.md)
+    - [Layotto 四大 Github Workflows 指南](zh/development/github-workflows.md)
+    - [Layotto 命令行工具指南](zh/development/commands.md)
     - [发布手册](zh/development/release-guide.md)
     - [待解决的问题](zh/development/problems-to-solve.md)
 - 社区
