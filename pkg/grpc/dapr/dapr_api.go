@@ -19,6 +19,8 @@ package dapr
 import (
 	"context"
 	"errors"
+	"strings"
+
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/secretstores"
@@ -43,7 +45,6 @@ import (
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	"mosn.io/layotto/pkg/messages"
 	"mosn.io/pkg/log"
-	"strings"
 )
 
 type DaprGrpcAPI interface {

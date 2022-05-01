@@ -18,8 +18,9 @@ package info
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type MockContributor struct {

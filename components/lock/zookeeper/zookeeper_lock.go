@@ -14,12 +14,13 @@
 package zookeeper
 
 import (
+	"time"
+
 	"github.com/go-zookeeper/zk"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/pkg/log"
 	util "mosn.io/pkg/utils"
-	"time"
 )
 
 // Zookeeper lock store
