@@ -95,4 +95,10 @@ image.push.%:
 	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
 	$(eval IMAGE_PLAT := $(subst _,/,$(PLATFORM)))
 	@echo "===========> Pushing image $(IMAGE) $(VERSION) to $(REGISTRY_PREFIX)"
-	$(DOCKER) push $(REGISTRY_PREFIX)/$(IMAGE).$(ARCH):$(VERSION)
+	@if [ "$(ARCH)" == "amd64" ]; then \
+		echo "===========> Pushing docker image tag $(REGISTRY_PREFIX)/$(IMAGE):$(VERSION) for $(ARCH)"; \
+		$(DOCKER) push $(REGISTRY_PREFIX)/$(IMAGE):$(VERSION); \
+	else \
+		echo "===========> Pushing docker image tag $(REGISTRY_PREFIX)/$(IMAGE).$(ARCH):$(VERSION) for $(ARCH)"; \
+		$(DOCKER) push $(REGISTRY_PREFIX)/$(IMAGE).$(ARCH):$(VERSION); \
+	fi
