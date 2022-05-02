@@ -18,6 +18,7 @@ package pubsub
 
 import (
 	"fmt"
+
 	dpubsub "github.com/dapr/components-contrib/pubsub"
 	"mosn.io/layotto/components/pkg/info"
 )

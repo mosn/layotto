@@ -15,12 +15,13 @@ package wasm
 
 import (
 	"encoding/json"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/mock"
 	"mosn.io/mosn/pkg/wasm"
-	"testing"
 )
 
 func TestCreateProxyWasmFilterFactory(t *testing.T) {

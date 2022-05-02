@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
 	contrib_pubsub "github.com/dapr/components-contrib/pubsub"
@@ -31,6 +32,7 @@ import (
 	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 
 	"encoding/base64"
+
 	"github.com/dapr/components-contrib/contenttype"
 	"mosn.io/layotto/pkg/messages"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"

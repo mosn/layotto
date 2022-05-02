@@ -15,6 +15,7 @@ package sequencer
 
 import (
 	"fmt"
+
 	"mosn.io/layotto/components/pkg/info"
 	"mosn.io/layotto/components/sequencer"
 )
