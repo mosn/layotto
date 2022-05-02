@@ -32,12 +32,13 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 	"mosn.io/api"
+	"mosn.io/mosn/pkg/stagemanager"
+	"mosn.io/mosn/pkg/trace/skywalking"
+
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
-	"mosn.io/mosn/pkg/stagemanager"
-	"mosn.io/mosn/pkg/trace/skywalking"
 
 	"mosn.io/layotto/components/file/local"
 	"mosn.io/layotto/components/file/s3/alicloud"
@@ -48,12 +49,13 @@ import (
 
 	dbindings "github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/bindings/http"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/runtime/bindings"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
-	"mosn.io/pkg/log"
 
 	// Hello
 	"mosn.io/layotto/components/hello"
@@ -78,6 +80,7 @@ import (
 	"github.com/dapr/components-contrib/pubsub/rabbitmq"
 	pubsub_redis "github.com/dapr/components-contrib/pubsub/redis"
 	"github.com/dapr/kit/logger"
+
 	"mosn.io/layotto/pkg/runtime/pubsub"
 
 	// RPC
@@ -105,6 +108,7 @@ import (
 	"github.com/dapr/components-contrib/state/rethinkdb"
 	"github.com/dapr/components-contrib/state/sqlserver"
 	"github.com/dapr/components-contrib/state/zookeeper"
+
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 
 	// Lock
@@ -137,10 +141,6 @@ import (
 
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
-	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
-	l8_grpc "mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/pkg/runtime"
-	_ "mosn.io/layotto/pkg/wasm"
 	"mosn.io/mosn/pkg/featuregate"
 	_ "mosn.io/mosn/pkg/filter/network/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
@@ -163,6 +163,11 @@ import (
 	tracebolt "mosn.io/mosn/pkg/trace/sofa/xprotocol/bolt"
 	_ "mosn.io/mosn/pkg/wasm/runtime/wasmer"
 	_ "mosn.io/pkg/buffer"
+
+	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
+	l8_grpc "mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/runtime"
+	_ "mosn.io/layotto/pkg/wasm"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
 	lprotocol "mosn.io/layotto/diagnostics/protocol"

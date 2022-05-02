@@ -20,6 +20,7 @@ import (
 	"context"
 
 	"google.golang.org/protobuf/types/known/emptypb"
+
 	"mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 )
 

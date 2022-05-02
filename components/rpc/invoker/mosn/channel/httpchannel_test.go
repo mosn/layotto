@@ -29,6 +29,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/valyala/fasthttp"
+
 	"mosn.io/layotto/components/rpc"
 )
 

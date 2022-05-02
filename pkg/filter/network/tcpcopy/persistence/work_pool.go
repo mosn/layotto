@@ -21,9 +21,10 @@ import (
 	"sync"
 	"time"
 
+	"mosn.io/pkg/utils"
+
 	"mosn.io/layotto/pkg/common"
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
-	"mosn.io/pkg/utils"
 )
 
 func init() {
