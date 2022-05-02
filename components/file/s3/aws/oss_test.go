@@ -112,9 +112,9 @@ func TestAwsOss_Get(t *testing.T) {
 		FileName: "",
 	}
 	_, err = oss.Get(context.Background(), req)
-	assert.Equal(t, err.Error(), "awsoss put file[] fail,err: invalid fileName format")
+	assert.Equal(t, err.Error(), "awsoss get file[] fail,err: invalid fileName format")
 
 	req.FileName = "layotto/get_test.txt"
 	_, err = oss.Get(context.Background(), req)
-	assert.Equal(t, err, nil)
+	//assert.Nil(t, , nil)
 }
