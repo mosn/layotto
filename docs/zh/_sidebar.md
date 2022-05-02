@@ -71,6 +71,7 @@
                 - [Redis](zh/component_specs/sequencer/redis.md)
                 - [Zookeeper](zh/component_specs/sequencer/zookeeper.md)
                 - [MongoDB](zh/component_specs/sequencer/mongo.md)
+            - [Secret Store](zh/component_specs/secret/common.md)  
             - [自定义组件](zh/component_specs/custom/common.md)
     - [如何部署、升级 Layotto](zh/operation/)
 - 设计文档

@@ -65,6 +65,7 @@
         - [Redis](en/component_specs/sequencer/redis.md)
         - [Zookeeper](en/component_specs/sequencer/zookeeper.md)
         - [MongoDB](en/component_specs/sequencer/mongo.md)
+      - [Secret Store](en/component_specs/secret/common.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
