@@ -14,8 +14,20 @@ jobs:
     name: "🍀 Title Validation"
     runs-on: ubuntu-latest
     steps:
-      - uses: thehanimo/pr-title-checker@v1.3.4
-        with:
+      - uses: amannn/action-semantic-pull-request@v2.1.0
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          pass_on_octokit_error: false
-          configuration_path: ".github/pr-title-checker-config.json"
+        with:
+          # If the PR contains one of these labels, the validation is skipped.
+          # Multiple labels can be separated by newlines.
+          # If you want to rerun the validation when labels change, you might want
+          # to use the `labeled` and `unlabeled` event triggers in your workflow.
+          ignoreLabels: |
+            dont-check-PRs-with-this-label
+          # For work-in-progress PRs you can typically use draft pull requests 
+          # from GitHub. However, private repositories on the free plan don't have 
+          # this option and therefore this action allows you to opt-in to using the 
+          # special "[WIP]" prefix to indicate this state. This will avoid the 
+          # validation of the PR title and the pull request checks remain pending.
+          # Note that a second check will be reported if this is enabled.
+          wip: true
