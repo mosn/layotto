@@ -19,6 +19,10 @@ package client
 import (
 	"context"
 	"fmt"
+	"net"
+	"os"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
@@ -26,9 +30,6 @@ import (
 	empty "google.golang.org/protobuf/types/known/emptypb"
 	pb "mosn.io/layotto/spec/proto/runtime/v1"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"net"
-	"os"
-	"testing"
 )
 
 const (

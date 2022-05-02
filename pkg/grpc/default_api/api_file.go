@@ -18,11 +18,12 @@ package default_api
 
 import (
 	"context"
+	"io"
+
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"io"
 	"mosn.io/layotto/components/file"
 
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"

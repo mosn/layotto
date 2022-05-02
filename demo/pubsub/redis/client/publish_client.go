@@ -38,7 +38,7 @@ func main() {
 
 func testPublish(cli client.Client) error {
 	data := []byte("value1")
-	err := cli.PublishEvent(context.Background(), "redis",topicName, data)
+	err := cli.PublishEvent(context.Background(), "redis", topicName, data)
 	if err != nil {
 		panic(err)
 	}

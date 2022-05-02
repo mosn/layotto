@@ -17,8 +17,9 @@
 package apollo
 
 import (
-	"mosn.io/layotto/components/configstores"
 	"sync"
+
+	"mosn.io/layotto/components/configstores"
 )
 
 // Holding subscribers' chan and ctx.

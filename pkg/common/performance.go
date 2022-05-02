@@ -18,10 +18,11 @@ package common
 
 import (
 	"fmt"
-	"github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/mem"
 	"runtime/debug"
 	"time"
+
+	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/mem"
 )
 
 func GetSystemUsageRate() (cpuRate float64, memRate float64, err error) {
