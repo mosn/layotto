@@ -17,11 +17,12 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
 const (
@@ -202,7 +203,7 @@ func ParseRedisClusterMetadata(properties map[string]string) (RedisClusterMetada
 		if err != nil {
 			return m, fmt.Errorf("redis store error: can't parse concurrency field: %s", err)
 		}
-		if con <= 0{
+		if con <= 0 {
 			con = runtime.NumCPU()
 		}
 		m.Concurrency = con

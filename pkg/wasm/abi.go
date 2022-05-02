@@ -18,6 +18,7 @@ package wasm
 
 import (
 	"errors"
+
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/mosn/pkg/wasm/abi"
 	v1 "mosn.io/mosn/pkg/wasm/abi/proxywasm010"
