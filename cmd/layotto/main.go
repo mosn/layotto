@@ -18,6 +18,10 @@ package main
 
 import (
 	"encoding/json"
+	"os"
+	"strconv"
+	"time"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
 	"github.com/dapr/components-contrib/secretstores/aws/secretmanager"
@@ -34,9 +38,6 @@ import (
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
 	"mosn.io/mosn/pkg/stagemanager"
 	"mosn.io/mosn/pkg/trace/skywalking"
-	"os"
-	"strconv"
-	"time"
 
 	"mosn.io/layotto/components/file/local"
 	"mosn.io/layotto/components/file/s3/alicloud"

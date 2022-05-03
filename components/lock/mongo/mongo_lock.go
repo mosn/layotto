@@ -16,6 +16,8 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -25,7 +27,6 @@ import (
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/pkg/log"
-	"time"
 )
 
 const (

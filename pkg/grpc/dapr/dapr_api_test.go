@@ -19,6 +19,9 @@ package dapr
 import (
 	"context"
 	"fmt"
+	"net"
+	"testing"
+
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/state"
 	"github.com/golang/mock/gomock"
@@ -26,14 +29,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	grpc_api "mosn.io/layotto/pkg/grpc"
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
-	"net"
-	"testing"
 
 	"errors"
+	"time"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"time"
 
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 )

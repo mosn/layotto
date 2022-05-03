@@ -14,8 +14,9 @@
 package actuators
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRangeAllIndicators(t *testing.T) {

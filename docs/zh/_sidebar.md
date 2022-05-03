@@ -96,10 +96,12 @@
         - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
         - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
     - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
-    - [解释一下Layotto的github workflow](zh/development/explanation-for-github-workflow.md)
+    - [Layotto 四大 Github Workflows 指南](zh/development/github-workflows.md)
+    - [Layotto 命令行工具指南](zh/development/commands.md)
     - [发布手册](zh/development/release-guide.md)
     - [待解决的问题](zh/development/problems-to-solve.md)
 - 社区
+    - [社区会议](zh/community/meeting.md)
     - [SOFAStack & MOSN 社区角色说明](zh/community/governance.md)
     - [Layotto社区晋升规则](zh/community/promote.md)
     - [Layotto社区成员](zh/community/people.md)
@@ -109,7 +111,4 @@
     - 源码分析
         - [处理 RPC 请求](zh/blog/code/layotto-rpc/index.md)
         - [7层流量治理，接口限流](zh/blog/code/flowcontrol/flowcontrol_code_analyze.md)
-
-- 演讲视频
-  - [Service Mesh落地之后：为 sidecar 注入灵魂](zh/video/inject-soul-into-sidecar.md)
-  - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/video/a-new-chapter-in-service-mesh-application-runtime.md)
+- [视频合集](zh/video/README.md)
