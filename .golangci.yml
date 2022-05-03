@@ -54,7 +54,6 @@ linters-settings :
       - name: error-strings
       - name: if-return
       - name: increment-decrement
-      - name: var-declaration
       - name: package-comments
       - name: range
       - name: receiver-naming
@@ -66,6 +65,7 @@ linters-settings :
       - name: superfluous-else
       - name: unreachable-code
       - name: redefines-builtin-id
+      # - name: var-declaration
       # - name: context-as-argument
       # - name: error-naming
       # - name: exported
