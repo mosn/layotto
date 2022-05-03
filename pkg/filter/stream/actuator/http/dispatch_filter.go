@@ -44,7 +44,7 @@ func (dis *DispatchFilter) OnDestroy() {}
 func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
 	// 1. log
 	log.DefaultLogger.Debugf("[actuator] receive actuator pkt")
-	path, err := variable.GetVariableValue(ctx, types.VarHttpRequestPath)
+	path, err := variable.GetString(ctx, types.VarHttpRequestPath)
 	if err != nil {
 		dis.write404()
 		return api.StreamFilterStop

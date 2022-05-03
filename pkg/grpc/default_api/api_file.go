@@ -48,7 +48,7 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	buffsPtr := bytesPool.Get().(*[]byte)
 	buf := *buffsPtr
 	if len(buf) == 0 {
-		buf = make([]byte, 102400, 102400)
+		buf = make([]byte, 102400)
 	}
 	defer func() {
 		data.Close()

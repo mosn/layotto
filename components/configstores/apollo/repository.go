@@ -60,7 +60,7 @@ type AgolloRepository struct {
 }
 
 func (a *AgolloRepository) Connect() error {
-	var err error = nil
+	var err error
 	a.client, err = agollo.StartWithConfig(func() (*agolloConfig.AppConfig, error) {
 		return repoConfig2AgolloConfig(a.cfg), nil
 	})
