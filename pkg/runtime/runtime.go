@@ -183,18 +183,18 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	// 2. init GrpcAPI stage
 	var apis []grpc.GrpcAPI
 	ac := &grpc.ApplicationContext{
-		m.runtimeConfig.AppManagement.AppId,
-		m.hellos,
-		m.configStores,
-		m.rpcs,
-		m.pubSubs,
-		m.states,
-		m.files,
-		m.locks,
-		m.sequencers,
-		m.sendToOutputBinding,
-		m.secretStores,
-		m.customComponent,
+		AppId:                 m.runtimeConfig.AppManagement.AppId,
+		Hellos:                m.hellos,
+		ConfigStores:          m.configStores,
+		Rpcs:                  m.rpcs,
+		PubSubs:               m.pubSubs,
+		StateStores:           m.states,
+		Files:                 m.files,
+		LockStores:            m.locks,
+		Sequencers:            m.sequencers,
+		SendToOutputBindingFn: m.sendToOutputBinding,
+		SecretStores:          m.secretStores,
+		CustomComponent:       m.customComponent,
 	}
 
 	for _, apiFactory := range o.apiFactorys {
@@ -211,7 +211,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		grpc.WithGrpcAPIs(apis),
 	)
 	// 3. create grpc server
-	var err error = nil
+	var err error
 	m.srv, err = grpc.NewGrpcServer(grpcOpts...)
 	return m.srv, err
 }
@@ -264,10 +264,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initInputBinding(o.services.inputBinding...); err != nil {
 		return err
 	}
-	if err := m.initSecretStores(o.services.secretStores...); err != nil {
-		return err
-	}
-	return nil
+	return m.initSecretStores(o.services.secretStores...)
 }
 
 func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {

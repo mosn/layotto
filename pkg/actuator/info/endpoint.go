@@ -40,7 +40,7 @@ func NewEndpoint() *Endpoint {
 
 func (e *Endpoint) Handle(ctx context.Context, params actuator.ParamsScanner) (map[string]interface{}, error) {
 	result := make(map[string]interface{})
-	var resultErr error = nil
+	var resultErr error
 	// handle the infoContributors
 	for k, c := range infoContributors {
 		cinfo, err := c.GetInfo()
