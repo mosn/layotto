@@ -17,7 +17,6 @@
 package apollo
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/zouyx/agollo/v4"
@@ -94,7 +93,7 @@ func (a *AgolloRepository) Get(namespace string, key string) (interface{}, error
 	// 1. get cache
 	cache := a.client.GetConfigCache(namespace)
 	if cache == nil {
-		return nil, errors.New(fmt.Sprintf("no cache for namespace:%v", namespace))
+		return nil, fmt.Errorf("no cache for namespace:%v", namespace)
 	}
 	// 2. query value
 	return cache.Get(key)
@@ -104,7 +103,7 @@ func (a *AgolloRepository) Range(namespace string, f func(key interface{}, value
 	// 1. get cache
 	cache := a.client.GetConfigCache(namespace)
 	if cache == nil {
-		return errors.New(fmt.Sprintf("no cache for namespace:%v", namespace))
+		return fmt.Errorf("no cache for namespace:%v", namespace)
 	}
 	// 2. loop process
 	cache.Range(f)
