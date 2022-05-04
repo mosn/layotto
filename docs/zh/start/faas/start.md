@@ -44,7 +44,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 ```
 > git clone https://github.com/mosn/layotto.git
 > cd layotto
-> make build-linux-wasm-layotto
+> make wasm
 > minikube cp ./layotto /home/docker/layotto
 > minikube cp ./demo/faas/config.json /home/docker/config.json
 > minikube ssh
