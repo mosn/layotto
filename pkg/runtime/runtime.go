@@ -339,6 +339,9 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 		// check consumerID
 		consumerID := strings.TrimSpace(config.Metadata["consumerID"])
 		if consumerID == "" {
+			if config.Metadata == nil {
+				config.Metadata = make(map[string]string)
+			}
 			config.Metadata["consumerID"] = m.runtimeConfig.AppManagement.AppId
 		}
 		// init this component with the config
