@@ -24,9 +24,9 @@ import (
 var ErrNoConfig = errors.New("configuration illegal:no config data")
 
 func errConfigMissingField(field string) error {
-	return errors.New(fmt.Sprintf("configuration illegal:no %s", field))
+	return fmt.Errorf("configuration illegal:no %s", field)
 }
 
 func errParamsMissingField(field string) error {
-	return errors.New(fmt.Sprintf("params illegal:no %s", field))
+	return fmt.Errorf("params illegal:no %s", field)
 }
