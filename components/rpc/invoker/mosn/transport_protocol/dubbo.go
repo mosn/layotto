@@ -20,10 +20,11 @@ import (
 	"context"
 
 	"mosn.io/api"
-	common "mosn.io/layotto/components/pkg/common"
-	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol/dubbo"
 	"mosn.io/pkg/buffer"
+
+	common "mosn.io/layotto/components/pkg/common"
+	"mosn.io/layotto/components/rpc"
 )
 
 // init dubbo protocol

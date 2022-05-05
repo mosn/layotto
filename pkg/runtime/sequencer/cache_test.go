@@ -19,9 +19,10 @@ import (
 
 	"github.com/alicebob/miniredis/v2"
 	"github.com/stretchr/testify/assert"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/components/sequencer/redis"
-	"mosn.io/pkg/log"
 )
 
 const keyXx = "resource_xxx"

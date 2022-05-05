@@ -18,8 +18,9 @@ package grpc
 
 import (
 	"google.golang.org/grpc"
-	"mosn.io/layotto/diagnostics"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
+
+	"mosn.io/layotto/diagnostics"
 )
 
 func NewGrpcServer(opts ...Option) (mgrpc.RegisteredServer, error) {

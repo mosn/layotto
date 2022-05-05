@@ -18,6 +18,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"mosn.io/layotto/components/file/s3/alicloud"
 )
 

@@ -21,9 +21,10 @@ import (
 	"testing"
 
 	"mosn.io/api"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/pkg/buffer"
+
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 )
 
 func TestCreateTcpcopyFactory(t *testing.T) {

@@ -24,12 +24,13 @@ import (
 	"sync/atomic"
 
 	"mosn.io/api"
+	"mosn.io/mosn/pkg/log"
+	"mosn.io/mosn/pkg/types"
+
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/persistence"
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 	_type "mosn.io/layotto/pkg/filter/network/tcpcopy/type"
-	"mosn.io/mosn/pkg/log"
-	"mosn.io/mosn/pkg/types"
 )
 
 var lock sync.Mutex
