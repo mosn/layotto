@@ -59,7 +59,7 @@ var (
 		},
 	}
 	// FIXME I put it here for compatibility.Don't write singleton like this !
-	// LayottoAPISingleton It should be refactored and deleted.
+	// LayottoAPISingleton should be refactored and deleted.
 	LayottoAPISingleton API
 )
 
