@@ -25,9 +25,10 @@ import (
 
 	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/trace"
-	"mosn.io/pkg/log"
 )
 
 type EtcdV3ConfigStore struct {

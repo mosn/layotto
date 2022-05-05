@@ -28,8 +28,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zouyx/agollo/v4"
-	"mosn.io/layotto/components/configstores"
 	"mosn.io/mosn/pkg/log"
+
+	"mosn.io/layotto/components/configstores"
 )
 
 // MockRepository implements Repository interface

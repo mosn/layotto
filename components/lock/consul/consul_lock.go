@@ -19,10 +19,11 @@ import (
 	"sync"
 
 	"github.com/hashicorp/consul/api"
-	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/pkg/utils"
 	msync "mosn.io/mosn/pkg/sync"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/utils"
 )
 
 type ConsulLock struct {

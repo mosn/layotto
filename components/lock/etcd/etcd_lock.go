@@ -18,10 +18,12 @@ import (
 	"fmt"
 
 	clientv3 "go.etcd.io/etcd/client/v3"
+
 	"mosn.io/layotto/components/pkg/utils"
 
-	"mosn.io/layotto/components/lock"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/lock"
 )
 
 // Etcd lock store
