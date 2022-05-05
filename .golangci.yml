@@ -28,7 +28,7 @@ linters :
     - goconst
     - gocyclo
     - revive
-    # - goimports
+    - goimports
     # - lll
 
 issues :
