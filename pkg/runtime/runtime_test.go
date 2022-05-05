@@ -26,6 +26,7 @@ import (
 
 	"github.com/dapr/components-contrib/bindings"
 	"google.golang.org/grpc/test/bufconn"
+
 	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/hello/helloworld"
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"

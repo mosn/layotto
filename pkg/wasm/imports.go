@@ -20,11 +20,12 @@ import (
 	"context"
 
 	anypb "github.com/golang/protobuf/ptypes/any"
-	"mosn.io/layotto/pkg/grpc/default_api"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 	"mosn.io/proxy-wasm-go-host/proxywasm/common"
 	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
+
+	"mosn.io/layotto/pkg/grpc/default_api"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 // LayottoHandler implement proxywasm.ImportsHandler

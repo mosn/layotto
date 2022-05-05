@@ -25,6 +25,7 @@ import (
 	"sync"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+
 	"mosn.io/layotto/components/file"
 	loss "mosn.io/layotto/components/file/s3"
 )

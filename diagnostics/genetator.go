@@ -9,10 +9,11 @@ import (
 	"mosn.io/mosn/pkg/types"
 
 	"google.golang.org/grpc/metadata"
-	"mosn.io/layotto/components/trace"
 	mosnctx "mosn.io/mosn/pkg/context"
 	mtrace "mosn.io/mosn/pkg/trace"
 	"mosn.io/mosn/pkg/trace/sofa"
+
+	"mosn.io/layotto/components/trace"
 )
 
 func init() {

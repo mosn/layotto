@@ -27,6 +27,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/pkg/mock"
 	"mosn.io/layotto/pkg/mock/runtime"
@@ -139,7 +140,7 @@ func TestGetFileMeta(t *testing.T) {
 		Size:         10,
 		LastModified: "123",
 		Metadata: map[string][]string{
-			"test": []string{},
+			"test": {},
 		},
 	}
 	mockFile.EXPECT().Stat(context.Background(), &file.FileMetaRequest{FileName: request.Request.Name, Metadata: meta}).Return(re, nil).Times(1)

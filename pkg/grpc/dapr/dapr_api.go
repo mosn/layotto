@@ -31,6 +31,8 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/hello"
@@ -44,7 +46,6 @@ import (
 	"mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	"mosn.io/layotto/pkg/messages"
-	"mosn.io/pkg/log"
 )
 
 type DaprGrpcAPI interface {

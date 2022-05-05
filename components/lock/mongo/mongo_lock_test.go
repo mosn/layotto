@@ -21,9 +21,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/mock"
-	"mosn.io/pkg/log"
 )
 
 const (

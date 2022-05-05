@@ -24,10 +24,11 @@ import (
 	"sync"
 
 	"google.golang.org/protobuf/types/known/emptypb"
-	"mosn.io/layotto/components/configstores"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
+
+	"mosn.io/layotto/components/configstores"
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 // GetConfiguration gets configuration from configuration store.

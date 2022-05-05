@@ -21,8 +21,9 @@ import (
 	"path"
 	"testing"
 
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 )
 
 func InitForTest() {
