@@ -14,14 +14,14 @@
 - [总结](#总结)
 
 ## Overview
-Layotto “寄生”在 MOSN 里，启动流程其实是先启动 MOSN, MOSN 在启动过程中回调 Layotto，让 Layotto 启动。
+Layotto “寄生”在 MOSN 里，启动流程其实是先启动 MOSN, MOSN 在启动过程中回调 Layotto ，让 Layotto 启动。
 
 ## 源码分析
 一切起源于我们的命令行: layotto start  -c  `configpath`
 
 ### 1.cmd分析
 
-main的init函数首先运行：
+main 的 init 函数首先运行：
 
 ```
 func init() {   
@@ -31,7 +31,7 @@ func init() {
 }
 ```
 
-cmd的action开始执行：
+cmd 的 action 开始执行：
 ```
 	Action: func(c *cli.Context) error {
 		app := mosn.NewMosn()
@@ -59,7 +59,7 @@ cmd的action开始执行：
 
 ### 2.回调函数NewRuntimeGrpcServer分析
 
-mons启动的时候回调 NewRuntimeGrpcServer ，data是未解析的配置文件，opts是grpc的配置项，返回Grpc server
+MOSN 启动的时候回调 NewRuntimeGrpcServer ，data 是未解析的配置文件，opts 是 grpc 的配置项，返回 Grpc server
 ```
 func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
 	// 将原始的配置文件解析成结构体形式。
@@ -91,7 +91,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 ### 3.runtime分析
 
-看一下runtime的结构体，从整体上把握runtime的构成：
+看一下 runtime 的结构体，从整体上把握 runtime 的构成：
 
 ```
 type MosnRuntime struct {
@@ -131,7 +131,7 @@ type MosnRuntime struct {
 }
 ```
 
-runtime的run函数逻辑如下:
+runtime 的 run 函数逻辑如下:
 ```
 func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	// 启动标志
@@ -188,7 +188,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 }
 
 ```
-组件的初始化函数initRuntime：
+组件的初始化函数 initRuntime ：
 
 ```
 func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
@@ -207,7 +207,7 @@ func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	return nil
 }
 ```
-DefaultInitRuntimeStage组件初始化逻辑，调用每个组件的init方法:
+DefaultInitRuntimeStage 组件初始化逻辑，调用每个组件的 init 方法:
 ```
 func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	 ...
@@ -251,7 +251,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	return nil
 }
 ```
-以file组件为例，看下初始化函数：
+以 file 组件为例，看下初始化函数：
 
 ```
 func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
@@ -275,10 +275,10 @@ func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
 	return nil
 }
 ```
-至此mosn、Grpc、layotto都已经启动完成，通过Grpc的接口就可以调用到组件的代码逻辑。
+至此 MOSN、Grpc、Layotto 都已经启动完成，通过 Grpc 的接口就可以调用到组件的代码逻辑。
 
 ## 总结
-总览整个启动流程，layotto结合mosn来做启动，解析配置文件，生成配置文件中的组件类，将Grpc的api暴露出去。
+总览整个启动流程，Layotto 结合 MOSN 来做启动，解析配置文件，生成配置文件中的组件类，将 Grpc 的 api 暴露出去。
 
 
 
