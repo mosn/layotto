@@ -44,7 +44,7 @@ The example only needs a Redis server that can be used normally. As for where it
 ```
 > git clone https://github.com/mosn/layotto.git
 > cd layotto
-> make build-linux-wasm-layotto
+> make wasm
 > minikube cp ./layotto /home/docker/layotto
 > minikube cp ./demo/faas/config.json /home/docker/config.json
 > minikube ssh
