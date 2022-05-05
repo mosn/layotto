@@ -17,9 +17,10 @@
 package strategy
 
 import (
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/pkg/common"
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
-	"mosn.io/pkg/log"
 )
 
 // Whether it has been fused

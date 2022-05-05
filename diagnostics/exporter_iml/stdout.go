@@ -4,8 +4,9 @@ import (
 	"strconv"
 	"time"
 
-	"mosn.io/layotto/components/trace"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/trace"
 )
 
 func init() {

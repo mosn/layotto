@@ -19,9 +19,10 @@ import (
 	"sync"
 	"time"
 
-	"mosn.io/layotto/components/sequencer"
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
+
+	"mosn.io/layotto/components/sequencer"
 )
 
 const defaultSize = 10000

@@ -26,6 +26,7 @@ import (
 
 	"github.com/dapr/components-contrib/bindings"
 	"google.golang.org/grpc/test/bufconn"
+
 	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/hello/helloworld"
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
@@ -280,6 +281,32 @@ func TestMosnRuntime_initPubSubs(t *testing.T) {
 						"target": "layotto",
 					},
 				},
+			},
+		}
+		// construct MosnRuntime
+		m := NewMosnRuntime(cfg)
+		m.errInt = func(err error, format string, args ...interface{}) {
+			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+		}
+		// test initPubSubs
+		err := m.initPubSubs(mpubsub.NewFactory("mock", f))
+		// assert result
+		assert.Nil(t, err)
+	})
+}
+
+func TestMosnRuntime_initPubSubsNotExistMetadata(t *testing.T) {
+	t.Run("normal", func(t *testing.T) {
+		// mock pubsub component
+		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
+		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		f := func() pubsub.PubSub {
+			return mockPubSub
+		}
+
+		cfg := &MosnRuntimeConfig{
+			PubSubManagement: map[string]mpubsub.Config{
+				"mock": {},
 			},
 		}
 		// construct MosnRuntime

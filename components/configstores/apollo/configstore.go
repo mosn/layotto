@@ -30,8 +30,9 @@ import (
 
 	"mosn.io/layotto/components/pkg/actuators"
 
-	"mosn.io/layotto/components/configstores"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/configstores"
 )
 
 var (
@@ -280,7 +281,7 @@ func (c *ConfigStore) Set(ctx context.Context, req *configstores.SetRequest) err
 		return err
 	}
 	// 4. commit kv namespace
-	for g, _ := range groupMap {
+	for g := range groupMap {
 		err := c.commit(c.env, req.AppId, c.kvConfig.cluster, g)
 		if err != nil {
 			return err

@@ -7,10 +7,11 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 
 	"google.golang.org/grpc"
+	"mosn.io/mosn/pkg/trace"
+
 	ltrace "mosn.io/layotto/components/trace"
 	lgrpc "mosn.io/layotto/diagnostics/grpc"
 	"mosn.io/layotto/diagnostics/protocol"
-	"mosn.io/mosn/pkg/trace"
 )
 
 // UnaryInterceptorFilter is an implementation of grpc.UnaryServerInterceptor

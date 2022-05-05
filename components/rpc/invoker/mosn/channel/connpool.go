@@ -25,10 +25,11 @@ import (
 	"sync"
 	"sync/atomic"
 
-	common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
+
+	common "mosn.io/layotto/components/pkg/common"
 )
 
 const (
