@@ -172,8 +172,8 @@ import (
 // loggerForDaprComp is constructed for reusing dapr's components.
 var loggerForDaprComp = logger.NewLogger("reuse.dapr.component")
 
-// Version mosn version is specified by build tag, in VERSION file
-var Version = ""
+// GitVersion mosn version is specified by latest tag
+var GitVersion = ""
 
 func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
@@ -530,7 +530,7 @@ func registerAppInfo(app *cli.App) {
 func newRuntimeApp(startCmd *cli.Command) *cli.App {
 	app := cli.NewApp()
 	app.Name = "Layotto"
-	app.Version = Version
+	app.Version = GitVersion
 	app.Compiled = time.Now()
 	app.Copyright = "(c) " + strconv.Itoa(time.Now().Year()) + " Layotto Authors"
 	app.Usage = "A fast and efficient cloud native application runtime based on MOSN."
