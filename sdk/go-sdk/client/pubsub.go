@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 
 	"github.com/pkg/errors"
+
 	pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 

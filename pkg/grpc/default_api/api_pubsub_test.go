@@ -32,10 +32,11 @@ import (
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"mosn.io/pkg/log"
+
 	mock_pubsub "mosn.io/layotto/pkg/mock/components/pubsub"
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"mosn.io/pkg/log"
 )
 
 func TestPublishEvent(t *testing.T) {

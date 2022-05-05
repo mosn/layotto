@@ -19,8 +19,9 @@ package callback
 import (
 	"encoding/json"
 
-	"mosn.io/layotto/components/rpc"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/rpc"
 )
 
 // RegisterBeforeInvoke is set BeforeFactory

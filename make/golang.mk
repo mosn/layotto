@@ -14,7 +14,7 @@
 GO := go
 GO_FMT := gofmt
 GO_IMPORTS := goimports
-GO_MODULE := github.com/mosn.io/layotto
+GO_MODULE := mosn.io/layotto
 VERSION_PACKAGE := main
 
 GO_LDFLAGS += -X $(VERSION_PACKAGE).GitVersion=$(VERSION) \

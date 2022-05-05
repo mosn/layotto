@@ -26,6 +26,7 @@ import (
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/stretchr/testify/assert"
+
 	"mosn.io/layotto/components/pkg/mock"
 )
 

@@ -19,8 +19,9 @@ package info
 import (
 	"context"
 
-	"mosn.io/layotto/pkg/actuator"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/pkg/actuator"
 )
 
 // init info Endpoint.

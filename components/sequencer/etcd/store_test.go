@@ -22,8 +22,9 @@ import (
 	"testing"
 	"time"
 
-	"mosn.io/layotto/components/sequencer"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/sequencer"
 
 	"github.com/stretchr/testify/assert"
 	"go.etcd.io/etcd/server/v3/embed"
