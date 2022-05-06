@@ -22,7 +22,6 @@ import (
 
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/google/uuid"
-	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -30,6 +29,7 @@ import (
 	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 
 	"encoding/base64"
+	"encoding/json"
 
 	"github.com/dapr/components-contrib/contenttype"
 	"mosn.io/pkg/log"
@@ -85,7 +85,7 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 	features := component.Features()
 	pubsub.ApplyMetadata(envelope, features, metadata)
 
-	b, err := jsoniter.ConfigFastest.Marshal(envelope)
+	b, err := json.Marshal(envelope)
 	if err != nil {
 		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventsSer, topic, pubsubName, err.Error())
 		return &emptypb.Empty{}, err
