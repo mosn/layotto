@@ -20,7 +20,7 @@ None of these is essential for a pull request, but they will all help.
 7. When writing a commit message please follow [these conventions](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html), if you are fixing an existing issue please add Fixes gh-XXXX at the end of the commit message (where XXXX is the issue number).
 8. Please ensure that code coverage will not decrease.
 9. Make sure checks have been correctly passed, you can simply run `make check`
-10. Contribute a PR as the rule of Github Workflow, and you should follow the pull request's rules.
+10. Contribute a Pull Request  as the rule of Github Workflow, and you should follow the pull request's rules.
 
 ## Version naming convention
 
