@@ -18,6 +18,10 @@ package main
 
 import (
 	"encoding/json"
+	"os"
+	"strconv"
+	"time"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
 	"github.com/dapr/components-contrib/secretstores/aws/secretmanager"
@@ -34,9 +38,6 @@ import (
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
 	"mosn.io/mosn/pkg/stagemanager"
 	"mosn.io/mosn/pkg/trace/skywalking"
-	"os"
-	"strconv"
-	"time"
 
 	"mosn.io/layotto/components/file/local"
 	"mosn.io/layotto/components/file/s3/alicloud"
@@ -170,6 +171,9 @@ import (
 
 // loggerForDaprComp is constructed for reusing dapr's components.
 var loggerForDaprComp = logger.NewLogger("reuse.dapr.component")
+
+// Version mosn version is specified by build tag, in VERSION file
+var Version = ""
 
 func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
@@ -421,7 +425,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 var cmdStart = cli.Command{
 	Name:  "start",
-	Usage: "start runtime",
+	Usage: "start runtime. For example:  ./layotto start -c configs/config_in_memory.json",
 	Flags: []cli.Flag{
 		cli.StringFlag{
 			Name:   "config, c",
@@ -526,9 +530,9 @@ func registerAppInfo(app *cli.App) {
 func newRuntimeApp(startCmd *cli.Command) *cli.App {
 	app := cli.NewApp()
 	app.Name = "Layotto"
-	app.Version = "0.1.0"
+	app.Version = Version
 	app.Compiled = time.Now()
-	app.Copyright = "(c) " + strconv.Itoa(time.Now().Year()) + " Ant Group"
+	app.Copyright = "(c) " + strconv.Itoa(time.Now().Year()) + " Layotto Authors"
 	app.Usage = "A fast and efficient cloud native application runtime based on MOSN."
 	app.Flags = cmdStart.Flags
 

@@ -4,16 +4,17 @@ build/bundles
 .idea
 .test
 .out
-layotto
 !./.gitignore
 IMAGEBUILD/
 coverage.txt
 .DS_Store
 logs/
 *.swp
+/layotto
 /cover.out
 vendor/
 demo/state/redis/client
+_output/
 
 # node
 node_modules/

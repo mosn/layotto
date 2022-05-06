@@ -20,11 +20,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"mosn.io/layotto/components/custom"
 	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
-	"strings"
-	"time"
 
 	"github.com/dapr/components-contrib/bindings"
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
@@ -338,6 +339,9 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 		// check consumerID
 		consumerID := strings.TrimSpace(config.Metadata["consumerID"])
 		if consumerID == "" {
+			if config.Metadata == nil {
+				config.Metadata = make(map[string]string)
+			}
 			config.Metadata["consumerID"] = m.runtimeConfig.AppManagement.AppId
 		}
 		// init this component with the config

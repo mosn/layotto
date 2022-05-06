@@ -21,14 +21,15 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/stretchr/testify/assert"
-	"github.com/zouyx/agollo/v4"
 	"io/ioutil"
-	"mosn.io/layotto/components/configstores"
-	"mosn.io/mosn/pkg/log"
 	"net/http"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/zouyx/agollo/v4"
+	"mosn.io/layotto/components/configstores"
+	"mosn.io/mosn/pkg/log"
 )
 
 // MockRepository implements Repository interface

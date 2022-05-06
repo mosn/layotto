@@ -17,8 +17,9 @@
 package actuator
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSetAppInfoSingleton(t *testing.T) {

@@ -16,6 +16,7 @@ package zookeeper
 import (
 	"context"
 	"fmt"
+
 	"github.com/go-zookeeper/zk"
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"

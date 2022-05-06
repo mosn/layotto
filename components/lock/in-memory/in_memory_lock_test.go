@@ -17,10 +17,11 @@
 package in_memory
 
 import (
-	"github.com/stretchr/testify/assert"
-	"mosn.io/layotto/components/lock"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"mosn.io/layotto/components/lock"
 )
 
 func TestNew(t *testing.T) {

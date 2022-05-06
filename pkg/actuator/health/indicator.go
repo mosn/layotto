@@ -16,6 +16,7 @@
 
 package health
 
+// Indicator report the Status and Details for Endpoint.
 type Indicator interface {
 	Report() (status Status, details map[string]interface{})
 }

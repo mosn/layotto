@@ -19,11 +19,12 @@ package default_api
 import (
 	"context"
 	"fmt"
+	"net"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	l8grpc "mosn.io/layotto/pkg/grpc"
-	"net"
-	"testing"
 
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/rpc"

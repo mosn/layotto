@@ -19,6 +19,7 @@ package health
 import (
 	"context"
 	"errors"
+
 	"mosn.io/layotto/pkg/actuator"
 )
 
@@ -36,6 +37,7 @@ var (
 	serviceInitError = errors.New("service is initializing")
 )
 
+// init health Endpoint.
 func init() {
 	actuator.GetDefault().AddEndpoint(health_key, NewEndpoint())
 }

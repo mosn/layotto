@@ -2,6 +2,7 @@ package secret
 
 import (
 	"errors"
+
 	"github.com/dapr/components-contrib/secretstores"
 )
 
