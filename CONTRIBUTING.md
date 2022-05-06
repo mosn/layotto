@@ -9,9 +9,7 @@ Before we accept a non-trivial patch or pull request we will need you to sign th
 None of these is essential for a pull request, but they will all help.
 
 1. Code format
-- With cli, run `goimports -w yourfile.go` and `golint yourfile.go` to format the style
-- With ide like goland, select 'Group stdlib imports', 'Move all stdlib imports in a single group', 'Move all imports in a single declaration' in Go->imports page
-- We would check code format when running ci tests, so please ensure that you have built project before you push branch.
+   you can simply run `make format` to format your codes style.
 2. Make sure all new `.go` files to have a simple doc class comment
    with at least an `author` tag identifying you, and preferably at least a
    paragraph on what the class is for.
