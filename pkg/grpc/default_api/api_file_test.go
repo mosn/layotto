@@ -19,17 +19,19 @@ package default_api
 import (
 	"context"
 	"errors"
+	"io"
+	"net"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"io"
+
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/pkg/mock"
 	"mosn.io/layotto/pkg/mock/runtime"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"net"
-	"testing"
 )
 
 func SendData(w net.Conn) {
@@ -138,7 +140,7 @@ func TestGetFileMeta(t *testing.T) {
 		Size:         10,
 		LastModified: "123",
 		Metadata: map[string][]string{
-			"test": []string{},
+			"test": {},
 		},
 	}
 	mockFile.EXPECT().Stat(context.Background(), &file.FileMetaRequest{FileName: request.Request.Name, Metadata: meta}).Return(re, nil).Times(1)

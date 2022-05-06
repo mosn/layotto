@@ -17,15 +17,17 @@ package dapr
 
 import (
 	"context"
+	"testing"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
 	grpc_api "mosn.io/layotto/pkg/grpc"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	"mosn.io/layotto/pkg/mock/components/secret"
-	"testing"
 )
 
 func TestNewDaprAPI_GetSecretStores(t *testing.T) {

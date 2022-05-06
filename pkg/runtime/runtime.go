@@ -20,13 +20,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/dapr/components-contrib/secretstores"
-	"mosn.io/layotto/components/custom"
-	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
 	"strings"
 	"time"
 
+	"github.com/dapr/components-contrib/secretstores"
+
+	"mosn.io/layotto/components/custom"
+	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
+
 	"github.com/dapr/components-contrib/bindings"
+
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
 
 	"mosn.io/layotto/components/file"
@@ -34,6 +37,9 @@ import (
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
 	rawGRPC "google.golang.org/grpc"
+	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
@@ -45,8 +51,6 @@ import (
 	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
-	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
-	"mosn.io/pkg/log"
 )
 
 type MosnRuntime struct {
@@ -338,6 +342,9 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 		// check consumerID
 		consumerID := strings.TrimSpace(config.Metadata["consumerID"])
 		if consumerID == "" {
+			if config.Metadata == nil {
+				config.Metadata = make(map[string]string)
+			}
 			config.Metadata["consumerID"] = m.runtimeConfig.AppManagement.AppId
 		}
 		// init this component with the config

@@ -19,12 +19,14 @@ package default_api
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+
 	"mosn.io/layotto/components/sequencer"
 	mock_sequencer "mosn.io/layotto/pkg/mock/components/sequencer"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"testing"
 )
 
 func TestGetNextId(t *testing.T) {

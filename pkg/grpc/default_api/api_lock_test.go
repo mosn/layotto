@@ -18,9 +18,10 @@ package default_api
 
 import (
 	"context"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 
 	"mosn.io/layotto/components/lock"
 	mock_lock "mosn.io/layotto/pkg/mock/components/lock"

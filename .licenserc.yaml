@@ -21,6 +21,7 @@ header:
     - 'pkg/'
     - 'components/'
     - 'sdk/'
+    - 'make/'
 
   paths-ignore:
     # js related

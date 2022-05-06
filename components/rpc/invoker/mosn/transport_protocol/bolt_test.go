@@ -20,10 +20,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/header"
+
+	"mosn.io/layotto/components/rpc"
 )
 
 func Test_boltCommon_FromFrame(t *testing.T) {

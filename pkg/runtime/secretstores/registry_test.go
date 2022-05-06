@@ -16,9 +16,10 @@
 package secretstores
 
 import (
-	"mosn.io/layotto/components/pkg/info"
 	"strings"
 	"testing"
+
+	"mosn.io/layotto/components/pkg/info"
 
 	ss "github.com/dapr/components-contrib/secretstores"
 )

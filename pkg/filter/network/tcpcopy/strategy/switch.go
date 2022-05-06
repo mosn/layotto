@@ -18,12 +18,14 @@ package strategy
 
 import (
 	"encoding/json"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
-	"mosn.io/mosn/pkg/log"
-	"mosn.io/pkg/utils"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"mosn.io/mosn/pkg/log"
+	"mosn.io/pkg/utils"
+
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
 )
 
 const (

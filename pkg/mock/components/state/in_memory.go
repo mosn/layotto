@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package mock_state
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/dapr/components-contrib/state"
 	"github.com/dapr/kit/logger"
 	jsoniter "github.com/json-iterator/go"
-	"sync"
 )
 
 type inMemStateStoreItem struct {
@@ -70,7 +72,7 @@ func (store *inMemoryStore) Delete(req *state.DeleteRequest) error {
 }
 
 func (store *inMemoryStore) BulkDelete(req []state.DeleteRequest) error {
-	if req == nil || len(req) == 0 {
+	if len(req) == 0 {
 		return nil
 	}
 	for _, dr := range req {
@@ -91,8 +93,11 @@ func (store *inMemoryStore) Get(req *state.GetRequest) (*state.GetResponse, erro
 	if item == nil {
 		return &state.GetResponse{Data: nil, ETag: nil}, nil
 	}
-
-	return &state.GetResponse{Data: unmarshal(item.data), ETag: item.etag}, nil
+	if data, err := unmarshal(item.data); err != nil {
+		return nil, err
+	} else {
+		return &state.GetResponse{Data: data, ETag: item.etag}, nil
+	}
 }
 
 func (store *inMemoryStore) BulkGet(req []state.GetRequest) (bool, []state.BulkGetResponse, error) {
@@ -179,15 +184,18 @@ func (store *inMemoryStore) Multi(request *state.TransactionalStateRequest) erro
 }
 
 func marshal(value interface{}) ([]byte, error) {
-	v, _ := jsoniter.MarshalToString(value)
-
-	return []byte(v), nil
+	if v, err := jsoniter.MarshalToString(value); err != nil {
+		return nil, err
+	} else {
+		return []byte(v), nil
+	}
 }
 
-func unmarshal(val interface{}) []byte {
+func unmarshal(val interface{}) ([]byte, error) {
 	var output string
 
-	jsoniter.UnmarshalFromString(string(val.([]byte)), &output)
-
-	return []byte(output)
+	if err := jsoniter.UnmarshalFromString(string(val.([]byte)), &output); err != nil {
+		return nil, err
+	}
+	return []byte(output), nil
 }

@@ -17,8 +17,9 @@
 package actuator
 
 import (
-	"mosn.io/layotto/pkg/actuator/health"
 	"sync"
+
+	"mosn.io/layotto/pkg/actuator/health"
 )
 
 const (

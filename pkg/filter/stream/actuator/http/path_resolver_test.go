@@ -17,8 +17,9 @@
 package http
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_pathResolver_isEmpty(t *testing.T) {
