@@ -38,9 +38,7 @@ func NewMySQLSequencer(logger log.ErrorLogger) *MySQLSequencer {
 	return s
 }
 
-func (e *MySQLSequencer) Init(config sequencer.Configuration) error {
-
-	db := &sql.DB{}
+func (e *MySQLSequencer) Init(config sequencer.Configuration, db *sql.DB) error {
 
 	m, err := utils.ParseMySQLMetadata(config.Properties, db)
 
@@ -87,15 +85,6 @@ func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest, db *sql.DB) 
 		return nil, err
 	}
 
-	defer func() {
-		switch err {
-		case nil:
-			err = begin.Commit()
-		default:
-			begin.Rollback()
-		}
-	}()
-
 	err = begin.QueryRow("SELECT sequencer_key,sequencer_value FROM ? WHERE sequencer_key = ?", metadata.TableName, req.Key).Scan(&Key, &Value)
 	if err != nil {
 		return nil, err
@@ -136,15 +125,6 @@ func (e *MySQLSequencer) GetSegment(req *sequencer.GetSegmentRequest, db *sql.DB
 	if err != nil {
 		return false, nil, err
 	}
-
-	defer func() {
-		switch err {
-		case nil:
-			err = begin.Commit()
-		default:
-			begin.Rollback()
-		}
-	}()
 
 	err = begin.QueryRow("SELECT sequencer_key,sequencer_value FROM ? WHERE sequencer_key = ?", metadata.TableName, req.Key).Scan(&Key, &Value)
 	if err != nil {

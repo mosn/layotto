@@ -31,18 +31,25 @@ const (
 
 func TestMySQLSequencer_Init(t *testing.T) {
 
+	db, _, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
 	var MySQLUrl = MySQLUrl
 
 	comp := NewMySQLSequencer(log.DefaultLogger)
 
 	cfg := sequencer.Configuration{
-		BiggerThan: nil,
 		Properties: make(map[string]string),
+		BiggerThan: make(map[string]int64),
 	}
 
 	cfg.Properties["MySQLHost"] = MySQLUrl
+	cfg.BiggerThan["test"] = 1000
 
-	err := comp.Init(cfg)
+	err = comp.Init(cfg, db)
 
 	assert.Error(t, err)
 }
@@ -117,6 +124,11 @@ func TestMySQLSequencer_Close(t *testing.T) {
 
 	var MySQLUrl = MySQLUrl
 
+	db, _, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
 	comp := NewMySQLSequencer(log.DefaultLogger)
 
 	cfg := sequencer.Configuration{
@@ -126,14 +138,7 @@ func TestMySQLSequencer_Close(t *testing.T) {
 
 	cfg.Properties["MySQLHost"] = MySQLUrl
 
-	_ = comp.Init(cfg)
-
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	mock.ExpectBegin()
-	mock.ExpectCommit()
+	_ = comp.Init(cfg, db)
 
 	comp.Close(db)
 }
