@@ -146,7 +146,7 @@ In order to help everyone better participate in open source projects, our commun
 
 [Layotto Commands Guide](docs/en/development/commands.md)
 
-[Layotto contributor guide](docs/en/development/CONTRIBUTING.md)
+[Layotto Contributor Guide](docs/en/development/CONTRIBUTING.md)
 
 ## Design Documents
 
