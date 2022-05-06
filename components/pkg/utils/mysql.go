@@ -15,7 +15,6 @@ package utils
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -59,21 +58,9 @@ func NewMySQLClient(meta MySQLMetadata) error {
 
 	val := meta
 
-	if val.ConnectionString == "" {
-		fmt.Errorf("Missing MySql connection string")
-	}
-
 	if val.TableName == "" {
 		val.TableName = defaultTableName
 	}
-
-	db, err := sql.Open("mysql", val.ConnectionString)
-
-	if err != nil {
-		fmt.Errorf("MySql connection fail")
-		return err
-	}
-	meta.Db = db
 
 	return tableExists(meta)
 }
