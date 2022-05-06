@@ -20,6 +20,8 @@ Layotto 基于 Apache 2.0 许可发布，遵循标准的 Github 开发流程，�
 9. 确保提交 Pull Request  之前所有的测试能够正确通过, 只需要执行 `make check`
 10. 按照 Github 工作流提交 Pull Request  ，并遵循 Pull Request 的规则。
 
+> Layotto 提供了很多方便你贡献的命令行工具，请在[这里](./commands.md)进行查阅
+
 ## 版本命名约定
 
 Layotto 的版本包含三位数，格式为 x.x.x，第一位是出于兼容性考虑； 第二个是新功能和增强功能； 最后一位是错误修复。
