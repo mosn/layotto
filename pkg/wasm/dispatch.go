@@ -33,7 +33,7 @@ type Router struct {
 // unsafe for concurrent
 func (route *Router) RegisterRoute(id string, plugin *WasmPlugin) {
 	if group, found := route.routes[id]; found {
-		group.count += 1
+		group.count++
 		group.plugins = append(group.plugins, plugin)
 	} else {
 		route.routes[id] = &Group{

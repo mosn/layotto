@@ -59,7 +59,7 @@ var (
 		},
 	}
 	// FIXME I put it here for compatibility.Don't write singleton like this !
-	// It should be refactored and deleted.
+	// LayottoAPISingleton should be refactored and deleted.
 	LayottoAPISingleton API
 )
 
@@ -228,7 +228,7 @@ func (a *api) getHello(name string) (hello.HelloService, error) {
 
 func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error) {
 	// convert request
-	var msg *dapr_common_v1pb.InvokeRequest = nil
+	var msg *dapr_common_v1pb.InvokeRequest
 	if in != nil && in.Message != nil {
 		msg = &dapr_common_v1pb.InvokeRequest{
 			Method:      in.Message.Method,

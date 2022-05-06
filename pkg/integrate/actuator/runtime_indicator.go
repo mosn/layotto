@@ -29,7 +29,6 @@ const (
 
 var runtimeReady *runtimeIndicatorImpl
 var runtimeLive *runtimeIndicatorImpl
-var once sync.Once
 
 func init() {
 	runtimeReady = &runtimeIndicatorImpl{

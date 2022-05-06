@@ -47,6 +47,7 @@ func TestSayHello(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Request failed, err: %s", err)
 		}
+		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			t.Fatalf("Read body failed, err: %s", err)

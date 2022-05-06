@@ -107,7 +107,7 @@ func (d *DoubleBuffer) getId() (int64, error) {
 				return
 			}
 			//slow retry
-			for true {
+			for {
 				buffer, err := d.getNewBuffer()
 				if err != nil {
 					log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
