@@ -69,22 +69,19 @@ func TestMySQLSequencer_GetNextId(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
 	mock.ExpectExec("UPDATE").WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("INSERT INTO").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO").WithArgs("", "sequenceKey", 3).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
 
 	req := &sequencer.GetNextIdRequest{Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
-	_, err1 := comp.GetNextId(req, db)
-	if err1 != nil {
+	_, err = comp.GetNextId(req, db)
+	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
 
-	assert.NoError(t, err1)
+	assert.NoError(t, err)
 }
 
 func TestMySQLSequencer_GetSegment(t *testing.T) {
@@ -109,15 +106,12 @@ func TestMySQLSequencer_GetSegment(t *testing.T) {
 
 	req := &sequencer.GetSegmentRequest{Size: Size, Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
-	_, _, err1 := comp.GetSegment(req, db)
-	if err1 != nil {
+	_, _, err = comp.GetSegment(req, db)
+	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
 
-	assert.NoError(t, err1)
+	assert.NoError(t, err)
 }
 
 func TestMySQLSequencer_Close(t *testing.T) {

@@ -89,14 +89,15 @@ func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest, db *sql.DB) 
 	if err != nil {
 		return nil, err
 	}
-	Value += 1
 
+	Value += 1
 	_, err1 := begin.Exec("UPDATE ? SET sequencer_value = ? WHERE sequencer_key = ?", metadata.TableName, Value, req.Key)
 	if err1 != nil {
 		return nil, err1
 	}
 
-	if _, err2 := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value) VALUES(?,?)", metadata.TableName, req.Key, Value+1); err2 != nil {
+	Value += 1
+	if _, err2 := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value) VALUES(?,?)", metadata.TableName, req.Key, Value); err2 != nil {
 		return nil, err2
 	}
 
