@@ -11,7 +11,7 @@ None of these is essential for a pull request, but they will all help.
 1. Code format
 - With cli, run `goimports -w yourfile.go` and `golint yourfile.go` to format the style
 - With ide like goland, select 'Group stdlib imports', 'Move all stdlib imports in a single group', 'Move all imports in a single declaration' in Go->imports page
-- We would check code format when run ci test, so please ensure that you have built project before you push branch.
+- We would check code format when running ci tests, so please ensure that you have built project before you push branch.
 2. Make sure all new `.go` files to have a simple doc class comment
    with at least an `author` tag identifying you, and preferably at least a
    paragraph on what the class is for.
@@ -21,7 +21,8 @@ None of these is essential for a pull request, but they will all help.
 6. A few unit tests would help a lot as well — someone has to do it.
 7. When writing a commit message please follow [these conventions](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html), if you are fixing an existing issue please add Fixes gh-XXXX at the end of the commit message (where XXXX is the issue number).
 8. Please ensure that code coverage will not decrease.
-9. Contribute a PR as the rule of Gitflow Workflow, and you should follow the pull request's rules.
+9. Make sure checks have been correctly passed, you can simply run `make check`
+10. Contribute a PR as the rule of Github Workflow, and you should follow the pull request's rules.
 
 ## Version naming convention
 
