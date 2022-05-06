@@ -35,7 +35,7 @@ type Registry interface {
 	CreateInputBinding(name string) (bindings.InputBinding, error)
 }
 
-type BindingsRegistry struct {
+type bindingsRegistry struct {
 	outputBindingStores map[string]func() bindings.OutputBinding
 	inputBindingStores  map[string]func() bindings.InputBinding
 	info                *info.RuntimeInfo
@@ -43,28 +43,28 @@ type BindingsRegistry struct {
 
 func NewRegistry(info *info.RuntimeInfo) Registry {
 	info.AddService(ServiceName)
-	return &BindingsRegistry{
+	return &bindingsRegistry{
 		outputBindingStores: make(map[string]func() bindings.OutputBinding),
 		inputBindingStores:  make(map[string]func() bindings.InputBinding),
 		info:                info,
 	}
 }
 
-func (r *BindingsRegistry) RegisterOutputBinding(fs ...*OutputBindingFactory) {
+func (r *bindingsRegistry) RegisterOutputBinding(fs ...*OutputBindingFactory) {
 	for _, f := range fs {
 		r.outputBindingStores[f.Name] = f.FactoryMethod
 		r.info.RegisterComponent(ServiceName, f.Name)
 	}
 }
 
-func (r *BindingsRegistry) RegisterInputBinding(fs ...*InputBindingFactory) {
+func (r *bindingsRegistry) RegisterInputBinding(fs ...*InputBindingFactory) {
 	for _, f := range fs {
 		r.inputBindingStores[f.Name] = f.FactoryMethod
 		r.info.RegisterComponent(ServiceName, f.Name)
 	}
 }
 
-func (r *BindingsRegistry) CreateOutputBinding(name string) (bindings.OutputBinding, error) {
+func (r *bindingsRegistry) CreateOutputBinding(name string) (bindings.OutputBinding, error) {
 	if f, ok := r.outputBindingStores[name]; ok {
 		r.info.LoadComponent(ServiceName, name)
 		return f(), nil
@@ -72,7 +72,7 @@ func (r *BindingsRegistry) CreateOutputBinding(name string) (bindings.OutputBind
 	return nil, fmt.Errorf("service component %s is not regsitered", name)
 }
 
-func (r *BindingsRegistry) CreateInputBinding(name string) (bindings.InputBinding, error) {
+func (r *bindingsRegistry) CreateInputBinding(name string) (bindings.InputBinding, error) {
 	if f, ok := r.inputBindingStores[name]; ok {
 		r.info.LoadComponent(ServiceName, name)
 		return f(), nil
