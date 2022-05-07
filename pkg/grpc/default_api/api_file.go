@@ -24,10 +24,12 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+
 	"mosn.io/layotto/components/file"
 
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
+
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtime_GetFileServer) error {
@@ -46,7 +48,7 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	buffsPtr := bytesPool.Get().(*[]byte)
 	buf := *buffsPtr
 	if len(buf) == 0 {
-		buf = make([]byte, 102400, 102400)
+		buf = make([]byte, 102400)
 	}
 	defer func() {
 		data.Close()

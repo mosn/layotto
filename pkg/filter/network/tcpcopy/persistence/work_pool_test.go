@@ -21,9 +21,10 @@ import (
 	"testing"
 	"time"
 
+	"mosn.io/mosn/pkg/log"
+
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
 	_type "mosn.io/layotto/pkg/filter/network/tcpcopy/type"
-	"mosn.io/mosn/pkg/log"
 )
 
 func TestNewDefaultWorkPool(t *testing.T) {

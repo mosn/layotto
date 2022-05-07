@@ -24,12 +24,13 @@ import (
 	"strconv"
 
 	"mosn.io/api"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/persistence"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/persistence"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 )
 
 func init() {
