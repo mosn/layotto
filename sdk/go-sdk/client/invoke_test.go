@@ -21,6 +21,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	v1 "mosn.io/layotto/spec/proto/runtime/v1"
 )
 

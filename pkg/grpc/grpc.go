@@ -18,8 +18,9 @@ package grpc
 
 import (
 	"google.golang.org/grpc"
-	"mosn.io/layotto/diagnostics"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
+
+	"mosn.io/layotto/diagnostics"
 )
 
 func NewGrpcServer(opts ...Option) (mgrpc.RegisteredServer, error) {
@@ -42,7 +43,7 @@ func NewDefaultServer(apis []GrpcAPI, opts ...grpc.ServerOption) (mgrpc.Register
 
 func NewRawGrpcServer(apis []GrpcAPI, opts ...grpc.ServerOption) (*grpc.Server, error) {
 	s := grpc.NewServer(opts...)
-	var err error = nil
+	var err error
 	// loop registering grpc api
 	for _, grpcAPI := range apis {
 		err = grpcAPI.Register(s)

@@ -21,10 +21,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net"
+	"testing"
+
 	"github.com/dapr/components-contrib/bindings"
 	"google.golang.org/grpc/test/bufconn"
+
 	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/hello/helloworld"
+	"mosn.io/layotto/components/sequencer"
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
@@ -34,8 +39,6 @@ import (
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"net"
-	"testing"
 
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
@@ -49,7 +52,6 @@ import (
 	"mosn.io/layotto/components/lock"
 	mock_component "mosn.io/layotto/components/pkg/mock"
 	"mosn.io/layotto/components/rpc"
-	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/mock"
 	mock_invoker "mosn.io/layotto/pkg/mock/components/invoker"
 	mock_lock "mosn.io/layotto/pkg/mock/components/lock"
@@ -58,7 +60,6 @@ import (
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	mlock "mosn.io/layotto/pkg/runtime/lock"
 	mpubsub "mosn.io/layotto/pkg/runtime/pubsub"
-	msequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	mstate "mosn.io/layotto/pkg/runtime/state"
 )
 
@@ -290,6 +291,32 @@ func TestMosnRuntime_initPubSubs(t *testing.T) {
 		}
 		// test initPubSubs
 		err := m.initPubSubs(mpubsub.NewFactory("pubsub", f))
+		// assert result
+		assert.Nil(t, err)
+	})
+}
+
+func TestMosnRuntime_initPubSubsNotExistMetadata(t *testing.T) {
+	t.Run("normal", func(t *testing.T) {
+		// mock pubsub component
+		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
+		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		f := func() pubsub.PubSub {
+			return mockPubSub
+		}
+
+		cfg := &MosnRuntimeConfig{
+			PubSubManagement: map[string]mpubsub.Config{
+				"mock": {},
+			},
+		}
+		// construct MosnRuntime
+		m := NewMosnRuntime(cfg)
+		m.errInt = func(err error, format string, args ...interface{}) {
+			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+		}
+		// test initPubSubs
+		err := m.initPubSubs(mpubsub.NewFactory("mock", f))
 		// assert result
 		assert.Nil(t, err)
 	})
@@ -614,9 +641,8 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 					Topic:    "layotto",
 					Metadata: nil,
 				})
-			} else {
-				return nil
 			}
+			return nil
 		})
 		f := func() pubsub.PubSub {
 			return mockPubSub
@@ -662,9 +688,8 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 				})
 				assert.NotNil(t, err)
 				return nil
-			} else {
-				return nil
 			}
+			return nil
 		})
 		f := func() pubsub.PubSub {
 			return mockPubSub
@@ -710,9 +735,8 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 				})
 				assert.Nil(t, err)
 				return nil
-			} else {
-				return nil
 			}
+			return nil
 		})
 		f := func() pubsub.PubSub {
 			return mockPubSub

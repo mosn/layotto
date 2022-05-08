@@ -19,13 +19,15 @@ package default_api
 import (
 	"context"
 	"errors"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/messages"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"mosn.io/pkg/log"
 )
 
 func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error) {
@@ -97,7 +99,7 @@ func (a *api) getNextIdFromComponent(ctx context.Context, store sequencer.Store,
 func GetNextIdRequest2ComponentRequest(req *runtimev1pb.GetNextIdRequest) (*sequencer.GetNextIdRequest, error) {
 	result := &sequencer.GetNextIdRequest{}
 	if req == nil {
-		return nil, errors.New("Cannot convert it since request is nil.")
+		return nil, errors.New("cannot convert it since request is nil")
 	}
 
 	result.Key = req.Key
@@ -108,7 +110,7 @@ func GetNextIdRequest2ComponentRequest(req *runtimev1pb.GetNextIdRequest) (*sequ
 		} else if req.Options.Increment == runtimev1pb.SequencerOptions_STRONG {
 			incrOption = sequencer.STRONG
 		} else {
-			return nil, errors.New("Options.Increment is illegal.")
+			return nil, errors.New("options.Increment is illegal")
 		}
 	}
 	result.Options = sequencer.SequencerOptions{AutoIncrement: incrOption}

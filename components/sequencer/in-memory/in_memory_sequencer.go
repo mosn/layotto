@@ -17,10 +17,12 @@
 package in_memory
 
 import (
+	"sync"
+
 	"go.uber.org/atomic"
+
 	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/sequencer"
-	"sync"
 )
 
 var (

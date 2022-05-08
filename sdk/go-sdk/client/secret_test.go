@@ -17,9 +17,11 @@ package client
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 var secretKey = "secret-key"

@@ -24,9 +24,10 @@ import (
 
 	hessian "github.com/apache/dubbo-go-hessian2"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol/dubbo"
 	"mosn.io/pkg/buffer"
+
+	"mosn.io/layotto/components/rpc"
 )
 
 func Test_dubboProtocol_FromFrame(t *testing.T) {

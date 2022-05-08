@@ -14,14 +14,16 @@
 package consul
 
 import (
-	"github.com/hashicorp/consul/api"
-	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/pkg/utils"
-	msync "mosn.io/mosn/pkg/sync"
-	"mosn.io/pkg/log"
 	"runtime"
 	"strconv"
 	"sync"
+
+	"github.com/hashicorp/consul/api"
+	msync "mosn.io/mosn/pkg/sync"
+	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/utils"
 )
 
 type ConsulLock struct {

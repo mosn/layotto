@@ -19,16 +19,18 @@ package client
 import (
 	"context"
 	"fmt"
+	"net"
+	"os"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	"google.golang.org/protobuf/types/known/anypb"
 	empty "google.golang.org/protobuf/types/known/emptypb"
+
 	pb "mosn.io/layotto/spec/proto/runtime/v1"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"net"
-	"os"
-	"testing"
 )
 
 const (
@@ -227,7 +229,7 @@ func (t *testRuntimeServer) SubscribeConfiguration(srv runtimev1pb.Runtime_Subsc
 		t.subscribed[key] = true
 	}
 	resp := &runtimev1pb.SubscribeConfigurationResponse{}
-	for key, _ := range t.subscribed {
+	for key := range t.subscribed {
 		item := &runtimev1pb.ConfigurationItem{Key: key, Content: "Test"}
 		resp.Items = append(resp.Items, item)
 	}

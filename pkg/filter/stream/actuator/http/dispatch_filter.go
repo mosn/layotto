@@ -19,14 +19,16 @@ package http
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/valyala/fasthttp"
 	"mosn.io/api"
-	"mosn.io/layotto/pkg/actuator"
 	mosnhttp "mosn.io/mosn/pkg/protocol/http"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/mosn/pkg/variable"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/pkg/actuator"
 )
 
 type DispatchFilter struct {
@@ -42,7 +44,7 @@ func (dis *DispatchFilter) OnDestroy() {}
 func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
 	// 1. log
 	log.DefaultLogger.Debugf("[actuator] receive actuator pkt")
-	path, err := variable.GetVariableValue(ctx, types.VarHttpRequestPath)
+	path, err := variable.GetString(ctx, types.VarHttpRequestPath)
 	if err != nil {
 		dis.write404()
 		return api.StreamFilterStop

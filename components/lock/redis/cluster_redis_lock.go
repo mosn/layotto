@@ -16,14 +16,16 @@ package redis
 import (
 	"context"
 	"fmt"
-	"github.com/go-redis/redis/v8"
-	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/pkg/utils"
-	msync "mosn.io/mosn/pkg/sync"
-	"mosn.io/pkg/log"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/go-redis/redis/v8"
+	msync "mosn.io/mosn/pkg/sync"
+	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/utils"
 )
 
 //RedLock
