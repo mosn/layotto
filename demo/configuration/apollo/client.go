@@ -31,7 +31,7 @@ import (
 )
 
 const (
-	storeName = "apollo"
+	storeName = "apollo_demo"
 	appid     = "testApplication_yang"
 	group     = "application"
 )

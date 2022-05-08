@@ -13,7 +13,7 @@ import (
 
 const (
 	resourceId = "resource_a"
-	storeName  = "mongo"
+	storeName  = "mongo_demo"
 )
 
 func main() {

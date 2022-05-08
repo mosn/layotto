@@ -10,7 +10,7 @@ import (
 
 const (
 	key       = "key666"
-	storeName = "redis"
+	storeName = "redis_demo"
 )
 
 func main() {

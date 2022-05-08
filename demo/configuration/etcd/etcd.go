@@ -24,6 +24,10 @@ import (
 	client "mosn.io/layotto/sdk/go-sdk/client"
 )
 
+const (
+	storeName = "etcd_demo"
+)
+
 func main() {
 	cli, err := client.NewClient()
 	if err != nil {
@@ -37,7 +41,7 @@ func main() {
 }
 
 func testHello(cli client.Client) {
-	req := &client.SayHelloRequest{ServiceName: "helloworld"}
+	req := &client.SayHelloRequest{ServiceName: "helloworld_demo"}
 	resp, err := cli.SayHello(context.Background(), req)
 	if err != nil {
 		fmt.Printf("say hello error: %+v", err)
@@ -55,7 +59,7 @@ func testWatch(cli client.Client) {
 	saveRequest.Items = append(saveRequest.Items, item1)
 	saveRequest.Items = append(saveRequest.Items, item2)
 
-	getRequest := &client.ConfigurationRequestItem{StoreName: "etcd", AppId: "sofa", Keys: []string{"hello1", "hello2"}}
+	getRequest := &client.ConfigurationRequestItem{StoreName: storeName, AppId: "sofa", Keys: []string{"hello1", "hello2"}}
 	go func() {
 		for {
 			time.Sleep(1 * time.Second)
@@ -73,7 +77,7 @@ func testWatch(cli client.Client) {
 		}
 	}()
 
-	item := &client.ConfigurationRequestItem{StoreName: "etcd", AppId: "sofa", Keys: []string{"hello1"}}
+	item := &client.ConfigurationRequestItem{StoreName: storeName, AppId: "sofa", Keys: []string{"hello1"}}
 	ch := cli.SubscribeConfiguration(ctx, item)
 	for wc := range ch {
 		for _, v := range wc.Item.Items {
@@ -85,11 +89,11 @@ func testWatch(cli client.Client) {
 func testSet(cli client.Client) {
 	item1 := &client.ConfigurationItem{Key: "hello1", Content: "world1"}
 	item2 := &client.ConfigurationItem{Key: "hello2", Content: "world2"}
-	saveRequest := &client.SaveConfigurationRequest{StoreName: "etcd", AppId: "sofa"}
+	saveRequest := &client.SaveConfigurationRequest{StoreName: storeName, AppId: "sofa"}
 	saveRequest.Items = append(saveRequest.Items, item1)
 	saveRequest.Items = append(saveRequest.Items, item2)
 
-	getRequest := &client.ConfigurationRequestItem{StoreName: "etcd", AppId: "sofa", Keys: []string{"hello1", "hello2"}}
+	getRequest := &client.ConfigurationRequestItem{StoreName: storeName, AppId: "sofa", Keys: []string{"hello1", "hello2"}}
 
 	if cli.SaveConfiguration(context.Background(), saveRequest) != nil {
 		fmt.Println("save key failed")
@@ -109,11 +113,11 @@ func testSet(cli client.Client) {
 func testDelete(cli client.Client) {
 	item1 := &client.ConfigurationItem{Key: "hello1", Content: "world1"}
 	item2 := &client.ConfigurationItem{Key: "hello2", Content: "world2"}
-	saveRequest := &client.SaveConfigurationRequest{StoreName: "etcd", AppId: "sofa"}
+	saveRequest := &client.SaveConfigurationRequest{StoreName: storeName, AppId: "sofa"}
 	saveRequest.Items = append(saveRequest.Items, item1)
 	saveRequest.Items = append(saveRequest.Items, item2)
 
-	getRequest := &client.ConfigurationRequestItem{StoreName: "etcd", AppId: "sofa", Keys: []string{"hello1", "hello2"}}
+	getRequest := &client.ConfigurationRequestItem{StoreName: storeName, AppId: "sofa", Keys: []string{"hello1", "hello2"}}
 	if cli.DeleteConfiguration(context.Background(), getRequest) != nil {
 		fmt.Println("save key failed")
 		return

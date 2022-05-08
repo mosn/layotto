@@ -13,7 +13,7 @@ import (
 
 const (
 	resourceId = "resource_a"
-	storeName  = "consul"
+	storeName  = "consul_demo"
 )
 
 func main() {
