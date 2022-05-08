@@ -6,7 +6,7 @@
 ![jsonrpc.jpg](../../../img/rpc/jsonrpc.jpg)
 
 ### step 2. Compile and start layotto
-```shell
+```shell @if.not.exist layotto
 go build -o layotto cmd/layotto/main.go
 ```
 
