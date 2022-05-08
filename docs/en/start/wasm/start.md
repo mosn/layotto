@@ -33,7 +33,7 @@ docker run -d --name redis-test -p 6379:6379 redis
 execute the command`set book1 100`
 
 ```shell
-docker exec -it redis-test redis-cli set book1 100
+docker exec -i redis-test redis-cli set book1 100
 ```
 
 This command will set `book1` with 100.
@@ -47,7 +47,7 @@ OK
 We can execute `get book1` to check the value of `book1`:
 
 ```shell
-docker exec -it redis-test redis-cli get book1
+docker exec -i redis-test redis-cli get book1
 ```
 
 The result is:

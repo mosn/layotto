@@ -24,13 +24,13 @@ Layotto支持加载编译好的WASM文件，并通过`proxy_abi_version_0_2_0`�
 
 启动 Redis 容器:
 ```shell
-docker run -itd --name redis-test -p 6379:6379 redis
+docker run -d --name redis-test -p 6379:6379 redis
 ```
 
 调用 Redis 容器中的 redis-cli,执行`set book1 100` 
 
 ```shell
-docker exec -it redis-test redis-cli set book1 100
+docker exec -i redis-test redis-cli set book1 100
 ```
 
 这条命令将 key 为 `book1` 的缓存值设置为100。如果返回如下结果,代表 set 成功:
@@ -42,7 +42,7 @@ OK
 我们可以执行 `get book1`,看看现在 `book1` 对应的值是多少:
 
 ```shell
-docker exec -it redis-test redis-cli get book1
+docker exec -i redis-test redis-cli get book1
 ```
 
 返回:
