@@ -44,7 +44,7 @@ jobs:
       - name: Test quickstart
         run: make style.quickstart
   test_go_1_17:
-    name: "🍀 Quickstart Validation"
+    name: "🍀 Quickstart Validation - go 1.17"
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.x
