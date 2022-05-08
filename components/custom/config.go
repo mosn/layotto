@@ -14,6 +14,7 @@
 package custom
 
 type Config struct {
+	Type     string            `json:"type"`
 	Version  string            `json:"version"`
 	Metadata map[string]string `json:"metadata"`
 }
