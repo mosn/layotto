@@ -30,7 +30,7 @@ func main() {
 	//2. get the secret
 	resp, err := cli.GetSecret(ctx, &runtimev1pb.GetSecretRequest{
 		StoreName: storeName,
-		Key:       "redisPassword",
+		Key:       "db-user-pass:password",
 	})
 	fmt.Println(resp)
 
