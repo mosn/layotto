@@ -47,6 +47,14 @@ checker.quickstart:
 	chmod +x  ${SCRIPT_DIR}/mdx
 	sh ${SCRIPT_DIR}/test-quickstart.sh
 
+.PHONY: checker.quickstart.17
+checker.quickstart.17:
+	@echo "===========> Checking QuickStart Doc"
+	curl -o ${ROOT_DIR}/mdx https://raw.githubusercontent.com/seeflood/mdx/main/mdx
+	mv ${ROOT_DIR}/mdx ${SCRIPT_DIR}
+	chmod +x  ${SCRIPT_DIR}/mdx
+	sh ${SCRIPT_DIR}/test-quickstart-17.sh
+
 .PHONY: checker.coverage
 checker.coverage:
 	@echo "===========> Coverage Analysis"
