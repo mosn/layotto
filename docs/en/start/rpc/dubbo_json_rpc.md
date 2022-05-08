@@ -30,13 +30,20 @@ git reset --hard f0d1e1076397a4736de080ffb16cd0963c8c2f9d
 cd rpc/jsonrpc/go-server
 docker-compose -f docker/docker-compose.yml up -d
 
-# build && start dubbo server
+# prepare to build dubbo server
 cd cmd
 export DUBBO_GO_CONFIG_PATH="../conf/dubbogo.yml"
 ```
 
-```shell @background.sleep 15s
-go run .
+Build dubbo server:
+```shell @if.not.exist server
+go build -o server .
+```
+
+Start dubbo server:
+
+```shell @background.sleep 3s
+./server
 ```
 
 ### step 4. call runtime InvokerService api.
