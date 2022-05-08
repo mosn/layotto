@@ -22,12 +22,14 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "helloworld_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "sequencer": {
-                        "mongo": {
+                        "mongo_demo": {
+                          "type": "mongo",
                           "metadata": {
                             "mongoHost": "localhost:27017",
                             "mongoPassword": "",

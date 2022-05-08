@@ -17,12 +17,14 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "helloworld_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "files": {
-                        "tencentCloudOSS": {
+                        "tencentCloudOSS_demo": {
+                          "type": "tencentCloudOSS",
                           "metadata": [
                             {
                               "endpoint": "<get endpoint from https://console.cloud.tencent.com/cos/bucket configuration management>",

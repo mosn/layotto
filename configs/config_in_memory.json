@@ -22,37 +22,43 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "helloworld_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "state": {
-                        "in-memory": {
+                        "in-memory_demo": {
+                          "type": "in-memory",
                           "metadata": {
                           }
                         }
                       },
                       "lock": {
-                        "in-memory": {
+                        "in-memory_demo": {
+                          "type": "in-memory",
                           "metadata": {
                           }
                         }
                       },
                       "pub_subs": {
-                        "in-memory": {
+                        "in-memory_demo": {
+                          "type": "in-memory",
                           "metadata": {
                             "consumerID": "1"
                           }
                         }
                       },
                       "sequencer": {
-                        "in-memory": {
+                        "in-memory_demo": {
+                          "type": "in-memory",
                           "metadata": {}
                         }
                       },
                       "custom_component": {
                         "helloworld": {
-                          "in-memory": {
+                          "in-memory_demo": {
+                            "type": "in-memory",
                             "metadata": {}
                           }
                         }

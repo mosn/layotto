@@ -29,11 +29,13 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "helloworld_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
-                      "config_store": {
+                      "config_store_demo": {
+                        "type": "config_store",
                         "apollo": {
                           "address": [
                             "http://106.54.227.205:8080"

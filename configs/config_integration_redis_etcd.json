@@ -48,7 +48,8 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "rpcs": {
-                        "mosn": {
+                        "mosn_demo": {
+                          "type": "mosn",
                           "config": {
                             "channel": [
                               {
@@ -61,19 +62,22 @@
                         }
                       },
                       "hellos": {
-                        "helloworld": {
+                        "helloworld_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "bindings": {
-                        "http": {
+                        "http_demo": {
+                          "type": "http",
                           "metadata": {
                             "url": "https://registry.npmmirror.com/layotto/0.0.0"
                           }
                         }
                       },
                       "config_store": {
-                        "etcd": {
+                        "etcd_demo": {
+                          "type": "etcd",
                           "address": [
                             "127.0.0.1:2379"
                           ],
@@ -81,7 +85,8 @@
                         }
                       },
                       "state": {
-                        "redis": {
+                        "redis_demo": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6380",
                             "redisPassword": ""
@@ -89,7 +94,8 @@
                         }
                       },
                       "sequencer": {
-                        "etcd": {
+                        "etcd_demo": {
+                          "type": "etcd",
                           "metadata": {
                             "endpoints": "localhost:2379",
                             "segmentCacheEnable": "false",
@@ -99,7 +105,8 @@
                             "dialTimeout": "5"
                           }
                         },
-                        "redis": {
+                        "redis_demo": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "127.0.0.1:6380",
                             "redisPassword": ""
@@ -107,7 +114,8 @@
                         }
                       },
                       "lock": {
-                        "etcd": {
+                        "etcd_demo": {
+                          "type": "etcd",
                           "metadata": {
                             "endpoints": "localhost:2379",
                             "username": "",
@@ -116,7 +124,8 @@
                             "dialTimeout": "5"
                           }
                         },
-                        "redis": {
+                        "redis_demo": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6380",
                             "redisPassword": ""
@@ -124,7 +133,8 @@
                         }
                       },
                       "pub_subs": {
-                        "redis": {
+                        "redis_demo": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6380",
                             "redisPassword": ""

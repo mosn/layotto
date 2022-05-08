@@ -17,12 +17,14 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "helloworld_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "file": {
-                        "minioOSS": {
+                        "minioOSS_demo": {
+                          "type": "minioOSS",
                           "metadata": [
                             {
                               "endpoint": "127.0.0.1:9000",

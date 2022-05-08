@@ -17,12 +17,14 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "helloworld_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "config_store": {
-                        "etcd": {
+                        "etcd_demo": {
+                          "type": "etcd",
                           "address": [
                             "127.0.0.1:2379"
                           ],
