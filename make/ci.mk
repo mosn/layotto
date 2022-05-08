@@ -39,15 +39,12 @@ checker.deadlink:
 	@echo "===========> Checking Dead Links"
 	sh ${SCRIPT_DIR}/check-dead-link.sh
 
+QUICKSTART_VERSION ?= default
+
 .PHONY: checker.quickstart
 checker.quickstart:
 	@echo "===========> Checking QuickStart Doc"
-	sh ${SCRIPT_DIR}/test-quickstart.sh
-
-.PHONY: checker.quickstart.17
-checker.quickstart.17:
-	@echo "===========> Checking QuickStart Doc"
-	sh ${SCRIPT_DIR}/test-quickstart-17.sh
+	sh ${SCRIPT_DIR}/test-quickstart.sh ${QUICKSTART_VERSION}
 
 .PHONY: checker.coverage
 checker.coverage:

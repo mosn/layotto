@@ -213,13 +213,6 @@ style.quickstart:
 	@$(MAKE) checker.quickstart
 
 # ==============================================================================
-## style.quickstart.17: Run quickstart check test with golang 1.17
-# ==============================================================================
-.PHONY: style.quickstart
-style.quickstart.17:
-	@$(MAKE) checker.quickstart.17
-
-# ==============================================================================
 ## integrate.wasm: Run integration test with wasm.
 # ==============================================================================
 .PHONY: integrate.wasm
