@@ -18,8 +18,9 @@ package transport_protocol
 
 import (
 	"mosn.io/api"
-	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
+
+	"mosn.io/layotto/components/rpc"
 )
 
 // protocolRegistry is storage protocol

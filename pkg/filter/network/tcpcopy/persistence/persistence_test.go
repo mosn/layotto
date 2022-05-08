@@ -17,12 +17,13 @@
 package persistence
 
 import (
-	"fmt"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
-	"mosn.io/pkg/log"
 	"os"
 	"path"
 	"testing"
+
+	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 )
 
 func InitForTest() {
@@ -31,7 +32,7 @@ func InitForTest() {
 
 func getPathForTest(fileName string) string {
 	logFolder, _ := os.Getwd()
-	logFolder = fmt.Sprintf(path.Join(logFolder, "logs/mosn"))
+	logFolder = path.Join(logFolder, "logs/mosn")
 	logPath := logFolder + string(os.PathSeparator) + fileName
 	return logPath
 }

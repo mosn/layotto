@@ -17,9 +17,10 @@
 package custom
 
 import (
-	"mosn.io/layotto/components/pkg/info"
 	"strings"
 	"testing"
+
+	"mosn.io/layotto/components/pkg/info"
 )
 
 func TestNewRegistry(t *testing.T) {

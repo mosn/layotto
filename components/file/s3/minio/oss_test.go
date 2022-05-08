@@ -24,6 +24,7 @@ import (
 
 	"github.com/minio/minio-go/v7"
 	"github.com/stretchr/testify/assert"
+
 	"mosn.io/layotto/components/file"
 )
 

@@ -17,8 +17,9 @@
 package actuator
 
 import (
-	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	"net"
+
+	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 )
 
 type GrpcServerWithActuator struct {

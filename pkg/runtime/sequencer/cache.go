@@ -16,11 +16,13 @@ package sequencer
 import (
 	"context"
 	"errors"
-	"mosn.io/layotto/components/sequencer"
-	"mosn.io/pkg/log"
-	"mosn.io/pkg/utils"
 	"sync"
 	"time"
+
+	"mosn.io/pkg/log"
+	"mosn.io/pkg/utils"
+
+	"mosn.io/layotto/components/sequencer"
 )
 
 const defaultSize = 10000
@@ -105,7 +107,7 @@ func (d *DoubleBuffer) getId() (int64, error) {
 				return
 			}
 			//slow retry
-			for true {
+			for {
 				buffer, err := d.getNewBuffer()
 				if err != nil {
 					log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)

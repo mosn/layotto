@@ -20,21 +20,22 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net"
+	"testing"
+	"time"
+
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/golang/mock/gomock"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
-	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"mosn.io/pkg/log"
+
 	mock_pubsub "mosn.io/layotto/pkg/mock/components/pubsub"
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"mosn.io/pkg/log"
-	"net"
-	"testing"
-	"time"
 )
 
 func TestPublishEvent(t *testing.T) {
@@ -116,7 +117,7 @@ func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
 		}()
 
 		// init callback client
-		callbackClient, err := grpc.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
+		callbackClient, err := grpc.DialContext(context.Background(), "bufnet", grpc.WithInsecure(), grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
 			return lis.Dial()
 		}))
 		assert.Nil(t, err)

@@ -8,10 +8,8 @@ Layotto 基于 Apache 2.0 许可发布，遵循标准的 Github 开发流程，�
 
 以下对于 Pull Request 的要求并非强制，但是会对您提交 Pull Request 有帮助。
 
-1. 代码格式
-- 命令行方式：在命令行中运行 `goimports -w yourfile.go` 或者 `golint yourfile.go` 格式化代码
-- IDE 方式：使用如 Goland IDE，在 Go->imports 页面中选择 ”Group stdlib imports“ - “Move all stdlib imports in a single group” - “Move all imports in a single declaration”
-- 在运行 CI 测试的时候会检查代码格式，请确保您在提交代码之前已对代码进行格式化
+1. 代码格式规范
+  你只需要执行 `make format` 去格式化你的代码。
 2. 确保所有新的 `.go` 文件都具有简单的 doc 类注释，其中至少包含一个 `author` 标记标识您，并且最好至少包含一个有关该类用途的段落。
 3. 将 Apache Software Foundation 许可证标头注释添加到所有新的 `.go` 文件（可以从项目中的现有文件复制）
 4. 将您自己添加为您实质修改的 `.go` 文件的作者（不仅仅是外观更改）。
@@ -19,7 +17,10 @@ Layotto 基于 Apache 2.0 许可发布，遵循标准的 Github 开发流程，�
 6. 进行一些单元测试也会有很大帮助。
 7. 编写提交消息时，请遵循[该约定](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html) ，如果要解决现有问题，请在提交消息的末尾添加 “Fixes gh-XXXX”（其中 XXXX 是 issue 编号）。
 8. 请确保代码覆盖率不会降低。
-9. 将 PR 作为 Gitflow 工作流程的规则，并遵循 Pull Request 的规则。
+9. 确保提交 Pull Request  之前所有的测试能够正确通过, 只需要执行 `make check`
+10. 按照 Github 工作流提交 Pull Request  ，并遵循 Pull Request 的规则。
+
+> Layotto 提供了很多方便你贡献的命令行工具，请在[这里](./commands.md)进行查阅
 
 ## 版本命名约定
 

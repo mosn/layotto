@@ -18,12 +18,14 @@ package default_api
 
 import (
 	"context"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
-	"testing"
 
 	"errors"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/pkg/mock"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"

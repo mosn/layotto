@@ -17,10 +17,12 @@
 package apollo
 
 import (
-	"github.com/zouyx/agollo/v4/storage"
-	"mosn.io/layotto/components/configstores"
-	"mosn.io/pkg/log"
 	"time"
+
+	"github.com/zouyx/agollo/v4/storage"
+	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/configstores"
 )
 
 type changeListener struct {

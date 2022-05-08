@@ -1,76 +1,279 @@
-SHELL = /bin/bash
-export GO111MODULE=on
+# Copyright 2021 Layotto Authors
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 
-MAJOR_VERSION    = $(shell cat VERSION)
-TARGET           = layotto
-ARM_TARGET       = layotto.aarch64
-PROJECT_NAME     = mosn.io/layotto
-CONFIG_FILE      = runtime_config.json
-BUILD_IMAGE      = godep-builder
-GIT_VERSION      = $(shell git log -1 --pretty=format:%h)
-SCRIPT_DIR       = $(shell pwd)/etc/script
+# http://www.apache.org/licenses/LICENSE-2.0
 
-IMAGE_NAME       = layotto
-REPOSITORY       = layotto/${IMAGE_NAME}
-IMAGE_BUILD_DIR  = IMAGEBUILD
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-IMAGE_TAG := $(tag)
+# Layotto commands 👀: 
 
-ifeq ($(IMAGE_TAG),)
-IMAGE_TAG := dev-${MAJOR_VERSION}-${GIT_VERSION}
-endif
+# A fast and efficient cloud native application runtime 🚀.
+# Commands below are used in Development 💻 and GitHub workflow 🌊.
 
-build-local:
-	@rm -rf build/bundles/${MAJOR_VERSION}/binary
-	CGO_ENABLED=1 go build \
-		-ldflags "-B 0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${MAJOR_VERSION}(${GIT_VERSION}) -X ${PROJECT_NAME}/pkg/types.IstioVersion=${ISTIO_VERSION}" \
-		-v -o ${TARGET} \
-		${PROJECT_NAME}/cmd/layotto
-	mkdir -p build/bundles/${MAJOR_VERSION}/binary
-	mv ${TARGET} build/bundles/${MAJOR_VERSION}/binary
-	@cd build/bundles/${MAJOR_VERSION}/binary && $(shell which md5sum) -b ${TARGET} | cut -d' ' -f1  > ${TARGET}.md5
-	cp configs/${CONFIG_FILE} build/bundles/${MAJOR_VERSION}/binary
-	@cd build/bundles/${MAJOR_VERSION}/binary
+# Usage: make <COMMANDS> <ARGS> ...
 
-build-arm64:
-	@rm -rf build/bundles/${MAJOR_VERSION}/binary
-	GOOS=linux GOARCH=arm64 go build\
-		-a -ldflags "-B 0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" \
-		-v -o ${ARM_TARGET} \
-		${PROJECT_NAME}/cmd/layotto
-	mkdir -p build/bundles/${MAJOR_VERSION}/binary
-	mv ${ARM_TARGET} build/bundles/${MAJOR_VERSION}/binary
-	@cd build/bundles/${MAJOR_VERSION}/binary && $(shell which md5sum) -b ${ARM_TARGET} | cut -d' ' -f1  > ${ARM_TARGET}.md5
+# COMMANDS:
+#   build               Build layotto for host platform.
+#   build.multiarch     Build layotto for multiple platforms. See option PLATFORMS.
+#   image               Build docker images for host arch.
+#   image.multiarch     Build docker images for multiple platforms. See option PLATFORMS.
+#   push                Push docker images to registry.
+#   push.multiarch      Push docker images for multiple platforms to registry.
+#   app                 Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
+#   app.multiarch       Build app docker images for multiple platforms. See option PLATFORMS.
+#   wasm                Build layotto wasm for linux arm64 platform.
+#   wasm.multiarch      Build layotto wasm for multiple platform.
+#   wasm.image          Build layotto wasm image for multiple platform.
+#   wasm.image.push     Push layotto wasm image for multiple platform.
+#   check               Run all go checks of code sources.
+#   check.lint          Run go syntax and styling of go sources.
+#   check.unit          Run go unit test.
+#   check.style         Run go style test.
+#   style.coverage      Run coverage analysis.
+#   style.deadlink      Run deadlink check test.
+#   style.quickstart    Run quickstart check test.
+#   integrate.wasm      Run integration test with wasm.
+#   integrate.runtime   Run integration test with runtime.
+#   format              Format layotto go codes style with gofmt and goimports.
+#   clean               Remove all files that are created by building.
+#   all                 Run format codes, check codes, build Layotto codes for host platform with one command
+#   help                Show this help info.
 
-image: build-local
-	@rm -rf ${IMAGE_BUILD_DIR}
-	cp -r build/contrib/builder/image ${IMAGE_BUILD_DIR} && cp build/bundles/${MAJOR_VERSION}/binary/${TARGET} ${IMAGE_BUILD_DIR} && cp -r configs ${IMAGE_BUILD_DIR} && cp -r etc ${IMAGE_BUILD_DIR}
-	docker build --rm -t ${REPOSITORY}:${IMAGE_TAG} ${IMAGE_BUILD_DIR}
-	rm -rf ${IMAGE_BUILD_DIR}
+# ARGS:
+#   BINS         The binaries to build. Default is all of cmd.
+#                This option is available when using: make build/build.multiarch
+#                Example: make build BINS="layotto_multiple_api layotto"
+#   IMAGES       Backend images to make. Default is all of cmds.
+#                This option is available when using: make image/image.multiarch/push/push.multiarch
+#                Example: make image.multiarch IMAGES="layotto_multiple_api layotto"
+#   PLATFORMS    The multiple platforms to build. Default is linux_amd64 and linux_arm64.
+#                This option is available when using: make build.multiarch/image.multiarch/push.multiarch
+#                Example: make image.multiarch IMAGES="layotto" PLATFORMS="linux_amd64 linux_arm64"
+#                Supported Platforms: linux_amd64 linux_arm64 darwin_amd64 darwin_arm64
 
-wasm-integrate-ci:
-	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/faas
-	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -v $(shell pwd)/test/wasm/wasm_test.sh:/go/src/${PROJECT_NAME}/wasm_test.sh -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} sh ./wasm_test.sh
 
-runtime-integrate-ci:
-	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/integrate
-	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -v $(shell pwd)/test/runtime/integrate_test.sh:/go/src/${PROJECT_NAME}/integrate_test.sh -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} sh ./integrate_test.sh
+SHELL := /bin/bash
 
-coverage:
-	sh ${SCRIPT_DIR}/report.sh
+# ==============================================================================
+# ROOT Options:
+# ==============================================================================
 
-build-linux-wasm-layotto:
-	docker build --rm -t ${BUILD_IMAGE} build/contrib/builder/image/faas
-	docker run --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} go build -tags wasmer -o layotto /go/src/${PROJECT_NAME}/cmd/layotto
+ROOT_PACKAGE=mosn.io/layotto
 
-build-linux-wasm-local:
-	go build -tags wasmer -o layotto $(shell pwd)/cmd/layotto
+# ==============================================================================
+# Includes:
+# ==============================================================================
 
-check-dead-link:
-	sh ${SCRIPT_DIR}/check-dead-link.sh
+include make/common.mk
+include make/golang.mk
+include make/image.mk
+include make/wasm.mk
+include make/ci.mk
 
-test-quickstart:
-	sh ${SCRIPT_DIR}/test-quickstart.sh
+# ==============================================================================
+# Targets:
+# ==============================================================================
 
-test-quickstart-17:
-	sh ${SCRIPT_DIR}/test-quickstart-17.sh
+# ==============================================================================
+## build: Build layotto for host platform.
+# ==============================================================================
+.PHONY: build
+build:
+	@$(MAKE) go.build
+
+# ==============================================================================
+## build.multiarch: Build layotto for multiple platforms. See option PLATFORMS.
+# ==============================================================================
+.PHONY: build.multiarch
+build.multiarch:
+	@$(MAKE) go.build.multiarch
+
+# ==============================================================================
+## image: Build docker images for host arch.
+# ==============================================================================
+.PHONY: image
+image:
+	@$(MAKE) image.build
+
+# ==============================================================================
+## image.multiarch: Build docker images for multiple platforms. See option PLATFORMS.
+# ==============================================================================
+.PHONY: image.multiarch
+image.multiarch:
+	@$(MAKE) image.build.multiarch
+
+# ==============================================================================
+## push: Push docker images to registry.
+# ==============================================================================
+.PHONY: push
+push:
+	@$(MAKE) image.push
+
+# ==============================================================================
+## push.multiarch: Push docker images for multiple platforms to registry.
+# ==============================================================================
+.PHONY: push.multiarch
+push.multiarch:
+	@$(MAKE) image.push.multiarch
+
+# ==============================================================================
+## app: Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
+# ==============================================================================
+.PHONY: app
+app:
+	@$(MAKE) app.image
+
+# ==============================================================================
+## app.multiarch: Build app docker images for multiple platforms. See option PLATFORMS.
+# ==============================================================================
+.PHONY: app.multiarch
+app.multiarch:
+	@$(MAKE) app.image.multiarch
+
+# ==============================================================================
+## wasm: Build layotto wasm for linux arm64 platform.
+# ==============================================================================
+.PHONY: wasm
+wasm:
+	@$(MAKE) go.wasm
+
+# ==============================================================================
+## wasm.multiarch: Build layotto wasm for multiple platform.
+# ==============================================================================
+.PHONY: wasm.multiarch
+wasm.multiarch:
+	@$(MAKE) go.wasm.multiarch
+
+# ==============================================================================
+## wasm.image: Build layotto wasm image for multiple platform.
+# ==============================================================================
+.PHONY: wasm.image
+wasm.image:
+	@$(MAKE) go.wasm.image
+
+# ==============================================================================
+## wasm.image.push: Push layotto wasm image for multiple platform.
+# ==============================================================================
+.PHONY: wasm.image.push
+wasm.image.push:
+	@$(MAKE) go.wasm.image.push
+
+# ==============================================================================
+## check: Run all go checks of code sources.
+# ==============================================================================
+.PHONY: check
+check: check.style check.unit check.lint
+
+# ==============================================================================
+## check.lint: Run go syntax and styling of go sources.
+# ==============================================================================
+.PHONY: check.lint
+check.lint:
+	@$(MAKE) go.lint
+
+# ==============================================================================
+## check.unit: Run go unit test.
+# ==============================================================================
+.PHONY: check.unit
+check.unit:
+	@$(MAKE) go.test
+
+# ==============================================================================
+## check.style: Run go style test.
+# ==============================================================================
+.PHONY: check.style
+check.style:
+	@$(MAKE) go.style
+
+# ==============================================================================
+## style.coverage: Run coverage analysis.
+# ==============================================================================
+.PHONY: style.coverage
+style.coverage:
+	@$(MAKE) checker.coverage
+
+# ==============================================================================
+## style.deadlink: Run deadlink check test.
+# ==============================================================================
+.PHONY: style.deadlink
+style.deadlink:
+	@$(MAKE) checker.deadlink
+
+# ==============================================================================
+## style.quickstart: Run quickstart check test.
+# ==============================================================================
+.PHONY: style.quickstart
+style.quickstart:
+	@$(MAKE) checker.quickstart
+
+# ==============================================================================
+## integrate.wasm: Run integration test with wasm.
+# ==============================================================================
+.PHONY: integrate.wasm
+integrate.wasm:
+	@$(MAKE) integration.wasm
+
+# ==============================================================================
+## integrate.runtime: Run integration test with runtime.
+# ==============================================================================
+.PHONY: integrate.runtime
+integrate.runtime:
+	@$(MAKE) integration.runtime
+
+# ==============================================================================
+## format: Format layotto go codes style with gofmt and goimports.
+# ==============================================================================
+.PHONY: format
+format: go.format
+
+# ==============================================================================
+## clean: Remove all files that are created by building.
+# ==============================================================================
+.PHONY: clean
+clean:
+	@$(MAKE) go.clean
+
+# ==============================================================================
+## all: Run format codes, check codes, build Layotto codes for host platform with one command
+# ==============================================================================
+.PHONY: all
+all: format check.style check.unit check.lint build
+
+# ==============================================================================
+# Usage
+# ==============================================================================
+
+define USAGE_OPTIONS
+
+ARGS:
+  BINS         The binaries to build. Default is all of cmd.
+               This option is available when using: make build/build.multiarch
+               Example: make build BINS="layotto_multiple_api layotto"
+  IMAGES       Backend images to make. Default is all of cmds.
+               This option is available when using: make image/image.multiarch/push/push.multiarch
+               Example: make image.multiarch IMAGES="layotto_multiple_api layotto"
+  PLATFORMS    The multiple platforms to build. Default is linux_amd64 and linux_arm64.
+               This option is available when using: make build.multiarch/image.multiarch/push.multiarch
+               Example: make image.multiarch IMAGES="layotto" PLATFORMS="linux_amd64 linux_arm64"
+               Supported Platforms: linux_amd64 linux_arm64 darwin_amd64 darwin_arm64
+endef
+export USAGE_OPTIONS
+
+# ==============================================================================
+# Help
+# ==============================================================================
+
+## help: Show this help info.
+.PHONY: help
+help: Makefile
+	@echo -e "Layotto commands 👀: \n\nA fast and efficient cloud native application runtime 🚀."
+	@echo -e "Commands below are used in Development 💻 and GitHub workflow 🌊.\n"
+	@echo -e "Usage: make <COMMANDS> <ARGS> ...\n\nCOMMANDS:"
+	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
+	@echo "$$USAGE_OPTIONS"

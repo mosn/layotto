@@ -5,20 +5,24 @@
   },
   "CHECKS": {
     "prefixes": [
-      "fix: ",
-      "feat: ",
-      "feature: ",
-      "doc: ",
-      "ci: ",
-      "chore: ",
-      "[WIP]"
+      "fix",
+      "feat",
+      "feature",
+      "docs",
+      "ci",
+      "chore",
+      "test",
+      "revert",
+      "style",
+      "refactor",
+      "sync",
+      "perf",
+      "merge"
     ],
     "regexp": "docs\\(v[0-9]\\): ",
     "regexpFlags": "i",
     "ignoreLabels": [
       "dont-check-PRs-with-this-label",
-      "do-not-merge",
-      "WIP",
       "meta"
     ]
   },

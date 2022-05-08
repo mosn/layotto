@@ -1,6 +1,7 @@
-name: "PR Title Checker"
+name: Layotto Env Pipeline 🌊
+
 on:
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - edited
@@ -10,6 +11,7 @@ on:
 
 jobs:
   check:
+    name: "🍀 Title Validation"
     runs-on: ubuntu-latest
     steps:
       - uses: thehanimo/pr-title-checker@v1.3.4
