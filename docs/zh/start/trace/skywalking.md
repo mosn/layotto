@@ -51,7 +51,7 @@ go build -o layotto
 ## 运行 Demo
 
 ```shell
-cd ${project_path}/demo/flowControl
+cd ${project_path}/demo/flowcontrol
 go run client.go
 ```
 
