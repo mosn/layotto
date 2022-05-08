@@ -38,7 +38,7 @@ for doc in ${quickstarts}; do
   echo "Start testing $doc......"
 
   #./mdx docs/en/start/state/start.md
-  ./mdx $doc
+  $(pwd)/etc/script/mdx $doc
 
   echo "End testing $doc......"
   release_resource

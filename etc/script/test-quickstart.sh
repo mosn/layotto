@@ -2,9 +2,6 @@
 
 set -e
 
-# $(pwd)/etc/script/mdsh.sh docs/en/start/state/start.md
-# $(pwd)/etc/script/mdsh.sh docs/zh/start/state/start.md
-
 # won't test:
 # docs/en/start/configuration/start-apollo.md
 # docs/zh/start/configuration/start-apollo.md
@@ -62,7 +59,7 @@ for doc in ${quickstarts}; do
   echo "Start testing $doc......"
 
   #./mdx docs/en/start/state/start.md
-  ./mdx $doc
+  $(pwd)/etc/script/mdx $doc
 
   echo "End testing $doc......"
   release_resource
