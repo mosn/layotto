@@ -35,7 +35,7 @@ cd cmd
 export DUBBO_GO_CONFIG_PATH="../conf/dubbogo.yml"
 ```
 
-```shell @background
+```shell @background.sleep 5s
 go run .
 ```
 
