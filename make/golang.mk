@@ -84,10 +84,12 @@ endif
 
 .PHONY: go.test
 go.test: go.test.verify
-	@echo "===========> Run unit test in cmd"
-	$(GO) test -count=1 -timeout=10m -short -v `go list ./cmd/...`
 	@echo "===========> Run unit test in diagnostics"
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./diagnostics/...`
+	@echo "===========> Run unit test in sdk/go-sdk"
+	@cd sdk/go-sdk && $(GO) test -count=1 -timeout=10m -short -v `go list ./...`
+	@echo "===========> Run unit test in components"
+	@cd components/ && $(GO) test -count=1 -timeout=10m -short -v `go list ./...`
 	@echo "===========> Run unit test in pkg"
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./pkg/...`
 
