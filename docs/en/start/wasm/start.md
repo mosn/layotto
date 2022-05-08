@@ -27,7 +27,7 @@ Here, we run redis with docker:
 
 Run redis container:
 ```shell
-docker run -itd --name redis-test -p 6379:6379 redis
+docker run -d --name redis-test -p 6379:6379 redis
 ```
 
 execute the command`set book1 100`

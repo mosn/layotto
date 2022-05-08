@@ -29,6 +29,8 @@ quickstarts="docs/en/start/configuration/start.md
   docs/en/start/wasm/start.md
   docs/zh/start/wasm/start.md
 "
+quickstarts="docs/en/start/wasm/start.md
+"
 
 # download mdx
 if ! test -e $(pwd)/etc/script/mdx
