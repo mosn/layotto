@@ -448,7 +448,7 @@ func TestMosnRuntime_initSequencers(t *testing.T) {
 		m.errInt = func(err error, format string, args ...interface{}) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
-		err := m.initSequencers(msequencer.NewFactory("sequencers", f))
+		err := m.initSequencers(runtime_sequencer.NewFactory("sequencers", f))
 		assert.Nil(t, err)
 	})
 }
