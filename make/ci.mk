@@ -42,9 +42,9 @@ checker.deadlink:
 .PHONY: checker.quickstart
 checker.quickstart:
 	@echo "===========> Checking QuickStart Doc"
-	curl -o ${ROOT_DIR}/mdsh.sh https://raw.githubusercontent.com/seeflood/mdsh/master/bin/mdsh
-	mv ${ROOT_DIR}/mdsh.sh ${SCRIPT_DIR}
-	chmod +x  ${SCRIPT_DIR}/mdsh.sh
+	curl -o ${ROOT_DIR}/mdx https://raw.githubusercontent.com/seeflood/mdx/main/mdx
+	mv ${ROOT_DIR}/mdx ${SCRIPT_DIR}
+	chmod +x  ${SCRIPT_DIR}/mdx
 	sh ${SCRIPT_DIR}/test-quickstart.sh
 
 .PHONY: checker.coverage
