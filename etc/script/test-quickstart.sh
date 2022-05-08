@@ -6,7 +6,6 @@ set -e
 # docs/en/start/configuration/start-apollo.md
 # docs/zh/start/configuration/start-apollo.md
 # because the github workflow can not connect to the apollo server due to the great firewall
-
 quickstarts="docs/en/start/configuration/start.md
   docs/zh/start/configuration/start.md
   docs/en/start/state/start.md
@@ -30,6 +29,14 @@ quickstarts="docs/en/start/configuration/start.md
   docs/en/start/wasm/start.md
   docs/zh/start/wasm/start.md
 "
+
+# download mdx
+if ! test -e $(pwd)/etc/script/mdx
+then
+  curl -o $(pwd)/etc/script/mdx https://raw.githubusercontent.com/seeflood/mdx/main/mdx
+fi
+chmod +x $(pwd)/etc/script/mdx
+
 
 # release all resources
 release_resource() {

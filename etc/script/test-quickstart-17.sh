@@ -10,6 +10,15 @@ set -e
 quickstarts="docs/en/start/rpc/dubbo_json_rpc.md
 docs/zh/start/rpc/dubbo_json_rpc.md"
 
+
+# download mdx
+if ! test -e $(pwd)/etc/script/mdx
+then
+  curl -o $(pwd)/etc/script/mdx https://raw.githubusercontent.com/seeflood/mdx/main/mdx
+fi
+chmod +x $(pwd)/etc/script/mdx
+
+
 # release all resources
 release_resource() {
   if killall layotto; then
