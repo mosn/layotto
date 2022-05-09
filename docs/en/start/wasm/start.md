@@ -7,8 +7,6 @@ For example, a business system has developed an SDK in the form of a jar package
 
 ![img_1.png](../../../img/wasm/img_1.png)
 
-
-
 And if it becomes like this:
 
 ![img.png](../../../img/wasm/img.png)
@@ -21,39 +19,76 @@ Layotto can load the compiled WASM files automatically, and interacts with them 
 
 ### Quick start
 
-1. start redis server and write test data
+#### step 1. start redis server and write test data
 
-The example only needs a Redis server that can be used normally. As for where it is installed, there is no special restriction. It can be a virtual machine, a local machine or a server. Here, the installation on mac is used as an example to introduce.
+The example only needs a Redis server that can be used normally. As for where it is installed, there is no special restriction. It can be a virtual machine, a local machine or a server. 
 
-```
-> brew install redis
-> redis-server /usr/local/etc/redis.conf
+Here, we run redis with docker:
+
+Run redis container:
+```shell
+docker run -d --name redis-test -p 6379:6379 redis
 ```
 
+execute the command`set book1 100`
+
+```shell
+docker exec -i redis-test redis-cli set book1 100
 ```
-> redis-cli
-127.0.0.1:6379> set book1 100
+
+This command will set `book1` with 100.
+
+The result will be:
+
+```bash
 OK
 ```
 
+We can execute `get book1` to check the value of `book1`:
 
-2. start Layotto server
-
+```shell
+docker exec -i redis-test redis-cli get book1
 ```
-go build -tags wasmer -o ./layotto ./cmd/layotto/main.go
-./layotto start -c ./demo/faas/config.json
+
+The result is:
+
+```bash
+"100"
+```
+
+#### step 2. start Layotto server
+Build:
+
+```shell @if.not.exist layotto_wasmer
+go build -tags wasmer -o ./layotto_wasmer ./cmd/layotto/main.go
+```
+
+Run it:
+```shell @background
+./layotto_wasmer start -c ./demo/faas/config.json
 ```
 
 **Note: You need to modify the redis address as needed, the default address is: localhost:6379**
 
-3. send request
-
-```
+#### step 3. send request
+```shell
 curl -H 'id:id_1' 'localhost:2045?name=book1'
+```
+
+It will returns:
+
+```bash
 There are 100 inventories for book1.
 ```
 
+
 This http request will access the wasm module in Layotto. The wasm module will call redis for logical processing.
+
+#### step 4. Release resources
+
+```shell
+docker rm -f redis-test
+```
 
 ### Note
 

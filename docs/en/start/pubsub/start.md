@@ -45,14 +45,21 @@ Parameter Description:
 `-p 6380:6379`: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
 
 ### Step 2. Start the Subscriber program and subscribe to events
-```bash
- cd ${projectpath}/demo/pubsub/redis/server/
+Build:
+
+```shell
+ cd ${project_path}/demo/pubsub/redis/server/
  go build -o subscriber
+ ```
+
+Start subscriber:
+
+```shell @background
  ./subscriber
 ```
 If the following information is printed out, it means the startup is successful:
 
-```shell
+```bash
 Start listening on port 9999 ...... 
 ```
 
@@ -74,21 +81,24 @@ After the program receives a new event, it will print the event to the command l
 
 After downloading the project code to the local, switch the code directory and compile:
 
-```bash
-cd ${projectpath}/cmd/layotto
+```shell
+cd ${project_path}/cmd/layotto
+```
+
+```shell @if.not.exist layotto
 go build
 ```
 
 After completion, the layotto file will be generated in the directory, run it:
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/config_redis.json
 ```
 
 ### Step 4. Run the Publisher program and call Layotto to publish events
 
-```bash
- cd ${projectpath}/demo/pubsub/redis/client/
+```shell
+ cd ${project_path}/demo/pubsub/redis/client/
  go build -o publisher
  ./publisher
 ```
@@ -103,7 +113,7 @@ Published a new event.Topic: topic1 ,Data: value1
 
 Go back to the subscriber's command line and you will see that a new message has been received:
 
-```shell
+```bash
 Start listening on port 9999 ...... 
 Received a new event.Topic: topic1 , Data:value1 
 ```
