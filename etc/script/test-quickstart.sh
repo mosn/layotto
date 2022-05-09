@@ -42,21 +42,20 @@ if ! test -e $(pwd)/etc/script/mdx; then
 fi
 chmod +x $(pwd)/etc/script/mdx
 
+# download etcd
+sh etc/script/download_etcd.sh
+
 # release all resources
 release_resource() {
-  if killall layotto; then
-    echo "layotto released"
-  fi
-  if killall layotto_wasmer; then
-    echo "layotto_wasmer released"
-  fi
-  if killall etcd; then
-    echo "etcd released"
-  fi
-  if killall go; then
-    echo "golang processes released"
-  fi
+  # kill processes
+  processes="layotto layotto_wasmer etcd go"
+  for key in ${processes}; do
+    if killall $key; then
+      echo "$key released"
+    fi
+  done
 
+  # remove containers
   keywords="redis skywalking hangzhouzk minio"
   for key in ${keywords}; do
     if [ $(docker container ls | grep $key | wc -l) -gt 0 ]; then
@@ -68,33 +67,19 @@ release_resource() {
 
 release_resource
 
-# download etcd
-sh etc/script/download_etcd.sh
-
-if [ "${GO_VERSION}" == "default" ]; then
+quickstarts=${quickstarts_in_advance}
+if test "${GO_VERSION}" = "default"; then
   quickstarts=${quickstarts_in_default}
-  echo "quickstarts contain ${quickstarts}"
-  # test quickstarts
-  for doc in ${quickstarts}; do
-    echo "Start testing $doc......"
-
-    #./mdx docs/en/start/state/start.md
-    $(pwd)/etc/script/mdx $doc
-
-    echo "End testing $doc......"
-    release_resource
-  done
-else
-  quickstarts=${quickstarts_in_advance}
-  echo "quickstarts contain ${quickstarts}"
-  # test quickstarts
-  for doc in ${quickstarts}; do
-    echo "Start testing $doc......"
-
-    #./mdx docs/en/start/state/start.md
-    $(pwd)/etc/script/mdx $doc
-
-    echo "End testing $doc......"
-    release_resource
-  done
 fi
+
+# test quickstarts
+echo "quickstarts contain ${quickstarts}"
+for doc in ${quickstarts}; do
+  echo "Start testing $doc......"
+
+  #./mdx docs/en/start/state/start.md
+  $(pwd)/etc/script/mdx $doc
+
+  echo "End testing $doc......"
+  release_resource
+done
