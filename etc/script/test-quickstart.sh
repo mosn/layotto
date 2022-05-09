@@ -6,7 +6,10 @@ set -e
 # docs/en/start/configuration/start-apollo.md
 # docs/zh/start/configuration/start-apollo.md
 # because the github workflow can not connect to the apollo server due to the great firewall
-quickstarts="docs/en/start/configuration/start.md
+
+GO_VERSION=${1:-"default"}
+
+quickstarts_in_default="docs/en/start/configuration/start.md
   docs/zh/start/configuration/start.md
   docs/en/start/state/start.md
   docs/zh/start/state/start.md
@@ -29,6 +32,9 @@ quickstarts="docs/en/start/configuration/start.md
   docs/en/start/wasm/start.md
   docs/zh/start/wasm/start.md
 "
+
+quickstarts_in_advance="docs/en/start/rpc/dubbo_json_rpc.md
+docs/zh/start/rpc/dubbo_json_rpc.md"
 
 # download mdx
 if ! test -e $(pwd)/etc/script/mdx; then
@@ -65,13 +71,30 @@ release_resource
 # download etcd
 sh etc/script/download_etcd.sh
 
-# test quickstarts
-for doc in ${quickstarts}; do
-  echo "Start testing $doc......"
+if [ "${GO_VERSION}" == "default" ]; then
+  quickstarts=${quickstarts_in_default}
+  echo "quickstarts contain ${quickstarts}"
+  # test quickstarts
+  for doc in ${quickstarts}; do
+    echo "Start testing $doc......"
 
-  #./mdx docs/en/start/state/start.md
-  $(pwd)/etc/script/mdx $doc
+    #./mdx docs/en/start/state/start.md
+    $(pwd)/etc/script/mdx $doc
 
-  echo "End testing $doc......"
-  release_resource
-done
+    echo "End testing $doc......"
+    release_resource
+  done
+else
+  quickstarts=${quickstarts_in_advance}
+  echo "quickstarts contain ${quickstarts}"
+  # test quickstarts
+  for doc in ${quickstarts}; do
+    echo "Start testing $doc......"
+
+    #./mdx docs/en/start/state/start.md
+    $(pwd)/etc/script/mdx $doc
+
+    echo "End testing $doc......"
+    release_resource
+  done
+fi
