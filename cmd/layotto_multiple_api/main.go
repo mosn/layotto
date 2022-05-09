@@ -26,6 +26,7 @@ import (
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/grpc/default_api"
+	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
 	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
 	"mosn.io/mosn/pkg/stagemanager"
 	"mosn.io/mosn/pkg/trace/skywalking"
@@ -216,6 +217,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			// Currently it only support Dapr's InvokeService,secret API,state API and InvokeBinding API.
 			// Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.
 			dapr.NewDaprAPI_Alpha,
+			s3ext.NewS3Server,
 		),
 		// Hello
 		runtime.WithHelloFactory(
@@ -390,6 +392,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithCustomComponentFactory("helloworld",
 			custom.NewComponentFactory("in-memory", component.NewInMemoryHelloWorld),
 			custom.NewComponentFactory("goodbye", component.NewSayGoodbyeHelloWorld),
+		),
+		runtime.WithCustomComponentFactory("extension",
+			custom.NewComponentFactory("s3", s3ext.NewS3Component),
 		),
 	)
 	return server, err

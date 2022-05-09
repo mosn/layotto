@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package mosn.proto.runtime.v1;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "mosn.io/layotto/spec/proto/extension/v1;s3";
+
+service S3 {
+  rpc GetObject(GetObjectInput) returns (stream GetObjectOutput) {}
+  rpc PutObject(stream PutObjectInput) returns(PutObjectOutput){}
+}
+
+message GetObjectInput {
+  string bucket = 1;
+  string expected_bucket_owner = 2;
+  string if_match = 3;
+  string if_modified_since = 4;
+  string if_none_match = 5;
+  string if_unmodified_since = 6;
+  string key = 7;
+  int64  part_number = 8;
+  string range = 9;
+  string request_payer = 10;
+  string response_cache_control = 11;
+  string response_content_disposition = 12;
+  string response_content_encoding = 13;
+  string response_content_language = 14;
+  string response_content_type = 15;
+  string response_expires = 16;
+  string sse_customer_algorithm = 17;
+  string sse_customer_key = 18;
+  string sse_customer_key_md5 = 19;
+  string version_id = 20;
+}
+
+message GetObjectOutput {
+  bytes body = 1;
+}
+
+message PutObjectInput{
+    string acl = 1;
+    bytes body = 2;
+    string bucket = 3;
+    string key = 4;
+    bool bucket_key_enabled = 5;
+    string cache_control = 6;
+}
+
+message PutObjectOutput{
+    bool bucket_key_enabled = 1;
+    string etag = 2;
+}

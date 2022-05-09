@@ -166,6 +166,8 @@ import (
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
 	lprotocol "mosn.io/layotto/diagnostics/protocol"
 	lsky "mosn.io/layotto/diagnostics/skywalking"
+
+	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
 )
 
 // loggerForDaprComp is constructed for reusing dapr's components.
@@ -216,6 +218,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// register your gRPC API here
 		runtime.WithGrpcAPI(
 			default_api.NewGrpcAPI,
+			s3ext.NewS3Server,
 		),
 		// Hello
 		runtime.WithHelloFactory(
