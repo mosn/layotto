@@ -2,8 +2,12 @@
 
 ## Run prometheus
 
+window users need to change the layotto in prometheus.yml to 'docker.for.windows.localhost:34903'
+
+![](../../../img/trace/layotto.png)
+
 ```shell
-cd diagnostics/prometheus
+cd ${project_path}/demo/prometheus
 
 docker-compose -f prometheus-docker-compose.yaml up -d
 ```
@@ -12,7 +16,9 @@ docker-compose -f prometheus-docker-compose.yaml up -d
 
 A layotto server can be started as follows.
 
-```
+```shell
+cd ${project_path}/cmd/layotto
+go build -o layotto
 ./layotto start -c ../../configs/runtime_config.json
 ```
 
@@ -20,12 +26,13 @@ A layotto server can be started as follows.
 
 The corresponding call-side code is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), and running it calls layotto's SayHello interface.
 
-```
- cd ${projectpath}/demo/flowcontrol/
+```shell
+ cd ${project_path}/demo/flowcontrol/
  go build -o client
  ./client
 ```
-Access http://127.0.0.1:9090
+
+Access http://127.0.0.1:9090/graph?g0.expr=grpc_request_total
 
 ![](../../../img/trace/prometheus.png)
 
@@ -33,7 +40,7 @@ Access http://127.0.0.1:9090
 ## Clearance resources
 
 ````shell
-cd diagnostics/prometheus
+cd ${project_path}/demo/prometheus
 
 docker-compose -f prometheus-docker-compose.yaml down
 ````

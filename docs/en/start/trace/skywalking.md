@@ -27,7 +27,7 @@ Example: configs/config_trace_skywalking.json
 ## Run skywalking
 
 ````shell
-cd diagnostics/skywalking
+cd ${project_path}/diagnostics/skywalking
 
 docker-compose -f skywalking-docker-compose.yaml up -d
 ````
@@ -35,7 +35,7 @@ docker-compose -f skywalking-docker-compose.yaml up -d
 ## Run layotto
 
 ````shell
-cd cmd/layotto_multiple_api/
+cd ${project_path}/cmd/layotto_multiple_api/
 go build -o layotto
 ./layotto start -c ../../configs/config_trace_skywalking.json
 ````
@@ -43,7 +43,7 @@ go build -o layotto
 ## Run Demo
 
 ````shell
-cd demo/flowControl
+cd ${project_path}/demo/flowcontrol
 go run client.go
 ````
 
@@ -54,7 +54,7 @@ Access http://127.0.0.1:8080
 ## Clearance resources
 
 ````shell
-cd diagnostics/skywalking
+cd ${project_path}/diagnostics/skywalking
 
 docker-compose -f skywalking-docker-compose.yaml down
 ````
