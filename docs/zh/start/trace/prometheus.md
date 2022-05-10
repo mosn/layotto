@@ -16,10 +16,8 @@ docker-compose -f prometheus-docker-compose.yaml up -d
 
 可以按照如下方式启动一个layotto的server：
 
-```shell
-cd ${project_path}/cmd/layotto
-go build -o layotto
 ```shell @if.not.exist layotto
+cd ${project_path}/cmd/layotto
 # build it
 go build -o layotto
 ```
@@ -28,7 +26,6 @@ go build -o layotto
 
 ```shell @background
 ./layotto start -c ../../configs/runtime_config.json
-```
 ```
 
 ## 运行 Demo

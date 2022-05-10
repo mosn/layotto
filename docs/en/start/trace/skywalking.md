@@ -26,18 +26,16 @@ Example: configs/config_trace_skywalking.json
 
 ## Run skywalking
 
-````shell
+```shell
 cd ${project_path}/diagnostics/skywalking
 
 docker-compose -f skywalking-docker-compose.yaml up -d
-````
+```
 
 ## Run layotto
 
-````shell
+```shell @if.not.exist layott
 cd ${project_path}/cmd/layotto_multiple_api/
-go build -o layotto
-```shell @if.not.exist layotto
 # build it
 go build -o layotto
 ```
@@ -47,14 +45,13 @@ Run it:
 ```shell @background
 ./layotto start -c ../../configs/config_trace_skywalking.json
 ```
-````
 
 ## Run Demo
 
-````shell
+```shell
 cd ${project_path}/demo/flowcontrol
 go run client.go
-````
+```
 
 Access http://127.0.0.1:8080
 
@@ -62,8 +59,8 @@ Access http://127.0.0.1:8080
 
 ## Release resources
 
-````shell
+```shell
 cd ${project_path}/diagnostics/skywalking
 
 docker-compose -f skywalking-docker-compose.yaml down
-````
+```
