@@ -35,7 +35,6 @@ quickstarts_in_default="docs/en/start/configuration/start.md
   docs/en/start/trace/prometheus.md
   docs/en/start/wasm/start.md
   docs/zh/start/wasm/start.md
-
 "
 
 # In advance mod, we test these docs with golang 1.17
