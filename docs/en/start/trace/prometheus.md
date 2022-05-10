@@ -27,7 +27,7 @@ The corresponding call-side code is in [client.go](https://github.com/mosn/layot
 ```
 Access http://127.0.0.1:9090
 
-![](../../../img/trace/prometheus.png)
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*mEVNSZMvtvEAAAAAAAAAAAAAARQnAQ)
 
 
 ## Clearance resources

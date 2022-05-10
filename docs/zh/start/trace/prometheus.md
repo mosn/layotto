@@ -26,7 +26,7 @@ docker-compose -f prometheus-docker-compose.yaml up -d
 ```
 访问 http://127.0.0.1:9090
 
-![](../../../img/trace/prometheus.png)
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*mEVNSZMvtvEAAAAAAAAAAAAAARQnAQ)
 
 
 ## 清理资源
