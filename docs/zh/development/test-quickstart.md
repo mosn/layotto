@@ -5,14 +5,14 @@ Quickstart 是项目的门面, 如果新用户进入仓库后，发现 Quickstar
 
 但是……定期手动测试 Quickstart、修复文档中的异常，这个过程实在太花时间了：
 
-![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*fTI5RbfAK3gAAAAAAAAAAAAAARQnAQ)
+<img src="https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*fTI5RbfAK3gAAAAAAAAAAAAAARQnAQ" width="30%" height="30%">
 
 烦死了！
 
 我们用工具自动测试文档吧！
 
 ## 原理
-用工具按顺序执行 markdown 文档里的所有 shell 脚本, 即所有用
+用工具按顺序执行 markdown 文档里的所有 shell 脚本, 即, 所有用
 ~~~markdown
 ```shell
 ```
