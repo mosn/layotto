@@ -28,9 +28,13 @@ quickstarts_in_default="docs/en/start/configuration/start.md
   docs/en/start/actuator/start.md
   docs/zh/start/trace/trace.md
   docs/en/start/trace/trace.md
+  docs/en/start/trace/skywalking.md
   docs/zh/start/trace/skywalking.md
+  docs/zh/start/trace/prometheus.md
+  docs/en/start/trace/prometheus.md
   docs/en/start/wasm/start.md
   docs/zh/start/wasm/start.md
+
 "
 
 quickstarts_in_advance="docs/en/start/rpc/dubbo_json_rpc.md
