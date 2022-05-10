@@ -32,13 +32,21 @@ func main() {
 		StoreName: storeName,
 		Key:       "db-user-pass:password",
 	})
+	if resp == nil || len(resp.Data) == 0 {
+		panic("no response data")
+	}
 	fmt.Println(resp)
 
 	//3. get the bulk secret
 	bulkSecrets, err := cli.GetBulkSecret(ctx, &runtimev1pb.GetBulkSecretRequest{
 		StoreName: storeName,
 	})
-
+	if err != nil {
+		panic(err)
+	}
+	if bulkSecrets == nil || len(bulkSecrets.Data) == 0 {
+		panic("no response data")
+	}
 	fmt.Println(bulkSecrets)
 
 }

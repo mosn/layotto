@@ -7,6 +7,7 @@
   - [Use Pub/Sub API](en/start/pubsub/start.md)
   - [Use Distributed Lock API](en/start/lock/start.md)
   - [Use Sequencer API](en/start/sequencer/start.md)
+  - [Use Secret API](en/start/secret/start.md)
   - Service Invocation
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
