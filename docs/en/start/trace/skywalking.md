@@ -37,7 +37,16 @@ docker-compose -f skywalking-docker-compose.yaml up -d
 ````shell
 cd ${project_path}/cmd/layotto_multiple_api/
 go build -o layotto
+```shell @if.not.exist layotto
+# build it
+go build -o layotto
+```
+
+Run it:
+
+```shell @background
 ./layotto start -c ../../configs/config_trace_skywalking.json
+```
 ````
 
 ## Run Demo
@@ -51,7 +60,7 @@ Access http://127.0.0.1:8080
 
 ![](../../../img/trace/sky.png)
 
-## Clearance resources
+## Release resources
 
 ````shell
 cd ${project_path}/diagnostics/skywalking

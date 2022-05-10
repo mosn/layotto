@@ -19,7 +19,16 @@ A layotto server can be started as follows.
 ```shell
 cd ${project_path}/cmd/layotto
 go build -o layotto
-./layotto start -c ../../configs/runtime_config.json
+```shell @if.not.exist layotto
+# build it
+go build -o layotto
+```
+
+Run it:
+
+```shell @background
+./layotto start -c ../../configs/config_trace_skywalking.json
+```
 ```
 
 ## Run Demo
@@ -37,7 +46,7 @@ Access http://127.0.0.1:9090/graph?g0.expr=grpc_request_total
 ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*mEVNSZMvtvEAAAAAAAAAAAAAARQnAQ)
 
 
-## Clearance resources
+Release resources
 
 ````shell
 cd ${project_path}/demo/prometheus
