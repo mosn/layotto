@@ -37,7 +37,7 @@ Access http://127.0.0.1:9090/graph?g0.expr=grpc_request_total
 ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*mEVNSZMvtvEAAAAAAAAAAAAAARQnAQ)
 
 
-## Clearance resources
+Release resources
 
 ````shell
 cd ${project_path}/demo/prometheus
