@@ -19,7 +19,16 @@ docker-compose -f prometheus-docker-compose.yaml up -d
 ```shell
 cd ${project_path}/cmd/layotto
 go build -o layotto
+```shell @if.not.exist layotto
+# build it
+go build -o layotto
+```
+
+运行:
+
+```shell @background
 ./layotto start -c ../../configs/runtime_config.json
+```
 ```
 
 ## 运行 Demo
