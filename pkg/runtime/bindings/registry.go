@@ -41,7 +41,7 @@ type bindingsRegistry struct {
 	info                *info.RuntimeInfo
 }
 
-func NewRegistry(info *info.RuntimeInfo) *bindingsRegistry {
+func NewRegistry(info *info.RuntimeInfo) Registry {
 	info.AddService(ServiceName)
 	return &bindingsRegistry{
 		outputBindingStores: make(map[string]func() bindings.OutputBinding),

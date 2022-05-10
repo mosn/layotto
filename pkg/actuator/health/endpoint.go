@@ -75,7 +75,7 @@ func (e *Endpoint) Handle(ctx context.Context, params actuator.ParamsScanner) (m
 	}
 	// 2. traverse the indicator chain
 	result[status_key] = UP
-	var resultErr error = nil
+	var resultErr error
 	components := make(map[string]Health)
 	result[components_key] = components
 	for k, idc := range m {

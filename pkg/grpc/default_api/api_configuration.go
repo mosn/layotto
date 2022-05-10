@@ -18,7 +18,6 @@ package default_api
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -37,7 +36,7 @@ func (a *api) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigur
 	// check store type supported or not
 	store, ok := a.configStores[req.StoreName]
 	if !ok {
-		return nil, errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
+		return nil, fmt.Errorf("configure store [%+v] don't support now", req.StoreName)
 	}
 	//here protect user use space for sting, eg: " ", "de fault"
 	if strings.ReplaceAll(req.Group, " ", "") == "" {
@@ -48,7 +47,7 @@ func (a *api) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigur
 	}
 	items, err := store.Get(ctx, &configstores.GetRequest{AppId: req.AppId, Group: req.Group, Label: req.Label, Keys: req.Keys, Metadata: req.Metadata})
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("get configuration failed with error: %+v", err))
+		return nil, fmt.Errorf("get configuration failed with error: %+v", err)
 	}
 	for _, item := range items {
 		resp.Items = append(resp.Items, &runtimev1pb.ConfigurationItem{Group: item.Group, Label: item.Label, Key: item.Key, Content: item.Content, Tags: item.Tags, Metadata: item.Metadata})
@@ -60,7 +59,7 @@ func (a *api) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigur
 func (a *api) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfigurationRequest) (*emptypb.Empty, error) {
 	store, ok := a.configStores[req.StoreName]
 	if !ok {
-		return nil, errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
+		return nil, fmt.Errorf("configure store [%+v] don't support now", req.StoreName)
 	}
 	setReq := &configstores.SetRequest{}
 	setReq.AppId = req.AppId
@@ -83,7 +82,7 @@ func (a *api) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfig
 func (a *api) DeleteConfiguration(ctx context.Context, req *runtimev1pb.DeleteConfigurationRequest) (*emptypb.Empty, error) {
 	store, ok := a.configStores[req.StoreName]
 	if !ok {
-		return nil, errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
+		return nil, fmt.Errorf("configure store [%+v] don't support now", req.StoreName)
 	}
 	if strings.ReplaceAll(req.Group, " ", "") == "" {
 		req.Group = store.GetDefaultGroup()
@@ -132,7 +131,7 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 				for _, store := range subscribedStore {
 					store.StopSubscribe()
 				}
-				subErr = errors.New(fmt.Sprintf("configure store [%+v] don't support now", req.StoreName))
+				subErr = fmt.Errorf("configure store [%+v] don't support now", req.StoreName)
 				// stop writer goroutine
 				close(recvExitCh)
 				return

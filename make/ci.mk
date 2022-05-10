@@ -39,13 +39,12 @@ checker.deadlink:
 	@echo "===========> Checking Dead Links"
 	sh ${SCRIPT_DIR}/check-dead-link.sh
 
+QUICKSTART_VERSION ?= default
+
 .PHONY: checker.quickstart
 checker.quickstart:
 	@echo "===========> Checking QuickStart Doc"
-	curl -o ${ROOT_DIR}/mdsh.sh https://raw.githubusercontent.com/seeflood/mdsh/master/bin/mdsh
-	mv ${ROOT_DIR}/mdsh.sh ${SCRIPT_DIR}
-	chmod +x  ${SCRIPT_DIR}/mdsh.sh
-	sh ${SCRIPT_DIR}/test-quickstart.sh
+	sh ${SCRIPT_DIR}/test-quickstart.sh ${QUICKSTART_VERSION}
 
 .PHONY: checker.coverage
 checker.coverage:
