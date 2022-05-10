@@ -8,7 +8,7 @@
 ## 启动 layotto
 
 ````shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
 go build
 ````
 编译成功后执行:
@@ -19,7 +19,7 @@ go build
 ## 运行 Demo
 
 ````shell
-cd ${projectpath}/demo/lock/in-memory/
+cd ${project_path}/demo/lock/in-memory/
  go build -o client
  ./client
 ````
