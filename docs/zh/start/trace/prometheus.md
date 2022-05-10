@@ -33,7 +33,7 @@ go build -o layotto
 ```
 访问 http://127.0.0.1:9090/graph?g0.expr=grpc_request_total
 
-![](../../../img/trace/prometheus.png)
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*mEVNSZMvtvEAAAAAAAAAAAAAARQnAQ)
 
 
 ## 清理资源

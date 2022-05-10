@@ -18,9 +18,10 @@ import (
 	"fmt"
 
 	clientv3 "go.etcd.io/etcd/client/v3"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
-	"mosn.io/pkg/log"
 )
 
 type EtcdSequencer struct {

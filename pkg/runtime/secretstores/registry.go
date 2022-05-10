@@ -19,6 +19,7 @@ package secretstores
 import (
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/pkg/errors"
+
 	"mosn.io/layotto/components/pkg/info"
 )
 

@@ -23,12 +23,13 @@ import (
 	"github.com/dapr/components-contrib/state"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
+
 	"mosn.io/layotto/components/rpc"
 	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	mock_invoker "mosn.io/layotto/pkg/mock/components/invoker"
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
-	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 )
 
 func TestImportsHandler(t *testing.T) {

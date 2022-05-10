@@ -14,12 +14,13 @@
 GO := go
 GO_FMT := gofmt
 GO_IMPORTS := goimports
-GO_MODULE := github.com/mosn.io/layotto
+GO_MODULE := mosn.io/layotto
+VERSION_PACKAGE := main
 
 GO_LDFLAGS += -X $(VERSION_PACKAGE).GitVersion=$(VERSION) \
-	-X $(VERSION_PACKAGE).GitCommit=$(GIT_COMMIT) \
-	-X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE) \
-	-X $(VERSION_PACKAGE).BuildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ') \
+	# -X $(VERSION_PACKAGE).GitCommit=$(GIT_COMMIT) \
+	# -X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE) \
+	# -X $(VERSION_PACKAGE).BuildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ') \
 
 ifeq ($(ROOT_PACKAGE),)
 	$(error the variable ROOT_PACKAGE must be set prior to including golang.mk)
@@ -83,10 +84,12 @@ endif
 
 .PHONY: go.test
 go.test: go.test.verify
-	@echo "===========> Run unit test in cmd"
-	$(GO) test -count=1 -timeout=10m -short -v `go list ./cmd/...`
 	@echo "===========> Run unit test in diagnostics"
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./diagnostics/...`
+	@echo "===========> Run unit test in sdk/go-sdk"
+	@cd sdk/go-sdk && $(GO) test -count=1 -timeout=10m -short -v `go list ./...`
+	@echo "===========> Run unit test in components"
+	@cd components/ && $(GO) test -count=1 -timeout=10m -short -v `go list ./...`
 	@echo "===========> Run unit test in pkg"
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./pkg/...`
 

@@ -18,25 +18,24 @@ package default_api
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
-	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
-	contrib_pubsub "github.com/dapr/components-contrib/pubsub"
 	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+
 	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 
 	"encoding/base64"
 
 	"github.com/dapr/components-contrib/contenttype"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/pkg/messages"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"mosn.io/pkg/log"
 )
 
 // Publishes events to the specific topic.
@@ -72,15 +71,15 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 		data = []byte{}
 	}
 	var envelope map[string]interface{}
-	var err error = nil
-	if contrib_contenttype.IsCloudEventContentType(contentType) {
-		envelope, err = contrib_pubsub.FromCloudEvent(data, topic, pubsubName, "")
+	var err error
+	if contenttype.IsCloudEventContentType(contentType) {
+		envelope, err = pubsub.FromCloudEvent(data, topic, pubsubName, "")
 		if err != nil {
 			err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
 			return &emptypb.Empty{}, err
 		}
 	} else {
-		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", topic, pubsubName,
+		envelope = pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", topic, pubsubName,
 			contentType, data, "")
 	}
 	features := component.Features()
@@ -274,7 +273,7 @@ func retryStrategy(err error, res *runtimev1pb.TopicEventResponse, cloudEvent ma
 			return nil
 		}
 
-		err = errors.New(fmt.Sprintf("error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err))
+		err = fmt.Errorf("error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err)
 		log.DefaultLogger.Debugf("%s", err)
 		// on error from application, return error for redelivery of event
 		return err
@@ -286,13 +285,13 @@ func retryStrategy(err error, res *runtimev1pb.TopicEventResponse, cloudEvent ma
 		// success from protobuf definition
 		return nil
 	case runtimev1pb.TopicEventResponse_RETRY:
-		return errors.New(fmt.Sprintf("RETRY status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string)))
+		return fmt.Errorf("RETRY status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
 	case runtimev1pb.TopicEventResponse_DROP:
 		log.DefaultLogger.Warnf("[runtime]DROP status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
 		return nil
 	}
 	// Consider unknown status field as error and retry
-	return errors.New(fmt.Sprintf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus()))
+	return fmt.Errorf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus())
 }
 
 func listTopicSubscriptions(client runtimev1pb.AppCallbackClient, log log.ErrorLogger) []*runtimev1pb.TopicSubscription {

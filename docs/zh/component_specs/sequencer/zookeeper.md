@@ -28,7 +28,7 @@ docker run --privileged=true -d --name zookeeper --publish 2181:2181  -d zookeep
 ## 启动 layotto
 
 ````shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
 go build
 ````
 
@@ -43,7 +43,7 @@ go build
 ## 运行 Demo
 
 ````shell
-cd ${projectpath}/demo/losequencerck/zookeeper/
+cd ${project_path}/demo/losequencerck/zookeeper/
  go build -o client
  ./client
 ````
