@@ -4,7 +4,7 @@
 
 示例：configs/config_trace_skywalking.json
 
-````json
+```json
 {
   "tracing": {
     "enable": true,
@@ -16,7 +16,7 @@
     }
   }
 }
-````
+```
 
 | 字段 | 必填  | 说明                       |
 | --- |-----|--------------------------|
@@ -26,26 +26,34 @@
 
 ## 运行 skywalking
 
-````shell
-cd diagnostics/skywalking
-
-docker-compose -f skywalking-docker-compose.yaml up -d
-````
+```shell
+docker-compose -f diagnostics/skywalking/skywalking-docker-compose.yaml up -d
+```
 
 ## 运行 layotto
+构建:
 
-````shell
+```shell
 cd cmd/layotto_multiple_api/
+```
+
+```shell @if.not.exist layotto
+# build it
 go build -o layotto
+```
+
+运行:
+
+```shell @background
 ./layotto start -c ../../configs/config_trace_skywalking.json
-````
+```
 
 ## 运行 Demo
 
-````shell
-cd demo/flowControl
+```shell
+cd ${project_path}/demo/flowcontrol
 go run client.go
-````
+```
 
 访问 http://127.0.0.1:8080
 
@@ -53,8 +61,7 @@ go run client.go
 
 ## 清理资源
 
-````shell
-cd diagnostics/skywalking
-
+```shell
+cd ${project_path}/diagnostics/skywalking
 docker-compose -f skywalking-docker-compose.yaml down
-````
+```

@@ -351,7 +351,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 以 helloworld 为例：
 
 ```shell
-cd ${projectpath}/cmd/layotto_multiple_api
+cd ${project_path}/cmd/layotto_multiple_api
 go build -o layotto
 # run it
 ./layotto start -c ../../configs/config_in_memory.json

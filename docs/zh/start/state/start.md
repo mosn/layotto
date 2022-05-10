@@ -45,41 +45,33 @@ docker run -itd --name redis-test -p 6380:6379 redis
 
 ### 第二步：运行Layotto
 
-将项目代码下载到本地后，切换代码目录、编译：
+将项目代码下载到本地后，切换代码目录：
 
 ```shell
 # change directory to ${your project path}/cmd/layotto
 cd cmd/layotto
-go build
+```
+
+构建:
+
+```shell @if.not.exist layotto
+go build -o layotto
 ```
 
 完成后目录下会生成layotto文件，运行它：
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/config_state_redis.json
 ```
 
-<!-- The command below will be run when testing this file 
-```shell
-nohup ./layotto start -c ../../configs/config_state_redis.json &
-```
--->
-
 ### 第三步：运行客户端程序，调用Layotto进行增删改查
-
-<!-- The command below will be run when testing this file 
-```shell
-cd ../../
-# if we should wait for layotto start, we can:
-# sleep 1s 
-```
--->
 
 ```shell
 # open a new terminal tab
 # change directory to ${your project path}/demo/state/redis/
- cd demo/state/redis/
- go run .
+ cd ${project_path}/demo/state/common/
+ go build -o client
+ ./client -s "redis"
 ```
 
 打印出如下信息则代表调用成功：

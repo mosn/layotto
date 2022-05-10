@@ -42,41 +42,33 @@ Parameter Description:
 
 ### step 2. Run Layotto
 
-After downloading the project code to the local, enter the code directory and compile:
+After downloading the project code to the local, change the code directory:
 
 ```shell
 # change directory to ${your project path}/cmd/layotto
 cd cmd/layotto
-go build
+```
+
+and then build layotto:
+
+```shell @if.not.exist layotto
+go build -o layotto
 ```
 
 The layotto file will be generated in the directory, run it:
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/config_state_redis.json
 ```
 
-<!-- The command below will be run when testing this file 
-```shell
-nohup ./layotto start -c ../../configs/config_state_redis.json &
-```
--->
-
 ### step 3. Run the client program, call Layotto to add, delete, modify and query
-
-<!-- 
-```shell
-cd ../../
-# if we should wait for layotto start, we can:
-# sleep 1s 
-```
--->
 
 ```shell
 # open a new terminal tab
-# change directory to ${your project path}/demo/state/redis/
- cd demo/state/redis/
- go run .
+# change directory to ${your project path}/demo/state/common/
+ cd ${project_path}/demo/state/common/
+ go build -o client
+ ./client -s "redis"
 ```
 
 If the following information is printed, the demo succeeded:
@@ -100,11 +92,6 @@ DeleteState succeeded.key:key2
 ```shell
 docker rm -f redis-test
 ```
-<!--
-```shell
-killall layotto
-```
--->
 
 ### Next step
 #### What did this client Demo do?

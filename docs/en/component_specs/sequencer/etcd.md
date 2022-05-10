@@ -31,7 +31,7 @@ default listen address `localhost:2379`
 ## Run layotto
 
 ````shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
 go build
 ````
 >If build reports an error, it can be executed in the root directory of the project `go mod vendor`
@@ -44,7 +44,7 @@ Execute after the compilation is successful:
 ## Run Demo
 
 ````shell
-cd ${projectpath}/demo/sequencer/etcd/
+cd ${project_path}/demo/sequencer/etcd/
  go build -o client
  ./client -s "etcd"
 ````
