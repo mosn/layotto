@@ -29,7 +29,6 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
-	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/pkg/log"
@@ -118,7 +117,7 @@ func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
 		}()
 
 		// init callback client
-		callbackClient, err := grpc.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
+		callbackClient, err := grpc.DialContext(context.Background(), "bufnet", grpc.WithInsecure(), grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
 			return lis.Dial()
 		}))
 		assert.Nil(t, err)

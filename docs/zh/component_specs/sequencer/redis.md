@@ -25,7 +25,7 @@ docker run -itd --name redis-test -p 6379:6379 redis
 ## 启动 layotto
 
 ````shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
 go build
 ````
 >如果 build 报错，可以在项目根目录执行 `go mod vendor`
@@ -38,7 +38,7 @@ go build
 ## 运行 Demo
 
 ````shell
-cd ${projectpath}/demo/sequencer/redis/
+cd ${project_path}/demo/sequencer/redis/
  go build -o client
  ./client
 ````

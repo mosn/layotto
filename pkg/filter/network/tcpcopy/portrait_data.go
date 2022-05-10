@@ -94,7 +94,7 @@ func UploadPortraitData(businessType _type.BusinessType, data interface{}, ctx c
 
 	// Persistent user reported data
 	var dataBytes []byte
-	var err error = nil
+	var err error
 	tmp := make(map[string]string)
 	if _, ok := data.(api.HeaderMap); ok {
 		data.(api.HeaderMap).Range(func(key, value string) bool {

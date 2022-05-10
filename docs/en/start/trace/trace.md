@@ -23,14 +23,26 @@ This configuration can turn on the trace capability of layotto, allowing layotto
 
 You can start a layotto server as follows:
 
+- Build
+```shell
+cd cmd/layotto_multiple_api/
 ```
+
+```shell @if.not.exist layotto
+# build it
+go build -o layotto
+```
+
+- Run it
+
+```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
 
-The corresponding client code is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), running it will call the SayHello API of layotto:
+The corresponding client demo is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), running it will call the SayHello API of layotto:
 
-```
- cd ${projectpath}/demo/flowcontrol/
+```shell
+ cd ${project_path}/demo/flowcontrol/
  go build -o client
  ./client
 ```
@@ -56,9 +68,15 @@ Trace expansion configuration:
 | generator  | String     | SpanId, traceId and other resource generation methods, users can expand by themselves |
 | exporter   | Array      | The way users need to report by trace can be implemented and expanded by themselves   |
 
-### Trace design and expansion
+### Trace mechanism
 
-Overall diagram:
+Tracing in Layotto is mainly to record grpc calls, which relies on two interceptors added in grpc： [UnaryInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go) 、 [StreamInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go)
+
+The interceptor will start tracing every time the grpc method is called, generate traceId spanId, a new context, record the method name, time, and pass the tracing information through the context, and finally export the span information when the method returns.
+
+### More details about the tracing framework
+
+Overall diagram of the tracing framework:
 
 ![img.png](../../../img/trace/structure.png)
 
@@ -66,13 +84,13 @@ Overall diagram:
 
 ```go
 type Span struct {
-StartTime time.Time //The time when the request was received
-EndTime time.Time //Returned time
-traceId string //traceId
-spanId string //spanId
-parentSpanId string // parent spanId
-tags [xprotocol.TRACE_END]string //Expand the field, the component can store its own information in this field
-operationName string
+    StartTime time.Time //The time when the request was received
+    EndTime time.Time //Returned time
+    traceId string //traceId
+    spanId string //spanId
+    parentSpanId string // parent spanId
+    tags [xprotocol.TRACE_END]string //Expand the field, the component can store its own information in this field
+    operationName string
 }
 ```
 
@@ -83,10 +101,10 @@ Unified trace report:
 
 ```go
 type Generator interface {
-GetTraceId(ctx context.Context) string
-GetSpanId(ctx context.Context) string
-GenerateNewContext(ctx context.Context, span api.Span) context.Context
-GetParentSpanId(ctx context.Context) string
+    GetTraceId(ctx context.Context) string
+    GetSpanId(ctx context.Context) string
+    GenerateNewContext(ctx context.Context, span api.Span) context.Context
+    GetParentSpanId(ctx context.Context) string
 }
 ```
 
@@ -97,7 +115,7 @@ You can implement your own Generator, you can refer to the implementation of [Op
 
 ```go
 type Exporter interface {
-ExportSpan(s *Span)
+    ExportSpan(s *Span)
 }
 ```
 
@@ -132,12 +150,6 @@ trace.SetExtraComponentInfo(ctx, fmt.Sprintf("method: %+v, store: %+v", "Get", "
 The results printed by trace are as follows:
 
 ![img.png](../../../img/trace/trace.png)
-
-### Trace mechanism
-
-Tracing in Layotto is mainly to record grpc calls, which relies on two interceptors added in grpc： [UnaryInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go) 、 [StreamInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go)
-
-The interceptor will start tracing every time the grpc method is called, generate traceId spanId, a new context, record the method name, time, and pass the tracing information through the context, and finally export the span information when the method returns.
 
 ## Metric
 

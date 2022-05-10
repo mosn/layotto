@@ -43,7 +43,7 @@ func NewDefaultServer(apis []GrpcAPI, opts ...grpc.ServerOption) (mgrpc.Register
 
 func NewRawGrpcServer(apis []GrpcAPI, opts ...grpc.ServerOption) (*grpc.Server, error) {
 	s := grpc.NewServer(opts...)
-	var err error = nil
+	var err error
 	// loop registering grpc api
 	for _, grpcAPI := range apis {
 		err = grpcAPI.Register(s)
