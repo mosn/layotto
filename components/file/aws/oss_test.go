@@ -35,7 +35,7 @@ const cfg = `[
 			]`
 
 func TestAwsOss_Init(t *testing.T) {
-	oss := NewAwsOss()
+	oss := NewAwsFile()
 	err := oss.Init(context.TODO(), &file.FileConfig{})
 	assert.Equal(t, err.Error(), "invalid config for aws oss")
 	err = oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
@@ -84,7 +84,7 @@ func TestAwsOss_IsAwsMetaValid(t *testing.T) {
 }
 
 func TestAwsOss_Put(t *testing.T) {
-	oss := NewAwsOss()
+	oss := NewAwsFile()
 	err := oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
 	assert.Equal(t, nil, err)
 

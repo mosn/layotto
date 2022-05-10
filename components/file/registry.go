@@ -18,7 +18,6 @@ package file
 
 import (
 	"fmt"
-
 	"mosn.io/layotto/components/pkg/info"
 )
 
@@ -60,6 +59,51 @@ func (r *FileStoreRegistry) Register(fs ...*FileFactory) {
 }
 
 func (r *FileStoreRegistry) Create(name string) (File, error) {
+	if f, ok := r.files[name]; ok {
+		r.info.LoadComponent(ServiceName, name)
+		return f(), nil
+	}
+	return nil, fmt.Errorf("service component %s is not regsitered", name)
+}
+
+type OssRegistry interface {
+	Register(fs ...*OssFactory)
+	Create(name string) (Oss, error)
+}
+
+type OssFactory struct {
+	Name          string
+	FactoryMethod func() Oss
+}
+
+func NewOssFactory(name string, f func() Oss) *OssFactory {
+	return &OssFactory{
+		Name:          name,
+		FactoryMethod: f,
+	}
+}
+
+type OssStoreRegistry struct {
+	files map[string]func() Oss
+	info  *info.RuntimeInfo
+}
+
+func NewOssRegistry(info *info.RuntimeInfo) OssRegistry {
+	info.AddService(ServiceName)
+	return &OssStoreRegistry{
+		files: make(map[string]func() Oss),
+		info:  info,
+	}
+}
+
+func (r *OssStoreRegistry) Register(fs ...*OssFactory) {
+	for _, f := range fs {
+		r.files[f.Name] = f.FactoryMethod
+		r.info.RegisterComponent(ServiceName, f.Name)
+	}
+}
+
+func (r *OssStoreRegistry) Create(name string) (Oss, error) {
 	if f, ok := r.files[name]; ok {
 		r.info.LoadComponent(ServiceName, name)
 		return f(), nil

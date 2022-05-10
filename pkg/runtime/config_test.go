@@ -15,10 +15,10 @@ package runtime
 
 import (
 	"encoding/json"
+	"mosn.io/layotto/components/file/alicloud"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"mosn.io/layotto/components/file/s3/alicloud"
 )
 
 func TestConfig(t *testing.T) {

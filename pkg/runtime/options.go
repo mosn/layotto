@@ -39,6 +39,7 @@ type services struct {
 	configStores  []*configstores.StoreFactory
 	rpcs          []*rpc.Factory
 	files         []*file.FileFactory
+	oss           []*file.OssFactory
 	pubSubs       []*pubsub.Factory
 	states        []*state.Factory
 	locks         []*runtime_lock.Factory
@@ -125,6 +126,12 @@ func WithConfigStoresFactory(configStores ...*configstores.StoreFactory) Option 
 func WithRpcFactory(rpcs ...*rpc.Factory) Option {
 	return func(o *runtimeOptions) {
 		o.services.rpcs = append(o.services.rpcs, rpcs...)
+	}
+}
+
+func WithOssFactory(oss ...*file.OssFactory) Option {
+	return func(o *runtimeOptions) {
+		o.services.oss = append(o.services.oss, oss...)
 	}
 }
 

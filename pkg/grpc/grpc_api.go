@@ -54,6 +54,7 @@ type ApplicationContext struct {
 	PubSubs               map[string]pubsub.PubSub
 	StateStores           map[string]state.Store
 	Files                 map[string]file.File
+	Oss                   map[string]file.Oss
 	LockStores            map[string]lock.LockStore
 	Sequencers            map[string]sequencer.Store
 	SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)

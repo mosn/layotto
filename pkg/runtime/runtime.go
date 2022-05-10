@@ -63,6 +63,7 @@ type MosnRuntime struct {
 	lockRegistry            runtime_lock.Registry
 	sequencerRegistry       runtime_sequencer.Registry
 	fileRegistry            file.Registry
+	ossRegistry             file.OssRegistry
 	bindingsRegistry        mbindings.Registry
 	secretStoresRegistry    msecretstores.Registry
 	customComponentRegistry custom.Registry
@@ -75,6 +76,7 @@ type MosnRuntime struct {
 	// state implementations store here are already initialized
 	states          map[string]state.Store
 	files           map[string]file.File
+	oss             map[string]file.Oss
 	locks           map[string]lock.LockStore
 	sequencers      map[string]sequencer.Store
 	outputBindings  map[string]bindings.OutputBinding
@@ -106,6 +108,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		stateRegistry:           runtime_state.NewRegistry(info),
 		bindingsRegistry:        mbindings.NewRegistry(info),
 		fileRegistry:            file.NewRegistry(info),
+		ossRegistry:             file.NewOssRegistry(info),
 		lockRegistry:            runtime_lock.NewRegistry(info),
 		sequencerRegistry:       runtime_sequencer.NewRegistry(info),
 		secretStoresRegistry:    msecretstores.NewRegistry(info),
@@ -116,6 +119,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		pubSubs:                 make(map[string]pubsub.PubSub),
 		states:                  make(map[string]state.Store),
 		files:                   make(map[string]file.File),
+		oss:                     make(map[string]file.Oss),
 		locks:                   make(map[string]lock.LockStore),
 		sequencers:              make(map[string]sequencer.Store),
 		outputBindings:          make(map[string]bindings.OutputBinding),
@@ -186,6 +190,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		m.pubSubs,
 		m.states,
 		m.files,
+		m.oss,
 		m.locks,
 		m.sequencers,
 		m.sendToOutputBinding,
@@ -249,6 +254,9 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 		return err
 	}
 	if err := m.initFiles(o.services.files...); err != nil {
+		return err
+	}
+	if err := m.initOss(o.services.oss...); err != nil {
 		return err
 	}
 	if err := m.initLocks(o.services.locks...); err != nil {
@@ -378,11 +386,32 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 	return nil
 }
 
+func (m *MosnRuntime) initOss(oss ...*file.OssFactory) error {
+	log.DefaultLogger.Infof("[runtime] init file service")
+
+	// register all oss store services implementation
+	m.ossRegistry.Register(oss...)
+	for name, config := range m.runtimeConfig.Files {
+		c, err := m.ossRegistry.Create(name)
+		if err != nil {
+			m.errInt(err, "create oss component %s failed", name)
+			return err
+		}
+		if err := c.InitConfig(context.TODO(), &config); err != nil {
+			m.errInt(err, "init oss component %s failed", name)
+			return err
+		}
+		m.oss[name] = c
+	}
+	return nil
+}
+
 func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
 	log.DefaultLogger.Infof("[runtime] init file service")
 
 	// register all files store services implementation
 	m.fileRegistry.Register(files...)
+
 	for name, config := range m.runtimeConfig.Files {
 		c, err := m.fileRegistry.Create(name)
 		if err != nil {

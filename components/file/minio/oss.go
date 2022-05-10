@@ -22,13 +22,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mosn.io/layotto/components/file/util"
 	"strconv"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"github.com/minio/minio-go/v7"
 	"mosn.io/layotto/components/file"
-	loss "mosn.io/layotto/components/file/s3"
 )
 
 const (
@@ -87,11 +87,11 @@ func (m *MinioOss) Put(ctx context.Context, st *file.PutFileStu) error {
 	var (
 		size int64 = -1
 	)
-	bucket, err := loss.GetBucketName(st.FileName)
+	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
 		return fmt.Errorf("minioOss put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	key, err := loss.GetFileName(st.FileName)
+	key, err := util.GetFileName(st.FileName)
 	if err != nil {
 		return fmt.Errorf("minioOss put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
@@ -114,11 +114,11 @@ func (m *MinioOss) Put(ctx context.Context, st *file.PutFileStu) error {
 }
 
 func (m *MinioOss) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, error) {
-	bucket, err := loss.GetBucketName(st.FileName)
+	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
 		return nil, fmt.Errorf("minioOss get file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	key, err := loss.GetFileName(st.FileName)
+	key, err := util.GetFileName(st.FileName)
 	if err != nil {
 		return nil, fmt.Errorf("minioOss get file[%s] fail,err: %s", st.FileName, err.Error())
 	}
@@ -134,12 +134,12 @@ func (m *MinioOss) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser,
 }
 
 func (m *MinioOss) List(ctx context.Context, st *file.ListRequest) (*file.ListResp, error) {
-	bucket, err := loss.GetBucketName(st.DirectoryName)
+	bucket, err := util.GetBucketName(st.DirectoryName)
 	marker := ""
 	if err != nil {
 		return nil, fmt.Errorf("MinioOss list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
 	}
-	prefix := loss.GetFilePrefixName(st.DirectoryName)
+	prefix := util.GetFilePrefixName(st.DirectoryName)
 
 	core, err := m.selectClient(st.Metadata)
 	if err != nil {
@@ -164,11 +164,11 @@ func (m *MinioOss) List(ctx context.Context, st *file.ListRequest) (*file.ListRe
 }
 
 func (m *MinioOss) Del(ctx context.Context, st *file.DelRequest) error {
-	bucket, err := loss.GetBucketName(st.FileName)
+	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
 		return fmt.Errorf("minioOss del file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	key, err := loss.GetFileName(st.FileName)
+	key, err := util.GetFileName(st.FileName)
 	if err != nil {
 		return fmt.Errorf("minioOss del file[%s] fail,err: %s", st.FileName, err.Error())
 	}
@@ -180,11 +180,11 @@ func (m *MinioOss) Del(ctx context.Context, st *file.DelRequest) error {
 }
 
 func (m *MinioOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.FileMetaResp, error) {
-	bucket, err := loss.GetBucketName(st.FileName)
+	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
 		return nil, fmt.Errorf("minioOss stat file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	key, err := loss.GetFileName(st.FileName)
+	key, err := util.GetFileName(st.FileName)
 	if err != nil {
 		return nil, fmt.Errorf("minioOss stat file[%s] fail,err: %s", st.FileName, err.Error())
 	}
@@ -205,7 +205,7 @@ func (m *MinioOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.Fi
 	resp.Metadata = make(map[string][]string)
 	resp.LastModified = info.LastModified.String()
 	resp.Size = info.Size
-	resp.Metadata[loss.ETag] = append(resp.Metadata[loss.ETag], info.ETag)
+	resp.Metadata[util.ETag] = append(resp.Metadata[util.ETag], info.ETag)
 	for k, v := range info.Metadata {
 		resp.Metadata[k] = v
 	}

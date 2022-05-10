@@ -21,12 +21,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"mosn.io/layotto/components/file/util"
 	"strconv"
 	"sync"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"mosn.io/layotto/components/file"
-	loss "mosn.io/layotto/components/file/s3"
 )
 
 const (
@@ -84,7 +84,7 @@ func (s *AliCloudOSS) Put(ctx context.Context, st *file.PutFileStu) error {
 	if err != nil {
 		return fmt.Errorf("put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	fileNameWithoutBucket, err := loss.GetFileName(st.FileName)
+	fileNameWithoutBucket, err := util.GetFileName(st.FileName)
 	if err != nil {
 		return fmt.Errorf("put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
@@ -101,7 +101,7 @@ func (s *AliCloudOSS) Get(ctx context.Context, st *file.GetFileStu) (io.ReadClos
 	if err != nil {
 		return nil, fmt.Errorf("get file[%s] fail, err: %s", st.FileName, err.Error())
 	}
-	fileNameWithoutBucket, err := loss.GetFileName(st.FileName)
+	fileNameWithoutBucket, err := util.GetFileName(st.FileName)
 	if err != nil {
 		return nil, fmt.Errorf("get file[%s] fail, err: %s", st.FileName, err.Error())
 	}
@@ -115,7 +115,7 @@ func (s *AliCloudOSS) List(ctx context.Context, request *file.ListRequest) (*fil
 		return nil, fmt.Errorf("list directory[%s] fail, err: %s", request.DirectoryName, err.Error())
 	}
 	resp := &file.ListResp{}
-	prefix := loss.GetFilePrefixName(request.DirectoryName)
+	prefix := util.GetFilePrefixName(request.DirectoryName)
 	object, err := bucket.ListObjectsV2(oss.StartAfter(request.Marker), oss.MaxKeys(int(request.PageSize)), oss.Prefix(prefix))
 	if err != nil {
 		return nil, fmt.Errorf("list directory[%s] fail, err: %s", request.DirectoryName, err.Error())
@@ -141,7 +141,7 @@ func (s *AliCloudOSS) Del(ctx context.Context, request *file.DelRequest) error {
 	if err != nil {
 		return fmt.Errorf("del file[%s] fail, err: %s", request.FileName, err.Error())
 	}
-	fileNameWithoutBucket, err := loss.GetFileName(request.FileName)
+	fileNameWithoutBucket, err := util.GetFileName(request.FileName)
 	if err != nil {
 		return fmt.Errorf("del file[%s] fail, err: %s", request.FileName, err.Error())
 	}
@@ -159,7 +159,7 @@ func (s *AliCloudOSS) Stat(ctx context.Context, request *file.FileMetaRequest) (
 	if err != nil {
 		return nil, fmt.Errorf("stat file[%s] fail, err: %s", request.FileName, err.Error())
 	}
-	fileNameWithoutBucket, err := loss.GetFileName(request.FileName)
+	fileNameWithoutBucket, err := util.GetFileName(request.FileName)
 	if err != nil {
 		return nil, fmt.Errorf("stat file[%s] fail, err: %s", request.FileName, err.Error())
 	}
@@ -223,7 +223,7 @@ func (s *AliCloudOSS) getBucket(fileName string, metaData map[string]string) (*o
 	}
 
 	// get oss bucket
-	bucketName, err := loss.GetBucketName(fileName)
+	bucketName, err := util.GetBucketName(fileName)
 	if err != nil {
 		return nil, err
 	}

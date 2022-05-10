@@ -22,6 +22,11 @@ import (
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
 	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
 	"mosn.io/layotto/components/custom"
+	"mosn.io/layotto/components/file/alicloud"
+	"mosn.io/layotto/components/file/aws"
+	"mosn.io/layotto/components/file/minio"
+	"mosn.io/layotto/components/file/qiniu"
+	"mosn.io/layotto/components/file/tencentcloud"
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
@@ -38,10 +43,6 @@ import (
 	_ "mosn.io/layotto/pkg/wasm"
 
 	"mosn.io/layotto/components/file/local"
-
-	"mosn.io/layotto/components/file/s3/alicloud"
-	"mosn.io/layotto/components/file/s3/aws"
-	"mosn.io/layotto/components/file/s3/minio"
 
 	dbindings "github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/bindings/http"
@@ -118,10 +119,6 @@ import (
 	sequencer_inmemory "mosn.io/layotto/components/sequencer/in-memory"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
-
-	// File
-	"mosn.io/layotto/components/file/s3/qiniu"
-	"mosn.io/layotto/components/file/s3/tencentcloud"
 
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
@@ -238,7 +235,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithFileFactory(
 			file.NewFileFactory("aliOSS", alicloud.NewAliCloudOSS),
 			file.NewFileFactory("minioOSS", minio.NewMinioOss),
-			file.NewFileFactory("awsOSS", aws.NewAwsOss),
+			file.NewFileFactory("awsOSS", aws.NewAwsFile),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
 			file.NewFileFactory("local", local.NewLocalStore),
 			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
@@ -392,9 +389,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithCustomComponentFactory("helloworld",
 			custom.NewComponentFactory("in-memory", component.NewInMemoryHelloWorld),
 			custom.NewComponentFactory("goodbye", component.NewSayGoodbyeHelloWorld),
-		),
-		runtime.WithCustomComponentFactory("extension",
-			custom.NewComponentFactory("s3", s3ext.NewS3Component),
 		),
 	)
 	return server, err

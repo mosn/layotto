@@ -8,44 +8,52 @@ import "google/protobuf/any.proto";
 option go_package = "mosn.io/layotto/spec/proto/extension/v1;s3";
 
 service S3 {
-  rpc GetObject(GetObjectInput) returns (stream GetObjectOutput) {}
+  rpc InitClient(InitRequest) returns (google.protobuf.Empty){}
+  rpc GetObject(GetObjectInput) returns (stream GetObjectOutput){}
   rpc PutObject(stream PutObjectInput) returns(PutObjectOutput){}
+}
+message InitRequest {
+	string store_name = 1;
+	map<string, string> metadata = 2;
 }
 
 message GetObjectInput {
-  string bucket = 1;
-  string expected_bucket_owner = 2;
-  string if_match = 3;
-  string if_modified_since = 4;
-  string if_none_match = 5;
-  string if_unmodified_since = 6;
-  string key = 7;
-  int64  part_number = 8;
-  string range = 9;
-  string request_payer = 10;
-  string response_cache_control = 11;
-  string response_content_disposition = 12;
-  string response_content_encoding = 13;
-  string response_content_language = 14;
-  string response_content_type = 15;
-  string response_expires = 16;
-  string sse_customer_algorithm = 17;
-  string sse_customer_key = 18;
-  string sse_customer_key_md5 = 19;
-  string version_id = 20;
+  string store_name = 1;
+  string bucket = 2;
+  string expected_bucket_owner = 3;
+  string if_match = 4;
+  string if_modified_since = 5;
+  string if_none_match = 6;
+  string if_unmodified_since = 7;
+  string key = 8;
+  int64  part_number = 9;
+  string range = 10;
+  string request_payer = 11;
+  string response_cache_control = 12;
+  string response_content_disposition = 13;
+  string response_content_encoding = 14;
+  string response_content_language = 15;
+  string response_content_type = 16;
+  string response_expires = 17;
+  string sse_customer_algorithm = 18;
+  string sse_customer_key = 19;
+  string sse_customer_key_md5 = 20;
+  string version_id = 21;
 }
+
 
 message GetObjectOutput {
   bytes body = 1;
 }
 
 message PutObjectInput{
-    string acl = 1;
-    bytes body = 2;
-    string bucket = 3;
-    string key = 4;
-    bool bucket_key_enabled = 5;
-    string cache_control = 6;
+    string store_name = 1;
+    string acl = 2;
+    bytes body = 3;
+    string bucket = 4;
+    string key = 5;
+    bool bucket_key_enabled = 6;
+    string cache_control = 7;
 }
 
 message PutObjectOutput{
