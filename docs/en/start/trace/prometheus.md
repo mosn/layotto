@@ -19,7 +19,16 @@ A layotto server can be started as follows.
 ```shell
 cd ${project_path}/cmd/layotto
 go build -o layotto
-./layotto start -c ../../configs/runtime_config.json
+```shell @if.not.exist layotto
+# build it
+go build -o layotto
+```
+
+Run it:
+
+```shell @background
+./layotto start -c ../../configs/config_trace_skywalking.json
+```
 ```
 
 ## Run Demo
