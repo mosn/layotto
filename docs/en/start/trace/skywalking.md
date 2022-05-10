@@ -51,7 +51,7 @@ Access http://127.0.0.1:8080
 
 ![](../../../img/trace/sky.png)
 
-## Clearance resources
+## Release resources
 
 ````shell
 cd ${project_path}/diagnostics/skywalking
