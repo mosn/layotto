@@ -5,14 +5,26 @@ Quickstart 是项目的门面, 如果新用户进入仓库后，发现 Quickstar
 
 但是……定期手动测试 Quickstart、修复文档中的异常，这个过程实在太花时间了：
 
-![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*fTI5RbfAK3gAAAAAAAAAAAAAARQnAQ)
+<img src="https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*fTI5RbfAK3gAAAAAAAAAAAAAARQnAQ" width="30%" height="30%">
 
 烦死了！
 
 我们用工具自动测试文档吧！
 
 ## 原理
-用工具按顺序执行 markdown 文档里的所有 shell 脚本
+用工具按顺序执行 markdown 文档里的所有 shell 脚本, 即, 所有用
+~~~markdown
+```shell
+```
+~~~
+包裹起来的脚本。
+
+注意，不会测试用 
+~~~markdown
+```bash
+```
+~~~
+包裹起来的脚本哦。
 
 ## step 1. 安装 `mdx`
 见 https://github.com/seeflood/mdx#installation
@@ -174,6 +186,8 @@ cd ${project_path}/demo/state/redis/
     cd demo/state/redis/
     go run .
     ```
+### 其他 markdown 注解
+mdx 工具提供了很多"markdown 注解"，帮助您编写"可以运行的 markdown 文件"。感兴趣可以查看[mdx文档](https://github.com/seeflood/mdx#usage)
 
 ### 修复报错，看看效果吧!
 经过一顿修复，我再次运行文档:
@@ -209,6 +223,12 @@ DeleteState succeeded.key:key1
 DeleteState succeeded.key:key2
 redis-test
 ```
+## step 5. 修改 CI,自动测试新写的 quickstart 文档
+如果您新写了一篇 quickstart 文档, 并且自测能正常运行，下一步可以修改 CI，实现"每次有人提 Pull request 时，工具自动测试这篇 quickstart 文档能跑通"。
+
+修改方法是：修改脚本 `etc/script/test-quickstart.sh`，把您的文档添加到其中:
+
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*ZPRlRa7a-0QAAAAAAAAAAAAAARQnAQ)
 
 ## Future work
 - 优化所有 Quickstart 文档，让文档具有"可测性"
