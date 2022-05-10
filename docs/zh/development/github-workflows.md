@@ -186,6 +186,4 @@ Layotto Release Pipeline 流水线主要负责 Layotto 新版本发布以及校�
 > [!TIP|label: 视频内容不一定是最新的]
 > 视频是 2022-04-29 录制，可能录完视频后 workflow 又做了修改，因此最新情况以 workflow 文件和本文档为准.
 
-[comment]: <> (<iframe src="https://www.bilibili.com/video/BV1wY4y1b7a5?t=358.6"></iframe>)
-
 <iframe src="//player.bilibili.com/player.html?high_quality=1&aid=546185355&bvid=BV1wY4y1b7a5&t=358.6&cid=357203402&page=1" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
