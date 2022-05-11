@@ -31,13 +31,11 @@ const (
 
 func TestMySQLSequencer_Init(t *testing.T) {
 
-	db, _, err := sqlmock.New()
+	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-
-	var MySQLUrl = MySQLUrl
 
 	comp := NewMySQLSequencer(log.DefaultLogger)
 
@@ -46,12 +44,16 @@ func TestMySQLSequencer_Init(t *testing.T) {
 		BiggerThan: make(map[string]int64),
 	}
 
-	cfg.Properties["MySQLHost"] = MySQLUrl
-	cfg.BiggerThan["test"] = 1000
+	rows := sqlmock.NewRows([]string{"exists"}).AddRow(0)
+	mock.ExpectQuery("SELECT EXISTS").WillReturnRows(rows)
+	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
 
+	cfg.Properties["tableNameKey"] = "tableName"
+	cfg.Properties["connectionString"] = "connectionString"
+	cfg.Properties["dataBaseName"] = "dataBaseName"
 	err = comp.Init(cfg, db)
 
-	assert.Error(t, err)
+	assert.Nil(t, err)
 }
 
 func TestMySQLSequencer_GetNextId(t *testing.T) {
@@ -69,10 +71,14 @@ func TestMySQLSequencer_GetNextId(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
 	mock.ExpectExec("UPDATE").WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("INSERT INTO").WithArgs("", "sequenceKey", 3).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO").WithArgs("tableName", "sequenceKey", 3).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
+
+	properties["tableName"] = "tableName"
+	properties["connectionString"] = "connectionString"
+	properties["dataBaseName"] = "dataBaseName"
 
 	req := &sequencer.GetNextIdRequest{Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
@@ -103,6 +109,10 @@ func TestMySQLSequencer_GetSegment(t *testing.T) {
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
+
+	properties["tableName"] = "tableName"
+	properties["connectionString"] = "connectionString"
+	properties["dataBaseName"] = "dataBaseName"
 
 	req := &sequencer.GetSegmentRequest{Size: Size, Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 

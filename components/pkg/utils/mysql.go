@@ -15,6 +15,7 @@ package utils
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -62,10 +63,24 @@ func NewMySQLClient(meta MySQLMetadata) error {
 		val.TableName = defaultTableName
 	}
 
-	return tableExists(meta)
+	exists, err := tableExists(val)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		createTable := fmt.Sprintf(`CREATE TABLE %s (
+			sequencer_key VARCHAR(255),
+			sequencer_value INT);`, val.TableName)
+		_, err = meta.Db.Exec(createTable)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-func tableExists(meta MySQLMetadata) error {
+func tableExists(meta MySQLMetadata) (bool, error) {
 	exists := ""
 
 	query := `SELECT EXISTS (
@@ -73,9 +88,5 @@ func tableExists(meta MySQLMetadata) error {
 		) AS 'exists'`
 	err := meta.Db.QueryRow(query, meta.DataBaseName, meta.TableName).Scan(&exists)
 
-	if exists == "1" {
-		return nil
-	} else {
-		return err
-	}
+	return exists == "1", err
 }
