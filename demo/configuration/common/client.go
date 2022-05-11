@@ -32,7 +32,6 @@ import (
 )
 
 const (
-	storeName = "apollo_demo"
 	appid      = "testApplication_yang"
 	group      = "application"
 	writeTimes = 4
