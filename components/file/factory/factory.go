@@ -10,6 +10,9 @@ var mux sync.RWMutex
 
 type S3ClientInit func(staticConf json.RawMessage, DynConf map[string]string) (map[string]interface{}, error)
 
+func init() {
+	initFuncRegistry = make(map[string]S3ClientInit)
+}
 func RegisterInitFunc(name string, f S3ClientInit) {
 	mux.Lock()
 	initFuncRegistry[name] = f
