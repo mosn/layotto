@@ -4,9 +4,9 @@ run :
   modules-download-mode : readonly
   skip-dirs :
     - spec/proto
+    - pkg/mock
   skip-files :
     - .pb.go
-    # - _test.go
 
 
 linters :
@@ -20,16 +20,16 @@ linters :
     - structcheck
     - varcheck
     - typecheck
-    - golint
     - unconvert
     - staticcheck
     - gosimple
     - bodyclose
-    - goimports
     - rowserrcheck
     - goconst
-    - lll
     - gocyclo
+    - revive
+    - goimports
+    # - lll
 
 issues :
   exclude-rules :
@@ -45,8 +45,31 @@ linters-settings :
     min-complexity : 20
   goimports :
     local-prefixes : mosn.io/layotto
-  golint :
-    min-confidence : 0
+  revive:
+    rules:
+      - name: blank-imports
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: if-return
+      - name: increment-decrement
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unreachable-code
+      - name: redefines-builtin-id
+      # - name: var-declaration
+      # - name: context-as-argument
+      # - name: error-naming
+      # - name: exported
+      # - name: unused-parameter
   lll :
     line-length : 120
   errcheck :

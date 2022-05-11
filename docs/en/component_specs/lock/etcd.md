@@ -22,30 +22,31 @@ Steps：
 download etcd from `https://github.com/etcd-io/etcd/releases` （You can also use docker.）
 
 start：
-````shell
+```shell
 ./etcd
-````
+```
 
 default listen address `localhost:2379`
 
 ## Run layotto
 
-````shell
-cd ${projectpath}/cmd/layotto
+```shell
+cd ${project_path}/cmd/layotto
 go build
-````
+```
+
 >If build reports an error, it can be executed in the root directory of the project `go mod vendor`
 
 Execute after the compilation is successful:
-````shell
+```shell @background
 ./layotto start -c ../../configs/config_lock_etcd.json
-````
+```
 
 ## Run Demo
 
-````shell
-cd ${projectpath}/demo/lock/etcd/
+```shell
+cd ${project_path}/demo/lock/etcd/
  go build -o client
  ./client
-````
+```
 

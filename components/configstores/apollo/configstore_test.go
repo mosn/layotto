@@ -42,7 +42,7 @@ type MockRepository struct {
 }
 
 func (a *MockRepository) Connect() error {
-	var err error = nil
+	var err error
 	return err
 }
 

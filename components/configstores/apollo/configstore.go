@@ -19,7 +19,6 @@ package apollo
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -633,5 +632,5 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 		log.DefaultLogger.Errorf("An error occurred when parsing createNamespace response. statusCode: %v ,error: %v", resp.StatusCode, err)
 		return err
 	}
-	return errors.New(fmt.Sprintf("createNamespace error. StatusCode: %v, response body: %s", resp.StatusCode, b))
+	return fmt.Errorf("createNamespace error. StatusCode: %v, response body: %s", resp.StatusCode, b)
 }

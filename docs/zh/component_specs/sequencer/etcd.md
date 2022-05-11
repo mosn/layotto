@@ -32,7 +32,7 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 ## 启动 layotto
 
 ````shell
-cd ${projectpath}/cmd/layotto
+cd ${project_path}/cmd/layotto
 go build
 ````
 >如果 build 报错，可以在项目根目录执行 `go mod vendor`
@@ -45,7 +45,7 @@ go build
 ## 运行 Demo
 
 ````shell
-cd ${projectpath}/demo/sequencer/etcd/
+cd ${project_path}/demo/sequencer/etcd/
  go build -o client
  ./client -s "etcd"
 ````
