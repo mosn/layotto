@@ -32,6 +32,9 @@ func main() {
 		StoreName: storeName,
 		Key:       "db-user-pass:password",
 	})
+	if err != nil {
+		panic(err)
+	}
 	if resp == nil || len(resp.Data) == 0 {
 		panic("no response data")
 	}

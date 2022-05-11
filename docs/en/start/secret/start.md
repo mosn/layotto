@@ -14,8 +14,12 @@ This example shows how to obtain the secret in file, env and k8s through the Lay
 After downloading the project code to the local, switch the code directory and compile:
 
 ```shell
-cd ${projectpath}/cmd/layotto
-go build
+cd ${project_path}/cmd/layotto
+```
+
+build:
+```shell @if.not.exist layotto
+go build -o layotto
 ```
 
 Once finished, the layotto file will be generated in the directory, run it:
@@ -27,8 +31,14 @@ Once finished, the layotto file will be generated in the directory, run it:
 ### Step 2: Run the client program and call Layotto to generate a unique id
 
 ```shell
- cd ${projectpath}/demo/secret/common/
+ cd ${project_path}/demo/secret/common/
+```
+
+```shell @if.not.exist client
  go build -o client
+```
+
+```shell
  ./client -s "local.file"
 ```
 
