@@ -38,6 +38,7 @@ func TestMySQLSequencer_Init(t *testing.T) {
 	defer db.Close()
 
 	comp := NewMySQLSequencer(log.DefaultLogger)
+	comp.db = db
 
 	cfg := sequencer.Configuration{
 		Properties: make(map[string]string),
@@ -51,7 +52,7 @@ func TestMySQLSequencer_Init(t *testing.T) {
 	cfg.Properties["tableNameKey"] = "tableName"
 	cfg.Properties["connectionString"] = "connectionString"
 	cfg.Properties["dataBaseName"] = "dataBaseName"
-	err = comp.Init(cfg, db)
+	err = comp.Init(cfg)
 
 	assert.Nil(t, err)
 }
@@ -71,7 +72,7 @@ func TestMySQLSequencer_GetNextId(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
 	mock.ExpectExec("UPDATE").WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("INSERT INTO").WithArgs("tableName", "sequenceKey", 3).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO").WithArgs("tableName", "sequenceKey", 2).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
@@ -82,7 +83,8 @@ func TestMySQLSequencer_GetNextId(t *testing.T) {
 
 	req := &sequencer.GetNextIdRequest{Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
-	_, err = comp.GetNextId(req, db)
+	comp.db = db
+	_, err = comp.GetNextId(req)
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
@@ -116,7 +118,8 @@ func TestMySQLSequencer_GetSegment(t *testing.T) {
 
 	req := &sequencer.GetSegmentRequest{Size: Size, Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
-	_, _, err = comp.GetSegment(req, db)
+	comp.db = db
+	_, _, err = comp.GetSegment(req)
 	if err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
@@ -142,7 +145,8 @@ func TestMySQLSequencer_Close(t *testing.T) {
 
 	cfg.Properties["MySQLHost"] = MySQLUrl
 
-	_ = comp.Init(cfg, db)
+	comp.db = db
+	_ = comp.Init(cfg)
 
 	comp.Close(db)
 }

@@ -14,7 +14,6 @@
 package mysql
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"mosn.io/layotto/components/pkg/utils"
@@ -26,8 +25,7 @@ type MySQLSequencer struct {
 	metadata   utils.MySQLMetadata
 	biggerThan map[string]int64
 	logger     log.ErrorLogger
-	ctx        context.Context
-	cancel     context.CancelFunc
+	db         *sql.DB
 }
 
 func NewMySQLSequencer(logger log.ErrorLogger) *MySQLSequencer {
@@ -38,20 +36,20 @@ func NewMySQLSequencer(logger log.ErrorLogger) *MySQLSequencer {
 	return s
 }
 
-func (e *MySQLSequencer) Init(config sequencer.Configuration, db *sql.DB) error {
+func (e *MySQLSequencer) Init(config sequencer.Configuration) error {
 
-	m, err := utils.ParseMySQLMetadata(config.Properties, db)
+	m, err := utils.ParseMySQLMetadata(config.Properties)
 
 	if err != nil {
 		return err
 	}
 	e.metadata = m
+	e.metadata.Db = e.db
 	e.biggerThan = config.BiggerThan
 
 	if err = utils.NewMySQLClient(e.metadata); err != nil {
 		return err
 	}
-	e.ctx, e.cancel = context.WithCancel(context.Background())
 
 	if len(e.biggerThan) > 0 {
 		var Key string
@@ -60,7 +58,7 @@ func (e *MySQLSequencer) Init(config sequencer.Configuration, db *sql.DB) error 
 			if bt <= 0 {
 				continue
 			} else {
-				m.Db.QueryRow(fmt.Sprintf("SELECT * FROM %s WHERE sequencer_key = ?", m.TableName), k).Scan(&Key, &Value)
+				m.Db.QueryRow(fmt.Sprintf("SELECT sequencer_key,sequencer_value FROM %s WHERE sequencer_key = ?", m.TableName), k).Scan(&Key, &Value)
 				if Value < bt {
 					return fmt.Errorf("MySQL sequencer error: can not satisfy biggerThan guarantee.key: %s,key in MySQL: %s", k, Key)
 				}
@@ -70,10 +68,10 @@ func (e *MySQLSequencer) Init(config sequencer.Configuration, db *sql.DB) error 
 	return nil
 }
 
-func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest, db *sql.DB) (*sequencer.GetNextIdResponse, error) {
+func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.GetNextIdResponse, error) {
 
-	metadata, err := utils.ParseMySQLMetadata(req.Metadata, db)
-
+	metadata, err := utils.ParseMySQLMetadata(req.Metadata)
+	metadata.Db = e.db
 	var Key string
 	var Value int64
 	if err != nil {
@@ -86,35 +84,35 @@ func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest, db *sql.DB) 
 	}
 
 	err = begin.QueryRow("SELECT sequencer_key,sequencer_value FROM ? WHERE sequencer_key = ?", metadata.TableName, req.Key).Scan(&Key, &Value)
-	if err != nil {
-		return nil, err
+
+	if err == sql.ErrNoRows {
+		Value = 1
+		_, err := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value) VALUES(?,?)", metadata.TableName, req.Key, Value)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		Value += 1
+		_, err := begin.Exec("UPDATE ? SET sequencer_value += 1 WHERE sequencer_key = ?", metadata.TableName, req.Key)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	Value += 1
-	_, err1 := begin.Exec("UPDATE ? SET sequencer_value = ? WHERE sequencer_key = ?", metadata.TableName, Value, req.Key)
-	if err1 != nil {
-		return nil, err1
-	}
-
-	Value += 1
-	if _, err2 := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value) VALUES(?,?)", metadata.TableName, req.Key, Value); err2 != nil {
-		return nil, err2
-	}
-
-	e.Close(metadata.Db)
+	defer e.Close(metadata.Db)
 
 	return &sequencer.GetNextIdResponse{
 		NextId: Value,
 	}, nil
 }
 
-func (e *MySQLSequencer) GetSegment(req *sequencer.GetSegmentRequest, db *sql.DB) (support bool, result *sequencer.GetSegmentResponse, err error) {
+func (e *MySQLSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support bool, result *sequencer.GetSegmentResponse, err error) {
 
 	if req.Size == 0 {
 		return true, nil, nil
 	}
 
-	metadata, err := utils.ParseMySQLMetadata(req.Metadata, db)
+	metadata, err := utils.ParseMySQLMetadata(req.Metadata)
 
 	var Key string
 	var Value int64
@@ -122,27 +120,31 @@ func (e *MySQLSequencer) GetSegment(req *sequencer.GetSegmentRequest, db *sql.DB
 		return false, nil, err
 	}
 
+	metadata.Db = e.db
+
 	begin, err := metadata.Db.Begin()
 	if err != nil {
 		return false, nil, err
 	}
 
 	err = begin.QueryRow("SELECT sequencer_key,sequencer_value FROM ? WHERE sequencer_key = ?", metadata.TableName, req.Key).Scan(&Key, &Value)
-	if err != nil {
-		return false, nil, err
-	}
-	Value += int64(req.Size)
 
-	_, err1 := begin.Exec("UPDATE ? SET sequencer_value = ? WHERE sequencer_key = ?", metadata.TableName, Value, req.Key)
-	if err1 != nil {
-		return false, nil, err1
+	if err == sql.ErrNoRows {
+		Value = int64(req.Size)
+		_, err := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value) VALUES(?,?)", metadata.TableName, req.Key, Value)
+		if err != nil {
+			return false, nil, err
+		}
+
+	} else {
+		Value += int64(req.Size)
+		_, err1 := begin.Exec("UPDATE ? SET sequencer_value = ? WHERE sequencer_key = ?", metadata.TableName, Value, req.Key)
+		if err1 != nil {
+			return false, nil, err1
+		}
 	}
 
-	if _, err2 := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value) VALUES(?,?)", metadata.TableName, req.Key, Value+1); err2 != nil {
-		return false, nil, err2
-	}
-
-	e.Close(metadata.Db)
+	defer e.Close(metadata.Db)
 
 	return false, &sequencer.GetSegmentResponse{
 		From: Value - int64(req.Size) + 1,

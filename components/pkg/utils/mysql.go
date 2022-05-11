@@ -37,7 +37,7 @@ type MySQLMetadata struct {
 	Db               *sql.DB
 }
 
-func ParseMySQLMetadata(properties map[string]string, db *sql.DB) (MySQLMetadata, error) {
+func ParseMySQLMetadata(properties map[string]string) (MySQLMetadata, error) {
 	m := MySQLMetadata{}
 
 	if val, ok := properties[tableNameKey]; ok && val != "" {
@@ -51,7 +51,6 @@ func ParseMySQLMetadata(properties map[string]string, db *sql.DB) (MySQLMetadata
 	if val, ok := properties[dataBaseName]; ok && val != "" {
 		m.DataBaseName = val
 	}
-	m.Db = db
 	return m, nil
 }
 
