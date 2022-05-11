@@ -1,13 +1,14 @@
-package s3
+package factory
 
-import "sync"
+import (
+	"encoding/json"
+	"sync"
+)
 
 var initFuncRegistry map[string]S3ClientInit
 var mux sync.RWMutex
 
-type S3ClientInit interface {
-	Init(staticConf map[string]string, DynConf map[string]string)
-}
+type S3ClientInit func(staticConf json.RawMessage, DynConf map[string]string) (map[string]interface{}, error)
 
 func RegisterInitFunc(name string, f S3ClientInit) {
 	mux.Lock()

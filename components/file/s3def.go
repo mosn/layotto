@@ -12,6 +12,8 @@ type Oss interface {
 	PutObject(context.Context) error
 }
 
+type BaseConfig struct {
+}
 type InitRequest struct {
 	App      string
 	Metadata map[string]string

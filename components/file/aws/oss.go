@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"io"
+	"mosn.io/layotto/components/file/factory"
 	"mosn.io/layotto/components/file/util"
 	"strings"
 
@@ -44,11 +45,56 @@ var (
 	ErrNotSpecifyEndpoint error = errors.New("should specific endpoint in metadata")
 )
 
+func init() {
+	factory.RegisterInitFunc("", AwsDefaultInitFunc)
+}
+func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (map[string]interface{}, error) {
+	m := make([]*AwsOssMetaData, 0)
+	err := json.Unmarshal(staticConf, &m)
+	clients := make(map[string]interface{})
+	if err != nil {
+		return nil, errors.New("invalid config for aws oss")
+	}
+	for _, data := range m {
+		customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+			if region == data.Region {
+				return aws.Endpoint{
+					PartitionID:       "aliyun",
+					URL:               "https://" + data.EndPoint,
+					SigningRegion:     data.Region,
+					HostnameImmutable: true,
+				}, nil
+			}
+			// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
+			return aws.Endpoint{}, &aws.EndpointNotFoundError{}
+		})
+
+		optFunc := []func(options *aws_config.LoadOptions) error{
+			aws_config.WithRegion(data.Region),
+			aws_config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
+				Value: aws.Credentials{
+					AccessKeyID: data.AccessKeyID, SecretAccessKey: data.AccessKeySecret,
+					Source: defaultCredentialsSource,
+				},
+			}),
+			aws_config.WithEndpointResolverWithOptions(customResolver),
+		}
+
+		cfg, err := aws_config.LoadDefaultConfig(context.TODO(), optFunc...)
+		if err != nil {
+			return nil, err
+		}
+		clients[data.EndPoint] = s3.NewFromConfig(cfg)
+	}
+	return clients, nil
+}
+
 // AwsOss is a binding for aws oss storage.
 type AwsOss struct {
-	client map[string]*s3.Client
-	meta   map[string]*AwsOssMetaData
-	method string
+	client  map[string]*s3.Client
+	meta    map[string]*AwsOssMetaData
+	method  string
+	rawData json.RawMessage
 }
 
 // AwsOssMetaData describe a aws-oss instance.
@@ -68,7 +114,6 @@ func NewAwsFile() file.File {
 
 // Init instance by config.
 func (a *AwsOss) Init(ctx context.Context, config *file.FileConfig) error {
-	a.method = config.Method
 	m := make([]*AwsOssMetaData, 0)
 	err := json.Unmarshal(config.Metadata, &m)
 	if err != nil {
@@ -101,7 +146,7 @@ func (a *AwsOss) createOssClient(meta *AwsOssMetaData) (*s3.Client, error) {
 	customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 		if region == meta.Region {
 			return aws.Endpoint{
-				PartitionID:       "aliyun",
+				PartitionID:       "awsoss",
 				URL:               "https://" + meta.EndPoint,
 				SigningRegion:     meta.Region,
 				HostnameImmutable: true,
@@ -320,19 +365,36 @@ func NewAwsOss() file.Oss {
 }
 
 func (a *AwsOss) InitConfig(ctx context.Context, config *file.FileConfig) error {
-	m := make([]*AwsOssMetaData, 0)
-	err := json.Unmarshal(config.Metadata, &m)
-	if err != nil {
-		return errors.New("invalid config for aws oss")
-	}
+	a.method = config.Method
+	a.rawData = config.Metadata
 	return nil
 }
 
-func (a *AwsOss) InitClient(context.Context, *file.InitRequest) error {
+func (a *AwsOss) InitClient(ctx context.Context, req *file.InitRequest) error {
+	initFunc := factory.GetInitFunc(a.method)
+	clients, err := initFunc(a.rawData, req.Metadata)
+	if err != nil {
+		return err
+	}
+	for k, v := range clients {
+		a.client[k] = v.(*s3.Client)
+	}
 	return nil
 }
-func (a *AwsOss) GetObject(context.Context, *file.GetObjectInput) (io.ReadCloser, error) {
-	return nil, nil
+func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (io.ReadCloser, error) {
+	input := &s3.GetObjectInput{
+		Bucket: &req.Bucket,
+		Key:    &req.Key,
+	}
+	client, err := a.selectClient(map[string]string{})
+	if err != nil {
+		return nil, err
+	}
+	ob, err := client.GetObject(context.TODO(), input)
+	if err != nil {
+		return nil, err
+	}
+	return ob.Body, nil
 }
 func (a *AwsOss) PutObject(context.Context) error {
 	return nil
