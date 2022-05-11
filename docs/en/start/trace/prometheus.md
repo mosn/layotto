@@ -45,8 +45,8 @@ Access http://127.0.0.1:9090/graph?g0.expr=grpc_request_total
 
 Release resources
 
-````shell
+```shell
 cd ${project_path}/demo/prometheus
 
 docker-compose -f prometheus-docker-compose.yaml down
-````
+```
