@@ -226,10 +226,36 @@ redis-test
 ## step 5. 修改 CI,自动测试新写的 quickstart 文档
 如果您新写了一篇 quickstart 文档, 并且自测能正常运行，下一步可以修改 CI，实现"每次有人提 Pull request 时，工具自动测试这篇 quickstart 文档能跑通"。
 
-修改方法是：修改脚本 `etc/script/test-quickstart.sh`，把您的文档添加到其中:
+修改方法是：
+
+1. 修改脚本 `etc/script/test-quickstart.sh`，把您的文档添加到其中:
 
 ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*ZPRlRa7a-0QAAAAAAAAAAAAAARQnAQ)
 
-## Future work
-- 优化所有 Quickstart 文档，让文档具有"可测性"
-- 在 CI pipeline 中自动测试所有 Quickstart
+2. 如果需要在文档运行前、运行后自动释放一些资源（比如自动 kill 进程、删除 docker 容器），可以在脚本里添加要释放的资源。举个例子，如果想实现"每次运行完一篇文档后，自动 kill etcd 进程"，可以在脚本中添加:
+
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*0th0Q7yn5MIAAAAAAAAAAAAAARQnAQ)
+
+3. 完成上述改动后，就可以测试新的 CI 了。 
+   
+在项目根目录下运行 
+```shell
+make style.quickstart
+```
+会测试这些文档:
+
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*I7LRSryXwWYAAAAAAAAAAAAAARQnAQ)
+
+> [!TIP|label: 本地运行需谨慎，该脚本会删除一些 docker 容器]
+> 该命令会删除包含图中关键字的 Docker 容器，如果您不希望删除这些容器，还是不要本地运行了：
+> ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*N3CIRb0883kAAAAAAAAAAAAAARQnAQ)
+
+
+而如果运行:
+
+```shell
+make style.quickstart QUICKSTART_VERSION=1.17
+```
+会测试以下文档(这些文档在 golang 1.17 及以上的版本才能运行成功):
+
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*X3F9QJSKq3QAAAAAAAAAAAAAARQnAQ)
