@@ -4,7 +4,7 @@
 
 window用户需要将prometheus.yml中的layotto改成'docker.for.windows.localhost:34903'
 
-![](../../../img/trace/layotto.png)
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*mMAeSa8VQ-UAAAAAAAAAAAAAARQnAQ)
 
 ```shell
 cd ${project_path}/demo/prometheus
