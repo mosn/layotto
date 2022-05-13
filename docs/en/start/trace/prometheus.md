@@ -16,9 +16,13 @@ docker-compose -f prometheus-docker-compose.yaml up -d
 
 A layotto server can be started as follows.
 
-```shell @if.not.exist layotto
+```shell
 cd ${project_path}/cmd/layotto
-# build it
+```
+
+Build it:
+
+```shell @if.not.exist layotto
 go build -o layotto
 ```
 
@@ -34,7 +38,15 @@ The corresponding call-side code is in [client.go](https://github.com/mosn/layot
 
 ```shell
  cd ${project_path}/demo/flowcontrol/
+```
+
+Build the demo client:
+```shell @if.not.exist client
  go build -o client
+```
+
+Run the demo client:
+```shell 
  ./client
 ```
 

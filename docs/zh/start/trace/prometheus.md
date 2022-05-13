@@ -16,9 +16,15 @@ docker-compose -f prometheus-docker-compose.yaml up -d
 
 可以按照如下方式启动一个layotto的server：
 
-```shell @if.not.exist layotto
+切换目录:
+
+```shell
 cd ${project_path}/cmd/layotto
-# build it
+```
+
+构建:
+
+```shell @if.not.exist layotto
 go build -o layotto
 ```
 
@@ -32,11 +38,23 @@ go build -o layotto
 
 对应的调用端代码在[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go) 中，运行它会调用layotto的SayHello接口：
 
+切换目录:
+
 ```shell
  cd ${project_path}/demo/flowcontrol/
+``` 
+
+构建:
+
+```shell @if.not.exist client 
  go build -o client
- ./client
 ```
+运行:
+
+```shell
+./client
+```
+
 访问 http://127.0.0.1:9090/graph?g0.expr=grpc_request_total
 
 ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*mEVNSZMvtvEAAAAAAAAAAAAAARQnAQ)

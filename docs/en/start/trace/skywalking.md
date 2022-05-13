@@ -34,9 +34,12 @@ docker-compose -f skywalking-docker-compose.yaml up -d
 
 ## Run layotto
 
-```shell @if.not.exist layott
+```shell 
 cd ${project_path}/cmd/layotto_multiple_api/
-# build it
+```
+
+Build it:
+```shell @if.not.exist layotto
 go build -o layotto
 ```
 
@@ -49,8 +52,17 @@ Run it:
 ## Run Demo
 
 ```shell
-cd ${project_path}/demo/flowcontrol
-go run client.go
+ cd ${project_path}/demo/flowcontrol/
+```
+
+Build the demo client:
+```shell @if.not.exist client
+ go build -o client
+```
+
+Run the demo client:
+```shell 
+ ./client
 ```
 
 Access http://127.0.0.1:8080
