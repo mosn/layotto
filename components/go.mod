@@ -16,6 +16,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/consul/api v1.3.0
+	github.com/lib/pq v1.0.0
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/minio/minio-go/v7 v7.0.15
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
@@ -36,6 +37,7 @@ require (
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
 	google.golang.org/grpc v1.38.0
+	gopkg.in/yaml.v2 v2.4.0
 	mosn.io/api v0.0.0-20211217011300-b851d129be01
 	mosn.io/mosn v0.25.1-0.20211217125944-69b50c40af81
 	mosn.io/pkg v0.0.0-20211217101631-d914102d1baf
