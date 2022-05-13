@@ -507,7 +507,7 @@ func ExtensionsRegister(_ *cli.Context) {
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
 	trace.RegisterTracerBuilder("SOFATracer", lprotocol.Layotto, diagnostics.NewTracer)
 	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
-	trace.RegisterTracerBuilder("Jaeger", protocol.HTTP1, jaeger.NewHttpJaegerTracer)
+	trace.RegisterTracerBuilder("Jaeger", lprotocol.Layotto, jaeger.NewGrpcJaegerTracer)
 }
 
 func main() {

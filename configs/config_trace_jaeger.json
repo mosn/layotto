@@ -5,14 +5,14 @@
       "default_log_level": "INFO",
       "listeners": [
         {
-          "name": "http",
+          "name": "grpc",
           "address": "0.0.0.0:34904",
           "bind_port": true,
           "filter_chains": [
             {
               "filters": [
                 {
-                  "type": "http",
+                  "type": "grpc",
                   "config": {
                     "server_name": "runtime",
                     "grpc_config": {
@@ -51,7 +51,7 @@
               }
             },
             {
-              "type": "http"
+              "type": "grpc"
             }
           ]
         }
@@ -62,9 +62,10 @@
     "enable": true,
     "driver": "jaeger",
     "config": {
-      "reporter": "http",
-      "backend_service": "127.0.0.1:6831",
-      "service_name": "layotto"
+      "config": {
+        "service_name": "default_sidecar",
+        "agent_host": "127.0.0.1:6831"
+      }
     }
   },
   "metrics": {
