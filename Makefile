@@ -243,7 +243,7 @@ clean:
 ## all: Run format codes, check codes, build Layotto codes for host platform with one command
 # ==============================================================================
 .PHONY: all
-all: format check.style check.unit check.lint build
+all: format check style.quickstart
 
 # ==============================================================================
 # Usage
