@@ -27,6 +27,8 @@ type PostgresqlSequencer struct {
 	cancel context.CancelFunc
 }
 
+var PostgresqlConfigFilePath = "D:\\goTest\\test\\layotto\\components\\sequencer\\postgresql\\conf\\postgresql.yaml"
+
 // NewPostgresqlSequencer returns a new postgresql sequencer
 func NewPostgresqlSequencer(logger log.ErrorLogger) *PostgresqlSequencer {
 	s := &PostgresqlSequencer{
@@ -36,7 +38,11 @@ func NewPostgresqlSequencer(logger log.ErrorLogger) *PostgresqlSequencer {
 }
 
 func (p *PostgresqlSequencer) Init(config sequencer.Configuration) error {
-	s := utils.InitPostgresql()
+	s, err := utils.InitPostgresql(config.Properties)
+	if err != nil {
+		fmt.Println("init config error")
+		return err
+	}
 	for key, value := range p.biggerThan {
 		err := p.client.InitMaxId(p.ctx, key, value, service.DEFAULT_STEP)
 		if err != nil {
@@ -70,9 +76,23 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 	}, nil
 }
 
+// GetSegment 其实该runtime cache 用处不大，因为我系统已经实现双buffer模式了~
 func (p *PostgresqlSequencer) GetSegment(req *sequencer.GetSegmentRequest) (bool, *sequencer.GetSegmentResponse, error) {
 
-	return false, nil, nil
+	if req.Size == 0 {
+		return true, nil, nil
+	}
+
+	by, err := p.client.GetId(p.ctx, req.Key)
+	if err != nil {
+		return true, nil, err
+	}
+	by = by + uint64(req.Size)
+
+	return true, &sequencer.GetSegmentResponse{
+		From: int64(by) - int64(req.Size) + 1,
+		To:   int64(by),
+	}, nil
 }
 
 func (p *PostgresqlSequencer) Close() error {

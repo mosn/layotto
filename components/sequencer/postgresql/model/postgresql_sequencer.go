@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const expiredTime = time.Minute * 15
+const expiredTime = time.Minute * 10
 
 // 全局分配器
 // key: biz_tag value: SegmentBuffer
@@ -46,12 +46,12 @@ func NewPostgresqlSeq() *PostgresqlSeq {
 	return seq
 }
 
-// 清理超过15min没用过的内存
+// 清理超过10min没用过的内存
 func (p *PostgresqlSeq) clear() {
 	for {
 		now := time.Now()
 		// 15分钟后
-		mm, _ := time.ParseDuration("15m")
+		mm, _ := time.ParseDuration("10m")
 		next := now.Add(mm)
 		next = time.Date(next.Year(), next.Month(), next.Day(), next.Hour(), next.Minute(), 0, 0, next.Location())
 		t := time.NewTimer(next.Sub(now))

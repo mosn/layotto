@@ -14,13 +14,18 @@ import (
 	"time"
 )
 
-func main() {
-
+func initMap() map[string]string {
+	vals := make(map[string]string)
+	vals["host"] = "127.0.0.1"
+	vals["port"] = "5432"
+	vals["username"] = "postgres"
+	vals["password"] = "213213"
+	vals["db"] =  "test_db"
+	return vals
 }
-
 func Test_readDB(t *testing.T) {
 	s := &PostgresqlServer{}
-	s.init()
+	s.init(initMap())
 	db := NewPostgresqlClient(s.conf)
 	fmt.Println(db)
 	fmt.Println(time.Now().Unix())
@@ -28,7 +33,7 @@ func Test_readDB(t *testing.T) {
 
 func Test_yaml(t *testing.T) {
 	s := &PostgresqlServer{}
-	s.init()
+	s.init(initMap())
 	fmt.Println(s.conf.Postgresql.Host)
 }
 
@@ -43,7 +48,7 @@ func Test_redisHost(t *testing.T) {
 
 func Test_query(t *testing.T) {
 	s := &PostgresqlServer{}
-	s.init()
+	s.init(initMap())
 	postDB := NewPostgresqlClient(s.conf)
 	sql, err := postDB.Query("select * from layotto_alloc;")
 	if err != nil {

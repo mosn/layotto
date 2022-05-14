@@ -127,6 +127,7 @@ import (
 	sequencer_mongo "mosn.io/layotto/components/sequencer/mongo"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
+	sequencer_postgresql "mosn.io/layotto/components/sequencer/postgresql"
 
 	// File
 	"mosn.io/layotto/components/file/s3/qiniu"
@@ -396,6 +397,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
 				return sequencer_inmemory.NewInMemorySequencer()
+			}),
+			runtime_sequencer.NewFactory("postgresql", func() sequencer.Store {
+				return sequencer_postgresql.NewPostgresqlSequencer(log.DefaultLogger)
 			}),
 		),
 		// secretstores

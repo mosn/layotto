@@ -15,17 +15,44 @@ import (
 	"testing"
 )
 
+type name struct {
+	id uint64
+}
 func Test_connected(t *testing.T) {
 
+	//_ := context.Background()
+
+	vals := initMap()
+
+	_, err := utils.InitPostgresql(vals)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+}
+
+func initMap() map[string]string {
+	vals := make(map[string]string)
+	vals["host"] = "127.0.0.1"
+	vals["port"] = "5432"
+	vals["username"] = "postgres"
+	vals["password"] = "213213"
+	vals["db"] =  "test_db"
+	return vals
 }
 
 func Test_getId(t *testing.T) {
 
 	ctx := context.Background()
-	db := utils.InitPostgresql()
+
+	vals := initMap()
+
+	db, err := utils.InitPostgresql(vals)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 	for i := 1; i < 10; i++ {
-		id, err := db.GetId(ctx, "azh")
+		id, err := db.GetId(ctx, "test")
 
 		if err != nil {
 			panic(err)
@@ -37,7 +64,10 @@ func Test_getId(t *testing.T) {
 
 func Test_map(t *testing.T) {
 	ctx := context.Background()
-	db := utils.InitPostgresql()
+	db, err := utils.InitPostgresql(initMap())
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 	kv := make(map[string]int64)
 	kv["test"] = 1
 	kv["azh"] = 5000
@@ -49,16 +79,20 @@ func Test_map(t *testing.T) {
 	}
 }
 
-func Test_all(t *testing.T) {
-	req := &sequencer.GetNextIdRequest{}
-	req.Key = "azh"
+func Test_Init(t *testing.T)  {
+	// init
 	p := &PostgresqlSequencer{}
 	config := &sequencer.Configuration{}
+	config.Properties = initMap()
 	p.Init(*config)
-	res, err := p.GetNextId(req)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(res)
 
+	// get id
+	req := &sequencer.GetNextIdRequest{}
+	req.Key = "test"
+	id, err := p.GetNextId(req)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println("next id : ", id.NextId)
 }
+
