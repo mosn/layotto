@@ -23,7 +23,7 @@
                         }
                       },
                       "bindings": {
-                        "http_demo": {
+                        "bindings_demo": {
                           "type": "http",
                           "metadata":
                             {

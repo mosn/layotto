@@ -68,7 +68,7 @@
                         }
                       },
                       "bindings": {
-                        "http_demo": {
+                        "bindings_demo": {
                           "type": "http",
                           "metadata": {
                             "url": "https://registry.npmmirror.com/layotto/0.0.0"
@@ -94,7 +94,7 @@
                         }
                       },
                       "sequencer": {
-                        "sequencer_demo": {
+                        "sequencer_demo1": {
                           "type": "etcd",
                           "metadata": {
                             "endpoints": "localhost:2379",
@@ -105,7 +105,7 @@
                             "dialTimeout": "5"
                           }
                         },
-                        "sequencer_demo": {
+                        "sequencer_demo2": {
                           "type": "redis",
                           "metadata": {
                             "redisHost": "127.0.0.1:6380",
@@ -114,7 +114,7 @@
                         }
                       },
                       "lock": {
-                        "lock_demo": {
+                        "lock_demo1": {
                           "type": "etcd",
                           "metadata": {
                             "endpoints": "localhost:2379",
@@ -124,7 +124,7 @@
                             "dialTimeout": "5"
                           }
                         },
-                        "lock_demo": {
+                        "lock_demo2": {
                           "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6380",
