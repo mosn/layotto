@@ -17,13 +17,13 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld_demo": {
+                        "quick_start_demo": {
                           "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "file": {
-                        "minioOSS_demo": {
+                        "file_demo": {
                           "type": "minioOSS",
                           "metadata": [
                             {

@@ -62,7 +62,7 @@
                         }
                       },
                       "hellos": {
-                        "helloworld_demo": {
+                        "quick_start_demo": {
                           "type": "helloworld",
                           "hello": "greeting"
                         }
@@ -76,7 +76,7 @@
                         }
                       },
                       "config_store": {
-                        "etcd_demo": {
+                        "config_demo": {
                           "type": "etcd",
                           "address": [
                             "127.0.0.1:2379"
@@ -85,7 +85,7 @@
                         }
                       },
                       "state": {
-                        "redis_demo": {
+                        "state_demo": {
                           "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6380",
@@ -94,7 +94,7 @@
                         }
                       },
                       "sequencer": {
-                        "etcd_demo": {
+                        "sequencer_demo": {
                           "type": "etcd",
                           "metadata": {
                             "endpoints": "localhost:2379",
@@ -105,7 +105,7 @@
                             "dialTimeout": "5"
                           }
                         },
-                        "redis_demo": {
+                        "sequencer_demo": {
                           "type": "redis",
                           "metadata": {
                             "redisHost": "127.0.0.1:6380",
@@ -114,7 +114,7 @@
                         }
                       },
                       "lock": {
-                        "etcd_demo": {
+                        "lock_demo": {
                           "type": "etcd",
                           "metadata": {
                             "endpoints": "localhost:2379",
@@ -124,7 +124,7 @@
                             "dialTimeout": "5"
                           }
                         },
-                        "redis_demo": {
+                        "lock_demo": {
                           "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6380",
@@ -133,7 +133,7 @@
                         }
                       },
                       "pub_subs": {
-                        "redis_demo": {
+                        "pub_subs_demo": {
                           "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6380",

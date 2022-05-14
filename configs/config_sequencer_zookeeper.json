@@ -22,13 +22,13 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld_demo": {
+                        "quick_start_demo": {
                           "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "sequencer": {
-                        "zookeeper_demo": {
+                        "sequencer_demo": {
                           "type": "zookeeper",
                           "metadata": {
                             "zookeeperHosts": "127.0.0.1",

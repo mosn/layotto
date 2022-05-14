@@ -28,7 +28,7 @@
                         }
                       },
                       "sequencer": {
-                        "redis_demo": {
+                        "sequencer_demo": {
                           "type": "redis",
                           "metadata": {
                             "redisHost": "127.0.0.1:6379",

@@ -29,12 +29,12 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld_demo": {
+                        "quick_start_demo": {
                           "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
-                      "config_store_demo": {
+                      "apollo": {
                         "type": "config_store",
                         "apollo": {
                           "address": [
