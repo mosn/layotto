@@ -19,6 +19,8 @@
   - Flow Control on the 7th layer network
     - [Method Level Flow Control](en/start/stream_filter/flow_control.md)
   - [Observability (trace, metric)](en/start/trace/trace.md)
+    - [Prometheus metrics](en/start/trace/prometheus.md)
+    - [Skywalking trace](en/start/trace/skywalking.md)
   - [Health check and metadata query](en/start/actuator/start.md)
   - [Run business logic in Layotto using WASM](en/start/wasm/start.md)
   - [FaaS model based on WASM and Runtime](en/start/faas/start.md)

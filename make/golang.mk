@@ -62,6 +62,24 @@ go.clean:
 	@echo "===========> Cleaning all build output"
 	@rm -rf $(OUTPUT_DIR)
 	@rm -rf $(ROOT_DIR)/cover.out
+	@rm -f cmd/layotto/layotto
+	@rm -f cmd/layotto/nohup.out
+	@rm -f cmd/layotto_multiple_api/layotto
+	@rm -f cmd/layotto_multiple_api/nohup.out
+	@rm -rf default.etcd/
+	@rm -f demo/configuration/common/client
+	@rm -f demo/file/client
+	@rm -f demo/flowcontrol/client
+	@rm -f demo/lock/redis/client
+	@rm -f demo/pubsub/redis/client/publisher
+	@rm -f demo/pubsub/redis/server/nohup.out
+	@rm -f demo/pubsub/redis/server/subscriber
+	@rm -f demo/sequencer/common/client
+	@rm -f demo/state/common/client
+	@rm -f etc/script/mdx
+	@rm -f etcd
+	@rm -f layotto_wasmer
+	@rm -f nohup.out
 
 .PHONY: go.lint.verify
 go.lint.verify:
