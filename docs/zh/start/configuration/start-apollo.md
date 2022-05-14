@@ -61,7 +61,7 @@ go build -o layotto
 ```
 
 ```shell
- ./client -s "apollo"
+ ./client -s "config_demo"
 ```
 
 打印出如下信息则代表调用成功：

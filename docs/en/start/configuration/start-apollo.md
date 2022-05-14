@@ -53,7 +53,7 @@ The client demo calls Layotto to add, delete, modify, and query configuration
 ```
 
 ```shell
- ./client -s "apollo"
+ ./client -s "config_demo"
 ```
 
 If the following information is printed, the call is successful：
