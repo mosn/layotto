@@ -47,7 +47,7 @@ Run it:
 ```
 
 ```shell
- ./client -s "etcd"
+ ./client -s "etcd_demo"
 ```
 
 If the following information is printed out, it means the client app has done all the CRUD operations successfully：
