@@ -53,7 +53,7 @@ sh etc/script/download_etcd.sh
 # release all resources
 release_resource() {
   # kill processes
-  processes="layotto layotto_wasmer etcd go"
+  processes="layotto layotto_wasmer etcd server client go"
   for key in ${processes}; do
     if killall $key; then
       echo "$key released"
