@@ -47,6 +47,6 @@ go build
 ````shell
 cd ${project_path}/demo/sequencer/etcd/
  go build -o client
- ./client -s "etcd"
+ ./client -s "sequencer_demo"
 ````
 

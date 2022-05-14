@@ -55,7 +55,7 @@ go build -o layotto
 ```
 
 ```shell
- ./client -s "etcd"
+ ./client -s "config_demo"
 ```
 
 打印出如下信息则代表启动完成：
