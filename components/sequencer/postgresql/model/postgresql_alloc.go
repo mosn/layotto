@@ -11,14 +11,14 @@ import (
 )
 
 type PostgresqlAlloc struct {
-	Key        string                 // 也就是`biz_tag`用来区分业务
+	Key        string                 // 也就是biz_tag用来区分业务
 	Step       int32                  // 记录步长
 	CurrentPos int32                  // 当前使用的 segment buffer光标; 总共两个buffer缓存区，循环使用
 	Buffer     []*Segment             // 双buffer 一个作为预缓存作用
 	UpdateTime time.Time              // 记录更新时间 方便长时间不用进行清理，防止占用内存
-	mutex      sync.Mutex             // 互斥锁
+	mutex      sync.Mutex
 	IsPreload  bool                   // 是否正在预加载
-	Waiting    map[string][]chan byte // 挂起等待
+	Waiting    map[string][]chan byte // 挂起等待, buffer加载时的等待
 }
 
 // Segment 号段
@@ -34,7 +34,7 @@ type PostgresqlModel struct {
 	ID          uint64 `json:"id" form:"id"`                   // 主键id
 	BizTag      string `json:"biz_tag" form:"biz_tag"`         // 区分业务
 	MaxID       uint64 `json:"max_id" form:"max_id"`           // 该biz_tag目前所被分配的ID号段的最大值
-	Step        int32  `json:"step" form:"step"`               // 每次分配ID号段长度
+	Step        int32  `json:"step" form:"step"`               // 每次分配ID号段长度，默认为1
 	Description string `json:"description" form:"description"` // 描述
 	UpdateTime  uint64 `json:"update_time" form:"update_time"` // 更新时间
 }
