@@ -5,7 +5,10 @@ Layotto 提供了丰富的命令行工具，方便贡献者开发和测试 Layot
 
 ## 重要开发命令
 
-+ 你可以执行 `make all` 去格式化你的代码，进行风格测试，linter 规范测试，单元测试，以及构建当前平台的二进制文件。
++ 你可以执行 `make all` 去格式化你的代码，进行风格测试，linter 规范测试，单元测试，以及集成测试。但是执行 `make all` 有以下注意事项：
+  + 需要先启动好 docker，以便跑集成测试
+  + 运行 `make all` 会删除包含 "redis skywalking hangzhouzk minio" 这些关键字的容器  
+  + 如果您没装 docker，或者不想删除这些容器，可以执行 `make check` 进行一些不需要 docker 的检查。
 
 + 你也可以执行 `make format` 去格式化你的代码
 
