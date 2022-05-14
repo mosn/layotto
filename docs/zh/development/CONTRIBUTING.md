@@ -22,8 +22,7 @@ Layotto 基于 Apache 2.0 许可发布，遵循标准的 Github 开发流程，�
 4. 添加文档
 5. 进行一些单元测试也会有很大帮助。
 6. 请确保代码覆盖率不会降低。
-7. 确保提交 Pull Request  之前所有的测试能够正确通过
-8. 你可以本地启动好 docker 后，执行 `make all` 去格式化你的代码，进行风格测试，linter 规范测试，单元测试，以及集成测试。但是执行前[请先查看注意事项](zh/development/commands)
+7. 确保提交 Pull Request  之前所有的测试能够正确通过。你可以本地启动好 docker 后，执行 `make all` 去格式化你的代码，进行风格测试，linter 规范测试，单元测试，以及集成测试。但是执行前[请先查看注意事项](zh/development/commands)
 9. 按照 Github 工作流提交 Pull Request  ，并遵循 Pull Request 的规则。
 
 > Layotto 提供了很多方便本地开发的命令行工具，请在[这里](zh/development/commands)进行查阅
