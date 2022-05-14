@@ -28,21 +28,21 @@
                         }
                       },
                       "state": {
-                        "memory_demo": {
+                        "state_demo": {
                           "type": "in-memory",
                           "metadata": {
                           }
                         }
                       },
                       "lock": {
-                        "memory_demo": {
+                        "lock_demo": {
                           "type": "in-memory",
                           "metadata": {
                           }
                         }
                       },
                       "pub_subs": {
-                        "in-memory_demo": {
+                        "pub_subs_demo": {
                           "type": "in-memory",
                           "metadata": {
                             "consumerID": "1"
@@ -50,14 +50,14 @@
                         }
                       },
                       "sequencer": {
-                        "in-memory_demo": {
+                        "sequencer_demo": {
                           "type": "in-memory",
                           "metadata": {}
                         }
                       },
                       "custom_component": {
                         "helloworld": {
-                          "in-memory_demo": {
+                          "custom_component_demo": {
                             "type": "in-memory",
                             "metadata": {}
                           }
