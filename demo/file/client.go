@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	storeName = "minioOSS_demo"
+	storeName = "file_demo"
 )
 
 func TestGet(fileName string) {

@@ -31,7 +31,7 @@ import (
 )
 
 const (
-	storeName = "tencentCloudOSS_demo"
+	storeName = "file_demo"
 )
 
 func TestGet(fileName string) {

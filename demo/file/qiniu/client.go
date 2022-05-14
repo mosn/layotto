@@ -32,7 +32,7 @@ import (
 )
 
 const (
-	storeName = "qiniuOSS_demo"
+	storeName = "file_demo"
 )
 
 func TestGet(fileName string) {

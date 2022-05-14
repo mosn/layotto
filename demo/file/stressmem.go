@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	storeName1 = "aliOSS_demo"
+	storeName1 = "file_demo"
 )
 
 func GetFile(wg *sync.WaitGroup, id int) {

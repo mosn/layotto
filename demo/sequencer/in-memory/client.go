@@ -10,7 +10,7 @@ import (
 
 const (
 	key       = "key666"
-	storeName = "in-memory_demo"
+	storeName = "sequencer_demo"
 )
 
 func main() {
