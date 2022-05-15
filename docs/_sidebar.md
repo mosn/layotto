@@ -7,6 +7,7 @@
   - [Use Pub/Sub API](en/start/pubsub/start.md)
   - [Use Distributed Lock API](en/start/lock/start.md)
   - [Use Sequencer API](en/start/sequencer/start.md)
+  - [Use Secret API](en/start/secret/start.md)
   - Service Invocation
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
@@ -67,6 +68,7 @@
         - [Redis](en/component_specs/sequencer/redis.md)
         - [Zookeeper](en/component_specs/sequencer/zookeeper.md)
         - [MongoDB](en/component_specs/sequencer/mongo.md)
+      - [Secret Store](en/component_specs/secret/common.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
