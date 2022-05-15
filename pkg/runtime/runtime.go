@@ -281,7 +281,7 @@ func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
 			m.errInt(err, "init hello's component %s failed", name)
 			return err
 		}
-		m.hellos[name] = h
+		m.hellos[config.Type] = h
 	}
 	return nil
 }
@@ -300,7 +300,7 @@ func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactor
 			m.errInt(err, "init configstore's component %s failed", name)
 			return err
 		}
-		m.configStores[name] = c
+		m.configStores[config.Type] = c
 	}
 	return nil
 }
@@ -319,7 +319,7 @@ func (m *MosnRuntime) initRpcs(rpcs ...*rpc.Factory) error {
 			m.errInt(err, "init rpc's component %s failed", name)
 			return err
 		}
-		m.rpcs[name] = c
+		m.rpcs[config.Type] = c
 	}
 	return nil
 }
@@ -350,7 +350,7 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 			return err
 		}
 		// register this component
-		m.pubSubs[name] = comp
+		m.pubSubs[config.Type] = comp
 	}
 	return nil
 }
@@ -371,7 +371,7 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 			m.errInt(err, "init state component %s failed", name)
 			return err
 		}
-		m.states[name] = comp
+		m.states[config.Type] = comp
 		// 2.2. save prefix strategy
 		err = runtime_state.SaveStateConfiguration(name, config.Metadata)
 		if err != nil {
@@ -397,7 +397,7 @@ func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
 			m.errInt(err, "init files component %s failed", name)
 			return err
 		}
-		m.files[name] = c
+		m.files[config.Type] = c
 	}
 	return nil
 }
@@ -425,7 +425,7 @@ func (m *MosnRuntime) initLocks(factorys ...*runtime_lock.Factory) error {
 			m.errInt(err, "save lock configuration %s failed", name)
 			return err
 		}
-		m.locks[name] = comp
+		m.locks[config.Type] = comp
 	}
 	return nil
 }
@@ -456,7 +456,7 @@ func (m *MosnRuntime) initSequencers(factorys ...*runtime_sequencer.Factory) err
 			m.errInt(err, "save sequencer configuration %s failed", name)
 			return err
 		}
-		m.sequencers[name] = comp
+		m.sequencers[config.Type] = comp
 	}
 	return nil
 }
@@ -500,7 +500,7 @@ func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFact
 			return err
 		}
 		// 2.3. put it into the runtime component pool
-		m.outputBindings[name] = comp
+		m.outputBindings[config.Type] = comp
 	}
 	return nil
 }
@@ -529,7 +529,7 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFa
 		}
 
 		// 2.3. save runtime related configs
-		m.secretStores[name] = comp
+		m.secretStores[config.Type] = comp
 	}
 	return nil
 }
@@ -605,7 +605,7 @@ func (m *MosnRuntime) initCustomComponents(type2factorys map[string][]*custom.Co
 				return err
 			}
 			// initialization finish
-			m.SetCustomComponent(compType, name, comp)
+			m.SetCustomComponent(compType, config.Type, comp)
 		}
 	}
 	return nil
