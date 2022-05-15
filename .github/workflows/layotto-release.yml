@@ -108,6 +108,16 @@ jobs:
           path: _output/darwin/amd64/layotto
           retention-days: 5
           if-no-files-found: error
+      - name: Compress Artifact
+        run: zip layotto.darwin_amd64.zip layotto
+        working-directory: _output/darwin/amd64
+      - name: Upload Artifact to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: _output/darwin/amd64/layotto.darwin_amd64.zip
+          tag: ${{ github.ref }}
+
 
   build-binary-darwin-arm64-artifact:
     name:  "🧳 Darwin ARM64 Artifact"
@@ -130,6 +140,15 @@ jobs:
           path: _output/darwin/arm64/layotto
           retention-days: 5
           if-no-files-found: error
+      - name: Compress Artifact
+        run: zip layotto.darwin_arm64.zip layotto
+        working-directory: _output/darwin/arm64
+      - name: Upload Artifact to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: _output/darwin/arm64/layotto.darwin_arm64.zip
+          tag: ${{ github.ref }}
 
   build-binary-linux-amd64-artifact:
     name:  "🧳 Linux AMD64 Artifact"
@@ -152,6 +171,15 @@ jobs:
           path: _output/linux/amd64/layotto
           retention-days: 5
           if-no-files-found: error
+      - name: Compress Artifact
+        run: zip layotto.linux_amd64.zip layotto
+        working-directory: _output/linux/amd64
+      - name: Upload Artifact to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: _output/linux/amd64/layotto.linux_amd64.zip
+          tag: ${{ github.ref }}
 
   build-binary-linux-arm64-artifact:
     name:  "🧳 Linux ARM64 Artifact"
@@ -174,6 +202,15 @@ jobs:
           path: _output/linux/arm64/layotto
           retention-days: 5
           if-no-files-found: error
+      - name: Compress Artifact
+        run: zip layotto.linux_arm64.zip layotto
+        working-directory: _output/linux/arm64
+      - name: Upload Artifact to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: _output/linux/arm64/layotto.linux_arm64.zip
+          tag: ${{ github.ref }}
 
   build-wasm-binary-linux-amd64-artifact:
     name:  "🧳 Linux AMD64 WASM Artifact"
@@ -197,6 +234,15 @@ jobs:
       #     path: _output/linux/amd64/layotto
       #     retention-days: 5
       #     if-no-files-found: error
+      # - name: Compress Artifact
+      #   run: zip layotto.wasm.linux_amd64.zip layotto
+      #   working-directory: _output/linux/amd64
+      # - name: Upload Artifact to Release
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: _output/linux/amd64/layotto.wasm.linux_amd64.zip
+      #     tag: ${{ github.ref }}
 
   build-push-wasm-image:
     name:  "🎉 Linux AMD64 WASM Image"
