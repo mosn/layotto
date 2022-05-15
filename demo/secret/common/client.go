@@ -20,7 +20,7 @@ func main() {
 	if storeName == "" {
 		panic("storeName is empty.")
 	}
-	fmt.Println(storeName)
+	fmt.Println("--------------------->" + storeName)
 	cli, err := client.NewClient()
 	if err != nil {
 		panic(err)
