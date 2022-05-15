@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"mosn.io/layotto/sdk/go-sdk/client"
-
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
@@ -21,6 +20,7 @@ func main() {
 	if storeName == "" {
 		panic("storeName is empty.")
 	}
+	fmt.Println(storeName)
 	cli, err := client.NewClient()
 	if err != nil {
 		panic(err)
