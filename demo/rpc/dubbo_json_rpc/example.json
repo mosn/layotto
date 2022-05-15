@@ -33,6 +33,7 @@
                   "grpc_config": {
                     "rpcs": {
                       "mosn": {
+                        "type": "mosn",
                         "config": {
                           "before_invoke": [{
                             "name": "dubbo_json_rpc"
