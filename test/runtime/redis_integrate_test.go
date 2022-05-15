@@ -28,7 +28,7 @@ import (
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
-var componentName = "redis"
+var componentName = "state_demo"
 
 func TestHelloApi(t *testing.T) {
 	cli, err := client.NewClientWithAddress("127.0.0.1:34904")

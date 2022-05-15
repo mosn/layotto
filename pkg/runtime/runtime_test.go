@@ -321,7 +321,7 @@ func TestMosnRuntime_initPubSubsNotExistMetadata(t *testing.T) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		// test initPubSubs
-		err := m.initPubSubs(mpubsub.NewFactory("mock", f))
+		err := m.initPubSubs(mpubsub.NewFactory("pubsub", f))
 		// assert result
 		assert.Nil(t, err)
 	})
