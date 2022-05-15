@@ -307,7 +307,12 @@ func TestMosnRuntime_initPubSubsNotExistMetadata(t *testing.T) {
 
 		cfg := &MosnRuntimeConfig{
 			PubSubManagement: map[string]mpubsub.Config{
-				"mock": {},
+				"mock": {
+					Type: "pubsub",
+					Metadata: map[string]string{
+						"target": "layotto",
+					},
+				},
 			},
 		}
 		// construct MosnRuntime
