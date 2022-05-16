@@ -16,7 +16,6 @@
                   "grpc_config": {
                     "rpcs": {
                       "mosn": {
-                        "type": "mosn",
                         "config": {
                           "channel": [{
                             "size": 16,

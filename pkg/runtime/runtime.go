@@ -310,7 +310,7 @@ func (m *MosnRuntime) initRpcs(rpcs ...*rpc.Factory) error {
 	// register all rpc components
 	m.rpcRegistry.Register(rpcs...)
 	for name, config := range m.runtimeConfig.RpcManagement {
-		c, err := m.rpcRegistry.Create(config.Type)
+		c, err := m.rpcRegistry.Create(name)
 		if err != nil {
 			m.errInt(err, "create rpc's component %s failed", name)
 			return err

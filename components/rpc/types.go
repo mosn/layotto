@@ -72,7 +72,6 @@ type RPCResponse struct {
 }
 
 type RpcConfig struct {
-	Type   string `json:"type"`
 	Config json.RawMessage
 }
 

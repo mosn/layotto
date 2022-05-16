@@ -49,7 +49,6 @@
                     "grpc_config": {
                       "rpcs": {
                         "demo": {
-                          "type": "mosn",
                           "config": {
                             "channel": [
                               {
