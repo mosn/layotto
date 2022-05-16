@@ -369,7 +369,7 @@ func TestMosnRuntime_initRpc(t *testing.T) {
 
 		cfg := &MosnRuntimeConfig{
 			RpcManagement: map[string]rpc.RpcConfig{
-				"mock": {},
+				"rpc": {},
 			},
 		}
 		// construct MosnRuntime
