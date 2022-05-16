@@ -67,7 +67,7 @@ func TestStateApi(t *testing.T) {
 }
 
 func TestLockApi(t *testing.T) {
-	storeName := "lock_state"
+	storeName := "lock_demo"
 	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
@@ -150,7 +150,7 @@ func TestSequencerApi(t *testing.T) {
 
 	for i := 1; i < 10; i++ {
 		resp, err := cli.GetNextId(ctx, &runtimev1pb.GetNextIdRequest{
-			StoreName: componentName,
+			StoreName: "sequencer_demo",
 			Key:       sequencerKey,
 		})
 		assert.Nil(t, err)
