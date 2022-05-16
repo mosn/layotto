@@ -89,17 +89,17 @@
     - [API插件](zh/design/api_plugin/design.md)
     - [支持Dapr API](zh/design/api_plugin/dapr_api.md)
 - 贡献指南
+    - [Layotto 贡献指南](zh/development/CONTRIBUTING.md)
     - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
-    - 文档相关  
+    - 想要贡献文档?  
         - [文档贡献指南](zh/development/contributing-doc.md)
         - [使用工具自动测试 Quickstart 文档](zh/development/test-quickstart.md)
-    - [组件开发指南](zh/development/developing-component.md)
+    - [想要开发新的组件?](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
         - [新增API时的开发规范](zh/development/developing-api.md)
         - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
         - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
-    - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
-    - [Layotto 四大 Github Workflows 指南](zh/development/github-workflows.md)
+    - [Layotto 四大 Github Workflows 说明](zh/development/github-workflows.md)
     - [Layotto 命令行工具指南](zh/development/commands.md)
     - [发布手册](zh/development/release-guide.md)
     - [待解决的问题](zh/development/problems-to-solve.md)
