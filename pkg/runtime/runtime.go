@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"mosn.io/layotto/components/ref"
 	"strings"
 	"time"
 
@@ -70,6 +71,7 @@ type MosnRuntime struct {
 	bindingsRegistry        mbindings.Registry
 	secretStoresRegistry    msecretstores.Registry
 	customComponentRegistry custom.Registry
+	Injector                ref.DefaultInjector
 	// component pool
 	hellos map[string]hello.HelloService
 	// config management system component
@@ -231,13 +233,23 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 		return err
 	}
 	// init all kinds of components with config
+	//init secret & config first
+	if err := m.initSecretStores(o.services.secretStores...); err != nil {
+		return err
+	}
+	if err := m.initConfigStores(o.services.configStores...); err != nil {
+		return err
+	}
+	m.Injector = ref.DefaultInjector{
+		Container: ref.RefContainer{
+			SecretRef: m.secretStores,
+			ConfigRef: m.configStores,
+		},
+	}
 	if err := m.initCustomComponents(o.services.custom); err != nil {
 		return err
 	}
 	if err := m.initHellos(o.services.hellos...); err != nil {
-		return err
-	}
-	if err := m.initConfigStores(o.services.configStores...); err != nil {
 		return err
 	}
 	if err := m.initStates(o.services.states...); err != nil {
@@ -440,6 +452,10 @@ func (m *MosnRuntime) initSequencers(factorys ...*runtime_sequencer.Factory) err
 		comp, err := m.sequencerRegistry.Create(name)
 		if err != nil {
 			m.errInt(err, "create sequencer component %s failed", name)
+			return err
+		}
+		//inject secret to component
+		if err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 			return err
 		}
 		// 2.2. init

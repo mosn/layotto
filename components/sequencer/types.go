@@ -11,9 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package sequencer
 
+import (
+	"mosn.io/layotto/components/ref"
+)
+
 type Config struct {
+	ref.RefConfig
 	BiggerThan map[string]int64  `json:"biggerThan"`
 	Metadata   map[string]string `json:"metadata"`
 }
