@@ -213,6 +213,14 @@ style.quickstart:
 	@$(MAKE) checker.quickstart
 
 # ==============================================================================
+## license: Add license headers for code files.
+# ==============================================================================
+.PHONY: license
+license:
+	# For more details: https://github.com/apache/skywalking-eyes#docker-image
+	docker run -it --rm -v $(pwd):/github/workspace apache/skywalking-eyes header fix
+
+# ==============================================================================
 ## integrate.wasm: Run integration test with wasm.
 # ==============================================================================
 .PHONY: integrate.wasm
