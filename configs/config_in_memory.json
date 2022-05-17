@@ -55,14 +55,6 @@
                           "in-memory": {
                             "metadata": {}
                           }
-                        },
-                        "extension": {
-                          "s3": {
-                            "metadata": {
-                              "ak": "123",
-                              "sk": "456"
-                            }
-                          }
                         }
                       },
                       "app": {
