@@ -149,10 +149,10 @@ func TestStat(fileName string) {
 func CreateBucket(bn string) {
 
 	ctx := context.Background()
-	endpoint := "play.min.io"
-	accessKeyID := "Q3AM3UQ867SPQQA43P2F"
-	secretAccessKey := "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
-	useSSL := true
+	endpoint := "127.0.0.1:9000"
+	accessKeyID := "layotto"
+	secretAccessKey := "layotto_secret"
+	useSSL := false
 
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, &minio.Options{

@@ -15,10 +15,12 @@ package redis
 
 import (
 	"context"
+
 	"github.com/go-redis/redis/v8"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
-	"mosn.io/pkg/log"
 )
 
 type StandaloneRedisSequencer struct {

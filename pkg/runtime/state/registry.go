@@ -18,7 +18,9 @@ package state
 
 import (
 	"fmt"
+
 	"github.com/dapr/components-contrib/state"
+
 	"mosn.io/layotto/components/pkg/info"
 )
 
@@ -36,6 +38,7 @@ type stateRegistry struct {
 	info   *info.RuntimeInfo
 }
 
+// Create a new Registry type variable
 func NewRegistry(info *info.RuntimeInfo) Registry {
 	info.AddService(ServiceName)
 	return &stateRegistry{
@@ -44,6 +47,7 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 	}
 }
 
+// Registration for multiple Factories
 func (r *stateRegistry) Register(fs ...*Factory) {
 	for _, f := range fs {
 		r.stores[f.Name] = f.FactoryMethod
@@ -51,6 +55,7 @@ func (r *stateRegistry) Register(fs ...*Factory) {
 	}
 }
 
+// Loading components for a registered Factory
 func (r *stateRegistry) Create(name string) (state.Store, error) {
 	if f, ok := r.stores[name]; ok {
 		r.info.LoadComponent(ServiceName, name)

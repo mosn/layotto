@@ -18,18 +18,20 @@ package skywalking
 
 import (
 	"context"
-	"mosn.io/layotto/diagnostics/grpc"
 	"time"
+
+	"mosn.io/layotto/diagnostics/grpc"
 
 	"github.com/SkyAPM/go2sky"
 	language_agent "github.com/SkyAPM/go2sky/reporter/grpc/language-agent"
 	"mosn.io/api"
-	ltrace "mosn.io/layotto/components/trace"
-	"mosn.io/layotto/diagnostics/protocol"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/trace"
 	"mosn.io/mosn/pkg/trace/skywalking"
 	"mosn.io/mosn/pkg/types"
+
+	ltrace "mosn.io/layotto/components/trace"
+	"mosn.io/layotto/diagnostics/protocol"
 )
 
 func init() {

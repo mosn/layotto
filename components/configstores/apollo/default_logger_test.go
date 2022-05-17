@@ -17,8 +17,9 @@
 package apollo
 
 import (
-	"mosn.io/pkg/log"
 	"testing"
+
+	"mosn.io/pkg/log"
 )
 
 func TestNewDefaultLogger(t *testing.T) {

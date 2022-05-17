@@ -7,6 +7,7 @@
     - [使用Pub/Sub API](zh/start/pubsub/start.md)
     - [使用分布式锁 API](zh/start/lock/start.md)
     - [使用Sequencer API生成分布式自增id](zh/start/sequencer/start.md)
+    - [使用 Secret API](zh/start/secret/start.md)
     - 进行RPC调用
         - [Hello World](zh/start/rpc/helloworld.md)
         - [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
@@ -22,6 +23,7 @@
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - 可观测性  
         - [Trace, Metrics](zh/start/trace/trace.md)
+        - [Metrics 接入 Prometheus](zh/start/trace/prometheus.md)
         - [Trace 接入 Skywalking](zh/start/trace/skywalking.md)
     - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
@@ -71,6 +73,7 @@
                 - [Redis](zh/component_specs/sequencer/redis.md)
                 - [Zookeeper](zh/component_specs/sequencer/zookeeper.md)
                 - [MongoDB](zh/component_specs/sequencer/mongo.md)
+            - [Secret Store](zh/component_specs/secret/common.md)  
             - [自定义组件](zh/component_specs/custom/common.md)
     - [如何部署、升级 Layotto](zh/operation/)
 - 设计文档
@@ -86,26 +89,31 @@
     - [API插件](zh/design/api_plugin/design.md)
     - [支持Dapr API](zh/design/api_plugin/dapr_api.md)
 - 贡献指南
+    - [Layotto 贡献指南](zh/development/CONTRIBUTING.md)
     - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
-    - 文档相关  
+    - 想要贡献文档?  
         - [文档贡献指南](zh/development/contributing-doc.md)
         - [使用工具自动测试 Quickstart 文档](zh/development/test-quickstart.md)
-    - [组件开发指南](zh/development/developing-component.md)
+    - [想要开发新的组件?](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
         - [新增API时的开发规范](zh/development/developing-api.md)
         - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
         - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
-    - [Layotto贡献者指南](zh/development/CONTRIBUTING.md) 
-    - [解释一下Layotto的github workflow](zh/development/explanation-for-github-workflow.md)
+    - [Layotto 四大 Github Workflows 说明](zh/development/github-workflows.md)
+    - [Layotto 命令行工具指南](zh/development/commands.md)
     - [发布手册](zh/development/release-guide.md)
     - [待解决的问题](zh/development/problems-to-solve.md)
 - 社区
+    - [社区会议](zh/community/meeting.md)
     - [SOFAStack & MOSN 社区角色说明](zh/community/governance.md)
     - [Layotto社区晋升规则](zh/community/promote.md)
     - [Layotto社区成员](zh/community/people.md)
 - 博客
     - [蚂蚁云原生应用运行时的探索和实践 - ArchSummit 上海](zh/blog/exploration-and-practice-of-antcloud-native-application-runtime-archsummit-shanghai.md)
     - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index.md)
-- 演讲视频
-  - [Service Mesh落地之后：为 sidecar 注入灵魂](zh/video/inject-soul-into-sidecar.md)
-  - [MOSN子项目Layotto：开启服务网格+应用运行时新篇章](zh/video/a-new-chapter-in-service-mesh-application-runtime.md)
+    - 源码分析
+        - [启动流程](zh/blog/code/start_process/start_process.md)
+        - [处理 RPC 请求](zh/blog/code/layotto-rpc/index.md)
+        - [7层流量治理，接口限流](zh/blog/code/flowcontrol/flowcontrol_code_analyze.md)
+        - [源码解析 4层流量治理，tcp流量dump](zh/blog/tcpcopy_code_analyze.md)
+- [视频合集](zh/video/README.md)

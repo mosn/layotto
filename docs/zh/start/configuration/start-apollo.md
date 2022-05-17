@@ -15,37 +15,53 @@
 ### 第二步：运行Layotto server 端
 
 将Layotto代码下载到本地
+
 ```bash
 git clone https://github.com/mosn/layotto.git
 ```
 
-切换代码目录、编译：
+切换代码目录：
 
-```bash
-#备注 请将${projectpath}替换成你的项目路径
-cd ${projectpath}/cmd/layotto
-go build
-#备注 如果发现构建失败无法下载,请进行如先设置
-go env -w GOPROXY="https://goproxy.cn,direct"
+```shell
+#备注 请将${project_path}替换成你的项目路径
+cd ${project_path}/cmd/layotto
 ```
+
+构建:
+
+```shell @if.not.exist layotto
+go build -o layotto
+```
+
+> [!TIP|label: 如果发现构建失败、无法下载]
+> 请进行如下设置
+> ```bash
+> go env -w GOPROXY="https://goproxy.cn,direct"
+> ```
 
 完成后目录下会生成layotto文件，运行它：
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/config_apollo.json
 ```
 
->Q: 使用默认配置时，demo启动报错？
->
->A: 默认配置会连接 apollo 的演示服务器，但是演示服务器的配置可能被其他人随意修改。报错可能是因为某些配置被修改了。
+> [!TIP|label: 使用默认配置时，demo启动报错？]
+> 默认配置会连接 apollo 的演示服务器，但是演示服务器的配置可能被其他人随意修改。报错可能是因为某些配置被修改了。
 > 
 > 遇到这种情况，您可以先尝试其他 demo，例如 [etcd demo](zh/start/configuration/start)
+
 ### 第三步：启动客户端Demo，调用Layotto增删改查
 
-```bash
- cd ${projectpath}/demo/configuration/apollo
- go build -o apolloClientDemo
- ./apolloClientDemo
+```shell
+ cd ${project_path}/demo/configuration/common
+```
+
+```shell @if.not.exist client
+ go build -o client
+```
+
+```shell
+ ./client -s "apollo"
 ```
 
 打印出如下信息则代表调用成功：

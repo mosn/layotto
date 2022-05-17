@@ -19,9 +19,10 @@ package wasm
 import (
 	"context"
 	"io/ioutil"
-	"mosn.io/layotto/components/pkg/utils"
 	"net/http"
 	"testing"
+
+	"mosn.io/layotto/components/pkg/utils"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -46,6 +47,7 @@ func TestSayHello(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Request failed, err: %s", err)
 		}
+		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			t.Fatalf("Read body failed, err: %s", err)

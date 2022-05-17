@@ -18,12 +18,14 @@ package strategy
 
 import (
 	"encoding/json"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
-	"mosn.io/mosn/pkg/log"
-	"mosn.io/pkg/utils"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"mosn.io/mosn/pkg/log"
+	"mosn.io/pkg/utils"
+
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
 )
 
 const (
@@ -61,7 +63,7 @@ var (
 	DumpSwitch = true
 
 	// Sampling Flag, 0 means no sampling, 1 means sampling
-	DumpSampleFlag int32 = 0
+	DumpSampleFlag int32
 
 	// cpu fuse threshold
 	DumpCpuMaxRate float64 = defaultCpuMaxRate
@@ -70,10 +72,10 @@ var (
 	DumpMemMaxRate float64 = defaultMemMaxRate
 
 	// Dump Interval
-	DumpInterval int = minInterval
+	DumpInterval = minInterval
 
 	// Single sampling duration
-	DumpDuration int = defaultDuration
+	DumpDuration = defaultDuration
 
 	// Dump uuid
 	DumpSampleUuid = "inituuid"
@@ -81,14 +83,12 @@ var (
 	// Sampling status of different Business
 	DumpBusinessCache = new(sync.Map)
 
-	lock sync.Mutex
-
 	initOnce = new(sync.Once)
 )
 
 //For hot reloading app-level dumpConfig
 func UpdateAppDumpConfig(value string) bool {
-	if "" == value {
+	if value == "" {
 		return false
 	}
 
@@ -197,16 +197,9 @@ func isDumpSwitchOpen() bool {
 
 	app := appDumpConfig.Switch
 	if app == kindOff {
-		if global == kindOn {
-			return true
-		}
-		return false
-	} else {
-		if app == kindOn {
-			return true
-		}
-		return false
+		return global == kindOn
 	}
+	return app == kindOn
 }
 
 func getDumpInterval() int {
@@ -218,9 +211,8 @@ func getDumpInterval() int {
 	app := appDumpConfig.Switch
 	if app == kindOn {
 		return appDumpConfig.Interval
-	} else {
-		return globalDumpConfig.Interval
 	}
+	return globalDumpConfig.Interval
 }
 
 func getDumpDuration() int {
@@ -232,9 +224,8 @@ func getDumpDuration() int {
 	app := appDumpConfig.Switch
 	if app == kindOn {
 		return appDumpConfig.Duration
-	} else {
-		return globalDumpConfig.Duration
 	}
+	return globalDumpConfig.Duration
 }
 
 func getDumpCpuMaxRate() float64 {
@@ -246,9 +237,8 @@ func getDumpCpuMaxRate() float64 {
 	app := appDumpConfig.Switch
 	if app == kindOn {
 		return appDumpConfig.CpuMaxRate
-	} else {
-		return globalDumpConfig.CpuMaxRate
 	}
+	return globalDumpConfig.CpuMaxRate
 }
 
 func getDumpMemMaxRate() float64 {
@@ -260,9 +250,8 @@ func getDumpMemMaxRate() float64 {
 	app := appDumpConfig.Switch
 	if app == kindOn {
 		return appDumpConfig.MemMaxRate
-	} else {
-		return globalDumpConfig.MemMaxRate
 	}
+	return globalDumpConfig.MemMaxRate
 }
 
 func updateSampleFlag() {

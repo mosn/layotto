@@ -26,12 +26,13 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/pkg/common"
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	"mosn.io/layotto/pkg/messages"
 	state2 "mosn.io/layotto/pkg/runtime/state"
-	"mosn.io/pkg/log"
 )
 
 func (d *daprGrpcAPI) SaveState(ctx context.Context, in *dapr_v1pb.SaveStateRequest) (*emptypb.Empty, error) {
@@ -323,10 +324,11 @@ func (d *daprGrpcAPI) ExecuteStateTransaction(ctx context.Context, request *dapr
 }
 
 func (d *daprGrpcAPI) getStateStore(name string) (state.Store, error) {
+	// check if the stateStores exists
 	if d.stateStores == nil || len(d.stateStores) == 0 {
 		return nil, status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
 	}
-
+	// check name
 	if d.stateStores[name] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, name)
 	}
@@ -334,17 +336,22 @@ func (d *daprGrpcAPI) getStateStore(name string) (state.Store, error) {
 }
 
 func StateItem2SetRequest(grpcReq *dapr_common_v1pb.StateItem, key string) *state.SetRequest {
+	// Set the key for the request
 	req := &state.SetRequest{
 		Key: key,
 	}
+	// check if the grpcReq exists
 	if grpcReq == nil {
 		return req
 	}
+	// Assign the value of grpcReq property to req
 	req.Metadata = grpcReq.Metadata
 	req.Value = grpcReq.Value
+	// Check grpcReq.Etag
 	if grpcReq.Etag != nil {
 		req.ETag = &grpcReq.Etag.Value
 	}
+	// Check grpcReq.Options
 	if grpcReq.Options != nil {
 		req.Options = state.SetStateOption{
 			Consistency: StateConsistencyToString(grpcReq.Options.Consistency),
@@ -355,7 +362,9 @@ func StateItem2SetRequest(grpcReq *dapr_common_v1pb.StateItem, key string) *stat
 }
 
 func GetResponse2GetStateResponse(compResp *state.GetResponse) *dapr_v1pb.GetStateResponse {
+	// Initialize an element of type GetStateResponse
 	resp := &dapr_v1pb.GetStateResponse{}
+	// check if the compResp exists
 	if compResp != nil {
 		resp.Etag = common.PointerToString(compResp.ETag)
 		resp.Data = compResp.Data
@@ -365,6 +374,7 @@ func GetResponse2GetStateResponse(compResp *state.GetResponse) *dapr_v1pb.GetSta
 }
 
 func StateConsistencyToString(c dapr_common_v1pb.StateOptions_StateConsistency) string {
+	// check
 	switch c {
 	case dapr_common_v1pb.StateOptions_CONSISTENCY_EVENTUAL:
 		return "eventual"
@@ -375,6 +385,7 @@ func StateConsistencyToString(c dapr_common_v1pb.StateOptions_StateConsistency) 
 }
 
 func StateConcurrencyToString(c dapr_common_v1pb.StateOptions_StateConcurrency) string {
+	// check the StateOptions of StateOptions_StateConcurrency
 	switch c {
 	case dapr_common_v1pb.StateOptions_CONCURRENCY_FIRST_WRITE:
 		return "first-write"
@@ -391,6 +402,7 @@ func (d *daprGrpcAPI) wrapDaprComponentError(err error, format string, args ...i
 	if !ok {
 		return status.Errorf(codes.Internal, format, args...)
 	}
+	// check the Kind of error
 	switch e.Kind() {
 	case state.ETagMismatch:
 		return status.Errorf(codes.Aborted, format, args...)
@@ -425,6 +437,7 @@ func generateGetStateTask(store state.Store, req *state.GetRequest, resultCh cha
 	}
 }
 
+// converting from BulkGetResponse to BulkStateItem
 func BulkGetResponse2BulkStateItem(compResp *state.BulkGetResponse) *dapr_v1pb.BulkStateItem {
 	if compResp == nil {
 		return &dapr_v1pb.BulkStateItem{}
@@ -438,7 +451,9 @@ func BulkGetResponse2BulkStateItem(compResp *state.BulkGetResponse) *dapr_v1pb.B
 	}
 }
 
+// converting from GetResponse to BulkStateItem
 func GetResponse2BulkStateItem(compResp *state.GetResponse, key string) *dapr_v1pb.BulkStateItem {
+	// convert
 	resp := &dapr_v1pb.BulkStateItem{}
 	resp.Key = key
 	if compResp != nil {
@@ -449,7 +464,9 @@ func GetResponse2BulkStateItem(compResp *state.GetResponse, key string) *dapr_v1
 	return resp
 }
 
+// converting from DeleteStateRequest to DeleteRequest
 func DeleteStateRequest2DeleteRequest(grpcReq *dapr_v1pb.DeleteStateRequest, key string) *state.DeleteRequest {
+	// convert
 	req := &state.DeleteRequest{
 		Key: key,
 	}
@@ -469,7 +486,9 @@ func DeleteStateRequest2DeleteRequest(grpcReq *dapr_v1pb.DeleteStateRequest, key
 	return req
 }
 
+// converting from StateItem to DeleteRequest
 func StateItem2DeleteRequest(grpcReq *dapr_common_v1pb.StateItem, key string) *state.DeleteRequest {
+	//convert
 	req := &state.DeleteRequest{
 		Key: key,
 	}

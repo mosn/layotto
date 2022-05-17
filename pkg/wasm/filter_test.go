@@ -17,9 +17,10 @@
 package wasm
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"mosn.io/proxy-wasm-go-host/proxywasm/common"
-	"testing"
 )
 
 func TestMapEncodeAndDecode(t *testing.T) {

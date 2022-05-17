@@ -20,31 +20,37 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 访问 https://github.com/etcd-io/etcd/releases 下载对应操作系统的 etcd（也可用 docker）
 
 下载完成执行命令启动：
-````shell
+
+```shell @background
 ./etcd
-````
+```
 
 默认监听地址为 `localhost:2379`
 
 ### 第二步：运行Layotto
 
-将项目代码下载到本地后，切换代码目录、编译：
+将项目代码下载到本地后，切换代码目录：
 
-```bash
-cd ${projectpath}/cmd/layotto
-go build
+```shell
+cd ${project_path}/cmd/layotto
+```
+
+构建:
+
+```shell @if.not.exist layotto
+go build -o layotto
 ```
 
 完成后目录下会生成layotto文件，运行它：
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/config_sequencer_etcd.json
 ```
 
 ### 第三步：运行客户端程序，调用Layotto生成唯一id
 
-```bash
- cd ${projectpath}/demo/sequencer/common/
+```shell
+ cd ${project_path}/demo/sequencer/common/
  go build -o client
  ./client -s "etcd"
 ```

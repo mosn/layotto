@@ -16,10 +16,12 @@ package zookeeper
 import (
 	"context"
 	"fmt"
+
 	"github.com/go-zookeeper/zk"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
-	"mosn.io/pkg/log"
 )
 
 const maxInt32 = 2147483647
