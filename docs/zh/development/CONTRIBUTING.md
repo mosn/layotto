@@ -1,25 +1,31 @@
-# Layotto 贡献者指南
+# Layotto 贡献指南
 
-Layotto 基于 Apache 2.0 许可发布，遵循标准的 Github 开发流程，使用 Github Issue 跟踪问题并将 Pull Request 合并到 master 分支中。本文档可以帮助你了解如何参与贡献。
+Layotto 基于 Apache 2.0 许可发布，遵循标准的 Github 开发流程，使用 Github Issue 跟踪问题并将 Pull Request 合并到 main 分支中。本文档可以帮助你了解如何参与贡献。
 
-在提交 Pull Request 之前您需要先签署[贡献者许可协议（CLA）](http://cla.sofastack.tech/)。虽然签署 CLA 不会给您授予主存储库的提交权利，但这意味着我们可以接受您的贡献，签署 CLA 后您将成为本项目的荣誉作者。对于活跃的贡献者甚至可以加入我们的核心团队，并具有合并 Pull Request 的权限。
+## 贡献流程
+- 首次提交 Pull Request 后，您需要先签署[贡献者许可协议（CLA）](http://cla.sofastack.tech/mosn)
+- 优化您的 Pull Request，确保能通过自动化测试(CI) 
+  - 如果是首次贡献者，您提交 Pull Request 是没法自动触发 CI 的，需要由项目维护者手动运行 CI. 这是 Github 的默认限制, 但您做过一次贡献、成为 contributor 后，再提新 PR 就能自动触发 CI 了。
+  - CI 的详细说明见 [Layotto GitHub Workflows](zh/development/github-workflows)
+  - 为了方便开发， Layotto 有一套 make 脚本，可以在本地跑检查、跑测试，在本地启动好 docker 后，敲 `make all` 即可，详见[文档说明](zh/development/commands)
+- 由社区维护者来 code review
+  - code review 如果有修改意见，会在 PR 下留言
+  - code review 有两票 approve 后, PR 就可以合并
 
 ## 代码约定
 
 以下对于 Pull Request 的要求并非强制，但是会对您提交 Pull Request 有帮助。
 
-1. 代码格式
-- 命令行方式：在命令行中运行 `goimports -w yourfile.go` 或者 `golint yourfile.go` 格式化代码
-- IDE 方式：使用如 Goland IDE，在 Go->imports 页面中选择 ”Group stdlib imports“ - “Move all stdlib imports in a single group” - “Move all imports in a single declaration”
-- 在运行 CI 测试的时候会检查代码格式，请确保您在提交代码之前已对代码进行格式化
-2. 确保所有新的 `.go` 文件都具有简单的 doc 类注释，其中至少包含一个 `author` 标记标识您，并且最好至少包含一个有关该类用途的段落。
+1. 代码格式规范: 你只需要执行 `make format` 去格式化你的代码。
+2. 确保所有新的 `.go` 文件都具有简单的 doc 类注释
 3. 将 Apache Software Foundation 许可证标头注释添加到所有新的 `.go` 文件（可以从项目中的现有文件复制）
-4. 将您自己添加为您实质修改的 `.go` 文件的作者（不仅仅是外观更改）。
-5. 添加文档
-6. 进行一些单元测试也会有很大帮助。
-7. 编写提交消息时，请遵循[该约定](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html) ，如果要解决现有问题，请在提交消息的末尾添加 “Fixes gh-XXXX”（其中 XXXX 是 issue 编号）。
-8. 请确保代码覆盖率不会降低。
-9. 将 PR 作为 Gitflow 工作流程的规则，并遵循 Pull Request 的规则。
+4. 添加文档
+5. 进行一些单元测试也会有很大帮助。
+6. 请确保代码覆盖率不会降低。
+7. 确保提交 Pull Request  之前所有的测试能够正确通过。你可以本地启动好 docker 后，执行 `make all` 去格式化你的代码，进行风格测试，linter 规范测试，单元测试，以及集成测试。但是执行前[请先查看注意事项](zh/development/commands)
+9. 按照 Github 工作流提交 Pull Request  ，并遵循 Pull Request 的规则。
+
+> Layotto 提供了很多方便本地开发的命令行工具，请在[这里](zh/development/commands)进行查阅
 
 ## 版本命名约定
 

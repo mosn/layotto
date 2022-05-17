@@ -14,10 +14,11 @@
 package wasm
 
 import (
-	"mosn.io/pkg/utils"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"mosn.io/pkg/utils"
 
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/log"
@@ -169,7 +170,7 @@ func fileExist(file string) bool {
 
 // Check the file suffix of wasm
 func pathIsWasmFile(fullPath string) bool {
-	for path, _ := range configs {
+	for path := range configs {
 		if strings.HasSuffix(fullPath, path) {
 			return true
 		}

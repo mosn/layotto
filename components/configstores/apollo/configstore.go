@@ -19,18 +19,19 @@ package apollo
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
-	"mosn.io/layotto/components/pkg/actuators"
 	"net/http"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
-	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/pkg/actuators"
+
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/configstores"
 )
 
 var (
@@ -279,7 +280,7 @@ func (c *ConfigStore) Set(ctx context.Context, req *configstores.SetRequest) err
 		return err
 	}
 	// 4. commit kv namespace
-	for g, _ := range groupMap {
+	for g := range groupMap {
 		err := c.commit(c.env, req.AppId, c.kvConfig.cluster, g)
 		if err != nil {
 			return err
@@ -631,5 +632,5 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 		log.DefaultLogger.Errorf("An error occurred when parsing createNamespace response. statusCode: %v ,error: %v", resp.StatusCode, err)
 		return err
 	}
-	return errors.New(fmt.Sprintf("createNamespace error. StatusCode: %v, response body: %s", resp.StatusCode, b))
+	return fmt.Errorf("createNamespace error. StatusCode: %v, response body: %s", resp.StatusCode, b)
 }

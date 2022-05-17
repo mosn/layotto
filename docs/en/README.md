@@ -2,10 +2,11 @@
   <h1>Layotto (L8): To be the next layer of OSI layer 7</h1>
   <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
 
+[![Layotto Env Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml)
+[![Layotto Dev Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml)
+
 [![GoDoc](https://godoc.org/mosn.io/layotto?status.svg)](https://godoc.org/mosn.io/layotto)
-[![Build Status](https://img.shields.io/github/workflow/status/mosn/layotto/test?branch=master)](https://github.com/mosn/layotto/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mosn/layotto)](https://goreportcard.com/report/mosn.io/layotto)
-[![CodeQL](https://github.com/mosn/layotto/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/codeql-analysis.yml)
 [![codecov](https://codecov.io/gh/mosn/layotto/branch/main/graph/badge.svg?token=10RxwSV6Sz)](https://codecov.io/gh/mosn/layotto)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mosn/layotto.svg)](http://isitmaintained.com/project/mosn/layotto "Average time to resolve an issue")
 
@@ -139,23 +140,33 @@ In order to help everyone better participate in open source projects, our commun
 
 [Component Development Guide](en/development/developing-component.md)
 
-[Explanation for github workflow](en/development/explanation-for-github-workflow.md)
+[Layotto Github Workflows](en/development/github-workflows.md)
+
+[Layotto Commands Guide](en/development/commands.md)
 
 [Layotto contributor guide](en/development/CONTRIBUTING.md)
+
+## Contributors
+
+Thank y'all!
+
+<a href="https://github.com/mosn/layotto/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mosn/layotto" />
+</a>
 
 ## Design Documents
 
 [Actuator Design Doc](en/design/actuator/actuator-design-doc.md)
 
-[configuration-api-with-apollo](en/design/configuration/configuration-api-with-apollo.md)
+[Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
 
-[pubsub-api-and-compability-with-dapr-component](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+[Pubsub API and Compability with Dapr Component](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
 
-[rpc-design-doc](en/design/rpc/rpc-design-doc.md)
+[RPC Design Doc](en/design/rpc/rpc-design-doc.md)
 
-[distributed-lock-api-design](en/design/lock/lock-api-design.md)
+[Distributed Lock API Design](en/design/lock/lock-api-design.md)
 
-[FaaS design](en/design/faas/faas-poc-design.md)
+[FaaS Design](en/design/faas/faas-poc-design.md)
 
 ## FAQ
 

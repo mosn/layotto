@@ -18,11 +18,13 @@ package persistence
 
 import (
 	"fmt"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
-	_type "mosn.io/layotto/pkg/filter/network/tcpcopy/type"
-	"mosn.io/mosn/pkg/log"
 	"testing"
 	"time"
+
+	"mosn.io/mosn/pkg/log"
+
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
+	_type "mosn.io/layotto/pkg/filter/network/tcpcopy/type"
 )
 
 func TestNewDefaultWorkPool(t *testing.T) {
@@ -34,39 +36,39 @@ func TestNewDefaultWorkPool(t *testing.T) {
 
 	go func() {
 		for i := 0; i < 5; i++ {
-			model_1 := model.NewDumpUploadDynamicConfig("uuid_1", _type.RPC, "12200", nil, "1s")
-			model_2 := model.NewDumpUploadDynamicConfig("uuid_2", _type.RPC, "12200", nil, "2s")
-			model_3 := model.NewDumpUploadDynamicConfig("uuid_3", _type.RPC, "12200", nil, "3s")
+			model1 := model.NewDumpUploadDynamicConfig("uuid_1", _type.RPC, "12200", nil, "1s")
+			model2 := model.NewDumpUploadDynamicConfig("uuid_2", _type.RPC, "12200", nil, "2s")
+			model3 := model.NewDumpUploadDynamicConfig("uuid_3", _type.RPC, "12200", nil, "3s")
 			go func() {
-				workPool.Schedule(model_1)
-				workPool.Schedule(model_2)
-				workPool.Schedule(model_3)
+				workPool.Schedule(model1)
+				workPool.Schedule(model2)
+				workPool.Schedule(model3)
 			}()
 		}
 	}()
 
 	go func() {
 		for i := 0; i < 5; i++ {
-			model_4 := model.NewDumpUploadDynamicConfig("uuid_4", _type.RPC, "12200", nil, "4s")
-			model_5 := model.NewDumpUploadDynamicConfig("uuid_5", _type.RPC, "12200", nil, "5s")
-			model_6 := model.NewDumpUploadDynamicConfig("uuid_6", _type.RPC, "12200", nil, "6s")
+			model4 := model.NewDumpUploadDynamicConfig("uuid_4", _type.RPC, "12200", nil, "4s")
+			model5 := model.NewDumpUploadDynamicConfig("uuid_5", _type.RPC, "12200", nil, "5s")
+			model6 := model.NewDumpUploadDynamicConfig("uuid_6", _type.RPC, "12200", nil, "6s")
 			go func() {
-				workPool.Schedule(model_4)
-				workPool.Schedule(model_5)
-				workPool.Schedule(model_6)
+				workPool.Schedule(model4)
+				workPool.Schedule(model5)
+				workPool.Schedule(model6)
 			}()
 		}
 	}()
 
 	go func() {
 		for i := 0; i < 5; i++ {
-			model_7 := model.NewDumpUploadDynamicConfig("uuid_7", _type.CONFIGURATION, "12200", nil, "7s")
-			model_8 := model.NewDumpUploadDynamicConfig("uuid_8", _type.CONFIGURATION, "12200", nil, "8s")
-			model_9 := model.NewDumpUploadDynamicConfig("uuid_9", _type.CONFIGURATION, "12200", nil, "9s")
+			model7 := model.NewDumpUploadDynamicConfig("uuid_7", _type.CONFIGURATION, "12200", nil, "7s")
+			model8 := model.NewDumpUploadDynamicConfig("uuid_8", _type.CONFIGURATION, "12200", nil, "8s")
+			model9 := model.NewDumpUploadDynamicConfig("uuid_9", _type.CONFIGURATION, "12200", nil, "9s")
 			go func() {
-				workPool.Schedule(model_7)
-				workPool.Schedule(model_8)
-				workPool.Schedule(model_9)
+				workPool.Schedule(model7)
+				workPool.Schedule(model8)
+				workPool.Schedule(model9)
 			}()
 		}
 	}()

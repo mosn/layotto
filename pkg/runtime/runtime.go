@@ -20,13 +20,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/dapr/components-contrib/secretstores"
-	"mosn.io/layotto/components/custom"
-	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
 	"strings"
 	"time"
 
+	"github.com/dapr/components-contrib/secretstores"
+
+	"mosn.io/layotto/components/custom"
+	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
+
 	"github.com/dapr/components-contrib/bindings"
+
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
 
 	"mosn.io/layotto/components/file"
@@ -34,6 +37,9 @@ import (
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/state"
 	rawGRPC "google.golang.org/grpc"
+	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
@@ -45,8 +51,6 @@ import (
 	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
-	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
-	"mosn.io/pkg/log"
 )
 
 type MosnRuntime struct {
@@ -183,19 +187,19 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	// 2. init GrpcAPI stage
 	var apis []grpc.GrpcAPI
 	ac := &grpc.ApplicationContext{
-		m.runtimeConfig.AppManagement.AppId,
-		m.hellos,
-		m.configStores,
-		m.rpcs,
-		m.pubSubs,
-		m.states,
-		m.files,
-		m.oss,
-		m.locks,
-		m.sequencers,
-		m.sendToOutputBinding,
-		m.secretStores,
-		m.customComponent,
+		AppId:                 m.runtimeConfig.AppManagement.AppId,
+		Hellos:                m.hellos,
+		ConfigStores:          m.configStores,
+		Rpcs:                  m.rpcs,
+		PubSubs:               m.pubSubs,
+		StateStores:           m.states,
+		Files:                 m.files,
+		Oss:                   m.oss,
+		LockStores:            m.locks,
+		Sequencers:            m.sequencers,
+		SendToOutputBindingFn: m.sendToOutputBinding,
+		SecretStores:          m.secretStores,
+		CustomComponent:       m.customComponent,
 	}
 
 	for _, apiFactory := range o.apiFactorys {
@@ -212,7 +216,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		grpc.WithGrpcAPIs(apis),
 	)
 	// 3. create grpc server
-	var err error = nil
+	var err error
 	m.srv, err = grpc.NewGrpcServer(grpcOpts...)
 	return m.srv, err
 }
@@ -268,10 +272,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initInputBinding(o.services.inputBinding...); err != nil {
 		return err
 	}
-	if err := m.initSecretStores(o.services.secretStores...); err != nil {
-		return err
-	}
-	return nil
+	return m.initSecretStores(o.services.secretStores...)
 }
 
 func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
@@ -346,6 +347,9 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 		// check consumerID
 		consumerID := strings.TrimSpace(config.Metadata["consumerID"])
 		if consumerID == "" {
+			if config.Metadata == nil {
+				config.Metadata = make(map[string]string)
+			}
 			config.Metadata["consumerID"] = m.runtimeConfig.AppManagement.AppId
 		}
 		// init this component with the config

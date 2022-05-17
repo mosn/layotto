@@ -18,6 +18,8 @@ package runtime
 
 import (
 	"google.golang.org/grpc"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/file"
@@ -30,7 +32,6 @@ import (
 	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	"mosn.io/layotto/pkg/runtime/state"
-	"mosn.io/pkg/log"
 )
 
 // services encapsulates the service to include in the runtime

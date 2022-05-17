@@ -44,7 +44,7 @@ type Details = map[string]interface{}
 
 func NewDetails() Details {
 	m := make(map[string]interface{})
-	return Details(m)
+	return m
 }
 
 // Health carries information about the health of a component.

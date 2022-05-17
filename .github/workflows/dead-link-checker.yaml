@@ -1,4 +1,4 @@
-name: Dead Link Checker
+name: Layotto Env Pipeline 🌊
 
 on:
   pull_request:
@@ -6,7 +6,8 @@ on:
       - main
 
 jobs:
-  CheckDeadLinks:
+  check:
+    name: "🍀 DeadLink Validation"
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -22,4 +23,4 @@ jobs:
              nohup docsify serve docs -p 3000 &
 
       - name: Check dead links in all the .md files
-        run: make check-dead-link
+        run: make style.deadlink  

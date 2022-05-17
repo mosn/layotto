@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package mock_state
 
 import (
@@ -32,7 +33,9 @@ func TestReadAndWrite(t *testing.T) {
 	defer ctl.Finish()
 
 	store := New(logger.NewLogger("test"))
-	store.Init(state.Metadata{})
+	if err := store.Init(state.Metadata{}); err != nil {
+		panic(err)
+	}
 
 	t.Run("test set 1", func(t *testing.T) {
 		setReq := &state.SetRequest{

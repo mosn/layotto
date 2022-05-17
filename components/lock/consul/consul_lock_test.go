@@ -14,13 +14,15 @@
 package consul
 
 import (
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/hashicorp/consul/api"
 	"github.com/stretchr/testify/assert"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/mock"
-	"mosn.io/pkg/log"
-	"testing"
 )
 
 const resouseId = "resoure_1"

@@ -28,6 +28,7 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"github.com/minio/minio-go/v7"
+
 	"mosn.io/layotto/components/file"
 )
 

@@ -19,13 +19,15 @@ package helloworld
 import (
 	"context"
 	"fmt"
+
 	rawGRPC "google.golang.org/grpc"
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/pkg/grpc"
 	grpc_api "mosn.io/layotto/pkg/grpc"
-	"mosn.io/pkg/log"
 )
 
 const componentType = "helloworld"
