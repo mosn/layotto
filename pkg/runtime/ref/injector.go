@@ -64,7 +64,7 @@ func (i *DefaultInjector) InjectConfigCmpRef(componentRefs []*ref.ComponentRef) 
 }
 
 //InjectSecretRef  inject secret to metaData
-func (i *DefaultInjector) InjectSecretRef(items []*ref.RefItem, metaData map[string]string) error {
+func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string]string) error {
 
 	meta := make(map[string]string)
 	for _, item := range items {
@@ -87,7 +87,7 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.RefItem, metaData map[str
 }
 
 //InjectConfigRef inject config
-func (i *DefaultInjector) InjectConfigRef(items []*ref.RefItem, metaData map[string]string) error {
+func (i *DefaultInjector) InjectConfigRef(items []*ref.Item, metaData map[string]string) error {
 	//TODO: how to inject config  subscribe or once ?  It can be configured by the user
 	meta := make(map[string]string)
 	for _, item := range items {

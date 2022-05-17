@@ -16,11 +16,11 @@
 
 package ref
 
-//RefConfig is ref json config
-type RefConfig struct {
+//Config is ref json config
+type Config struct {
 	ComponentRef     []*ComponentRef
-	SecretRef        []*RefItem
-	ConfigurationRef []*RefItem
+	SecretRef        []*Item
+	ConfigurationRef []*Item
 }
 
 type ComponentRef struct {
@@ -28,7 +28,7 @@ type ComponentRef struct {
 	Name string `json:"name"`
 }
 
-type RefItem struct {
+type Item struct {
 	Name string `json:"name"`
 	Key  string `json:"key"`
 }

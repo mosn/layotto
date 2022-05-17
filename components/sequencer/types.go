@@ -17,7 +17,7 @@ package sequencer
 import "mosn.io/layotto/components/ref"
 
 type Config struct {
-	ref.RefConfig
+	ref.Config
 	BiggerThan map[string]int64  `json:"biggerThan"`
 	Metadata   map[string]string `json:"metadata"`
 }
