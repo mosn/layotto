@@ -65,7 +65,7 @@ func (ctx *httpHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.
 	bookName := string(body)
 
 	//2. get request state from redis by specific key through ABI
-	inventories, err := proxywasm.GetState("state_demo", bookName)
+	inventories, err := proxywasm.GetState("redis", bookName)
 	if err != nil {
 		proxywasm.LogErrorf("GetState failed: %v", err)
 		return types.ActionPause
