@@ -20,7 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"mosn.io/layotto/components/ref"
+	ref2 "mosn.io/layotto/pkg/runtime/ref"
 	"strings"
 	"time"
 
@@ -71,7 +71,7 @@ type MosnRuntime struct {
 	bindingsRegistry        mbindings.Registry
 	secretStoresRegistry    msecretstores.Registry
 	customComponentRegistry custom.Registry
-	Injector                ref.DefaultInjector
+	Injector                ref2.DefaultInjector
 	// component pool
 	hellos map[string]hello.HelloService
 	// config management system component
@@ -240,8 +240,8 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initConfigStores(o.services.configStores...); err != nil {
 		return err
 	}
-	m.Injector = ref.DefaultInjector{
-		Container: ref.RefContainer{
+	m.Injector = ref2.DefaultInjector{
+		Container: ref2.RefContainer{
 			SecretRef: m.secretStores,
 			ConfigRef: m.configStores,
 		},

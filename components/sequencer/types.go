@@ -15,7 +15,7 @@
 package sequencer
 
 import (
-	"mosn.io/layotto/components/ref"
+	"mosn.io/layotto/pkg/runtime/ref"
 )
 
 type Config struct {
