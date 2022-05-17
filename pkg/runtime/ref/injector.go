@@ -20,6 +20,7 @@ import (
 	"context"
 	"github.com/dapr/components-contrib/secretstores"
 	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/ref"
 )
 
 const (
@@ -32,7 +33,7 @@ type DefaultInjector struct {
 }
 
 //InjectSecretCmpRef inject secret Component
-func (i *DefaultInjector) InjectSecretCmpRef(componentRefs []*ComponentRef) map[string]secretstores.SecretStore {
+func (i *DefaultInjector) InjectSecretCmpRef(componentRefs []*ref.ComponentRef) map[string]secretstores.SecretStore {
 	cmpRefs := make(map[string]secretstores.SecretStore)
 	for _, ref := range componentRefs {
 		if ref.Type != TypeSecret {
@@ -47,7 +48,7 @@ func (i *DefaultInjector) InjectSecretCmpRef(componentRefs []*ComponentRef) map[
 	return cmpRefs
 }
 
-func (i *DefaultInjector) InjectConfigCmpRef(componentRefs []*ComponentRef) map[string]configstores.Store {
+func (i *DefaultInjector) InjectConfigCmpRef(componentRefs []*ref.ComponentRef) map[string]configstores.Store {
 	cmpRefs := make(map[string]configstores.Store)
 	for _, ref := range componentRefs {
 		if ref.Type != TypeConfig {
@@ -63,7 +64,7 @@ func (i *DefaultInjector) InjectConfigCmpRef(componentRefs []*ComponentRef) map[
 }
 
 //InjectSecretRef  inject secret to metaData
-func (i *DefaultInjector) InjectSecretRef(items []*RefItem, metaData map[string]string) error {
+func (i *DefaultInjector) InjectSecretRef(items []*ref.RefItem, metaData map[string]string) error {
 
 	meta := make(map[string]string)
 	for _, item := range items {
@@ -86,7 +87,7 @@ func (i *DefaultInjector) InjectSecretRef(items []*RefItem, metaData map[string]
 }
 
 //InjectConfigRef inject config
-func (i *DefaultInjector) InjectConfigRef(items []*RefItem, metaData map[string]string) error {
+func (i *DefaultInjector) InjectConfigRef(items []*ref.RefItem, metaData map[string]string) error {
 	//TODO: how to inject config  subscribe or once ?  It can be configured by the user
 	meta := make(map[string]string)
 	for _, item := range items {
