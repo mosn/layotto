@@ -1,13 +1,15 @@
 package secretstores
 
 import (
-	secretstores_loader "github.com/dapr/components-contrib/secretstores"
-	"mosn.io/layotto/pkg/mock/components/secret"
 	"testing"
+
+	"mosn.io/layotto/pkg/mock/components/secret"
+
+	"github.com/dapr/components-contrib/secretstores"
 )
 
 func TestNewFactory(t *testing.T) {
-	NewFactory("test", func() secretstores_loader.SecretStore {
+	NewFactory("test", func() secretstores.SecretStore {
 		return secret.FakeSecretStore{}
 	})
 }
