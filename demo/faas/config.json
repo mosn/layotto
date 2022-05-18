@@ -26,7 +26,7 @@
                       }
                     },
                     "state": {
-                      "redis": {
+                      "state_demo": {
                         "type": "redis",
                         "metadata": {
                           "redisHost": "localhost:6379",
