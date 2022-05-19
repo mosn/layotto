@@ -560,17 +560,17 @@ func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	return nil
 }
 
-func (m *MosnRuntime) SetCustomComponent(componentType string, name string, component custom.Component) {
-	if _, ok := m.customComponent[componentType]; !ok {
-		m.customComponent[componentType] = make(map[string]custom.Component)
+func (m *MosnRuntime) SetCustomComponent(kind string, name string, component custom.Component) {
+	if _, ok := m.customComponent[kind]; !ok {
+		m.customComponent[kind] = make(map[string]custom.Component)
 	}
-	m.customComponent[componentType][name] = component
+	m.customComponent[kind][name] = component
 }
 
-func (m *MosnRuntime) initCustomComponents(type2factorys map[string][]*custom.ComponentFactory) error {
+func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.ComponentFactory) error {
 	log.DefaultLogger.Infof("[runtime] start initializing custom components")
 	// 1. validation
-	if len(type2factorys) == 0 {
+	if len(kind2factorys) == 0 {
 		log.DefaultLogger.Infof("[runtime] no custom component factorys compiled")
 		return nil
 	}
@@ -579,22 +579,22 @@ func (m *MosnRuntime) initCustomComponents(type2factorys map[string][]*custom.Co
 		return nil
 	}
 	// 2. loop registering all types of components.
-	for compType, factorys := range type2factorys {
+	for kind, factorys := range kind2factorys {
 		// 2.0. check empty
 		if len(factorys) == 0 {
 			continue
 		}
-		name2Config, ok := m.runtimeConfig.CustomComponent[compType]
+		name2Config, ok := m.runtimeConfig.CustomComponent[kind]
 		if !ok {
-			log.DefaultLogger.Errorf("[runtime] Your required component type %s is not supported.Please check your configuration", compType)
+			log.DefaultLogger.Errorf("[runtime] Your required component type %s is not supported.Please check your configuration", kind)
 			continue
 		}
 		// 2.1. register all the factorys
-		m.customComponentRegistry.Register(compType, factorys...)
+		m.customComponentRegistry.Register(kind, factorys...)
 		// 2.2. loop initializing component instances
 		for name, config := range name2Config {
 			// create the component
-			comp, err := m.customComponentRegistry.Create(compType, config.Type)
+			comp, err := m.customComponentRegistry.Create(kind, config.Type)
 			if err != nil {
 				m.errInt(err, "create custom component %s failed", name)
 				return err
@@ -605,7 +605,7 @@ func (m *MosnRuntime) initCustomComponents(type2factorys map[string][]*custom.Co
 				return err
 			}
 			// initialization finish
-			m.SetCustomComponent(compType, name, comp)
+			m.SetCustomComponent(kind, name, comp)
 		}
 	}
 	return nil

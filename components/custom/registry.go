@@ -25,13 +25,13 @@ type Registry interface {
 }
 
 type ComponentFactory struct {
-	Name          string
+	Type          string
 	FactoryMethod func() Component
 }
 
-func NewComponentFactory(name string, f func() Component) *ComponentFactory {
+func NewComponentFactory(compType string, f func() Component) *ComponentFactory {
 	return &ComponentFactory{
-		Name:          name,
+		Type:          compType,
 		FactoryMethod: f,
 	}
 }
@@ -59,8 +59,8 @@ func (r *componentRegistry) Register(componentType string, fs ...*ComponentFacto
 	}
 	// register FactoryMethod
 	for _, f := range fs {
-		r.stores[componentType][f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(componentType, f.Name)
+		r.stores[componentType][f.Type] = f.FactoryMethod
+		r.info.RegisterComponent(componentType, f.Type)
 	}
 }
 

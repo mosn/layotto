@@ -57,7 +57,7 @@
                       },
                       "custom_component": {
                         "helloworld": {
-                          "custom_component_demo": {
+                          "demo": {
                             "type": "in-memory",
                             "metadata": {}
                           }
