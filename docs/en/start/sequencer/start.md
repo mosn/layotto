@@ -50,7 +50,7 @@ Once finished, the layotto file will be generated in the directory, run it:
 ```shell
  cd ${project_path}/demo/sequencer/common/
  go build -o client
- ./client -s "config_sequencer_etcd"
+ ./client -s "sequencer_demo"
 ```
 
 If the following information is printed, the demo is successful:
