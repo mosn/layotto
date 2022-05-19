@@ -150,5 +150,5 @@ endif
 go.format: go.format.verify
 	@echo "===========> Running go codes format"
 	$(GO_FMT) -s -w .
-	$($GOPATH/bin/GO_IMPORTS) -w -local $(GO_MODULE) .
+	$(GOPATH)/bin/$(GO_IMPORTS) -w -local $(GO_MODULE) .
 	$(GO) mod tidy
