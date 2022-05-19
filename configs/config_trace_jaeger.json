@@ -63,7 +63,7 @@
     "driver": "jaeger",
     "config": {
       "config": {
-        "service_name": "default_sidecar",
+        "service_name": "layotto",
         "agent_host": "127.0.0.1:6831"
       }
     }
