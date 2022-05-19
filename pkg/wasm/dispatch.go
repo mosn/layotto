@@ -45,7 +45,7 @@ func (route *Router) RegisterRoute(id string, plugin *WasmPlugin) {
 	}
 }
 
-func (route *Router) RemoveRoute(id string)  {
+func (route *Router) RemoveRoute(id string) {
 	delete(route.routes, id)
 }
 

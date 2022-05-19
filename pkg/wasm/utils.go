@@ -18,7 +18,7 @@ package wasm
 
 import "reflect"
 
-func filter(arr interface{}, predicate interface{}) interface{}  {
+func filter(arr interface{}, predicate interface{}) interface{} {
 	arrValue := reflect.ValueOf(arr)
 	arrType := arrValue.Type()
 	funcValue := reflect.ValueOf(predicate)

@@ -150,7 +150,7 @@ func reloadWasm(fullPath string) {
 				log.DefaultLogger.Errorf("[proxywasm] [watcher] reloadWasm plugin not found")
 				return
 			}
-			
+
 			factory := factories[path]
 			config.VmConfig = pw.GetConfig().VmConfig
 			factory.config = append(filter(factory.config, func(item *filterConfigItem) bool {

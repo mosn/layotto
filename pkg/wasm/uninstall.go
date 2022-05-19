@@ -51,7 +51,6 @@ func (e *UnInstallEndpoint) Handle(ctx context.Context, f *Filter) (map[string]i
 		return nil, errors.New(id + " is not registered")
 	}
 
-
 	if f.pluginUsed != nil && f.pluginUsed.pluginName == wasmPlugin.pluginName {
 		err = f.releaseUsedInstance()
 		if err != nil {

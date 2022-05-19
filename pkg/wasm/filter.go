@@ -142,7 +142,7 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 	return filter
 }
 
-func (f *Filter) releaseUsedInstance() error  {
+func (f *Filter) releaseUsedInstance() error {
 	if f.pluginUsed == nil || f.instance == nil {
 		return nil
 	}
@@ -179,8 +179,8 @@ func (f *Filter) writeJsonResult(jsonObject map[string]interface{}) {
 	f.responseBuffer = buffer.NewIoBufferBytes(byteSlice)
 }
 
-func (f *Filter) writeErrorMessage(err string)  {
-	f.writeJsonResult(map[string]interface{} { "error": err })
+func (f *Filter) writeErrorMessage(err string) {
+	f.writeJsonResult(map[string]interface{}{"error": err})
 }
 
 // Destruction of filters
