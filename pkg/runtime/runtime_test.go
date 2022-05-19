@@ -607,7 +607,7 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			),
 			// PubSub
 			WithPubSubFactory(
-				mpubsub.NewFactory("mock", f),
+				mpubsub.NewFactory("pubsub", f),
 			),
 			// Sequencer
 			WithSequencerFactory(
@@ -664,7 +664,7 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			),
 			// PubSub
 			WithPubSubFactory(
-				mpubsub.NewFactory("mock", f),
+				mpubsub.NewFactory("pubsub", f),
 			),
 		)
 		// 4. assert
@@ -711,7 +711,7 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			),
 			// PubSub
 			WithPubSubFactory(
-				mpubsub.NewFactory("mock", f),
+				mpubsub.NewFactory("pubsub", f),
 			),
 		)
 		// 4. assert
@@ -758,7 +758,7 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			),
 			// PubSub
 			WithPubSubFactory(
-				mpubsub.NewFactory("mock", f),
+				mpubsub.NewFactory("pubsub", f),
 			),
 		)
 		// 4. assert
@@ -814,7 +814,7 @@ func runtimeWithCallbackConnection(t *testing.T) (*MosnRuntime, *mock_appcallbac
 	cfg := &MosnRuntimeConfig{
 		PubSubManagement: map[string]mpubsub.Config{
 			"mock": {
-				Type: "mock",
+				Type: "pubsub",
 				Metadata: map[string]string{
 					"target": "layotto",
 				},

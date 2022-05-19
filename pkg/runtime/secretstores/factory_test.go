@@ -17,6 +17,7 @@ package secretstores
  */
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"mosn.io/layotto/pkg/mock/components/secret"
@@ -25,7 +26,9 @@ import (
 )
 
 func TestNewFactory(t *testing.T) {
-	NewFactory("test", func() secretstores.SecretStore {
+	factory := NewFactory("test", func() secretstores.SecretStore {
 		return secret.FakeSecretStore{}
 	})
+
+	assert.NotNil(t, factory)
 }
