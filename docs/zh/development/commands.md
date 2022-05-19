@@ -5,13 +5,18 @@ Layotto 提供了丰富的命令行工具，方便贡献者开发和测试 Layot
 
 ## 重要开发命令
 
-+ 你可以执行 `make all` 去格式化你的代码，进行风格测试，linter 规范测试，单元测试，以及构建当前平台的二进制文件。
++ 你可以执行 `make all` 去格式化你的代码，进行风格测试，linter 规范测试，单元测试，以及集成测试。但是执行 `make all` 有以下注意事项：
+  + 需要先启动好 docker，以便跑集成测试
+  + 运行 `make all` 会删除包含 "redis skywalking hangzhouzk minio" 这些关键字的容器  
+  + 如果您没装 docker，或者不想删除这些容器，可以执行 `make check` 进行一些不需要 docker 的检查。
 
 + 你也可以执行 `make format` 去格式化你的代码
 
 + 执行 `make check` 进行风格测试，linter 规范测试，单元测试
 
 + 执行 `make build` 构建当前平台的二进制文件
+
++ 执行 `make license` 使用 docker 容器为代码文件添加 license headers
 
 具体细节可查看一下命令，或执行 `make help` 查看：
 
@@ -43,6 +48,7 @@ COMMANDS:
   style.coverage      Run coverage analysis.
   style.deadlink      Run deadlink check test.
   style.quickstart    Run quickstart check test.
+  license             Add license headers for code files.
   integrate.wasm      Run integration test with wasm.
   integrate.runtime   Run integration test with runtime.
   format              Format layotto go codes style with gofmt and goimports.

@@ -13,6 +13,8 @@ Layotto provides powerful commands, which makes contribution and local developme
 
 + Run `make build` to build layotto binary for host platform. 
 
++ Run `make license` to add licnese headers for all code files, with docker.
+
 See below commands to know more details or excute `make help`:
 
 ```
@@ -43,6 +45,7 @@ COMMANDS:
   style.coverage      Run coverage analysis.
   style.deadlink      Run deadlink check test.
   style.quickstart    Run quickstart check test.
+  license             Add license headers for code files.
   integrate.wasm      Run integration test with wasm.
   integrate.runtime   Run integration test with runtime.
   format              Format layotto go codes style with gofmt and goimports.

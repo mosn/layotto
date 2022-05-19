@@ -146,6 +146,14 @@ In order to help everyone better participate in open source projects, our commun
 
 [Layotto contributor guide](en/development/CONTRIBUTING.md)
 
+## Contributors
+
+Thank y'all!
+
+<a href="https://github.com/mosn/layotto/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mosn/layotto" />
+</a>
+
 ## Design Documents
 
 [Actuator Design Doc](en/design/actuator/actuator-design-doc.md)

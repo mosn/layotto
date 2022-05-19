@@ -158,6 +158,14 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 [Layotto 贡献者指南](zh/development/CONTRIBUTING.md)
 
+## 贡献者
+
+感谢所有的贡献者！
+
+<a href="https://github.com/mosn/layotto/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mosn/layotto" />
+</a>
+
 ## 设计文档
 
 [Actuator 设计文档](zh/design/actuator/actuator-design-doc.md)
