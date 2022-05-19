@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+
 	"mosn.io/layotto/sdk/go-sdk/client"
 
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
