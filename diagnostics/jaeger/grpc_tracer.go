@@ -38,7 +38,7 @@ const (
 	serviceName            = "layotto"
 	agentHost              = "agent_host"
 	defaultServiceName     = "layotto"
-	defaultJaegerAgentHost = "0.0.0.0:6831"
+	defaultJaegerAgentHost = "127.0.0.1:6831"
 	jaegerAgentHostKey     = "TRACE"
 	appIDKey               = "APP_ID"
 )
@@ -69,7 +69,8 @@ func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 		Reporter: &config.ReporterConfig{
 			LogSpans:            false,
 			BufferFlushInterval: 1 * time.Second,
-			LocalAgentHostPort:  getAgentHost(traceCfg),
+			//LocalAgentHostPort:  getAgentHost(traceCfg),
+			CollectorEndpoint: "http://127.0.0.1:14268/api/traces",
 		},
 	}
 
@@ -121,8 +122,6 @@ func (t *grpcJaegerTracer) Start(ctx context.Context, request interface{}, start
 		log.DefaultLogger.Debugf("[jaeger] [tracer] [layotto] unable to get request header, downstream trace ignored")
 		return &jaeger.Span{}
 	}
-
-	fmt.Println(header)
 
 	//create entry span (downstream)
 	sp, _ := opentracing.StartSpanFromContextWithTracer(ctx, t.tracer, header.FullMethod)
