@@ -4,7 +4,7 @@ This component can access secrets from local files, environment variables, k8s, 
 
 The json configuration file has the following structure:
 ```json
-"secretStores": {
+"secret_store": {
   "<STORE NAME>": {
     "metadata": {
       "<KEY>": "<VALUE>",
@@ -15,7 +15,7 @@ The json configuration file has the following structure:
 ```
 Configuration examples of local file keys, local environment variables, and k8s keys:
 ```
-       "secretStores": {
+       "secret_store": {
                         "local.file": {
                           "metadata": {
                             "secretsFile": "../../configs/config_secret_local_file.json"
