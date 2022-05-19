@@ -24,12 +24,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	//_ "github.com/bmizerany/pq"
-	"mosn.io/layotto/components/sequencer/postgresql/dao"
-	"mosn.io/layotto/components/sequencer/postgresql/model"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"mosn.io/layotto/components/sequencer/postgresql/dao"
+	"mosn.io/layotto/components/sequencer/postgresql/model"
 )
 
 const (

@@ -22,9 +22,10 @@ package config
 
 import (
 	"fmt"
+	"io/ioutil"
+
 	_ "github.com/lib/pq"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
 )
 
 type Server struct {
@@ -33,7 +34,7 @@ type Server struct {
 
 type Postgresql struct {
 	Host     string `json:"host" yaml:"host"`
-	Port     int64  `json:"port" yaml:"port"`
+	Port     string `json:"port" yaml:"port"`
 	Username string `json:"username" yaml:"username"`
 	Password string `json:"password" yaml:"password"`
 	Db       string `json:"db" yaml:"db"`

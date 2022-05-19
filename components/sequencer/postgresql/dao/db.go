@@ -24,9 +24,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	//_ "github.com/bmizerany/pq"
-	"mosn.io/layotto/components/sequencer/postgresql/model"
 	"time"
+
+	"mosn.io/layotto/components/sequencer/postgresql/model"
 )
 
 const postgresqlTableName = "layotto_alloc"
@@ -110,4 +112,3 @@ func (db *DB) Create(ctx context.Context, model *model.PostgresqlModel) error {
 	}
 	return nil
 }
-

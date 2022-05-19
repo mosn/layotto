@@ -23,15 +23,18 @@ package postgresql
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	_ "github.com/lib/pq"
+
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
-	"testing"
 )
 
 type name struct {
 	id uint64
 }
+
 func Test_connected(t *testing.T) {
 
 	//_ := context.Background()
@@ -50,7 +53,7 @@ func initMap() map[string]string {
 	vals["port"] = "5432"
 	vals["username"] = "postgres"
 	vals["password"] = "213213"
-	vals["db"] =  "test_db"
+	vals["db"] = "test_db"
 	return vals
 }
 
@@ -93,7 +96,7 @@ func Test_map(t *testing.T) {
 	}
 }
 
-func Test_Init(t *testing.T)  {
+func Test_Init(t *testing.T) {
 	// init
 	p := &PostgresqlSequencer{}
 	config := &sequencer.Configuration{}
@@ -109,4 +112,3 @@ func Test_Init(t *testing.T)  {
 	}
 	fmt.Println("next id : ", id.NextId)
 }
-

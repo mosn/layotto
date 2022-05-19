@@ -125,9 +125,9 @@ import (
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
 	sequencer_inmemory "mosn.io/layotto/components/sequencer/in-memory"
 	sequencer_mongo "mosn.io/layotto/components/sequencer/mongo"
+	sequencer_postgresql "mosn.io/layotto/components/sequencer/postgresql"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
-	sequencer_postgresql "mosn.io/layotto/components/sequencer/postgresql"
 
 	// File
 	"mosn.io/layotto/components/file/s3/qiniu"

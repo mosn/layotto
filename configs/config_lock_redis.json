@@ -29,7 +29,7 @@
                       "lock": {
                         "redis": {
                           "metadata": {
-                            "redisHost": "localhost:6380",
+                            "redisHost": "127.0.0.1:6380",
                             "redisPassword": ""
                           }
                         }

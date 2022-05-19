@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	key = "key666"
+	key = "test"
 )
 
 var storeName string

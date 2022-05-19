@@ -22,10 +22,12 @@ package utils
 
 import (
 	"fmt"
-	"github.com/alicebob/miniredis/v2"
-	model2 "mosn.io/layotto/components/sequencer/postgresql/model"
 	"testing"
 	"time"
+
+	"github.com/alicebob/miniredis/v2"
+
+	model2 "mosn.io/layotto/components/sequencer/postgresql/model"
 )
 
 func initMap() map[string]string {
@@ -34,7 +36,7 @@ func initMap() map[string]string {
 	vals["port"] = "5432"
 	vals["username"] = "postgres"
 	vals["password"] = "213213"
-	vals["db"] =  "test_db"
+	vals["db"] = "test_db"
 	return vals
 }
 func Test_readDB(t *testing.T) {

@@ -29,8 +29,8 @@
                       "sequencer": {
                         "postgresql": {
                           "metadata": {
-                            "host": "127.0.0.1",
-                            "port": 5432,
+                            "host": "127.0.0.1:5432",
+                            "port": "5432",
                             "username": "postgres",
                             "password": "213213",
                             "db": "test_db"

@@ -24,7 +24,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	_ "github.com/lib/pq"
+
 	"mosn.io/layotto/components/sequencer/postgresql/model"
 )
 

@@ -23,10 +23,12 @@ package postgresql
 import (
 	"context"
 	"fmt"
+
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer/postgresql/model"
 	"mosn.io/layotto/components/sequencer/postgresql/service"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/sequencer"
 )
@@ -113,4 +115,3 @@ func (p *PostgresqlSequencer) Close() error {
 	p.cancel()
 	return nil
 }
-

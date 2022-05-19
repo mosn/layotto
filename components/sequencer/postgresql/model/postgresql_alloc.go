@@ -1,4 +1,5 @@
 package model
+
 //
 // Copyright 2021 Layotto Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,11 +25,11 @@ import (
 )
 
 type PostgresqlAlloc struct {
-	Key        string                 // 也就是biz_tag用来区分业务
-	Step       int32                  // 记录步长
-	CurrentPos int32                  // 当前使用的 segment buffer光标; 总共两个buffer缓存区，循环使用
-	Buffer     []*Segment             // 双buffer 一个作为预缓存作用
-	UpdateTime time.Time              // 记录更新时间 方便长时间不用进行清理，防止占用内存
+	Key        string     // 也就是biz_tag用来区分业务
+	Step       int32      // 记录步长
+	CurrentPos int32      // 当前使用的 segment buffer光标; 总共两个buffer缓存区，循环使用
+	Buffer     []*Segment // 双buffer 一个作为预缓存作用
+	UpdateTime time.Time  // 记录更新时间 方便长时间不用进行清理，防止占用内存
 	mutex      sync.Mutex
 	IsPreload  bool                   // 是否正在预加载
 	Waiting    map[string][]chan byte // 挂起等待, buffer加载时的等待
