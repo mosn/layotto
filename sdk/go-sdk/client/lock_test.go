@@ -17,11 +17,14 @@ package client
  */
 
 import (
+	"testing"
+
+	"mosn.io/layotto/components/lock"
+
 	"context"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/layotto/components/lock"
+
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"testing"
 )
 
 func TestTryLock(t *testing.T) {

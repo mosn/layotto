@@ -17,12 +17,12 @@ package secretstores
  */
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"mosn.io/layotto/pkg/mock/components/secret"
 
 	"github.com/dapr/components-contrib/secretstores"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewFactory(t *testing.T) {
