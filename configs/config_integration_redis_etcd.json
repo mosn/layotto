@@ -48,7 +48,7 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "rpcs": {
-                        "demo": {
+                        "mosn": {
                           "config": {
                             "channel": [
                               {
