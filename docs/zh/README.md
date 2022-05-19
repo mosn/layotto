@@ -104,17 +104,17 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 | feature        | status |                      quick start                      | desc                                                             |
 | -------------- | :----: | :---------------------------------------------------: | ---------------------------------------------------------------- |
-| Go (TinyGo)    |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/wasm/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上         |
-| Rust           | 待开发 |                        待开发                         | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上           |
-| AssemblyScript | 待开发 |                        待开发                         | 把用 AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上 |
+| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/wasm/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上         |
+| Rust           |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/wasm/start) | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上           |
+| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/wasm/start) | 把用  AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上 |
 
 ### 作为 Serverless 的运行时，通过 WebAssembly (WASM) 写 FaaS
 
 | feature        | status |                      quick start                      | desc                                                                                      |
 | -------------- | :----: | :---------------------------------------------------: | ----------------------------------------------------------------------------------------- |
-| Go (TinyGo)    |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。         |
-| Rust           | 待开发 |                        待开发                         | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。           |
-| AssemblyScript | 待开发 |                        待开发                         | 把用 AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。 |
+| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。         |
+| Rust           |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。           |
+| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。 |
 
 ### Service Mesh
 

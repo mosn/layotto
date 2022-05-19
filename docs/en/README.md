@@ -89,16 +89,16 @@ For other features,see the demos below:
 | feature        | status |                      quick start                      | desc                                                                 |
 | -------------- | :----: | :---------------------------------------------------: | -------------------------------------------------------------------- |
 | Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/en/start/wasm/start) | Compile Code written by TinyGo to \*.wasm and run in Layotto         |
-| Rust           |  TODO  |                         TODO                          | Compile Code written by Rust to \*.wasm and run in Layotto           |
-| AssemblyScript |  TODO  |                         TODO                          | Compile Code written by AssemblyScript to \*.wasm and run in Layotto |
+| Rust           |   ✅   | [demo](https://mosn.io/layotto/#/en/start/wasm/start) | Compile Code written by Rust to \*.wasm and run in Layotto           |
+| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/#/en/start/wasm/start) | Compile Code written by AssemblyScript to \*.wasm and run in Layotto |
 
 ### As a FaaS(Serverless) runtime (Layotto + WebAssembly + k8s)
 
 | feature        | status |                      quick start                      | desc                                                                                       |
 | -------------- | :----: | :---------------------------------------------------: | ------------------------------------------------------------------------------------------ |
 | Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/en/start/faas/start) | Compile Code written by TinyGo to \*.wasm and run in Layotto And Scheduled by k8s.         |
-| Rust           |  TODO  |                         TODO                          | Compile Code written by Rust to \*.wasm and run in Layotto And Scheduled by k8s.           |
-| AssemblyScript |  TODO  |                         TODO                          | Compile Code written by AssemblyScript to \*.wasm and run in Layotto And Scheduled by k8s. |
+| Rust           |   ✅   | [demo](https://mosn.io/layotto/#/en/start/faas/start) | Compile Code written by Rust to \*.wasm and run in Layotto And Scheduled by k8s.           |
+| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/#/en/start/faas/start) | Compile Code written by AssemblyScript to \*.wasm and run in Layotto And Scheduled by k8s. |
 
 ### Service Mesh
 

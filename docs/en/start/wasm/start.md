@@ -11,7 +11,7 @@ And if it becomes like this:
 
 ![img.png](../../../img/wasm/img.png)
 
-If developers no longer develop sdk (jar package), change to develop .wasm files and support independent upgrade and deployment, there will be no pain to push the users to upgrade. 
+If developers no longer develop sdk (jar package), change to develop .wasm files and support independent upgrade and deployment, there will be no pain to push the users to upgrade.
 
 When you want to upgrade, you can release it on the operation platform. There is no need to restart the app and sidecar.
 
@@ -21,7 +21,7 @@ Layotto can load the compiled WASM files automatically, and interacts with them 
 
 #### step 1. start redis server and write test data
 
-The example only needs a Redis server that can be used normally. As for where it is installed, there is no special restriction. It can be a virtual machine, a local machine or a server. 
+The example only needs a Redis server that can be used normally. As for where it is installed, there is no special restriction. It can be a virtual machine, a local machine or a server.
 
 Here, we run redis with docker:
 
@@ -92,6 +92,53 @@ This http request will access the wasm module in Layotto. The wasm module will c
 ```shell
 docker rm -f redis-test
 ```
+
+### Dynamic Load
+
+We can specify the WASM file to load in `./demo/faas/config.json` config file:
+
+```json
+"config": {
+  "function1": {
+    "name": "function1",
+    "instance_num": 1,
+    "vm_config": {
+      "engine": "wasmer",
+      "path": "demo/faas/code/golang/client/function_1.wasm"
+    }
+  },
+  "function2": {
+    "name": "function2",
+    "instance_num": 1,
+    "vm_config": {
+      "engine": "wasmer",
+      "path": "demo/faas/code/golang/server/function_2.wasm"
+    }
+  }
+}
+```
+
+We can also install, update, and uninstall WASM file dynamically through the following Apis.
+
+#### Install
+
+```shell
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:2045/wasm/install
+```
+
+#### Update Instance Number
+
+```shell
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2}' http://127.0.0.1:2045/wasm/update
+```
+
+#### Uninstall
+
+```shell
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1"}' http://127.0.0.1:2045/wasm/uninstall
+```
+
+**Note: All the above Apis will return data like `{"error": "xxxxx"}` if there is an exception.**
 
 ### Note
 
