@@ -104,6 +104,26 @@ func addWatchFile(cfg *filterConfigItem, factory *FilterConfigFactory) {
 	log.DefaultLogger.Infof("[proxywasm] [watcher] addWatchFile start to watch wasm file and its dir: %s", path)
 }
 
+// remove watching file
+func removeWatchFile(cfg *filterConfigItem) {
+	path := cfg.VmConfig.Path
+	// Add starts watching the named file or directory (non-recursively).
+	if err := watcher.Remove(path); err != nil {
+		log.DefaultLogger.Errorf("[proxywasm] [watcher] removeWatchFile fail to stop watch wasm file, err: %v", err)
+	}
+
+	dir := filepath.Dir(path)
+	if err := watcher.Remove(dir); err != nil {
+		log.DefaultLogger.Errorf("[proxywasm] [watcher] removeWatchFile fail to stop watch wasm dir, err: %v", err)
+		return
+	}
+
+	delete(configs, path)
+	delete(factories, path)
+
+	log.DefaultLogger.Infof("[proxywasm] [watcher] removeWatchFile stop to watch wasm file and its dir: %s", path)
+}
+
 // Reload Wasm's configuration file
 func reloadWasm(fullPath string) {
 	found := false
@@ -130,11 +150,12 @@ func reloadWasm(fullPath string) {
 				log.DefaultLogger.Errorf("[proxywasm] [watcher] reloadWasm plugin not found")
 				return
 			}
-
+			
 			factory := factories[path]
 			config.VmConfig = pw.GetConfig().VmConfig
-			factory.config = append(factory.config, config)
-
+			factory.config = append(filter(factory.config, func(item *filterConfigItem) bool {
+				return item.PluginName != config.PluginName
+			}).([]*filterConfigItem), config)
 			wasmPlugin := &WasmPlugin{
 				pluginName:    config.PluginName,
 				plugin:        pw.GetPlugin(),

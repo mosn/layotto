@@ -33,14 +33,20 @@ type Router struct {
 // unsafe for concurrent
 func (route *Router) RegisterRoute(id string, plugin *WasmPlugin) {
 	if group, found := route.routes[id]; found {
-		group.count++
-		group.plugins = append(group.plugins, plugin)
+		group.plugins = append(filter(group.plugins, func(item *WasmPlugin) bool {
+			return item.pluginName != plugin.pluginName
+		}).([]*WasmPlugin), plugin)
+		group.count = len(group.plugins)
 	} else {
 		route.routes[id] = &Group{
 			count:   1,
 			plugins: []*WasmPlugin{plugin},
 		}
 	}
+}
+
+func (route *Router) RemoveRoute(id string)  {
+	delete(route.routes, id)
 }
 
 // Get random plugin with rand id
@@ -55,5 +61,4 @@ func (route *Router) GetRandomPluginByID(id string) (*WasmPlugin, error) {
 	plugin := group.plugins[idx]
 	log.DefaultLogger.Infof("[proxywasm][dispatch] GetRandomPluginByID return index: %d, plugin: %s", idx, plugin.pluginName)
 	return plugin, nil
-
 }

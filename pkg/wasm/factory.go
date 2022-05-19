@@ -19,14 +19,14 @@ package wasm
 import (
 	"context"
 	"errors"
+	"mosn.io/mosn/pkg/wasm"
+	"mosn.io/pkg/utils"
 
 	"mosn.io/api"
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/types"
-	"mosn.io/mosn/pkg/wasm"
 	"mosn.io/mosn/pkg/wasm/abi"
-	"mosn.io/pkg/utils"
 )
 
 const LayottoWasm = "Layotto"
@@ -65,53 +65,10 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory config not a map, configID: %s", configID)
 			return nil, errors.New("config not a map")
 		}
-		// parse filter config
-		config, err := parseFilterConfigItem(conf)
+		err := factory.register(conf)
 		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to parse config, configID: %s, err: %v", configID, err)
 			return nil, err
 		}
-
-		var pluginName string
-		if config.FromWasmPlugin == "" {
-			pluginName = utils.GenerateUUID()
-
-			v2Config := v2.WasmPluginConfig{
-				PluginName:  pluginName,
-				VmConfig:    config.VmConfig,
-				InstanceNum: config.InstanceNum,
-			}
-
-			err = wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
-			if err != nil {
-				config.PluginName = pluginName
-				addWatchFile(config, factory)
-				continue
-			}
-
-			addWatchFile(config, factory)
-		} else {
-			pluginName = config.FromWasmPlugin
-		}
-		config.PluginName = pluginName
-
-		pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginName)
-		if pw == nil {
-			return nil, errors.New("plugin not found")
-		}
-
-		config.VmConfig = pw.GetConfig().VmConfig
-		factory.config = append(factory.config, config)
-
-		wasmPlugin := &WasmPlugin{
-			pluginName:    config.PluginName,
-			plugin:        pw.GetPlugin(),
-			rootContextID: config.RootContextID,
-			config:        config,
-		}
-		factory.plugins[config.PluginName] = wasmPlugin
-		// pw.RegisterPluginHandler will call factory.OnPluginStart
-		pw.RegisterPluginHandler(factory)
 	}
 
 	return factory, nil
@@ -126,6 +83,51 @@ func (f *FilterConfigFactory) CreateFilterChain(context context.Context, callbac
 
 	callbacks.AddStreamReceiverFilter(filter, api.BeforeRoute)
 	callbacks.AddStreamSenderFilter(filter, api.BeforeSend)
+}
+
+func (f *FilterConfigFactory) register(conf map[string]interface{}) error {
+	config, err := parseFilterConfigItem(conf)
+	if err != nil {
+		log.DefaultLogger.Errorf("[proxywasm][factory] register fail to parse config, err: %v", err)
+		return err
+	}
+	var pluginName string
+	if config.FromWasmPlugin == "" {
+		pluginName = utils.GenerateUUID()
+		v2Config := v2.WasmPluginConfig{
+			PluginName:  pluginName,
+			VmConfig:    config.VmConfig,
+			InstanceNum: config.InstanceNum,
+		}
+		err = wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
+		if err != nil {
+			config.PluginName = pluginName
+			addWatchFile(config, f)
+			return nil
+		}
+		addWatchFile(config, f)
+	} else {
+		pluginName = config.FromWasmPlugin
+	}
+	config.PluginName = pluginName
+	pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginName)
+	if pw == nil {
+		log.DefaultLogger.Errorf("[proxywasm][factory] register plugin not found")
+		return errors.New("plugin not found")
+	}
+	config.VmConfig = pw.GetConfig().VmConfig
+	f.config = append(filter(f.config, func(item *filterConfigItem) bool {
+		return item.PluginName != config.PluginName
+	}).([]*filterConfigItem), config)
+	wasmPlugin := &WasmPlugin{
+		pluginName:    config.PluginName,
+		plugin:        pw.GetPlugin(),
+		rootContextID: config.RootContextID,
+		config:        config,
+	}
+	f.plugins[config.PluginName] = wasmPlugin
+	pw.RegisterPluginHandler(f)
+	return nil
 }
 
 // Get RootContext's ID
@@ -207,4 +209,4 @@ func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 }
 
 // Destroy the plugin of FilterConfigFactory
-func (f *FilterConfigFactory) OnPluginDestroy(plugin types.WasmPlugin) {}
+func (f *FilterConfigFactory) OnPluginDestroy(types.WasmPlugin) {}

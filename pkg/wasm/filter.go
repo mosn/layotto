@@ -18,6 +18,7 @@ package wasm
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"sync"
@@ -141,28 +142,54 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 	return filter
 }
 
+func (f *Filter) releaseUsedInstance() error  {
+	if f.pluginUsed == nil || f.instance == nil {
+		return nil
+	}
+	plugin := f.pluginUsed
+	f.instance.Lock(f.abi)
+
+	_, err := f.exports.ProxyOnDone(f.contextID)
+	if err != nil {
+		log.DefaultLogger.Errorf("[proxywasm][filter] releaseUsedInstance fail to call ProxyOnDone, err: %v", err)
+		return err
+	}
+
+	err = f.exports.ProxyOnDelete(f.contextID)
+	if err != nil {
+		log.DefaultLogger.Errorf("[proxywasm][filter] releaseUsedInstance fail to call ProxyOnDelete, err: %v", err)
+		return err
+	}
+
+	f.instance.Unlock()
+	plugin.plugin.ReleaseInstance(f.instance)
+
+	return nil
+}
+
+func (f *Filter) writeJsonResult(jsonObject map[string]interface{}) {
+	var byteSlice []byte
+	if jsonObject != nil {
+		var err error
+		byteSlice, err = json.Marshal(jsonObject)
+		if err != nil {
+			log.DefaultLogger.Errorf("[proxywasm][filter]error when marshal result:%v", err)
+		}
+	}
+	f.responseBuffer = buffer.NewIoBufferBytes(byteSlice)
+}
+
+func (f *Filter) writeErrorMessage(err string)  {
+	f.writeJsonResult(map[string]interface{} { "error": err })
+}
+
 // Destruction of filters
 func (f *Filter) OnDestroy() {
 	f.destroyOnce.Do(func() {
-		if f.pluginUsed == nil || f.instance == nil {
+		err := f.releaseUsedInstance()
+		if err != nil {
 			return
 		}
-
-		plugin := f.pluginUsed
-		f.instance.Lock(f.abi)
-
-		_, err := f.exports.ProxyOnDone(f.contextID)
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] OnDestroy fail to call ProxyOnDone, err: %v", err)
-		}
-
-		err = f.exports.ProxyOnDelete(f.contextID)
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] OnDestroy fail to call ProxyOnDelete, err: %v", err)
-		}
-
-		f.instance.Unlock()
-		plugin.plugin.ReleaseInstance(f.instance)
 	})
 }
 
@@ -192,6 +219,29 @@ func headerMapSize(headers api.HeaderMap) int {
 
 // Reset the filter when receiving then return StreamFilter status
 func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
+	// dynamic load/unload wasm file
+	path, err := variable.GetString(ctx, types.VarHttpRequestPath)
+	if err != nil {
+		f.writeErrorMessage(err.Error())
+		return api.StreamFilterStop
+	}
+	resolver := NewPathResolver(path)
+	if resolver.Next() == "wasm" {
+		endpoint, ok := GetDefault().GetEndpoint(resolver.Next())
+		if !ok {
+			f.writeErrorMessage("illegal request path: " + path)
+			return api.StreamFilterStop
+		}
+		result, err := endpoint.Handle(ctx, f)
+		if err != nil {
+			f.writeErrorMessage(err.Error())
+		} else {
+			f.writeJsonResult(result)
+		}
+		return api.StreamFilterStop
+	}
+
+	// process wasm proxy logic
 	id, ok := headers.Get("id")
 	if !ok {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders no id in headers")
