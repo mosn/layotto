@@ -19,7 +19,9 @@ package jaeger
 import (
 	"context"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	jaegerc "github.com/uber/jaeger-client-go"
+	"github.com/uber/jaeger-client-go/config"
 	"mosn.io/api"
 	ltrace "mosn.io/layotto/components/trace"
 	"mosn.io/layotto/diagnostics/grpc"
@@ -33,7 +35,7 @@ import (
 )
 
 const (
-	serviceName            = "service_name"
+	serviceName            = "layotto"
 	agentHost              = "agent_host"
 	defaultServiceName     = "layotto"
 	defaultJaegerAgentHost = "0.0.0.0:6831"
@@ -42,7 +44,7 @@ const (
 )
 
 type grpcJaegerTracer struct {
-	*jaegerc.Tracer
+	tracer opentracing.Tracer
 }
 
 type grpcJaegerSpan struct {
@@ -74,15 +76,30 @@ func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 	cfg.ServiceName = getServiceName(traceCfg)
 	tracer, _, err := cfg.NewTracer()
 
-	log.DefaultLogger.Infof("[jaeger] [tracer] jaeger agent host:%s, report service name:%s",
+	log.DefaultLogger.Infof("[layotto] [jaeger] [tracer] jaeger agent host:%s, report service name:%s",
 		getAgentHost(traceCfg), getServiceName(traceCfg))
 
 	if err != nil {
-		log.DefaultLogger.Errorf("[jaeger] [tracer] [http1] cannot initialize Jaeger Tracer")
+		log.DefaultLogger.Errorf("[jaeger] [tracer] [layotto] cannot initialize Jaeger Tracer")
 		return nil, err
 	}
 
-	return &grpcJaegerTracer{}, nil
+	return &grpcJaegerTracer{
+		tracer: tracer,
+	}, nil
+}
+
+func getAgentHost(traceCfg map[string]interface{}) string {
+	if agentHost, ok := traceCfg[agentHost]; ok {
+		return agentHost.(string)
+	}
+
+	//if TRACE is not set, get it from the env variable
+	if host := os.Getenv(jaegerAgentHostKey); host != "" {
+		return host
+	}
+
+	return defaultJaegerAgentHost
 }
 
 func getServiceName(traceCfg map[string]interface{}) string {
@@ -105,57 +122,22 @@ func (t *grpcJaegerTracer) Start(ctx context.Context, request interface{}, start
 		return &jaeger.Span{}
 	}
 
-	fmt.Println(t)
 	fmt.Println(header)
 
 	//create entry span (downstream)
-	//sp, _ := opentracing.StartSpanFromContextWithTracer(ctx, t.tracer, header.FullMethod)
+	sp, _ := opentracing.StartSpanFromContextWithTracer(ctx, t.tracer, header.FullMethod)
 
 	//renew span context
-	//newSpanCtx, ok := sp.Context().(jaegerc.SpanContext)
-
-	//sp, spanCtx := t.getSpan(ctx, header, startTime)
-	//
-	//ext.HTTPMethod.Set(sp, string(header.Method()))
-	//ext.HTTPUrl.Set(sp, string(header.RequestURI()))
+	newSpanCtx, ok := sp.Context().(jaegerc.SpanContext)
 
 	return &grpcJaegerSpan{
-		trace: t,
-		ctx:   ctx,
-		Span:  &ltrace.Span{},
-		//spanCtx:    newSpanCtx,
-		//jaegerSpan: sp,
+		trace:      t,
+		ctx:        ctx,
+		Span:       &ltrace.Span{},
+		spanCtx:    newSpanCtx,
+		jaegerSpan: sp,
 	}
 }
-
-//func (t *grpcJaegerTracer) getSpan(ctx context.Context, header http.RequestHeader, startTime time.Time) (opentracing.Span, jaegerc.SpanContext) {
-//	httpHeaderPropagator := jaegerc.NewHTTPHeaderPropagator(newDefaultHeadersConfig(), *jaegerc.NewNullMetrics())
-//	// extract metadata
-//	spanCtx, _ := httpHeaderPropagator.Extract(jaeger.HTTPHeadersCarrier(header))
-//	sp, _ := opentracing.StartSpanFromContextWithTracer(ctx, t.trace, getOperationName(header.RequestURI()), opentracing.ChildOf(spanCtx), opentracing.StartTime(startTime))
-//
-//	//renew span context
-//	newSpanCtx, ok := sp.Context().(jaegerc.SpanContext)
-//	if !ok {
-//		return sp, spanCtx
-//	}
-//
-//	return sp, newSpanCtx
-//}
-//
-//func getOperationName(uri []byte) string {
-//	arr := strings.Split(string(uri), "?")
-//	return arr[0]
-//}
-//
-//func newDefaultHeadersConfig() *jaegerc.HeadersConfig {
-//	return &jaegerc.HeadersConfig{
-//		JaegerDebugHeader:        jaegerc.JaegerDebugHeader,
-//		JaegerBaggageHeader:      jaegerc.JaegerBaggageHeader,
-//		TraceContextHeaderName:   jaegerc.TraceContextHeaderName,
-//		TraceBaggageHeaderPrefix: jaegerc.TraceBaggageHeaderPrefix,
-//	}
-//}
 
 func (s *grpcJaegerSpan) TraceId() string {
 	return s.spanCtx.TraceID().String()
