@@ -41,7 +41,7 @@ Layotto 中的组件分为两种：
   "custom_component": {
     "helloworld": {
       "demo": {
-        "type":"in-memory"",
+        "type":"in-memory",
         "metadata": {}
       }
     }
