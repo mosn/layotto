@@ -18,7 +18,6 @@ package jaeger
 
 import (
 	"context"
-	"fmt"
 	"github.com/opentracing/opentracing-go"
 	jaegerc "github.com/uber/jaeger-client-go"
 	"github.com/uber/jaeger-client-go/config"
@@ -109,7 +108,7 @@ func getServiceName(traceCfg map[string]interface{}) string {
 
 	//if service_name is not set, get it from the env variable
 	if appID := os.Getenv(appIDKey); appID != "" {
-		return fmt.Sprintf("%s_sidecar", appID)
+		return appID + "_sidecar"
 	}
 
 	return defaultServiceName
