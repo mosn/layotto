@@ -36,12 +36,16 @@ import (
 )
 
 const (
-	serviceName            = "layotto"
-	agentHost              = "agent_host"
-	defaultServiceName     = "layotto"
-	defaultJaegerAgentHost = "127.0.0.1:6831"
-	jaegerAgentHostKey     = "TRACE"
-	appIDKey               = "APP_ID"
+	serviceName              = "layotto"
+	strategy                 = "strategy"
+	agentHost                = "agent_host"
+	collectorEndpoint        = "collector_endpoint"
+	defaultServiceName       = "layotto"
+	defaultJaegerAgentHost   = "127.0.0.1:6831"
+	jaegerAgentHostKey       = "TRACE"
+	appIDKey                 = "APP_ID"
+	defaultCollectorEndpoint = "http://127.0.0.1:14268/api/traces"
+	defaultStrategy          = "collector"
 )
 
 type grpcJaegerTracer struct {
@@ -61,17 +65,32 @@ func init() {
 }
 
 func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
+	var reporter *config.ReporterConfig
+
+	// Determining whether to start the agent
+	strategy := getStrategy(traceCfg)
+
+	if strategy == defaultStrategy {
+		reporter = &config.ReporterConfig{
+			LogSpans:            false,
+			BufferFlushInterval: 1 * time.Second,
+			CollectorEndpoint:   getCollectorEndpoint(traceCfg),
+		}
+	} else {
+		reporter = &config.ReporterConfig{
+			LogSpans:            false,
+			BufferFlushInterval: 1 * time.Second,
+			LocalAgentHostPort:  getAgentHost(traceCfg),
+		}
+	}
+
 	cfg := config.Configuration{
 		Disabled: false,
 		Sampler: &config.SamplerConfig{
 			Type:  "const",
 			Param: 1,
 		},
-		Reporter: &config.ReporterConfig{
-			LogSpans:            false,
-			BufferFlushInterval: 1 * time.Second,
-			LocalAgentHostPort:  getAgentHost(traceCfg),
-		},
+		Reporter: reporter,
 	}
 
 	cfg.ServiceName = getServiceName(traceCfg)
@@ -101,6 +120,22 @@ func getAgentHost(traceCfg map[string]interface{}) string {
 	}
 
 	return defaultJaegerAgentHost
+}
+
+func getStrategy(traceCfg map[string]interface{}) string {
+	if strategy, ok := traceCfg[strategy]; ok {
+		return strategy.(string)
+	}
+
+	return defaultStrategy
+}
+
+func getCollectorEndpoint(traceCfg map[string]interface{}) string {
+	if collectorEndpoint, ok := traceCfg[collectorEndpoint]; ok {
+		return collectorEndpoint.(string)
+	}
+
+	return defaultCollectorEndpoint
 }
 
 func getServiceName(traceCfg map[string]interface{}) string {
