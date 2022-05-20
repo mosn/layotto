@@ -126,7 +126,7 @@ func (t *grpcJaegerTracer) Start(ctx context.Context, request interface{}, start
 	sp, _ := opentracing.StartSpanFromContextWithTracer(ctx, t.tracer, header.FullMethod)
 
 	//renew span context
-	newSpanCtx, ok := sp.Context().(jaegerc.SpanContext)
+	newSpanCtx, _ := sp.Context().(jaegerc.SpanContext)
 
 	return &grpcJaegerSpan{
 		trace:      t,
