@@ -21,12 +21,12 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/json-iterator/go v1.1.11
-	github.com/opentracing/opentracing-go v1.2.0 // indirect
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0
-	github.com/uber/jaeger-client-go v2.30.0+incompatible // indirect
+	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.28.0
 	go.uber.org/automaxprocs v1.4.0 // indirect
@@ -36,7 +36,6 @@ require (
 	google.golang.org/protobuf v1.27.1
 	mosn.io/api v0.0.0-20220308091133-b233c56e98c7
 	mosn.io/layotto/components v0.0.0-20220119065745-4f03f6779399
-	mosn.io/layotto/sdk/go-sdk v0.0.0-20220311052659-a386713c7c13
 	mosn.io/layotto/spec v0.0.0-20220119065745-4f03f6779399
 	mosn.io/mosn v0.27.0
 	mosn.io/pkg v0.0.0-20220331064139-949046a47fa2

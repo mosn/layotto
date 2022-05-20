@@ -18,19 +18,21 @@ package jaeger
 
 import (
 	"context"
+	"os"
+	"time"
+
 	"github.com/opentracing/opentracing-go"
 	jaegerc "github.com/uber/jaeger-client-go"
 	"github.com/uber/jaeger-client-go/config"
 	"mosn.io/api"
-	ltrace "mosn.io/layotto/components/trace"
-	"mosn.io/layotto/diagnostics/grpc"
-	"mosn.io/layotto/diagnostics/protocol"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/trace"
 	"mosn.io/mosn/pkg/trace/jaeger"
 	"mosn.io/mosn/pkg/types"
-	"os"
-	"time"
+
+	ltrace "mosn.io/layotto/components/trace"
+	"mosn.io/layotto/diagnostics/grpc"
+	"mosn.io/layotto/diagnostics/protocol"
 )
 
 const (
