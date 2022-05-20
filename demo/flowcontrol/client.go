@@ -19,8 +19,9 @@ package main
 import (
 	"context"
 	"fmt"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"time"
+
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 
 	"google.golang.org/grpc"
 )

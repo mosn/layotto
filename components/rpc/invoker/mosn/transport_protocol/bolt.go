@@ -23,12 +23,13 @@ import (
 	"unsafe"
 
 	"mosn.io/api"
-	"mosn.io/layotto/components/pkg/common"
-	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
 	"mosn.io/mosn/pkg/protocol/xprotocol/boltv2"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/header"
+
+	"mosn.io/layotto/components/pkg/common"
+	"mosn.io/layotto/components/rpc"
 )
 
 // init mosn bolt or boltv2 protocol

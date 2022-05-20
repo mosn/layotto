@@ -16,15 +16,18 @@ All these features can be accessed through the HTTP API.
 
 After downloading the project source code, change directory and compile:
 
-```bash
-cd ${projectpath}/cmd/layotto
+```shell
+cd ${project_path}/cmd/layotto
+```
+
+```shell @if.not.exist layotto
 go build
 ```
 
 After completion, the layotto file will be generated in the directory, run it:
 
-```bash
-./layotto start -c ../../configs/config_apollo_health.json
+```shell @background
+./layotto start -c ../../configs/config_in_memory.json
 ```
 
 >Q: The demo report an error?
@@ -32,11 +35,12 @@ After completion, the layotto file will be generated in the directory, run it:
 >A: With the default configuration, Layotto will connect to apollo's demo server, but the configuration in that demo server may be modified by others. So the error may be because some configuration has been modified.
 >
 > In this case, you can try other demos.
+
 ### Access the health check API
 
 Visit /actuator/health/liveness
 
-```bash
+```shell
 curl http://127.0.0.1:34999/actuator/health/liveness
 ```
 
@@ -61,6 +65,8 @@ return:
 
 In the above json,"status": "UP" means the status is healthy. The Http status code returned is 200.
 
+If the current state is unhealthy, the value of "status" will be "DOWN", and the Http status code returned will be 503.
+
 ### Query metadata
 
 Visit /actuator/info
@@ -81,47 +87,69 @@ return:
 }
 ```
 
-### Simulate a configuration error scenario
+[comment]: <> (### Simulate a configuration error scenario)
 
-If a configuration error causes Layotto unavailable after startup, it can be discovered in time through the health check function.
+[comment]: <> (If a configuration error causes Layotto unavailable after startup, it can be discovered in time through the health check function.)
 
-We can simulate a configuration error scenario by starting Layotto with an incorrect configuration file:
+[comment]: <> (We can simulate a configuration error scenario by starting Layotto with an incorrect configuration file:)
 
-```shell
-./layotto start -c ../../configs/wrong/config_apollo_health.json
-```
+[comment]: <> (```bash)
 
-There isn't an 'open_api_token' field in the configuration file,which is required to access apollo.
+[comment]: <> (./layotto start -c ../../configs/wrong/config_apollo_health.json)
 
-Access the health check API (note that the port configured here is 34888, which is different from the previous example):
+[comment]: <> (```)
 
-```shell
-curl http://127.0.0.1:34888/actuator/health/liveness
-```
+[comment]: <> (There isn't an 'open_api_token' field in the configuration file,which is required to access apollo.)
 
-return:
+[comment]: <> (Access the health check API &#40;note that the port configured here is 34888, which is different from the previous example&#41;:)
 
-```json
-{
-  "components": {
-    "apollo": {
-      "status": "DOWN",
-      "details": {
-        "reason": "configuration illegal:no open_api_token"
-      }
-    },
-    "runtime_startup": {
-      "status": "DOWN",
-      "details": {
-        "reason": "configuration illegal:no open_api_token"
-      }
-    }
-  },
-  "status": "DOWN"
-}
-```
+[comment]: <> (```bash)
 
-"status": "DOWN" in json means the current status is unhealthy. The Http status code returned this time is 503.
+[comment]: <> (curl http://127.0.0.1:34888/actuator/health/liveness)
+
+[comment]: <> (```)
+
+[comment]: <> (return:)
+
+[comment]: <> (```json)
+
+[comment]: <> ({)
+
+[comment]: <> (  "components": {)
+
+[comment]: <> (    "apollo": {)
+
+[comment]: <> (      "status": "DOWN",)
+
+[comment]: <> (      "details": {)
+
+[comment]: <> (        "reason": "configuration illegal:no open_api_token")
+
+[comment]: <> (      })
+
+[comment]: <> (    },)
+
+[comment]: <> (    "runtime_startup": {)
+
+[comment]: <> (      "status": "DOWN",)
+
+[comment]: <> (      "details": {)
+
+[comment]: <> (        "reason": "configuration illegal:no open_api_token")
+
+[comment]: <> (      })
+
+[comment]: <> (    })
+
+[comment]: <> (  },)
+
+[comment]: <> (  "status": "DOWN")
+
+[comment]: <> (})
+
+[comment]: <> (```)
+
+[comment]: <> ("status": "DOWN" in json means the current status is unhealthy. The Http status code returned this time is 503.)
 
 ## Next step
 

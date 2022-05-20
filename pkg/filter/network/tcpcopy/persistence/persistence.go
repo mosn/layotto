@@ -17,12 +17,13 @@
 package persistence
 
 import (
-	"mosn.io/layotto/pkg/common"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 	"os"
 	"sync"
 	"sync/atomic"
+
+	"mosn.io/layotto/pkg/common"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 
 	"mosn.io/mosn/pkg/configmanager"
 	"mosn.io/mosn/pkg/log"
@@ -49,8 +50,8 @@ var (
 	staticConfPersistence   rlog.ErrorLogger
 	portraitDataPersistence rlog.ErrorLogger
 	//md5 for diff
-	md5ValueOfMemDump    string
-	md5ValueOfStaticConf string
+	md5ValueOfMemDump string
+	// md5ValueOfStaticConf string
 
 	memConfDumpFilePath string
 

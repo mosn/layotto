@@ -4,10 +4,27 @@
     "color": "EEEEEE"
   },
   "CHECKS": {
-    "prefixes": ["fix: ", "feat: ","doc: ","ci: ","chore: "],
+    "prefixes": [
+      "fix",
+      "feat",
+      "feature",
+      "docs",
+      "ci",
+      "chore",
+      "test",
+      "revert",
+      "style",
+      "refactor",
+      "sync",
+      "perf",
+      "merge"
+    ],
     "regexp": "docs\\(v[0-9]\\): ",
     "regexpFlags": "i",
-    "ignoreLabels" : ["dont-check-PRs-with-this-label", "meta"]
+    "ignoreLabels": [
+      "dont-check-PRs-with-this-label",
+      "meta"
+    ]
   },
   "MESSAGES": {
     "success": "All OK",

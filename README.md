@@ -1,15 +1,22 @@
-# Layotto (L8):To be the next layer of OSI layer 7
+<div align="center">
+  <h1>Layotto (L8): To be the next layer of OSI layer 7</h1>
+  <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
 
+[![Layotto Env Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml)
+[![Layotto Dev Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml)
+
+[![GoDoc](https://godoc.org/mosn.io/layotto?status.svg)](https://godoc.org/mosn.io/layotto)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mosn/layotto)](https://goreportcard.com/report/mosn.io/layotto)
 [![codecov](https://codecov.io/gh/mosn/layotto/branch/main/graph/badge.svg?token=10RxwSV6Sz)](https://codecov.io/gh/mosn/layotto)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mosn/layotto.svg)](http://isitmaintained.com/project/mosn/layotto "Average time to resolve an issue")
 
-<img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
+</div>
 
 [查看中文版本](https://mosn.io/layotto/#/zh/README)
 
 Layotto(/leɪˈɒtəʊ/) is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event pub/sub capabilities to simplify application development.
 
-Layotto is built on the open source data plane [MOSN](https://github.com/mosn/mosn) .In addition to providing distributed building blocks, Layotto can also serve as the data plane of Service Mesh and has the ability to control traffic.
+Layotto is built on the open source data plane [MOSN](https://github.com/mosn/mosn). In addition to providing distributed building blocks, Layotto can also serve as the data plane of Service Mesh and has the ability to control traffic.
 
 ## Motivation
 
@@ -17,7 +24,7 @@ Layotto aims to combine [Multi-Runtime](https://www.infoq.com/articles/multi-run
 
 For example, by adding Runtime capabilities to MOSN, a Layotto process can both [serve as the data plane of istio](https://mosn.io/layotto/#/en/start/istio/start.md) and provide various Runtime APIs (such as Configuration API, Pub/Sub API, etc.)
 
-In addition, we were surprised to find that a sidecar can do much more than that. We are trying to make Layotto even the runtime container of FaaS (Function as a service) and [reloadable sdk](https://github.com/mosn/layotto/issues/166) with the magic power of [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) .
+In addition, we were surprised to find that a sidecar can do much more than that. We are trying to make Layotto even the runtime container of FaaS (Function as a service) and [reloadable sdk](https://github.com/mosn/layotto/issues/166) with the magic power of [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly).
 
 ## Features
 
@@ -131,27 +138,37 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 As a programming enthusiast , have you ever felt that you want to participate in the development of an open source project, but don't know where to start?
 In order to help everyone better participate in open source projects, our community will regularly publish community tasks to help everyone learn by doing!
 
-[Document Contribution Guide](en/development/contributing-doc.md)
+[Document Contribution Guide](docs/en/development/contributing-doc.md)
 
-[Component Development Guide](en/development/developing-component.md)
+[Component Development Guide](docs/en/development/developing-component.md)
 
-[Explanation for github workflow](en/development/explanation-for-github-workflow.md)
+[Layotto Github Workflows](docs/en/development/github-workflows.md)
 
-[Layotto contributor guide](en/development/CONTRIBUTING.md)
+[Layotto Commands Guide](docs/en/development/commands.md)
+
+[Layotto Contributor Guide](docs/en/development/CONTRIBUTING.md)
+
+## Contributors
+
+Thank y'all!
+
+<a href="https://github.com/mosn/layotto/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mosn/layotto" />
+</a>
 
 ## Design Documents
 
-[Actuator Design Doc](en/design/actuator/actuator-design-doc.md)
+[Actuator Design Doc](docs/en/design/actuator/actuator-design-doc.md)
 
-[configuration-api-with-apollo](en/design/configuration/configuration-api-with-apollo.md)
+[Configuration API with Apollo](docs/en/design/configuration/configuration-api-with-apollo.md)
 
-[pubsub-api-and-compability-with-dapr-component](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+[Pubsub API and Compability with Dapr Component](docs/en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
 
-[rpc-design-doc](en/design/rpc/rpc-design-doc.md)
+[RPC Design Doc](docs/en/design/rpc/rpc-design-doc.md)
 
-[distributed-lock-api-design](en/design/lock/lock-api-design.md)
+[Distributed Lock API Design](docs/en/design/lock/lock-api-design.md)
 
-[FaaS design](en/design/faas/faas-poc-design.md)
+[FaaS Design](docs/en/design/faas/faas-poc-design.md)
 
 ## FAQ
 

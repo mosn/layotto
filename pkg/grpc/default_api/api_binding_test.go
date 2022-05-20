@@ -19,13 +19,15 @@ package default_api
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"testing"
 )
 
 func TestInvokeBinding(t *testing.T) {

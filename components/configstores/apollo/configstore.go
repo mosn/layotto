@@ -19,21 +19,34 @@ package apollo
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
-	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/pkg/actuators"
+
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/configstores"
 )
 
 var (
 	openAPIClientSingleton = &http.Client{}
+	once                   sync.Once
+	readinessIndicator     *actuators.HealthIndicator
+	livenessIndicator      *actuators.HealthIndicator
 )
+
+const componentName = "apollo"
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type ConfigStore struct {
 	tagsNamespace  string
@@ -70,6 +83,7 @@ func (c *ConfigStore) GetDefaultLabel() string {
 }
 
 func NewStore() configstores.Store {
+	registerActuator()
 	return &ConfigStore{
 		tagsNamespace: defaultTagsNamespace,
 		delimiter:     defaultDelimiter,
@@ -78,6 +92,13 @@ func NewStore() configstores.Store {
 		tagsRepo:      newAgolloRepository(),
 		openAPIClient: newHttpClient(),
 	}
+}
+
+func registerActuator() {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 }
 
 func newHttpClient() httpClient {
@@ -90,11 +111,11 @@ func newHttpClient() httpClient {
 func (c *ConfigStore) Init(config *configstores.StoreConfig) error {
 	err := c.doInit(config)
 	if err != nil {
-		GetReadinessIndicator().reportError(err.Error())
-		GetLivenessIndicator().reportError(err.Error())
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 	}
-	GetReadinessIndicator().setStarted()
-	GetLivenessIndicator().setStarted()
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return err
 }
 
@@ -259,7 +280,7 @@ func (c *ConfigStore) Set(ctx context.Context, req *configstores.SetRequest) err
 		return err
 	}
 	// 4. commit kv namespace
-	for g, _ := range groupMap {
+	for g := range groupMap {
 		err := c.commit(c.env, req.AppId, c.kvConfig.cluster, g)
 		if err != nil {
 			return err
@@ -611,5 +632,5 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 		log.DefaultLogger.Errorf("An error occurred when parsing createNamespace response. statusCode: %v ,error: %v", resp.StatusCode, err)
 		return err
 	}
-	return errors.New(fmt.Sprintf("createNamespace error. StatusCode: %v, response body: %s", resp.StatusCode, b))
+	return fmt.Errorf("createNamespace error. StatusCode: %v, response body: %s", resp.StatusCode, b)
 }

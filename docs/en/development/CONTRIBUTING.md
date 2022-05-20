@@ -1,4 +1,4 @@
-# Layotto contributor guide
+# Layotto Contributor Guide
 
 Layotto is released under the Apache 2.0 license, and follows a very standard Github development process, using Github tracker for issues and merging pull requests into master. If you would like to contribute something,  or simply want to hack on the code this document should help you get started.
 
@@ -9,9 +9,7 @@ Before we accept a non-trivial patch or pull request we will need you to sign th
 None of these is essential for a pull request, but they will all help.
 
 1. Code format
-- With cli, run `goimports -w yourfile.go` and `golint yourfile.go` to format the style
-- With ide like goland, select 'Group stdlib imports', 'Move all stdlib imports in a single group', 'Move all imports in a single declaration' in Go->imports page
-- We would check code format when run ci test, so please ensure that you have built project before you push branch.
+   you can simply run `make format` to format your codes style.
 2. Make sure all new `.go` files to have a simple doc class comment
    with at least an `author` tag identifying you, and preferably at least a
    paragraph on what the class is for.
@@ -21,7 +19,10 @@ None of these is essential for a pull request, but they will all help.
 6. A few unit tests would help a lot as well — someone has to do it.
 7. When writing a commit message please follow [these conventions](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html), if you are fixing an existing issue please add Fixes gh-XXXX at the end of the commit message (where XXXX is the issue number).
 8. Please ensure that code coverage will not decrease.
-9. Contribute a PR as the rule of Gitflow Workflow, and you should follow the pull request's rules.
+9. Make sure checks have been correctly passed, you can simply run `make check`
+10. Contribute a Pull Request  as the rule of Github Workflow, and you should follow the pull request's rules.
+
+> Layotto provides many useful commands to help you contribute easier, please check it [here](./commands.md)
 
 ## Version naming convention
 

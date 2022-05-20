@@ -19,8 +19,9 @@ package default_api
 import (
 	"context"
 	"errors"
-	"github.com/dapr/components-contrib/secretstores"
 	"sync"
+
+	"github.com/dapr/components-contrib/secretstores"
 
 	"github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/pubsub"
@@ -28,11 +29,14 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
+
 	"mosn.io/layotto/components/file"
 	grpc_api "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
+
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
@@ -40,7 +44,6 @@ import (
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"mosn.io/pkg/log"
 )
 
 const (
@@ -56,7 +59,7 @@ var (
 		},
 	}
 	// FIXME I put it here for compatibility.Don't write singleton like this !
-	// It should be refactored and deleted.
+	// LayottoAPISingleton should be refactored and deleted.
 	LayottoAPISingleton API
 )
 
@@ -225,7 +228,7 @@ func (a *api) getHello(name string) (hello.HelloService, error) {
 
 func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error) {
 	// convert request
-	var msg *dapr_common_v1pb.InvokeRequest = nil
+	var msg *dapr_common_v1pb.InvokeRequest
 	if in != nil && in.Message != nil {
 		msg = &dapr_common_v1pb.InvokeRequest{
 			Method:      in.Message.Method,

@@ -1,40 +1,53 @@
 # Dubbo JSON RPC Example
-
+*Note: This demo needs to run under go v1.17*
 ## Quick Start
-1. Edit config file，add `dubbo_json_rpc` filter
+### step 1. Edit config file，add `dubbo_json_rpc` filter
 
 ![jsonrpc.jpg](../../../img/rpc/jsonrpc.jpg)
 
-2. Compile and start layotto
-```sh
+### step 2. Compile and start layotto
+```shell @if.not.exist layotto
 go build -o layotto cmd/layotto/main.go
+```
+
+```shell @background
 ./layotto -c demo/rpc/dubbo_json_rpc/example.json
 ```
 
-3. Start dubbo server
+### step 3. Start dubbo server
 
 use `dubbo-go-samples` repo's example server.
 
-```sh
-git clone git@github.com:apache/dubbo-go-samples.git
-cd dubbo-go-samples
-
-# start zookeeper
-cd attachment/go-server
-make -f ../../build/Makefile docker-up 
-cd -
-
-# build dubbo server
-cd general/jsonrpc/go-server
-sh assembly/mac/dev.sh
-
-# start dubbo server
-cd target/darwin/{generate_folder}/
-sh ./bin/load.sh start
+```shell @catch
+git clone https://github.com/apache/dubbo-go-samples.git
 ```
 
-4. call runtime InvokerService api.
-```sh
+```shell
+cd dubbo-go-samples
+git reset --hard f0d1e1076397a4736de080ffb16cd0963c8c2f9d
+
+# start zookeeper
+cd rpc/jsonrpc/go-server
+docker-compose -f docker/docker-compose.yml up -d
+
+# prepare to build dubbo server
+cd cmd
+export DUBBO_GO_CONFIG_PATH="../conf/dubbogo.yml"
+```
+
+Build dubbo server:
+```shell @if.not.exist server
+go build -o server .
+```
+
+Start dubbo server:
+
+```shell @background.sleep 3s
+./server
+```
+
+### step 4. call runtime InvokerService api.
+```shell @cd ${project_path}
 go run demo/rpc/dubbo_json_rpc/dubbo_json_client/client.go -d '{"jsonrpc":"2.0","method":"GetUser","params":["A003"],"id":9527}'
 ```
 

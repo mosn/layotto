@@ -29,6 +29,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/valyala/fasthttp"
+
 	"mosn.io/layotto/components/rpc"
 )
 
@@ -54,7 +55,7 @@ func (ts *testhttpServer) readLoop(conn net.Conn) {
 		case "close":
 			return
 		case "timeout":
-			time.Sleep(2*time.Second)
+			time.Sleep(2 * time.Second)
 		default:
 		}
 
@@ -107,7 +108,7 @@ func TestManyRequests(t *testing.T) {
 	channel, err := newHttpChannel(ChannelConfig{Size: 1})
 	assert.Nil(t, err)
 
-	for i:=0;i<100;i++{
+	for i := 0; i < 100; i++ {
 		req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello"), Timeout: 1000}
 		_, err = channel.Do(req)
 		assert.Nil(t, err)
@@ -124,7 +125,7 @@ func TestResponseTimeout(t *testing.T) {
 	_, err = channel.Do(req)
 	assert.Error(t, err)
 
-	for i:=0;i<100;i++{
+	for i := 0; i < 100; i++ {
 		req = &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello"), Timeout: 1000}
 		_, err = channel.Do(req)
 		assert.Nil(t, err)

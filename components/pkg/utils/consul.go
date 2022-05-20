@@ -15,7 +15,9 @@ package utils
 
 import (
 	"errors"
+
 	"github.com/hashicorp/consul/api"
+
 	"mosn.io/layotto/components/lock"
 )
 

@@ -25,6 +25,7 @@ type Factory struct {
 	FactoryMethod func() state.Store
 }
 
+// Create a new Factory type variable
 func NewFactory(name string, f func() state.Store) *Factory {
 	return &Factory{
 		Name:          name,

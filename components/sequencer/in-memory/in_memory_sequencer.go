@@ -17,22 +17,48 @@
 package in_memory
 
 import (
-	"go.uber.org/atomic"
-	"mosn.io/layotto/components/sequencer"
 	"sync"
+
+	"go.uber.org/atomic"
+
+	"mosn.io/layotto/components/pkg/actuators"
+	"mosn.io/layotto/components/sequencer"
 )
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+const componentName = "in-memory"
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type InMemorySequencer struct {
 	data *sync.Map
 }
 
+func registerActuator() {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
+}
+
 func NewInMemorySequencer() *InMemorySequencer {
+	registerActuator()
 	return &InMemorySequencer{
 		data: &sync.Map{},
 	}
 }
 
 func (s *InMemorySequencer) Init(_ sequencer.Configuration) error {
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

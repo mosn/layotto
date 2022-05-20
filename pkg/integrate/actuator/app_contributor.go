@@ -17,9 +17,10 @@
 package actuator
 
 import (
-	"mosn.io/layotto/pkg/actuator/info"
 	"sync/atomic"
 	"time"
+
+	"mosn.io/layotto/pkg/actuator/info"
 )
 
 type AppContributor info.Contributor

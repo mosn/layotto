@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"sync"
+
 	"github.com/google/uuid"
+
 	client "mosn.io/layotto/sdk/go-sdk/client"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"sync"
 )
 
 const (
@@ -62,12 +64,9 @@ func main() {
 	// 3. client 1 unlock
 	fmt.Println("client1 prepare to unlock...")
 	unlockResp, err := cli.Unlock(ctx, &runtimev1pb.UnlockRequest{
-		StoreName:            storeName,
-		ResourceId:           resourceId,
-		LockOwner:            owner1,
-		XXX_NoUnkeyedLiteral: struct{}{},
-		XXX_unrecognized:     nil,
-		XXX_sizecache:        0,
+		StoreName:  storeName,
+		ResourceId: resourceId,
+		LockOwner:  owner1,
 	})
 	if err != nil {
 		panic(err)
@@ -96,12 +95,9 @@ func main() {
 		fmt.Printf("client2 got lock.ResourceId is %s\n", resourceId)
 		// 5. client2 unlock
 		unlockResp, err := cli.Unlock(ctx, &runtimev1pb.UnlockRequest{
-			StoreName:            storeName,
-			ResourceId:           resourceId,
-			LockOwner:            owner2,
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
+			StoreName:  storeName,
+			ResourceId: resourceId,
+			LockOwner:  owner2,
 		})
 		if err != nil {
 			panic(err)

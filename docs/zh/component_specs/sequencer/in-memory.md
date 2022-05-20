@@ -6,20 +6,20 @@
 
 
 ## 启动 layotto
-
-````shell
-cd ${projectpath}/cmd/layotto
+```shell
+cd ${project_path}/cmd/layotto
 go build
-````
+```
+
 编译成功后执行:
-````shell
+```shell @background
 ./layotto start -c ../../configs/config_in_memory.json
-````
+```
 
 ## 运行 Demo
 
-````shell
-cd ${projectpath}/demo/sequencer/in-memory/
+```shell
+cd ${project_path}/demo/sequencer/in-memory/
  go build -o client
  ./client
-````
+```

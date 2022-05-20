@@ -17,10 +17,12 @@
 package state
 
 import (
-	"github.com/dapr/components-contrib/state"
-	"mosn.io/layotto/components/pkg/info"
 	"strings"
 	"testing"
+
+	"github.com/dapr/components-contrib/state"
+
+	"mosn.io/layotto/components/pkg/info"
 )
 
 func TestNewRegistry(t *testing.T) {

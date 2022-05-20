@@ -18,6 +18,10 @@ package main
 
 import (
 	"encoding/json"
+	"os"
+	"strconv"
+	"time"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
 	"github.com/dapr/components-contrib/secretstores/aws/secretmanager"
@@ -28,15 +32,13 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 	"mosn.io/api"
+	"mosn.io/mosn/pkg/stagemanager"
+	"mosn.io/mosn/pkg/trace/skywalking"
+
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
-	"mosn.io/mosn/pkg/stagemanager"
-	"mosn.io/mosn/pkg/trace/skywalking"
-	"os"
-	"strconv"
-	"time"
 
 	"mosn.io/layotto/components/file/local"
 	"mosn.io/layotto/components/file/s3/alicloud"
@@ -47,12 +49,13 @@ import (
 
 	dbindings "github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/bindings/http"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/runtime/bindings"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
-	"mosn.io/pkg/log"
 
 	// Hello
 	"mosn.io/layotto/components/hello"
@@ -77,6 +80,7 @@ import (
 	"github.com/dapr/components-contrib/pubsub/rabbitmq"
 	pubsub_redis "github.com/dapr/components-contrib/pubsub/redis"
 	"github.com/dapr/kit/logger"
+
 	"mosn.io/layotto/pkg/runtime/pubsub"
 
 	// RPC
@@ -104,6 +108,7 @@ import (
 	"github.com/dapr/components-contrib/state/rethinkdb"
 	"github.com/dapr/components-contrib/state/sqlserver"
 	"github.com/dapr/components-contrib/state/zookeeper"
+
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 
 	// Lock
@@ -136,10 +141,6 @@ import (
 
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
-	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
-	l8_grpc "mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/pkg/runtime"
-	_ "mosn.io/layotto/pkg/wasm"
 	"mosn.io/mosn/pkg/featuregate"
 	_ "mosn.io/mosn/pkg/filter/network/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
@@ -163,6 +164,11 @@ import (
 	_ "mosn.io/mosn/pkg/wasm/runtime/wasmer"
 	_ "mosn.io/pkg/buffer"
 
+	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
+	l8_grpc "mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/runtime"
+	_ "mosn.io/layotto/pkg/wasm"
+
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
 	"mosn.io/layotto/diagnostics/jaeger"
 	lprotocol "mosn.io/layotto/diagnostics/protocol"
@@ -171,6 +177,9 @@ import (
 
 // loggerForDaprComp is constructed for reusing dapr's components.
 var loggerForDaprComp = logger.NewLogger("reuse.dapr.component")
+
+// GitVersion mosn version is specified by latest tag
+var GitVersion = ""
 
 func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
@@ -422,7 +431,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 var cmdStart = cli.Command{
 	Name:  "start",
-	Usage: "start runtime",
+	Usage: "start runtime. For example:  ./layotto start -c configs/config_in_memory.json",
 	Flags: []cli.Flag{
 		cli.StringFlag{
 			Name:   "config, c",
@@ -527,9 +536,9 @@ func registerAppInfo(app *cli.App) {
 func newRuntimeApp(startCmd *cli.Command) *cli.App {
 	app := cli.NewApp()
 	app.Name = "Layotto"
-	app.Version = "0.1.0"
+	app.Version = GitVersion
 	app.Compiled = time.Now()
-	app.Copyright = "(c) " + strconv.Itoa(time.Now().Year()) + " Ant Group"
+	app.Copyright = "(c) " + strconv.Itoa(time.Now().Year()) + " Layotto Authors"
 	app.Usage = "A fast and efficient cloud native application runtime based on MOSN."
 	app.Flags = cmdStart.Flags
 

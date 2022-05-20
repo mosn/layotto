@@ -30,9 +30,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"mosn.io/api"
-	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
 	"mosn.io/pkg/buffer"
+
+	"mosn.io/layotto/components/rpc"
 )
 
 var (
