@@ -105,7 +105,7 @@ go.test: go.test.verify
 	@echo "===========> Run unit test in diagnostics"
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./diagnostics/...`
 	@echo "===========> Run unit test in sdk/go-sdk"
-	@cd sdk/go-sdk && $(GO) test -count=1 -timeout=10m -short -v `go list ./...`
+	@cd sdk/go-sdk && $(GO) test -count=1 -timeout=10m -short -v `go list ./... | grep -v runtime`
 	@echo "===========> Run unit test in components"
 	@cd components/ && $(GO) test -count=1 -timeout=10m -short -v `go list ./...`
 	@echo "===========> Run unit test in pkg"
