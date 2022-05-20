@@ -164,6 +164,10 @@ func (f *Filter) releaseUsedInstance() error {
 	f.instance.Unlock()
 	plugin.plugin.ReleaseInstance(f.instance)
 
+	f.instance = nil
+	f.pluginUsed = nil
+	f.exports = nil
+
 	return nil
 }
 
