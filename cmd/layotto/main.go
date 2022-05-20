@@ -18,7 +18,6 @@ package main
 
 import (
 	"encoding/json"
-	"mosn.io/layotto/diagnostics/jaeger"
 	"os"
 	"strconv"
 	"time"
@@ -171,7 +170,7 @@ import (
 	_ "mosn.io/layotto/pkg/wasm"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
-	_ "mosn.io/layotto/diagnostics/jaeger"
+	"mosn.io/layotto/diagnostics/jaeger"
 	lprotocol "mosn.io/layotto/diagnostics/protocol"
 	lsky "mosn.io/layotto/diagnostics/skywalking"
 )
