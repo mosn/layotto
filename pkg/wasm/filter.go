@@ -20,20 +20,19 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"mosn.io/mosn/pkg/variable"
+	"mosn.io/mosn/pkg/wasm/abi"
+	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 	"reflect"
 	"sync"
 	"sync/atomic"
 
-	"mosn.io/mosn/pkg/variable"
-
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/types"
-	"mosn.io/mosn/pkg/wasm/abi"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 	"mosn.io/pkg/buffer"
 	"mosn.io/proxy-wasm-go-host/proxywasm/common"
-	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 )
 
 type Filter struct {
@@ -217,9 +216,8 @@ func headerMapSize(headers api.HeaderMap) int {
 	return size
 }
 
-// Reset the filter when receiving then return StreamFilter status
-func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
-	// dynamic load/unload wasm file
+// dynamic install, update instance number, and uninstall wasm
+func (f *Filter) dynamicManageWasm(ctx context.Context) api.StreamFilterStatus {
 	path, err := variable.GetString(ctx, types.VarHttpRequestPath)
 	if err != nil {
 		f.writeErrorMessage(err.Error())
@@ -240,8 +238,10 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 		}
 		return api.StreamFilterStop
 	}
+	return api.StreamFilterContinue
+}
 
-	// process wasm proxy logic
+func (f *Filter) processProxyRequest(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
 	id, ok := headers.Get("id")
 	if !ok {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders no id in headers")
@@ -320,6 +320,15 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 	}
 
 	return api.StreamFilterContinue
+}
+
+// Reset the filter when receiving then return StreamFilter status
+func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
+	status := f.dynamicManageWasm(ctx)
+	if status == api.StreamFilterStop {
+		return api.StreamFilterStop
+	}
+	return f.processProxyRequest(ctx, headers, buf, trailers)
 }
 
 // Append ResponseData of filter
