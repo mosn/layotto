@@ -26,6 +26,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0
+	github.com/uber/jaeger-client-go v2.30.0+incompatible // indirect
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.28.0
 	go.uber.org/automaxprocs v1.4.0 // indirect
