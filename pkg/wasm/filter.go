@@ -20,12 +20,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"mosn.io/mosn/pkg/variable"
-	"mosn.io/mosn/pkg/wasm/abi"
-	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 	"reflect"
 	"sync"
 	"sync/atomic"
+
+	"mosn.io/mosn/pkg/variable"
+	"mosn.io/mosn/pkg/wasm/abi"
+	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/log"
