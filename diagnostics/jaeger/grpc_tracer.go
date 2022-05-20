@@ -69,8 +69,7 @@ func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 		Reporter: &config.ReporterConfig{
 			LogSpans:            false,
 			BufferFlushInterval: 1 * time.Second,
-			//LocalAgentHostPort:  getAgentHost(traceCfg),
-			CollectorEndpoint: "http://127.0.0.1:14268/api/traces",
+			LocalAgentHostPort:  getAgentHost(traceCfg),
 		},
 	}
 
