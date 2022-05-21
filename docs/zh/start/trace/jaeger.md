@@ -1,5 +1,31 @@
 # Jaeger trace 接入
 
+## 配置
+
+示例：configs/config_trace_jaeger.json
+
+```json
+{
+  "tracing": {
+    "enable": true,
+    "driver": "jaeger",
+    "config": {
+      "config": {
+        "service_name": "layotto",
+        "agent_host": "127.0.0.1:6831",
+        "strategy": "collector"
+      }
+    }
+  }
+}
+```
+
+| 字段           | 必填  | 说明                 |
+|--------------|-----|--------------------|
+| service_name | Y | 服务名称               |
+| agent_host   | N | agent组件端口          |
+| strategy     | N | 数据上报方式，默认使用agent方式 |
+
 ## 运行Jaeger
 
 ```shell
