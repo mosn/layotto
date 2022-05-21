@@ -1,106 +1,120 @@
 # Layotto GitHub Workflows
 
-本文档解释了 Layotto 的 Github 四大工作流：
+This document explains Layotto's four workflows in Github:
+
 + Layotto Env Pipeline 🌊
 + Layotto Dev Pipeline 🌊 (Before Merged)
 + Layotto Dev Pipeline 🌊 (After Merged)
 + Layotto Release Pipeline 🌊
 
-工作流中包含了一个或多个任务，提高了 Layotto 的代码规范度和安全性，简化了开发/构建/发布等重复步骤，以下为对上述四大工作流的详细解释。
+The workflow contains one or more tasks, It improves the standardization and security of the code in layotto, simplifies repetitive steps of development / build / release. The following is a detailed explanation of the above four workflows.
 
 ### Layotto Env Pipeline 🌊
 
-#### Job 任务内容
+#### Job Task Content
 
-Layotto Env Pipeline 流水线主要负责 Layotto 的项目以及相关环境的规范，其中目前包含以下任务：
-+ Title Validation (基于 Semantic 风格 检查 PR Title 的规范)
-+ Quickstart Validation (QuickStart 文档的校验)
-+ Update Stale Status (Issue/PR 状态的更新)
-+ License Validation (License 的校验)
-+ DeadLink Validation (文档中 DeadLink 的检查)
-+ CodeQL (CodeQL 的分析)
+Layotto Env Pipeline is mainly responsible for the project of layotto and the specification of relevant environment,it current contains the following tasks：
 
-#### Job 触发方式
++ Title Validation (Check the specification of PR title based on semantic style)
++ Quickstart Validation (Verification of QuickStart documents)
++ Update Stale Status (Update of issue / PR status)
++ License Validation (Verification of license)
++ DeadLink Validation (Check the deadLink in document)
++ CodeQL (Analysis of CodeQL)
 
-Layotto Env Pipeline 流水线任务触发方式：
+#### Job Trigger Event
+
+Layotto Env Pipeline Task Trigger Events:
+
 + Title Validation: 
-    ```
-    pull_request:
-        types:
-        - opened 开启 PR 
-        - edited 编辑 PR
-        - synchronize 同步 PR
-        - labeled PR 添加 Label
-        - unlabeled PR 取消 Label
-    ```
+  
+  ```
+  pull_request:
+      types:
+      - opened open PR 
+      - edited edit PR
+      - synchronize synchronize PR
+      - labeled PR add Label
+      - unlabeled PR cancel Label
+  ```
+
 + Quickstart Validation: 
-    ```
-    push:
-        branches:
-        - main 合并 PR
-    pull_request:
-        branches:
-        - main 提交 PR
-    ```
+  
+  ```
+  push:
+      branches:
+      - main merge PR
+  pull_request:
+      branches:
+      - main commit PR
+  ```
+
 + Update Stale Status: 
-    ```
-    on:
-    schedule:
-        - cron: '30 1 * * *' 定时任务
-    ```
+  
+  ```
+  on:
+  schedule:
+      - cron: '30 1 * * *' timed tasks
+  ```
+
 + License Validation: 
-    ```
-    push:
-        branches:
-        - main 合并 PR
-    pull_request:
-        branches:
-        - main 提交 PR
-    ```
+  
+  ```
+  push:
+      branches:
+      - main merge PR
+  pull_request:
+      branches:
+      - main commit PR
+  ```
+
 + DeadLink Validation: 
-    ```
-    pull_request:
-        branches:
-        - main 提交 PR
-    ```
+  
+  ```
+  pull_request:
+      branches:
+      - main commit PR
+  ```
+
 + CodeQL: 
-    ```
-    schedule:
-        - cron: '0 4 * * 5' 定时任务
-    ```
+  
+  ```
+  schedule:
+      - cron: '0 4 * * 5' timed tasks
+  ```
 
 ### Layotto Dev Pipeline 🌊 (Before Merged)
 
 ![release.png](../../img/development/workflow/workflow-dev.png)
 
-#### Job 任务内容
+#### Job Task Content
 
-Layotto Dev Pipeline (Before Merged) 流水线主要负责 Layotto 提交 PR 后对代码的校验，其中目前包含以下若干任务：
+The layotto dev pipeline (before merged)  is mainly responsible for verifying the code after submitting the PR, which currently includes the following tasks:
 
-+ Go Style Check：对代码进行 风格校验
-+ Go CI Linter：对代码进行 Linter 规范校验
-+ Go Unit Test 对代码进行 单元测试
-+ Coverage Analysis 对代码进行 Coverage 分析
-+ Integrate with WASM 对代码进行 WASM 集成测试
-+ Integrate with Runtime 对代码进行 Runtime 集成测试
-+ Darwin AMD64 Artifact 对代码构建 Darwin AMD64 Binary 校验
-+ Darwin ARM64 Artifact 对代码构建 Darwin ARM64 Binary 校验
-+ Linux AMD64 Artifact 对代码构建 Linux AMD64Binary 校验
-+ Linux ARM64 Artifact 对代码构建 Linux ARM64 Binary 校验
-+ Linux AMD64 WASM Artifact 对 Layotto WASM 构建 Linux AMD64 Binary 校验
++ Go Style Check : Check the style of the code
++ Go CI Linter : Perform linter specification of verification on the code
++ Go Unit Test : Unit test the code
++ Coverage Analysis : Coverage analysis of the code
++ Integrate with WASM : WASM integration test on the code
++ Integrate with Runtime : Run time integration test on the code
++ Darwin AMD64 Artifact : Build Darwin AMD64 binary verification for code
++ Darwin ARM64 Artifact : Build Darwin arm64 binary verification for code
++ Linux AMD64 Artifact : Build linux amd64 binary verification for code
++ Linux ARM64 Artifact : Build linux arm64 binary verification for code
++ Linux AMD64 WASM Artifact : Build linux AMD64 binary verification for layotto wasm
 
-#### Job 触发方式
+#### Job Trigger Event
 
 ```
     on:
     push:
-        branches: [main] 合并 PR
-        paths-ignore: 忽略以下变更： docs 目录下文件，markdown 文件
+        branches: [main] merge PR
+        paths-ignore: ignore the following changes: docs directory files，markdown files
         - 'docs/**'
         - '**/*.md'
     pull_request:
-        branches: "*" 提交 PR
-        paths-ignore: 忽略以下变更： docs 目录下文件，markdown 文件
+        branches: "*" merge PR
+        paths-ignore: ignore the following changes: docs directory files，markdown files
         - 'docs/**'
         - '**/*.md'
 ```
@@ -109,37 +123,37 @@ Layotto Dev Pipeline (Before Merged) 流水线主要负责 Layotto 提交 PR 后
 
 ![release.png](../../img/development/workflow/workflow-merge.png)
 
-#### Job 任务内容
+#### Job Task Content
 
-Layotto Dev Pipeline (After Merged) 流水线主要负责 Layotto 代码合并后的校验和发布，其中目前包含以下任务：
+The layotto dev pipeline (after merged)  is mainly responsible for the verification and release of the combined layotto code, which currently includes the following tasks：
 
-+ Go Style Check：对代码进行 风格校验
-+ Go CI Linter：对代码进行 Linter 规范校验
-+ Go Unit Test 对代码进行 单元测试
-+ Coverage Analysis 对代码进行 Coverage 分析
-+ Integrate with WASM 对代码进行 WASM 集成测试
-+ Integrate with Runtime 对代码进行 Runtime 集成测试
-+ Darwin AMD64 Artifact 对代码构建 Darwin AMD64 Binary 校验
-+ Darwin ARM64 Artifact 对代码构建 Darwin ARM64 Binary 校验
-+ Linux AMD64 Artifact 对代码构建 Linux AMD64Binary 校验
-+ Linux ARM64 Artifact 对代码构建 Linux ARM64 Binary 校验
-+ Linux AMD64 WASM Artifact 对 Layotto WASM 构建 Linux AMD64 Binary 校验
-+ Linux AMD64 WASM Image 发布最新版本的 Layotto WASM 镜像，镜像规范为  layotto/faas-amd64:latest
-+ Linux AMD64 Image  发布最新版本的 Layotto 镜像，镜像规范为 layotto/layotto:latest
-+ Linux ARMD64 Image  发布最新版本的 Layotto 镜像，镜像规范为 layotto/layotto.arm64:latest
++ Go Style Check : Check the style of the code
++ Go CI Linter : Perform linter specification of verification on the code
++ Go Unit Test : Unit test the code
++ Coverage Analysis : Coverage analysis of the code
++ Integrate with WASM : WASM integration test on the code
++ Integrate with Runtime : Run time integration test on the code
++ Darwin AMD64 Artifact : Build Darwin AMD64 binary verification for code
++ Darwin ARM64 Artifact : Build Darwin arm64 binary verification for code
++ Linux AMD64 Artifact : Build linux amd64 binary verification for code
++ Linux ARM64 Artifact : Build linux arm64 binary verification for code
++ Linux AMD64 WASM Artifact : Build linux AMD64 binary verification for layotto wasm
++ Linux AMD64 WASM Image : Release the latest version of layotto wasm image. The image specification is layotto/faas-amd64:latest
++ Linux AMD64 Image : Release the latest version of layotto wasm image. The image specification is layotto/layotto:latest
++ Linux ARMD64 Image : Release the latest version of layotto wasm image. The image specification is layotto/layotto.arm64:latest
 
-#### Job 触发方式
+#### Job Trigger Event
 
 ```
     on:
     push:
-        branches: [main] 合并 PR
-        paths-ignore: 忽略以下变更： docs 目录下文件，markdown 文件
+        branches: [main] merge PR
+        paths-ignore: ignore the following changes： docs directory files，markdown files
         - 'docs/**'
         - '**/*.md'
     pull_request:
-        branches: "*" 提交 PR
-        paths-ignore: 忽略以下变更： docs 目录下文件，markdown 文件
+        branches: "*" create a PR
+        paths-ignore: ignore the following changes： docs directory files，markdown files
         - 'docs/**'
         - '**/*.md'
 ```
@@ -148,34 +162,32 @@ Layotto Dev Pipeline (After Merged) 流水线主要负责 Layotto 代码合并�
 
 ![release.png](../../img/development/workflow/workflow-release.png)
 
-#### Job 任务内容
+#### Job Task Content
 
-Layotto Release Pipeline 流水线主要负责 Layotto 新版本发布以及校验，其中目前包含以下任务：
+The layotto release pipeline  is mainly responsible for the release and verification of the new version of layotto, which currently includes the following tasks :
 
-+ Go Style Check：对代码进行 风格校验
-+ Go CI Linter：对代码进行 Linter 规范校验
-+ Go Unit Test 对代码进行 单元测试
-+ Coverage Analysis 对代码进行 Coverage 分析
-+ Integrate with WASM 对代码进行 WASM 集成测试
-+ Integrate with Runtime 对代码进行 Runtime 集成测试
-+ Darwin AMD64 Artifact 对代码构建 Darwin AMD64 Binary 校验
-+ Darwin ARM64 Artifact 对代码构建 Darwin ARM64 Binary 校验
-+ Linux AMD64 Artifact 对代码构建 Linux AMD64Binary 校验
-+ Linux ARM64 Artifact 对代码构建 Linux ARM64 Binary 校验
-+ Linux AMD64 WASM Artifact 对 Layotto WASM 构建 Linux AMD64 Binary 校验
-+ Linux AMD64 WASM Image 发布 Release 版本的 Layotto WASM 镜像，镜像规范为  layotto/faas-amd64:{latest_tagname}
-+ Linux AMD64 Image  发布 Release 版本的 Layotto 镜像，镜像规范为 layotto/layotto:{latest_tagname}
-+ Linux ARMD64 Image  发布 Release 版本的 Layotto 镜像，镜像规范为 layotto/layotto.arm64:{latest_tagname}
++ Go Style Check : Check the style of the code
++ Go CI Linter : Perform linter specification of verification on the code
++ Go Unit Test : Unit test the code
++ Coverage Analysis : Coverage analysis of the code
++ Integrate with WASM : WASM integration test on the code
++ Integrate with Runtime : Run time integration test on the code
++ Darwin AMD64 Artifact : Build Darwin AMD64 binary verification for code
++ Darwin ARM64 Artifact : Build Darwin arm64 binary verification for code
++ Linux AMD64 Artifact : Build linux amd64 binary verification for code
++ Linux ARM64 Artifact : Build linux arm64 binary verification for code
++ Linux AMD64 WASM Artifact : Build linux AMD64 binary verification for layotto wasm
++ Linux AMD64 WASM Image : Release the latest version of layotto wasm image. The image specification is layotto/faas-amd64:{latest_tagname}
++ Linux AMD64 Image : Release the latest version of layotto wasm image. The image specification is layotto/layotto:{latest_tagname}
++ Linux ARMD64 Image : Release the latest version of layotto wasm image. The image specification is layotto/layotto.arm64:{latest_tagname}
 
-#### Job 触发方式
+#### Job Trigger Event
 
 ```
     on:
-    create 创建 Tag 或 Branch，结合以下条件
+    create  Tag or Branch,combined with the following conditions
 
-    if: ${{ startsWith(github.ref, 'refs/tags/') }} 变更为 Tag（忽略新 Branch 的创建）
+    if: ${{ startsWith(github.ref, 'refs/tags/') }} changes to Tag(Ignore creation of new branch)
 ```
 
-> Layotto 的 github 工作流的配置文件在[这里](https://github.com/mosn/layotto/tree/main/.github/workflows)
-
-> TODO: need to translate.
+> The configuration file of Layotto's GitHub workflow is in [here](https://github.com/mosn/layotto/tree/main/.github/workflows)
