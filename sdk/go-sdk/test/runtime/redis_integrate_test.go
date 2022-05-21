@@ -78,7 +78,7 @@ func TestLockApi(t *testing.T) {
 	owner1 := uuid.New().String()
 	owner2 := uuid.New().String()
 	resourceID := "MyLock"
-
+	storeName := "lock_demo"
 	// 1. client1 tryLock
 	resp, err := cli.TryLock(ctx, &runtimev1pb.TryLockRequest{
 		StoreName:  storeName,
