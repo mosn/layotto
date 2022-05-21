@@ -6,7 +6,7 @@
       "listeners": [
         {
           "name": "grpc",
-          "address": "0.0.0.0:34904",
+          "address": "0.0.0.0:11104",
           "bind_port": true,
           "filter_chains": [
             {

@@ -31,7 +31,7 @@ import (
 var componentName = "state_demo"
 
 func TestHelloApi(t *testing.T) {
-	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
+	cli, err := client.NewClientWithAddress("127.0.0.1:11104")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,7 +48,7 @@ func TestHelloApi(t *testing.T) {
 }
 
 func TestStateApi(t *testing.T) {
-	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
+	cli, err := client.NewClientWithAddress("127.0.0.1:11104")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,8 +67,7 @@ func TestStateApi(t *testing.T) {
 }
 
 func TestLockApi(t *testing.T) {
-	storeName := "lock_demo"
-	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
+	cli, err := client.NewClientWithAddress("127.0.0.1:11104")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -139,7 +138,7 @@ func TestLockApi(t *testing.T) {
 }
 
 func TestSequencerApi(t *testing.T) {
-	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
+	cli, err := client.NewClientWithAddress("127.0.0.1:11104")
 	if err != nil {
 		t.Fatal(err)
 	}
