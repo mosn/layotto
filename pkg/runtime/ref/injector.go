@@ -18,7 +18,9 @@ package ref
 
 import (
 	"context"
+
 	"github.com/dapr/components-contrib/secretstores"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/ref"
 )

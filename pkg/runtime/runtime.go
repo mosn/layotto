@@ -20,9 +20,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	ref2 "mosn.io/layotto/pkg/runtime/ref"
 	"strings"
 	"time"
+
+	ref2 "mosn.io/layotto/pkg/runtime/ref"
 
 	"github.com/dapr/components-contrib/secretstores"
 
