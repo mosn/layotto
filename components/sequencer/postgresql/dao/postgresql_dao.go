@@ -36,7 +36,7 @@ type PostgresqlDao struct {
 }
 
 func (p *PostgresqlDao) NextSegment(ctx context.Context, bizTag string) (*model.PostgresqlModel, error) {
-	// 这儿开启事物
+	// start transition
 	tx, err := p.sql.Begin()
 	defer func() {
 		if err != nil {
@@ -65,7 +65,7 @@ func (p *PostgresqlDao) NextSegment(ctx context.Context, bizTag string) (*model.
 	return postgresqlModel, nil
 }
 
-// rollback 事物回滚
+// rollback
 func (p *PostgresqlDao) rollback(tx *sql.Tx) {
 	err := tx.Rollback()
 	if err != sql.ErrTxDone && err != nil {

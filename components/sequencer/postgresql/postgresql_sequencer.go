@@ -72,7 +72,7 @@ func (p *PostgresqlSequencer) Init(config sequencer.Configuration) error {
 	return nil
 }
 
-// Create 用户可以根据自定义去初始化id序列，纬度是以业务为纬度，biz_tag
+// Create 用户可以根据自定义去初始化id序列，维度以业务为维度，biz_tag
 func (p *PostgresqlSequencer) Create(model *model.PostgresqlModel) error {
 	err := p.client.Create(p.ctx, model)
 	if err != nil {

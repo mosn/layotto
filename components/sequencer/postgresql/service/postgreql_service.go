@@ -54,12 +54,11 @@ func NewPostgresqlService(dao *dao.PostgresqlDao, seq *model.PostgresqlSeq) *Pos
 }
 
 func (p *PostgresqlService) GetId(ctx context.Context, bizTag string) (uint64, error) {
-	// 先看看内存是否初始化
 	p.mutex.Lock()
 	var err error
 	seqList := p.overAllSeq.GetId(bizTag)
 	if seqList == nil {
-		// 内存中不存在，就初始化一下
+		// if it doesn't exist in memory, just initialize it
 		seqList, err = p.InitCache(ctx, bizTag)
 		if err != nil {
 			p.mutex.Unlock()

@@ -89,7 +89,7 @@ func (s *PostgresqlServer) NewPostgresqlServer() *service.PostgresqlService {
 
 func InitPostgresql(proterties map[string]string) (*service.PostgresqlService, error) {
 	s := &PostgresqlServer{}
-	err := s.init(proterties)
+	err := s.Init(proterties)
 	return s.NewPostgresqlServer(), err
 }
 
@@ -111,7 +111,7 @@ func NewPostgresqlClient(conf *config.Server) *sql.DB {
 	return postDB
 }
 
-func (s *PostgresqlServer) init(proterties map[string]string) error {
+func (s *PostgresqlServer) Init(proterties map[string]string) error {
 	conf := &config.Server{}
 
 	if val, ok := proterties[postgresqlHost]; ok && val != "" {
