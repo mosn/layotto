@@ -48,8 +48,8 @@ func (info *RuntimeInfo) RegisterComponent(service string, name string) {
 	}
 }
 
-func (info *RuntimeInfo) LoadComponent(service string, name string) {
+func (info *RuntimeInfo) LoadComponent(service string, componentType string) {
 	if c, ok := info.Services[service]; ok {
-		c.Loaded = append(c.Loaded, name)
+		c.Loaded = append(c.Loaded, componentType)
 	}
 }

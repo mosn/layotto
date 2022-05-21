@@ -29,7 +29,7 @@ const serviceName = "pubsub"
 // Registry is the pubsub registry with pubsub name as the key
 type Registry interface {
 	Register(fs ...*Factory)
-	Create(name string) (dpubsub.PubSub, error)
+	Create(componentType string) (dpubsub.PubSub, error)
 }
 
 type pubsubRegistry struct {
@@ -52,10 +52,10 @@ func (r *pubsubRegistry) Register(fs ...*Factory) {
 	}
 }
 
-func (r *pubsubRegistry) Create(name string) (dpubsub.PubSub, error) {
-	if f, ok := r.stores[name]; ok {
-		r.info.LoadComponent(serviceName, name)
+func (r *pubsubRegistry) Create(componentType string) (dpubsub.PubSub, error) {
+	if f, ok := r.stores[componentType]; ok {
+		r.info.LoadComponent(serviceName, componentType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not registered", name)
+	return nil, fmt.Errorf("service component %s is not registered", componentType)
 }

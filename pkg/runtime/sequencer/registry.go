@@ -26,7 +26,7 @@ const (
 
 type Registry interface {
 	Register(fs ...*Factory)
-	Create(name string) (sequencer.Store, error)
+	Create(componentType string) (sequencer.Store, error)
 }
 
 type sequencerRegistry struct {
@@ -49,10 +49,10 @@ func (r *sequencerRegistry) Register(fs ...*Factory) {
 	}
 }
 
-func (r *sequencerRegistry) Create(name string) (sequencer.Store, error) {
-	if f, ok := r.stores[name]; ok {
-		r.info.LoadComponent(ServiceName, name)
+func (r *sequencerRegistry) Create(componentType string) (sequencer.Store, error) {
+	if f, ok := r.stores[componentType]; ok {
+		r.info.LoadComponent(ServiceName, componentType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", name)
+	return nil, fmt.Errorf("service component %s is not regsitered", componentType)
 }

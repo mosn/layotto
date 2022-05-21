@@ -24,7 +24,7 @@ import (
 
 type Registry interface {
 	Register(fs ...*StoreFactory)
-	Create(name string) (Store, error)
+	Create(componentType string) (Store, error)
 }
 
 type StoreFactory struct {
@@ -59,10 +59,10 @@ func (r *StoreRegistry) Register(fs ...*StoreFactory) {
 	}
 }
 
-func (r *StoreRegistry) Create(name string) (Store, error) {
-	if f, ok := r.stores[name]; ok {
-		r.info.LoadComponent(ServiceName, name)
+func (r *StoreRegistry) Create(componentType string) (Store, error) {
+	if f, ok := r.stores[componentType]; ok {
+		r.info.LoadComponent(ServiceName, componentType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", name)
+	return nil, fmt.Errorf("service component %s is not regsitered", componentType)
 }

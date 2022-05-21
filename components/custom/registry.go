@@ -21,7 +21,7 @@ import (
 
 type Registry interface {
 	Register(componentType string, factorys ...*ComponentFactory)
-	Create(componentType, name string) (Component, error)
+	Create(kind, componentType string) (Component, error)
 }
 
 type ComponentFactory struct {

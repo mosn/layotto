@@ -24,7 +24,7 @@ import (
 
 type Registry interface {
 	Register(fs ...*HelloFactory)
-	Create(name string) (HelloService, error)
+	Create(componentType string) (HelloService, error)
 }
 
 type HelloFactory struct {
@@ -59,10 +59,10 @@ func (r *helloRegistry) Register(fs ...*HelloFactory) {
 	}
 }
 
-func (r *helloRegistry) Create(name string) (HelloService, error) {
-	if f, ok := r.stores[name]; ok {
-		r.info.LoadComponent(ServiceName, name) // 加载组件信息
+func (r *helloRegistry) Create(componentType string) (HelloService, error) {
+	if f, ok := r.stores[componentType]; ok {
+		r.info.LoadComponent(ServiceName, componentType) // 加载组件信息
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", name)
+	return nil, fmt.Errorf("service component %s is not regsitered", componentType)
 }
