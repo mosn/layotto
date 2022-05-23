@@ -32,8 +32,11 @@ endif
 ifeq ($(origin DOCS_DIR),undefined)
 DOCS_DIR := $(ROOT_DIR)/docs
 endif
-ifeq ($(origin TEST_DIR),undefined)
-TEST_DIR := $(ROOT_DIR)/test
+ifeq ($(origin TEST_WASM_DIR),undefined)
+TEST_WASM_DIR := $(ROOT_DIR)/test
+endif
+ifeq ($(origin TEST_RUNTIME_DIR),undefined)
+TEST_RUNTIME_DIR := $(ROOT_DIR)/sdk/go-sdk/test
 endif
 ifeq ($(origin DEMO_DIR),undefined)
 DEMO_DIR := $(ROOT_DIR)/demo

@@ -62,6 +62,24 @@ go.clean:
 	@echo "===========> Cleaning all build output"
 	@rm -rf $(OUTPUT_DIR)
 	@rm -rf $(ROOT_DIR)/cover.out
+	@rm -f cmd/layotto/layotto
+	@rm -f cmd/layotto/nohup.out
+	@rm -f cmd/layotto_multiple_api/layotto
+	@rm -f cmd/layotto_multiple_api/nohup.out
+	@rm -rf default.etcd/
+	@rm -f demo/configuration/common/client
+	@rm -f demo/file/client
+	@rm -f demo/flowcontrol/client
+	@rm -f demo/lock/redis/client
+	@rm -f demo/pubsub/redis/client/publisher
+	@rm -f demo/pubsub/redis/server/nohup.out
+	@rm -f demo/pubsub/redis/server/subscriber
+	@rm -f demo/sequencer/common/client
+	@rm -f demo/state/common/client
+	@rm -f etc/script/mdx
+	@rm -f etcd
+	@rm -f layotto_wasmer
+	@rm -f nohup.out
 
 .PHONY: go.lint.verify
 go.lint.verify:
@@ -87,7 +105,7 @@ go.test: go.test.verify
 	@echo "===========> Run unit test in diagnostics"
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./diagnostics/...`
 	@echo "===========> Run unit test in sdk/go-sdk"
-	@cd sdk/go-sdk && $(GO) test -count=1 -timeout=10m -short -v `go list ./...`
+	@cd sdk/go-sdk && $(GO) test -count=1 -timeout=10m -short -v `go list ./... | grep -v runtime`
 	@echo "===========> Run unit test in components"
 	@cd components/ && $(GO) test -count=1 -timeout=10m -short -v `go list ./...`
 	@echo "===========> Run unit test in pkg"
@@ -102,12 +120,35 @@ go.style:
 go.format.verify:  
 ifeq ($(shell which goimports), )
 	@echo "===========> Installing missing goimports"
-	@GO111MODULE=off $(GO) get -u golang.org/x/tools/cmd/goimports
+	@mkdir -p $(GOPATH)/src/github.com/golang
+	@mkdir -p $(GOPATH)/src/golang.org/x
+ifeq ($(shell if [ -d $(GOPATH)/src/github.com/golang/tools ]; then echo "exist"; else echo ""; fi;), )
+	@git clone https://github.com/golang/tools.git $(GOPATH)/src/github.com/golang/tools
+endif 
+ifeq ($(shell if [ -d $(GOPATH)/src/golang.org/x/tools ]; then echo "exist"; else echo ""; fi;), )
+	@ln -s $(GOPATH)/src/github.com/golang/tools $(GOPATH)/src/golang.org/x/tools
+endif
+
+ifeq ($(shell if [ -d $(GOPATH)/src/github.com/golang/mod ]; then echo "exist"; else echo ""; fi;), )
+	@git clone https://github.com/golang/mod.git $(GOPATH)/src/github.com/golang/mod
+endif 
+ifeq ($(shell if [ -d $(GOPATH)/src/golang.org/x/mod ]; then echo "exist"; else echo ""; fi;), )
+	@ln -s $(GOPATH)/src/github.com/golang/mod $(GOPATH)/src/golang.org/x/mod
+endif
+
+ifeq ($(shell if [ -d $(GOPATH)/src/github.com/golang/sys ]; then echo "exist"; else echo ""; fi;), )
+	@git clone https://github.com/golang/sys.git $(GOPATH)/src/github.com/golang/sys
+endif 
+ifeq ($(shell if [ -d $(GOPATH)/src/golang.org/x/sys ]; then echo "exist"; else echo ""; fi;), )
+	@ln -s $(GOPATH)/src/github.com/golang/sys $(GOPATH)/src/golang.org/x/sys
+endif
+	@GO111MODULE=off $(GO) build $(GOPATH)/src/golang.org/x/tools/cmd/goimports
+	@GO111MODULE=off $(GO) install $(GOPATH)/src/golang.org/x/tools/cmd/goimports
 endif
 
 .PHONY: go.format
 go.format: go.format.verify
 	@echo "===========> Running go codes format"
 	$(GO_FMT) -s -w .
-	$(GO_IMPORTS) -w -local $(GO_MODULE) .
+	$(GOPATH)/bin/$(GO_IMPORTS) -w -local $(GO_MODULE) .
 	$(GO) mod tidy
