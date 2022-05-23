@@ -170,7 +170,7 @@ curl --location --request GET 'http://127.0.0.1:34903/metrics'
 解释一下[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 里 metrics 相关配置
 
 #### 埋点、统计
-<img src="https://11user-images.githubusercontent.com/26001097/151318373-632e93bc-108d-47ae-b401-6092ed66bcdc.png" width="50%" height="50%" />
+<img src="https://user-images.githubusercontent.com/26001097/151318373-632e93bc-108d-47ae-b401-6092ed66bcdc.png" width="50%" height="50%" />
 
 图中标红的这段配置会启用mosn的"grpc_metric" filter。这个filter的作用是在每次处理完grpc请求后，统计服务名、成功还是失败等信息，存在内存中。
 
