@@ -17,6 +17,5 @@
 go build ./cmd/layotto
 nohup redis-server &
 nohup ./layotto start -c ./configs/integrate_config.json &
-go get mosn.io/layotto/sdk/go-sdk/client
-go test -p 1 -v ./test/runtime/...
-
+cd sdk/go-sdk/test/runtime
+go test -p 1 -v ./...
