@@ -109,12 +109,7 @@ func (h *hdfs) Put(ctx context.Context, stu *file.PutFileStu) error {
 	}
 
 	_, err = client.Write(stu.FileName, stu.DataStream, size)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (h *hdfs) Get(ctx context.Context, stu *file.GetFileStu) (io.ReadCloser, error) {
