@@ -19,8 +19,6 @@ package client
 import (
 	"testing"
 
-	"mosn.io/layotto/components/lock"
-
 	"context"
 	"github.com/stretchr/testify/assert"
 
@@ -29,8 +27,9 @@ import (
 
 func TestTryLock(t *testing.T) {
 	ctx := context.Background()
-	t.Run("try lock", func(t *testing.T) {
+	t.Run("try lock successfully", func(t *testing.T) {
 		request := runtimev1pb.TryLockRequest{
+			StoreName:  "demo",
 			ResourceId: "lock_test",
 			LockOwner:  "layotto",
 		}
@@ -42,43 +41,46 @@ func TestTryLock(t *testing.T) {
 
 func TestUnLock(t *testing.T) {
 	ctx := context.Background()
-	t.Run("try lock", func(t *testing.T) {
+	t.Run("unlock with different owner failed", func(t *testing.T) {
+		// 1. try lock
 		request := runtimev1pb.TryLockRequest{
+			StoreName:  "demo",
 			ResourceId: "lock_test",
 			LockOwner:  "layotto",
 		}
 		lock, err := testClient.TryLock(ctx, &request)
 		assert.Nil(t, err)
 		assert.NotNil(t, lock.Success, true)
-	})
-
-	t.Run("unlock", func(t *testing.T) {
-		request := runtimev1pb.UnlockRequest{
+		// 2. unlock with different owner
+		unlockReq := runtimev1pb.UnlockRequest{
+			StoreName:  "demo",
 			ResourceId: "lock_test",
 			LockOwner:  "layotto1",
 		}
-		unlock, err := testClient.Unlock(ctx, &request)
+		unlock, err := testClient.Unlock(ctx, &unlockReq)
 		assert.Nil(t, err)
-		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_Status(lock.LOCK_BELONG_TO_OTHERS))
+		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_LOCK_BELONG_TO_OTHERS)
 	})
 
-	t.Run("unlock", func(t *testing.T) {
+	t.Run("unlock successfully", func(t *testing.T) {
 		request := runtimev1pb.UnlockRequest{
+			StoreName:  "demo",
 			ResourceId: "lock_test",
 			LockOwner:  "layotto",
 		}
 		unlock, err := testClient.Unlock(ctx, &request)
 		assert.Nil(t, err)
-		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_Status(lock.SUCCESS))
+		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_SUCCESS)
 	})
 
-	t.Run("unlock", func(t *testing.T) {
+	t.Run("unlock but LOCK_UNEXIST", func(t *testing.T) {
 		request := runtimev1pb.UnlockRequest{
+			StoreName:  "demo",
 			ResourceId: "lock_test",
 			LockOwner:  "layotto",
 		}
 		unlock, err := testClient.Unlock(ctx, &request)
 		assert.Nil(t, err)
-		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_Status(lock.LOCK_UNEXIST))
+		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_LOCK_UNEXIST)
 	})
 }
