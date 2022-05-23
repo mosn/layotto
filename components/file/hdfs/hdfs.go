@@ -268,8 +268,5 @@ func (h *hdfs) createHdfsClient(meta *HdfsMetaData) (types.Storager, error) {
 
 // ishdfsMetaValid check if the metadata is valid
 func (hm *HdfsMetaData) isHdfsMetaValid() bool {
-	if hm.EndPoint == "" {
-		return false
-	}
-	return true
+	return hm.EndPoint != ""
 }

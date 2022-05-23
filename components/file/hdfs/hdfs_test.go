@@ -29,12 +29,16 @@ import (
 	"go.beyondstorage.io/v5/types"
 )
 
-// config is the raw json data of component's Metadata configuration
-const config = `[
+const (
+	// config is the raw json data of component's Metadata configuration
+	config = `[
 				{
 					"endpoint": "tcp:127.0.0.1:9000"
 				}
 			]`
+	endpoint9000    = "127.0.0.1:9000"
+	endpoint9000TCP = "tcp:127.0.0.1:9000"
+)
 
 func TestHdfs_Init(t *testing.T) {
 	hdfs := NewHdfs()
@@ -63,7 +67,7 @@ func TestHdfs_selectClient(t *testing.T) {
 	assert.Equal(t, err, ErrInitFailed)
 
 	meta := make(map[string]string)
-	meta["endpoint"] = "tcp:127.0.0.1:9000"
+	meta["endpoint"] = endpoint9000TCP
 	_, err = hdfs.selectClient(meta)
 	assert.NotNil(t, err)
 
@@ -112,7 +116,7 @@ func TestHdfs_Put(t *testing.T) {
 	assert.NotNil(t, err)
 
 	// convert from string to int64 success
-	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
+	req.Metadata["endpoint"] = endpoint9000TCP
 	req.Metadata["fileSize"] = "123"
 	err = hdfs.Put(context.TODO(), req)
 	assert.NotNil(t, err)
@@ -138,11 +142,11 @@ func TestHdfs_Get(t *testing.T) {
 	assert.Equal(t, ErrMissingEndPoint, err)
 
 	// client not exist
-	req.Metadata["endpoint"] = "127.0.0.1:9000"
+	req.Metadata["endpoint"] = endpoint9000
 	_, err = hdfs.Get(context.TODO(), req)
 	assert.Equal(t, ErrClientNotExist, err)
 
-	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
+	req.Metadata["endpoint"] = endpoint9000TCP
 	_, err = hdfs.Get(context.TODO(), req)
 	assert.NotNil(t, err)
 
@@ -168,11 +172,11 @@ func TestHdfs_Del(t *testing.T) {
 	assert.Equal(t, ErrMissingEndPoint, err)
 
 	// client not exist
-	req.Metadata["endpoint"] = "127.0.0.1:9000"
+	req.Metadata["endpoint"] = endpoint9000
 	err = hdfs.Del(context.TODO(), req)
 	assert.Equal(t, ErrClientNotExist, err)
 
-	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
+	req.Metadata["endpoint"] = endpoint9000TCP
 	err = hdfs.Del(context.TODO(), req)
 	assert.NotNil(t, err)
 }
@@ -198,11 +202,11 @@ func TestHdfs_List(t *testing.T) {
 	assert.Equal(t, ErrMissingEndPoint, err)
 	assert.Nil(t, resp)
 
-	req.Metadata["endpoint"] = "127.0.0.1:9000"
+	req.Metadata["endpoint"] = endpoint9000
 	resp, err = hdfs.List(context.TODO(), req)
 	assert.Equal(t, ErrClientNotExist, err)
 
-	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
+	req.Metadata["endpoint"] = endpoint9000TCP
 	resp, err = hdfs.List(context.TODO(), req)
 	assert.NotNil(t, err)
 }
@@ -227,11 +231,11 @@ func TestHdfs_Stat(t *testing.T) {
 	assert.Equal(t, ErrNotSpecifyEndpoint, err)
 	assert.Nil(t, resp)
 
-	req.Metadata["endpoint"] = "127.0.0.1:9000"
+	req.Metadata["endpoint"] = endpoint9000
 	resp, err = hdfs.Stat(context.TODO(), req)
 	assert.Equal(t, ErrClientNotExist, err)
 
-	req.Metadata["endpoint"] = "tcp:127.0.0.1:9000"
+	req.Metadata["endpoint"] = endpoint9000TCP
 	resp, err = hdfs.Stat(context.TODO(), req)
 	assert.NotNil(t, err)
 }
@@ -253,7 +257,7 @@ func TestHdfs_CreateHdfsClient(t *testing.T) {
 	assert.Nil(t, store)
 	assert.Error(t, err)
 
-	mt.EndPoint = "tcp:127.0.0.1:9000"
+	mt.EndPoint = endpoint9000TCP
 	store, err = oss.(*hdfs).createHdfsClient(mt)
 	assert.Nil(t, store)
 	assert.Error(t, err)
