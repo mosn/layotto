@@ -258,12 +258,7 @@ func (h *hdfs) selectClient(meta map[string]string) (client types.Storager, err 
 }
 
 func (h *hdfs) createHdfsClient(meta *HdfsMetaData) (types.Storager, error) {
-	client, err := store.NewStorager(pairs.WithEndpoint(meta.EndPoint))
-
-	if err != nil {
-		return nil, err
-	}
-	return client, nil
+	return store.NewStorager(pairs.WithEndpoint(meta.EndPoint))
 }
 
 // ishdfsMetaValid check if the metadata is valid
