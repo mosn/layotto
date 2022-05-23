@@ -31,11 +31,22 @@ jobs:
       - name: Format Go
         run: |
            make check.style
-  
+  resolve-modules:
+    name: "👀 Resolve Go Modules"
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout Sources
+        uses: actions/checkout@v2
+      - id: set-matrix
+        run: ./etc/script/resolve-modules.sh
   golangci-lint:
     name: "👀 Go CI Linter"
-    needs: [style-check]
+    needs: [style-check,resolve-modules]
     runs-on: ubuntu-20.04
+    strategy:
+      matrix: ${{ fromJson(needs.resolve-modules.outputs.matrix) }}
     steps:
     - uses: actions/checkout@v3
     - name: Set up Go
@@ -43,7 +54,10 @@ jobs:
       with:
         go-version: 1.18.1
     - name: Go Lint Test
-      run: make check.lint                                                                                                                                                                                                                                                                                                                                                                                                                                         
+        uses: golangci/golangci-lint-action@v1
+        with:
+          version: v1.28
+          working-directory: ${{ matrix.workdir }}
 
   go-unit-test:
     name: "👀 Go Unit Test"
@@ -66,7 +80,7 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
     - name: Test Coverage
-      run: make style.coverage 
+      run: make style.coverage
     - name: Post Coverage
       run: bash <(curl -s https://codecov.io/bash)
 
@@ -247,7 +261,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Login to DockerHub
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -271,7 +285,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Login to DockerHub
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
