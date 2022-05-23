@@ -28,7 +28,7 @@ jobs:
       - name: Checkout Sources
         uses: actions/checkout@v2
       - id: set-matrix
-        run: ./etc/script/resolve-modules.sh
+        run: sh ./etc/script/resolve-modules.sh
   golangci-lint:
     name: "👀 Go CI Linter"
     needs: [ style-check,resolve-modules ]
