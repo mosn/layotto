@@ -109,12 +109,7 @@ func (h *hdfs) Put(ctx context.Context, stu *file.PutFileStu) error {
 	}
 
 	_, err = client.Write(stu.FileName, stu.DataStream, size)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (h *hdfs) Get(ctx context.Context, stu *file.GetFileStu) (io.ReadCloser, error) {
@@ -258,18 +253,10 @@ func (h *hdfs) selectClient(meta map[string]string) (client types.Storager, err 
 }
 
 func (h *hdfs) createHdfsClient(meta *HdfsMetaData) (types.Storager, error) {
-	client, err := store.NewStorager(pairs.WithEndpoint(meta.EndPoint))
-
-	if err != nil {
-		return nil, err
-	}
-	return client, nil
+	return store.NewStorager(pairs.WithEndpoint(meta.EndPoint))
 }
 
 // ishdfsMetaValid check if the metadata is valid
 func (hm *HdfsMetaData) isHdfsMetaValid() bool {
-	if hm.EndPoint == "" {
-		return false
-	}
-	return true
+	return hm.EndPoint != ""
 }
