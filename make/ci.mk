@@ -39,6 +39,16 @@ checker.deadlink:
 	@echo "===========> Checking Dead Links"
 	sh ${SCRIPT_DIR}/check-dead-link.sh
 
+.PHONY: checker.license
+checker.license:
+	# For more details: https://github.com/apache/skywalking-eyes#docker-image
+	docker run -it --rm -v $(ROOT_DIR):/github/workspace apache/skywalking-eyes header check
+
+.PHONY: checker.license.fix
+checker.license.fix:
+	# For more details: https://github.com/apache/skywalking-eyes#docker-image
+	docker run -it --rm -v $(ROOT_DIR):/github/workspace apache/skywalking-eyes header fix
+
 QUICKSTART_VERSION ?= default
 
 .PHONY: checker.quickstart
