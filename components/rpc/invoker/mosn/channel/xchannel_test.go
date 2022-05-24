@@ -255,7 +255,8 @@ func TestConncurrent(t *testing.T) {
 
 	wg.Wait()
 	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 1000}
-	_, err = channel.Do(req)
+	channel.Do(req)
+	//_, err = channel.Do(req)
 	//assert.Nil(t, err)
 
 	size = 100
