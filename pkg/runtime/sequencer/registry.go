@@ -26,7 +26,7 @@ const (
 
 type Registry interface {
 	Register(fs ...*Factory)
-	Create(componentType string) (sequencer.Store, error)
+	Create(compType string) (sequencer.Store, error)
 }
 
 type sequencerRegistry struct {
@@ -44,15 +44,15 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 
 func (r *sequencerRegistry) Register(fs ...*Factory) {
 	for _, f := range fs {
-		r.stores[f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(ServiceName, f.Name)
+		r.stores[f.CompType] = f.FactoryMethod
+		r.info.RegisterComponent(ServiceName, f.CompType)
 	}
 }
 
-func (r *sequencerRegistry) Create(componentType string) (sequencer.Store, error) {
-	if f, ok := r.stores[componentType]; ok {
-		r.info.LoadComponent(ServiceName, componentType)
+func (r *sequencerRegistry) Create(compType string) (sequencer.Store, error) {
+	if f, ok := r.stores[compType]; ok {
+		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", componentType)
+	return nil, fmt.Errorf("service component %s is not regsitered", compType)
 }

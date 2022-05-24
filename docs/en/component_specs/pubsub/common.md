@@ -4,7 +4,15 @@
 The json configuration file has the following structure:
 ```json
 "pub_subs": {
-  "<STORE NAME>": {
+  "<Component A Name>": {
+    "type":"<Component A Type>",
+    "metadata": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    }
+  },
+  "<Component B Name>": {
+    "type":"<Component B Type>",
     "metadata": {
       "<KEY>": "<VALUE>",
       "<KEY>": "<VALUE>"
@@ -16,7 +24,8 @@ You can configure the key/value configuration items that the component cares abo
 
 ```json
 "pub_subs": {
-  "redis": {
+  "pubsub_dmoe": {
+    "type": "redis",
     "metadata": {
       "redisHost": "localhost:6380",
       "redisPassword": ""

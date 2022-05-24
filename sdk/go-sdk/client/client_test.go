@@ -30,7 +30,6 @@ import (
 	"google.golang.org/protobuf/types/known/anypb"
 	empty "google.golang.org/protobuf/types/known/emptypb"
 
-	"mosn.io/layotto/components/lock"
 	pb "mosn.io/layotto/spec/proto/runtime/v1"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
@@ -290,19 +289,19 @@ func (t *testRuntimeServer) Unlock(ctx context.Context, in *runtimev1pb.UnlockRe
 		if t.lock[in.ResourceId] == in.LockOwner {
 			delete(t.lock, in.ResourceId)
 			resp := &runtimev1pb.UnlockResponse{
-				Status: runtimev1pb.UnlockResponse_Status(lock.SUCCESS),
+				Status: pb.UnlockResponse_SUCCESS,
 			}
 			return resp, nil
 		} else {
 			resp := &runtimev1pb.UnlockResponse{
-				Status: runtimev1pb.UnlockResponse_Status(lock.LOCK_BELONG_TO_OTHERS),
+				Status: pb.UnlockResponse_LOCK_BELONG_TO_OTHERS,
 			}
 			return resp, nil
 		}
 
 	} else {
 		resp := &runtimev1pb.UnlockResponse{
-			Status: runtimev1pb.UnlockResponse_Status(lock.LOCK_UNEXIST),
+			Status: pb.UnlockResponse_LOCK_UNEXIST,
 		}
 		return resp, nil
 	}

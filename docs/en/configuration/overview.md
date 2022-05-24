@@ -14,7 +14,8 @@ The configuration item in `grpc_config` is Layotto's component configuration, th
 ```json
 "grpc_config": {
   "<API NAME>": {
-    "<COMPONENT NAME>": {
+    "<COMPONENT A NAME>": {
+      "type": "<COMPONENT A Type>"
       "<KEY>": "<VALUE>",
       "metadata": {
         "<KEY>": "<VALUE>",
@@ -23,16 +24,16 @@ The configuration item in `grpc_config` is Layotto's component configuration, th
     }
   },
   "<API NAME>": {
-    "<COMPONENT NAME>": {
+    "<COMPONENT B NAME>": {
+      "type": "<COMPONENT B Type>"
       "<KEY>": "<VALUE>",
       "metadata": {
         "<KEY>": "<VALUE>",
         "<KEY>": "<VALUE>"
       }
     }
-  }
+  },
 }
-
 ```
 
 As for what to fill in each `<API NAME>`, what is each `<COMPONENT NAME>`, and which `"<KEY>": "<VALUE>"` configuration items can be configured with the components, you can refer to [Component specs](en/component_specs/overview) .

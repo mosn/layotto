@@ -24,17 +24,17 @@ import (
 
 type Registry interface {
 	Register(fs ...*HelloFactory)
-	Create(componentType string) (HelloService, error)
+	Create(compType string) (HelloService, error)
 }
 
 type HelloFactory struct {
-	Name          string
+	CompType      string
 	FatcoryMethod func() HelloService
 }
 
-func NewHelloFactory(name string, f func() HelloService) *HelloFactory {
+func NewHelloFactory(compType string, f func() HelloService) *HelloFactory {
 	return &HelloFactory{
-		Name:          name,
+		CompType:      compType,
 		FatcoryMethod: f,
 	}
 }
@@ -54,15 +54,15 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 
 func (r *helloRegistry) Register(fs ...*HelloFactory) {
 	for _, f := range fs {
-		r.stores[f.Name] = f.FatcoryMethod
-		r.info.RegisterComponent(ServiceName, f.Name) // 注册组件信息
+		r.stores[f.CompType] = f.FatcoryMethod
+		r.info.RegisterComponent(ServiceName, f.CompType) // 注册组件信息
 	}
 }
 
-func (r *helloRegistry) Create(componentType string) (HelloService, error) {
-	if f, ok := r.stores[componentType]; ok {
-		r.info.LoadComponent(ServiceName, componentType) // 加载组件信息
+func (r *helloRegistry) Create(compType string) (HelloService, error) {
+	if f, ok := r.stores[compType]; ok {
+		r.info.LoadComponent(ServiceName, compType) // 加载组件信息
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", componentType)
+	return nil, fmt.Errorf("service component %s is not regsitered", compType)
 }

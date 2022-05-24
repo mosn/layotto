@@ -31,8 +31,8 @@ const (
 type Registry interface {
 	RegisterOutputBinding(fs ...*OutputBindingFactory)
 	RegisterInputBinding(fs ...*InputBindingFactory)
-	CreateOutputBinding(componentType string) (bindings.OutputBinding, error)
-	CreateInputBinding(componentType string) (bindings.InputBinding, error)
+	CreateOutputBinding(compType string) (bindings.OutputBinding, error)
+	CreateInputBinding(compType string) (bindings.InputBinding, error)
 }
 
 type bindingsRegistry struct {
@@ -52,30 +52,30 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 
 func (r *bindingsRegistry) RegisterOutputBinding(fs ...*OutputBindingFactory) {
 	for _, f := range fs {
-		r.outputBindingStores[f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(ServiceName, f.Name)
+		r.outputBindingStores[f.CompType] = f.FactoryMethod
+		r.info.RegisterComponent(ServiceName, f.CompType)
 	}
 }
 
 func (r *bindingsRegistry) RegisterInputBinding(fs ...*InputBindingFactory) {
 	for _, f := range fs {
-		r.inputBindingStores[f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(ServiceName, f.Name)
+		r.inputBindingStores[f.CompType] = f.FactoryMethod
+		r.info.RegisterComponent(ServiceName, f.CompType)
 	}
 }
 
-func (r *bindingsRegistry) CreateOutputBinding(componentType string) (bindings.OutputBinding, error) {
-	if f, ok := r.outputBindingStores[componentType]; ok {
-		r.info.LoadComponent(ServiceName, componentType)
+func (r *bindingsRegistry) CreateOutputBinding(compType string) (bindings.OutputBinding, error) {
+	if f, ok := r.outputBindingStores[compType]; ok {
+		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", componentType)
+	return nil, fmt.Errorf("service component %s is not regsitered", compType)
 }
 
-func (r *bindingsRegistry) CreateInputBinding(componentType string) (bindings.InputBinding, error) {
-	if f, ok := r.inputBindingStores[componentType]; ok {
-		r.info.LoadComponent(ServiceName, componentType)
+func (r *bindingsRegistry) CreateInputBinding(compType string) (bindings.InputBinding, error) {
+	if f, ok := r.inputBindingStores[compType]; ok {
+		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", componentType)
+	return nil, fmt.Errorf("service component %s is not regsitered", compType)
 }

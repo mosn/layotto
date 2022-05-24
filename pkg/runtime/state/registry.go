@@ -30,7 +30,7 @@ const (
 
 type Registry interface {
 	Register(fs ...*Factory)
-	Create(componentType string) (state.Store, error)
+	Create(compType string) (state.Store, error)
 }
 
 type stateRegistry struct {
@@ -50,16 +50,16 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 // Registration for multiple Factories
 func (r *stateRegistry) Register(fs ...*Factory) {
 	for _, f := range fs {
-		r.stores[f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(ServiceName, f.Name)
+		r.stores[f.CompType] = f.FactoryMethod
+		r.info.RegisterComponent(ServiceName, f.CompType)
 	}
 }
 
 // Loading components for a registered Factory
-func (r *stateRegistry) Create(componentType string) (state.Store, error) {
-	if f, ok := r.stores[componentType]; ok {
-		r.info.LoadComponent(ServiceName, componentType)
+func (r *stateRegistry) Create(compType string) (state.Store, error) {
+	if f, ok := r.stores[compType]; ok {
+		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", componentType)
+	return nil, fmt.Errorf("service component %s is not regsitered", compType)
 }

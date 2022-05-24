@@ -20,8 +20,8 @@ import (
 )
 
 type Registry interface {
-	Register(componentType string, factorys ...*ComponentFactory)
-	Create(kind, componentType string) (Component, error)
+	Register(compType string, factorys ...*ComponentFactory)
+	Create(kind, compType string) (Component, error)
 }
 
 type ComponentFactory struct {
@@ -48,29 +48,29 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 	}
 }
 
-func (r *componentRegistry) Register(componentType string, fs ...*ComponentFactory) {
+func (r *componentRegistry) Register(compType string, fs ...*ComponentFactory) {
 	if len(fs) == 0 {
 		return
 	}
-	r.info.AddService(componentType)
+	r.info.AddService(compType)
 	// lazy init
-	if _, ok := r.stores[componentType]; !ok {
-		r.stores[componentType] = make(map[string]func() Component)
+	if _, ok := r.stores[compType]; !ok {
+		r.stores[compType] = make(map[string]func() Component)
 	}
 	// register FactoryMethod
 	for _, f := range fs {
-		r.stores[componentType][f.Type] = f.FactoryMethod
-		r.info.RegisterComponent(componentType, f.Type)
+		r.stores[compType][f.Type] = f.FactoryMethod
+		r.info.RegisterComponent(compType, f.Type)
 	}
 }
 
-func (r *componentRegistry) Create(componentType, name string) (Component, error) {
-	store, ok := r.stores[componentType]
+func (r *componentRegistry) Create(compType, name string) (Component, error) {
+	store, ok := r.stores[compType]
 	if !ok {
-		return nil, fmt.Errorf("custom component type %s is not regsitered", componentType)
+		return nil, fmt.Errorf("custom component type %s is not regsitered", compType)
 	}
 	if f, ok := store[name]; ok {
-		r.info.LoadComponent(componentType, name)
+		r.info.LoadComponent(compType, name)
 		return f(), nil
 	}
 	return nil, fmt.Errorf("custom component %s is not regsitered", name)

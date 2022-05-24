@@ -19,8 +19,6 @@ package client
 import (
 	"testing"
 
-	"mosn.io/layotto/components/lock"
-
 	"context"
 	"github.com/stretchr/testify/assert"
 
@@ -52,33 +50,33 @@ func TestUnLock(t *testing.T) {
 		assert.NotNil(t, lock.Success, true)
 	})
 
-	t.Run("unlock", func(t *testing.T) {
+	t.Run("Test to release locks held by others", func(t *testing.T) {
 		request := runtimev1pb.UnlockRequest{
 			ResourceId: "lock_test",
 			LockOwner:  "layotto1",
 		}
 		unlock, err := testClient.Unlock(ctx, &request)
 		assert.Nil(t, err)
-		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_Status(lock.LOCK_BELONG_TO_OTHERS))
+		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_LOCK_BELONG_TO_OTHERS)
 	})
 
-	t.Run("unlock", func(t *testing.T) {
+	t.Run("the lock release test succeeded. ", func(t *testing.T) {
 		request := runtimev1pb.UnlockRequest{
 			ResourceId: "lock_test",
 			LockOwner:  "layotto",
 		}
 		unlock, err := testClient.Unlock(ctx, &request)
 		assert.Nil(t, err)
-		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_Status(lock.SUCCESS))
+		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_SUCCESS)
 	})
 
-	t.Run("unlock", func(t *testing.T) {
+	t.Run("the test lock does not exist", func(t *testing.T) {
 		request := runtimev1pb.UnlockRequest{
 			ResourceId: "lock_test",
 			LockOwner:  "layotto",
 		}
 		unlock, err := testClient.Unlock(ctx, &request)
 		assert.Nil(t, err)
-		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_Status(lock.LOCK_UNEXIST))
+		assert.NotNil(t, unlock.Status, runtimev1pb.UnlockResponse_LOCK_UNEXIST)
 	})
 }
