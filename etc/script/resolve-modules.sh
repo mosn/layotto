@@ -4,5 +4,5 @@
 
 echo "Resolving modules in $(pwd)"
 
-PATHS=$(find . -mindepth 2 -not -path "*/faas/*" -type f -name go.mod -printf '{"workdir":"%h"},')
+PATHS=$(find . -not -path "*/faas/*" -type f -name go.mod -printf '{"workdir":"%h"},')
 echo "::set-output name=matrix::{\"include\":[${PATHS%?}]}"
