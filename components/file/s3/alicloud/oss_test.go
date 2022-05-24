@@ -171,7 +171,7 @@ func TestGet(t *testing.T) {
 	assert.Nil(t, resp)
 
 	req.FileName = fileName
-	resp, err = oss.Get(context.Background(), req)
+	_, err = oss.Get(context.Background(), req)
 	assert.Error(t, err)
 }
 
@@ -192,7 +192,7 @@ func TestStat(t *testing.T) {
 	assert.Nil(t, resp)
 
 	req.FileName = fileName
-	resp, err = oss.Stat(context.Background(), req)
+	_, err = oss.Stat(context.Background(), req)
 	assert.Error(t, err)
 }
 
@@ -214,7 +214,7 @@ func TestList(t *testing.T) {
 	assert.Nil(t, resp)
 
 	req.DirectoryName = "b/"
-	resp, err = oss.List(context.Background(), req)
+	_, err = oss.List(context.Background(), req)
 	assert.Error(t, err)
 }
 
