@@ -41,7 +41,7 @@ func TestTryLock(t *testing.T) {
 
 func TestUnLock(t *testing.T) {
 	ctx := context.Background()
-	t.Run("try lock", func(t *testing.T) {
+	t.Run("try lock successfully", func(t *testing.T) {
 		request := runtimev1pb.TryLockRequest{
 			StoreName:  "demo",
 			ResourceId: "lock_test",
