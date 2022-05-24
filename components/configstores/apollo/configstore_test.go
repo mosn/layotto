@@ -27,15 +27,17 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zouyx/agollo/v4"
 	"mosn.io/mosn/pkg/log"
 
 	"mosn.io/layotto/components/configstores"
 )
 
+const (
+	prod = "prod"
+)
+
 // MockRepository implements Repository interface
 type MockRepository struct {
-	client  *agollo.Client
 	cfg     *RepoConfig
 	invoked []string
 	cache   map[string]map[string]string
@@ -131,7 +133,7 @@ func TestConfigStore_read(t *testing.T) {
 	var req configstores.GetRequest
 	req.AppId = appId
 	req.Group = "application"
-	req.Label = "prod"
+	req.Label = prod
 	req.Keys = []string{"sofa"}
 	resp, err := store.Get(context.Background(), &req)
 	if err != nil || len(resp) == 0 || resp[0].Content != "sofa@$prod" {
@@ -172,7 +174,7 @@ func TestConfigStore_read(t *testing.T) {
 	ch := make(chan *configstores.SubscribeResp)
 	subReq.AppId = "testApplication_yang"
 	subReq.Group = "application"
-	subReq.Label = "prod"
+	subReq.Label = prod
 	subReq.Keys = []string{"sofa"}
 	err = store.Subscribe(&subReq, ch)
 	if err != nil {
@@ -300,7 +302,7 @@ func TestConfigStore_write(t *testing.T) {
 	item.Key = "sofa"
 	item.Content = "v1"
 	item.Group = "application"
-	item.Label = "prod"
+	item.Label = prod
 	req.StoreName = "apollo"
 	req.Items = append(req.Items, &item)
 
@@ -353,7 +355,7 @@ func TestConfigStore_write(t *testing.T) {
 	delReq.AppId = appId
 	delReq.Keys = []string{"sofa"}
 	delReq.Group = "application"
-	delReq.Label = "prod"
+	delReq.Label = prod
 	err = store.Delete(context.Background(), &delReq)
 	if err != nil {
 		t.Error(err)
