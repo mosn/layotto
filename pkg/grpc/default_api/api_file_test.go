@@ -51,7 +51,8 @@ func TestGetFile(t *testing.T) {
 	mockStream.EXPECT().Send(&runtimev1pb.GetFileResponse{Data: []byte("testFile")}).Times(1)
 	mockStream.EXPECT().Context().Return(context.Background())
 	go SendData(w)
-	api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock"}, mockStream)
+	err = api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock"}, mockStream)
+	assert.Nil(t, err)
 }
 
 func TestPutFile(t *testing.T) {

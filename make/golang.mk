@@ -114,7 +114,7 @@ go.test: go.test.verify
 .PHONY: go.style
 go.style:  
 	@echo "===========> Running go style check"
-	$(GO) fmt ./... && git status && [[ -z `git status -s` ]]
+	$(MAKE) format && git status && [[ -z `git status -s` ]]
 
 .PHONY: go.format.verify
 go.format.verify:  
@@ -152,3 +152,7 @@ go.format: go.format.verify
 	$(GO_FMT) -s -w .
 	$(GOPATH)/bin/$(GO_IMPORTS) -w -local $(GO_MODULE) .
 	$(GO) mod tidy
+	cd components && $(GO) mod tidy
+	cd demo && $(GO) mod tidy
+	cd sdk/go-sdk && $(GO) mod tidy
+	cd spec && $(GO) mod tidy

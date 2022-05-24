@@ -68,7 +68,8 @@ func TestEndpoint_WhenNoIndicator(t *testing.T) {
 	assert.True(t, err != nil)
 	assert.True(t, len(handle) == 2)
 	assert.True(t, handle["status"] == DOWN)
-	health := handle["components"].(map[string]Health)["test"]
+	health, ok := handle["components"].(map[string]Health)["test"]
+	assert.True(t, ok)
 	assert.True(t, health.Status == DOWN)
 	assert.True(t, health.GetDetail("reason") == "mock")
 }

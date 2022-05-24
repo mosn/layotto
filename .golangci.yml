@@ -29,6 +29,8 @@ linters :
     - gocyclo
     - revive
     - goimports
+#    - errcheck
+#    - forcetypeassert
     # - lll
 
 issues :
