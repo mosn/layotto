@@ -8,7 +8,7 @@ import (
 var initFuncRegistry map[string]S3ClientInit
 var mux sync.RWMutex
 
-type S3ClientInit func(staticConf json.RawMessage, DynConf map[string]string) (map[string]interface{}, error)
+type S3ClientInit func(staticConf json.RawMessage, dynConf map[string]string) (map[string]interface{}, error)
 
 func init() {
 	initFuncRegistry = make(map[string]S3ClientInit)

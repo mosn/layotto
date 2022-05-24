@@ -201,7 +201,7 @@ func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
 	//	Body:          st.DataStream,
 	//	ContentLength: bodySize,
 	//}
-	client, err := a.selectClient(st.Metadata)
+	client, err := a.selectClient(st.Metadata, endpointKey)
 	if err != nil {
 		return err
 	}
@@ -222,9 +222,9 @@ func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
 }
 
 // selectClient choose aws client from exist client-map, key is endpoint, value is client instance.
-func (a *AwsOss) selectClient(meta map[string]string) (*s3.Client, error) {
+func (a *AwsOss) selectClient(meta map[string]string, key string) (*s3.Client, error) {
 	// exist specific client with key endpoint
-	if ep, ok := meta[endpointKey]; ok {
+	if ep, ok := meta[key]; ok {
 		if client, ok := a.client[ep]; ok {
 			return client, nil
 		}
@@ -252,7 +252,7 @@ func (a *AwsOss) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, e
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(st.Metadata)
+	client, err := a.selectClient(st.Metadata, endpointKey)
 	if err != nil {
 		return nil, err
 	}
@@ -382,12 +382,13 @@ func (a *AwsOss) InitClient(ctx context.Context, req *file.InitRequest) error {
 	}
 	return nil
 }
+
 func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (io.ReadCloser, error) {
 	input := &s3.GetObjectInput{
 		Bucket: &req.Bucket,
 		Key:    &req.Key,
 	}
-	client, err := a.selectClient(map[string]string{})
+	client, err := a.selectClient(map[string]string{}, req.ClientName)
 	if err != nil {
 		return nil, err
 	}
@@ -397,6 +398,7 @@ func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (io.Re
 	}
 	return ob.Body, nil
 }
+
 func (a *AwsOss) PutObject(context.Context) error {
 	return nil
 }

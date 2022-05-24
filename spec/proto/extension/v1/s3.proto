@@ -3,15 +3,33 @@ syntax = "proto3";
 package mosn.proto.runtime.v1;
 
 import "google/protobuf/empty.proto";
-import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "mosn.io/layotto/spec/proto/extension/v1;s3";
 
 service S3 {
   rpc InitClient(InitRequest) returns (google.protobuf.Empty){}
-  rpc GetObject(GetObjectInput) returns (stream GetObjectOutput){}
   rpc PutObject(stream PutObjectInput) returns(PutObjectOutput){}
+  rpc GetObject(GetObjectInput) returns (stream GetObjectOutput){}
+  rpc DeleteObject(DeleteObjectInput) returns (DeleteObjectOutput){}
+  rpc PutObjectTagging(PutBucketTaggingInput) returns (PutBucketTaggingOutput){}
+  rpc DeleteObjectTagging(DeleteObjectTaggingInput) returns(DeleteObjectTaggingOutput){}
+  rpc GetObjectTagging(GetObjectTaggingInput) returns(GetObjectTaggingOutput){}
+  rpc CopyObject(CopyObjectInput) returns(CopyObjectOutput){}
+  rpc DeleteObjects(DeleteObjectsInput) returns(DeleteObjectsOutput){}
+  rpc ListObjects(ListObjectsInput) returns(ListObjectsOutput){}
+  rpc GetObjectAcl(GetObjectAclInput) returns(GetObjectAclOutput){}
+  rpc PutObjectAcl(PutObjectAclInput) returns(PutObjectAclOutput){}
+  rpc RestoreObject(RestoreObjectInput) returns(RestoreObjectOutput){}
+  rpc CreateMultipartUpload(CreateMultipartUploadInput) returns(CreateMultipartUploadOutput){}
+  rpc UploadPart(stream UploadPartInput) returns(UploadPartOutput){}
+  rpc UploadPartCopy(UploadPartCopyInput) returns(UploadPartCopyOutput){}
+  rpc CompleteMultipartUpload(CompleteMultipartUploadInput) returns(CompleteMultipartUploadOutput){}
+  rpc AbortMultipartUpload(AbortMultipartUploadInput) returns(AbortMultipartUploadOutput){}
+  rpc ListMultipartUploads(ListMultipartUploadsInput) returns(ListMultipartUploadsOutput){}
+  rpc ListObjectVersions(ListObjectVersionsInput) returns(ListObjectVersionsOutput){}
 }
+
 message InitRequest {
 	string store_name = 1;
 	map<string, string> metadata = 2;
@@ -40,8 +58,6 @@ message GetObjectInput {
   string sse_customer_key_md5 = 20;
   string version_id = 21;
 }
-
-
 message GetObjectOutput {
   bytes body = 1;
 }
@@ -55,8 +71,339 @@ message PutObjectInput{
     bool bucket_key_enabled = 6;
     string cache_control = 7;
 }
-
 message PutObjectOutput{
     bool bucket_key_enabled = 1;
     string etag = 2;
+}
+
+message DeleteObjectInput{
+    string bucket = 1;
+    string key = 2;
+}
+message DeleteObjectOutput{
+    bool delete_marker = 1;
+    string request_charged = 2;
+    string version_id = 3;
+}
+
+message PutBucketTaggingInput{
+    string bucket = 1;
+    map<string, string> tags = 2;
+}
+message PutBucketTaggingOutput{
+
+}
+
+message DeleteObjectTaggingInput{
+	// The bucket name containing the objects from which to remove the tags.
+    string bucket = 1;
+    string key = 2;
+}
+message DeleteObjectTaggingOutput{
+    string version_id = 1;
+}
+
+message GetObjectTaggingInput{
+    string bucket = 1;
+    string key = 2;
+}
+message GetObjectTaggingOutput{
+    map<string, string> tags = 1;
+}
+
+message CopyObjectInput{
+    string bucket = 1;
+    string key = 2;
+    string copy_source = 3;
+}
+message CopyObjectOutput{
+
+}
+
+message DeleteObjectsInput{
+	// The bucket name containing the objects from which to remove the tags.
+    string bucket = 1;
+    repeated string objects = 2;
+}
+message DeleteObjectsOutput{
+
+}
+
+message ListObjectsInput{
+    string bucket = 1;
+}
+message ListObjectsOutput{
+    repeated string common_prefixes = 1;
+    repeated Object contents = 2;
+    string delimiter = 3;
+    string encoding_type = 4;
+    bool is_truncated = 5;
+    string marker = 6;
+    int64 max_keys = 7;
+    string name = 8;
+    string next_marker = 9;
+    string prefix = 10;
+}
+message Owner{
+    string display_name = 1;
+    string id = 2;
+}
+message Object{
+    string etag = 1;
+    string key = 2;
+    google.protobuf.Timestamp last_modified = 3;
+    Owner owner = 4;
+    int64 size = 5;
+    string storage_class = 6;
+}
+
+message Grantee{
+    string display_name = 1;
+    string email_address = 2;
+    string id = 3;
+    string type = 4;
+    string uri = 5;
+}
+message Grant{
+    Grantee grantee = 1;
+    string permission = 2;
+}
+message GetObjectAclInput{
+    string bucket = 1;
+    string key = 2;
+}
+message GetObjectAclOutput{
+    repeated Grant grants = 1;
+    Owner owner = 2;
+    string request_charged = 3;
+}
+
+message PutObjectAclInput{
+    string bucket = 1;
+    string key = 2;
+    string acl = 3;
+}
+message PutObjectAclOutput{
+    string request_charged = 1;
+}
+
+message RestoreObjectInput{
+    string bucket = 1;
+    string key = 2;
+}
+message RestoreObjectOutput{
+    string request_charged = 1;
+    string restore_output_path = 2;
+}
+
+message CreateMultipartUploadInput{
+    string bucket = 1;
+    string key = 2;
+    string acl = 3;
+    bool bucket_key_enabled = 4;
+    string cache_control = 5;
+    string content_disposition = 6;
+    string content_encoding = 7;
+    string content_language = 8;
+    string content_type = 9;
+    string expected_bucket_owner = 10;
+    string expires = 11;
+    string grant_full_control = 12;
+    string grant_read = 13;
+    string grant_read_acp = 14;
+    string grant_write_acp = 15;
+    map<string, string> meta_data = 16;
+    string object_lock_legal_hold_status = 17;
+    string object_lock_mode = 18;
+    string object_lock_retain_until_date = 19;
+    string request_payer = 20;
+    string sse_customer_algorithm = 21;
+    string sse_customer_key = 22;
+    string sse_customer_key_md5 = 23;
+    string sse_kms_encryption_context = 24;
+    string sse_kms_key_id = 25;
+    string server_side_encryption = 26;
+    string storage_class = 27;
+    string tagging = 28;
+    string website_redirect_location = 29;
+}
+message CreateMultipartUploadOutput{
+    string bucket = 1;
+    string key = 2;
+    google.protobuf.Timestamp abort_date = 3;
+    string abort_rule_id = 4;
+    bool bucket_key_enabled = 5;
+    string request_charged = 6;
+    string sse_customer_algorithm = 7;
+    string sse_customer_key_md5 = 8;
+    string sse_kms_encryption_context = 9;
+    string sse_kms_key_id = 10;
+    string server_side_encryption = 11;
+    string upload_id = 12;
+}
+
+message UploadPartInput{
+    string bucket = 1;
+    string key = 2;
+    bytes  body = 3;
+    int64  content_length = 4;
+    string content_md5 = 5;
+    string expected_bucket_owner = 6;
+    int64  part_number = 7;
+    string request_payer = 8;
+    string sse_customer_algorithm = 9;
+    string sse_customer_key = 10;
+    string sse_customer_key_md5 = 11;
+    string upload_id = 12;
+}
+message UploadPartOutput{
+    bool bucket_key_enabled = 1;
+    string etag = 2;
+    string request_charged = 3;
+    string sse_customer_algorithm = 4;
+    string sse_customer_key_md5 = 5;
+    string sse_kms_key_id = 6;
+    string server_side_encryption = 7;
+}
+
+message UploadPartCopyInput{
+    string bucket = 1;
+    string key = 2;
+    string copy_source = 3;
+    int64  part_number = 4;
+    string upload_id = 5;
+}
+
+message CopyPartResult{
+    string etag = 1;
+    google.protobuf.Timestamp last_modified = 2;
+}
+message UploadPartCopyOutput{
+    bool bucket_key_enabled = 1;
+    CopyPartResult copy_part_result = 2;
+    string copy_source_version_id = 3;
+    string request_charged = 4;
+    string sse_customer_algorithm = 5;
+    string sse_customer_key_md5 = 6;
+    string sse_kms_key_id = 7;
+    string server_side_encryption = 8;
+}
+
+message CompletedPart{
+    string etag = 1;
+    int64 part_number = 2;
+}
+message CompletedMultipartUpload{
+    repeated CompletedPart parts = 1;
+}
+message CompleteMultipartUploadInput{
+    string bucket = 1;
+    string key = 2;
+    string upload_id = 3;
+    string request_payer = 4;
+    string expected_bucket_owner = 5;
+    CompletedMultipartUpload multipart_upload = 6;
+}
+message CompleteMultipartUploadOutput{
+    string bucket = 1;
+    string key = 2;
+    bool bucket_key_enabled = 3;
+    string etag = 4;
+    string expiration = 5;
+    string location = 6;
+    string request_charged = 7;
+    string sse_kms_keyId = 8;
+    string server_side_encryption = 9;
+    string version_id = 10;
+}
+
+message AbortMultipartUploadInput{
+    string bucket = 1;
+    string key = 2;
+    string expected_bucket_owner = 3;
+    string request_payer = 4;
+    string upload_id = 5;
+}
+message AbortMultipartUploadOutput{
+    string request_charged = 1;
+}
+
+message ListMultipartUploadsInput{
+    string bucket = 1;
+    string delimiter = 2;
+    string encoding_type = 3;
+    string expected_bucket_owner = 4;
+    string key_marker = 5;
+    int64  max_uploads = 6;
+    string prefix = 7;
+    string upload_id_marker = 8;
+}
+message Initiator{
+    string display_name = 1;
+    string id = 2;
+}
+message MultipartUpload{
+    google.protobuf.Timestamp Initiated = 1;
+    Initiator initiator = 2;
+    string key = 3;
+    Owner owner = 4;
+    string storage_class = 5;
+    string UploadId = 6;
+}
+message ListMultipartUploadsOutput{
+    string bucket = 1;
+    repeated string common_prefixes = 2;
+    string delimiter = 3;
+    string encoding_type = 4;
+    bool is_truncated = 5;
+    string key_marker = 6;
+    int64 max_uploads = 7;
+    string  next_key_marker = 8;
+    string next_upload_id_marker = 9;
+    string prefix = 10;
+    string upload_id_marker = 11;
+    MultipartUpload uploads = 12;
+}
+
+message ListObjectVersionsInput{
+    string bucket = 1;
+    string delimiter = 2;
+    string encoding_type = 3;
+    string expected_bucket_owner = 4;
+    string key_marker = 5;
+    int64  max_keys = 6;
+    string prefix = 7;
+    string version_id_marker = 8;
+}
+message DeleteMarkerEntry{
+    bool is_latest = 1;
+    string key = 2;
+    google.protobuf.Timestamp last_modified = 3;
+    Owner owner = 4;
+    string version_id = 5;
+}
+message ObjectVersion{
+    string etag = 1;
+    bool is_latest = 2;
+    string key = 3;
+    google.protobuf.Timestamp last_modified = 4;
+    Owner owner = 5;
+    int64 size = 6;
+    string storage_class = 7;
+    string version_id = 8;
+}
+message ListObjectVersionsOutput{
+    repeated string common_prefixes = 1;
+    repeated DeleteMarkerEntry delete_markers = 2;
+    string delimiter = 3;
+    string encoding_type = 4;
+    bool is_truncated = 5;
+    string key_marker = 6;
+    int64  max_keys = 7;
+    string name = 8;
+    string next_key_marker = 9;
+    string next_version_id_marker = 10;
+    string prefix = 11;
+    string version_id_marker = 12;
+    repeated ObjectVersion versions = 13;
 }
