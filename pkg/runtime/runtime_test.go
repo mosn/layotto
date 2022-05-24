@@ -195,8 +195,8 @@ func TestMosnRuntime_Run(t *testing.T) {
 		// 2. construct runtime
 		cfg := &MosnRuntimeConfig{
 			PubSubManagement: map[string]mpubsub.Config{
-				"mock": {
-					Type: "pubsub",
+				"demo": {
+					Type: "mock",
 					Metadata: map[string]string{
 						"target": "layotto",
 					},
@@ -217,7 +217,7 @@ func TestMosnRuntime_Run(t *testing.T) {
 			),
 			// PubSub
 			WithPubSubFactory(
-				mpubsub.NewFactory("pubsub", f),
+				mpubsub.NewFactory("mock", f),
 			),
 			// Sequencer
 			WithSequencerFactory(
@@ -276,8 +276,8 @@ func TestMosnRuntime_initPubSubs(t *testing.T) {
 
 		cfg := &MosnRuntimeConfig{
 			PubSubManagement: map[string]mpubsub.Config{
-				"mock": {
-					Type: "pubsub",
+				"demo": {
+					Type: "mock",
 					Metadata: map[string]string{
 						"target": "layotto",
 					},
@@ -290,7 +290,7 @@ func TestMosnRuntime_initPubSubs(t *testing.T) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		// test initPubSubs
-		err := m.initPubSubs(mpubsub.NewFactory("pubsub", f))
+		err := m.initPubSubs(mpubsub.NewFactory("mock", f))
 		// assert result
 		assert.Nil(t, err)
 	})
@@ -307,8 +307,8 @@ func TestMosnRuntime_initPubSubsNotExistMetadata(t *testing.T) {
 
 		cfg := &MosnRuntimeConfig{
 			PubSubManagement: map[string]mpubsub.Config{
-				"mock": {
-					Type: "pubsub",
+				"demo": {
+					Type: "mock",
 					Metadata: map[string]string{
 						"target": "layotto",
 					},
@@ -321,7 +321,7 @@ func TestMosnRuntime_initPubSubsNotExistMetadata(t *testing.T) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		// test initPubSubs
-		err := m.initPubSubs(mpubsub.NewFactory("pubsub", f))
+		err := m.initPubSubs(mpubsub.NewFactory("mock", f))
 		// assert result
 		assert.Nil(t, err)
 	})
@@ -516,14 +516,15 @@ func TestMosnRuntime_initOutputBinding(t *testing.T) {
 
 func TestMosnRuntime_runWithCustomComponentAndAPI(t *testing.T) {
 	t.Run("normal", func(t *testing.T) {
-		compType := "super_pubsub"
-		compName := "etcd"
+		kind := "super_pubsub"
+		compName := "demo"
+		compType := "etcd"
 		// 1. construct config
 		cfg := &MosnRuntimeConfig{
 			CustomComponent: map[string]map[string]custom.Config{
-				compType: {
+				kind: {
 					compName: custom.Config{
-						Type:     compName,
+						Type:     compType,
 						Version:  "",
 						Metadata: nil,
 					},
@@ -542,14 +543,14 @@ func TestMosnRuntime_runWithCustomComponentAndAPI(t *testing.T) {
 			WithGrpcAPI(
 				default_api.NewGrpcAPI,
 				func(ac *grpc.ApplicationContext) grpc.GrpcAPI {
-					comp := ac.CustomComponent[compType][compName].(superPubsub)
+					comp := ac.CustomComponent[kind][compName].(superPubsub)
 					customAPI = &mockGrpcAPI{comp: comp}
 					return customAPI
 				},
 			),
 			// Custom components
-			WithCustomComponentFactory(compType,
-				custom.NewComponentFactory(compName, newSuperPubsub),
+			WithCustomComponentFactory(kind,
+				custom.NewComponentFactory(compType, newSuperPubsub),
 			),
 			// Hello
 			WithHelloFactory(
@@ -557,7 +558,7 @@ func TestMosnRuntime_runWithCustomComponentAndAPI(t *testing.T) {
 			),
 			// Sequencer
 			WithSequencerFactory(
-				runtime_sequencer.NewFactory(compName, func() sequencer.Store {
+				runtime_sequencer.NewFactory(compType, func() sequencer.Store {
 					return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
 				}),
 				runtime_sequencer.NewFactory("redis", func() sequencer.Store {
@@ -607,7 +608,7 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			),
 			// PubSub
 			WithPubSubFactory(
-				mpubsub.NewFactory("pubsub", f),
+				mpubsub.NewFactory("mock", f),
 			),
 			// Sequencer
 			WithSequencerFactory(
@@ -664,7 +665,7 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			),
 			// PubSub
 			WithPubSubFactory(
-				mpubsub.NewFactory("pubsub", f),
+				mpubsub.NewFactory("mock", f),
 			),
 		)
 		// 4. assert
@@ -711,7 +712,7 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			),
 			// PubSub
 			WithPubSubFactory(
-				mpubsub.NewFactory("pubsub", f),
+				mpubsub.NewFactory("mock", f),
 			),
 		)
 		// 4. assert
@@ -758,7 +759,7 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			),
 			// PubSub
 			WithPubSubFactory(
-				mpubsub.NewFactory("pubsub", f),
+				mpubsub.NewFactory("mock", f),
 			),
 		)
 		// 4. assert
@@ -781,12 +782,14 @@ func constructCloudEvent() map[string]interface{} {
 }
 
 func runtimeWithCallbackConnection(t *testing.T) (*MosnRuntime, *mock_appcallback.MockAppCallbackServer) {
+	compName := "demo"
+	compType := "mock"
 	// 1. prepare callback
 	// mock callback response
 	subResp := &runtimev1pb.ListTopicSubscriptionsResponse{
 		Subscriptions: []*runtimev1pb.TopicSubscription{
 			{
-				PubsubName: "mock",
+				PubsubName: compName,
 				Topic:      "layotto",
 				Metadata:   nil,
 			},
@@ -813,8 +816,8 @@ func runtimeWithCallbackConnection(t *testing.T) (*MosnRuntime, *mock_appcallbac
 	// 3. construct mosn runtime
 	cfg := &MosnRuntimeConfig{
 		PubSubManagement: map[string]mpubsub.Config{
-			"mock": {
-				Type: "pubsub",
+			compName: {
+				Type: compType,
 				Metadata: map[string]string{
 					"target": "layotto",
 				},
