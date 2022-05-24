@@ -58,9 +58,9 @@ The layotto file will be generated in the directory, run it:
 ### Step 3. Run the client program, call Layotto to add, delete, modify and query
 
 ```shell
- cd ${project_path}/demo/lock/redis/
+ cd ${project_path}/demo/lock/common/
  go build -o client
- ./client
+ ./client -s "redis"
 ```
 
 If the following information is printed, the call is successful:

@@ -59,9 +59,9 @@ go build -o layotto
 ### 第三步：运行客户端程序，调用Layotto抢锁/解锁
 
 ```shell
- cd ${project_path}/demo/lock/redis/
+ cd ${project_path}/demo/lock/common/
  go build -o client
- ./client
+ ./client -s "redis"
 ```
 
 打印出如下信息则代表调用成功：
