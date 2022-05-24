@@ -32,7 +32,7 @@ jobs:
         run: |
            make check.style
   resolve-modules:
-    name: "👀 Resolve Go Modules"
+    name: "🌈️ Resolve Go Modules"
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
