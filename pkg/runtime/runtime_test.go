@@ -510,7 +510,8 @@ func TestMosnRuntime_initOutputBinding(t *testing.T) {
 		Type:     "mock_outbindings",
 		Metadata: mdata,
 	}
-	m.initOutputBinding(registry)
+	err := m.initOutputBinding(registry)
+	assert.Nil(t, err)
 	assert.NotNil(t, m.outputBindings["mockOutbindings"])
 }
 
