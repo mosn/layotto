@@ -45,11 +45,11 @@ func TestGet(fileName string) {
 		fmt.Printf("get file error: %+v", err)
 		return
 	}
-	pic := make([]byte, 0, 0)
+	pic := make([]byte, 0)
 	for {
 		resp, err := cli.Recv()
 		if err != nil {
-			fmt.Errorf("recv file failed")
+			fmt.Printf("recv file failed")
 			break
 		}
 		pic = append(pic, resp.Data...)
@@ -146,11 +146,10 @@ func TestStat(fileName string) {
 		if m.Code() == codes.NotFound {
 			fmt.Println("file not exist")
 			return
-		} else {
-			if m != nil {
-				fmt.Printf("stat file fail,err:%+v \n", err)
-				return
-			}
+		}
+		if m != nil {
+			fmt.Printf("stat file fail,err:%+v \n", err)
+			return
 		}
 	}
 	fmt.Printf("get meta data of file: size:%+v, modifyTime:%+v \n", data.Size, data.LastModified)
