@@ -132,7 +132,7 @@ func TestConfigStore_read(t *testing.T) {
 	//	get key
 	var req configstores.GetRequest
 	req.AppId = appId
-	req.Group = "application"
+	req.Group = defaultGroup
 	req.Label = prod
 	req.Keys = []string{"sofa"}
 	resp, err := store.Get(context.Background(), &req)
@@ -173,14 +173,14 @@ func TestConfigStore_read(t *testing.T) {
 	var subReq configstores.SubscribeReq
 	ch := make(chan *configstores.SubscribeResp)
 	subReq.AppId = "testApplication_yang"
-	subReq.Group = "application"
+	subReq.Group = defaultGroup
 	subReq.Label = prod
 	subReq.Keys = []string{"sofa"}
 	err = store.Subscribe(&subReq, ch)
 	if err != nil {
 		t.Error(err)
 	}
-	subReq.Group = "application"
+	subReq.Group = defaultGroup
 	subReq.Label = ""
 	subReq.Keys = []string{}
 	err = store.Subscribe(&subReq, ch)
@@ -301,7 +301,7 @@ func TestConfigStore_write(t *testing.T) {
 	req.AppId = appId
 	item.Key = "sofa"
 	item.Content = "v1"
-	item.Group = "application"
+	item.Group = defaultGroup
 	item.Label = prod
 	req.StoreName = "apollo"
 	req.Items = append(req.Items, &item)
@@ -354,7 +354,7 @@ func TestConfigStore_write(t *testing.T) {
 	var delReq configstores.DeleteRequest
 	delReq.AppId = appId
 	delReq.Keys = []string{"sofa"}
-	delReq.Group = "application"
+	delReq.Group = defaultGroup
 	delReq.Label = prod
 	err = store.Delete(context.Background(), &delReq)
 	if err != nil {
@@ -377,7 +377,7 @@ func TestConfigStore_Init_fail(t *testing.T) {
 	err := store.Init(cfg)
 	assert.Nil(t, err)
 	// no config
-	store, cfg = setup(t)
+	store, _ = setup(t)
 	err = store.Init(nil)
 	if notNil := assert.NotNil(t, err); notNil {
 		assert.True(t, err.Error() != "")

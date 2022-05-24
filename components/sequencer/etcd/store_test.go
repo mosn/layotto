@@ -31,10 +31,6 @@ import (
 )
 
 const key = "resource_xxx"
-const key2 = "resource_xxx2"
-
-const key3 = "resource_xxx3"
-const key4 = "resource_xxx4"
 
 // GetFreePort returns a free port from the OS.
 func GetFreePort() (int, error) {

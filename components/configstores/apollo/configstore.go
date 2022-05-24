@@ -41,7 +41,10 @@ var (
 	livenessIndicator      *actuators.HealthIndicator
 )
 
-const componentName = "apollo"
+const (
+	defaultGroup  = "application"
+	componentName = "apollo"
+)
 
 func init() {
 	readinessIndicator = actuators.NewHealthIndicator()
@@ -75,7 +78,7 @@ func (c *httpClientImpl) Do(req *http.Request) (*http.Response, error) {
 }
 
 func (c *ConfigStore) GetDefaultGroup() string {
-	return "application"
+	return defaultGroup
 }
 
 func (c *ConfigStore) GetDefaultLabel() string {

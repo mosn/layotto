@@ -158,8 +158,8 @@ func (suite *ClientTestSuite) Delete() {
 	var delReq configstores.DeleteRequest
 	delReq.AppId = "mosn"
 	delReq.Keys = []string{"sofa"}
-	delReq.Group = "default"
-	delReq.Label = "default"
+	delReq.Group = defaultGroup
+	delReq.Label = defaultLabel
 	err := suite.store.Delete(context.Background(), &delReq)
 	if err != nil {
 		suite.T().Fatal(err)
@@ -179,8 +179,8 @@ func (suite *ClientTestSuite) Subscribe() {
 	var i int
 	ch := make(chan *configstores.SubscribeResp)
 	subReq.AppId = "mosn"
-	subReq.Group = "default"
-	subReq.Label = "default"
+	subReq.Group = defaultGroup
+	subReq.Label = defaultLabel
 	subReq.Keys = []string{"sofa"}
 	wg.Add(1)
 	suite.store.Subscribe(&subReq, ch)
@@ -201,8 +201,8 @@ func (suite *ClientTestSuite) Subscribe() {
 func (suite *ClientTestSuite) Get() {
 	var req configstores.GetRequest
 	req.AppId = "mosn"
-	req.Group = "default"
-	req.Label = "default"
+	req.Group = defaultGroup
+	req.Label = defaultLabel
 	req.Keys = []string{"sofa"}
 	resp, err := suite.store.Get(context.Background(), &req)
 	if err != nil || len(resp) == 0 {
@@ -211,8 +211,8 @@ func (suite *ClientTestSuite) Get() {
 	for _, value := range resp {
 		assert.Equal(suite.T(), value.Key, "sofa")
 		assert.Equal(suite.T(), value.Content, "v1")
-		assert.Equal(suite.T(), value.Group, "default")
-		assert.Equal(suite.T(), value.Label, "default")
+		assert.Equal(suite.T(), value.Group, defaultGroup)
+		assert.Equal(suite.T(), value.Label, defaultLabel)
 	}
 
 	req.Keys = []string{}
@@ -223,8 +223,8 @@ func (suite *ClientTestSuite) Get() {
 	for _, value := range resp {
 		assert.Equal(suite.T(), value.Key, "sofa")
 		assert.Equal(suite.T(), value.Content, "v1")
-		assert.Equal(suite.T(), value.Group, "default")
-		assert.Equal(suite.T(), value.Label, "default")
+		assert.Equal(suite.T(), value.Group, defaultGroup)
+		assert.Equal(suite.T(), value.Label, defaultLabel)
 	}
 }
 
@@ -233,8 +233,8 @@ func (suite *ClientTestSuite) Set() {
 	var item configstores.ConfigurationItem
 	item.Key = "sofa"
 	item.Content = "v1"
-	item.Group = "default"
-	item.Label = "default"
+	item.Group = defaultGroup
+	item.Label = defaultLabel
 	req.StoreName = "etcd"
 	req.AppId = "mosn"
 	req.Items = append(req.Items, &item)

@@ -28,13 +28,16 @@ import (
 	"mosn.io/layotto/components/file"
 )
 
-const data = `[
+const (
+	data = `[
 				{
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret"
 				}
 			]`
+	fileName = "b/a.txt"
+)
 
 func TestInit(t *testing.T) {
 	fc := file.FileConfig{}
@@ -80,7 +83,7 @@ func TestGetBucket(t *testing.T) {
 	assert.Equal(t, err.Error(), "invalid fileName format")
 	assert.Nil(t, bucket)
 
-	bucket, err = ac.getBucket("b/a.txt", mt)
+	bucket, err = ac.getBucket(fileName, mt)
 	assert.Equal(t, err.Error(), "bucket name b len is between [3-63],now is 1")
 	assert.Nil(t, bucket)
 
@@ -146,7 +149,7 @@ func TestPut(t *testing.T) {
 	err = oss.Put(context.Background(), req)
 	assert.Error(t, err)
 
-	req.FileName = "b/a.txt"
+	req.FileName = fileName
 	err = oss.Put(context.Background(), req)
 	assert.Error(t, err)
 }
@@ -167,7 +170,7 @@ func TestGet(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, resp)
 
-	req.FileName = "b/a.txt"
+	req.FileName = fileName
 	resp, err = oss.Get(context.Background(), req)
 	assert.Error(t, err)
 }
@@ -188,7 +191,7 @@ func TestStat(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, resp)
 
-	req.FileName = "b/a.txt"
+	req.FileName = fileName
 	resp, err = oss.Stat(context.Background(), req)
 	assert.Error(t, err)
 }
@@ -229,7 +232,7 @@ func TestDel(t *testing.T) {
 	err = oss.Del(context.Background(), req)
 	assert.Error(t, err)
 
-	req.FileName = "b/a.txt"
+	req.FileName = fileName
 	err = oss.Del(context.Background(), req)
 	assert.Error(t, err)
 }
