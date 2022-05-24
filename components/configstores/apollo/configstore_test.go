@@ -207,6 +207,24 @@ func TestConfigStore_Init(t *testing.T) {
 		err := store.Init(cfg)
 		assert.NotNil(t, err)
 	})
+	t.Run("when open_api_token blank then error", func(t *testing.T) {
+		// 1. set up
+		// inject the MockRepository into a ConfigStore
+		store, cfg := setup(t)
+		cfg.Metadata["open_api_token"] = ""
+		store.openAPIClient = newMockHttpClient(http.StatusBadRequest)
+		kvRepo := store.kvRepo.(*MockRepository)
+		kvRepo.Set("application", "sofa@$prod", "sofa@$prod")
+		kvRepo.Set("application", "apollo@$prod", "apollo@$prod")
+		kvRepo.Set("dubbo", "dubbo", "dubbo")
+
+		// 2. test the ConfigStore,which has a MockRepository in it
+		// init
+		log.DefaultLogger.SetLogLevel(log.DEBUG)
+		err := store.Init(cfg)
+		assert.Error(t, err)
+	})
+
 	t.Run("when namespace exist then succeed with debug information", func(t *testing.T) {
 		// 1. set up
 		// inject the MockRepository into a ConfigStore

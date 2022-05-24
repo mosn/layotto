@@ -153,6 +153,9 @@ func TestEtcd_GetNextId(t *testing.T) {
 	expected = 2
 	assert.Equal(t, expected, resp.NextId)
 
+	support, _, err := comp.GetSegment(nil)
+	assert.False(t, support)
+	assert.Nil(t, err)
 }
 
 func startEtcdServer(dir string, port int) (*embed.Etcd, error) {
