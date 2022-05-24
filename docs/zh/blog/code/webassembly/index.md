@@ -8,12 +8,12 @@
 - [源码分析](#源码分析)
   - [框架INIT](#框架INIT)
   - [工作流程](#工作流程)
-  - [Faas模式](#Faas模式)
+  - [FaaS模式](#FaaS模式)
 - [总结](#总结)
 
 ## 概述
 WebAssemly 简称 WASM，是一种运行在沙箱化的执行环境中的可移植、体积小、加载快的二进制格式，WASM最初设计是为了在网络浏览器中实现高性能应用，得益于它良好的隔离性和安全性、多语言支持、冷启动快等灵活性和敏捷性等特性，又被应用于嵌入其它应用程序中以获得较好的扩展能力，显然我们可以将它嵌入到 Layotto 中。Layotto 支持加载编译好的 WASM 文件，并通过 proxy_abi_version_0_2_0 的 API 与目标 WASM 进行交互;
-另外 Layotto 也支持加载并运行以 WASM 为载体的 Function，并支持 Function 之间互相调用以及访问基础设施；同时 Layotto 社区也正在探索把 component 编译成 WASM 模块以此来增强模块间的隔离性。本文以 Layotto 官方 [quickstart](https://mosn.io/layotto/#/zh/start/wasm/start) 即访问redis相关实例为例来分析 Layotto 中 Webassemly 相关的实现和应用。
+另外 Layotto 也支持加载并运行以 WASM 为载体的 Function，并支持 Function 之间互相调用以及访问基础设施；同时 Layotto 社区也正在探索把 component 编译成 WASM 模块以此来增强模块间的隔离性。本文以 Layotto 官方 [quickstart](https://mosn.io/layotto/#/zh/start/wasm/start) 即访问redis相关示例为例来分析 Layotto 中 WebAssemly 相关的实现和应用。
 
 ## 源码分析
 备注：本文基于 commit hash：f1cf350a52b5a1a0b3788a31681007a056e332ef
@@ -30,7 +30,7 @@ WebAssemly 简称 WASM，是一种运行在沙箱化的执行环境中的可移�
 [Proxy-Wasm](https://github.com/proxy-wasm) ：WebAssembly for Proxies (ABI specification) 是一个代理无关的 ABI 标准，它约定了代理和 WASM 模块如何以函数和回调的形式互动 [3]。\
 [proxy-wasm-go-sdk](https://github.com/tetratelabs/proxy-wasm-go-sdk) ：定义了函数访问系统资源及基础设施服务的接口，基于 [proxy-wasm/spec](https://github.com/proxy-wasm/spec) 实现，在此基础上结合 Runtime API 增加了对基础设施访问的 ABI。\
 [proxy-wasm-go-host](https://github.com/mosn/proxy-wasm-go-host) WebAssembly for Proxies (GoLang host implementation)：Proxy-Wasm 的 golang 实现，用以在 Layotto 中实现 Runtime ABI 的具体逻辑。\
-VM：Virtual Machine 虚拟机，Runtime类型有：wastime、Wasmer、V8、 Lucet、WAMR、wasm3，本文例子中使用 wasmer
+VM：Virtual Machine 虚拟机，Runtime类型有：wasmtime、Wasmer、V8、 Lucet、WAMR、wasm3，本文例子中使用 wasmer
 
 1、首先看 [quickstart例子](https://mosn.io/layotto/#/zh/start/wasm/start) 中 stream filter 的配置，如下可以看到配置中有两个 WASM 插件，使用 wasmer VM 分别启动一个实例，详见如下配置：
 ```json
@@ -565,21 +565,22 @@ func ProxyGetState(instance common.WasmInstance, storeNamePtr int32, storeNameSi
 ```
 以上 Layotto rpc 流程简要说是通过两个虚拟连接借助 Dapr API 和 底层 Mosn 实现 [5],具体可参见前序文章[Layotto源码解析——处理RPC请求](https://mosn.io/layotto/#/zh/blog/code/layotto-rpc/index)，从 Redis 中获取数据可直接阅读 Dapr State 相关代码，在此不一一展开了。
 
-### Faas模式
+### FaaS模式
 
-回过头来再看 WASM 的特性：字节码有与机器码相匹敌的性能；沙箱中执行保证良好的隔离性和安全性；编译后跨平台、易分发和加载运行；具备轻量且多语言开发的灵活性，似乎天然的就适合做 Faas。
+回过头来再看 WASM 的特性：字节码有与机器码相匹敌的性能；沙箱中执行保证良好的隔离性和安全性；编译后跨平台、易分发和加载运行；具备轻量且多语言开发的灵活性，似乎天然的就适合做 FaaS。
 
-所以 Layotto 也探索支持了WASM Faas模式，即加载并运行以 WASM 为载体的 Function，并支持 Function 之间相互调用及访问基础设施。因加载 WASM 的核心逻辑并未变化，只是使用和部署方式上与上述方式有差别，故 Layotto 加载 WASM 部分逻辑不再赘述。
+所以 Layotto 也探索支持了 WASM FaaS 模式，即加载并运行以 WASM 为载体的 Function，并支持 Function 之间相互调用及访问基础设施。因加载 WASM 的核心逻辑并未变化，只是使用和部署方式上与上述方式有差别，故 Layotto 加载 WASM 部分逻辑不再赘述。
 
-除 Wasm-Proxy 相关实现外，Faas 模式核心逻辑是通过扩展 Containerd 实现多运行时插件 containerd-shim-layotto-v2 [6]，并借此"穿针引线"的巧妙的利用了 Docker 的镜像能力来管理 *.wasm 包和 Kubernetes 优秀的编排能力来调度函数，具体架构和工作流可见图3 Layotto Faas Workflow。
+除 Wasm-Proxy 相关实现外，FaaS 模式核心逻辑是通过扩展 Containerd 实现多运行时插件 containerd-shim-layotto-v2 [6]，并借此"穿针引线"的巧妙的利用了 Docker 的镜像能力来管理 *.wasm 包和 Kubernetes 优秀的编排能力来调度函数，具体架构和工作流可见图3 Layotto FaaS Workflow。
 
 ![layotto_faas_workflow](layotto_faas_workflow.png)
-<center>图3 Layotto Faas Workflow </center>
+<center>图3 Layotto FaaS Workflow </center>
 
-这里简单看一下 containerd-shim-layotto-v2 的主函数，可以看到 shim.Run 设置的 WASM 的运行时为 io.containerd.layotto.v2，也就是 containerd 中 plugins.cri.containerd.runtimes 对应插件的 runtime_type。 当创建 Pod 时，在 yaml 的 spec 中指定 runtimeClassName: layotto，经过调度，最终 kubelet 就会通过 cri-plugin 调用 containerd 中的 containerd-shim-layotto-v2 运行时来进行加载和运行等相关处理。
+这里简单看一下 containerd-shim-layotto-v2 的主函数，可以看到 shim.Run 设置的 WASM 的运行时为 io.containerd.layotto.v2，也就是 containerd 中 plugins.cri.containerd.runtimes 对应插件的 runtime_type。当创建 Pod 时，在 yaml 的 spec 中指定 runtimeClassName: layotto，经过调度，最终 kubelet 就会通过 cri-plugin 调用 containerd 中的 containerd-shim-layotto-v2 运行时来进行加载和运行等相关处理。
 ```go
 func main() {
 	startLayotto()
+	// 解析输入参数，初始化运行时环境，调用 wasm.New 实例化 service 对象 
 	shim.Run("io.containerd.layotto.v2", wasm.New)
 }
 
@@ -596,7 +597,7 @@ func startLayotto() {
 ```
 
 ## 总结
-Layotto Webassemly 虽然涉及较多 WASM 相关的基础知识，但通过示例由浅入深，循序渐进也不难理解。最后整体看一下 WASM 技术，可以看到它已经被应用到Web前端、Serverless、游戏场景、边缘计算、服务网格等很多领域，甚至就连 Docker 之父 Solomon Hykes 在前不久都表示: "如果 WASM 这个技术在2008年就有的话，我就不搞Docker了"（后来又补充道：Docker 不会被替换，会与 WASM 并肩而行），不管怎么说，WASM 似乎在继 VM 和 Container 之后，正在成为更轻量及性能更好的云原生技术而被应用到更多的领域，与此同时，相信在 Mosn 社区的推动以及 Layotto 的继续探索中 WASM 也会有更多使用场景和用户，至此 Layotto Webassemly 相关源码分析就完了，鉴于时间和篇幅，没有进行一些更全面和深入的剖析，如有纰漏之处，欢迎指正，联系方式：rayo.wangzl@gmail.com。
+Layotto WebAssemly 虽然涉及较多 WASM 相关的基础知识，但通过示例由浅入深，循序渐进也不难理解。最后整体看一下 WASM 技术，可以看到它已经被应用到Web前端、Serverless、游戏场景、边缘计算、服务网格等很多领域，甚至就连 Docker 之父 Solomon Hykes 在前不久都表示: "如果 WASM 这个技术在2008年就有的话，我就不搞Docker了"（后来又补充道：Docker 不会被替换，会与 WASM 并肩而行），不管怎么说，WASM 似乎在继 VM 和 Container 之后，正在成为更轻量及性能更好的云原生技术而被应用到更多的领域，与此同时，相信在 Mosn 社区的推动以及 Layotto 的继续探索中 WASM 也会有更多使用场景和用户，至此 Layotto WebAssemly 相关源码分析就完了，鉴于时间和篇幅，没有进行一些更全面和深入的剖析，如有纰漏之处，欢迎指正，联系方式：rayo.wangzl@gmail.com。
 
 ### 参考资料
 - [1] [WebAssembly 在 MOSN 中的实践](https://mosn.io/blog/posts/mosn-wasm-framework/)
