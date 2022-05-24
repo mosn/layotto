@@ -17,6 +17,6 @@ cd ..
 cd sdk/go-sdk
 echo "" > cover.out
 echo "test go-sdk"
-go test -count=1 -failfast -timeout 120s ./... -coverprofile cover.out -covermode=atomic
+go test -count=1 -failfast -timeout 120s $(go list ./... | grep -v runtime) -coverprofile cover.out -covermode=atomic
 cat cover.out >> ../../cover.out
 cd ../..
