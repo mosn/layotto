@@ -217,8 +217,7 @@ style.quickstart:
 # ==============================================================================
 .PHONY: license
 license:
-	# For more details: https://github.com/apache/skywalking-eyes#docker-image
-	docker run -it --rm -v $(pwd):/github/workspace apache/skywalking-eyes header fix
+	@$(MAKE) checker.license.fix
 
 # ==============================================================================
 ## integrate.wasm: Run integration test with wasm.
