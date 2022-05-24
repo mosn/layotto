@@ -68,7 +68,7 @@ func (a *MockRepository) Get(namespace string, key string) (interface{}, error) 
 	if _, ok := a.cache[namespace]; !ok {
 		a.cache[namespace] = make(map[string]string)
 	}
-	v, _ := a.cache[namespace][key]
+	v := a.cache[namespace][key]
 	return v, nil
 }
 
