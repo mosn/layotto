@@ -61,8 +61,8 @@ type ConfigStore struct {
 	listener       *changeListener
 	kvRepo         Repository
 	tagsRepo       Repository
-	kvConfig       *RepoConfig
-	tagsConfig     *RepoConfig
+	kvConfig       *repoConfig
+	tagsConfig     *repoConfig
 	openAPIClient  httpClient
 }
 type httpClient interface {
@@ -170,7 +170,7 @@ func (c *ConfigStore) doInit(config *configstores.StoreConfig) error {
 	}
 	// TODO make 'env' configurable
 	// 2. SetConfig client
-	kvRepoConfig := &RepoConfig{
+	kvRepoConfig := &repoConfig{
 		addr:           addr,
 		appId:          appId,
 		env:            c.env,
@@ -562,6 +562,9 @@ func (c *ConfigStore) deleteItem(env string, appId string, cluster string, group
 	keyWithLabel := c.concatenateKey(key, label)
 	deleteUrl := fmt.Sprintf(deleteUrlTpl, c.openAPIAddress, env, appId, cluster, group, keyWithLabel)
 	req, err := http.NewRequest("DELETE", deleteUrl, nil)
+	if err != nil {
+		return err
+	}
 	// add params
 	q := req.URL.Query()
 	q.Add("key", keyWithLabel)
@@ -580,7 +583,7 @@ func (c *ConfigStore) deleteItem(env string, appId string, cluster string, group
 	return err
 }
 
-func (c *ConfigStore) initTagsClient(tagCfg *RepoConfig) error {
+func (c *ConfigStore) initTagsClient(tagCfg *repoConfig) error {
 	// 1. create if not exist
 	err := c.createNamespace(c.env, tagCfg.appId, tagCfg.cluster, c.tagsNamespace)
 	if err != nil {
@@ -608,6 +611,9 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 		return err
 	}
 	req, err := http.NewRequest("POST", url, strings.NewReader(string(reqBodyJson)))
+	if err != nil {
+		return err
+	}
 	// add headers
 	c.addHeaderForOpenAPI(req)
 	log.DefaultLogger.Debugf("createNamespace url: %v, request body: %s, request: %+v", url, reqBodyJson, req)

@@ -38,7 +38,7 @@ const (
 
 // MockRepository implements Repository interface
 type MockRepository struct {
-	cfg     *RepoConfig
+	cfg     *repoConfig
 	invoked []string
 	cache   map[string]map[string]string
 }
@@ -48,12 +48,8 @@ func (a *MockRepository) Connect() error {
 	return err
 }
 
-func (a *MockRepository) SetConfig(r *RepoConfig) {
+func (a *MockRepository) SetConfig(r *repoConfig) {
 	a.cfg = r
-}
-
-func (a *MockRepository) GetConfig() *RepoConfig {
-	return a.cfg
 }
 
 func newMockRepository() *MockRepository {
