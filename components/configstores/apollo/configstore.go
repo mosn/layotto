@@ -475,6 +475,9 @@ func (c *ConfigStore) setItem(appId string, item *configstores.ConfigurationItem
 		return err
 	}
 	req, err := http.NewRequest("PUT", setUrl, strings.NewReader(string(reqBodyJson)))
+	if err != nil {
+		return err
+	}
 	// add params
 	q := req.URL.Query()
 	q.Add("createIfNotExists", "true")
@@ -538,6 +541,9 @@ func (c *ConfigStore) commit(env string, appId string, cluster string, namespace
 		return err
 	}
 	req, err := http.NewRequest("POST", commitUrl, strings.NewReader(string(reqBodyJson)))
+	if err != nil {
+		return err
+	}
 	// add headers
 	c.addHeaderForOpenAPI(req)
 	// do request

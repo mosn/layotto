@@ -30,7 +30,10 @@ import (
 	"mosn.io/layotto/components/configstores"
 )
 
-const defaultEtcdV3WorkDir = "/tmp/default-dubbo-go-remote.etcd"
+const (
+	appId                = "mosn"
+	defaultEtcdV3WorkDir = "/tmp/default-dubbo-go-remote.etcd"
+)
 
 var etcd EtcdV3ConfigStore
 
@@ -53,7 +56,7 @@ func TestGetDetailInfoFromResult(t *testing.T) {
 	kvs = append(kvs, kv3)
 	kvs = append(kvs, kv4)
 	kvs = append(kvs, kv5)
-	targetStr := []string{"mosn", "group1", "label1", "sofa"}
+	targetStr := []string{appId, "group1", "label1", "sofa"}
 	res := etcd.GetItemsFromAllKeys(kvs, targetStr)
 	for _, value := range res {
 		assert.Equal(t, value.Group, "group1")
@@ -62,7 +65,7 @@ func TestGetDetailInfoFromResult(t *testing.T) {
 		assert.Equal(t, value.Content, "value1")
 		assert.Equal(t, value.Tags, map[string]string{"tag1": "tag1", "tag2": "tag2"})
 	}
-	targetStr2 := []string{"mosn", "*", "label1", "sofa"}
+	targetStr2 := []string{appId, "*", "label1", "sofa"}
 	res = etcd.GetItemsFromAllKeys(kvs, targetStr2)
 	for _, value := range res {
 		assert.Equal(t, value.Group, "group1")
@@ -72,7 +75,7 @@ func TestGetDetailInfoFromResult(t *testing.T) {
 		assert.Equal(t, value.Tags, map[string]string{"tag1": "tag1", "tag2": "tag2"})
 	}
 
-	targetStr3 := []string{"mosn", "*", "*", "sofa"}
+	targetStr3 := []string{appId, "*", "*", "sofa"}
 	res = etcd.GetItemsFromAllKeys(kvs, targetStr3)
 	for _, value := range res {
 		assert.Equal(t, value.Group, "group1")
@@ -156,7 +159,7 @@ func (suite *ClientTestSuite) SetupTest() {
 
 func (suite *ClientTestSuite) Delete() {
 	var delReq configstores.DeleteRequest
-	delReq.AppId = "mosn"
+	delReq.AppId = appId
 	delReq.Keys = []string{"sofa"}
 	delReq.Group = defaultGroup
 	delReq.Label = defaultLabel
@@ -166,19 +169,19 @@ func (suite *ClientTestSuite) Delete() {
 	}
 
 	var req configstores.GetRequest
-	req.AppId = "mosn"
+	req.AppId = appId
 	req.Keys = []string{"sofa"}
 
 	resp, err := suite.store.Get(context.Background(), &req)
 	assert.Equal(suite.T(), len(resp), 0)
-
+	assert.Nil(suite.T(), err)
 }
 
 func (suite *ClientTestSuite) Subscribe() {
 	var subReq configstores.SubscribeReq
 	var i int
 	ch := make(chan *configstores.SubscribeResp)
-	subReq.AppId = "mosn"
+	subReq.AppId = appId
 	subReq.Group = defaultGroup
 	subReq.Label = defaultLabel
 	subReq.Keys = []string{"sofa"}
@@ -200,7 +203,7 @@ func (suite *ClientTestSuite) Subscribe() {
 
 func (suite *ClientTestSuite) Get() {
 	var req configstores.GetRequest
-	req.AppId = "mosn"
+	req.AppId = appId
 	req.Group = defaultGroup
 	req.Label = defaultLabel
 	req.Keys = []string{"sofa"}
@@ -236,7 +239,7 @@ func (suite *ClientTestSuite) Set() {
 	item.Group = defaultGroup
 	item.Label = defaultLabel
 	req.StoreName = "etcd"
-	req.AppId = "mosn"
+	req.AppId = appId
 	req.Items = append(req.Items, &item)
 	err := suite.store.Set(context.Background(), &req)
 	if err != nil {
