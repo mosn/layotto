@@ -20,7 +20,7 @@ import (
 )
 
 type Registry interface {
-	Register(compType string, factorys ...*ComponentFactory)
+	Register(kind string, factorys ...*ComponentFactory)
 	Create(kind, compType string) (Component, error)
 }
 
@@ -48,19 +48,19 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 	}
 }
 
-func (r *componentRegistry) Register(compType string, fs ...*ComponentFactory) {
+func (r *componentRegistry) Register(kind string, fs ...*ComponentFactory) {
 	if len(fs) == 0 {
 		return
 	}
-	r.info.AddService(compType)
+	r.info.AddService(kind)
 	// lazy init
-	if _, ok := r.stores[compType]; !ok {
-		r.stores[compType] = make(map[string]func() Component)
+	if _, ok := r.stores[kind]; !ok {
+		r.stores[kind] = make(map[string]func() Component)
 	}
 	// register FactoryMethod
 	for _, f := range fs {
-		r.stores[compType][f.Type] = f.FactoryMethod
-		r.info.RegisterComponent(compType, f.Type)
+		r.stores[kind][f.Type] = f.FactoryMethod
+		r.info.RegisterComponent(kind, f.Type)
 	}
 }
 

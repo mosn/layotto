@@ -42,9 +42,9 @@ func (info *RuntimeInfo) AddService(service string) {
 	info.Services[service] = &ComponentInfo{}
 }
 
-func (info *RuntimeInfo) RegisterComponent(service string, name string) {
+func (info *RuntimeInfo) RegisterComponent(service string, compType string) {
 	if c, ok := info.Services[service]; ok {
-		c.Registered = append(c.Registered, name)
+		c.Registered = append(c.Registered, compType)
 	}
 }
 
