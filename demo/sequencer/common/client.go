@@ -40,8 +40,7 @@ func main() {
 			Metadata:  nil,
 		})
 		if err != nil {
-			fmt.Print(err)
-			return
+			panic(err)
 		}
 		fmt.Printf("Next id:%v \n", id)
 	}
