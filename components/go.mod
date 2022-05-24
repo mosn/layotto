@@ -3,6 +3,7 @@ module mosn.io/layotto/components
 go 1.14
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/alicebob/miniredis/v2 v2.16.0
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.8+incompatible
 	github.com/apache/dubbo-go-hessian2 v1.7.0
@@ -12,6 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.16.0
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
 	github.com/go-redis/redis/v8 v8.8.0
+	github.com/go-sql-driver/mysql v1.5.0
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
