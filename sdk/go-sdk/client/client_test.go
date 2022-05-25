@@ -201,38 +201,38 @@ func (t *testRuntimeServer) PublishEvent(ctx context.Context, req *runtimev1pb.P
 	return &empty.Empty{}, nil
 }
 
-func (s *testRuntimeServer) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error) {
+func (t *testRuntimeServer) GetConfiguration(ctx context.Context, req *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error) {
 	resp := &runtimev1pb.GetConfigurationResponse{}
 	for _, v := range req.Keys {
-		if _, ok := s.kv[v]; ok {
-			item := &runtimev1pb.ConfigurationItem{Key: v, Content: s.kv[v]}
+		if _, ok := t.kv[v]; ok {
+			item := &runtimev1pb.ConfigurationItem{Key: v, Content: t.kv[v]}
 			resp.Items = append(resp.Items, item)
 		}
 	}
 	return resp, nil
 }
-func (s *testRuntimeServer) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfigurationRequest) (*empty.Empty, error) {
+func (t *testRuntimeServer) SaveConfiguration(ctx context.Context, req *runtimev1pb.SaveConfigurationRequest) (*empty.Empty, error) {
 	for _, v := range req.Items {
-		s.kv[v.Key] = v.Content
+		t.kv[v.Key] = v.Content
 	}
 	return &empty.Empty{}, nil
 }
-func (s *testRuntimeServer) DeleteConfiguration(ctx context.Context, req *runtimev1pb.DeleteConfigurationRequest) (*empty.Empty, error) {
+func (t *testRuntimeServer) DeleteConfiguration(ctx context.Context, req *runtimev1pb.DeleteConfigurationRequest) (*empty.Empty, error) {
 	for _, v := range req.Keys {
-		delete(s.kv, v)
+		delete(t.kv, v)
 	}
 	return &empty.Empty{}, nil
 }
-func (s *testRuntimeServer) SubscribeConfiguration(srv runtimev1pb.Runtime_SubscribeConfigurationServer) error {
+func (t *testRuntimeServer) SubscribeConfiguration(srv runtimev1pb.Runtime_SubscribeConfigurationServer) error {
 	req, err := srv.Recv()
 	if err != nil {
 		return err
 	}
 	for _, key := range req.Keys {
-		s.subscribed[key] = true
+		t.subscribed[key] = true
 	}
 	resp := &runtimev1pb.SubscribeConfigurationResponse{}
-	for key := range s.subscribed {
+	for key := range t.subscribed {
 		item := &runtimev1pb.ConfigurationItem{Key: key, Content: "Test"}
 		resp.Items = append(resp.Items, item)
 	}
