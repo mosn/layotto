@@ -586,7 +586,7 @@ func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Co
 		}
 		name2Config, ok := m.runtimeConfig.CustomComponent[kind]
 		if !ok {
-			log.DefaultLogger.Errorf("[runtime] Your required component type %s is not supported.Please check your configuration", kind)
+			log.DefaultLogger.Errorf("[runtime] Your required component kind %s is not supported. Please check your configuration", kind)
 			continue
 		}
 		// 2.1. register all the factorys
