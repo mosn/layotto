@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	storeName = "file_demo"
+	storeName   = "file_demo"
 	storageType = "Standard"
 )
 

@@ -7,7 +7,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/minio/minio-go/v7 v7.0.15
 	google.golang.org/grpc v1.37.0
-	google.golang.org/protobuf v1.26.0-rc.1
+	google.golang.org/protobuf v1.26.0
 	mosn.io/layotto/sdk/go-sdk v0.0.0-20211020084508-6f5ee3cfeba0
 	mosn.io/layotto/spec v0.0.0-20211020084508-6f5ee3cfeba0
 )
