@@ -36,7 +36,7 @@ func TestTryLock(t *testing.T) {
 		}
 		lock, err := testClient.TryLock(ctx, &request)
 		assert.Nil(t, err)
-		assert.True(t, lock.Success, true)
+		assert.True(t, lock.Success)
 	})
 }
 
@@ -45,16 +45,16 @@ func TestUnLock(t *testing.T) {
 	t.Run("can't unlock with different owner", func(t *testing.T) {
 		request := runtimev1pb.TryLockRequest{
 			StoreName:  "demo",
-			ResourceId: "lock_test",
+			ResourceId: "unlock_test",
 			LockOwner:  "layotto",
 		}
 		lock, err := testClient.TryLock(ctx, &request)
 		assert.Nil(t, err)
-		assert.True(t, lock.Success, true)
+		assert.True(t, lock.Success)
 		// 2. unlock with different owner
 		unlockReq := runtimev1pb.UnlockRequest{
 			StoreName:  "demo",
-			ResourceId: "lock_test",
+			ResourceId: "unlock_test",
 			LockOwner:  "layotto1",
 		}
 		unlock, err := testClient.Unlock(ctx, &unlockReq)
@@ -65,7 +65,7 @@ func TestUnLock(t *testing.T) {
 	t.Run("unlock successfully", func(t *testing.T) {
 		request := runtimev1pb.UnlockRequest{
 			StoreName:  "demo",
-			ResourceId: "lock_test",
+			ResourceId: "unlock_test",
 			LockOwner:  "layotto",
 		}
 		unlock, err := testClient.Unlock(ctx, &request)
@@ -76,7 +76,7 @@ func TestUnLock(t *testing.T) {
 	t.Run("unlock but LOCK_UNEXIST", func(t *testing.T) {
 		request := runtimev1pb.UnlockRequest{
 			StoreName:  "demo",
-			ResourceId: "lock_test",
+			ResourceId: "unlock_test",
 			LockOwner:  "layotto",
 		}
 		unlock, err := testClient.Unlock(ctx, &request)
