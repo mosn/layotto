@@ -240,7 +240,7 @@ func (t *testRuntimeServer) SubscribeConfiguration(srv runtimev1pb.Runtime_Subsc
 	return err
 }
 
-func (s *testRuntimeServer) SayHello(ctx context.Context, req *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error) {
+func (*testRuntimeServer) SayHello(ctx context.Context, req *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error) {
 	resp := &runtimev1pb.SayHelloResponse{Hello: "world"}
 	return resp, nil
 }
