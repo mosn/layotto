@@ -58,7 +58,7 @@ jobs:
       with:
         version: v1.46.2
         working-directory: ${{ matrix.workdir }}
-        args: --verbose
+        args: "--out-${NO_FUTURE}format colored-line-number"
 
   go-unit-test:
     name: "👀 Go Unit Test"
