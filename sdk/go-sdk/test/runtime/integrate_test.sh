@@ -16,6 +16,6 @@
 
 go build ./cmd/layotto
 nohup redis-server --port 6380 &
-nohup ./layotto start -c ./configs/runtime_config.json &
+nohup ./layotto start -c ./configs/config_redis.json &
 cd sdk/go-sdk/test/runtime
 go test -p 1 -v ./...
