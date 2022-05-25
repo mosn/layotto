@@ -28,7 +28,7 @@ import (
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
-var componentName = "redis"
+var componentName = "state_demo"
 
 func TestHelloApi(t *testing.T) {
 	cli, err := client.NewClientWithAddress("127.0.0.1:11104")
@@ -40,7 +40,7 @@ func TestHelloApi(t *testing.T) {
 	ctx := context.Background()
 
 	helloReq := &client.SayHelloRequest{
-		ServiceName: "helloworld",
+		ServiceName: "quick_start_demo",
 	}
 	helloResp, err := cli.SayHello(ctx, helloReq)
 	assert.Nil(t, err)
@@ -61,7 +61,7 @@ func TestStateApi(t *testing.T) {
 	err = cli.SaveState(ctx, componentName, stateKey, stateValue)
 	assert.Nil(t, err)
 
-	stateResp, err := cli.GetState(ctx, componentName, stateKey)
+	stateResp, err := cli.GetState(ctx, "state_demo", stateKey)
 	assert.Nil(t, err)
 	assert.Equal(t, stateValue, stateResp.Value)
 }
@@ -78,10 +78,10 @@ func TestLockApi(t *testing.T) {
 	owner1 := uuid.New().String()
 	owner2 := uuid.New().String()
 	resourceID := "MyLock"
-
+	storeName := "lock_demo"
 	// 1. client1 tryLock
 	resp, err := cli.TryLock(ctx, &runtimev1pb.TryLockRequest{
-		StoreName:  componentName,
+		StoreName:  storeName,
 		ResourceId: resourceID,
 		LockOwner:  owner1,
 		Expire:     100000,
@@ -94,7 +94,7 @@ func TestLockApi(t *testing.T) {
 	//	2. client2 tryLock
 	go func() {
 		resp, err := cli.TryLock(ctx, &runtimev1pb.TryLockRequest{
-			StoreName:  componentName,
+			StoreName:  storeName,
 			ResourceId: resourceID,
 			LockOwner:  owner2,
 			Expire:     1000,
@@ -106,7 +106,7 @@ func TestLockApi(t *testing.T) {
 	wg.Wait()
 	// 3. client1 unlock
 	unlockResp, err := cli.Unlock(ctx, &runtimev1pb.UnlockRequest{
-		StoreName:  componentName,
+		StoreName:  storeName,
 		ResourceId: resourceID,
 		LockOwner:  owner1,
 	})
@@ -117,7 +117,7 @@ func TestLockApi(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		resp, err := cli.TryLock(ctx, &runtimev1pb.TryLockRequest{
-			StoreName:  componentName,
+			StoreName:  storeName,
 			ResourceId: resourceID,
 			LockOwner:  owner2,
 			Expire:     10,
@@ -126,7 +126,7 @@ func TestLockApi(t *testing.T) {
 		assert.True(t, true, resp.Success)
 		// 5. client2 unlock
 		unlockResp, err := cli.Unlock(ctx, &runtimev1pb.UnlockRequest{
-			StoreName:  componentName,
+			StoreName:  storeName,
 			ResourceId: resourceID,
 			LockOwner:  owner2,
 		})
@@ -149,7 +149,7 @@ func TestSequencerApi(t *testing.T) {
 
 	for i := 1; i < 10; i++ {
 		resp, err := cli.GetNextId(ctx, &runtimev1pb.GetNextIdRequest{
-			StoreName: componentName,
+			StoreName: "sequencer_demo",
 			Key:       sequencerKey,
 		})
 		assert.Nil(t, err)

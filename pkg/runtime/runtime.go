@@ -272,7 +272,7 @@ func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
 	// register all hello services implementation
 	m.helloRegistry.Register(hellos...)
 	for name, config := range m.runtimeConfig.HelloServiceManagement {
-		h, err := m.helloRegistry.Create(name)
+		h, err := m.helloRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create hello's component %s failed", name)
 			return err
@@ -291,7 +291,7 @@ func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactor
 	// register all config store services implementation
 	m.configStoreRegistry.Register(configStores...)
 	for name, config := range m.runtimeConfig.ConfigStoreManagement {
-		c, err := m.configStoreRegistry.Create(name)
+		c, err := m.configStoreRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create configstore's component %s failed", name)
 			return err
@@ -331,7 +331,7 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 	m.pubSubRegistry.Register(factorys...)
 	for name, config := range m.runtimeConfig.PubSubManagement {
 		// create component
-		comp, err := m.pubSubRegistry.Create(name)
+		comp, err := m.pubSubRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create pubsub component %s failed", name)
 			return err
@@ -362,7 +362,7 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 	// 2. loop initializing
 	for name, config := range m.runtimeConfig.StateManagement {
 		// 2.1. create and store the component
-		comp, err := m.stateRegistry.Create(name)
+		comp, err := m.stateRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create state component %s failed", name)
 			return err
@@ -388,7 +388,7 @@ func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
 	// register all files store services implementation
 	m.fileRegistry.Register(files...)
 	for name, config := range m.runtimeConfig.Files {
-		c, err := m.fileRegistry.Create(name)
+		c, err := m.fileRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create files component %s failed", name)
 			return err
@@ -409,7 +409,7 @@ func (m *MosnRuntime) initLocks(factorys ...*runtime_lock.Factory) error {
 	// 2. loop initializing
 	for name, config := range m.runtimeConfig.LockManagement {
 		// 2.1. create the component
-		comp, err := m.lockRegistry.Create(name)
+		comp, err := m.lockRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create lock component %s failed", name)
 			return err
@@ -437,7 +437,7 @@ func (m *MosnRuntime) initSequencers(factorys ...*runtime_sequencer.Factory) err
 	// 2. loop initializing
 	for name, config := range m.runtimeConfig.SequencerManagement {
 		// 2.1. create the component
-		comp, err := m.sequencerRegistry.Create(name)
+		comp, err := m.sequencerRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create sequencer component %s failed", name)
 			return err
@@ -489,7 +489,7 @@ func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFact
 	// 2. loop initializing
 	for name, config := range m.runtimeConfig.Bindings {
 		// 2.1. create the component
-		comp, err := m.bindingsRegistry.CreateOutputBinding(name)
+		comp, err := m.bindingsRegistry.CreateOutputBinding(config.Type)
 		if err != nil {
 			m.errInt(err, "create outbinding component %s failed", name)
 			return err
@@ -517,7 +517,7 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFa
 	// 2. loop initializing
 	for name, config := range m.runtimeConfig.SecretStoresManagement {
 		// 2.1. create the component
-		comp, err := m.secretStoresRegistry.Create(name)
+		comp, err := m.secretStoresRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create secretStore component %s failed", name)
 			return err
@@ -560,17 +560,17 @@ func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	return nil
 }
 
-func (m *MosnRuntime) SetCustomComponent(componentType string, name string, component custom.Component) {
-	if _, ok := m.customComponent[componentType]; !ok {
-		m.customComponent[componentType] = make(map[string]custom.Component)
+func (m *MosnRuntime) SetCustomComponent(kind string, name string, component custom.Component) {
+	if _, ok := m.customComponent[kind]; !ok {
+		m.customComponent[kind] = make(map[string]custom.Component)
 	}
-	m.customComponent[componentType][name] = component
+	m.customComponent[kind][name] = component
 }
 
-func (m *MosnRuntime) initCustomComponents(type2factorys map[string][]*custom.ComponentFactory) error {
+func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.ComponentFactory) error {
 	log.DefaultLogger.Infof("[runtime] start initializing custom components")
 	// 1. validation
-	if len(type2factorys) == 0 {
+	if len(kind2factorys) == 0 {
 		log.DefaultLogger.Infof("[runtime] no custom component factorys compiled")
 		return nil
 	}
@@ -579,22 +579,22 @@ func (m *MosnRuntime) initCustomComponents(type2factorys map[string][]*custom.Co
 		return nil
 	}
 	// 2. loop registering all types of components.
-	for compType, factorys := range type2factorys {
+	for kind, factorys := range kind2factorys {
 		// 2.0. check empty
 		if len(factorys) == 0 {
 			continue
 		}
-		name2Config, ok := m.runtimeConfig.CustomComponent[compType]
+		name2Config, ok := m.runtimeConfig.CustomComponent[kind]
 		if !ok {
-			log.DefaultLogger.Errorf("[runtime] Your required component type %s is not supported.Please check your configuration", compType)
+			log.DefaultLogger.Errorf("[runtime] Your required component type %s is not supported.Please check your configuration", kind)
 			continue
 		}
 		// 2.1. register all the factorys
-		m.customComponentRegistry.Register(compType, factorys...)
+		m.customComponentRegistry.Register(kind, factorys...)
 		// 2.2. loop initializing component instances
 		for name, config := range name2Config {
 			// create the component
-			comp, err := m.customComponentRegistry.Create(compType, name)
+			comp, err := m.customComponentRegistry.Create(kind, config.Type)
 			if err != nil {
 				m.errInt(err, "create custom component %s failed", name)
 				return err
@@ -605,7 +605,7 @@ func (m *MosnRuntime) initCustomComponents(type2factorys map[string][]*custom.Co
 				return err
 			}
 			// initialization finish
-			m.SetCustomComponent(compType, name, comp)
+			m.SetCustomComponent(kind, name, comp)
 		}
 	}
 	return nil

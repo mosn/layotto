@@ -35,7 +35,7 @@ go build -o layotto
  go build -o client
 ```
 ```shell
- ./client -s "local.file"
+ ./client -s "secret_demo"
 ```
 
 打印出如下信息则代表调用成功：
