@@ -48,14 +48,14 @@ Parameter Description:
 Build:
 
 ```shell
- cd ${project_path}/demo/pubsub/redis/server/
+ cd ${project_path}/demo/pubsub/server/
  go build -o subscriber
  ```
 
 Start subscriber:
 
 ```shell @background
- ./subscriber
+ ./subscriber -s redis
 ```
 If the following information is printed out, it means the startup is successful:
 
@@ -98,9 +98,9 @@ After completion, the layotto file will be generated in the directory, run it:
 ### Step 4. Run the Publisher program and call Layotto to publish events
 
 ```shell
- cd ${project_path}/demo/pubsub/redis/client/
+ cd ${project_path}/demo/pubsub/client/
  go build -o publisher
- ./publisher
+ ./publisher -s redis
 ```
 
 If the following information is printed, the call is successful:
