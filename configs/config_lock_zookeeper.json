@@ -22,12 +22,14 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "quick_start_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "lock": {
-                        "zookeeper": {
+                        "lock_demo": {
+                          "type": "zookeeper",
                           "metadata": {
                             "zookeeperHosts": "127.0.0.1",
                             "zookeeperPassword": "",

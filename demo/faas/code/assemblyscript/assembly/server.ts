@@ -24,7 +24,7 @@ class ServerHttpContext extends Context {
 
   onRequestBody(body_buffer_length: usize, _end_of_stream: bool): FilterDataStatusValues {
     let name = String.UTF8.decode(get_buffer_bytes(BufferTypeValues.HttpRequestBody, 0, body_buffer_length as u32));
-    set_http_response_body(String.UTF8.decode(getState("redis", name)));
+    set_http_response_body(String.UTF8.decode(getState("state_demo", name)));
     return FilterDataStatusValues.Continue
   }
 }

@@ -4,7 +4,15 @@
 json配置文件有如下结构：
 ```json
 "lock": {
-  "<STORE NAME>": {
+  "<Component A Name>": {
+    "type":"<Component A Type>",
+    "metadata": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    }
+  },
+  "<Component B Name>": {
+    "type":"<Component B Type>",
     "metadata": {
       "<KEY>": "<VALUE>",
       "<KEY>": "<VALUE>"
@@ -17,7 +25,8 @@ json配置文件有如下结构：
 
 ```json
 "lock": {
-  "redis": {
+  "lock_demo": {
+    "type": "redis",
     "metadata": {
       "redisHost": "localhost:6380",
       "redisPassword": ""

@@ -13,6 +13,10 @@ import (
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
+const (
+	storeName1 = "file_demo"
+)
+
 func GetFile(wg *sync.WaitGroup, id int) {
 	defer wg.Done()
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
@@ -21,7 +25,7 @@ func GetFile(wg *sync.WaitGroup, id int) {
 		return
 	}
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.GetFileRequest{StoreName: "aliOSS", Name: "fileName"}
+	req := &runtimev1pb.GetFileRequest{StoreName: storeName1, Name: "fileName"}
 	cli, err := c.GetFile(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)
@@ -50,7 +54,7 @@ func PutFile(wg *sync.WaitGroup, id int) {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.PutFileRequest{StoreName: "aliOSS", Name: "fileName", Metadata: meta}
+	req := &runtimev1pb.PutFileRequest{StoreName: storeName1, Name: "fileName", Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
 	if err != nil {
 		fmt.Printf("put file failed:%+v", err)

@@ -68,7 +68,7 @@ The layotto file will be generated in the directory, run it:
 # change directory to ${your project path}/demo/state/common/
  cd ${project_path}/demo/state/common/
  go build -o client
- ./client -s "redis"
+ ./client -s "state_demo"
 ```
 
 If the following information is printed, the demo succeeded:
