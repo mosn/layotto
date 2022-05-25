@@ -64,14 +64,14 @@ func (r *componentRegistry) Register(kind string, fs ...*ComponentFactory) {
 	}
 }
 
-func (r *componentRegistry) Create(compType, name string) (Component, error) {
-	store, ok := r.stores[compType]
+func (r *componentRegistry) Create(kind, compType string) (Component, error) {
+	store, ok := r.stores[kind]
 	if !ok {
-		return nil, fmt.Errorf("custom component type %s is not regsitered", compType)
+		return nil, fmt.Errorf("custom component kind %s is not regsitered", kind)
 	}
-	if f, ok := store[name]; ok {
-		r.info.LoadComponent(compType, name)
+	if f, ok := store[compType]; ok {
+		r.info.LoadComponent(kind, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("custom component %s is not regsitered", name)
+	return nil, fmt.Errorf("custom component %s is not regsitered", compType)
 }
