@@ -399,6 +399,6 @@ func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (io.Re
 	return ob.Body, nil
 }
 
-func (a *AwsOss) PutObject(context.Context) error {
+func (a *AwsOss) PutObject(context.Context, *file.PutObjectInput) error {
 	return nil
 }
