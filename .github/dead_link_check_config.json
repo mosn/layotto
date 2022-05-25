@@ -11,6 +11,9 @@
     },
     {
       "pattern": "^https://console.cloud.tencent.com/cos/bucket"
+    },
+    {
+      "pattern": "^#"
     }
   ],
   "replacementPatterns": [
