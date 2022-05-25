@@ -269,40 +269,34 @@ func (*testRuntimeServer) GetBulkSecret(ctx context.Context, in *runtimev1pb.Get
 }
 
 func (t *testRuntimeServer) TryLock(ctx context.Context, in *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error) {
-
 	if len(t.lock[in.ResourceId]) == 0 {
 		t.lock[in.ResourceId] = in.LockOwner
-		resp := &runtimev1pb.TryLockResponse{
+		return &runtimev1pb.TryLockResponse{
 			Success: true,
-		}
-		return resp, nil
-	} else {
-		resp := &runtimev1pb.TryLockResponse{
-			Success: false,
-		}
-		return resp, nil
+		}, nil
 	}
+	// lock exist
+	return &runtimev1pb.TryLockResponse{
+		Success: false,
+	}, nil
 }
 
 func (t *testRuntimeServer) Unlock(ctx context.Context, in *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error) {
-	if len(t.lock[in.ResourceId]) != 0 {
-		if t.lock[in.ResourceId] == in.LockOwner {
-			delete(t.lock, in.ResourceId)
-			resp := &runtimev1pb.UnlockResponse{
-				Status: pb.UnlockResponse_SUCCESS,
-			}
-			return resp, nil
-		} else {
-			resp := &runtimev1pb.UnlockResponse{
-				Status: pb.UnlockResponse_LOCK_BELONG_TO_OTHERS,
-			}
-			return resp, nil
-		}
-
-	} else {
-		resp := &runtimev1pb.UnlockResponse{
+	// LOCK_UNEXIST
+	if len(t.lock[in.ResourceId]) == 0 {
+		return &runtimev1pb.UnlockResponse{
 			Status: pb.UnlockResponse_LOCK_UNEXIST,
-		}
-		return resp, nil
+		}, nil
 	}
+	// SUCCESS
+	if t.lock[in.ResourceId] == in.LockOwner {
+		delete(t.lock, in.ResourceId)
+		return &runtimev1pb.UnlockResponse{
+			Status: pb.UnlockResponse_SUCCESS,
+		}, nil
+	}
+	// LOCK_BELONG_TO_OTHERS
+	return &runtimev1pb.UnlockResponse{
+		Status: pb.UnlockResponse_LOCK_BELONG_TO_OTHERS,
+	}, nil
 }
