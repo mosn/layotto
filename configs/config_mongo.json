@@ -11,48 +11,51 @@
       "listeners": [
         {
           "name": "grpc",
-          "address": "127.0.0.1:34905",
+          "address": "127.0.0.1:34904",
           "bind_port": true,
           "filter_chains": [
             {
               "filters": [
-                {
-                  "type": "tcpcopy",
-                  "config": {
-                    "strategy": {
-                      "switch": "ON",
-                      "interval": 30,
-                      "duration": 10,
-                      "cpu_max_rate": 80,
-                      "mem_max_rate": 80
-                    }
-                  }
-                },
                 {
                   "type": "grpc",
                   "config": {
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "quick_start_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
-                      "config_store": {
-                        "apollo": {
-                          "address": [
-                            "http://106.54.227.205:8080"
-                          ],
+                      "sequencer": {
+                        "sequencer_demo": {
+                          "type": "mongo",
                           "metadata": {
-                            "app_id": "testApplication_yang",
-                            "cluster": "default",
-                            "namespace_name": "dubbo,product.joe,application",
-                            "is_backup_config": "true",
-                            "secret": "6ce3ff7e96a24335a9634fe9abca6d51",
-                            "open_api_address": "http://106.54.227.205",
-                            "open_api_user": "apollo"
+                            "mongoHost": "localhost:27017",
+                            "mongoPassword": "",
+                            "username": "",
+                            "databaseName ": "",
+                            "collecttionName": "",
+                            "params": ""
                           }
                         }
+                      },
+                      "lock": {
+                        "lock_demo": {
+                          "type": "mongo",
+                          "metadata": {
+                            "mongoHost": "localhost:27017",
+                            "mongoPassword": "",
+                            "username": "",
+                            "databaseName ": "",
+                            "collecttionName": "",
+                            "params": ""
+                          }
+                        }
+                      },
+                      "app": {
+                        "app_id": "app1",
+                        "grpc_callback_port": 9999
                       }
                     }
                   }
@@ -63,7 +66,7 @@
         },
         {
           "name": "actuator",
-          "address": "127.0.0.1:34888",
+          "address": "127.0.0.1:34999",
           "bind_port": true,
           "filter_chains": [
             {

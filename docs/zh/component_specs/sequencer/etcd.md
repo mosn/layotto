@@ -1,7 +1,7 @@
 # Etcd
 
 ## 配置项说明
-示例：configs/config_sequencer_etcd.json
+示例：configs/runtime_config.json
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
@@ -39,7 +39,7 @@ go build
 
 编译成功后执行:
 ````shell
-./layotto start -c ../../configs/config_sequencer_etcd.json
+./layotto start -c ../../configs/runtime_config.json
 ````
 
 ## 运行 Demo

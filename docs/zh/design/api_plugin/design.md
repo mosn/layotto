@@ -325,7 +325,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 cd ${project_path}/cmd/layotto_multiple_api
 go build -o layotto
 # run it
-./layotto start -c ../../configs/config_in_memory.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 Layotto 启动过程中，会回调每个注册进来的 API 的生命周期方法(Init,Register)

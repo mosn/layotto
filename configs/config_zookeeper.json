@@ -27,12 +27,25 @@
                           "hello": "greeting"
                         }
                       },
+                      "sequencer": {
+                        "sequencer_demo": {
+                          "type": "zookeeper",
+                          "metadata": {
+                            "zookeeperHosts": "127.0.0.1",
+                            "zookeeperPassword": "",
+                            "sessionTimeout": "3",
+                            "logInfo": "false"
+                          }
+                        }
+                      },
                       "lock": {
                         "lock_demo": {
-                          "type": "redis",
+                          "type": "zookeeper",
                           "metadata": {
-                            "redisHost": "localhost:6380",
-                            "redisPassword": ""
+                            "zookeeperHosts": "127.0.0.1",
+                            "zookeeperPassword": "",
+                            "sessionTimeout": "3",
+                            "logInfo": "false"
                           }
                         }
                       },

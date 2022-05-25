@@ -30,6 +30,31 @@
                           ],
                           "timeout": "10"
                         }
+                      },
+                      "sequencer": {
+                        "sequencer_demo": {
+                          "type": "etcd",
+                          "metadata": {
+                            "endpoints": "localhost:2379",
+                            "segmentCacheEnable": "false",
+                            "segmentStep": "1",
+                            "username": "",
+                            "password": "",
+                            "dialTimeout": "5"
+                          }
+                        }
+                      },
+                      "lock": {
+                        "lock_demo": {
+                          "type": "etcd",
+                          "metadata": {
+                            "endpoints": "localhost:2379",
+                            "username": "",
+                            "password": "",
+                            "keyPrefixPath": "/lock",
+                            "dialTimeout": "5"
+                          }
+                        }
                       }
                     }
                   }
