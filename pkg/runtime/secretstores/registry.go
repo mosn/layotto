@@ -29,7 +29,7 @@ type (
 	// Registry is used to get registered secret store implementations.
 	Registry interface {
 		Register(ss ...*SecretStoresFactory)
-		Create(name string) (secretstores.SecretStore, error)
+		Create(compType string) (secretstores.SecretStore, error)
 	}
 
 	secretStoreRegistry struct {
@@ -50,17 +50,17 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 // Register adds one or many new secret stores to the registry.
 func (s *secretStoreRegistry) Register(ss ...*SecretStoresFactory) {
 	for _, component := range ss {
-		s.secretStores[component.Name] = component.FactoryMethod
-		s.info.RegisterComponent(ServiceName, component.Name)
+		s.secretStores[component.CompType] = component.FactoryMethod
+		s.info.RegisterComponent(ServiceName, component.CompType)
 	}
 }
 
 // Create instantiates a secret store based on `name`.
-func (s *secretStoreRegistry) Create(name string) (secretstores.SecretStore, error) {
-	if method, ok := s.secretStores[name]; ok {
-		s.info.LoadComponent(ServiceName, name)
+func (s *secretStoreRegistry) Create(compType string) (secretstores.SecretStore, error) {
+	if method, ok := s.secretStores[compType]; ok {
+		s.info.LoadComponent(ServiceName, compType)
 		return method(), nil
 	}
 
-	return nil, errors.Errorf("couldn't find secret store %s", name)
+	return nil, errors.Errorf("couldn't find secret store %s", compType)
 }

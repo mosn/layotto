@@ -20,18 +20,18 @@ import (
 )
 
 type Registry interface {
-	Register(componentType string, factorys ...*ComponentFactory)
-	Create(componentType, name string) (Component, error)
+	Register(kind string, factorys ...*ComponentFactory)
+	Create(kind, compType string) (Component, error)
 }
 
 type ComponentFactory struct {
-	Name          string
+	Type          string
 	FactoryMethod func() Component
 }
 
-func NewComponentFactory(name string, f func() Component) *ComponentFactory {
+func NewComponentFactory(compType string, f func() Component) *ComponentFactory {
 	return &ComponentFactory{
-		Name:          name,
+		Type:          compType,
 		FactoryMethod: f,
 	}
 }
@@ -48,29 +48,29 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 	}
 }
 
-func (r *componentRegistry) Register(componentType string, fs ...*ComponentFactory) {
+func (r *componentRegistry) Register(kind string, fs ...*ComponentFactory) {
 	if len(fs) == 0 {
 		return
 	}
-	r.info.AddService(componentType)
+	r.info.AddService(kind)
 	// lazy init
-	if _, ok := r.stores[componentType]; !ok {
-		r.stores[componentType] = make(map[string]func() Component)
+	if _, ok := r.stores[kind]; !ok {
+		r.stores[kind] = make(map[string]func() Component)
 	}
 	// register FactoryMethod
 	for _, f := range fs {
-		r.stores[componentType][f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(componentType, f.Name)
+		r.stores[kind][f.Type] = f.FactoryMethod
+		r.info.RegisterComponent(kind, f.Type)
 	}
 }
 
-func (r *componentRegistry) Create(componentType, name string) (Component, error) {
-	store, ok := r.stores[componentType]
+func (r *componentRegistry) Create(compType, name string) (Component, error) {
+	store, ok := r.stores[compType]
 	if !ok {
-		return nil, fmt.Errorf("custom component type %s is not regsitered", componentType)
+		return nil, fmt.Errorf("custom component type %s is not regsitered", compType)
 	}
 	if f, ok := store[name]; ok {
-		r.info.LoadComponent(componentType, name)
+		r.info.LoadComponent(compType, name)
 		return f(), nil
 	}
 	return nil, fmt.Errorf("custom component %s is not regsitered", name)

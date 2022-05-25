@@ -18,13 +18,13 @@ import (
 )
 
 type SecretStoresFactory struct {
-	Name          string
+	CompType      string
 	FactoryMethod func() secretstores.SecretStore
 }
 
-func NewFactory(name string, f func() secretstores.SecretStore) *SecretStoresFactory {
+func NewFactory(compType string, f func() secretstores.SecretStore) *SecretStoresFactory {
 	return &SecretStoresFactory{
-		Name:          name,
+		CompType:      compType,
 		FactoryMethod: f,
 	}
 }

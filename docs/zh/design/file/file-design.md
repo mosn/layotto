@@ -109,7 +109,8 @@ Put接口入参主要有三个，多了一个data字段用来传输文件内容�
 
 {
     "file": {
-      "aliOSS": {
+      "file_demo": {
+        "type": "aliOSS",
         "metadata":[
           {
             "endpoint": "endpoint_address",

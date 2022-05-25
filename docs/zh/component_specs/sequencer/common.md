@@ -4,7 +4,19 @@
 json配置文件有如下结构：
 ```json
 "sequencer": {
-  "<STORE NAME>": {
+  "<Component A Name>": {
+    "type": "Component A Name",
+    "biggerThan": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    },
+    "metadata": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    }
+  },
+  "<Component B Name>": {
+    "type": "Component B Name",
     "biggerThan": {
       "<KEY>": "<VALUE>",
       "<KEY>": "<VALUE>"
@@ -21,7 +33,8 @@ json配置文件有如下结构：
 
 ```json
 "sequencer": {
-  "etcd": {
+  "sequencer_demo": {
+    "type": "etcd",
     "biggerThan": {
       "key1": 1,
       "key2": 111

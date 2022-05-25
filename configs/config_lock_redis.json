@@ -22,12 +22,14 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "quick_start_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "lock": {
-                        "redis": {
+                        "lock_demo": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6380",
                             "redisPassword": ""
