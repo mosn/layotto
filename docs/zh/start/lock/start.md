@@ -61,7 +61,7 @@ go build -o layotto
 ```shell
  cd ${project_path}/demo/lock/common/
  go build -o client
- ./client -s "redis"
+ ./client -s "lock_demo"
 ```
 
 打印出如下信息则代表调用成功：

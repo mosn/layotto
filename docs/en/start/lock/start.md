@@ -60,7 +60,7 @@ The layotto file will be generated in the directory, run it:
 ```shell
  cd ${project_path}/demo/lock/common/
  go build -o client
- ./client -s "redis"
+ ./client -s "lock_demo"
 ```
 
 If the following information is printed, the call is successful:
