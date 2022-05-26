@@ -39,7 +39,7 @@ Once finished, the layotto file will be generated in the directory, run it:
 ```
 
 ```shell
- ./client -s "local.file"
+ ./client -s "secret_demo"
 ```
 
 If the following information is printed, the demo is successful:

@@ -1,3 +1,5 @@
+package secretstores
+
 /*
  * Copyright 2021 Layotto Authors
  *
@@ -14,10 +16,19 @@
  * limitations under the License.
  */
 
-package state
+import (
+	"testing"
 
-// Config wraps configuration for a state implementation
-type Config struct {
-	Type     string            `json:"type"`
-	Metadata map[string]string `json:"metadata"`
+	"mosn.io/layotto/pkg/mock/components/secret"
+
+	"github.com/dapr/components-contrib/secretstores"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestNewFactory(t *testing.T) {
+	factory := NewFactory("test", func() secretstores.SecretStore {
+		return secret.FakeSecretStore{}
+	})
+
+	assert.NotNil(t, factory)
 }

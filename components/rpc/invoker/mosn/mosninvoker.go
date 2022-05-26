@@ -22,6 +22,7 @@ import (
 	"errors"
 	"fmt"
 
+	// bridge to mosn
 	_ "mosn.io/mosn/pkg/filter/network/proxy"
 	"mosn.io/pkg/log"
 

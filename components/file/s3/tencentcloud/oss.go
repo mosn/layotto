@@ -93,12 +93,11 @@ func (t *TencentCloudOSS) checkMetadata(m *OssMetadata) bool {
 	if !strings.HasPrefix(m.Endpoint, "http") {
 		endpoint = "https://" + m.Endpoint
 	}
-
-	if bucketUrl, err := url.Parse(endpoint); err != nil {
+	bucketUrl, err := url.Parse(endpoint)
+	if err != nil {
 		return false
-	} else {
-		m.bucketUrl = bucketUrl
 	}
+	m.bucketUrl = bucketUrl
 
 	if m.Timeout <= 0 {
 		m.Timeout = 100 * 1000 //100s

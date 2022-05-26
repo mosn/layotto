@@ -13,7 +13,7 @@ import (
 
 const (
 	resourceId = "resource_a"
-	storeName  = "in-memory"
+	storeName  = "lock_demo"
 )
 
 func main() {

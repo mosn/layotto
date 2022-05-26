@@ -63,6 +63,7 @@ func TestConsulLock_TryLock(t *testing.T) {
 	}
 	cfg.Properties["address"] = "127.0.0.1:8500"
 	err := comp.Init(cfg)
+	assert.Nil(t, err)
 	comp.client = client
 	comp.sessionFactory = factory
 	comp.kv = kv

@@ -64,11 +64,12 @@ func TestFile(t *testing.T) {
 	f.DataStream = reader
 	go WriteFile(writer)
 	err = ls.Put(context.TODO(), f)
+	assert.Nil(t, err)
 	exist, err := CheckFileExist(f.FileName)
 	assert.Nil(t, err)
 	assert.Equal(t, true, exist)
 
-	data := make([]byte, 10, 10)
+	data := make([]byte, 10)
 	fs := &file.GetFileStu{}
 	fs.FileName = FileName
 	stream, err := ls.Get(context.TODO(), fs)

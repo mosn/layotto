@@ -4,12 +4,20 @@
 json配置文件有如下结构：
 ```json
 "state": {
-  "<STORE NAME>": {
-    "metadata": {
-      "<KEY>": "<VALUE>",
-      "<KEY>": "<VALUE>"
+    "<Component A Name>": {
+    "type":"<Component A Type>",
+      "metadata": {
+        "<KEY>": "<VALUE>",
+        "<KEY>": "<VALUE>"
+      }
+    },
+    "<Component B Name>": {
+      "type":"<Component B Type>",
+      "metadata": {
+        "<KEY>": "<VALUE>",
+        "<KEY>": "<VALUE>"
+      }
     }
-  }
 }
 ```
 
@@ -17,7 +25,8 @@ json配置文件有如下结构：
 
 ```json
 "state": {
-  "redis": {
+  "state_demo": {
+    "type": "redis",
     "metadata": {
       "redisHost": "localhost:6380",
       "redisPassword": ""

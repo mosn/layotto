@@ -23,6 +23,7 @@ import (
 
 // FileConfig wraps configuration for a file implementation
 type FileConfig struct {
+	Type     string `json:"type"`
 	Metadata json.RawMessage
 }
 
