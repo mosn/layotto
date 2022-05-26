@@ -21,7 +21,7 @@ WebAssemly 简称 WASM，是一种运行在沙箱化的执行环境中的可移�
 ### 框架INIT
 由于 Layotto 的底层是 Mosn，WASM 的扩展框架也是复用 Mosn 的 WASM 扩展框架，如图1 Layotto & Mosn WASM 框架 [1] 所示。
 
-![mosn_wasm_ext_framework_module](mosn_wasm_ext_framework_module.png)
+![mosn_wasm_ext_framework_module](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*jz4BSJmVQ3gAAAAAAAAAAAAAARQnAQ)
 <center>图1 Layotto & Mosn WASM 框架 </center>
 
 其中，Manager 负责对 WASM 插件进行管理和动态更新；VM 负责对 WASM 虚拟机、模块和实例进行管理；ABI 作为应用程序二进制接口，提供对外使用接口 [2]。
@@ -323,7 +323,7 @@ func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 
 ### 工作流程
 Layotto 中 WASM 的工作流程大致如下图2 Layotto & Mosn WASM 工作流程所示，其中配置更新在上述初始化环节基本已囊括，这里重点看一下请求处理流程。
-![mosn_wasm_ext_framework_workflow](mosn_wasm_ext_framework_workflow.png)
+![mosn_wasm_ext_framework_workflow](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*XTDeRq0alYsAAAAAAAAAAAAAARQnAQ)
 <center>图2 Layotto & Mosn WASM 工作流程 </center>
 
 1、由 Layotto 底层 Mosn 收到请求，经过 workpool 调度，在 proxy downstream 中按照配置依次执行 StreamFilterChain 到 Wasm StreamFilter 的 OnReceive 方法，具体逻辑详见如下代码：
@@ -573,7 +573,7 @@ func ProxyGetState(instance common.WasmInstance, storeNamePtr int32, storeNameSi
 
 除 Wasm-Proxy 相关实现外，FaaS 模式核心逻辑是通过扩展 Containerd 实现多运行时插件 containerd-shim-layotto-v2 [6]，并借此"穿针引线"的巧妙的利用了 Docker 的镜像能力来管理 *.wasm 包和 Kubernetes 优秀的编排能力来调度函数，具体架构和工作流可见图3 Layotto FaaS Workflow。
 
-![layotto_faas_workflow](layotto_faas_workflow.png)
+![layotto_faas_workflow](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*XWmNT6-7FoEAAAAAAAAAAAAAARQnAQ)
 <center>图3 Layotto FaaS Workflow </center>
 
 这里简单看一下 containerd-shim-layotto-v2 的主函数，可以看到 shim.Run 设置的 WASM 的运行时为 io.containerd.layotto.v2，也就是 containerd 中 plugins.cri.containerd.runtimes 对应插件的 runtime_type。当创建 Pod 时，在 yaml 的 spec 中指定 runtimeClassName: layotto，经过调度，最终 kubelet 就会通过 cri-plugin 调用 containerd 中的 containerd-shim-layotto-v2 运行时来进行加载和运行等相关处理。
