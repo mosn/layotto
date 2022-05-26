@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"net"
 	"strconv"
@@ -30,7 +31,17 @@ import (
 
 const topicName = "topic1"
 
+var storeName string
+
+func init() {
+	flag.StringVar(&storeName, "s", "", "set `storeName`")
+}
+
 func main() {
+	flag.Parse()
+	if storeName == "" {
+		panic("storeName is empty.")
+	}
 	// start a grpc server for callback
 	testSub()
 }
@@ -56,7 +67,7 @@ type AppCallbackServerImpl struct {
 func (a *AppCallbackServerImpl) ListTopicSubscriptions(ctx context.Context, empty *empty.Empty) (*runtimev1pb.ListTopicSubscriptionsResponse, error) {
 	result := &runtimev1pb.ListTopicSubscriptionsResponse{}
 	ts := &runtimev1pb.TopicSubscription{
-		PubsubName: "pub_subs_demo",
+		PubsubName: storeName,
 		Topic:      topicName,
 		Metadata:   nil,
 	}

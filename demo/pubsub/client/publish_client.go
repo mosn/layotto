@@ -18,29 +18,41 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 
-	"mosn.io/layotto/sdk/go-sdk/client"
+	client "mosn.io/layotto/sdk/go-sdk/client"
 )
 
-const (
-	topic = "in-memory"
-)
+const topicName = "topic1"
+
+var storeName string
+
+func init() {
+	flag.StringVar(&storeName, "s", "", "set `storeName`")
+}
 
 func main() {
+	flag.Parse()
+	if storeName == "" {
+		panic("storeName is empty.")
+	}
+	// 1. construct client
 	cli, err := client.NewClient()
 	if err != nil {
 		panic(err)
 	}
+	// 2. publish a new event
 	testPublish(cli)
 	cli.Close()
 }
 
-func testPublish(cli client.Client) {
-	data := []byte("hello in-memory pubsub")
-	err := cli.PublishEvent(context.Background(), "in-memory", topic, data)
+func testPublish(cli client.Client) error {
+	data := []byte("value1")
+	err := cli.PublishEvent(context.Background(), storeName, topicName, data)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Published a new event.Topic: %s ,Data: %s \n", topic, data)
+	fmt.Printf("Published a new event.Topic: %s ,Data: %s \n", topicName, data)
+	return err
 }
