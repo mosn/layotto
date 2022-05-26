@@ -63,7 +63,7 @@ func (e *MySQLSequencer) Init(config sequencer.Configuration) error {
 			} else {
 				m.Db.QueryRow(fmt.Sprintf("SELECT sequencer_key,sequencer_value FROM %s WHERE sequencer_key = ?", m.TableName), k).Scan(&Key, &Value)
 				if Value < bt {
-					return fmt.Errorf("MySQL sequencer error: can not satisfy biggerThan guarantee.key: %s,key in MySQL: %s", k, Key)
+					return fmt.Errorf("mysql sequencer error: can not satisfy biggerThan guarantee.key: %s,key in MySQL: %s", k, Key)
 				}
 			}
 		}

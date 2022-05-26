@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	MySQLUrl = "localhost:xxxxxx"
+	MySQLUrl = "localhost:xxxxx"
 	Value    = 1
 	Key      = "sequenceKey"
 	Size     = 50

@@ -25,7 +25,7 @@ var (
 
 const (
 	defaultTableName    = "layotto_sequencer"
-	tableNameKey        = "tableName"
+	defaultTableNameKey = "tableName"
 	connectionStringKey = "connectionString"
 	dataBaseName        = "dataBaseName"
 )
@@ -40,7 +40,7 @@ type MySQLMetadata struct {
 func ParseMySQLMetadata(properties map[string]string) (MySQLMetadata, error) {
 	m := MySQLMetadata{}
 
-	if val, ok := properties[tableNameKey]; ok && val != "" {
+	if val, ok := properties[defaultTableNameKey]; ok && val != "" {
 		m.TableName = val
 	}
 
