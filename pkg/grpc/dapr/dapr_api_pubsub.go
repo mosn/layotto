@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package dapr
 
 import (
@@ -62,7 +63,7 @@ func (d *daprGrpcAPI) PublishEvent(ctx context.Context, in *dapr_v1pb.PublishEve
 
 	component, ok := d.pubSubs[in.PubsubName]
 
-	if ok == false {
+	if !ok {
 		err := status.Errorf(codes.InvalidArgument, messages.ErrPubsubNotFound, in.PubsubName)
 		return &emptypb.Empty{}, err
 	}
