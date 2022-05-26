@@ -55,7 +55,7 @@ Build:
 Start subscriber:
 
 ```shell @background
- ./subscriber -s redis
+ ./subscriber -s pub_subs_demo
 ```
 If the following information is printed out, it means the startup is successful:
 
