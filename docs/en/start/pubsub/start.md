@@ -100,7 +100,7 @@ After completion, the layotto file will be generated in the directory, run it:
 ```shell
  cd ${project_path}/demo/pubsub/client/
  go build -o publisher
- ./publisher -s redis
+ ./publisher -s pub_subs_demo
 ```
 
 If the following information is printed, the call is successful:
