@@ -31,7 +31,7 @@ import (
 var componentName = "state_demo"
 
 func TestHelloApi(t *testing.T) {
-	cli, err := client.NewClientWithAddress("127.0.0.1:11104")
+	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -44,11 +44,11 @@ func TestHelloApi(t *testing.T) {
 	}
 	helloResp, err := cli.SayHello(ctx, helloReq)
 	assert.Nil(t, err)
-	assert.Equal(t, "welcome layotto", helloResp.Hello)
+	assert.Equal(t, "greeting", helloResp.Hello)
 }
 
 func TestStateApi(t *testing.T) {
-	cli, err := client.NewClientWithAddress("127.0.0.1:11104")
+	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,7 +67,7 @@ func TestStateApi(t *testing.T) {
 }
 
 func TestLockApi(t *testing.T) {
-	cli, err := client.NewClientWithAddress("127.0.0.1:11104")
+	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -138,7 +138,7 @@ func TestLockApi(t *testing.T) {
 }
 
 func TestSequencerApi(t *testing.T) {
-	cli, err := client.NewClientWithAddress("127.0.0.1:11104")
+	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
 	}
