@@ -43,9 +43,4 @@ func testPublish(cli client.Client) {
 		panic(err)
 	}
 	fmt.Printf("Published a new event.Topic: %s ,Data: %s \n", topic, data)
-	return
-}
-
-func testSubscribe(cli client.Client) error {
-	return nil
 }
