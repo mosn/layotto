@@ -20,7 +20,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/json-iterator/go v1.1.11
+	github.com/json-iterator/go v1.1.12
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
@@ -30,15 +30,15 @@ require (
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.28.0
 	go.uber.org/automaxprocs v1.4.0 // indirect
-	golang.org/x/net v0.0.0-20211005001312-d4b1ae081e3b // indirect
+	golang.org/x/net v0.1.10 // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
 	google.golang.org/protobuf v1.27.1
 	mosn.io/api v0.0.0-20220308091133-b233c56e98c7
-	mosn.io/layotto/components v0.0.0-20220119065745-4f03f6779399
-	mosn.io/layotto/spec v0.0.0-20220119065745-4f03f6779399
-	mosn.io/mosn v0.27.0
-	mosn.io/pkg v0.0.0-20220331064139-949046a47fa2
+	mosn.io/layotto/components v0.0.0-20220413092851-55c58dbb1a23
+	mosn.io/layotto/spec v0.0.0-20220413092851-55c58dbb1a23
+	mosn.io/mosn v1.0.1
+	mosn.io/pkg v1.0.0
 	mosn.io/proxy-wasm-go-host v0.1.1-0.20210524020952-3fb13ba763a6
 	nhooyr.io/websocket v1.8.7 // indirect
 )
