@@ -431,7 +431,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 var cmdStart = cli.Command{
 	Name:  "start",
-	Usage: "start runtime. For example:  ./layotto start -c configs/config_in_memory.json",
+	Usage: "start runtime. For example:  ./layotto start -c configs/config_standalone.json",
 	Flags: []cli.Flag{
 		cli.StringFlag{
 			Name:   "config, c",

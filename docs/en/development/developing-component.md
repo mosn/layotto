@@ -90,7 +90,7 @@ As mentioned above:
 
 So how to configure when users want to use Zookeeper? We need to provide a sample configuration, for both user reference and running integration tests
 
-We can copy a json configuration file from another component. For example, copy configs/config_lock_redis.json and paste it into configs/config_lock_zookeeper.json when developing a plug-in component
+We can copy a json configuration file from another component. For example, copy configs/config_redis.json and paste it into configs/config_zookeeper.json when developing a plug-in component
 Then edit and modify the configuration shown below:
 
 ![img_3.png](../../img/development/component/img_3.png)

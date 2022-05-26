@@ -22,15 +22,34 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "quick_start_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
-                      "lock": {
-                        "redis": {
+                      "sequencer": {
+                        "sequencer_demo": {
+                          "type": "mongo",
                           "metadata": {
-                            "redisHost": "localhost:6380",
-                            "redisPassword": ""
+                            "mongoHost": "localhost:27017",
+                            "mongoPassword": "",
+                            "username": "",
+                            "databaseName ": "",
+                            "collecttionName": "",
+                            "params": ""
+                          }
+                        }
+                      },
+                      "lock": {
+                        "lock_demo": {
+                          "type": "mongo",
+                          "metadata": {
+                            "mongoHost": "localhost:27017",
+                            "mongoPassword": "",
+                            "username": "",
+                            "databaseName ": "",
+                            "collecttionName": "",
+                            "params": ""
                           }
                         }
                       },

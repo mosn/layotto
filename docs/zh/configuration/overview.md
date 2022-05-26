@@ -14,7 +14,8 @@ Layotto 启动时需要读取一个 json 格式的配置文件。示例配置文
 ```json
 "grpc_config": {
   "<API NAME>": {
-    "<COMPONENT NAME>": {
+    "<COMPONENT A NAME>": {
+      "type": "<COMPONENT A Type>"
       "<KEY>": "<VALUE>",
       "metadata": {
         "<KEY>": "<VALUE>",
@@ -23,16 +24,16 @@ Layotto 启动时需要读取一个 json 格式的配置文件。示例配置文
     }
   },
   "<API NAME>": {
-    "<COMPONENT NAME>": {
+    "<COMPONENT B NAME>": {
+      "type": "<COMPONENT B Type>"
       "<KEY>": "<VALUE>",
       "metadata": {
         "<KEY>": "<VALUE>",
         "<KEY>": "<VALUE>"
       }
     }
-  }
+  },
 }
-
 ```
 
 至于每个API NAME填啥、每个组件名是啥、组件能配哪些Key/Value配置项，您可以查阅[组件配置说明](zh/component_specs/overview)

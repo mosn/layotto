@@ -17,6 +17,7 @@
 package secretstores
 
 type Metadata struct {
+	Type     string `json:"type"`
 	Version  string
 	Metadata map[string]string `json:"metadata"`
 }

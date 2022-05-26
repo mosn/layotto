@@ -2,7 +2,7 @@
 
 ## 配置项说明
 
-示例：configs/config_lock_consul.json
+示例：configs/config_consul.json
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |

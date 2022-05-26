@@ -1,7 +1,7 @@
 # MongoDB
 
 ## 配置项说明
-示例：configs/config_sequencer_mongo.json
+示例：configs/config_mongo.json
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |

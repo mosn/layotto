@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 
 	client "mosn.io/layotto/sdk/go-sdk/client"
@@ -25,7 +26,17 @@ import (
 
 const topicName = "topic1"
 
+var storeName string
+
+func init() {
+	flag.StringVar(&storeName, "s", "", "set `storeName`")
+}
+
 func main() {
+	flag.Parse()
+	if storeName == "" {
+		panic("storeName is empty.")
+	}
 	// 1. construct client
 	cli, err := client.NewClient()
 	if err != nil {
@@ -38,7 +49,7 @@ func main() {
 
 func testPublish(cli client.Client) error {
 	data := []byte("value1")
-	err := cli.PublishEvent(context.Background(), "redis", topicName, data)
+	err := cli.PublishEvent(context.Background(), storeName, topicName, data)
 	if err != nil {
 		panic(err)
 	}

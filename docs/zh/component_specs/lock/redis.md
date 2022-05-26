@@ -1,7 +1,7 @@
 # Redis
 
 ## 配置项说明
-示例：configs/config_lock_redis.json
+示例：configs/config_redis.json
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
@@ -20,6 +20,7 @@ docker run -itd --name redis-test -p 6380:6379 redis
 
 ## 配置项说明
 示例：configs/config_lock_redis_cluter.json
+
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
 | redisHosts | Y | redis节点地址,多个节点以','隔开，例如localhost:6381,localhost:6382 |

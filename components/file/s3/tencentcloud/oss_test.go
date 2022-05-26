@@ -28,6 +28,15 @@ import (
 	"mosn.io/layotto/components/file"
 )
 
+const data = `[
+				{
+					"endpoint": "https://xxx-1251058690.cos.ap-chengdu.myqcloud.com",
+					"accessKeyID": "accessKey",
+					"accessKeySecret": "secret",
+					"timeout": 1000
+				}
+			]`
+
 func TestInit(t *testing.T) {
 	data := `[
 				{
@@ -160,14 +169,6 @@ func TestSelectClient(t *testing.T) {
 }
 
 func TestPut(t *testing.T) {
-	data := `[
-				{
-					"endpoint": "https://xxx-1251058690.cos.ap-chengdu.myqcloud.com",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"timeout": 1000
-				}
-			]`
 	fc := file.FileConfig{}
 	oss := NewTencentCloudOSS()
 	fc.Metadata = []byte(data)
@@ -188,14 +189,6 @@ func TestPut(t *testing.T) {
 }
 
 func TestStat(t *testing.T) {
-	data := `[
-				{
-					"endpoint": "https://xxx-1251058690.cos.ap-chengdu.myqcloud.com",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"timeout": 1000
-				}
-			]`
 	fc := file.FileConfig{}
 	oss := NewTencentCloudOSS()
 	fc.Metadata = []byte(data)
@@ -214,14 +207,6 @@ func TestStat(t *testing.T) {
 }
 
 func TestList(t *testing.T) {
-	data := `[
-				{
-					"endpoint": "https://xxx-1251058690.cos.ap-chengdu.myqcloud.com",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"timeout": 1000
-				}
-			]`
 	fc := file.FileConfig{}
 	oss := NewTencentCloudOSS()
 	fc.Metadata = []byte(data)
@@ -252,14 +237,6 @@ func TestList(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	data := `[
-				{
-					"endpoint": "https://xxx-1251058690.cos.ap-chengdu.myqcloud.com",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"timeout": 1000
-				}
-			]`
 	fc := file.FileConfig{}
 	oss := NewTencentCloudOSS()
 	fc.Metadata = []byte(data)
@@ -277,14 +254,6 @@ func TestGet(t *testing.T) {
 }
 
 func TestDel(t *testing.T) {
-	data := `[
-				{
-					"endpoint": "https://xxx-1251058690.cos.ap-chengdu.myqcloud.com",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"timeout": 1000
-				}
-			]`
 	fc := file.FileConfig{}
 	oss := NewTencentCloudOSS()
 	fc.Metadata = []byte(data)
@@ -300,14 +269,6 @@ func TestDel(t *testing.T) {
 }
 
 func TestCheckFileName(t *testing.T) {
-	data := `[
-				{
-					"endpoint": "https://xxx-1251058690.cos.ap-chengdu.myqcloud.com",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"timeout": 1000
-				}
-			]`
 	fc := file.FileConfig{}
 	oss := NewTencentCloudOSS()
 	fc.Metadata = []byte(data)
