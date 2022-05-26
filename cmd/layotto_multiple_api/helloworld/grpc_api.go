@@ -33,7 +33,7 @@ import (
 const kind = "helloworld"
 
 // This demo will always use this component name.
-const componentName = "in-memory"
+const componentName = "demo"
 
 func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
 	// 1. convert custom components

@@ -29,7 +29,7 @@ go build -o layotto
 Run it:
 
 ```shell @background
-./layotto start -c ../../configs/config_trace_skywalking.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 ## Run Demo

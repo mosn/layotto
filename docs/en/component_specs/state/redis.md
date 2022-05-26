@@ -1,7 +1,7 @@
 # Redis
 
 ## metadata fields
-Example: configs/config_state_redis.json
+Example: configs/config_redis.json
 
 | Field | Required | Description |
 | --- | --- | --- |

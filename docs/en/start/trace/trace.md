@@ -1,10 +1,10 @@
-# Observability (trace, metric)
+# Observability (Tracing, Metrics)
 
-## trace
+## 1. Tracing
 
 ### Features
 
-In [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json), there is a paragraph about trace configuration as follows:
+In [config_standalone.json](https://github.com/mosn/layotto/blob/main/configs/config_standalone.json), there is a paragraph about trace configuration as follows:
 
 ```json
 [
@@ -36,7 +36,7 @@ go build -o layotto
 - Run it
 
 ```shell @background
-./layotto start -c ../../configs/runtime_config.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 The corresponding client demo is in [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), running it will call the SayHello API of layotto:
@@ -151,9 +151,9 @@ The results printed by trace are as follows:
 
 ![img.png](../../../img/trace/trace.png)
 
-## Metric
+## 2. Metrics
 
-Layotto's metric reuses mosn's metric, and connects to prometheus. An example of metric configuration is provided in [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json), follow the above steps to start layotto After that, you can read the metric information through the following command:
+Layotto's metric reuses mosn's metric, and connects to prometheus. An example of metric configuration is provided in [config_standalone.json](https://github.com/mosn/layotto/blob/main/configs/config_standalone.json), follow the above steps to start layotto After that, you can read the metric information through the following command:
 
 ```shell
 curl --location --request GET 'http://127.0.0.1:34903/metrics'
