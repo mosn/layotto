@@ -19,6 +19,7 @@ go build -o layotto
 ```
 
 Run Layotto:
+
 ```shell @background
 ./layotto start -c ../../configs/config_standalone.json
 ```

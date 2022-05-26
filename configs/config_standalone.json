@@ -121,5 +121,25 @@
         }
       ]
     }
-  ]
+  ],
+  "tracing": {
+    "enable": true,
+    "driver": "SOFATracer",
+    "config": {
+      "generator": "mosntracing",
+      "exporter": [
+        "stdout"
+      ]
+    }
+  },
+  "metrics": {
+    "sinks": [
+      {
+        "type": "prometheus",
+        "config": {
+          "port": 34903
+        }
+      }
+    ]
+  }
 }

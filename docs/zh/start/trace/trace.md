@@ -1,10 +1,10 @@
 # 可观测性
 
-## Trace管理
+## 1. Trace管理
 
 ### 功能介绍
 
-在[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 中，有一段关于trace的配置如下：
+在[config_standalone.json](https://github.com/mosn/layotto/blob/main/configs/config_standalone.json) 中，有一段关于trace的配置如下：
 
 ```json
 [
@@ -36,7 +36,7 @@ go build -o layotto
 运行:
 
 ```shell @background
-./layotto start -c ../../configs/runtime_config.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 对应的调用端代码在[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go) 中，运行它会调用layotto的SayHello接口：
@@ -71,9 +71,9 @@ trace拓展配置：
 
 ### Trace 原理
 
-Layotto中的 Tracing 主要是对grpc调用进行记录，依赖于在grpc里添加的两个拦截器： [UnaryInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go) 、 [StreamInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go)
+Layotto中的 Tracing 会对grpc调用进行记录，依赖于在grpc里添加的两个拦截器： [UnaryInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go) 、 [StreamInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go)
 
-拦截器在每次grpc方法调用时都会开启一次tracing，生成traceId spanId、新的context，记录方法名、时间，并且会将tracing信息通过context透传下去，方法返回时将span信息导出。
+拦截器在每次grpc方法调用时都会开启一次tracing，生成traceId spanId、新的context，记录方法名、时间，并且会将tracing信息通过context透传下去，请求处理结束后会将span信息导出。
 
 
 ### Trace 框架的设计
@@ -151,11 +151,11 @@ trace打印的结果如下：
 ![img.png](../../../img/trace/trace.png)
 
 
-## Metrics管理
+## 2. Metrics管理
 
-layotto的metrics复用的mosn的metrics，对接prometheus。
+layotto 复用了 mosn 的 Metrics 功能，可以对接各种 Metrics 平台，比如 prometheus。
 
-[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 中提供了metric配置的示例，按照上述步骤启动layotto后，可以通过以下指令读取 metrics 信息：
+[config_standalone.json](https://github.com/mosn/layotto/blob/main/configs/config_standalone.json) 中提供了metric配置的示例，按照上述步骤启动layotto后，可以通过以下指令读取 metrics 信息：
 
 
 ```shell
@@ -167,7 +167,7 @@ curl --location --request GET 'http://127.0.0.1:34903/metrics'
 ![img.png](../../../img/trace/metric.png)
 
 ### 配置解释
-解释一下[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 里 metrics 相关配置
+解释一下[config_standalone.json](https://github.com/mosn/layotto/blob/main/configs/config_standalone.json) 里 metrics 相关配置
 
 #### 埋点、统计
 <img src="https://user-images.githubusercontent.com/26001097/151318373-632e93bc-108d-47ae-b401-6092ed66bcdc.png" width="50%" height="50%" />
