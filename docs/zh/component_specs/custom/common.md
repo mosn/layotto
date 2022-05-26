@@ -35,7 +35,7 @@ Layotto 中的组件分为两种：
 您可以在metadata里配置组件关心的key/value配置。
 
 ## 示例
-例如，在`configs/config_in_memory.json` 中，配置了 kind 是`helloworld` 的 `CustomComponent`，只有一个组件，其组件名是 `demo`, type 是 `in-memory`:
+例如，在`configs/config_standalone.json` 中，配置了 kind 是`helloworld` 的 `CustomComponent`，只有一个组件，其组件名是 `demo`, type 是 `in-memory`:
 
 ```json
   "custom_component": {

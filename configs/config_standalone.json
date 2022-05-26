@@ -55,6 +55,27 @@
                           "metadata": {}
                         }
                       },
+                      "secret_store": {
+                        "secret_demo": {
+                          "type": "local.file",
+                          "metadata": {
+                            "secretsFile": "../../configs/secret/config_secret_local_file.json"
+                          }
+                        },
+                        "secret_demo1": {
+                          "type": "local.env",
+                          "metadata": {
+                          }
+                        }
+                      },
+                      "bindings": {
+                        "bindings_demo": {
+                          "type": "http",
+                          "metadata": {
+                            "url": "https://mosn.io/layotto"
+                          }
+                        }
+                      },
                       "custom_component": {
                         "helloworld": {
                           "demo": {
@@ -100,5 +121,25 @@
         }
       ]
     }
-  ]
+  ],
+  "tracing": {
+    "enable": true,
+    "driver": "SOFATracer",
+    "config": {
+      "generator": "mosntracing",
+      "exporter": [
+        "stdout"
+      ]
+    }
+  },
+  "metrics": {
+    "sinks": [
+      {
+        "type": "prometheus",
+        "config": {
+          "port": 34903
+        }
+      }
+    ]
+  }
 }
