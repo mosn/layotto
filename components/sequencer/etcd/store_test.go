@@ -31,10 +31,6 @@ import (
 )
 
 const key = "resource_xxx"
-const key2 = "resource_xxx2"
-
-const key3 = "resource_xxx3"
-const key4 = "resource_xxx4"
 
 // GetFreePort returns a free port from the OS.
 func GetFreePort() (int, error) {
@@ -157,6 +153,9 @@ func TestEtcd_GetNextId(t *testing.T) {
 	expected = 2
 	assert.Equal(t, expected, resp.NextId)
 
+	support, _, err := comp.GetSegment(nil)
+	assert.False(t, support)
+	assert.Nil(t, err)
 }
 
 func startEtcdServer(dir string, port int) (*embed.Etcd, error) {

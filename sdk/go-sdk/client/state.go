@@ -85,31 +85,31 @@ func (o OperationType) String() string {
 }
 
 // String returns the string value of the StateConsistency.
-func (c StateConsistency) String() string {
+func (s StateConsistency) String() string {
 	names := [...]string{
 		UndefinedType,
 		"strong",
 		"eventual",
 	}
-	if c < StateConsistencyStrong || c > StateConsistencyEventual {
+	if s < StateConsistencyStrong || s > StateConsistencyEventual {
 		return UndefinedType
 	}
 
-	return names[c]
+	return names[s]
 }
 
 // String returns the string value of the StateConcurrency.
-func (c StateConcurrency) String() string {
+func (s StateConcurrency) String() string {
 	names := [...]string{
 		UndefinedType,
 		"first-write",
 		"last-write",
 	}
-	if c < StateConcurrencyFirstWrite || c > StateConcurrencyLastWrite {
+	if s < StateConcurrencyFirstWrite || s > StateConcurrencyLastWrite {
 		return UndefinedType
 	}
 
-	return names[c]
+	return names[s]
 }
 
 var (
@@ -228,7 +228,7 @@ func toProtoDuration(d time.Duration) *duration.Duration {
 	secs := nanos / 1e9
 	nanos -= secs * 1e9
 	return &duration.Duration{
-		Seconds: int64(secs),
+		Seconds: secs,
 		Nanos:   int32(nanos),
 	}
 }
