@@ -14,14 +14,16 @@
 package consul
 
 import (
-	"github.com/hashicorp/consul/api"
-	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/pkg/utils"
-	msync "mosn.io/mosn/pkg/sync"
-	"mosn.io/pkg/log"
 	"runtime"
 	"strconv"
 	"sync"
+
+	"github.com/hashicorp/consul/api"
+	msync "mosn.io/mosn/pkg/sync"
+	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/utils"
 )
 
 type ConsulLock struct {
@@ -49,6 +51,9 @@ func (c *ConsulLock) Init(metadata lock.Metadata) error {
 		Address: consulMetadata.Address,
 		Scheme:  consulMetadata.Scheme,
 	})
+	if err != nil {
+		return err
+	}
 	c.client = client
 	c.sessionFactory = client.Session()
 	c.kv = client.KV()
@@ -96,12 +101,10 @@ func (c *ConsulLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, e
 		return &lock.TryLockResponse{
 			Success: true,
 		}, nil
-	} else {
-		return &lock.TryLockResponse{
-			Success: false,
-		}, nil
 	}
-
+	return &lock.TryLockResponse{
+		Success: false,
+	}, nil
 }
 func (c *ConsulLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 
@@ -127,7 +130,6 @@ func (c *ConsulLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, erro
 		}
 		return &lock.UnlockResponse{Status: lock.
 			SUCCESS}, nil
-	} else {
-		return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
 	}
+	return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
 }

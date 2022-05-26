@@ -30,9 +30,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"mosn.io/api"
-	"mosn.io/layotto/components/rpc"
 	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
 	"mosn.io/pkg/buffer"
+
+	"mosn.io/layotto/components/rpc"
 )
 
 var (
@@ -48,7 +49,7 @@ func (ts *testserver) accept(conn net.Conn, listener string) error {
 	return nil
 }
 
-func (s *testserver) handleRequest(frame api.XFrame) ([]byte, error) {
+func (ts *testserver) handleRequest(frame api.XFrame) ([]byte, error) {
 	data := frame.GetData()
 	if data != nil {
 		data := string(data.Bytes())
@@ -62,17 +63,17 @@ func (s *testserver) handleRequest(frame api.XFrame) ([]byte, error) {
 		default:
 			if strings.Contains(data, "echo") {
 				resp := bolt.NewRpcResponse(uint32(frame.GetRequestId()), bolt.ResponseStatusSuccess, nil, buffer.NewIoBufferBytes([]byte(data)))
-				buf, _ := s.XProtocol.Encode(context.TODO(), resp)
+				buf, _ := ts.XProtocol.Encode(context.TODO(), resp)
 				return buf.Bytes(), nil
 			}
 		}
 	}
 	resp := bolt.NewRpcResponse(uint32(frame.GetRequestId()), bolt.ResponseStatusSuccess, nil, buffer.NewIoBufferBytes([]byte("ok")))
-	buf, _ := s.XProtocol.Encode(context.TODO(), resp)
+	buf, _ := ts.XProtocol.Encode(context.TODO(), resp)
 	return buf.Bytes(), nil
 }
 
-func (s *testserver) readLoop(conn net.Conn) {
+func (ts *testserver) readLoop(conn net.Conn) {
 	data := buffer.GetIoBuffer(1024)
 
 	defer conn.Close()
@@ -88,7 +89,7 @@ func (s *testserver) readLoop(conn net.Conn) {
 		data.Write(p[:n])
 
 		for {
-			packet, err := s.XProtocol.Decode(context.TODO(), data)
+			packet, err := ts.XProtocol.Decode(context.TODO(), data)
 			if err != nil {
 				return
 			}
@@ -98,7 +99,7 @@ func (s *testserver) readLoop(conn net.Conn) {
 
 			go func() {
 				frame := packet.(*bolt.Request)
-				bytes, err := s.handleRequest(frame)
+				bytes, err := ts.handleRequest(frame)
 				if err != nil {
 					conn.Close()
 					return
@@ -254,7 +255,8 @@ func TestConncurrent(t *testing.T) {
 
 	wg.Wait()
 	req := &rpc.RPCRequest{Ctx: context.TODO(), Id: "foo", Method: "bar", Data: []byte("hello world"), Timeout: 1000}
-	_, err = channel.Do(req)
+	channel.Do(req)
+	//_, err = channel.Do(req)
 	//assert.Nil(t, err)
 
 	size = 100

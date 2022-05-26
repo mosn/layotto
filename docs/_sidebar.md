@@ -7,6 +7,7 @@
   - [Use Pub/Sub API](en/start/pubsub/start.md)
   - [Use Distributed Lock API](en/start/lock/start.md)
   - [Use Sequencer API](en/start/sequencer/start.md)
+  - [Use Secret API](en/start/secret/start.md)
   - Service Invocation
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
@@ -18,6 +19,8 @@
   - Flow Control on the 7th layer network
     - [Method Level Flow Control](en/start/stream_filter/flow_control.md)
   - [Observability (trace, metric)](en/start/trace/trace.md)
+    - [Prometheus metrics](en/start/trace/prometheus.md)
+    - [Skywalking trace](en/start/trace/skywalking.md)
   - [Health check and metadata query](en/start/actuator/start.md)
   - [Run business logic in Layotto using WASM](en/start/wasm/start.md)
   - [FaaS model based on WASM and Runtime](en/start/faas/start.md)
@@ -65,6 +68,7 @@
         - [Redis](en/component_specs/sequencer/redis.md)
         - [Zookeeper](en/component_specs/sequencer/zookeeper.md)
         - [MongoDB](en/component_specs/sequencer/mongo.md)
+      - [Secret Store](en/component_specs/secret/common.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
@@ -79,6 +83,7 @@
     - [Development specification when adding API](en/development/developing-api.md)
     - [Comment specification of proto file](en/api_reference/comment_spec_of_proto.md)
     - [How to generate API document based on the proto files](en/api_reference/how_to_generate_api_doc.md)
-  - [Explanation for github workflow](en/development/explanation-for-github-workflow.md)
+  - [Layotto Github Workflows Guide](en/development/github-workflows.md)
+  - [Layotto Commands Guide](en/development/commands.md)
   - [Layotto contributor guide](en/development/CONTRIBUTING.md)
 

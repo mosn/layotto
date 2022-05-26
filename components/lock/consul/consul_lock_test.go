@@ -14,13 +14,15 @@
 package consul
 
 import (
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/hashicorp/consul/api"
 	"github.com/stretchr/testify/assert"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/mock"
-	"mosn.io/pkg/log"
-	"testing"
 )
 
 const resouseId = "resoure_1"
@@ -61,6 +63,7 @@ func TestConsulLock_TryLock(t *testing.T) {
 	}
 	cfg.Properties["address"] = "127.0.0.1:8500"
 	err := comp.Init(cfg)
+	assert.Nil(t, err)
 	comp.client = client
 	comp.sessionFactory = factory
 	comp.kv = kv

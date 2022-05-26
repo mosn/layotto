@@ -20,15 +20,17 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net"
+	"strconv"
+
 	"mosn.io/api"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/persistence"
-	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/pkg/log"
-	"net"
-	"strconv"
+
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/persistence"
+	"mosn.io/layotto/pkg/filter/network/tcpcopy/strategy"
 )
 
 func init() {

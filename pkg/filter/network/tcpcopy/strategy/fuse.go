@@ -17,9 +17,10 @@
 package strategy
 
 import (
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/pkg/common"
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
-	"mosn.io/pkg/log"
 )
 
 // Whether it has been fused
@@ -33,13 +34,13 @@ func IsAvaliable() (ava bool) {
 
 	if cpuRate < DumpCpuMaxRate && memRate < DumpMemMaxRate {
 		if log.DefaultLogger.GetLogLevel() >= log.DEBUG {
-			log.DefaultLogger.Debugf("%s cpuRate:%s is less than max rate %s, memRate:%s is less than max rate %s", model.LogDumpKey, cpuRate, memRate, DumpCpuMaxRate, DumpMemMaxRate)
+			log.DefaultLogger.Debugf("%s cpuRate:%f is less than max rate %f, memRate:%f is less than max rate %f", model.LogDumpKey, cpuRate, memRate, DumpCpuMaxRate, DumpMemMaxRate)
 		}
 		return true
 	}
 
 	if log.DefaultLogger.GetLogLevel() >= log.DEBUG {
-		log.DefaultLogger.Debugf("%s cpuRate:%s, memRate:%s, one or both of them are larger than max rate. Max cpu rate %s. Max mem rate %s", model.LogDumpKey, cpuRate, memRate, DumpCpuMaxRate, DumpMemMaxRate)
+		log.DefaultLogger.Debugf("%s cpuRate:%f, memRate:%f, one or both of them are larger than max rate. Max cpu rate %f. Max mem rate %f", model.LogDumpKey, cpuRate, memRate, DumpCpuMaxRate, DumpMemMaxRate)
 	}
 	return false
 }

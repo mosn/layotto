@@ -18,7 +18,9 @@ package state
 
 import (
 	"fmt"
+
 	"github.com/dapr/components-contrib/state"
+
 	"mosn.io/layotto/components/pkg/info"
 )
 
@@ -28,7 +30,7 @@ const (
 
 type Registry interface {
 	Register(fs ...*Factory)
-	Create(name string) (state.Store, error)
+	Create(compType string) (state.Store, error)
 }
 
 type stateRegistry struct {
@@ -48,16 +50,16 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 // Registration for multiple Factories
 func (r *stateRegistry) Register(fs ...*Factory) {
 	for _, f := range fs {
-		r.stores[f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(ServiceName, f.Name)
+		r.stores[f.CompType] = f.FactoryMethod
+		r.info.RegisterComponent(ServiceName, f.CompType)
 	}
 }
 
 // Loading components for a registered Factory
-func (r *stateRegistry) Create(name string) (state.Store, error) {
-	if f, ok := r.stores[name]; ok {
-		r.info.LoadComponent(ServiceName, name)
+func (r *stateRegistry) Create(compType string) (state.Store, error) {
+	if f, ok := r.stores[compType]; ok {
+		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", name)
+	return nil, fmt.Errorf("service component %s is not regsitered", compType)
 }

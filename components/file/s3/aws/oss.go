@@ -28,13 +28,13 @@ import (
 	aws_config "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+
 	"mosn.io/layotto/components/file"
 	loss "mosn.io/layotto/components/file/s3"
 )
 
 const (
 	endpointKey              = "endpoint"
-	bucketKey                = "bucket"
 	defaultCredentialsSource = "provider"
 )
 
@@ -129,7 +129,7 @@ func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
 	if err != nil {
 		return err
 	}
-	_, err = client.PutObject(context.TODO(), input, nil)
+	_, err = client.PutObject(context.TODO(), input)
 	if err != nil {
 		return err
 	}
@@ -171,7 +171,7 @@ func (a *AwsOss) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, e
 	if err != nil {
 		return nil, err
 	}
-	ob, err := client.GetObject(context.TODO(), input, nil)
+	ob, err := client.GetObject(context.TODO(), input)
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +195,7 @@ func (a *AwsOss) List(ctx context.Context, st *file.ListRequest) (*file.ListResp
 	if err != nil {
 		return nil, fmt.Errorf("list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
 	}
-	out, err := client.ListObjects(context.TODO(), input, nil)
+	out, err := client.ListObjects(context.TODO(), input)
 	if err != nil {
 		return nil, fmt.Errorf("list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
 	}

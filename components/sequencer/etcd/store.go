@@ -16,10 +16,12 @@ package etcd
 import (
 	"context"
 	"fmt"
+
 	clientv3 "go.etcd.io/etcd/client/v3"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
-	"mosn.io/pkg/log"
 )
 
 type EtcdSequencer struct {
@@ -105,7 +107,7 @@ func (e *EtcdSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.G
 	}, nil
 }
 
-func (s *EtcdSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support bool, result *sequencer.GetSegmentResponse, err error) {
+func (e *EtcdSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support bool, result *sequencer.GetSegmentResponse, err error) {
 	return false, nil, nil
 }
 

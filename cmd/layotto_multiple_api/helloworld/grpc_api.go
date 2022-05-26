@@ -19,16 +19,18 @@ package helloworld
 import (
 	"context"
 	"fmt"
+
 	rawGRPC "google.golang.org/grpc"
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/pkg/grpc"
 	grpc_api "mosn.io/layotto/pkg/grpc"
-	"mosn.io/pkg/log"
 )
 
-const componentType = "helloworld"
+const kind = "helloworld"
 
 // This demo will always use this component name.
 const componentName = "in-memory"
@@ -38,7 +40,7 @@ func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
 	name2component := make(map[string]component.HelloWorld)
 	if len(ac.CustomComponent) != 0 {
 		// we only care about those components of type "helloworld"
-		name2comp, ok := ac.CustomComponent[componentType]
+		name2comp, ok := ac.CustomComponent[kind]
 		if ok && len(name2comp) > 0 {
 			for name, v := range name2comp {
 				// convert them using type assertion

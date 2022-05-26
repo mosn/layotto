@@ -16,21 +16,27 @@ package etcdv3
 import (
 	"context"
 	"fmt"
-	"mosn.io/pkg/utils"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
+	"mosn.io/pkg/utils"
+
 	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/trace"
-	"mosn.io/pkg/log"
+)
+
+const (
+	defaultGroup = "default"
+	defaultLabel = "default"
 )
 
 type EtcdV3ConfigStore struct {
-	name   string
 	client *clientv3.Client
 	sync.RWMutex
 	subscribeKey map[string]string
@@ -42,11 +48,11 @@ type EtcdV3ConfigStore struct {
 }
 
 func (c *EtcdV3ConfigStore) GetDefaultGroup() string {
-	return "default"
+	return defaultGroup
 }
 
 func (c *EtcdV3ConfigStore) GetDefaultLabel() string {
-	return "default"
+	return defaultLabel
 }
 
 func NewStore() configstores.Store {

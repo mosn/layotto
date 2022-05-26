@@ -22,13 +22,27 @@
 
 可以按照如下方式启动一个layotto的server：
 
+构建:
+
+```shell
+cd cmd/layotto_multiple_api/
 ```
+
+```shell @if.not.exist layotto
+# build it
+go build -o layotto
+```
+
+运行:
+
+```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
 
 对应的调用端代码在[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go) 中，运行它会调用layotto的SayHello接口：
-```
- cd ${projectpath}/demo/flowcontrol/
+
+```shell
+ cd ${project_path}/demo/flowcontrol/
  go build -o client
  ./client
 ```
@@ -55,10 +69,14 @@ trace拓展配置：
 | generator  | String | spanId,traceId等资源的生成方式，用户可自行拓展|
 | exporter  | Array | 用户需要trace上报的方式，可自行实现和拓展|
 
+### Trace 原理
+
+Layotto中的 Tracing 主要是对grpc调用进行记录，依赖于在grpc里添加的两个拦截器： [UnaryInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go) 、 [StreamInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go)
+
+拦截器在每次grpc方法调用时都会开启一次tracing，生成traceId spanId、新的context，记录方法名、时间，并且会将tracing信息通过context透传下去，方法返回时将span信息导出。
 
 
-
-### Trace设计和拓展
+### Trace 框架的设计
 整体结构图:
 
 ![img.png](../../../img/trace/structure.png)
@@ -132,12 +150,6 @@ trace打印的结果如下：
 
 ![img.png](../../../img/trace/trace.png)
 
-### Trace原理
-
-Layotto中的tracing主要是对grpc调用进行记录，依赖于在grpc里添加的两个拦截器： [UnaryInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go) 、 [StreamInterceptorFilter](https://github.com/mosn/layotto/blob/main/diagnostics/grpc_tracing.go)
-
-拦截器在每次grpc方法调用时都会开启一次tracing，生成traceId spanId、新的context，记录方法名、时间，并且会将tracing信息通过context透传下去，方法返回时将span信息导出。
-
 
 ## Metrics管理
 
@@ -158,7 +170,7 @@ curl --location --request GET 'http://127.0.0.1:34903/metrics'
 解释一下[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 里 metrics 相关配置
 
 #### 埋点、统计
-![](https://user-images.githubusercontent.com/26001097/151318373-632e93bc-108d-47ae-b401-6092ed66bcdc.png)
+<img src="https://user-images.githubusercontent.com/26001097/151318373-632e93bc-108d-47ae-b401-6092ed66bcdc.png" width="50%" height="50%" />
 
 图中标红的这段配置会启用mosn的"grpc_metric" filter。这个filter的作用是在每次处理完grpc请求后，统计服务名、成功还是失败等信息，存在内存中。
 

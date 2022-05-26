@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+
 	sequencer "mosn.io/layotto/components/sequencer"
 )
 

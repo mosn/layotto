@@ -14,15 +14,17 @@
 package mongo
 
 import (
+	"sync"
+	"testing"
+
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/mock"
-	"mosn.io/pkg/log"
-	"sync"
-	"testing"
 )
 
 const (
@@ -141,8 +143,7 @@ func TestMongoLock_Unlock(t *testing.T) {
 	}
 
 	cfg.Properties["mongoHost"] = mongoUrl
-	err = comp.Init(cfg)
-
+	_ = comp.Init(cfg)
 	// mock
 	insertManyResult := &mongo.InsertManyResult{}
 	insertOneResult := &mongo.InsertOneResult{}

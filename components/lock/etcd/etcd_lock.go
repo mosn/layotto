@@ -16,11 +16,14 @@ package etcd
 import (
 	"context"
 	"fmt"
-	"go.etcd.io/etcd/client/v3"
+
+	clientv3 "go.etcd.io/etcd/client/v3"
+
 	"mosn.io/layotto/components/pkg/utils"
 
-	"mosn.io/layotto/components/lock"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/lock"
 )
 
 // Etcd lock store
@@ -73,11 +76,11 @@ func (e *EtcdLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, err
 	var leaseId clientv3.LeaseID
 	//1.Create new lease
 	lease := clientv3.NewLease(e.client)
-	if leaseGrantResp, err := lease.Grant(e.ctx, int64(req.Expire)); err != nil {
+	leaseGrantResp, err := lease.Grant(e.ctx, int64(req.Expire))
+	if err != nil {
 		return &lock.TryLockResponse{}, fmt.Errorf("[etcdLock]: Create new lease returned error: %s.ResourceId: %s", err, req.ResourceId)
-	} else {
-		leaseId = leaseGrantResp.ID
 	}
+	leaseId = leaseGrantResp.ID
 
 	key := e.getKey(req.ResourceId)
 
@@ -118,14 +121,13 @@ func (e *EtcdLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error)
 
 	if txnResponse.Succeeded {
 		return &lock.UnlockResponse{Status: lock.SUCCESS}, nil
-	} else {
-		resp := txnResponse.Responses[0].GetResponseRange()
-		if len(resp.Kvs) == 0 {
-			return &lock.UnlockResponse{Status: lock.LOCK_UNEXIST}, nil
-		}
-
-		return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
 	}
+	resp := txnResponse.Responses[0].GetResponseRange()
+	if len(resp.Kvs) == 0 {
+		return &lock.UnlockResponse{Status: lock.LOCK_UNEXIST}, nil
+	}
+
+	return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
 }
 
 // Close shuts down the client's etcd connections.

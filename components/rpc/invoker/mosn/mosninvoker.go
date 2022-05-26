@@ -22,11 +22,13 @@ import (
 	"errors"
 	"fmt"
 
+	// bridge to mosn
+	_ "mosn.io/mosn/pkg/filter/network/proxy"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/rpc/callback"
 	"mosn.io/layotto/components/rpc/invoker/mosn/channel"
-	_ "mosn.io/mosn/pkg/filter/network/proxy"
-	"mosn.io/pkg/log"
 )
 
 const (

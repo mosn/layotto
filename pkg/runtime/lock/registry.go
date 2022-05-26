@@ -15,6 +15,7 @@ package lock
 
 import (
 	"fmt"
+
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/info"
 )
@@ -25,7 +26,7 @@ const (
 
 type Registry interface {
 	Register(fs ...*Factory)
-	Create(name string) (lock.LockStore, error)
+	Create(compType string) (lock.LockStore, error)
 }
 
 type lockRegistry struct {
@@ -43,15 +44,15 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 
 func (r *lockRegistry) Register(fs ...*Factory) {
 	for _, f := range fs {
-		r.stores[f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(ServiceName, f.Name)
+		r.stores[f.CompType] = f.FactoryMethod
+		r.info.RegisterComponent(ServiceName, f.CompType)
 	}
 }
 
-func (r *lockRegistry) Create(name string) (lock.LockStore, error) {
-	if f, ok := r.stores[name]; ok {
-		r.info.LoadComponent(ServiceName, name)
+func (r *lockRegistry) Create(compType string) (lock.LockStore, error) {
+	if f, ok := r.stores[compType]; ok {
+		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", name)
+	return nil, fmt.Errorf("service component %s is not regsitered", compType)
 }

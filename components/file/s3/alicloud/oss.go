@@ -22,16 +22,15 @@ import (
 	"fmt"
 	"io"
 	"strconv"
-	"sync"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+
 	"mosn.io/layotto/components/file"
 	loss "mosn.io/layotto/components/file/s3"
 )
 
 const (
 	endpointKey    = "endpoint"
-	bucketKey      = "bucket"
 	storageTypeKey = "storageType"
 )
 
@@ -39,7 +38,6 @@ const (
 type AliCloudOSS struct {
 	metadata map[string]*OssMetadata
 	client   map[string]*oss.Client
-	stream   sync.Map
 }
 
 type OssMetadata struct {
@@ -208,8 +206,7 @@ func (s *AliCloudOSS) getClient(metadata *OssMetadata) (*oss.Client, error) {
 }
 
 func (s *AliCloudOSS) getBucket(fileName string, metaData map[string]string) (*oss.Bucket, error) {
-	ossClient := &oss.Client{}
-	bucket := &oss.Bucket{}
+	var ossClient *oss.Client
 	var err error
 	// get oss client
 	if _, ok := metaData[endpointKey]; ok {
@@ -227,7 +224,7 @@ func (s *AliCloudOSS) getBucket(fileName string, metaData map[string]string) (*o
 	if err != nil {
 		return nil, err
 	}
-	bucket, err = ossClient.Bucket(bucketName)
+	bucket, err := ossClient.Bucket(bucketName)
 	if err != nil {
 		return nil, err
 	}

@@ -17,8 +17,8 @@
 package apollo
 
 import (
-	"errors"
 	"fmt"
+
 	"github.com/zouyx/agollo/v4"
 	agolloConfig "github.com/zouyx/agollo/v4/env/config"
 	"mosn.io/pkg/log"
@@ -26,8 +26,7 @@ import (
 
 // An interface to abstract different apollo sdks,also making it easier to write unit tests.
 type Repository interface {
-	SetConfig(r *RepoConfig)
-	GetConfig() *RepoConfig
+	SetConfig(r *repoConfig)
 	Connect() error
 	// subscribe
 	AddChangeListener(listener *changeListener)
@@ -37,15 +36,15 @@ type Repository interface {
 	Range(namespace string, f func(key, value interface{}) bool) error
 }
 
-type RepoConfig struct {
-	addr          string `json:"addr"`
-	appId         string `json:"appId"`
-	env           string `json:"env"`
-	cluster       string `json:"cluster"`
-	namespaceName string `json:"namespaceName"`
+type repoConfig struct {
+	addr          string
+	appId         string
+	env           string
+	cluster       string
+	namespaceName string
 	// whether backup config after fetch config from apollo
-	isBackupConfig bool   `default:"true" json:"isBackupConfig"`
-	secret         string `json:"secret"`
+	isBackupConfig bool
+	secret         string
 }
 
 func init() {
@@ -55,22 +54,22 @@ func init() {
 //Implement Repository interface
 type AgolloRepository struct {
 	client *agollo.Client
-	cfg    *RepoConfig
+	cfg    *repoConfig
 }
 
 func (a *AgolloRepository) Connect() error {
-	var err error = nil
+	var err error
 	a.client, err = agollo.StartWithConfig(func() (*agolloConfig.AppConfig, error) {
 		return repoConfig2AgolloConfig(a.cfg), nil
 	})
 	return err
 }
 
-func (a *AgolloRepository) SetConfig(r *RepoConfig) {
+func (a *AgolloRepository) SetConfig(r *repoConfig) {
 	a.cfg = r
 }
 
-func repoConfig2AgolloConfig(r *RepoConfig) *agolloConfig.AppConfig {
+func repoConfig2AgolloConfig(r *repoConfig) *agolloConfig.AppConfig {
 	return &agolloConfig.AppConfig{
 		IP:             r.addr,
 		AppID:          r.appId,
@@ -81,10 +80,6 @@ func repoConfig2AgolloConfig(r *RepoConfig) *agolloConfig.AppConfig {
 	}
 }
 
-func (a *AgolloRepository) GetConfig() *RepoConfig {
-	return a.cfg
-}
-
 func newAgolloRepository() Repository {
 	return &AgolloRepository{}
 }
@@ -93,7 +88,7 @@ func (a *AgolloRepository) Get(namespace string, key string) (interface{}, error
 	// 1. get cache
 	cache := a.client.GetConfigCache(namespace)
 	if cache == nil {
-		return nil, errors.New(fmt.Sprintf("no cache for namespace:%v", namespace))
+		return nil, fmt.Errorf("no cache for namespace:%v", namespace)
 	}
 	// 2. query value
 	return cache.Get(key)
@@ -103,7 +98,7 @@ func (a *AgolloRepository) Range(namespace string, f func(key interface{}, value
 	// 1. get cache
 	cache := a.client.GetConfigCache(namespace)
 	if cache == nil {
-		return errors.New(fmt.Sprintf("no cache for namespace:%v", namespace))
+		return fmt.Errorf("no cache for namespace:%v", namespace)
 	}
 	// 2. loop process
 	cache.Range(f)

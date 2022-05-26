@@ -17,14 +17,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readconcern"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
-	"strconv"
-	"time"
 )
 
 const (
@@ -144,13 +145,9 @@ func (c *MongoFactoryImpl) NewMongoClient(m MongoMetadata) (MongoClient, error) 
 func ParseMongoMetadata(properties map[string]string) (MongoMetadata, error) {
 	m := MongoMetadata{}
 
-	if val, ok := properties[mongoHost]; ok && val != "" {
-		m.Host = val
-	}
+	m.Host = getString(properties, mongoHost)
 
-	if val, ok := properties[server]; ok && val != "" {
-		m.Server = val
-	}
+	m.Server = getString(properties, server)
 
 	if len(m.Host) == 0 && len(m.Server) == 0 {
 		return m, errors.New("must set 'host' or 'server' fields")
@@ -160,13 +157,8 @@ func ParseMongoMetadata(properties map[string]string) (MongoMetadata, error) {
 		return m, errors.New("'host' or 'server' fields are mutually exclusive")
 	}
 
-	if val, ok := properties[username]; ok && val != "" {
-		m.Username = val
-	}
-
-	if val, ok := properties[mongoPassword]; ok && val != "" {
-		m.Password = val
-	}
+	m.Username = getString(properties, username)
+	m.Password = getString(properties, mongoPassword)
 
 	m.DatabaseName = defaultDatabase
 	if val, ok := properties[databaseName]; ok && val != "" {
@@ -178,17 +170,9 @@ func ParseMongoMetadata(properties map[string]string) (MongoMetadata, error) {
 		m.CollectionName = val
 	}
 
-	if val, ok := properties[writeConcern]; ok && val != "" {
-		m.WriteConcern = val
-	}
-
-	if val, ok := properties[readConcern]; ok && val != "" {
-		m.ReadConcern = val
-	}
-
-	if val, ok := properties[params]; ok && val != "" {
-		m.Params = val
-	}
+	m.WriteConcern = getString(properties, writeConcern)
+	m.ReadConcern = getString(properties, readConcern)
+	m.Params = getString(properties, params)
 
 	var err error
 	m.OperationTimeout = defaultTimeout
@@ -199,6 +183,13 @@ func ParseMongoMetadata(properties map[string]string) (MongoMetadata, error) {
 		}
 	}
 	return m, nil
+}
+
+func getString(properties map[string]string, key string) string {
+	if val, ok := properties[key]; ok && val != "" {
+		return val
+	}
+	return ""
 }
 
 func getMongoURI(m MongoMetadata) string {

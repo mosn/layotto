@@ -16,16 +16,18 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readconcern"
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 	"go.mongodb.org/mongo-driver/x/bsonx"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/utils"
-	"mosn.io/pkg/log"
-	"time"
 )
 
 const (
@@ -92,7 +94,7 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 
 	// create exprie time index
 	indexModel := mongo.IndexModel{
-		Keys:    bsonx.Doc{{"Expire", bsonx.Int64(1)}},
+		Keys:    bsonx.Doc{{Key: "Expire", Value: bsonx.Int64(1)}},
 		Options: options.Index().SetExpireAfterSeconds(0),
 	}
 	e.collection.Indexes().CreateOne(e.ctx, indexModel)
@@ -159,11 +161,10 @@ func (e *MongoLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, er
 		return &lock.TryLockResponse{
 			Success: true,
 		}, nil
-	} else {
-		return &lock.TryLockResponse{
-			Success: false,
-		}, nil
 	}
+	return &lock.TryLockResponse{
+		Success: false,
+	}, nil
 }
 
 func (e *MongoLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {

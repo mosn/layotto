@@ -4,19 +4,28 @@
 The json configuration file has the following structure:
 ```json
 "state": {
-  "<STORE NAME>": {
-    "metadata": {
-      "<KEY>": "<VALUE>",
-      "<KEY>": "<VALUE>"
+    "<Component A Name>": {
+    "type":"<Component A Type>",
+      "metadata": {
+        "<KEY>": "<VALUE>",
+        "<KEY>": "<VALUE>"
+      }
+    },
+    "<Component B Name>": {
+      "type":"<Component B Type>",
+      "metadata": {
+        "<KEY>": "<VALUE>",
+        "<KEY>": "<VALUE>"
+      }
     }
-  }
 }
 ```
 You can configure the key/value configuration items that the component cares about in the metadata. For example, [redis component configuration](https://github.com/mosn/layotto/blob/main/configs/config_state_redis.json) is as follows:
 
 ```json
 "state": {
-  "redis": {
+  "state_demo": {
+    "type": "redis",
     "metadata": {
       "redisHost": "localhost:6380",
       "redisPassword": ""

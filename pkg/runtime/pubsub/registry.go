@@ -18,7 +18,9 @@ package pubsub
 
 import (
 	"fmt"
+
 	dpubsub "github.com/dapr/components-contrib/pubsub"
+
 	"mosn.io/layotto/components/pkg/info"
 )
 
@@ -27,7 +29,7 @@ const serviceName = "pubsub"
 // Registry is the pubsub registry with pubsub name as the key
 type Registry interface {
 	Register(fs ...*Factory)
-	Create(name string) (dpubsub.PubSub, error)
+	Create(compType string) (dpubsub.PubSub, error)
 }
 
 type pubsubRegistry struct {
@@ -45,15 +47,15 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 
 func (r *pubsubRegistry) Register(fs ...*Factory) {
 	for _, f := range fs {
-		r.stores[f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(serviceName, f.Name)
+		r.stores[f.CompType] = f.FactoryMethod
+		r.info.RegisterComponent(serviceName, f.CompType)
 	}
 }
 
-func (r *pubsubRegistry) Create(name string) (dpubsub.PubSub, error) {
-	if f, ok := r.stores[name]; ok {
-		r.info.LoadComponent(serviceName, name)
+func (r *pubsubRegistry) Create(compType string) (dpubsub.PubSub, error) {
+	if f, ok := r.stores[compType]; ok {
+		r.info.LoadComponent(serviceName, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not registered", name)
+	return nil, fmt.Errorf("service component %s is not registered", compType)
 }

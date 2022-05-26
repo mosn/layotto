@@ -26,9 +26,11 @@ import (
 	"mosn.io/pkg/buffer"
 
 	"github.com/valyala/fasthttp"
+	// bridge to mosn
+	_ "mosn.io/mosn/pkg/stream/http"
+
 	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
-	_ "mosn.io/mosn/pkg/stream/http"
 )
 
 // init is regist http channel

@@ -18,5 +18,6 @@ package pubsub
 
 // Config wraps configuration for a pubsub implementation
 type Config struct {
+	Type     string            `json:"type"`
 	Metadata map[string]string `json:"metadata"`
 }

@@ -4,16 +4,17 @@ build/bundles
 .idea
 .test
 .out
-layotto
 !./.gitignore
 IMAGEBUILD/
 coverage.txt
 .DS_Store
 logs/
 *.swp
+/layotto
 /cover.out
 vendor/
 demo/state/redis/client
+_output/
 
 # node
 node_modules/
@@ -41,3 +42,26 @@ application.pid
 
 # integrate test
 integrate_test.sh
+
+# production of make script
+goimports
+
+# production of quickstart testing
+cmd/layotto/layotto
+cmd/layotto/nohup.out
+cmd/layotto_multiple_api/layotto
+cmd/layotto_multiple_api/nohup.out
+default.etcd/
+demo/configuration/common/client
+demo/file/client
+demo/flowcontrol/client
+demo/lock/redis/client
+demo/pubsub/redis/client/publisher
+demo/pubsub/redis/server/nohup.out
+demo/pubsub/redis/server/subscriber
+demo/sequencer/common/client
+demo/state/common/client
+etc/script/mdx
+etcd
+layotto_wasmer
+nohup.out

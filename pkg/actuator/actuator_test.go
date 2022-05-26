@@ -18,8 +18,9 @@ package actuator
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type MockEndpoint struct {
@@ -37,7 +38,7 @@ func TestActuator(t *testing.T) {
 	act.AddEndpoint("health", nil)
 
 	endpoint, ok := act.GetEndpoint("health")
-	//assert.False(t, ok)
+	assert.True(t, ok)
 	assert.Nil(t, endpoint)
 
 	act.AddEndpoint("", nil)

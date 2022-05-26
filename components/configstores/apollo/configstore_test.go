@@ -21,35 +21,35 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/stretchr/testify/assert"
-	"github.com/zouyx/agollo/v4"
 	"io/ioutil"
-	"mosn.io/layotto/components/configstores"
-	"mosn.io/mosn/pkg/log"
 	"net/http"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"mosn.io/mosn/pkg/log"
+
+	"mosn.io/layotto/components/configstores"
+)
+
+const (
+	prod = "prod"
 )
 
 // MockRepository implements Repository interface
 type MockRepository struct {
-	client  *agollo.Client
-	cfg     *RepoConfig
+	cfg     *repoConfig
 	invoked []string
 	cache   map[string]map[string]string
 }
 
 func (a *MockRepository) Connect() error {
-	var err error = nil
+	var err error
 	return err
 }
 
-func (a *MockRepository) SetConfig(r *RepoConfig) {
+func (a *MockRepository) SetConfig(r *repoConfig) {
 	a.cfg = r
-}
-
-func (a *MockRepository) GetConfig() *RepoConfig {
-	return a.cfg
 }
 
 func newMockRepository() *MockRepository {
@@ -68,7 +68,7 @@ func (a *MockRepository) Get(namespace string, key string) (interface{}, error) 
 	if _, ok := a.cache[namespace]; !ok {
 		a.cache[namespace] = make(map[string]string)
 	}
-	v, _ := a.cache[namespace][key]
+	v := a.cache[namespace][key]
 	return v, nil
 }
 
@@ -128,8 +128,8 @@ func TestConfigStore_read(t *testing.T) {
 	//	get key
 	var req configstores.GetRequest
 	req.AppId = appId
-	req.Group = "application"
-	req.Label = "prod"
+	req.Group = defaultGroup
+	req.Label = prod
 	req.Keys = []string{"sofa"}
 	resp, err := store.Get(context.Background(), &req)
 	if err != nil || len(resp) == 0 || resp[0].Content != "sofa@$prod" {
@@ -169,14 +169,14 @@ func TestConfigStore_read(t *testing.T) {
 	var subReq configstores.SubscribeReq
 	ch := make(chan *configstores.SubscribeResp)
 	subReq.AppId = "testApplication_yang"
-	subReq.Group = "application"
-	subReq.Label = "prod"
+	subReq.Group = defaultGroup
+	subReq.Label = prod
 	subReq.Keys = []string{"sofa"}
 	err = store.Subscribe(&subReq, ch)
 	if err != nil {
 		t.Error(err)
 	}
-	subReq.Group = "application"
+	subReq.Group = defaultGroup
 	subReq.Label = ""
 	subReq.Keys = []string{}
 	err = store.Subscribe(&subReq, ch)
@@ -207,6 +207,24 @@ func TestConfigStore_Init(t *testing.T) {
 		err := store.Init(cfg)
 		assert.NotNil(t, err)
 	})
+	t.Run("when open_api_token blank then error", func(t *testing.T) {
+		// 1. set up
+		// inject the MockRepository into a ConfigStore
+		store, cfg := setup(t)
+		cfg.Metadata["open_api_token"] = ""
+		store.openAPIClient = newMockHttpClient(http.StatusBadRequest)
+		kvRepo := store.kvRepo.(*MockRepository)
+		kvRepo.Set("application", "sofa@$prod", "sofa@$prod")
+		kvRepo.Set("application", "apollo@$prod", "apollo@$prod")
+		kvRepo.Set("dubbo", "dubbo", "dubbo")
+
+		// 2. test the ConfigStore,which has a MockRepository in it
+		// init
+		log.DefaultLogger.SetLogLevel(log.DEBUG)
+		err := store.Init(cfg)
+		assert.Error(t, err)
+	})
+
 	t.Run("when namespace exist then succeed with debug information", func(t *testing.T) {
 		// 1. set up
 		// inject the MockRepository into a ConfigStore
@@ -297,8 +315,8 @@ func TestConfigStore_write(t *testing.T) {
 	req.AppId = appId
 	item.Key = "sofa"
 	item.Content = "v1"
-	item.Group = "application"
-	item.Label = "prod"
+	item.Group = defaultGroup
+	item.Label = prod
 	req.StoreName = "apollo"
 	req.Items = append(req.Items, &item)
 
@@ -350,8 +368,8 @@ func TestConfigStore_write(t *testing.T) {
 	var delReq configstores.DeleteRequest
 	delReq.AppId = appId
 	delReq.Keys = []string{"sofa"}
-	delReq.Group = "application"
-	delReq.Label = "prod"
+	delReq.Group = defaultGroup
+	delReq.Label = prod
 	err = store.Delete(context.Background(), &delReq)
 	if err != nil {
 		t.Error(err)
@@ -373,7 +391,7 @@ func TestConfigStore_Init_fail(t *testing.T) {
 	err := store.Init(cfg)
 	assert.Nil(t, err)
 	// no config
-	store, cfg = setup(t)
+	store, _ = setup(t)
 	err = store.Init(nil)
 	if notNil := assert.NotNil(t, err); notNil {
 		assert.True(t, err.Error() != "")

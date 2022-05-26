@@ -17,9 +17,11 @@
 package apollo
 
 import (
-	"github.com/stretchr/testify/assert"
-	"mosn.io/layotto/components/configstores"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"mosn.io/layotto/components/configstores"
 )
 
 // Test CRUD operations of subscriberHolder

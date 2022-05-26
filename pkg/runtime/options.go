@@ -18,6 +18,8 @@ package runtime
 
 import (
 	"google.golang.org/grpc"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/file"
@@ -30,7 +32,6 @@ import (
 	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	"mosn.io/layotto/pkg/runtime/state"
-	"mosn.io/pkg/log"
 )
 
 // services encapsulates the service to include in the runtime
@@ -47,7 +48,7 @@ type services struct {
 	inputBinding  []*mbindings.InputBindingFactory
 	secretStores  []*msecretstores.SecretStoresFactory
 	// Custom components.
-	// The key is component type
+	// The key is component kind
 	custom map[string][]*custom.ComponentFactory
 }
 
@@ -101,12 +102,12 @@ func WithErrInterceptor(i ErrInterceptor) Option {
 	}
 }
 
-func WithCustomComponentFactory(componentType string, factorys ...*custom.ComponentFactory) Option {
+func WithCustomComponentFactory(kind string, factorys ...*custom.ComponentFactory) Option {
 	return func(o *runtimeOptions) {
 		if len(factorys) == 0 {
 			return
 		}
-		o.services.custom[componentType] = append(o.services.custom[componentType], factorys...)
+		o.services.custom[kind] = append(o.services.custom[kind], factorys...)
 	}
 }
 

@@ -19,8 +19,9 @@ package main
 import (
 	"context"
 	"fmt"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"time"
+
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 
 	"google.golang.org/grpc"
 )
@@ -35,7 +36,7 @@ func main() {
 
 	for i := 0; i < 10; i++ {
 		r, err := c.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
-			ServiceName: "helloworld",
+			ServiceName: "quick_start_demo",
 		})
 		if err != nil {
 			fmt.Println("get an error: ", err)

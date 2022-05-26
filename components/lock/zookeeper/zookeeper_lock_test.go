@@ -14,14 +14,17 @@
 package zookeeper
 
 import (
+	"os"
+	"testing"
+	"time"
+
 	"github.com/go-zookeeper/zk"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/mock"
-	"mosn.io/pkg/log"
-	"testing"
-	"time"
 )
 
 const resouseId = "resoure_1"
@@ -37,7 +40,7 @@ func TestMain(m *testing.M) {
 
 	cfg.Properties["zookeeperHosts"] = "127.0.0.1;127.0.0.1"
 	cfg.Properties["zookeeperPassword"] = ""
-	m.Run()
+	os.Exit(m.Run())
 
 }
 

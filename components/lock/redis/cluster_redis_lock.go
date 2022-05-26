@@ -16,14 +16,16 @@ package redis
 import (
 	"context"
 	"fmt"
-	"github.com/go-redis/redis/v8"
-	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/components/pkg/utils"
-	msync "mosn.io/mosn/pkg/sync"
-	"mosn.io/pkg/log"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/go-redis/redis/v8"
+	msync "mosn.io/mosn/pkg/sync"
+	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/utils"
 )
 
 //RedLock
@@ -127,25 +129,24 @@ func (c *ClusterRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockRespo
 	if len(errorStrs) > 0 {
 		err = fmt.Errorf(strings.Join(errorStrs, "\n"))
 	}
-
 	//getting lock on majority of redis cluster will be regarded as locking success
 	if successCount*2 > len(c.clients) {
 		return &lock.TryLockResponse{
 			Success: true,
 		}, err
-	} else {
-		_, unlockErr := c.UnlockAllRedis(&lock.UnlockRequest{
-			ResourceId: req.ResourceId,
-			LockOwner:  req.LockOwner,
-		}, &wg)
-		if unlockErr != nil {
-			errorStrs = append(errorStrs, unlockErr.Error())
-			err = fmt.Errorf(strings.Join(errorStrs, "\n"))
-		}
-		return &lock.TryLockResponse{
-			Success: false,
-		}, err
 	}
+
+	_, unlockErr := c.UnlockAllRedis(&lock.UnlockRequest{
+		ResourceId: req.ResourceId,
+		LockOwner:  req.LockOwner,
+	}, &wg)
+	if unlockErr != nil {
+		errorStrs = append(errorStrs, unlockErr.Error())
+		err = fmt.Errorf(strings.Join(errorStrs, "\n"))
+	}
+	return &lock.TryLockResponse{
+		Success: false,
+	}, err
 }
 
 func (c *ClusterRedisLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {

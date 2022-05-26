@@ -18,6 +18,7 @@ package configstores
 
 // StoreConfig wraps configuration for a store implementation
 type StoreConfig struct {
+	Type      string            `json:"type"`
 	StoreName string            `json:"store_name"`
 	Address   []string          `json:"address"`
 	TimeOut   string            `json:"timeout"`

@@ -22,6 +22,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/stretchr/testify/assert"
+
 	"mosn.io/layotto/components/file"
 )
 
@@ -64,7 +65,7 @@ func TestAwsOss_SelectClient(t *testing.T) {
 	meta["endpoint"] = "protocol://cn-northwest-1.region-code.amazonaws.com"
 	client, err = oss.selectClient(meta)
 	assert.Nil(t, err)
-
+	assert.NotNil(t, client)
 	// new client with endpoint
 	oss.client["protocol://cn-northwest-1.region-code.amazonaws.com"] = &s3.Client{}
 	client, _ = oss.selectClient(meta)
@@ -97,5 +98,27 @@ func TestAwsOss_Put(t *testing.T) {
 	req.FileName = "/a.txt"
 	err = oss.Put(context.Background(), req)
 	assert.Equal(t, err.Error(), "awsoss put file[/a.txt] fail,err: invalid fileName format")
+}
 
+func TestAwsOss_Get(t *testing.T) {
+	oss := NewAwsOss()
+	err := oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
+	assert.Equal(t, nil, err)
+
+	putReq := &file.PutFileStu{
+		FileName: "/a.txt",
+	}
+	err = oss.Put(context.Background(), putReq)
+
+	assert.Equal(t, err.Error(), "awsoss put file[/a.txt] fail,err: invalid fileName format")
+
+	req := &file.GetFileStu{
+		FileName: "",
+	}
+	_, err = oss.Get(context.Background(), req)
+	assert.Equal(t, err.Error(), "awsoss get file[] fail,err: invalid fileName format")
+
+	req.FileName = "/a.txt"
+	_, err = oss.Get(context.Background(), req)
+	assert.Equal(t, err.Error(), "awsoss get file[/a.txt] fail,err: invalid fileName format")
 }

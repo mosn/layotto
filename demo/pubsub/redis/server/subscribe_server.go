@@ -24,6 +24,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
+
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
@@ -55,7 +56,7 @@ type AppCallbackServerImpl struct {
 func (a *AppCallbackServerImpl) ListTopicSubscriptions(ctx context.Context, empty *empty.Empty) (*runtimev1pb.ListTopicSubscriptionsResponse, error) {
 	result := &runtimev1pb.ListTopicSubscriptionsResponse{}
 	ts := &runtimev1pb.TopicSubscription{
-		PubsubName: "redis",
+		PubsubName: "pub_subs_demo",
 		Topic:      topicName,
 		Metadata:   nil,
 	}

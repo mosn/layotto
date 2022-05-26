@@ -25,6 +25,7 @@ import (
 
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
+
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
@@ -173,7 +174,6 @@ func NewClientWithConnection(conn *grpc.ClientConn) Client {
 type GRPCClient struct {
 	connection  *grpc.ClientConn
 	protoClient runtimev1pb.RuntimeClient
-	mux         sync.Mutex
 }
 
 // Close cleans up all resources created by the client.

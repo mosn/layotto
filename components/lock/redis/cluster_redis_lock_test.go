@@ -14,17 +14,22 @@
 package redis
 
 import (
-	miniredis "github.com/alicebob/miniredis/v2"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
-	"mosn.io/layotto/components/lock"
-	"mosn.io/pkg/log"
 	"strings"
 	"sync"
 	"testing"
+
+	miniredis "github.com/alicebob/miniredis/v2"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/lock"
 )
 
-const cResourceId = "resource_red_lock"
+const (
+	redisHosts  = "127.0.0.1"
+	cResourceId = "resource_red_lock"
+)
 
 func TestClusterRedisLock_InitError(t *testing.T) {
 	t.Run("error when connection fail", func(t *testing.T) {
@@ -34,7 +39,7 @@ func TestClusterRedisLock_InitError(t *testing.T) {
 		cfg := lock.Metadata{
 			Properties: make(map[string]string),
 		}
-		cfg.Properties["redisHosts"] = "127.0.0.1"
+		cfg.Properties["redisHosts"] = redisHosts
 		cfg.Properties["redisPassword"] = ""
 
 		// init
@@ -64,7 +69,7 @@ func TestClusterRedisLock_InitError(t *testing.T) {
 		cfg := lock.Metadata{
 			Properties: make(map[string]string),
 		}
-		cfg.Properties["redisHosts"] = "127.0.0.1"
+		cfg.Properties["redisHosts"] = redisHosts
 		cfg.Properties["redisPassword"] = ""
 		cfg.Properties["maxRetries"] = "1 "
 
@@ -77,13 +82,11 @@ func TestClusterRedisLock_InitError(t *testing.T) {
 
 func TestClusterRedisLock_TryLock(t *testing.T) {
 	// start 5 miniredis instances
-	redisInstances := make([]*miniredis.Miniredis, 0, 5)
 	redisAddrs := make([]string, 0, 5)
 	var err error
 	for i := 0; i < 5; i++ {
 		redis, err := miniredis.Run()
 		assert.NoError(t, err)
-		redisInstances = append(redisInstances, redis)
 		redisAddrs = append(redisAddrs, redis.Addr())
 	}
 	// construct component

@@ -18,12 +18,14 @@ package dapr
 
 import (
 	"context"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	"mosn.io/layotto/pkg/messages"
-	"mosn.io/pkg/log"
 )
 
 func (d *daprGrpcAPI) GetSecret(ctx context.Context, request *runtime.GetSecretRequest) (*runtime.GetSecretResponse, error) {

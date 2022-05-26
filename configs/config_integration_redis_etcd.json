@@ -61,19 +61,22 @@
                         }
                       },
                       "hellos": {
-                        "helloworld": {
+                        "quick_start_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "bindings": {
-                        "http": {
+                        "bindings_demo": {
+                          "type": "http",
                           "metadata": {
                             "url": "https://registry.npmmirror.com/layotto/0.0.0"
                           }
                         }
                       },
                       "config_store": {
-                        "etcd": {
+                        "config_demo": {
+                          "type": "etcd",
                           "address": [
                             "127.0.0.1:2379"
                           ],
@@ -81,7 +84,8 @@
                         }
                       },
                       "state": {
-                        "redis": {
+                        "state_demo": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6380",
                             "redisPassword": ""
@@ -89,7 +93,8 @@
                         }
                       },
                       "sequencer": {
-                        "etcd": {
+                        "sequencer_demo1": {
+                          "type": "etcd",
                           "metadata": {
                             "endpoints": "localhost:2379",
                             "segmentCacheEnable": "false",
@@ -99,7 +104,8 @@
                             "dialTimeout": "5"
                           }
                         },
-                        "redis": {
+                        "sequencer_demo2": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "127.0.0.1:6380",
                             "redisPassword": ""
@@ -107,7 +113,8 @@
                         }
                       },
                       "lock": {
-                        "etcd": {
+                        "lock_demo1": {
+                          "type": "etcd",
                           "metadata": {
                             "endpoints": "localhost:2379",
                             "username": "",
@@ -116,7 +123,8 @@
                             "dialTimeout": "5"
                           }
                         },
-                        "redis": {
+                        "lock_demo2": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6380",
                             "redisPassword": ""
@@ -124,7 +132,8 @@
                         }
                       },
                       "pub_subs": {
-                        "redis": {
+                        "pub_subs_demo": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6380",
                             "redisPassword": ""

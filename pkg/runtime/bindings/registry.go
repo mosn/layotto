@@ -31,8 +31,8 @@ const (
 type Registry interface {
 	RegisterOutputBinding(fs ...*OutputBindingFactory)
 	RegisterInputBinding(fs ...*InputBindingFactory)
-	CreateOutputBinding(name string) (bindings.OutputBinding, error)
-	CreateInputBinding(name string) (bindings.InputBinding, error)
+	CreateOutputBinding(compType string) (bindings.OutputBinding, error)
+	CreateInputBinding(compType string) (bindings.InputBinding, error)
 }
 
 type bindingsRegistry struct {
@@ -41,7 +41,7 @@ type bindingsRegistry struct {
 	info                *info.RuntimeInfo
 }
 
-func NewRegistry(info *info.RuntimeInfo) *bindingsRegistry {
+func NewRegistry(info *info.RuntimeInfo) Registry {
 	info.AddService(ServiceName)
 	return &bindingsRegistry{
 		outputBindingStores: make(map[string]func() bindings.OutputBinding),
@@ -52,30 +52,30 @@ func NewRegistry(info *info.RuntimeInfo) *bindingsRegistry {
 
 func (r *bindingsRegistry) RegisterOutputBinding(fs ...*OutputBindingFactory) {
 	for _, f := range fs {
-		r.outputBindingStores[f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(ServiceName, f.Name)
+		r.outputBindingStores[f.CompType] = f.FactoryMethod
+		r.info.RegisterComponent(ServiceName, f.CompType)
 	}
 }
 
 func (r *bindingsRegistry) RegisterInputBinding(fs ...*InputBindingFactory) {
 	for _, f := range fs {
-		r.inputBindingStores[f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(ServiceName, f.Name)
+		r.inputBindingStores[f.CompType] = f.FactoryMethod
+		r.info.RegisterComponent(ServiceName, f.CompType)
 	}
 }
 
-func (r *bindingsRegistry) CreateOutputBinding(name string) (bindings.OutputBinding, error) {
-	if f, ok := r.outputBindingStores[name]; ok {
-		r.info.LoadComponent(ServiceName, name)
+func (r *bindingsRegistry) CreateOutputBinding(compType string) (bindings.OutputBinding, error) {
+	if f, ok := r.outputBindingStores[compType]; ok {
+		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", name)
+	return nil, fmt.Errorf("service component %s is not regsitered", compType)
 }
 
-func (r *bindingsRegistry) CreateInputBinding(name string) (bindings.InputBinding, error) {
-	if f, ok := r.inputBindingStores[name]; ok {
-		r.info.LoadComponent(ServiceName, name)
+func (r *bindingsRegistry) CreateInputBinding(compType string) (bindings.InputBinding, error) {
+	if f, ok := r.inputBindingStores[compType]; ok {
+		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", name)
+	return nil, fmt.Errorf("service component %s is not regsitered", compType)
 }

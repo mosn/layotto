@@ -14,20 +14,24 @@ If you have deployed apollo yourself, you can modify Layotto's config file (e.g.
 ## Step 2. Run Layotto server
 
 Download the project code to the local:
+
 ```bash
 git clone https://github.com/mosn/layotto.git
 ```
 
 Switch the code directory and compile:
 
-```bash
-cd ${projectpath}/cmd/layotto
+```shell
+cd ${project_path}/cmd/layotto
+```
+
+```shell @if.not.exist layotto
 go build
 ```
 
 After success, a new layotto file will be generated in the directory. Let's run it:
 
-```bash
+```shell @background
 ./layotto start -c ../../configs/config_apollo.json
 ```
 
@@ -36,14 +40,20 @@ After success, a new layotto file will be generated in the directory. Let's run 
 >A: With the default configuration, Layotto will connect to apollo's demo server, but the configuration in that demo server may be modified by others. So the error may be because some configuration has been modified.
 >
 > In this case, you can try other demos, such as [the etcd demo](en/start/configuration/start.md)
+
 ## Step 3. Run the client demo 
 
 The client demo calls Layotto to add, delete, modify, and query configuration
 
-```bash
- cd ${projectpath}/demo/configuration/apollo
- go build -o apolloClientDemo
- ./apolloClientDemo
+```shell
+ cd ${project_path}/demo/configuration/common
+```
+```shell @if.not.exist client
+ go build -o client
+```
+
+```shell
+ ./client -s "config_demo"
 ```
 
 If the following information is printed, the call is successful：
@@ -54,7 +64,7 @@ get configuration after save, &{Key:key1 Content:value1 Group:application Label:
 get configuration after save, &{Key:haha Content:heihei Group:application Label:prod Tags:map[feature:haha release:1.0.0] Metadata:map[]} 
 delete keys success
 write start
-receive subscribe resp store_name:"apollo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
+receive subscribe resp store_name:"config_demo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
 ```
 
 ### Next step

@@ -19,18 +19,19 @@ package apollo
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
-	"mosn.io/layotto/components/pkg/actuators"
 	"net/http"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
-	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/pkg/actuators"
+
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/configstores"
 )
 
 var (
@@ -40,7 +41,10 @@ var (
 	livenessIndicator      *actuators.HealthIndicator
 )
 
-const componentName = "apollo"
+const (
+	defaultGroup  = "application"
+	componentName = "apollo"
+)
 
 func init() {
 	readinessIndicator = actuators.NewHealthIndicator()
@@ -57,8 +61,8 @@ type ConfigStore struct {
 	listener       *changeListener
 	kvRepo         Repository
 	tagsRepo       Repository
-	kvConfig       *RepoConfig
-	tagsConfig     *RepoConfig
+	kvConfig       *repoConfig
+	tagsConfig     *repoConfig
 	openAPIClient  httpClient
 }
 type httpClient interface {
@@ -74,7 +78,7 @@ func (c *httpClientImpl) Do(req *http.Request) (*http.Response, error) {
 }
 
 func (c *ConfigStore) GetDefaultGroup() string {
-	return "application"
+	return defaultGroup
 }
 
 func (c *ConfigStore) GetDefaultLabel() string {
@@ -166,7 +170,7 @@ func (c *ConfigStore) doInit(config *configstores.StoreConfig) error {
 	}
 	// TODO make 'env' configurable
 	// 2. SetConfig client
-	kvRepoConfig := &RepoConfig{
+	kvRepoConfig := &repoConfig{
 		addr:           addr,
 		appId:          appId,
 		env:            c.env,
@@ -279,7 +283,7 @@ func (c *ConfigStore) Set(ctx context.Context, req *configstores.SetRequest) err
 		return err
 	}
 	// 4. commit kv namespace
-	for g, _ := range groupMap {
+	for g := range groupMap {
 		err := c.commit(c.env, req.AppId, c.kvConfig.cluster, g)
 		if err != nil {
 			return err
@@ -471,6 +475,9 @@ func (c *ConfigStore) setItem(appId string, item *configstores.ConfigurationItem
 		return err
 	}
 	req, err := http.NewRequest("PUT", setUrl, strings.NewReader(string(reqBodyJson)))
+	if err != nil {
+		return err
+	}
 	// add params
 	q := req.URL.Query()
 	q.Add("createIfNotExists", "true")
@@ -534,6 +541,9 @@ func (c *ConfigStore) commit(env string, appId string, cluster string, namespace
 		return err
 	}
 	req, err := http.NewRequest("POST", commitUrl, strings.NewReader(string(reqBodyJson)))
+	if err != nil {
+		return err
+	}
 	// add headers
 	c.addHeaderForOpenAPI(req)
 	// do request
@@ -552,6 +562,9 @@ func (c *ConfigStore) deleteItem(env string, appId string, cluster string, group
 	keyWithLabel := c.concatenateKey(key, label)
 	deleteUrl := fmt.Sprintf(deleteUrlTpl, c.openAPIAddress, env, appId, cluster, group, keyWithLabel)
 	req, err := http.NewRequest("DELETE", deleteUrl, nil)
+	if err != nil {
+		return err
+	}
 	// add params
 	q := req.URL.Query()
 	q.Add("key", keyWithLabel)
@@ -570,7 +583,7 @@ func (c *ConfigStore) deleteItem(env string, appId string, cluster string, group
 	return err
 }
 
-func (c *ConfigStore) initTagsClient(tagCfg *RepoConfig) error {
+func (c *ConfigStore) initTagsClient(tagCfg *repoConfig) error {
 	// 1. create if not exist
 	err := c.createNamespace(c.env, tagCfg.appId, tagCfg.cluster, c.tagsNamespace)
 	if err != nil {
@@ -598,6 +611,9 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 		return err
 	}
 	req, err := http.NewRequest("POST", url, strings.NewReader(string(reqBodyJson)))
+	if err != nil {
+		return err
+	}
 	// add headers
 	c.addHeaderForOpenAPI(req)
 	log.DefaultLogger.Debugf("createNamespace url: %v, request body: %s, request: %+v", url, reqBodyJson, req)
@@ -631,5 +647,5 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 		log.DefaultLogger.Errorf("An error occurred when parsing createNamespace response. statusCode: %v ,error: %v", resp.StatusCode, err)
 		return err
 	}
-	return errors.New(fmt.Sprintf("createNamespace error. StatusCode: %v, response body: %s", resp.StatusCode, b))
+	return fmt.Errorf("createNamespace error. StatusCode: %v, response body: %s", resp.StatusCode, b)
 }

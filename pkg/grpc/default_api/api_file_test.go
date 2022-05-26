@@ -19,17 +19,19 @@ package default_api
 import (
 	"context"
 	"errors"
+	"io"
+	"net"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"io"
+
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/pkg/mock"
 	"mosn.io/layotto/pkg/mock/runtime"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"net"
-	"testing"
 )
 
 func SendData(w net.Conn) {
@@ -49,7 +51,8 @@ func TestGetFile(t *testing.T) {
 	mockStream.EXPECT().Send(&runtimev1pb.GetFileResponse{Data: []byte("testFile")}).Times(1)
 	mockStream.EXPECT().Context().Return(context.Background())
 	go SendData(w)
-	api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock"}, mockStream)
+	err = api.GetFile(&runtimev1pb.GetFileRequest{StoreName: "mock"}, mockStream)
+	assert.Nil(t, err)
 }
 
 func TestPutFile(t *testing.T) {
@@ -93,13 +96,14 @@ func TestListFile(t *testing.T) {
 	assert.Equal(t, resp.Marker, "hello")
 	assert.Equal(t, resp.IsTruncated, true)
 	mockFile.EXPECT().List(context.Background(), &file.ListRequest{DirectoryName: request.Name, Metadata: request.Metadata}).Return(&file.ListResp{}, errors.New("test fail")).Times(1)
-	resp, err = api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
+	_, err = api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
 	assert.NotNil(t, err)
 	info := &file.FilesInfo{FileName: "hello", Size: 10, LastModified: "2021.11.12"}
 	files := make([]*file.FilesInfo, 0)
 	files = append(files, info)
 	mockFile.EXPECT().List(context.Background(), &file.ListRequest{DirectoryName: request.Name, Metadata: request.Metadata}).Return(&file.ListResp{Files: files}, nil).Times(1)
 	resp, err = api.ListFile(context.Background(), &runtimev1pb.ListFileRequest{Request: request})
+	assert.Nil(t, err)
 	assert.Equal(t, len(resp.Files), 1)
 	assert.Equal(t, resp.Files[0].FileName, "hello")
 }
@@ -138,11 +142,12 @@ func TestGetFileMeta(t *testing.T) {
 		Size:         10,
 		LastModified: "123",
 		Metadata: map[string][]string{
-			"test": []string{},
+			"test": {},
 		},
 	}
 	mockFile.EXPECT().Stat(context.Background(), &file.FileMetaRequest{FileName: request.Request.Name, Metadata: meta}).Return(re, nil).Times(1)
 	resp, err = api.GetFileMeta(context.Background(), request)
+	assert.Nil(t, err)
 	assert.Equal(t, resp.LastModified, "123")
 	assert.Equal(t, int(resp.Size), 10)
 }
