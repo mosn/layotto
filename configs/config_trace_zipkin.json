@@ -1,0 +1,81 @@
+{
+  "servers": [
+    {
+      "default_log_path": "stdout",
+      "default_log_level": "INFO",
+      "listeners": [
+        {
+          "name": "grpc",
+          "address": "0.0.0.0:34904",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "hellos": {
+                        "helloworld": {
+                          "hello": "greeting"
+                        }
+                      },
+                      "config_store": {
+                        "etcd": {
+                          "address": [
+                            "127.0.0.1:2379"
+                          ],
+                          "timeout": "10"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "stream_filters": [
+            {
+              "type": "flowControlFilter",
+              "config": {
+                "global_switch": true,
+                "limit_key_type": "PATH",
+                "rules": [
+                  {
+                    "resource": "/spec.proto.runtime.v1.Runtime/SayHello",
+                    "grade": 1,
+                    "threshold": 5
+                  }
+                ]
+              }
+            },
+            {
+              "type": "grpc_metric"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "tracing": {
+    "enable": true,
+    "driver": "Zipkin",
+    "config": {
+      "reporter": "gRPC",
+      "backend_service": "127.0.0.1:11800",
+      "service_name": "layotto"
+    }
+  },
+  "metrics": {
+    "sinks": [
+      {
+        "type": "prometheus",
+        "config": {
+          "port": 34903
+        }
+      }
+    ]
+  }
+}
+
