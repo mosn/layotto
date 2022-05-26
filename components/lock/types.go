@@ -17,6 +17,7 @@ type Feature string
 
 // Lock's metadata
 type Config struct {
+	Type     string            `json:"type"`
 	Metadata map[string]string `json:"metadata"`
 }
 

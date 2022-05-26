@@ -17,12 +17,14 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "quick_start_demo": {
+                          "type": "helloworld",
                           "hello": "welcome layotto"
                         }
                       },
                       "state": {
-                        "redis": {
+                        "state_demo": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6379",
                             "redisPassword": ""
@@ -30,7 +32,8 @@
                         }
                       },
                       "lock": {
-                        "redis": {
+                        "lock_demo": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "localhost:6379",
                             "redisPassword": ""
@@ -38,7 +41,8 @@
                         }
                       },
                       "sequencer": {
-                        "redis": {
+                        "sequencer_demo": {
+                          "type": "redis",
                           "metadata": {
                             "redisHost": "127.0.0.1:6379",
                             "redisPassword": ""

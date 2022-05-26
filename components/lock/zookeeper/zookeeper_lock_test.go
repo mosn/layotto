@@ -14,6 +14,7 @@
 package zookeeper
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -39,7 +40,7 @@ func TestMain(m *testing.M) {
 
 	cfg.Properties["zookeeperHosts"] = "127.0.0.1;127.0.0.1"
 	cfg.Properties["zookeeperPassword"] = ""
-	m.Run()
+	os.Exit(m.Run())
 
 }
 

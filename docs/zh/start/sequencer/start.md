@@ -52,7 +52,7 @@ go build -o layotto
 ```shell
  cd ${project_path}/demo/sequencer/common/
  go build -o client
- ./client -s "etcd"
+ ./client -s "sequencer_demo"
 ```
 
 打印出如下信息则代表调用成功：

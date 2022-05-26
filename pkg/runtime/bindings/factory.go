@@ -21,25 +21,25 @@ import (
 )
 
 type OutputBindingFactory struct {
-	Name          string
+	CompType      string
 	FactoryMethod func() bindings.OutputBinding
 }
 
-func NewOutputBindingFactory(name string, f func() bindings.OutputBinding) *OutputBindingFactory {
+func NewOutputBindingFactory(compType string, f func() bindings.OutputBinding) *OutputBindingFactory {
 	return &OutputBindingFactory{
-		Name:          name,
+		CompType:      compType,
 		FactoryMethod: f,
 	}
 }
 
 type InputBindingFactory struct {
-	Name          string
+	CompType      string
 	FactoryMethod func() bindings.InputBinding
 }
 
-func NewInputBindingFactory(name string, f func() bindings.InputBinding) *InputBindingFactory {
+func NewInputBindingFactory(compType string, f func() bindings.InputBinding) *InputBindingFactory {
 	return &InputBindingFactory{
-		Name:          name,
+		CompType:      compType,
 		FactoryMethod: f,
 	}
 }

@@ -35,7 +35,6 @@ import (
 
 const (
 	endpointKey              = "endpoint"
-	bucketKey                = "bucket"
 	defaultCredentialsSource = "provider"
 )
 

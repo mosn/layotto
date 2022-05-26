@@ -37,10 +37,14 @@ const (
 	writeTimes = 4
 )
 
-var storeName string
+var (
+	storeName string
+	mode      string
+)
 
 func init() {
 	flag.StringVar(&storeName, "s", "", "set `storeName`")
+	flag.StringVar(&mode, "mode", "raw", "set `mode`")
 }
 
 func main() {
@@ -77,10 +81,13 @@ func main() {
 
 	// 5. show how to use subscribe API
 	// with sdk
-	//testSubscribeWithSDK(ctx, cli)
+	if mode == "sdk" {
+		testSubscribeWithSDK(ctx, cli)
+	} else {
+		// besides sdk,u can also call layotto with grpc
+		testSubscribeWithGrpc(ctx)
+	}
 
-	// besides sdk,u can also call layotto with grpc
-	testSubscribeWithGrpc(ctx)
 }
 
 func testSubscribeWithSDK(ctx context.Context, cli client.Client) {
@@ -135,6 +142,9 @@ func testSubscribeWithGrpc(ctx context.Context) {
 	var wg sync.WaitGroup
 	wg.Add(2)
 	cli, err := c.SubscribeConfiguration(ctx)
+	if err != nil {
+		panic(err)
+	}
 	// client receive changes
 	go func() {
 		for {
