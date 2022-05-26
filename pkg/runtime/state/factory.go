@@ -21,14 +21,14 @@ import (
 )
 
 type Factory struct {
-	Name          string
+	CompType      string
 	FactoryMethod func() state.Store
 }
 
 // Create a new Factory type variable
-func NewFactory(name string, f func() state.Store) *Factory {
+func NewFactory(compType string, f func() state.Store) *Factory {
 	return &Factory{
-		Name:          name,
+		CompType:      compType,
 		FactoryMethod: f,
 	}
 }

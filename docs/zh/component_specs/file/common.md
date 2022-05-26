@@ -6,7 +6,8 @@ json配置文件有如下结构：
 
 ```json
 "file": {
-    "aliOSS": {
+    "file_demo": {
+        "type": "aliOSS"
         "metadata":[
                 {
                     "endpoint": "endpoint_address",
@@ -26,6 +27,7 @@ json配置文件有如下结构：
 
 ```golang
     type FileConfig struct {
+	    Type     string
 	    Metadata json.RawMessage
     }
 
@@ -36,7 +38,8 @@ json配置文件有如下结构：
 
 ```json
 "file": {
-    "localFile": {
+    "file_demo": {
+      "type": "localFile",
       "group":{
         "name": "group1"
         "permisson":"rwx",

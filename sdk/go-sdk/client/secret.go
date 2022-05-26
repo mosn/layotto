@@ -1,3 +1,4 @@
+//
 // Copyright 2021 Layotto Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -10,7 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+// CODE ATTRIBUTION: https://github.com/dapr/go-sdk
+// Modified the import package to use layotto's pb
+// We use same sdk code with Dapr's for state API because we want to keep compatible with Dapr state API
 package client
 
 import (

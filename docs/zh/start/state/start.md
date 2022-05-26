@@ -71,7 +71,7 @@ go build -o layotto
 # change directory to ${your project path}/demo/state/redis/
  cd ${project_path}/demo/state/common/
  go build -o client
- ./client -s "redis"
+ ./client -s "state_demo"
 ```
 
 打印出如下信息则代表调用成功：

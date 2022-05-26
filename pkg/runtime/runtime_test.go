@@ -195,7 +195,8 @@ func TestMosnRuntime_Run(t *testing.T) {
 		// 2. construct runtime
 		cfg := &MosnRuntimeConfig{
 			PubSubManagement: map[string]mpubsub.Config{
-				"mock": {
+				"demo": {
+					Type: "mock",
 					Metadata: map[string]string{
 						"target": "layotto",
 					},
@@ -275,7 +276,8 @@ func TestMosnRuntime_initPubSubs(t *testing.T) {
 
 		cfg := &MosnRuntimeConfig{
 			PubSubManagement: map[string]mpubsub.Config{
-				"mock": {
+				"demo": {
+					Type: "mock",
 					Metadata: map[string]string{
 						"target": "layotto",
 					},
@@ -305,7 +307,12 @@ func TestMosnRuntime_initPubSubsNotExistMetadata(t *testing.T) {
 
 		cfg := &MosnRuntimeConfig{
 			PubSubManagement: map[string]mpubsub.Config{
-				"mock": {},
+				"demo": {
+					Type: "mock",
+					Metadata: map[string]string{
+						"target": "layotto",
+					},
+				},
 			},
 		}
 		// construct MosnRuntime
@@ -332,6 +339,7 @@ func TestMosnRuntime_initStates(t *testing.T) {
 		cfg := &MosnRuntimeConfig{
 			StateManagement: map[string]mstate.Config{
 				"mock": {
+					Type: "status",
 					Metadata: map[string]string{
 						"target": "layotto",
 					},
@@ -344,7 +352,7 @@ func TestMosnRuntime_initStates(t *testing.T) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		// test initStates
-		err := m.initStates(mstate.NewFactory("mock", f))
+		err := m.initStates(mstate.NewFactory("status", f))
 		// assert result
 		assert.Nil(t, err)
 	})
@@ -361,7 +369,7 @@ func TestMosnRuntime_initRpc(t *testing.T) {
 
 		cfg := &MosnRuntimeConfig{
 			RpcManagement: map[string]rpc.RpcConfig{
-				"mock": {},
+				"rpc": {},
 			},
 		}
 		// construct MosnRuntime
@@ -370,7 +378,7 @@ func TestMosnRuntime_initRpc(t *testing.T) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		// test initRpcs method
-		err := m.initRpcs(rpc.NewRpcFactory("mock", f))
+		err := m.initRpcs(rpc.NewRpcFactory("rpc", f))
 		// assert
 		assert.Nil(t, err)
 	})
@@ -386,14 +394,16 @@ func TestMosnRuntime_initConfigStores(t *testing.T) {
 
 		cfg := &MosnRuntimeConfig{
 			ConfigStoreManagement: map[string]configstores.StoreConfig{
-				"mock": {},
+				"mock": {
+					Type: "store_config",
+				},
 			},
 		}
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
-		err := m.initConfigStores(configstores.NewStoreFactory("mock", f))
+		err := m.initConfigStores(configstores.NewStoreFactory("store_config", f))
 		assert.Nil(t, err)
 	})
 }
@@ -408,14 +418,16 @@ func TestMosnRuntime_initHellos(t *testing.T) {
 
 		cfg := &MosnRuntimeConfig{
 			HelloServiceManagement: map[string]hello.HelloConfig{
-				"mock": {},
+				"mock": {
+					Type: "hello",
+				},
 			},
 		}
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
-		err := m.initHellos(hello.NewHelloFactory("mock", f))
+		err := m.initHellos(hello.NewHelloFactory("hello", f))
 		assert.Nil(t, err)
 	})
 }
@@ -430,14 +442,16 @@ func TestMosnRuntime_initSequencers(t *testing.T) {
 
 		cfg := &MosnRuntimeConfig{
 			SequencerManagement: map[string]sequencer.Config{
-				"mock": {},
+				"mock": {
+					Type: "sequencers",
+				},
 			},
 		}
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
-		err := m.initSequencers(runtime_sequencer.NewFactory("mock", f))
+		err := m.initSequencers(runtime_sequencer.NewFactory("sequencers", f))
 		assert.Nil(t, err)
 	})
 }
@@ -452,14 +466,16 @@ func TestMosnRuntime_initLocks(t *testing.T) {
 
 		cfg := &MosnRuntimeConfig{
 			LockManagement: map[string]lock.Config{
-				"mock": {},
+				"mock": {
+					Type: "lock",
+				},
 			},
 		}
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
 			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
-		err := m.initLocks(mlock.NewFactory("mock", f))
+		err := m.initLocks(mlock.NewFactory("lock", f))
 		assert.Nil(t, err)
 	})
 }
@@ -485,12 +501,13 @@ func TestMosnRuntime_initOutputBinding(t *testing.T) {
 	m := NewMosnRuntime(cfg)
 	assert.Nil(t, m.outputBindings["mockOutbindings"])
 
-	registry := mbindings.NewOutputBindingFactory("mockOutbindings", func() bindings.OutputBinding {
+	registry := mbindings.NewOutputBindingFactory("mock_outbindings", func() bindings.OutputBinding {
 		return &MockBindings{}
 	})
 	mdata := make(map[string]string)
 	m.RuntimeConfig().Bindings = make(map[string]mbindings.Metadata)
 	m.runtimeConfig.Bindings["mockOutbindings"] = mbindings.Metadata{
+		Type:     "mock_outbindings",
 		Metadata: mdata,
 	}
 	err := m.initOutputBinding(registry)
@@ -500,13 +517,15 @@ func TestMosnRuntime_initOutputBinding(t *testing.T) {
 
 func TestMosnRuntime_runWithCustomComponentAndAPI(t *testing.T) {
 	t.Run("normal", func(t *testing.T) {
-		compType := "super_pubsub"
-		compName := "etcd"
+		kind := "super_pubsub"
+		compName := "demo"
+		compType := "etcd"
 		// 1. construct config
 		cfg := &MosnRuntimeConfig{
 			CustomComponent: map[string]map[string]custom.Config{
-				compType: {
+				kind: {
 					compName: custom.Config{
+						Type:     compType,
 						Version:  "",
 						Metadata: nil,
 					},
@@ -525,14 +544,14 @@ func TestMosnRuntime_runWithCustomComponentAndAPI(t *testing.T) {
 			WithGrpcAPI(
 				default_api.NewGrpcAPI,
 				func(ac *grpc.ApplicationContext) grpc.GrpcAPI {
-					comp := ac.CustomComponent[compType][compName].(superPubsub)
+					comp := ac.CustomComponent[kind][compName].(superPubsub)
 					customAPI = &mockGrpcAPI{comp: comp}
 					return customAPI
 				},
 			),
 			// Custom components
-			WithCustomComponentFactory(compType,
-				custom.NewComponentFactory(compName, newSuperPubsub),
+			WithCustomComponentFactory(kind,
+				custom.NewComponentFactory(compType, newSuperPubsub),
 			),
 			// Hello
 			WithHelloFactory(
@@ -540,7 +559,7 @@ func TestMosnRuntime_runWithCustomComponentAndAPI(t *testing.T) {
 			),
 			// Sequencer
 			WithSequencerFactory(
-				runtime_sequencer.NewFactory(compName, func() sequencer.Store {
+				runtime_sequencer.NewFactory(compType, func() sequencer.Store {
 					return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
 				}),
 				runtime_sequencer.NewFactory("redis", func() sequencer.Store {
@@ -764,12 +783,14 @@ func constructCloudEvent() map[string]interface{} {
 }
 
 func runtimeWithCallbackConnection(t *testing.T) (*MosnRuntime, *mock_appcallback.MockAppCallbackServer) {
+	compName := "demo"
+	compType := "mock"
 	// 1. prepare callback
 	// mock callback response
 	subResp := &runtimev1pb.ListTopicSubscriptionsResponse{
 		Subscriptions: []*runtimev1pb.TopicSubscription{
 			{
-				PubsubName: "mock",
+				PubsubName: compName,
 				Topic:      "layotto",
 				Metadata:   nil,
 			},
@@ -796,7 +817,8 @@ func runtimeWithCallbackConnection(t *testing.T) (*MosnRuntime, *mock_appcallbac
 	// 3. construct mosn runtime
 	cfg := &MosnRuntimeConfig{
 		PubSubManagement: map[string]mpubsub.Config{
-			"mock": {
+			compName: {
+				Type: compType,
 				Metadata: map[string]string{
 					"target": "layotto",
 				},
