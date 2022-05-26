@@ -29,7 +29,7 @@
 ## 运行Jaeger
 
 ```shell
-cd ${project_path}/diagnostics/jaeger/jaeger-docker-compose.yaml
+cd ${project_path}/diagnostics/jaeger
 
 docker-compose -f jaeger-docker-compose.yaml up -d
 ```
