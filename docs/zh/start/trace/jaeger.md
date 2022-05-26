@@ -85,7 +85,7 @@ go build -o layotto
 ## 清理资源
 
 ```shell
-cd ${project_path}/diagnostics/jaeger/jaeger-docker-compose.yaml
+cd ${project_path}/diagnostics/jaeger
 
 docker-compose -f jaeger-docker-compose.yaml down
 ```
