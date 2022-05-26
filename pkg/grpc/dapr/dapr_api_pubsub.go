@@ -19,7 +19,6 @@ package dapr
 import (
 	"context"
 	"encoding/base64"
-	"errors"
 	"fmt"
 
 	"github.com/dapr/components-contrib/contenttype"
@@ -268,7 +267,7 @@ func retryStrategy(err error, res *dapr_v1pb.TopicEventResponse, cloudEvent map[
 			return nil
 		}
 
-		err = errors.New(fmt.Sprintf("error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err))
+		err = fmt.Errorf("error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err)
 		log.DefaultLogger.Debugf("%s", err)
 		// on error from application, return error for redelivery of event
 		return err
@@ -278,13 +277,13 @@ func retryStrategy(err error, res *dapr_v1pb.TopicEventResponse, cloudEvent map[
 	case dapr_v1pb.TopicEventResponse_SUCCESS:
 		return nil
 	case dapr_v1pb.TopicEventResponse_RETRY:
-		return errors.New(fmt.Sprintf("RETRY status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string)))
+		return fmt.Errorf("RETRY status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
 	case dapr_v1pb.TopicEventResponse_DROP:
 		log.DefaultLogger.Warnf("[runtime]DROP status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
 		return nil
 	}
 	// Consider unknown status field as error and retry
-	return errors.New(fmt.Sprintf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus()))
+	return fmt.Errorf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus())
 }
 
 func listTopicSubscriptions(client dapr_v1pb.AppCallbackClient, log log.ErrorLogger) []*dapr_v1pb.TopicSubscription {
