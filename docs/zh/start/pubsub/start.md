@@ -97,7 +97,7 @@ go build -o layotto
 ```shell
  cd ${project_path}/demo/pubsub/client/
  go build -o publisher
- ./publisher -s redis
+ ./publisher -s pub_subs_demo
 ```
 
 打印出如下信息则代表调用成功：
