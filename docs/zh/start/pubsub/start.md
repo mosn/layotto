@@ -50,7 +50,7 @@ docker run -itd --name redis-test -p 6380:6379 redis
 ```
 
 ```shell @background
- ./subscriber -s redis
+ ./subscriber -s pub_subs_demo
 ```
 打印出如下信息则代表启动成功：
 
