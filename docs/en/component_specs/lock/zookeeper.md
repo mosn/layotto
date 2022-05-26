@@ -1,7 +1,7 @@
 # Zookeeper
 
 ## metadata fields
-Example: configs/config_lock_zookeeper.json
+Example: configs/config_zookeeper.json
 
 | Field | Required | Description |
 | --- | --- | --- |
@@ -29,7 +29,7 @@ go build
 
 Execute after the compilation is successful:
 ````shell
-./layotto start -c ../../configs/config_lock_zookeeper.json
+./layotto start -c ../../configs/config_zookeeper.json
 ````
 
 ## Run Demo

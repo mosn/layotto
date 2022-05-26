@@ -19,8 +19,9 @@ go build -o layotto
 ```
 
 Run Layotto:
+
 ```shell @background
-./layotto start -c ../../configs/config_in_memory.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 Q: What happened?

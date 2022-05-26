@@ -58,7 +58,7 @@ go build -o layotto
 The layotto file will be generated in the directory, run it:
 
 ```shell @background
-./layotto start -c ../../configs/config_state_redis.json
+./layotto start -c ../../configs/config_redis.json
 ```
 
 ### step 3. Run the client program, call Layotto to add, delete, modify and query

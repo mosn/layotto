@@ -21,7 +21,7 @@ json配置文件有如下结构：
 }
 ```
 
-您可以在metadata里配置组件关心的key/value配置。例如[redis组件的配置](https://github.com/mosn/layotto/blob/main/configs/config_state_redis.json) 如下：
+您可以在metadata里配置组件关心的key/value配置。例如[redis组件的配置](https://github.com/mosn/layotto/blob/main/configs/config_redis.json) 如下：
 
 ```json
 "state": {

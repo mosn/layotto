@@ -119,7 +119,7 @@ docker rm -f redis-test
 
 其中有一段脚本会运行 Layotto, 但是如果运行它就会 hang 住，导致测试工具没法继续运行下一条命令：
 ```bash
-./layotto start -c ../../configs/config_state_redis.json
+./layotto start -c ../../configs/config_redis.json
 ```
 
 怎么办呢？
@@ -130,7 +130,7 @@ docker rm -f redis-test
 
 ~~~
 ```shell @background
-./layotto start -c ../../configs/config_in_memory.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 ~~~
 
@@ -140,12 +140,12 @@ docker rm -f redis-test
 
 ```bash
     ```bash
-    ./layotto start -c ../../configs/config_state_redis.json
+    ./layotto start -c ../../configs/config_redis.json
     ```
     
     <!-- The command below will be run when testing this file 
     ```shell
-    nohup ./layotto start -c ../../configs/config_state_redis.json &
+    nohup ./layotto start -c ../../configs/config_redis.json &
     ```
     -->
 ```
