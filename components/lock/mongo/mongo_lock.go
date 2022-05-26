@@ -94,7 +94,7 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 
 	// create exprie time index
 	indexModel := mongo.IndexModel{
-		Keys:    bsonx.Doc{{"Expire", bsonx.Int64(1)}},
+		Keys:    bsonx.Doc{{Key: "Expire", Value: bsonx.Int64(1)}},
 		Options: options.Index().SetExpireAfterSeconds(0),
 	}
 	e.collection.Indexes().CreateOne(e.ctx, indexModel)
@@ -161,11 +161,10 @@ func (e *MongoLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, er
 		return &lock.TryLockResponse{
 			Success: true,
 		}, nil
-	} else {
-		return &lock.TryLockResponse{
-			Success: false,
-		}, nil
 	}
+	return &lock.TryLockResponse{
+		Success: false,
+	}, nil
 }
 
 func (e *MongoLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
