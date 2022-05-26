@@ -25,7 +25,7 @@ go build -o layotto
 Once finished, the layotto file will be generated in the directory, run it:
 
 ```shell @background
-./layotto start -c ../../configs/config_secret_file.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 ### Step 2: Run the client program and call Layotto to generate a unique id
@@ -39,7 +39,7 @@ Once finished, the layotto file will be generated in the directory, run it:
 ```
 
 ```shell
- ./client -s "local.file"
+ ./client -s "secret_demo"
 ```
 
 If the following information is printed, the demo is successful:

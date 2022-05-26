@@ -143,8 +143,7 @@ func TestMongoLock_Unlock(t *testing.T) {
 	}
 
 	cfg.Properties["mongoHost"] = mongoUrl
-	err = comp.Init(cfg)
-
+	_ = comp.Init(cfg)
 	// mock
 	insertManyResult := &mongo.InsertManyResult{}
 	insertOneResult := &mongo.InsertOneResult{}

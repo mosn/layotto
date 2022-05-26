@@ -27,7 +27,7 @@ import (
 )
 
 func main() {
-	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure(), grpc.WithBlock(), grpc.WithTimeout(time.Second))
+	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure(), grpc.WithBlock(), grpc.WithTimeout(2*time.Second))
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +36,7 @@ func main() {
 
 	for i := 0; i < 10; i++ {
 		r, err := c.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
-			ServiceName: "helloworld",
+			ServiceName: "quick_start_demo",
 		})
 		if err != nil {
 			fmt.Println("get an error: ", err)
