@@ -20,16 +20,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/dapr/components-contrib/pubsub"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 
 	"encoding/base64"
+
 	"github.com/dapr/components-contrib/contenttype"
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
+
+	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 // Publishes events to the specific topic.

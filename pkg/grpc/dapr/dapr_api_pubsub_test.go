@@ -19,6 +19,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net"
+	"testing"
+	"time"
+
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/golang/mock/gomock"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -27,14 +31,12 @@ import (
 	"google.golang.org/grpc"
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
+	"mosn.io/pkg/log"
+
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	mock_pubsub "mosn.io/layotto/pkg/mock/components/pubsub"
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
-	"mosn.io/pkg/log"
-	"net"
-	"testing"
-	"time"
 )
 
 func TestDaprGrpcAPIPublishEvent(t *testing.T) {

@@ -2,11 +2,13 @@ package mock_appcallback
 
 import (
 	"context"
+	"reflect"
+
 	"github.com/golang/mock/gomock"
 	empty "google.golang.org/protobuf/types/known/emptypb"
+
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
-	"reflect"
 )
 
 type MockDaprAppCallbackServer struct {
