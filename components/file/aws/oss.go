@@ -22,6 +22,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
 	"mosn.io/layotto/components/file/factory"
 	"mosn.io/layotto/components/file/util"
@@ -276,7 +278,7 @@ func (a *AwsOss) List(ctx context.Context, st *file.ListRequest) (*file.ListResp
 		Marker:  &st.Marker,
 		Prefix:  &prefix,
 	}
-	client, err := a.selectClient(st.Metadata)
+	client, err := a.selectClient(st.Metadata, endpointKey)
 	if err != nil {
 		return nil, fmt.Errorf("list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
 	}
@@ -313,7 +315,7 @@ func (a *AwsOss) Del(ctx context.Context, st *file.DelRequest) error {
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(st.Metadata)
+	client, err := a.selectClient(st.Metadata, endpointKey)
 	if err != nil {
 		return err
 	}
@@ -336,7 +338,7 @@ func (a *AwsOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.File
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(st.Metadata)
+	client, err := a.selectClient(st.Metadata, endpointKey)
 	if err != nil {
 		return nil, err
 	}
@@ -388,7 +390,7 @@ func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (io.Re
 		Bucket: &req.Bucket,
 		Key:    &req.Key,
 	}
-	client, err := a.selectClient(map[string]string{}, req.ClientName)
+	client, err := a.selectClient(map[string]string{}, "")
 	if err != nil {
 		return nil, err
 	}
@@ -399,6 +401,208 @@ func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (io.Re
 	return ob.Body, nil
 }
 
-func (a *AwsOss) PutObject(context.Context, *file.PutObjectInput) error {
-	return nil
+func (a *AwsOss) PutObject(ctx context.Context, req *file.PutObjectInput) (*file.PutObjectOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	uploader := manager.NewUploader(client)
+	resp, err := uploader.Upload(context.TODO(), &s3.PutObjectInput{
+		Bucket: &req.Bucket,
+		Key:    &req.Key,
+		Body:   req.DataStream,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &file.PutObjectOutput{BucketKeyEnabled: resp.BucketKeyEnabled, Etag: *resp.ETag}, err
+}
+
+func (a *AwsOss) DeleteObject(ctx context.Context, req *file.DeleteObjectInput) (*file.DeleteObjectOutput, error) {
+	input := &s3.DeleteObjectInput{
+		Bucket: &req.Bucket,
+		Key:    &req.Key,
+	}
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.DeleteObject(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	return &file.DeleteObjectOutput{DeleteMarker: resp.DeleteMarker, RequestCharged: string(resp.RequestCharged), VersionId: *resp.VersionId}, err
+}
+
+func (a *AwsOss) PutObjectTagging(ctx context.Context, req *file.PutBucketTaggingInput) (*file.PutBucketTaggingOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.PutObjectTaggingInput{
+		Bucket:  &req.Bucket,
+		Key:     &req.Key,
+		Tagging: &types.Tagging{},
+	}
+
+	for k, v := range req.Tags {
+		input.Tagging.TagSet = append(input.Tagging.TagSet, types.Tag{Key: &k, Value: &v})
+	}
+	_, err = client.PutObjectTagging(ctx, input)
+	return &file.PutBucketTaggingOutput{}, err
+}
+func (a *AwsOss) DeleteObjectTagging(ctx context.Context, req *file.DeleteObjectTaggingInput) (*file.DeleteObjectTaggingOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.DeleteObjectTaggingInput{
+		Bucket: &req.Bucket,
+		Key:    &req.Key,
+	}
+	resp, err := client.DeleteObjectTagging(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	return &file.DeleteObjectTaggingOutput{VersionId: *resp.VersionId}, err
+}
+
+func (a *AwsOss) GetObjectTagging(ctx context.Context, req *file.GetObjectTaggingInput) (*file.GetObjectTaggingOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.GetObjectTaggingInput{
+		Bucket: &req.Bucket,
+		Key:    &req.Key,
+	}
+	resp, err := client.GetObjectTagging(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	output := &file.GetObjectTaggingOutput{Tags: map[string]string{}}
+	for _, tags := range resp.TagSet {
+		output.Tags[*tags.Key] = *tags.Value
+	}
+	return output, err
+}
+
+func (a *AwsOss) CopyObject(ctx context.Context, req *file.CopyObjectInput) (*file.CopyObjectOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.CopyObjectInput{
+		Bucket:     &req.Bucket,
+		Key:        &req.Key,
+		CopySource: &req.CopySource,
+	}
+	resp, err := client.CopyObject(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return &file.CopyObjectOutput{}, err
+}
+func (a *AwsOss) DeleteObjects(ctx context.Context, req *file.DeleteObjectsInput) (*file.DeleteObjectsOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.DeleteObjectsInput{
+		Bucket: &req.Bucket,
+		Delete: &types.Delete{},
+	}
+	for _, v := range req.Delete.Objects {
+		object := types.ObjectIdentifier{Key: &v.Key, VersionId: &v.VersionId}
+		input.Delete.Objects = append(input.Delete.Objects, object)
+	}
+	_, err = client.DeleteObjects(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	return &file.DeleteObjectsOutput{}, err
+}
+func (a *AwsOss) ListObjects(ctx context.Context, req *file.ListObjectsInput) (*file.ListObjectsOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.ListObjectsInput{
+		Bucket:              &req.Bucket,
+		Delimiter:           &req.Delimiter,
+		EncodingType:        types.EncodingType(req.EncodingType),
+		ExpectedBucketOwner: &req.ExpectedBucketOwner,
+		Marker:              &req.Marker,
+		MaxKeys:             req.MaxKeys,
+		Prefix:              &req.Prefix,
+		RequestPayer:        types.RequestPayer(req.RequestPayer),
+	}
+	resp, err := client.ListObjects(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	output := &file.ListObjectsOutput{Delimiter: *resp.Delimiter, EncodingType: string(resp.EncodingType), IsTruncated: resp.IsTruncated, Marker: *resp.Marker,
+		MaxKeys: resp.MaxKeys, Name: *resp.Name, NextMarker: *resp.NextMarker, Prefix: *resp.Prefix,
+	}
+
+	for _, v := range resp.CommonPrefixes {
+		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
+	}
+
+	for _, v := range resp.Contents {
+		object := &file.Object{Etag: *v.ETag, Key: *v.Key, Size: v.Size, StorageClass: string(v.StorageClass), Owner: &file.Owner{DisplayName: *v.Owner.DisplayName, Id: *v.Owner.ID}, LastModified: &timestamppb.Timestamp{Seconds: int64(v.LastModified.Second()), Nanos: int32(v.LastModified.Nanosecond())}}
+		output.Contents = append(output.Contents, object)
+	}
+
+	return output, err
+}
+func (a *AwsOss) GetObjectAcl(ctx context.Context, req *file.GetObjectAclInput) (*file.GetObjectAclOutput, error) {
+
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.GetObjectAclInput{
+		Bucket: &req.Bucket,
+		Key:    &req.Key,
+	}
+	resp, err := client.GetObjectAcl(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	output := &file.GetObjectAclOutput{Owner: &file.Owner{}, RequestCharged: string(resp.RequestCharged)}
+	for _, v := range resp.Grants {
+
+	}
+	return &file.DeleteObjectsOutput{}, err
+}
+func (a *AwsOss) PutObjectAcl(context.Context, *file.PutObjectAclInput) (*file.PutObjectAclOutput, error) {
+	return nil, nil
+}
+func (a *AwsOss) RestoreObject(context.Context, *file.RestoreObjectInput) (*file.RestoreObjectOutput, error) {
+	return nil, nil
+}
+func (a *AwsOss) CreateMultipartUpload(context.Context, *file.CreateMultipartUploadInput) (*file.CreateMultipartUploadOutput, error) {
+	return nil, nil
+}
+func (a *AwsOss) UploadPart(context.Context, *file.UploadPartInput) (*file.UploadPartOutput, error) {
+	return nil, nil
+}
+func (a *AwsOss) UploadPartCopy(context.Context, *file.UploadPartCopyInput) (*file.UploadPartCopyOutput, error) {
+	return nil, nil
+}
+func (a *AwsOss) CompleteMultipartUpload(context.Context, *file.CompleteMultipartUploadInput) (*file.CompleteMultipartUploadOutput, error) {
+	return nil, nil
+}
+func (a *AwsOss) AbortMultipartUpload(context.Context, *file.AbortMultipartUploadInput) (*file.AbortMultipartUploadOutput, error) {
+	return nil, nil
+}
+func (a *AwsOss) ListMultipartUploads(context.Context, *file.ListMultipartUploadsInput) (*file.ListMultipartUploadsOutput, error) {
+	return nil, nil
+}
+func (a *AwsOss) ListObjectVersions(context.Context, *file.ListObjectVersionsInput) (*file.ListObjectVersionsOutput, error) {
+	return nil, nil
 }

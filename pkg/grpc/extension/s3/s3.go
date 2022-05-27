@@ -200,6 +200,7 @@ func (s *S3Server) PutObject(stream s3.S3_PutObjectServer) error {
 }
 
 func (s *S3Server) DeleteObject(context.Context, *s3.DeleteObjectInput) (*s3.DeleteObjectOutput, error) {
+
 	return nil, nil
 }
 func (s *S3Server) PutObjectTagging(context.Context, *s3.PutBucketTaggingInput) (*s3.PutBucketTaggingOutput, error) {

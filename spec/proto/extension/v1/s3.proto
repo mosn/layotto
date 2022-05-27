@@ -88,7 +88,8 @@ message DeleteObjectOutput{
 
 message PutBucketTaggingInput{
     string bucket = 1;
-    map<string, string> tags = 2;
+    string key = 2;
+    map<string, string> tags = 3;
 }
 message PutBucketTaggingOutput{
 
@@ -120,10 +121,18 @@ message CopyObjectOutput{
 
 }
 
+
+message Delete{
+    repeated ObjectIdentifier objects = 1;
+    bool quiet = 2;
+}
+message ObjectIdentifier{
+	string key = 1;
+	string version_id = 2;
+}
 message DeleteObjectsInput{
-	// The bucket name containing the objects from which to remove the tags.
     string bucket = 1;
-    repeated string objects = 2;
+    Delete Delete = 2;
 }
 message DeleteObjectsOutput{
 
@@ -131,6 +140,13 @@ message DeleteObjectsOutput{
 
 message ListObjectsInput{
     string bucket = 1;
+    string delimiter = 2;
+    string encoding_type = 3;
+    string expected_bucket_owner = 4;
+    string marker = 5;
+    int32  maxKeys = 6;
+    string prefix = 7;
+    string request_payer = 8;
 }
 message ListObjectsOutput{
     repeated string common_prefixes = 1;
@@ -139,7 +155,7 @@ message ListObjectsOutput{
     string encoding_type = 4;
     bool is_truncated = 5;
     string marker = 6;
-    int64 max_keys = 7;
+    int32 max_keys = 7;
     string name = 8;
     string next_marker = 9;
     string prefix = 10;
