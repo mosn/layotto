@@ -61,7 +61,7 @@ go build -o layotto
 完成后目录下会生成layotto文件，运行它：
 
 ```shell @background
-./layotto start -c ../../configs/config_state_redis.json
+./layotto start -c ../../configs/config_redis.json
 ```
 
 ### 第三步：运行客户端程序，调用Layotto进行增删改查

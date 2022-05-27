@@ -26,7 +26,7 @@ go build -o layotto
 完成后目录下会生成 layotto 文件，运行它：
 
 ```shell @background
-./layotto start -c ../../configs/config_in_memory.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 ### 访问健康检查接口

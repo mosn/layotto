@@ -42,7 +42,7 @@ go build
 Once finished, the layotto file will be generated in the directory, run it:
 
 ```shell @background
-./layotto start -c ../../configs/config_sequencer_etcd.json
+./layotto start -c ../../configs/runtime_config.json
 ```
 
 ### Step 3: Run the client program and call Layotto to generate a unique id
