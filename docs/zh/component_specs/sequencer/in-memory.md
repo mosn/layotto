@@ -2,7 +2,7 @@
 
 ## 配置项说明
 
-直接使用配置：configs/config_in_memory.json
+直接使用配置：configs/config_standalone.json
 
 
 ## 启动 layotto
@@ -13,7 +13,7 @@ go build
 
 编译成功后执行:
 ```shell @background
-./layotto start -c ../../configs/config_in_memory.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 ## 运行 Demo

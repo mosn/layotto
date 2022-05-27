@@ -145,7 +145,7 @@ func (h *hdfs) List(ctx context.Context, request *file.ListRequest) (*file.ListR
 
 	it, err := client.List(starter)
 	if err != nil {
-		err = ErrHdfsListFail
+		return nil, ErrHdfsListFail
 	}
 
 	marker := ""

@@ -26,8 +26,7 @@ import (
 
 // An interface to abstract different apollo sdks,also making it easier to write unit tests.
 type Repository interface {
-	SetConfig(r *RepoConfig)
-	GetConfig() *RepoConfig
+	SetConfig(r *repoConfig)
 	Connect() error
 	// subscribe
 	AddChangeListener(listener *changeListener)
@@ -37,15 +36,15 @@ type Repository interface {
 	Range(namespace string, f func(key, value interface{}) bool) error
 }
 
-type RepoConfig struct {
-	addr          string `json:"addr"`
-	appId         string `json:"appId"`
-	env           string `json:"env"`
-	cluster       string `json:"cluster"`
-	namespaceName string `json:"namespaceName"`
+type repoConfig struct {
+	addr          string
+	appId         string
+	env           string
+	cluster       string
+	namespaceName string
 	// whether backup config after fetch config from apollo
-	isBackupConfig bool   `default:"true" json:"isBackupConfig"`
-	secret         string `json:"secret"`
+	isBackupConfig bool
+	secret         string
 }
 
 func init() {
@@ -55,7 +54,7 @@ func init() {
 //Implement Repository interface
 type AgolloRepository struct {
 	client *agollo.Client
-	cfg    *RepoConfig
+	cfg    *repoConfig
 }
 
 func (a *AgolloRepository) Connect() error {
@@ -66,11 +65,11 @@ func (a *AgolloRepository) Connect() error {
 	return err
 }
 
-func (a *AgolloRepository) SetConfig(r *RepoConfig) {
+func (a *AgolloRepository) SetConfig(r *repoConfig) {
 	a.cfg = r
 }
 
-func repoConfig2AgolloConfig(r *RepoConfig) *agolloConfig.AppConfig {
+func repoConfig2AgolloConfig(r *repoConfig) *agolloConfig.AppConfig {
 	return &agolloConfig.AppConfig{
 		IP:             r.addr,
 		AppID:          r.appId,
@@ -79,10 +78,6 @@ func repoConfig2AgolloConfig(r *RepoConfig) *agolloConfig.AppConfig {
 		IsBackupConfig: r.isBackupConfig,
 		Secret:         r.secret,
 	}
-}
-
-func (a *AgolloRepository) GetConfig() *RepoConfig {
-	return a.cfg
 }
 
 func newAgolloRepository() Repository {

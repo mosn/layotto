@@ -34,8 +34,8 @@ type CommonError interface {
 }
 
 type commonError struct {
-	code int    `json:"code"`
-	msg  string `json:"msg"`
+	code int
+	msg  string
 }
 
 func (le *commonError) Code() int {

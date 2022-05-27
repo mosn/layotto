@@ -19,7 +19,8 @@ import (
 )
 
 const (
-	storeName = "file_demo"
+	storeName   = "file_demo"
+	storageType = "Standard"
 )
 
 func TestGet(fileName string) {
@@ -36,11 +37,14 @@ func TestGet(fileName string) {
 		fmt.Printf("get file error: %+v", err)
 		return
 	}
-	pic := make([]byte, 0, 0)
+	pic := make([]byte, 0)
 	for {
 		resp, err := cli.Recv()
 		if err != nil {
-			fmt.Errorf("recv file failed")
+			fmt.Println("recv file failed")
+			if err.Error() != "EOF" {
+				panic(err)
+			}
 			break
 		}
 		pic = append(pic, resp.Data...)
@@ -55,7 +59,7 @@ func TestPut(fileName string, value string) {
 		return
 	}
 	meta := make(map[string]string)
-	meta["storageType"] = "Standard"
+	meta["storageType"] = storageType
 	c := runtimev1pb.NewRuntimeClient(conn)
 	req := &runtimev1pb.PutFileRequest{StoreName: storeName, Name: fileName, Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
@@ -78,7 +82,7 @@ func TestList(bucketName string) {
 		return
 	}
 	meta := make(map[string]string)
-	meta["storageType"] = "Standard"
+	meta["storageType"] = storageType
 	c := runtimev1pb.NewRuntimeClient(conn)
 	marker := ""
 	for {
@@ -107,7 +111,7 @@ func TestDel(fileName string) {
 		return
 	}
 	meta := make(map[string]string)
-	meta["storageType"] = "Standard"
+	meta["storageType"] = storageType
 	c := runtimev1pb.NewRuntimeClient(conn)
 	req := &runtimev1pb.FileRequest{StoreName: storeName, Name: fileName, Metadata: meta}
 	listReq := &runtimev1pb.DelFileRequest{Request: req}
@@ -126,7 +130,7 @@ func TestStat(fileName string) {
 		return
 	}
 	meta := make(map[string]string)
-	meta["storageType"] = "Standard"
+	meta["storageType"] = storageType
 	c := runtimev1pb.NewRuntimeClient(conn)
 	req := &runtimev1pb.FileRequest{StoreName: storeName, Name: fileName, Metadata: meta}
 	statReq := &runtimev1pb.GetFileMetaRequest{Request: req}
@@ -136,11 +140,10 @@ func TestStat(fileName string) {
 		if m.Code() == codes.NotFound {
 			fmt.Println("file not exist")
 			return
-		} else {
-			if m != nil {
-				fmt.Printf("stat file fail,err:%+v \n", err)
-				return
-			}
+		}
+		if m != nil {
+			fmt.Printf("stat file fail,err:%+v \n", err)
+			return
 		}
 	}
 	fmt.Printf("get meta data of file: size:%+v, modifyTime:%+v \n", data.Size, data.LastModified)

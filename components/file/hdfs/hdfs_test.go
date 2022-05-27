@@ -203,11 +203,11 @@ func TestHdfs_List(t *testing.T) {
 	assert.Nil(t, resp)
 
 	req.Metadata["endpoint"] = endpoint
-	resp, err = hdfs.List(context.TODO(), req)
+	_, err = hdfs.List(context.TODO(), req)
 	assert.Equal(t, ErrClientNotExist, err)
 
 	req.Metadata["endpoint"] = tcpEndpoint
-	resp, err = hdfs.List(context.TODO(), req)
+	_, err = hdfs.List(context.TODO(), req)
 	assert.NotNil(t, err)
 }
 
@@ -232,11 +232,11 @@ func TestHdfs_Stat(t *testing.T) {
 	assert.Nil(t, resp)
 
 	req.Metadata["endpoint"] = endpoint
-	resp, err = hdfs.Stat(context.TODO(), req)
+	_, err = hdfs.Stat(context.TODO(), req)
 	assert.Equal(t, ErrClientNotExist, err)
 
 	req.Metadata["endpoint"] = tcpEndpoint
-	resp, err = hdfs.Stat(context.TODO(), req)
+	_, err = hdfs.Stat(context.TODO(), req)
 	assert.NotNil(t, err)
 }
 

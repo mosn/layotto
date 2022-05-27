@@ -1,7 +1,7 @@
 # Redis
 
 ## metadata fields
-Example: configs/config_sequencer_redis.json
+Example: configs/config_redis.json
 
 | Field | Required | Description |
 | --- | --- | --- |
@@ -35,7 +35,7 @@ go build
 
 Execute after the compilation is successful:
 ````shell
-./layotto start -c ../../configs/config_sequencer_redis.json
+./layotto start -c ../../configs/config_redis.json
 ````
 
 ## Run Demo
