@@ -45,11 +45,8 @@ var (
 )
 
 const (
-	Provider        = "provider"
-	Region          = "region"
-	EndPoint        = "endpoint"
-	AccessKeyID     = "accessKeyID"
-	AccessKeySecret = "accessKeySecret"
+	Region   = "region"
+	EndPoint = "endpoint"
 )
 
 type S3Server struct {
@@ -199,7 +196,10 @@ func (s *S3Server) PutObject(stream s3.S3_PutObjectServer) error {
 	}
 }
 
-func (s *S3Server) DeleteObject(context.Context, *s3.DeleteObjectInput) (*s3.DeleteObjectOutput, error) {
+func (s *S3Server) DeleteObject(ctx context.Context, req *s3.DeleteObjectInput) (*s3.DeleteObjectOutput, error) {
+	if s.ossInstance[req.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+	}
 
 	return nil, nil
 }

@@ -21,18 +21,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	aws_config "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
 	"mosn.io/layotto/components/file/factory"
 	"mosn.io/layotto/components/file/util"
 	"strings"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
-	aws_config "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 
 	"mosn.io/layotto/components/file"
 )
@@ -498,7 +497,7 @@ func (a *AwsOss) CopyObject(ctx context.Context, req *file.CopyObjectInput) (*fi
 		Key:        &req.Key,
 		CopySource: &req.CopySource,
 	}
-	resp, err := client.CopyObject(ctx, input)
+	_, err = client.CopyObject(ctx, input)
 	if err != nil {
 		return nil, err
 	}
@@ -560,7 +559,6 @@ func (a *AwsOss) ListObjects(ctx context.Context, req *file.ListObjectsInput) (*
 	return output, err
 }
 func (a *AwsOss) GetObjectAcl(ctx context.Context, req *file.GetObjectAclInput) (*file.GetObjectAclOutput, error) {
-
 	client, err := a.selectClient(map[string]string{}, endpointKey)
 	if err != nil {
 		return nil, err
@@ -575,34 +573,303 @@ func (a *AwsOss) GetObjectAcl(ctx context.Context, req *file.GetObjectAclInput) 
 	}
 	output := &file.GetObjectAclOutput{Owner: &file.Owner{}, RequestCharged: string(resp.RequestCharged)}
 	for _, v := range resp.Grants {
-
+		output.Grants = append(output.Grants, &file.Grant{Grantee: &file.Grantee{DisplayName: *v.Grantee.DisplayName, EmailAddress: *v.Grantee.DisplayName,
+			Id: *v.Grantee.ID, Type: v.Grantee.Type, Uri: *v.Grantee.URI,
+		}, Permission: string(v.Permission)})
 	}
-	return &file.DeleteObjectsOutput{}, err
+	return output, err
 }
-func (a *AwsOss) PutObjectAcl(context.Context, *file.PutObjectAclInput) (*file.PutObjectAclOutput, error) {
-	return nil, nil
+func (a *AwsOss) PutObjectAcl(ctx context.Context, req *file.PutObjectAclInput) (*file.PutObjectAclOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.PutObjectAclInput{
+		Bucket: &req.Bucket,
+		Key:    &req.Key,
+		ACL:    types.ObjectCannedACL(req.Acl),
+	}
+	resp, err := client.PutObjectAcl(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	return &file.PutObjectAclOutput{RequestCharged: string(resp.RequestCharged)}, err
 }
-func (a *AwsOss) RestoreObject(context.Context, *file.RestoreObjectInput) (*file.RestoreObjectOutput, error) {
-	return nil, nil
+func (a *AwsOss) RestoreObject(ctx context.Context, req *file.RestoreObjectInput) (*file.RestoreObjectOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.RestoreObjectInput{
+		Bucket: &req.Bucket,
+		Key:    &req.Key,
+	}
+	resp, err := client.RestoreObject(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	return &file.RestoreObjectOutput{RequestCharged: string(resp.RequestCharged), RestoreOutputPath: *resp.RestoreOutputPath}, err
 }
-func (a *AwsOss) CreateMultipartUpload(context.Context, *file.CreateMultipartUploadInput) (*file.CreateMultipartUploadOutput, error) {
-	return nil, nil
+func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *file.CreateMultipartUploadInput) (*file.CreateMultipartUploadOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.CreateMultipartUploadInput{
+		Bucket:                    &req.Bucket,
+		Key:                       &req.Key,
+		ACL:                       types.ObjectCannedACL(req.Acl),
+		BucketKeyEnabled:          req.BucketKeyEnabled,
+		CacheControl:              &req.CacheControl,
+		ContentDisposition:        &req.ContentDisposition,
+		ContentEncoding:           &req.ContentEncoding,
+		ContentLanguage:           &req.ContentLanguage,
+		ContentType:               &req.ContentType,
+		ExpectedBucketOwner:       &req.ExpectedBucketOwner,
+		GrantFullControl:          &req.GrantFullControl,
+		GrantRead:                 &req.GrantRead,
+		GrantReadACP:              &req.GrantReadAcp,
+		GrantWriteACP:             &req.GrantWriteAcp,
+		Metadata:                  req.MetaData,
+		ObjectLockLegalHoldStatus: types.ObjectLockLegalHoldStatus(req.ObjectLockLegalHoldStatus),
+		ObjectLockMode:            types.ObjectLockMode(req.ObjectLockMode),
+		RequestPayer:              types.RequestPayer(req.RequestPayer),
+		SSECustomerAlgorithm:      &req.SseCustomerAlgorithm,
+		SSECustomerKey:            &req.SseCustomerKey,
+		SSECustomerKeyMD5:         &req.SseCustomerKeyMd5,
+		SSEKMSEncryptionContext:   &req.SseKmsEncryptionContext,
+		SSEKMSKeyId:               &req.SseKmsKeyId,
+		ServerSideEncryption:      types.ServerSideEncryption(req.ServerSideEncryption),
+		StorageClass:              types.StorageClass(req.StorageClass),
+		Tagging:                   &req.Tagging,
+		WebsiteRedirectLocation:   &req.WebsiteRedirectLocation,
+	}
+	expire := req.Expires.AsTime()
+	input.Expires = &expire
+
+	retain := req.ObjectLockRetainUntilDate.AsTime()
+	input.ObjectLockRetainUntilDate = &retain
+	resp, err := client.CreateMultipartUpload(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	output := &file.CreateMultipartUploadOutput{Bucket: *resp.Bucket, Key: *resp.Key,
+		AbortDate:   &timestamppb.Timestamp{Seconds: int64(resp.AbortDate.Second()), Nanos: int32(resp.AbortDate.Nanosecond())},
+		AbortRuleId: *resp.AbortRuleId, BucketKeyEnabled: resp.BucketKeyEnabled, RequestCharged: string(resp.RequestCharged),
+		SseCustomerAlgorithm: *resp.SSECustomerAlgorithm, SseCustomerKeyMd5: *resp.SSECustomerKeyMD5, SseKmsEncryptionContext: *resp.SSEKMSEncryptionContext,
+		SseKmsKeyId: *resp.SSEKMSKeyId, ServerSideEncryption: string(resp.ServerSideEncryption), UploadId: *resp.UploadId,
+	}
+
+	return output, err
 }
-func (a *AwsOss) UploadPart(context.Context, *file.UploadPartInput) (*file.UploadPartOutput, error) {
-	return nil, nil
+func (a *AwsOss) UploadPart(ctx context.Context, req *file.UploadPartInput) (*file.UploadPartOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.UploadPartInput{
+		Body:                 req.DataStream,
+		Bucket:               &req.Bucket,
+		Key:                  &req.Key,
+		ContentLength:        req.ContentLength,
+		ContentMD5:           &req.ContentMd5,
+		ExpectedBucketOwner:  &req.ExpectedBucketOwner,
+		PartNumber:           req.PartNumber,
+		RequestPayer:         types.RequestPayer(req.RequestPayer),
+		SSECustomerAlgorithm: &req.SseCustomerAlgorithm,
+		SSECustomerKey:       &req.SseCustomerKey,
+		SSECustomerKeyMD5:    &req.SseCustomerKeyMd5,
+		UploadId:             &req.UploadId,
+	}
+	resp, err := client.UploadPart(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	output := &file.UploadPartOutput{BucketKeyEnabled: resp.BucketKeyEnabled, Etag: *resp.ETag, RequestCharged: string(resp.RequestCharged),
+		SseCustomerAlgorithm: *resp.SSECustomerAlgorithm, SseCustomerKeyMd5: *resp.SSECustomerKeyMD5, SseKmsKeyId: *resp.SSECustomerKeyMD5,
+		ServerSideEncryption: string(resp.ServerSideEncryption),
+	}
+	return output, err
 }
-func (a *AwsOss) UploadPartCopy(context.Context, *file.UploadPartCopyInput) (*file.UploadPartCopyOutput, error) {
-	return nil, nil
+func (a *AwsOss) UploadPartCopy(ctx context.Context, req *file.UploadPartCopyInput) (*file.UploadPartCopyOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.UploadPartCopyInput{
+		Bucket:     &req.Bucket,
+		Key:        &req.Key,
+		CopySource: &req.CopySource,
+		PartNumber: req.PartNumber,
+		UploadId:   &req.UploadId,
+	}
+	resp, err := client.UploadPartCopy(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	LastModified := &timestamppb.Timestamp{Seconds: int64(resp.CopyPartResult.LastModified.Second()), Nanos: int32(resp.CopyPartResult.LastModified.Nanosecond())}
+	output := &file.UploadPartCopyOutput{BucketKeyEnabled: resp.BucketKeyEnabled, RequestCharged: string(resp.RequestCharged),
+		CopyPartResult:       &file.CopyPartResult{Etag: *resp.CopyPartResult.ETag, LastModified: LastModified},
+		CopySourceVersionId:  *resp.CopySourceVersionId,
+		SseCustomerAlgorithm: *resp.SSECustomerAlgorithm, SseCustomerKeyMd5: *resp.SSECustomerKeyMD5, SseKmsKeyId: *resp.SSECustomerKeyMD5,
+		ServerSideEncryption: string(resp.ServerSideEncryption),
+	}
+	return output, err
 }
-func (a *AwsOss) CompleteMultipartUpload(context.Context, *file.CompleteMultipartUploadInput) (*file.CompleteMultipartUploadOutput, error) {
-	return nil, nil
+func (a *AwsOss) CompleteMultipartUpload(ctx context.Context, req *file.CompleteMultipartUploadInput) (*file.CompleteMultipartUploadOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.CompleteMultipartUploadInput{
+		Bucket:              &req.Bucket,
+		Key:                 &req.Key,
+		UploadId:            &req.UploadId,
+		RequestPayer:        types.RequestPayer(req.RequestPayer),
+		ExpectedBucketOwner: &req.ExpectedBucketOwner,
+		MultipartUpload:     &types.CompletedMultipartUpload{},
+	}
+	for _, v := range req.MultipartUpload.Parts {
+		input.MultipartUpload.Parts = append(input.MultipartUpload.Parts, types.CompletedPart{ETag: &v.Etag, PartNumber: v.PartNumber})
+	}
+	resp, err := client.CompleteMultipartUpload(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	output := &file.CompleteMultipartUploadOutput{
+		Bucket:               *resp.Bucket,
+		Key:                  *resp.Key,
+		BucketKeyEnabled:     resp.BucketKeyEnabled,
+		Etag:                 *resp.ETag,
+		Expiration:           *resp.Expiration,
+		Location:             *resp.Location,
+		RequestCharged:       string(resp.RequestCharged),
+		SseKmsKeyId:          *resp.SSEKMSKeyId,
+		ServerSideEncryption: string(resp.ServerSideEncryption),
+		VersionId:            *resp.VersionId,
+	}
+	return output, err
 }
-func (a *AwsOss) AbortMultipartUpload(context.Context, *file.AbortMultipartUploadInput) (*file.AbortMultipartUploadOutput, error) {
-	return nil, nil
+func (a *AwsOss) AbortMultipartUpload(ctx context.Context, req *file.AbortMultipartUploadInput) (*file.AbortMultipartUploadOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.AbortMultipartUploadInput{
+		Bucket:              &req.Bucket,
+		Key:                 &req.Key,
+		UploadId:            &req.UploadId,
+		RequestPayer:        types.RequestPayer(req.RequestPayer),
+		ExpectedBucketOwner: &req.ExpectedBucketOwner,
+	}
+	resp, err := client.AbortMultipartUpload(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	output := &file.AbortMultipartUploadOutput{
+		RequestCharged: string(resp.RequestCharged),
+	}
+	return output, err
 }
-func (a *AwsOss) ListMultipartUploads(context.Context, *file.ListMultipartUploadsInput) (*file.ListMultipartUploadsOutput, error) {
-	return nil, nil
+func (a *AwsOss) ListMultipartUploads(ctx context.Context, req *file.ListMultipartUploadsInput) (*file.ListMultipartUploadsOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.ListMultipartUploadsInput{
+		Bucket:              &req.Bucket,
+		ExpectedBucketOwner: &req.ExpectedBucketOwner,
+	}
+	resp, err := client.ListMultipartUploads(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	output := &file.ListMultipartUploadsOutput{
+		Bucket:             *resp.Bucket,
+		Delimiter:          *resp.Delimiter,
+		EncodingType:       string(resp.EncodingType),
+		IsTruncated:        resp.IsTruncated,
+		KeyMarker:          *resp.KeyMarker,
+		MaxUploads:         resp.MaxUploads,
+		NextKeyMarker:      *resp.NextKeyMarker,
+		NextUploadIdMarker: *resp.NextUploadIdMarker,
+		Prefix:             *resp.Prefix,
+		UploadIdMarker:     *resp.UploadIdMarker,
+	}
+
+	for _, v := range resp.CommonPrefixes {
+		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
+	}
+	for _, v := range resp.Uploads {
+		upload := &file.MultipartUpload{
+			Initiated:    timestamppb.New(*v.Initiated),
+			Initiator:    &file.Initiator{DisplayName: *v.Initiator.DisplayName, Id: *v.Initiator.ID},
+			Key:          *v.Key,
+			Owner:        &file.Owner{Id: *v.Owner.ID, DisplayName: *v.Owner.DisplayName},
+			StorageClass: string(v.StorageClass),
+			UploadId:     *v.UploadId,
+		}
+		output.Uploads = append(output.Uploads, upload)
+	}
+	return output, err
 }
-func (a *AwsOss) ListObjectVersions(context.Context, *file.ListObjectVersionsInput) (*file.ListObjectVersionsOutput, error) {
-	return nil, nil
+func (a *AwsOss) ListObjectVersions(ctx context.Context, req *file.ListObjectVersionsInput) (*file.ListObjectVersionsOutput, error) {
+	client, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.ListObjectVersionsInput{
+		Bucket:              &req.Bucket,
+		Delimiter:           &req.Delimiter,
+		EncodingType:        types.EncodingType(req.EncodingType),
+		ExpectedBucketOwner: &req.ExpectedBucketOwner,
+		KeyMarker:           &req.KeyMarker,
+		MaxKeys:             req.MaxKeys,
+		Prefix:              &req.Prefix,
+		VersionIdMarker:     &req.VersionIdMarker,
+	}
+	resp, err := client.ListObjectVersions(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	output := &file.ListObjectVersionsOutput{
+		Delimiter:           *resp.Delimiter,
+		EncodingType:        string(resp.EncodingType),
+		IsTruncated:         resp.IsTruncated,
+		KeyMarker:           *resp.KeyMarker,
+		MaxKeys:             resp.MaxKeys,
+		Name:                *resp.Name,
+		NextKeyMarker:       *resp.NextKeyMarker,
+		NextVersionIdMarker: *resp.NextVersionIdMarker,
+		Prefix:              *resp.Prefix,
+		VersionIdMarker:     *resp.VersionIdMarker,
+	}
+
+	for _, v := range resp.CommonPrefixes {
+		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
+	}
+	for _, v := range resp.DeleteMarkers {
+		entry := &file.DeleteMarkerEntry{
+			IsLatest:     v.IsLatest,
+			Key:          *v.Key,
+			LastModified: timestamppb.New(*v.LastModified),
+			Owner:        &file.Owner{DisplayName: *v.Owner.DisplayName, Id: *v.Owner.ID},
+			VersionId:    *v.VersionId,
+		}
+		output.DeleteMarkers = append(output.DeleteMarkers, entry)
+	}
+	for _, v := range resp.Versions {
+		version := &file.ObjectVersion{
+			Etag:         *v.ETag,
+			IsLatest:     v.IsLatest,
+			Key:          *v.Key,
+			LastModified: timestamppb.New(*v.LastModified),
+			Owner:        &file.Owner{DisplayName: *v.Owner.DisplayName, Id: *v.Owner.ID},
+			Size:         v.Size,
+			StorageClass: string(v.StorageClass),
+			VersionId:    *v.VersionId,
+		}
+		output.Versions = append(output.Versions, version)
+	}
+	return output, err
 }

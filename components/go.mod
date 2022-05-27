@@ -6,11 +6,11 @@ require (
 	github.com/alicebob/miniredis/v2 v2.16.0
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.8+incompatible
 	github.com/apache/dubbo-go-hessian2 v1.7.0
-	github.com/aws/aws-sdk-go-v2 v1.16.3
-	github.com/aws/aws-sdk-go-v2/config v1.15.4
-	github.com/aws/aws-sdk-go-v2/credentials v1.12.0
-	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.6
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.6
+	github.com/aws/aws-sdk-go-v2 v1.16.4
+	github.com/aws/aws-sdk-go-v2/config v1.15.9
+	github.com/aws/aws-sdk-go-v2/credentials v1.12.4
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.14
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.10
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
 	github.com/go-redis/redis/v8 v8.8.0
 	github.com/go-zookeeper/zk v1.0.2
@@ -37,6 +37,7 @@ require (
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
 	google.golang.org/grpc v1.38.0
+	google.golang.org/protobuf v1.26.0
 	mosn.io/api v0.0.0-20211217011300-b851d129be01
 	mosn.io/mosn v0.25.1-0.20211217125944-69b50c40af81
 	mosn.io/pkg v0.0.0-20211217101631-d914102d1baf

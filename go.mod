@@ -10,6 +10,7 @@ require (
 	github.com/SkyAPM/go2sky v0.5.0
 	github.com/agrea/ptr v0.0.0-20180711073057-77a518d99b7b
 	github.com/alicebob/miniredis/v2 v2.16.0
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.14 // indirect
 	github.com/dapr/components-contrib v1.5.1-rc.1
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/dimchansky/utfbom v1.1.1 // indirect
