@@ -79,7 +79,7 @@ go build -o layotto
 
 访问 http://localhost:16686
 
-![img.png](../../../img/trace/jaeger.png)
+![img.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*-f2LSLAR9YMAAAAAAAAAAAAAARQnAQ)
 
 
 ## 清理资源
