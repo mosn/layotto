@@ -24,6 +24,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"mosn.io/pkg/log"
 	"sync"
 
 	"mosn.io/layotto/components/sequencer/postgresql/config"
@@ -56,23 +57,6 @@ type product struct {
 	Price     float64
 }
 
-//func DBopen() error {
-//	info := fmt.Sprintf("host=%s port=%d user=%s "+
-//		"password=%s dbname=%s sslmode=disable",
-//		postgresqlHost, postgresqlPort, postgresqlUsername, postgresqlPassword, postgresqlDBname)
-//	postDB, err = sql.Open("postgres", info)
-//	if err != nil {
-//		return err
-//	}
-//	err = postDB.Ping()
-//	if err != nil {
-//		fmt.Println("conected faild")
-//		return err
-//	}
-//	fmt.Println("success connected")
-//	return nil
-//}
-
 type PostgresqlServer struct {
 	conf *config.Server
 	once sync.Once
@@ -97,17 +81,16 @@ func NewPostgresqlClient(conf *config.Server) *sql.DB {
 	info := fmt.Sprintf("host=%s port=%s user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		conf.Postgresql.Host, conf.Postgresql.Port, conf.Postgresql.Username, conf.Postgresql.Password, conf.Postgresql.Db)
-	//fmt.Println("db info: ", info)
 	postDB, err = sql.Open("postgres", info)
 	if err != nil {
 		return nil
 	}
 	err = postDB.Ping()
 	if err != nil {
-		fmt.Println("conected faild")
+		log.DefaultLogger.Infof("faild connected")
 		return nil
 	}
-	fmt.Println("success connected")
+	log.DefaultLogger.Infof("success connected")
 	return postDB
 }
 

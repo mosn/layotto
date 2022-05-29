@@ -23,7 +23,7 @@ package dao
 import (
 	"context"
 	"database/sql"
-	"fmt"
+	"mosn.io/pkg/log"
 
 	_ "github.com/lib/pq"
 
@@ -69,7 +69,7 @@ func (p *PostgresqlDao) NextSegment(ctx context.Context, bizTag string) (*model.
 func (p *PostgresqlDao) rollback(tx *sql.Tx) {
 	err := tx.Rollback()
 	if err != sql.ErrTxDone && err != nil {
-		fmt.Println("rollback error")
+		log.DefaultLogger.Infof("rollback error")
 	}
 }
 
@@ -77,9 +77,6 @@ func (p *PostgresqlDao) checkError(err error) error {
 	if err == nil {
 		return nil
 	}
-	//if message, ok := err.(*postgresql.PostgresqlError); ok {
-	// fmt.Printf("it's sql error; str:%v", message.Message)
-	//}
 	return err
 }
 

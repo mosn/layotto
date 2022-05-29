@@ -22,8 +22,6 @@ package postgresql
 
 import (
 	"context"
-	"fmt"
-
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/pkg/utils"
@@ -56,13 +54,13 @@ func NewPostgresqlSequencer(logger log.ErrorLogger) *PostgresqlSequencer {
 func (p *PostgresqlSequencer) Init(config sequencer.Configuration) error {
 	s, err := utils.InitPostgresql(config.Properties)
 	if err != nil {
-		fmt.Println("init config error")
+		p.logger.Infof("init config error")
 		return err
 	}
 	for key, value := range p.biggerThan {
 		err := p.client.InitMaxId(p.ctx, key, value, service.DEFAULT_STEP)
 		if err != nil {
-			fmt.Println("init max_id error")
+			p.logger.Infof("init max_id error")
 			return err
 		}
 	}
@@ -72,7 +70,8 @@ func (p *PostgresqlSequencer) Init(config sequencer.Configuration) error {
 	return nil
 }
 
-// Create 用户可以根据自定义去初始化id序列，维度以业务为维度，biz_tag
+// Create The user can initialize the ID sequence according to the customization.
+//The dimension takes the business as the dimension biz_tag
 func (p *PostgresqlSequencer) Create(model *model.PostgresqlModel) error {
 	err := p.client.Create(p.ctx, model)
 	if err != nil {
@@ -92,7 +91,7 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 	}, nil
 }
 
-// GetSegment 其实该runtime cache 用处不大，因为我系统已经实现双buffer模式了~
+// GetSegment In fact, the runtime cache is not very useful, because my system has implemented the dual buffer mode~
 func (p *PostgresqlSequencer) GetSegment(req *sequencer.GetSegmentRequest) (bool, *sequencer.GetSegmentResponse, error) {
 
 	if req.Size == 0 {

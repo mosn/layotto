@@ -24,6 +24,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"mosn.io/pkg/log"
 
 	//_ "github.com/bmizerany/pq"
 	"time"
@@ -48,8 +49,8 @@ func (db *DB) UpdateMaxID(ctx context.Context, bizTag string, tx *sql.Tx) error 
 		res, err = db.db.ExecContext(ctx, querySql, now, bizTag)
 	}
 	if err != nil {
-		fmt.Printf("update max_id error, bizTag: %s; err: %v\n", bizTag, err)
-		fmt.Println("错误： ", err.Error())
+		log.DefaultLogger.Infof("update max_id error, bizTag: %s; err: %v\n", bizTag, err)
+		log.DefaultLogger.Infof("错误： ", err.Error())
 		return err
 	}
 	rowsId, err := res.RowsAffected()
@@ -66,7 +67,7 @@ func (db *DB) InitMaxId(ctx context.Context, bizTag string, maxId int64, step in
 	sql := fmt.Sprintf(`update %v set max_id = %d, step = %d, update_time = $1 where biz_tag = $2`, postgresqlTableName, maxId, step)
 	res, err := db.db.Exec(sql, time.Now().Unix(), bizTag)
 	if err != nil {
-		fmt.Printf("init max_id error, bizTag: %s; err: %v\n", bizTag, err)
+		log.DefaultLogger.Infof("init max_id error, bizTag: %s; err: %v\n", bizTag, err)
 		return err
 	}
 	rowsId, err := res.RowsAffected()
@@ -86,7 +87,7 @@ func (db *DB) Get(ctx context.Context, bizTag string, tx *sql.Tx) (*model.Postgr
 		err = db.db.QueryRowContext(ctx, querySql, bizTag).Scan(&postgresqlModel.ID, &postgresqlModel.BizTag, &postgresqlModel.MaxID, &postgresqlModel.Step, &postgresqlModel.Description, &postgresqlModel.UpdateTime)
 	}
 	if err != nil {
-		fmt.Printf("get postgresqlModel error, biz_tag: %s, err: %v", bizTag, err)
+		log.DefaultLogger.Infof("get postgresqlModel error, biz_tag: %s, err: %v", bizTag, err)
 		return nil, err
 	}
 	return &postgresqlModel, nil
@@ -103,7 +104,7 @@ func (db *DB) Create(ctx context.Context, model *model.PostgresqlModel) error {
 	now := time.Now().Unix()
 	res, err := db.db.ExecContext(ctx, createSql, model.BizTag, model.MaxID, model.Step, model.Description, uint64(now))
 	if err != nil {
-		fmt.Printf("insert error; model: %v, err: %v\n", model, err)
+		log.DefaultLogger.Infof("insert error; model: %v, err: %v\n", model, err)
 		return err
 	}
 	_, err = res.LastInsertId()
