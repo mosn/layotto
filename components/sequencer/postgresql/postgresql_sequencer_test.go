@@ -21,7 +21,7 @@ package postgresql
  */
 
 import (
-	"fmt"
+	"github.com/zouyx/agollo/v4/component/log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -65,19 +65,19 @@ func Test_Init(t *testing.T) {
 	p := &PostgresqlSequencer{}
 	err := p.Init(*config)
 	if err != nil {
-		fmt.Println(err)
+		log.Infof("test error: %v", err)
 	}
 }
 
 func Test_GetNextId(t *testing.T) {
 	p := &PostgresqlSequencer{}
-	config := &sequencer.Configuration{Properties: initMap()}
-	err := p.Init(*config)
-	if err != nil {
-		fmt.Println(err)
-	}
+	//config := &sequencer.Configuration{Properties: initMap()}
+	//err := p.Init(*config)
+	//if err != nil {
+	//	log.Infof("test error: %v", err)
+	//}
 	if p.client == nil {
-		fmt.Println("postgresql client is nil")
+		log.Info("postgresql client is nil")
 		return
 	}
 
@@ -85,9 +85,10 @@ func Test_GetNextId(t *testing.T) {
 
 	id, err := p.GetNextId(req)
 	if err != nil {
-		fmt.Println(err)
+		log.Infof("test error: %v", err)
 	}
-	fmt.Println(id)
+	//fmt.Println(id)
+	assert.NotEmpty(t, id)
 }
 
 func Test_Create(t *testing.T) {
@@ -95,35 +96,38 @@ func Test_Create(t *testing.T) {
 	p := &PostgresqlSequencer{}
 	err := p.Create(model)
 	if err != nil {
-		fmt.Println(err)
+		log.Infof("test error； %v", err)
 	}
 }
 
 func Test_GetSegment(t *testing.T) {
 	req := &sequencer.GetSegmentRequest{Key: "test", Size: 10}
 	p := &PostgresqlSequencer{}
-	config := &sequencer.Configuration{Properties: initMap()}
-	err := p.Init(*config)
-	if err != nil {
-		fmt.Println(err)
-	}
+	//config := &sequencer.Configuration{Properties: initMap()}
+	//err := p.Init(*config)
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
 	if p.client == nil {
-		fmt.Println("postgresql client is nil")
+		log.Info("postgresql client is nil")
 		return
 	}
 
 	_, id, err := p.GetSegment(req)
 	if err != nil {
-		fmt.Println(err)
+		log.Errorf("error: %v", err)
 	}
-	fmt.Println("get next id: ", id)
+	log.Infof("get next id: %d", id)
 	assert.NoError(t, err)
 }
 
 func Test_GetID_mock(t *testing.T) {
-	// 因为采用双buffer+号段模式，所以我采用分层架构，如果用mock来mock开始事物，需要在dao层修改，进行mock.ExpectBegin()
-	// 但那样会破坏原有的代码结构, 所以如果想验证是否有没有问题，可以docker启动一个postgresql，然后执行上面test就可以了
-	// 然后连接后执行postgresql.sql脚本，然后配置文件配置用户密码等信息，就可以验证了
+	//Because the dual buffer+ segment mode is adopted, so I adopt a layered architecture.
+	//If you use mock to mock things, you need to modify it at the Dao layer and mock it Expectbegin()
+	////But that will destroy the original code structure,
+	//so if you want to verify whether there is a problem, you can start a PostgreSQL with docker,
+	//and then execute the above test
+	//Then execute postgresql SQL script, and then configure the user password and other information in the configuration file to verify
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		panic(err)

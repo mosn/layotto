@@ -24,6 +24,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/zouyx/agollo/v4/component/log"
 	"sync"
 
 	"mosn.io/layotto/components/sequencer/postgresql/config"
@@ -104,10 +105,10 @@ func NewPostgresqlClient(conf *config.Server) *sql.DB {
 	}
 	err = postDB.Ping()
 	if err != nil {
-		fmt.Println("conected faild")
+		log.Info("conected faild")
 		return nil
 	}
-	fmt.Println("success connected")
+	log.Info("success connected")
 	return postDB
 }
 

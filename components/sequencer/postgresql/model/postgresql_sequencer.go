@@ -21,14 +21,14 @@ package model
  */
 
 import (
-	"fmt"
+	"github.com/zouyx/agollo/v4/component/log"
 	"sync"
 	"time"
 )
 
 const expiredTime = time.Minute * 20
 
-// 全局分配器
+// Global allocator
 // key: biz_tag value: SegmentBuffer
 type PostgresqlSeq struct {
 	cache sync.Map
@@ -60,7 +60,7 @@ func NewPostgresqlSeq() *PostgresqlSeq {
 	return seq
 }
 
-// 清理超过20min没用过的内存
+// Clean up unused memory for more than 20min
 func (p *PostgresqlSeq) clear() {
 	for {
 		now := time.Now()
@@ -70,11 +70,11 @@ func (p *PostgresqlSeq) clear() {
 		next = time.Date(next.Year(), next.Month(), next.Day(), next.Hour(), next.Minute(), 0, 0, next.Location())
 		t := time.NewTimer(next.Sub(now))
 		<-t.C
-		fmt.Println("start clear goroutine")
+		log.Info("start clear goroutine\n")
 		p.cache.Range(func(key, value interface{}) bool {
 			alloc := value.(*PostgresqlAlloc)
 			if next.Sub(alloc.UpdateTime) > expiredTime {
-				fmt.Printf("clear biz_tag: %s cache", key)
+				log.Infof("clear biz_tag: %s cache", key)
 				p.cache.Delete(key)
 			}
 			return true
