@@ -17,43 +17,28 @@
             {
               "filters": [
                 {
-                  "type": "tcpcopy",
-                  "config": {
-                    "strategy": {
-                      "switch": "ON",
-                      "interval": 30,
-                      "duration": 10,
-                      "cpu_max_rate": 80,
-                      "mem_max_rate": 80
-                    }
-                  }
-                },
-                {
                   "type": "grpc",
                   "config": {
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "quick_start_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
-                      "config_store": {
-                        "apollo": {
-                          "address": [
-                            "http://106.54.227.205:8080"
-                          ],
+                      "lock": {
+                        "lock_demo": {
+                          "type": "consul",
                           "metadata": {
-                            "app_id": "testApplication_yang",
-                            "cluster": "default",
-                            "namespace_name": "dubbo,product.joe,application",
-                            "is_backup_config": "true",
-                            "secret": "6ce3ff7e96a24335a9634fe9abca6d51",
-                            "open_api_token": "947b0db097d2931ba5bf503f1e33c10394f90d11",
-                            "open_api_address": "http://106.54.227.205",
-                            "open_api_user": "apollo"
+                            "address": "localhost:8500",
+                            "scheme": "http"
                           }
                         }
+                      },
+                      "app": {
+                        "app_id": "app1",
+                        "grpc_callback_port": 9999
                       }
                     }
                   }

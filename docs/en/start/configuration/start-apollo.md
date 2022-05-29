@@ -53,7 +53,7 @@ The client demo calls Layotto to add, delete, modify, and query configuration
 ```
 
 ```shell
- ./client -s "apollo"
+ ./client -s "config_demo"
 ```
 
 If the following information is printed, the call is successful：
@@ -64,7 +64,7 @@ get configuration after save, &{Key:key1 Content:value1 Group:application Label:
 get configuration after save, &{Key:haha Content:heihei Group:application Label:prod Tags:map[feature:haha release:1.0.0] Metadata:map[]} 
 delete keys success
 write start
-receive subscribe resp store_name:"apollo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
+receive subscribe resp store_name:"config_demo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
 ```
 
 ### Next step

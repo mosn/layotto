@@ -44,7 +44,7 @@ go build -o layotto
 完成后目录下会生成layotto文件，运行它：
 
 ```shell @background
-./layotto start -c ../../configs/config_sequencer_etcd.json
+./layotto start -c ../../configs/runtime_config.json
 ```
 
 ### 第三步：运行客户端程序，调用Layotto生成唯一id
@@ -52,7 +52,7 @@ go build -o layotto
 ```shell
  cd ${project_path}/demo/sequencer/common/
  go build -o client
- ./client -s "etcd"
+ ./client -s "sequencer_demo"
 ```
 
 打印出如下信息则代表调用成功：

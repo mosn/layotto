@@ -107,7 +107,7 @@ func (e *EtcdSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.G
 	}, nil
 }
 
-func (s *EtcdSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support bool, result *sequencer.GetSegmentResponse, err error) {
+func (e *EtcdSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support bool, result *sequencer.GetSegmentResponse, err error) {
 	return false, nil, nil
 }
 

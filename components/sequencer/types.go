@@ -18,6 +18,7 @@ import "mosn.io/layotto/components/ref"
 
 type Config struct {
 	ref.Config
+	Type       string            `json:"type"`
 	BiggerThan map[string]int64  `json:"biggerThan"`
 	Metadata   map[string]string `json:"metadata"`
 }

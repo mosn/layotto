@@ -223,36 +223,7 @@ Layotto 中的组件分为两种：
 允许您自己扩展自己的组件，比如下面示例中的 `HelloWorld` 组件。
 
 ##### 解释：如何配置自定义组件?
-在 json 配置文件中按以下格式配置：
-```json
-  "custom_component": {
-    "<Component Type>": {
-      "<Component A Name>": {
-        "metadata": {
-          "<KEY>": "<VALUE>",
-          "<KEY>": "<VALUE>"
-        }
-      },
-      "<Component B Name>": {
-        "metadata": {
-          "<KEY>": "<VALUE>",
-          "<KEY>": "<VALUE>"
-        }
-      }
-    }
-  },
-```
-
-例如，在`configs/config_in_memory.json` 中，配置了类型是`helloworld` 的 `CustomComponent`，只有一个组件，其组件名是 `in-memory`:
-```json
-  "custom_component": {
-    "helloworld": {
-      "in-memory": {
-        "metadata": {}
-      }
-    }
-  },
-```
+详见[自定义组件的配置文档](zh/component_specs/custom/common)
 
 ##### 看个例子
 看个具体的例子，在[helloworld 示例中](https://github.com/mosn/layotto/blob/main/cmd/layotto_multiple_api/helloworld/grpc_api.go), `*server` 实现了 `Init`
@@ -277,7 +248,7 @@ func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
 	name2component := make(map[string]component.HelloWorld)
 	if len(ac.CustomComponent) != 0 {
 		// we only care about those components of type "helloworld"
-		name2comp, ok := ac.CustomComponent[componentType]
+		name2comp, ok := ac.CustomComponent[kind]
 		if ok && len(name2comp) > 0 {
 			for name, v := range name2comp {
 				// convert them using type assertion
@@ -354,7 +325,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 cd ${project_path}/cmd/layotto_multiple_api
 go build -o layotto
 # run it
-./layotto start -c ../../configs/config_in_memory.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 Layotto 启动过程中，会回调每个注册进来的 API 的生命周期方法(Init,Register)

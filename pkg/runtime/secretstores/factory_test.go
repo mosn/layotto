@@ -1,3 +1,5 @@
+package secretstores
+
 /*
  * Copyright 2021 Layotto Authors
  *
@@ -14,38 +16,19 @@
  * limitations under the License.
  */
 
-package main
-
 import (
-	"context"
-	"fmt"
+	"testing"
 
-	"mosn.io/layotto/sdk/go-sdk/client"
+	"mosn.io/layotto/pkg/mock/components/secret"
+
+	"github.com/dapr/components-contrib/secretstores"
+	"github.com/stretchr/testify/assert"
 )
 
-const (
-	topic = "in-memory"
-)
+func TestNewFactory(t *testing.T) {
+	factory := NewFactory("test", func() secretstores.SecretStore {
+		return secret.FakeSecretStore{}
+	})
 
-func main() {
-	cli, err := client.NewClient()
-	if err != nil {
-		panic(err)
-	}
-	testPublish(cli)
-	cli.Close()
-}
-
-func testPublish(cli client.Client) {
-	data := []byte("hello in-memory pubsub")
-	err := cli.PublishEvent(context.Background(), "in-memory", topic, data)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Published a new event.Topic: %s ,Data: %s \n", topic, data)
-	return
-}
-
-func testSubscribe(cli client.Client) error {
-	return nil
+	assert.NotNil(t, factory)
 }

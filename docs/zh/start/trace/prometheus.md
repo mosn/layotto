@@ -31,7 +31,7 @@ go build -o layotto
 运行:
 
 ```shell @background
-./layotto start -c ../../configs/runtime_config.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 ## 运行 Demo
