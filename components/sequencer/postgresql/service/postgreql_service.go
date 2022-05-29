@@ -23,7 +23,7 @@ package service
 import (
 	"context"
 	"errors"
-	"github.com/zouyx/agollo/v4/component/log"
+	"fmt"
 
 	//_ "github.com/bmizerany/pq"
 	"sync"
@@ -95,7 +95,7 @@ func (p *PostgresqlService) Create(ctx context.Context, model *model.PostgresqlM
 func (p *PostgresqlService) InitCache(ctx context.Context, bizTag string) (*model.PostgresqlAlloc, error) {
 	postgresql, err := p.dao.NextSegment(ctx, bizTag)
 	if err != nil {
-		log.Errorf("initCache error, err: %v\n", err)
+		fmt.Printf("initCache error, err: %v\n", err)
 		return nil, err
 	}
 	alloc := model.NewPostgresqlAlloc(postgresql)
@@ -110,24 +110,22 @@ func (p *PostgresqlService) NextId(current *model.PostgresqlAlloc) (uint64, erro
 
 	var id uint64
 	currentBuf := current.Buffer[current.CurrentPos]
-	// judge whether the current buffer can be used
+	// 判断当前buffer是否可以使用
 	if current.HasSeq() {
 		id = atomic.AddUint64(&current.Buffer[current.CurrentPos].Cursor, 1)
 		current.UpdateTime = time.Now()
 	}
 
-	// When 50% of the current number segment has been distributed,
-	//if the next number segment has not been updated and loaded,
-	//another thread will be added to update the number segment
-	if currentBuf.Max-id < uint64(float32(current.Step) * 0.5) && len(current.Buffer) <= 1 && !current.IsPreload {
+	// 当前号段已下发50%时，如果下一个号段没有更新加载，则另外新增一个线程去更新号段
+	if currentBuf.Max-id < uint64(float32(current.Step)*0.5) && len(current.Buffer) <= 1 && !current.IsPreload {
 		current.IsPreload = true
 		cancel, _ := context.WithTimeout(context.Background(), 3*time.Second)
 		go p.preLoadBuf(cancel, current.Key, current)
 	}
 
-	// If the current buffer is used, switch to the next buffer and remove the current buffer
+	// 如果当前buffer使用完成 就切换到下一个buffer，并移除当前buffer
 	if id == currentBuf.Max {
-		//Determine whether the buffer is ready
+		// 得判断下buffer是否准备好
 		if len(current.Buffer) > 1 && current.Buffer[current.CurrentPos+1].InitOk {
 			current.Buffer = append(current.Buffer[:0], current.Buffer[1:]...)
 		}
@@ -136,12 +134,11 @@ func (p *PostgresqlService) NextId(current *model.PostgresqlAlloc) (uint64, erro
 		return id, nil
 	}
 
-	//When you get here, it means that the current buffer has no available ID,
-	//and the compensation thread has not finished running
+	// 到达这儿，说明当前buffer没有可用id，而补偿线程还没运行结束呢
 	waitChan := make(chan byte, 1)
 	current.Waiting[current.Key] = append(current.Waiting[current.Key], waitChan)
 
-	// Other clients cannot be blocked while waiting
+	// 这儿在等待时不能阻塞其他客户端
 	current.Unlock()
 	timer := time.NewTimer(500 * time.Millisecond)
 	select {
@@ -152,7 +149,7 @@ func (p *PostgresqlService) NextId(current *model.PostgresqlAlloc) (uint64, erro
 	if len(current.Buffer) <= 1 {
 		return 0, errors.New("get id errror")
 	}
-	// switch uffer
+	// 切换buffer
 	current.Buffer = append(current.Buffer[:0], current.Buffer[1:]...)
 	if current.HasSeq() {
 		id = atomic.AddUint64(&current.Buffer[current.CurrentPos].Cursor, 1)
@@ -165,7 +162,7 @@ func (p *PostgresqlService) preLoadBuf(ctx context.Context, bizTag string, curre
 	for i := 0; i < RETRY_MAX; i++ {
 		pModel, err := p.dao.NextSegment(ctx, bizTag)
 		if err != nil {
-			log.Errorf("preLoadBuffer error, bizTag: %s, err: %v", bizTag, err)
+			fmt.Printf("preLoadBuffer error, bizTag: %s, err: %v", bizTag, err)
 			continue
 		}
 		segment := model.NewPostgresqlSegment(pModel)

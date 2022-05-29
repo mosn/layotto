@@ -22,6 +22,8 @@ package postgresql
 
 import (
 	"context"
+	"fmt"
+
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/pkg/utils"
@@ -41,6 +43,8 @@ type PostgresqlSequencer struct {
 	cancel context.CancelFunc
 }
 
+var PostgresqlConfigFilePath = "D:\\goTest\\test\\layotto\\components\\sequencer\\postgresql\\conf\\postgresql.yaml"
+
 // NewPostgresqlSequencer returns a new postgresql sequencer
 func NewPostgresqlSequencer(logger log.ErrorLogger) *PostgresqlSequencer {
 	s := &PostgresqlSequencer{
@@ -52,13 +56,13 @@ func NewPostgresqlSequencer(logger log.ErrorLogger) *PostgresqlSequencer {
 func (p *PostgresqlSequencer) Init(config sequencer.Configuration) error {
 	s, err := utils.InitPostgresql(config.Properties)
 	if err != nil {
-		p.logger.Errorf("init config error: %v", err)
+		fmt.Println("init config error")
 		return err
 	}
 	for key, value := range p.biggerThan {
 		err := p.client.InitMaxId(p.ctx, key, value, service.DEFAULT_STEP)
 		if err != nil {
-			p.logger.Errorf("init max_id error: %v", err)
+			fmt.Println("init max_id error")
 			return err
 		}
 	}
@@ -88,7 +92,7 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 	}, nil
 }
 
-// GetSegment In fact, the runtime cache is not very useful, because my system has implemented the dual buffer mode~
+// GetSegment 其实该runtime cache 用处不大，因为我系统已经实现双buffer模式了~
 func (p *PostgresqlSequencer) GetSegment(req *sequencer.GetSegmentRequest) (bool, *sequencer.GetSegmentResponse, error) {
 
 	if req.Size == 0 {

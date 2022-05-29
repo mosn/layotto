@@ -25,39 +25,39 @@ import (
 )
 
 type PostgresqlAlloc struct {
-	Key        string     // Which is biz_ Tag is used to distinguish business
-	Step       int32      // Recording step
-	CurrentPos int32      // Current segment buffer cursor; There are two buffer buffers in total, which are used circularly
-	Buffer     []*Segment // Two buffers, one as a pre cache
-	UpdateTime time.Time  // It is convenient to record the update time without cleaning for a long time to prevent memory occupation
+	Key        string     // 也就是biz_tag用来区分业务
+	Step       int32      // 记录步长
+	CurrentPos int32      // 当前使用的 segment buffer光标; 总共两个buffer缓存区，循环使用
+	Buffer     []*Segment // 双buffer 一个作为预缓存作用
+	UpdateTime time.Time  // 记录更新时间 方便长时间不用进行清理，防止占用内存
 	mutex      sync.Mutex
-	IsPreload  bool                   // Is preloading
-	Waiting    map[string][]chan byte // suspend wait, wait when the buffer is loaded
+	IsPreload  bool                   // 是否正在预加载
+	Waiting    map[string][]chan byte // 挂起等待, buffer加载时的等待
 }
 
 // Segment 号段
 type Segment struct {
-	Cursor uint64 // current distribution location
-	Max    uint64 // the maximum
-	Min    uint64 // start value is the minimum value
-	InitOk bool   // whether initialization succeeded
+	Cursor uint64 // 当前发放位置
+	Max    uint64 // 最大值
+	Min    uint64 // 开始值即最小值
+	InitOk bool   // 是否初始化成功
 }
 
-// PostgresqlModel postgresql model
+// PostgresqlModel postgresql 模型
 type PostgresqlModel struct {
-	ID          uint64 `json:"id" form:"id"`                   // primary key ID
-	BizTag      string `json:"biz_tag" form:"biz_tag"`         // differentiated business
-	MaxID       uint64 `json:"max_id" form:"max_id"`           // this biz_ Tag the maximum value of the currently assigned ID number segment
-	Step        int32  `json:"step" form:"step"`               // each time the ID number segment length is allocated, the default value is 1
-	Description string `json:"description" form:"description"` // describe
-	UpdateTime  uint64 `json:"update_time" form:"update_time"` // update time
+	ID          uint64 `json:"id" form:"id"`                   // 主键id
+	BizTag      string `json:"biz_tag" form:"biz_tag"`         // 区分业务
+	MaxID       uint64 `json:"max_id" form:"max_id"`           // 该biz_tag目前所被分配的ID号段的最大值
+	Step        int32  `json:"step" form:"step"`               // 每次分配ID号段长度，默认为1
+	Description string `json:"description" form:"description"` // 描述
+	UpdateTime  uint64 `json:"update_time" form:"update_time"` // 更新时间
 }
 
 func NewPostgresqlAlloc(pModel *PostgresqlModel) *PostgresqlAlloc {
 	return &PostgresqlAlloc{
 		Key:        pModel.BizTag,
 		Step:       pModel.Step,
-		CurrentPos: 0, // use only the first cache for the first time
+		CurrentPos: 0, // 第一次只使用第一块cache
 		Buffer:     make([]*Segment, 0),
 		UpdateTime: time.Now(),
 		Waiting:    make(map[string][]chan byte),
@@ -65,14 +65,12 @@ func NewPostgresqlAlloc(pModel *PostgresqlModel) *PostgresqlAlloc {
 	}
 }
 
-// NewPostgresqlSegment For example, the maxid in the initialization DB is 1,
-// that is, the number segment starts from 1, the step size is 1000,
-// the maximum value is 1000, and the range is 1 ~ 1000. The next range is 1001 ~ 2000
+// NewPostgresqlSegment 以初始化DB中的maxId为1举例子，也就是号段从1开始，步长为1000,最大值就是1000，范围是1～1000。下一段范围就是1001～2000
 func NewPostgresqlSegment(pModel *PostgresqlModel) *Segment {
 	return &Segment{
-		Cursor: pModel.MaxID - uint64(pModel.Step+1), // previous value of minimum value
-		Max:    pModel.MaxID - 1,                     // DB stores 1 by default, so 1 should be subtracted here
-		Min:    pModel.MaxID - uint64(pModel.Step),   // start min
+		Cursor: pModel.MaxID - uint64(pModel.Step+1), // 最小值的前一个值
+		Max:    pModel.MaxID - 1,                     // DB默认存的是1 所以这里要减1
+		Min:    pModel.MaxID - uint64(pModel.Step),   // 开始的最小值
 		InitOk: true,
 	}
 }

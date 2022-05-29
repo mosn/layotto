@@ -21,10 +21,11 @@ package config
  */
 
 import (
-	_ "github.com/lib/pq"
-	"github.com/zouyx/agollo/v4/component/log"
-	"gopkg.in/yaml.v2"
+	"fmt"
 	"io/ioutil"
+
+	_ "github.com/lib/pq"
+	"gopkg.in/yaml.v2"
 )
 
 type Server struct {
@@ -39,17 +40,16 @@ type Postgresql struct {
 	Db       string `json:"db" yaml:"db"`
 }
 
-//now did not use it to load file
 func (m *Server) Load(filePath string) error {
 	yamlFile, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		log.Errorf("read yaml file error %v\n", err)
+		fmt.Printf("read yaml file error %v\n", err)
 		return err
 	}
 
 	err = yaml.Unmarshal(yamlFile, m)
 	if err != nil {
-		log.Errorf("unmarshal config error %v\n", err)
+		fmt.Printf("unmarshal config error %v\n", err)
 		return err
 	}
 	return nil
