@@ -51,7 +51,8 @@ A: Legacy systems using apollo can't migrate to our sidecar if we design like th
 ### config.json for sidecar
 ```json
 {
-  "apollo": {
+  "config_store": {
+    "type": "apollo",
     "address": [
       "http://106.54.227.205:8080"
     ],

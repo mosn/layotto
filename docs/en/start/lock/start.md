@@ -52,15 +52,15 @@ go build
 The layotto file will be generated in the directory, run it:
 
 ```shell @background
-./layotto start -c ../../configs/config_lock_redis.json
+./layotto start -c ../../configs/config_redis.json
 ```
 
 ### Step 3. Run the client program, call Layotto to add, delete, modify and query
 
 ```shell
- cd ${project_path}/demo/lock/redis/
+ cd ${project_path}/demo/lock/common/
  go build -o client
- ./client
+ ./client -s "lock_demo"
 ```
 
 If the following information is printed, the call is successful:

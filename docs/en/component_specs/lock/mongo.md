@@ -2,7 +2,7 @@
 
 ## metadata fields
 
-Example：configs/config_lock_mongo.json
+Example：configs/config_mongo.json
 
 |  Field | Required | Description |
 | --- | --- | --- |

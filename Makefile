@@ -213,6 +213,13 @@ style.quickstart:
 	@$(MAKE) checker.quickstart
 
 # ==============================================================================
+## license: Add license headers for code files.
+# ==============================================================================
+.PHONY: license
+license:
+	@$(MAKE) checker.license.fix
+
+# ==============================================================================
 ## integrate.wasm: Run integration test with wasm.
 # ==============================================================================
 .PHONY: integrate.wasm

@@ -58,7 +58,7 @@ go build -o layotto
 The layotto file will be generated in the directory, run it:
 
 ```shell @background
-./layotto start -c ../../configs/config_state_redis.json
+./layotto start -c ../../configs/config_redis.json
 ```
 
 ### step 3. Run the client program, call Layotto to add, delete, modify and query
@@ -68,7 +68,7 @@ The layotto file will be generated in the directory, run it:
 # change directory to ${your project path}/demo/state/common/
  cd ${project_path}/demo/state/common/
  go build -o client
- ./client -s "redis"
+ ./client -s "state_demo"
 ```
 
 If the following information is printed, the demo succeeded:

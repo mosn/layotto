@@ -55,4 +55,7 @@ func main() {
 		log.Fatalf("could not greet: %v", err)
 	}
 	log.Printf("Greeting: %s", r.GetMessage())
+	if r.GetMessage() != "Hello world" {
+		panic("Response message is not `Hello world`. I don't know why!")
+	}
 }

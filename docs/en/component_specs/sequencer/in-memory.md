@@ -2,7 +2,7 @@
 
 ## Example
 
-You can use `configs/config_in_memory.json`
+You can use `configs/config_standalone.json`
 
 ## Start Layotto
 Download Layotto:
@@ -26,7 +26,7 @@ go build
 Run Layotto:
 
 ```shell @background
-./layotto start -c ../../configs/config_in_memory.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 ## Run Demo

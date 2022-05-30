@@ -19,13 +19,13 @@ package pubsub
 import "github.com/dapr/components-contrib/pubsub"
 
 type Factory struct {
-	Name          string
+	CompType      string
 	FactoryMethod func() pubsub.PubSub
 }
 
-func NewFactory(name string, f func() pubsub.PubSub) *Factory {
+func NewFactory(compType string, f func() pubsub.PubSub) *Factory {
 	return &Factory{
-		Name:          name,
+		CompType:      compType,
 		FactoryMethod: f,
 	}
 }

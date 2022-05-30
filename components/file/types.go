@@ -25,6 +25,7 @@ import (
 type FileConfig struct {
 	Method   string          `json:"method"`
 	Metadata json.RawMessage `json:"metadata"`
+	Type     string          `json:"type"`
 }
 
 type PutFileStu struct {

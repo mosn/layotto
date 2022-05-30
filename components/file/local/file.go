@@ -67,7 +67,7 @@ func (lf *LocalStore) Put(ctx context.Context, f *file.PutFileStu) error {
 		return err
 	}
 	defer fileObj.Close()
-	data := make([]byte, 512, 512)
+	data := make([]byte, 512)
 	for {
 		n, err := f.DataStream.Read(data)
 		if err != nil {
@@ -159,7 +159,7 @@ func (lf *LocalStore) Stat(ctx context.Context, f *file.FileMetaRequest) (*file.
 	m := strconv.Itoa(mode)
 	t := fileInfo.IsDir()
 	isDir := "false"
-	if t == true {
+	if t {
 		isDir = "true"
 	}
 	resp.Metadata[FileMode] = append(resp.Metadata[FileMode], m)

@@ -26,6 +26,7 @@ type HelloService interface {
 }
 
 type HelloConfig struct {
+	Type        string `json:"type"`
 	HelloString string `json:"hello"`
 }
 

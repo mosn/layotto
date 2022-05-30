@@ -4,7 +4,19 @@
 json配置文件有如下结构：
 ```json
 "sequencer": {
-  "<STORE NAME>": {
+  "<Component A Name>": {
+    "type": "Component A Name",
+    "biggerThan": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    },
+    "metadata": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    }
+  },
+  "<Component B Name>": {
+    "type": "Component B Name",
     "biggerThan": {
       "<KEY>": "<VALUE>",
       "<KEY>": "<VALUE>"
@@ -17,11 +29,12 @@ json配置文件有如下结构：
 }
 ```
 
-您可以在metadata里配置组件关心的key/value配置。例如[etcd组件的配置](https://github.com/mosn/layotto/blob/main/configs/config_sequencer_etcd.json) 如下：
+您可以在metadata里配置组件关心的key/value配置。例如[etcd组件的配置](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 如下：
 
 ```json
 "sequencer": {
-  "etcd": {
+  "sequencer_demo": {
+    "type": "etcd",
     "biggerThan": {
       "key1": 1,
       "key2": 111

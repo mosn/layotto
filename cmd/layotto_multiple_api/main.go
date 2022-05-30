@@ -22,6 +22,18 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/dapr/components-contrib/secretstores"
+	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
+	"github.com/dapr/components-contrib/secretstores/aws/secretmanager"
+	"github.com/dapr/components-contrib/secretstores/azure/keyvault"
+	gcp_secretmanager "github.com/dapr/components-contrib/secretstores/gcp/secretmanager"
+	"github.com/dapr/components-contrib/secretstores/hashicorp/vault"
+	sercetstores_kubernetes "github.com/dapr/components-contrib/secretstores/kubernetes"
+	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
+	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
+
+	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
+
 	"mosn.io/api"
 	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
 	"mosn.io/mosn/pkg/stagemanager"
@@ -390,6 +402,33 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return sequencer_inmemory.NewInMemorySequencer()
 			}),
 		),
+		// secretstores
+		runtime.WithSecretStoresFactory(
+			secretstores_loader.NewFactory("kubernetes", func() secretstores.SecretStore {
+				return sercetstores_kubernetes.NewKubernetesSecretStore(loggerForDaprComp)
+			}),
+			secretstores_loader.NewFactory("azure.keyvault", func() secretstores.SecretStore {
+				return keyvault.NewAzureKeyvaultSecretStore(loggerForDaprComp)
+			}),
+			secretstores_loader.NewFactory("hashicorp.vault", func() secretstores.SecretStore {
+				return vault.NewHashiCorpVaultSecretStore(loggerForDaprComp)
+			}),
+			secretstores_loader.NewFactory("aws.secretmanager", func() secretstores.SecretStore {
+				return secretmanager.NewSecretManager(loggerForDaprComp)
+			}),
+			secretstores_loader.NewFactory("aws.parameterstore", func() secretstores.SecretStore {
+				return parameterstore.NewParameterStore(loggerForDaprComp)
+			}),
+			secretstores_loader.NewFactory("gcp.secretmanager", func() secretstores.SecretStore {
+				return gcp_secretmanager.NewSecreteManager(loggerForDaprComp)
+			}),
+			secretstores_loader.NewFactory("local.file", func() secretstores.SecretStore {
+				return secretstore_file.NewLocalSecretStore(loggerForDaprComp)
+			}),
+			secretstores_loader.NewFactory("local.env", func() secretstores.SecretStore {
+				return secretstore_env.NewEnvSecretStore(loggerForDaprComp)
+			}),
+		),
 		// Custom components
 		runtime.WithCustomComponentFactory("helloworld",
 			custom.NewComponentFactory("in-memory", component.NewInMemoryHelloWorld),
@@ -401,7 +440,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 var cmdStart = cli.Command{
 	Name:  "start",
-	Usage: "start runtime. For example:  ./layotto start -c configs/config_in_memory.json",
+	Usage: "start runtime. For example:  ./layotto start -c configs/config_standalone.json",
 	Flags: []cli.Flag{
 		cli.StringFlag{
 			Name:   "config, c",

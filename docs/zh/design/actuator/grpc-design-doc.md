@@ -72,12 +72,14 @@ func MyFunc(_ json.RawMessage) *grpc.Server {
 									"server_name":"runtime",
 									"grpc_config": {
 										"hellos": {
-											"helloworld": {
+											"quick_start_demo": {
+                                                "type": "helloworld",
 												"hello": "greeting"
 											}
 										},
 										"config_store": {
-											"etcd": {
+											"config_store_demo": {
+                                                "type": "etcd",
 												"address": ["127.0.0.1:2379"],
 												"timeout": "10"
 											}

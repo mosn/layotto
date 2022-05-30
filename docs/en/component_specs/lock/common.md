@@ -4,7 +4,15 @@
 The json configuration file has the following structure:
 ```json
 "lock": {
-  "<STORE NAME>": {
+  "<Component A Name>": {
+    "type":"<Component A Type>",
+    "metadata": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    }
+  },
+  "<Component B Name>": {
+    "type":"<Component B Type>",
     "metadata": {
       "<KEY>": "<VALUE>",
       "<KEY>": "<VALUE>"
@@ -12,11 +20,12 @@ The json configuration file has the following structure:
   }
 }
 ```
-You can configure the key/value configuration items that the component cares about in the metadata. For example, [redis component configuration](https://github.com/mosn/layotto/blob/main/configs/config_lock_redis.json) is as follows:
+You can configure the key/value configuration items that the component cares about in the metadata. For example, [redis component configuration](https://github.com/mosn/layotto/blob/main/configs/config_redis.json) is as follows:
 
 ```json
 "lock": {
-  "redis": {
+  "lock_demo": {
+    "type": "redis",
     "metadata": {
       "redisHost": "localhost:6380",
       "redisPassword": ""

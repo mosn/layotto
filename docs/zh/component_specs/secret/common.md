@@ -5,28 +5,39 @@
 
 json配置文件有如下结构：
 ```json
-"secretStores": {
-  "<STORE NAME>": {
-    "metadata": {
-      "<KEY>": "<VALUE>",
-      "<KEY>": "<VALUE>"
+"secret_store": {
+  "<Component A Name>": {
+    "type":"<Component A Type>",
+      "metadata": {
+        "<KEY>": "<VALUE>",
+        "<KEY>": "<VALUE>"
+      }
+    },
+    "<Component B Name>": {
+      "type":"<Component B Type>",
+      "metadata": {
+        "<KEY>": "<VALUE>",
+        "<KEY>": "<VALUE>"
+      }
     }
-  }
 }
 ```
 本地文件秘钥、本地环境变量、k8s秘钥的配置例子：
-```
-       "secretStores": {
-                        "local.file": {
+```json
+       "secret_store": {
+                        "secret_demo": {
+                          "type": "local.file",
                           "metadata": {
                             "secretsFile": "../../configs/config_secret_local_file.json"
                           }
                         },
-                        "local.env": {
+                        "secret_demo1": {
+                          "type": "local.env",
                           "metadata": {
                           }
                         },
-                        "kubernetes": {
+                        "secret_demo2": {
+                          "type": "kubernetes",
                           "metadata": {
                           }
                         }

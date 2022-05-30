@@ -2,7 +2,7 @@
 
 ## metadata fields
 
-Example：configs/config_lock_consul.json
+Example：configs/config_consul.json
 
 | Field | Required | Description |
 | --- | --- | --- |
