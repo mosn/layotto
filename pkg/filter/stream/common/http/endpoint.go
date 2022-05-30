@@ -16,8 +16,10 @@
 
 package http
 
-const (
-	HttpSuccessCode     = 200
-	HttpNotFoundCode    = 404
-	HttpUnavailableCode = 503
+import (
+	"context"
 )
+
+type Endpoint interface {
+	Handle(ctx context.Context, params ParamsScanner) (jsonObject map[string]interface{}, err error)
+}

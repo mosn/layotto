@@ -17,31 +17,34 @@
 package wasm
 
 import (
+	"mosn.io/layotto/pkg/filter/stream/common/http"
+
 	"mosn.io/pkg/log"
 )
 
 type Wasm struct {
-	endpointRegistry map[string]Endpoint
+	endpointRegistry map[string]http.Endpoint
 }
 
-// New init an Actuator.
+// New init a Wasm.
 func New() *Wasm {
 	return &Wasm{
-		endpointRegistry: make(map[string]Endpoint),
+		endpointRegistry: make(map[string]http.Endpoint),
 	}
 }
 
 // GetEndpoint get an Endpoint from Wasm with name.
-func (wasm *Wasm) GetEndpoint(name string) (endpoint Endpoint, ok bool) {
+func (wasm *Wasm) GetEndpoint(name string) (endpoint http.Endpoint, ok bool) {
 	e, ok := wasm.endpointRegistry[name]
 	return e, ok
 }
 
 // AddEndpoint add an Endpoint to Wasm。
-func (wasm *Wasm) AddEndpoint(name string, ep Endpoint) {
+func (wasm *Wasm) AddEndpoint(name string, ep http.Endpoint) {
 	_, ok := wasm.endpointRegistry[name]
 	if ok {
 		log.DefaultLogger.Warnf("Duplicate Endpoint name:  %v !", name)
+		return
 	}
 	wasm.endpointRegistry[name] = ep
 }

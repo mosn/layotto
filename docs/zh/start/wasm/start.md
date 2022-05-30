@@ -120,22 +120,20 @@ docker rm -f redis-test
 #### 加载
 
 ```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:2045/wasm/install
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
 ```
 
 #### 更新实例数
 
 ```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2}' http://127.0.0.1:2045/wasm/update
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2}' http://127.0.0.1:34998/wasm/update
 ```
 
 #### 卸载
 
 ```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1"}' http://127.0.0.1:2045/wasm/uninstall
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1"}' http://127.0.0.1:34998/wasm/uninstall
 ```
-
-**注：以上所有接口如有异常均返回 `{"error": "xxxxx"}` 格式数据。**
 
 ### 说明
 

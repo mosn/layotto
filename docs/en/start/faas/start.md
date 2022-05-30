@@ -59,7 +59,7 @@ The example only needs a Redis server that can be used normally. As for where it
 
 **Note2: Need to modify the path of the wasm file in `./demo/faas/config.json` to `/home/docker/function_1.wasm` and `/home/docker/function_2.wasm`**
 
-**Note3: We can also use the `./demo/faas/config_dynamic_load.json` to dynamically load WASM file. For details, see [WASM Dynamic Load](https://mosn.io/layotto/#/en/start/wasm/start?id=dynamic-load)**
+**Note3: We can also load WASM file dynamically. For details, see [WASM Dynamic Load](https://mosn.io/layotto/#/en/start/wasm/start?id=dynamic-load)**
 
 #### D、Compile & install containerd-shim-layotto-v2
 

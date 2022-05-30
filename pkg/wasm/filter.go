@@ -18,7 +18,6 @@ package wasm
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"sync"
@@ -171,22 +170,6 @@ func (f *Filter) releaseUsedInstance() error {
 	return nil
 }
 
-func (f *Filter) writeJsonResult(jsonObject map[string]interface{}) {
-	var byteSlice []byte
-	if jsonObject != nil {
-		var err error
-		byteSlice, err = json.Marshal(jsonObject)
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter]error when marshal result:%v", err)
-		}
-	}
-	f.responseBuffer = buffer.NewIoBufferBytes(byteSlice)
-}
-
-func (f *Filter) writeErrorMessage(err string) {
-	f.writeJsonResult(map[string]interface{}{"error": err})
-}
-
 // Destruction of filters
 func (f *Filter) OnDestroy() {
 	f.destroyOnce.Do(func() {
@@ -221,32 +204,8 @@ func headerMapSize(headers api.HeaderMap) int {
 	return size
 }
 
-// dynamic install, update instance number, and uninstall wasm
-func (f *Filter) dynamicManageWasm(ctx context.Context) api.StreamFilterStatus {
-	path, err := variable.GetString(ctx, types.VarHttpRequestPath)
-	if err != nil {
-		f.writeErrorMessage(err.Error())
-		return api.StreamFilterStop
-	}
-	resolver := NewPathResolver(path)
-	if resolver.Next() == "wasm" {
-		endpoint, ok := GetDefault().GetEndpoint(resolver.Next())
-		if !ok {
-			f.writeErrorMessage("illegal request path: " + path)
-			return api.StreamFilterStop
-		}
-		result, err := endpoint.Handle(ctx, f)
-		if err != nil {
-			f.writeErrorMessage(err.Error())
-		} else {
-			f.writeJsonResult(result)
-		}
-		return api.StreamFilterStop
-	}
-	return api.StreamFilterContinue
-}
-
-func (f *Filter) processProxyRequest(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
+// Reset the filter when receiving then return StreamFilter status
+func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
 	id, ok := headers.Get("id")
 	if !ok {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders no id in headers")
@@ -325,15 +284,6 @@ func (f *Filter) processProxyRequest(ctx context.Context, headers api.HeaderMap,
 	}
 
 	return api.StreamFilterContinue
-}
-
-// Reset the filter when receiving then return StreamFilter status
-func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
-	status := f.dynamicManageWasm(ctx)
-	if status == api.StreamFilterStop {
-		return api.StreamFilterStop
-	}
-	return f.processProxyRequest(ctx, headers, buf, trailers)
 }
 
 // Append ResponseData of filter

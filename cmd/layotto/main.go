@@ -171,9 +171,13 @@ import (
 	_ "mosn.io/pkg/buffer"
 
 	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
+	_ "mosn.io/layotto/pkg/filter/stream/wasm/http"
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/runtime"
 	_ "mosn.io/layotto/pkg/wasm"
+	_ "mosn.io/layotto/pkg/wasm/install"
+	_ "mosn.io/layotto/pkg/wasm/uninstall"
+	_ "mosn.io/layotto/pkg/wasm/update"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
 	"mosn.io/layotto/diagnostics/jaeger"

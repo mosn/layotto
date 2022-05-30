@@ -59,7 +59,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 
 **注2：需要把`./demo/faas/config.json`中的 wasm 文件的路径修改为`/home/docker/function_1.wasm`跟`/home/docker/function_2.wasm`， 两个wasm文件在后面会被自动注入。**
 
-**注3：也可使用`./demo/faas/config_dynamic_load.json` 配置来动态加载 WASM 文件，详情参见：[WASM 动态注册](https://mosn.io/layotto/#/zh/start/wasm/start?id=动态注册)**
+**注3：也可动态加载 WASM 文件，详情参见：[WASM 动态注册](https://mosn.io/layotto/#/zh/start/wasm/start?id=动态注册)**
 
 #### D、安装 containerd-shim-layotto-v2
 

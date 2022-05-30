@@ -123,22 +123,20 @@ We can also install, update, and uninstall WASM file dynamically through the fol
 #### Install
 
 ```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:2045/wasm/install
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
 ```
 
 #### Update Instance Number
 
 ```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2}' http://127.0.0.1:2045/wasm/update
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2}' http://127.0.0.1:34998/wasm/update
 ```
 
 #### Uninstall
 
 ```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1"}' http://127.0.0.1:2045/wasm/uninstall
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1"}' http://127.0.0.1:34998/wasm/uninstall
 ```
-
-**Note: All the above Apis will return data like `{"error": "xxxxx"}` if there is an exception.**
 
 ### Note
 

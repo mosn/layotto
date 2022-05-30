@@ -49,8 +49,12 @@ import (
 	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/grpc/default_api"
 
+	_ "mosn.io/layotto/pkg/filter/stream/wasm/http"
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	_ "mosn.io/layotto/pkg/wasm"
+	_ "mosn.io/layotto/pkg/wasm/install"
+	_ "mosn.io/layotto/pkg/wasm/uninstall"
+	_ "mosn.io/layotto/pkg/wasm/update"
 
 	"mosn.io/layotto/components/file/local"
 
