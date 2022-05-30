@@ -17,8 +17,9 @@
 package actuator
 
 import (
-	"mosn.io/layotto/pkg/filter/stream/common/http"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/pkg/filter/stream/common/http"
 )
 
 type Actuator struct {
