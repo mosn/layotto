@@ -60,7 +60,10 @@ func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap,
 		return api.StreamFilterStop
 	}
 	// 3. process request
-	ctx = context.WithValue(ctx, "requestData", dis.handler.GetRequestData().Bytes())
+	requestData := dis.handler.GetRequestData()
+	if requestData != nil {
+		ctx = context.WithValue(ctx, "requestData", requestData.Bytes())
+	}
 	epName := resolver.Next()
 	endpoint, ok := dis.requestHandler.GetEndpoint(epName)
 	if !ok {

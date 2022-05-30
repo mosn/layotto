@@ -18,7 +18,6 @@ package update
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 
 	"mosn.io/layotto/pkg/wasm"
@@ -40,10 +39,9 @@ func NewEndpoint() *Endpoint {
 }
 
 func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[string]interface{}, error) {
-	conf := make(map[string]interface{})
-	err := json.Unmarshal(ctx.Value("requestData").([]byte), &conf)
+	conf, err := wasm.GetRequestData(ctx)
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasm][update] invalid body for request /wasm/uninstall, err:%v", err)
+		log.DefaultLogger.Errorf("[wasm][update] invalid request body for request /wasm/update, err:%v", err)
 		return map[string]interface{}{"error": err.Error()}, err
 	}
 
