@@ -34,7 +34,7 @@ impl HttpContext for ServerHttpContext {
                 None => None,
             });
         match book_name {
-            Some(book_name) => match get_state("redis", &book_name) {
+            Some(book_name) => match get_state("state_demo", &book_name) {
                 Ok(response) => {
                     let response = response.unwrap_or(vec![]);
                     set_buffer(BufferType::HttpResponseBody, 0, &response).unwrap();

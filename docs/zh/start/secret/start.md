@@ -22,7 +22,7 @@ go build -o layotto
 完成后目录下会生成layotto文件，运行它：
 
 ```shell @background
-./layotto start -c ../../configs/config_secret_file.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 
 ### 第二步：运行客户端程序，调用Layotto生成唯一id
@@ -35,7 +35,7 @@ go build -o layotto
  go build -o client
 ```
 ```shell
- ./client -s "local.file"
+ ./client -s "secret_demo"
 ```
 
 打印出如下信息则代表调用成功：

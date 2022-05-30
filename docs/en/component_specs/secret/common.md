@@ -5,29 +5,40 @@ This component can access secrets from local files, environment variables, k8s, 
 The json configuration file has the following structure:
 ```json
 "secret_store": {
-  "<STORE NAME>": {
-    "metadata": {
-      "<KEY>": "<VALUE>",
-      "<KEY>": "<VALUE>"
+  "<Component A Name>": {
+    "type":"<Component A Type>",
+      "metadata": {
+        "<KEY>": "<VALUE>",
+        "<KEY>": "<VALUE>"
+      }
+    },
+    "<Component B Name>": {
+      "type":"<Component B Type>",
+      "metadata": {
+        "<KEY>": "<VALUE>",
+        "<KEY>": "<VALUE>"
+      }
     }
-  }
 }
 ```
 Configuration examples of local file keys, local environment variables, and k8s keys:
-```
+```json
        "secret_store": {
-                        "local.file": {
+                        "secret_demo": {
+                          "type": "local.file",
                           "metadata": {
                             "secretsFile": "../../configs/config_secret_local_file.json"
                           }
                         },
-                        "local.env": {
+                        "secret_demo1": {
+                          "type": "local.env",
                           "metadata": {
                           }
                         },
-                        "kubernetes": {
+                        "secret_demo2": {
+                          "type": "kubernetes",
                           "metadata": {
                           }
                         }
-                      }
+}
 ```

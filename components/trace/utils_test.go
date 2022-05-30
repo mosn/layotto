@@ -30,3 +30,19 @@ func TestSetExtraComponentInfo(t *testing.T) {
 	v := span.Tag(LAYOTTO_COMPONENT_DETAIL)
 	assert.Equal(t, v, "hello")
 }
+
+func TestSetterAndGetter(t *testing.T) {
+	var span Span
+	// ParentSpanId
+	span.SetParentSpanId("par")
+	v := span.ParentSpanId()
+	assert.Equal(t, v, "par")
+	// traceId
+	span.SetTraceId("traceId")
+	v = span.TraceId()
+	assert.Equal(t, v, "traceId")
+	// span id
+	span.SetSpanId("spanId")
+	v = span.SpanId()
+	assert.Equal(t, v, "spanId")
+}

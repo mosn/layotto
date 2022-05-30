@@ -19,6 +19,7 @@ package client
 import (
 	"context"
 	"fmt"
+
 	"net"
 	"os"
 	"testing"
@@ -81,6 +82,7 @@ func getTestClient(ctx context.Context) (client Client, closer func()) {
 		kv:         make(map[string]string),
 		subscribed: make(map[string]bool),
 		state:      make(map[string][]byte),
+		lock:       make(map[string]string),
 	})
 
 	l := bufconn.Listen(testBufSize)
@@ -113,9 +115,10 @@ type testRuntimeServer struct {
 	kv         map[string]string
 	subscribed map[string]bool
 	state      map[string][]byte
+	lock       map[string]string
 }
 
-func (s *testRuntimeServer) InvokeService(ctx context.Context, req *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error) {
+func (t *testRuntimeServer) InvokeService(ctx context.Context, req *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error) {
 	if req.Message == nil {
 		return &runtimev1pb.InvokeResponse{
 			ContentType: "text/plain",
@@ -130,17 +133,17 @@ func (s *testRuntimeServer) InvokeService(ctx context.Context, req *runtimev1pb.
 	}, nil
 }
 
-func (s *testRuntimeServer) GetState(ctx context.Context, req *runtimev1pb.GetStateRequest) (*runtimev1pb.GetStateResponse, error) {
+func (t *testRuntimeServer) GetState(ctx context.Context, req *runtimev1pb.GetStateRequest) (*runtimev1pb.GetStateResponse, error) {
 	return &pb.GetStateResponse{
-		Data: s.state[req.Key],
+		Data: t.state[req.Key],
 		Etag: "1",
 	}, nil
 }
 
-func (s *testRuntimeServer) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequest) (*runtimev1pb.GetBulkStateResponse, error) {
+func (t *testRuntimeServer) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequest) (*runtimev1pb.GetBulkStateResponse, error) {
 	items := make([]*runtimev1pb.BulkStateItem, 0)
 	for _, k := range in.GetKeys() {
-		if v, found := s.state[k]; found {
+		if v, found := t.state[k]; found {
 			item := &pb.BulkStateItem{
 				Key:  k,
 				Etag: "1",
@@ -154,7 +157,7 @@ func (s *testRuntimeServer) GetBulkState(ctx context.Context, in *runtimev1pb.Ge
 	}, nil
 }
 
-func (s *testRuntimeServer) SaveState(ctx context.Context, req *runtimev1pb.SaveStateRequest) (*empty.Empty, error) {
+func (t *testRuntimeServer) SaveState(ctx context.Context, req *runtimev1pb.SaveStateRequest) (*empty.Empty, error) {
 	if req == nil {
 		return &empty.Empty{}, nil
 	}
@@ -162,31 +165,31 @@ func (s *testRuntimeServer) SaveState(ctx context.Context, req *runtimev1pb.Save
 		if item == nil {
 			continue
 		}
-		s.state[item.Key] = item.Value
+		t.state[item.Key] = item.Value
 	}
 	return &empty.Empty{}, nil
 }
 
-func (s *testRuntimeServer) DeleteState(ctx context.Context, req *runtimev1pb.DeleteStateRequest) (*empty.Empty, error) {
-	delete(s.state, req.Key)
+func (t *testRuntimeServer) DeleteState(ctx context.Context, req *runtimev1pb.DeleteStateRequest) (*empty.Empty, error) {
+	delete(t.state, req.Key)
 	return &empty.Empty{}, nil
 }
 
-func (s *testRuntimeServer) DeleteBulkState(ctx context.Context, req *runtimev1pb.DeleteBulkStateRequest) (*empty.Empty, error) {
+func (t *testRuntimeServer) DeleteBulkState(ctx context.Context, req *runtimev1pb.DeleteBulkStateRequest) (*empty.Empty, error) {
 	for _, item := range req.States {
-		delete(s.state, item.Key)
+		delete(t.state, item.Key)
 	}
 	return &empty.Empty{}, nil
 }
 
-func (s *testRuntimeServer) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*empty.Empty, error) {
+func (t *testRuntimeServer) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*empty.Empty, error) {
 	for _, op := range in.GetOperations() {
 		item := op.GetRequest()
 		switch opType := op.GetOperationType(); opType {
 		case "upsert":
-			s.state[item.Key] = item.Value
+			t.state[item.Key] = item.Value
 		case "delete":
-			delete(s.state, item.Key)
+			delete(t.state, item.Key)
 		default:
 			return &empty.Empty{}, fmt.Errorf("invalid operation type: %s", opType)
 		}
@@ -194,7 +197,7 @@ func (s *testRuntimeServer) ExecuteStateTransaction(ctx context.Context, in *run
 	return &empty.Empty{}, nil
 }
 
-func (s *testRuntimeServer) PublishEvent(ctx context.Context, req *runtimev1pb.PublishEventRequest) (*empty.Empty, error) {
+func (t *testRuntimeServer) PublishEvent(ctx context.Context, req *runtimev1pb.PublishEventRequest) (*empty.Empty, error) {
 	return &empty.Empty{}, nil
 }
 
@@ -263,4 +266,37 @@ func (*testRuntimeServer) GetBulkSecret(ctx context.Context, in *runtimev1pb.Get
 		Data: data,
 	}
 	return resp, nil
+}
+
+func (t *testRuntimeServer) TryLock(ctx context.Context, in *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error) {
+	if len(t.lock[in.ResourceId]) == 0 {
+		t.lock[in.ResourceId] = in.LockOwner
+		return &runtimev1pb.TryLockResponse{
+			Success: true,
+		}, nil
+	}
+	// lock exist
+	return &runtimev1pb.TryLockResponse{
+		Success: false,
+	}, nil
+}
+
+func (t *testRuntimeServer) Unlock(ctx context.Context, in *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error) {
+	// LOCK_UNEXIST
+	if len(t.lock[in.ResourceId]) == 0 {
+		return &runtimev1pb.UnlockResponse{
+			Status: pb.UnlockResponse_LOCK_UNEXIST,
+		}, nil
+	}
+	// SUCCESS
+	if t.lock[in.ResourceId] == in.LockOwner {
+		delete(t.lock, in.ResourceId)
+		return &runtimev1pb.UnlockResponse{
+			Status: pb.UnlockResponse_SUCCESS,
+		}, nil
+	}
+	// LOCK_BELONG_TO_OTHERS
+	return &runtimev1pb.UnlockResponse{
+		Status: pb.UnlockResponse_LOCK_BELONG_TO_OTHERS,
+	}, nil
 }

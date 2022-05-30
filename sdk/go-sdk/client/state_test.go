@@ -26,6 +26,8 @@ import (
 	v1 "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
+const test = "test"
+
 func TestTypes(t *testing.T) {
 	var op OperationType = -1
 	assert.Equal(t, UndefinedType, op.String())
@@ -36,7 +38,7 @@ func TestTypes(t *testing.T) {
 }
 
 func TestDurationConverter(t *testing.T) {
-	d := time.Duration(10 * time.Second)
+	d := 10 * time.Second
 	pd := toProtoDuration(d)
 	assert.NotNil(t, pd)
 	assert.Equal(t, pd.Seconds, int64(10))
@@ -56,8 +58,8 @@ func TestStateOptionsConverter(t *testing.T) {
 // go test -timeout 30s ./client -count 1 -run ^TestSaveState$
 func TestSaveState(t *testing.T) {
 	ctx := context.Background()
-	data := "test"
-	store := "test"
+	data := test
+	store := test
 	key := "key1"
 
 	t.Run("save data", func(t *testing.T) {
@@ -104,8 +106,8 @@ func TestSaveState(t *testing.T) {
 // go test -timeout 30s ./client -count 1 -run ^TestDeleteState$
 func TestDeleteState(t *testing.T) {
 	ctx := context.Background()
-	data := "test"
-	store := "test"
+	data := test
+	store := test
 	key := "key1"
 
 	t.Run("delete not exist data", func(t *testing.T) {
@@ -182,8 +184,8 @@ func TestDeleteState(t *testing.T) {
 
 func TestDeleteBulkState(t *testing.T) {
 	ctx := context.Background()
-	data := "test"
-	store := "test"
+	data := test
+	store := test
 	keys := []string{"key1", "key2", "key3"}
 
 	t.Run("delete not exist data", func(t *testing.T) {
@@ -290,7 +292,7 @@ func TestDeleteBulkState(t *testing.T) {
 func TestStateTransactions(t *testing.T) {
 	ctx := context.Background()
 	data := `{ "message": "test" }`
-	store := "test"
+	store := test
 	meta := map[string]string{}
 	keys := []string{"k1", "k2", "k3"}
 	adds := make([]*StateOperation, 0)

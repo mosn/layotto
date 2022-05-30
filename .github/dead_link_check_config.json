@@ -11,6 +11,9 @@
     },
     {
       "pattern": "^https://console.cloud.tencent.com/cos/bucket"
+    },
+    {
+      "pattern": "^#"
     }
   ],
   "replacementPatterns": [
@@ -33,6 +36,7 @@
   "fallbackRetryDelay": "1s",
   "aliveStatusCodes": [
     200,
-    401
+    401,
+    403
   ]
 }

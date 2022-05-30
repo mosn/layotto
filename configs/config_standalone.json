@@ -22,37 +22,64 @@
                     "server_name": "runtime",
                     "grpc_config": {
                       "hellos": {
-                        "helloworld": {
+                        "quick_start_demo": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "state": {
-                        "in-memory": {
+                        "state_demo": {
+                          "type": "in-memory",
                           "metadata": {
                           }
                         }
                       },
                       "lock": {
-                        "in-memory": {
+                        "lock_demo": {
+                          "type": "in-memory",
                           "metadata": {
                           }
                         }
                       },
                       "pub_subs": {
-                        "in-memory": {
+                        "pub_subs_demo": {
+                          "type": "in-memory",
                           "metadata": {
                             "consumerID": "1"
                           }
                         }
                       },
                       "sequencer": {
-                        "in-memory": {
+                        "sequencer_demo": {
+                          "type": "in-memory",
                           "metadata": {}
+                        }
+                      },
+                      "secret_store": {
+                        "secret_demo": {
+                          "type": "local.file",
+                          "metadata": {
+                            "secretsFile": "../../configs/secret/config_secret_local_file.json"
+                          }
+                        },
+                        "secret_demo1": {
+                          "type": "local.env",
+                          "metadata": {
+                          }
+                        }
+                      },
+                      "bindings": {
+                        "bindings_demo": {
+                          "type": "http",
+                          "metadata": {
+                            "url": "https://mosn.io/layotto"
+                          }
                         }
                       },
                       "custom_component": {
                         "helloworld": {
-                          "in-memory": {
+                          "demo": {
+                            "type": "in-memory",
                             "metadata": {}
                           }
                         }
@@ -94,5 +121,25 @@
         }
       ]
     }
-  ]
+  ],
+  "tracing": {
+    "enable": true,
+    "driver": "SOFATracer",
+    "config": {
+      "generator": "mosntracing",
+      "exporter": [
+        "stdout"
+      ]
+    }
+  },
+  "metrics": {
+    "sinks": [
+      {
+        "type": "prometheus",
+        "config": {
+          "port": 34903
+        }
+      }
+    ]
+  }
 }

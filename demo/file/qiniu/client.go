@@ -31,6 +31,10 @@ import (
 	"google.golang.org/grpc"
 )
 
+const (
+	storeName = "file_demo"
+)
+
 func TestGet(fileName string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
@@ -39,17 +43,17 @@ func TestGet(fileName string) {
 	}
 
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.GetFileRequest{StoreName: "qiniuOSS", Name: fileName}
+	req := &runtimev1pb.GetFileRequest{StoreName: storeName, Name: fileName}
 	cli, err := c.GetFile(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)
 		return
 	}
-	pic := make([]byte, 0, 0)
+	pic := make([]byte, 0)
 	for {
 		resp, err := cli.Recv()
 		if err != nil {
-			fmt.Errorf("recv file failed")
+			fmt.Printf("recv file failed")
 			break
 		}
 		pic = append(pic, resp.Data...)
@@ -67,7 +71,7 @@ func TestPut(fileName string, value string) {
 	c := runtimev1pb.NewRuntimeClient(conn)
 	data := []byte(value)
 	meta["filesize"] = strconv.Itoa(len(data))
-	req := &runtimev1pb.PutFileRequest{StoreName: "qiniuOSS", Name: fileName, Metadata: meta}
+	req := &runtimev1pb.PutFileRequest{StoreName: storeName, Name: fileName, Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
 	if err != nil {
 		fmt.Printf("put file failed:%+v", err)
@@ -92,7 +96,7 @@ func TestList(bucketName string) {
 	c := runtimev1pb.NewRuntimeClient(conn)
 	marker := ""
 	for {
-		req := &runtimev1pb.FileRequest{StoreName: "qiniuOSS", Name: bucketName, Metadata: meta}
+		req := &runtimev1pb.FileRequest{StoreName: storeName, Name: bucketName, Metadata: meta}
 		listReq := &runtimev1pb.ListFileRequest{Request: req, PageSize: 1, Marker: marker}
 		resp, err := c.ListFile(context.Background(), listReq)
 		if err != nil {
@@ -119,7 +123,7 @@ func TestDel(fileName string) {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.FileRequest{StoreName: "qiniuOSS", Name: fileName, Metadata: meta}
+	req := &runtimev1pb.FileRequest{StoreName: storeName, Name: fileName, Metadata: meta}
 	listReq := &runtimev1pb.DelFileRequest{Request: req}
 	_, err = c.DelFile(context.Background(), listReq)
 	if err != nil {
@@ -138,7 +142,7 @@ func TestStat(fileName string) {
 	meta := make(map[string]string)
 	meta["storageType"] = "Standard"
 	c := runtimev1pb.NewRuntimeClient(conn)
-	req := &runtimev1pb.FileRequest{StoreName: "qiniuOSS", Name: fileName, Metadata: meta}
+	req := &runtimev1pb.FileRequest{StoreName: storeName, Name: fileName, Metadata: meta}
 	statReq := &runtimev1pb.GetFileMetaRequest{Request: req}
 	data, err := c.GetFileMeta(context.Background(), statReq)
 	//here use grpc error code check file exist or not.
@@ -146,11 +150,10 @@ func TestStat(fileName string) {
 		if m.Code() == codes.NotFound {
 			fmt.Println("file not exist")
 			return
-		} else {
-			if m != nil {
-				fmt.Printf("stat file fail,err:%+v \n", err)
-				return
-			}
+		}
+		if m != nil {
+			fmt.Printf("stat file fail,err:%+v \n", err)
+			return
 		}
 	}
 	fmt.Printf("get meta data of file: size:%+v, modifyTime:%+v \n", data.Size, data.LastModified)
