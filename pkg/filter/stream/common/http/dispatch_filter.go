@@ -62,7 +62,7 @@ func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap,
 	// 3. process request
 	requestData := dis.handler.GetRequestData()
 	if requestData != nil {
-		ctx = context.WithValue(ctx, "requestData", requestData.Bytes())
+		ctx = context.WithValue(ctx, ContextKeyRequestData{}, requestData.Bytes())
 	}
 	epName := resolver.Next()
 	endpoint, ok := dis.requestHandler.GetEndpoint(epName)

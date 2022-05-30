@@ -17,9 +17,6 @@
 package wasm
 
 import (
-	"context"
-	"encoding/json"
-	"errors"
 	"reflect"
 )
 
@@ -37,17 +34,4 @@ func filter(arr interface{}, predicate interface{}) interface{} {
 		}
 	}
 	return resultSlice.Interface()
-}
-
-func GetRequestData(ctx context.Context) (map[string]interface{}, error) {
-	requestData := ctx.Value("requestData")
-	if requestData == nil {
-		return nil, errors.New("invalid request body")
-	}
-	conf := make(map[string]interface{})
-	err := json.Unmarshal(requestData.([]byte), &conf)
-	if err != nil {
-		return nil, err
-	}
-	return conf, nil
 }

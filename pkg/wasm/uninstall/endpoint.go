@@ -39,7 +39,7 @@ func NewEndpoint() *Endpoint {
 }
 
 func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[string]interface{}, error) {
-	conf, err := wasm.GetRequestData(ctx)
+	conf, err := http.GetRequestData(ctx)
 	if err != nil {
 		log.DefaultLogger.Errorf("[wasm][uninstall] invalid request body for request /wasm/uninstall, err:%v", err)
 		return map[string]interface{}{"error": err.Error()}, err
