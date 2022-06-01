@@ -17,11 +17,13 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"errors"
+	"testing"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/layotto/components/sequencer"
 	"mosn.io/pkg/log"
-	"testing"
+
+	"mosn.io/layotto/components/sequencer"
 )
 
 const (
@@ -29,6 +31,7 @@ const (
 	Value    = 1
 	Key      = "sequenceKey"
 	Size     = 50
+	Version  = 1
 )
 
 func TestMySQLSequencer_Init(t *testing.T) {
@@ -68,12 +71,12 @@ func TestMySQLSequencer_GetNextId(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	rows := sqlmock.NewRows([]string{"sequencer_key", "sequencer_value"}).AddRow([]driver.Value{Key, Value}...)
+	rows := sqlmock.NewRows([]string{"sequencer_key", "sequencer_value", "version"}).AddRow([]driver.Value{Key, Value, Version}...)
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
 	mock.ExpectExec("UPDATE").WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", "sequenceKey", 2).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", "sequenceKey", Value, Version).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
@@ -103,12 +106,12 @@ func TestMySQLSequencer_GetSegment(t *testing.T) {
 	}
 	defer db.Close()
 
-	rows := sqlmock.NewRows([]string{"sequencer_key", "sequencer_value"}).AddRow([]driver.Value{Key, Value}...)
+	rows := sqlmock.NewRows([]string{"sequencer_key", "sequencer_value", "version"}).AddRow([]driver.Value{Key, Value, Version}...)
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
 	mock.ExpectExec("UPDATE").WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", Key, Size).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", Key, Size, Version).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
@@ -163,7 +166,7 @@ func TestMySQLSequencer_Segment_Insert(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnError(sql.ErrNoRows)
-	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", Key, Size).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", Key, Size, Version).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
@@ -192,7 +195,7 @@ func TestMySQLSequencer_GetNextId_Insert(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnError(sql.ErrNoRows)
-	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", "sequenceKey", 1).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", "sequenceKey", Value, Version).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
@@ -222,7 +225,7 @@ func TestMySQLSequencer_GetNextId_InsertError(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnError(sql.ErrNoRows)
-	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", "sequenceKey", 1).WillReturnError(errors.New("insert error"))
+	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", "sequenceKey", Value, Version).WillReturnError(errors.New("insert error"))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
@@ -250,7 +253,7 @@ func TestMySQLSequencer_Segment_InsertError(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnError(sql.ErrNoRows)
-	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", Key, Size).WillReturnError(errors.New("insert error"))
+	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", Key, Size, Version).WillReturnError(errors.New("insert error"))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
@@ -274,7 +277,7 @@ func TestMySQLSequencer_GetNextId_UpdateError(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	rows := sqlmock.NewRows([]string{"sequencer_key", "sequencer_value"}).AddRow([]driver.Value{Key, Value}...)
+	rows := sqlmock.NewRows([]string{"sequencer_key", "sequencer_value", "version"}).AddRow([]driver.Value{Key, Value, Version}...)
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
@@ -304,7 +307,7 @@ func TestMySQLSequencer_Segment_UpdateError(t *testing.T) {
 	}
 	defer db.Close()
 
-	rows := sqlmock.NewRows([]string{"sequencer_key", "sequencer_value"}).AddRow([]driver.Value{Key, Value}...)
+	rows := sqlmock.NewRows([]string{"sequencer_key", "sequencer_value", "version"}).AddRow([]driver.Value{Key, Value, Version}...)
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)

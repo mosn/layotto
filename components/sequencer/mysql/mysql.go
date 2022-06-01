@@ -16,10 +16,12 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"sync"
+
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
-	"mosn.io/pkg/log"
-	"sync"
 )
 
 var lock sync.Mutex
@@ -80,6 +82,8 @@ func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.
 	metadata.Db = e.db
 	var Key string
 	var Value int64
+	var Version int64
+	var oldVersion int64
 	if err != nil {
 		return nil, err
 	}
@@ -87,16 +91,17 @@ func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.
 	if err != nil {
 		return nil, err
 	}
-	err = begin.QueryRow("SELECT sequencer_key,sequencer_value FROM ? WHERE sequencer_key = ?", metadata.TableName, req.Key).Scan(&Key, &Value)
+	err = begin.QueryRow("SELECT sequencer_key, sequencer_value, version FROM ? WHERE sequencer_key = ?", metadata.TableName, req.Key).Scan(&Key, &Value, &oldVersion)
 
 	if err == sql.ErrNoRows {
 		Value = 1
-		_, err := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value) VALUES(?,?)", metadata.TableName, req.Key, Value)
+		Version = 1
+		_, err := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value, version) VALUES(?,?,?)", metadata.TableName, req.Key, Value, Version)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		_, err := begin.Exec("UPDATE ? SET sequencer_value +=1 WHERE sequencer_key = ?", metadata.TableName, req.Key)
+		_, err := begin.Exec("UPDATE ? SET sequencer_value +=1, version += 1 WHERE sequencer_key = ? and version = ?", metadata.TableName, req.Key, oldVersion)
 		if err != nil {
 			return nil, err
 		}
@@ -122,6 +127,8 @@ func (e *MySQLSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support b
 
 	var Key string
 	var Value int64
+	var Version int64
+	var oldVersion int64
 	if err != nil {
 		return false, nil, err
 	}
@@ -133,17 +140,18 @@ func (e *MySQLSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support b
 		return false, nil, err
 	}
 
-	err = begin.QueryRow("SELECT sequencer_key,sequencer_value FROM ? WHERE sequencer_key == ?", metadata.TableName, req.Key).Scan(&Key, &Value)
+	err = begin.QueryRow("SELECT sequencer_key, sequencer_value, version FROM ? WHERE sequencer_key == ?", metadata.TableName, req.Key).Scan(&Key, &Value, &oldVersion)
 	if err == sql.ErrNoRows {
 		Value = int64(req.Size)
-		_, err := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value) VALUES(?,?)", metadata.TableName, req.Key, Value)
+		Version = 1
+		_, err := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value, version) VALUES(?,?,?)", metadata.TableName, req.Key, Value, Version)
 		if err != nil {
 			return false, nil, err
 		}
 
 	} else {
 		Value += int64(req.Size)
-		_, err1 := begin.Exec("UPDATE ? SET sequencer_value = ? WHERE sequencer_key = ?", metadata.TableName, Value, req.Key)
+		_, err1 := begin.Exec("UPDATE ? SET sequencer_value = ?, version += 1 WHERE sequencer_key = ? AND version = ?", metadata.TableName, Value, req.Key, oldVersion)
 		if err1 != nil {
 			return false, nil, err1
 		}
