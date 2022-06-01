@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install markdown-link-check
-        run: sudo npm install -g markdown-link-check@3.8.7
+        run: sudo npm install -g markdown-link-check@3
 
       - name: Install and start docsify server
         run: |
