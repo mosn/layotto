@@ -27,11 +27,14 @@ import (
 )
 
 const (
-	MySQLUrl = "localhost:xxxxx"
-	Value    = 1
-	Key      = "sequenceKey"
-	Size     = 50
-	Version  = 1
+	MySQLUrl         = "localhost:xxxxx"
+	Value            = 1
+	Key              = "sequenceKey"
+	Size             = 50
+	Version          = 1
+	tableNameKey     = "layotto_sequencer"
+	dataBaseName     = "layotto"
+	connectionString = "connectionString"
 )
 
 func TestMySQLSequencer_Init(t *testing.T) {
@@ -54,9 +57,9 @@ func TestMySQLSequencer_Init(t *testing.T) {
 	mock.ExpectQuery("SELECT EXISTS").WillReturnRows(rows)
 	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
 
-	cfg.Properties["tableNameKey"] = "layotto_sequencer"
-	cfg.Properties["connectionString"] = "connectionString"
-	cfg.Properties["dataBaseName"] = "layotto"
+	cfg.Properties["tableNameKey"] = tableNameKey
+	cfg.Properties["connectionString"] = connectionString
+	cfg.Properties["dataBaseName"] = dataBaseName
 	err = comp.Init(cfg)
 
 	assert.Nil(t, err)
@@ -81,9 +84,9 @@ func TestMySQLSequencer_GetNextId(t *testing.T) {
 
 	properties := make(map[string]string)
 
-	properties["tableName"] = "layotto_sequencer"
-	properties["connectionString"] = "connectionString"
-	properties["dataBaseName"] = "layotto"
+	properties["tableNameKey"] = tableNameKey
+	properties["connectionString"] = connectionString
+	properties["dataBaseName"] = dataBaseName
 
 	req := &sequencer.GetNextIdRequest{Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
@@ -116,9 +119,9 @@ func TestMySQLSequencer_GetSegment(t *testing.T) {
 
 	properties := make(map[string]string)
 
-	properties["tableName"] = "layotto_sequencer"
-	properties["connectionString"] = "connectionString"
-	properties["dataBaseName"] = "layotto"
+	properties["tableNameKey"] = tableNameKey
+	properties["connectionString"] = connectionString
+	properties["dataBaseName"] = dataBaseName
 
 	req := &sequencer.GetSegmentRequest{Size: Size, Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
@@ -171,9 +174,9 @@ func TestMySQLSequencer_Segment_Insert(t *testing.T) {
 
 	properties := make(map[string]string)
 
-	properties["tableName"] = "layotto_sequencer"
-	properties["connectionString"] = "connectionString"
-	properties["dataBaseName"] = "layotto"
+	properties["tableNameKey"] = tableNameKey
+	properties["connectionString"] = connectionString
+	properties["dataBaseName"] = dataBaseName
 
 	segmentReq := &sequencer.GetSegmentRequest{Size: Size, Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 	comp.db = db
@@ -200,9 +203,9 @@ func TestMySQLSequencer_GetNextId_Insert(t *testing.T) {
 
 	properties := make(map[string]string)
 
-	properties["tableName"] = "layotto_sequencer"
-	properties["connectionString"] = "connectionString"
-	properties["dataBaseName"] = "layotto"
+	properties["tableNameKey"] = tableNameKey
+	properties["connectionString"] = connectionString
+	properties["dataBaseName"] = dataBaseName
 
 	req := &sequencer.GetNextIdRequest{Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
@@ -230,9 +233,9 @@ func TestMySQLSequencer_GetNextId_InsertError(t *testing.T) {
 
 	properties := make(map[string]string)
 
-	properties["tableName"] = "layotto_sequencer"
-	properties["connectionString"] = "connectionString"
-	properties["dataBaseName"] = "layotto"
+	properties["tableNameKey"] = tableNameKey
+	properties["connectionString"] = connectionString
+	properties["dataBaseName"] = dataBaseName
 
 	req := &sequencer.GetNextIdRequest{Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
@@ -258,9 +261,9 @@ func TestMySQLSequencer_Segment_InsertError(t *testing.T) {
 
 	properties := make(map[string]string)
 
-	properties["tableName"] = "layotto_sequencer"
-	properties["connectionString"] = "connectionString"
-	properties["dataBaseName"] = "layotto"
+	properties["tableNameKey"] = tableNameKey
+	properties["connectionString"] = connectionString
+	properties["dataBaseName"] = dataBaseName
 
 	segmentReq := &sequencer.GetSegmentRequest{Size: Size, Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 	comp.db = db
@@ -286,9 +289,9 @@ func TestMySQLSequencer_GetNextId_UpdateError(t *testing.T) {
 
 	properties := make(map[string]string)
 
-	properties["tableName"] = "layotto_sequencer"
-	properties["connectionString"] = "connectionString"
-	properties["dataBaseName"] = "layotto"
+	properties["tableNameKey"] = tableNameKey
+	properties["connectionString"] = connectionString
+	properties["dataBaseName"] = dataBaseName
 
 	req := &sequencer.GetNextIdRequest{Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
@@ -316,9 +319,9 @@ func TestMySQLSequencer_Segment_UpdateError(t *testing.T) {
 
 	properties := make(map[string]string)
 
-	properties["tableName"] = "layotto_sequencer"
-	properties["connectionString"] = "connectionString"
-	properties["dataBaseName"] = "layotto"
+	properties["tableNameKey"] = tableNameKey
+	properties["connectionString"] = connectionString
+	properties["dataBaseName"] = dataBaseName
 
 	req := &sequencer.GetSegmentRequest{Size: Size, Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
