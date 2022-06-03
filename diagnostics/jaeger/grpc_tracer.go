@@ -65,6 +65,7 @@ func init() {
 }
 
 func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
+	// 1. construct the ReporterConfig, which is used to communicate with jaeger
 	var reporter *config.ReporterConfig
 
 	// Determining whether to start the agent
@@ -83,7 +84,7 @@ func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 			LocalAgentHostPort:  getAgentHost(traceCfg),
 		}
 	}
-
+	// 2. construct the Configuration
 	cfg := config.Configuration{
 		Disabled: false,
 		Sampler: &config.SamplerConfig{
@@ -94,6 +95,8 @@ func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 	}
 
 	cfg.ServiceName = getServiceName(traceCfg)
+
+	// 3. use the Configuration to construct a new tracer
 	tracer, _, err := cfg.NewTracer()
 
 	log.DefaultLogger.Infof("[layotto] [jaeger] [tracer] jaeger agent host:%s, report service name:%s",
@@ -104,6 +107,7 @@ func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 		return nil, err
 	}
 
+	// 4. adapt to the `api.Tracer`
 	return &grpcJaegerTracer{
 		tracer: tracer,
 	}, nil
