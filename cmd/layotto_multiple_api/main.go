@@ -132,9 +132,9 @@ import (
 	// Sequencer
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
 	sequencer_inmemory "mosn.io/layotto/components/sequencer/in-memory"
+	sequencer_mysql "mosn.io/layotto/components/sequencer/mysql"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
-
 	// File
 	"mosn.io/layotto/components/file/s3/qiniu"
 	"mosn.io/layotto/components/file/s3/tencentcloud"
@@ -402,6 +402,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
 				return sequencer_inmemory.NewInMemorySequencer()
+			}),
+			runtime_sequencer.NewFactory("mysql", func() sequencer.Store {
+				return sequencer_mysql.NewMySQLSequencer(log.DefaultLogger)
 			}),
 		),
 		// secretstores
