@@ -49,7 +49,7 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 如果您想把应用部署到不同的云平台（例如将阿里云上的应用部署到 AWS），您只需要在 Layotto 提供的 [配置文件](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json)
 里修改配置、指定自己想用的基础设施类型，不需要修改应用的代码就能让应用拥有"跨云部署"能力，大大提高了程序的可移植性。
 
-![系统架构图](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
+![系统架构图](../img/runtime-architecture.png)
 
 ## 快速开始
 
@@ -134,7 +134,7 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 | 平台                                          | 联系方式                                                                                                                                             |
 | :-------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 💬 [钉钉](https://www.dingtalk.com/zh) (用户群) | 群号: 31912621 或者扫描下方二维码 <br> <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/ding-talk-group-1.png" height="200px"> <br> |
+| 💬 [钉钉](https://www.dingtalk.com/zh) (用户群) | 群号: 31912621 或者扫描下方二维码 <br> <img src="../img/ding-talk-group-1.png" height="200px"> <br> |
 | 💬 [钉钉](https://www.dingtalk.com/zh) (社区会议群) | 群号：41585216 <br> [Layotto 在每周五晚 8 点进行社区会议，欢迎所有人](zh/community/meeting.md) |
 
 [comment]: <> (| 💬 [微信]&#40;https://www.wechat.com/&#41; | 扫描下方二维码添加好友，她会邀请您加入微信群 <br> <img src="../img/wechat-group.jpg" height="200px">)
