@@ -1,6 +1,6 @@
 <div align="center">
   <h1>Layotto (L8): To be the next layer of OSI layer 7</h1>
-  <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
+  <img src="img/logo/grey2-1.svg" height="120px">
 
 [![Layotto Env Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml)
 [![Layotto Dev Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml)
@@ -41,7 +41,7 @@ As shown in the architecture diagram below, Layotto uses the open source MOSN as
 
 Layotto provides sdk in various languages. The sdk interacts with Layotto through grpc. Application developers only need to specify their own infrastructure type through the [configuration file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) provided by Layotto. No coding changes are required, which greatly improves the portability of the program.
 
-![Architecture](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
+<img src="img/runtime-architecture.png" />
 
 ## Quickstarts
 
@@ -125,7 +125,7 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 | Platform                                               | Link                                                                                                                                                                                    |
 | :----------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 💬 [DingTalk](https://www.dingtalk.com/en) (preferred) | Search the group number: 31912621 or scan the QR code below <br> <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/ding-talk-group-1.png?raw=true" height="200px"> |
+| 💬 [DingTalk](https://www.dingtalk.com/en) (preferred) | Search the group number: 31912621 or scan the QR code below <br> <img src="img/ding-talk-group-1.png?raw=true" height="200px"> |
 
 [comment]: <> (| 💬 [Wechat]&#40;https://www.wechat.com/en/&#41; | Scan the QR code below and she will invite you into the wechat group <br> <img src="img/wechat-group.jpg" height="200px">)
 
