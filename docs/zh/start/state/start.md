@@ -10,7 +10,7 @@ API支持批量CRUD操作，支持声明对并发安全和数据一致性的要�
 
 该示例的架构如下图，启动的进程有：redis、Layotto、客户端程程序
 
-![img.png](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/state/img.png)
+![img.png](../../../img/state/img.png)
 
 ### 第一步：部署存储系统（redis）
 
@@ -29,7 +29,7 @@ docker pull redis:latest
 docker images
 ```
 
-![img.png](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/mq/start/img.png)
+![img.png](../../../img/mq/start/img.png)
 
 3. 运行容器
 
