@@ -11,20 +11,19 @@
     "driver": "jaeger",
     "config": {
       "config": {
-        "service_name": "layotto",
-        "agent_host": "127.0.0.1:6831",
-        "strategy": "collector"
+        "service_name": "layotto"
       }
     }
   }
 }
 ```
 
-| 字段           | 必填  | 说明                 |
-|--------------|-----|--------------------|
-| service_name | Y | 服务名称               |
-| agent_host   | N | agent组件端口          |
-| strategy     | N | 数据上报方式，默认使用agent方式 |
+| 字段           | 必填 | 说明                                                   |
+|--------------|----|------------------------------------------------------|
+| service_name | Y  | 服务名称                                                 |
+| agent_host   | N  | agent组件端口                                            |
+| strategy     | N  | 数据上报方式，默认使用 collector 方式. 可选的配置值有`collector`和`agent` |
+|collector_endpoint | N  | collector的端口号，默认http://127.0.0.1:14268/api/traces    |
 
 ## 运行Jaeger
 

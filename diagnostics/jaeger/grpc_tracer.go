@@ -21,6 +21,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/opentracing/opentracing-go"
 	jaegerc "github.com/uber/jaeger-client-go"
 	"github.com/uber/jaeger-client-go/config"
@@ -36,7 +38,7 @@ import (
 )
 
 const (
-	serviceName              = "layotto"
+	serviceName              = "service_name"
 	strategy                 = "strategy"
 	agentHost                = "agent_host"
 	collectorEndpoint        = "collector_endpoint"
@@ -46,6 +48,7 @@ const (
 	appIDKey                 = "APP_ID"
 	defaultCollectorEndpoint = "http://127.0.0.1:14268/api/traces"
 	defaultStrategy          = "collector"
+	configs                  = "config"
 )
 
 type grpcJaegerTracer struct {
@@ -68,7 +71,11 @@ func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 	var reporter *config.ReporterConfig
 
 	// Determining whether to start the agent
-	strategy := getStrategy(traceCfg)
+	strategy, err := getStrategy(traceCfg)
+
+	if err != nil {
+		return nil, err
+	}
 
 	if strategy == defaultStrategy {
 		reporter = &config.ReporterConfig{
@@ -96,11 +103,10 @@ func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 	cfg.ServiceName = getServiceName(traceCfg)
 	tracer, _, err := cfg.NewTracer()
 
-	log.DefaultLogger.Infof("[layotto] [jaeger] [tracer] jaeger agent host:%s, report service name:%s",
-		getAgentHost(traceCfg), getServiceName(traceCfg))
+	log.DefaultLogger.Infof("[layotto] [jaeger] [tracer] report service name:%s", getServiceName(traceCfg))
 
 	if err != nil {
-		log.DefaultLogger.Errorf("[jaeger] [tracer] [layotto] cannot initialize Jaeger Tracer")
+		log.DefaultLogger.Errorf("[layotto] [jaeger] [tracer] cannot initialize Jaeger Tracer")
 		return nil, err
 	}
 
@@ -110,8 +116,11 @@ func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 }
 
 func getAgentHost(traceCfg map[string]interface{}) string {
-	if agentHost, ok := traceCfg[agentHost]; ok {
-		return agentHost.(string)
+	if cfg, ok := traceCfg[configs]; ok {
+		host := cfg.(map[string]interface{})
+		if agentHost, ok := host[agentHost]; ok {
+			return agentHost.(string)
+		}
 	}
 
 	//if TRACE is not set, get it from the env variable
@@ -122,25 +131,37 @@ func getAgentHost(traceCfg map[string]interface{}) string {
 	return defaultJaegerAgentHost
 }
 
-func getStrategy(traceCfg map[string]interface{}) string {
-	if strategy, ok := traceCfg[strategy]; ok {
-		return strategy.(string)
+func getStrategy(traceCfg map[string]interface{}) (string, error) {
+	if cfg, ok := traceCfg[configs]; ok {
+		str := cfg.(map[string]interface{})
+		k, ok := str[strategy]
+		if ok && (k.(string) == defaultStrategy || k.(string) == "agent") {
+			return k.(string), nil
+		} else if ok {
+			return "", errors.New("Unknown Strategy")
+		}
 	}
 
-	return defaultStrategy
+	return defaultStrategy, nil
 }
 
 func getCollectorEndpoint(traceCfg map[string]interface{}) string {
-	if collectorEndpoint, ok := traceCfg[collectorEndpoint]; ok {
-		return collectorEndpoint.(string)
+	if cfg, ok := traceCfg[configs]; ok {
+		endpoint := cfg.(map[string]interface{})
+		if collectorEndpoint, ok := endpoint[collectorEndpoint]; ok {
+			return collectorEndpoint.(string)
+		}
 	}
 
 	return defaultCollectorEndpoint
 }
 
 func getServiceName(traceCfg map[string]interface{}) string {
-	if service, ok := traceCfg[serviceName]; ok {
-		return service.(string)
+	if cfg, ok := traceCfg[configs]; ok {
+		name := cfg.(map[string]interface{})
+		if service, ok := name[serviceName]; ok {
+			return service.(string)
+		}
 	}
 
 	//if service_name is not set, get it from the env variable
@@ -154,7 +175,7 @@ func getServiceName(traceCfg map[string]interface{}) string {
 func (t *grpcJaegerTracer) Start(ctx context.Context, request interface{}, startTime time.Time) api.Span {
 	header, ok := request.(*grpc.RequestInfo)
 	if !ok {
-		log.DefaultLogger.Debugf("[jaeger] [tracer] [layotto] unable to get request header, downstream trace ignored")
+		log.DefaultLogger.Debugf("[layotto] [jaeger] [tracer] unable to get request header, downstream trace ignored")
 		return &jaeger.Span{}
 	}
 
