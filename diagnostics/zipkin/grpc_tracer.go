@@ -15,3 +15,62 @@
  */
 
 package zipkin
+
+import (
+	"context"
+	"time"
+
+	"github.com/openzipkin/zipkin-go"
+	"mosn.io/api"
+	ltrace "mosn.io/layotto/components/trace"
+	"mosn.io/layotto/diagnostics/protocol"
+	"mosn.io/mosn/pkg/trace"
+	"mosn.io/mosn/pkg/types"
+)
+
+const (
+	PORT = "9005"
+
+	SERVICE_NAME              = "layotto"
+	ZIPKIN_HTTP_ENDPOINT      = "http://127.0.0.1:9411/api/v1/spans"
+	ZIPKIN_RECORDER_HOST_PORT = "127.0.0.1:9000"
+)
+
+type grpcZipTracer struct {
+	*zipkin.Tracer
+}
+
+func init() {
+	trace.RegisterTracerBuilder("ZipKin", protocol.Layotto, NewGrpcZipTracer)
+}
+
+func NewGrpcZipTracer(_ map[string]interface{}) (api.Tracer, error) {
+	return nil, nil
+}
+
+func (tracer *grpcZipTracer) Start(ctx context.Context, request interface{}, _ time.Time) api.Span {
+	//info, ok := request.(*grpc.RequestInfo)
+
+	return nil
+}
+
+type grpcZipSpan struct {
+	*ltrace.Span
+	tracer *grpcZipTracer
+	ctx    context.Context
+	span   zipkin.Span
+}
+
+func (h *grpcZipSpan) TraceId() string {
+	return ""
+}
+
+func (h *grpcZipSpan) InjectContext(requestHeaders types.HeaderMap, requestInfo api.RequestInfo) {
+}
+
+func (h *grpcZipSpan) SetRequestInfo(requestInfo api.RequestInfo) {
+}
+
+func (h *grpcZipSpan) FinishSpan() {
+	h.span.Finish()
+}
