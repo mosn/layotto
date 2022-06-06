@@ -135,6 +135,7 @@ import (
 	sequencer_mysql "mosn.io/layotto/components/sequencer/mysql"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
+
 	// File
 	"mosn.io/layotto/components/file/s3/qiniu"
 	"mosn.io/layotto/components/file/s3/tencentcloud"
