@@ -3,13 +3,32 @@
 Your application can use the same State API to operate different databases (or a certain storage system) to add, delete, modify and query the data of the Key/Value model.
 
 API supports batch CRUD operations and supports the declaration of requirements for concurrency safety and data consistency. Layotto will deal with complex concurrency safety and data consistency issues for you.
+
 ## Quick start
 This example shows how to call redis through Layotto to add, delete, modify and query status data.
 
 The architecture of this example is shown in the figure below, and the started processes are: redis, Layotto, client program
 
 ![img.png](../../../img/state/img.png)
-### step 1. Deploy redis using Docker
+
+### step 1. Deploy Redis and Layotto
+<!-- tabs:start -->
+#### **with Docker Compose**
+You can start Redis and Layotto with docker-compose
+
+```bash
+cd docker/layotto-redis
+# Start redis and layotto with docker-compose
+docker-compose up -d
+```
+
+#### **Compile locally (not for Windows)**
+You can run Redis with Docker, then compile and run Layotto locally.
+
+> [!TIP|label: Not for Windows users]
+> Layotto fails to compile under Windows. Windows users are recommended to deploy using docker-compose
+
+##### step 1.1. Run Redis with Docker
 
 1. Get the latest version of Redis docker image
 
@@ -26,6 +45,7 @@ Use the following command to check if redis is installed:
 ```shell
 docker images
 ```
+
 ![img.png](../../../img/mq/start/img.png)
 
 3. Run the container
@@ -40,7 +60,7 @@ Parameter Description:
 
 `-p 6380:6379`: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
 
-### step 2. Run Layotto
+##### step 1.2. Compile and Run Layotto
 
 After downloading the project code to the local, change the code directory:
 
@@ -61,7 +81,9 @@ The layotto file will be generated in the directory, run it:
 ./layotto start -c ../../configs/config_redis.json
 ```
 
-### step 3. Run the client program, call Layotto to add, delete, modify and query
+<!-- tabs:end -->
+
+### step 2. Run the client program, call Layotto to add, delete, modify and query
 
 ```shell
 # open a new terminal tab
@@ -87,11 +109,22 @@ DeleteState succeeded.key:key1
 DeleteState succeeded.key:key2
 ```
 
-### step 4. Stop redis and release resources
+### step 3. Stop containers and release resources
+<!-- tabs:start -->
+#### **Docker Compose**
+If you started Redis and Layotto with docker-compose, you can shut them down as follows:
 
+```bash
+cd ${project_path}/docker/layotto-redis
+docker-compose stop
+```
+
+#### **Destroy the Redis container**
+If you started Redis with Docker, you can destroy the Redis container as follows:
 ```shell
 docker rm -f redis-test
 ```
+<!-- tabs:end -->
 
 ### Next step
 #### What did this client Demo do?
