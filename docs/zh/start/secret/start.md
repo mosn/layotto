@@ -25,7 +25,7 @@ go build -o layotto
 ./layotto start -c ../../configs/config_standalone.json
 ```
 
-### 第二步：运行客户端程序，调用Layotto生成唯一id
+### 第二步：运行客户端程序，调用 Layotto 获取 secret
 
 ```shell
  cd ${project_path}/demo/secret/common/
