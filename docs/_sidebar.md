@@ -78,6 +78,7 @@
   - [FaaS design](en/design/faas/faas-poc-design.md)
 - Contributing
   - [Document Contribution Guide](en/development/contributing-doc.md)
+    - [Automate testing of Quickstart documentation with tools](en/development/test-quickstart.md)
   - [Component Development Guide](en/development/developing-component.md)
   - You wanna modify proto files or API definition?
     - [Development specification when adding API](en/development/developing-api.md)
