@@ -39,7 +39,6 @@ Similarly, if the documentation will start containers like redis with Docker, yo
 ## step 3. Running documentation
 
 As an example, run the Quickstart documentation for the state API:
-
 ```shell
 mdx docs/en/start/state/start.md 
 ```
