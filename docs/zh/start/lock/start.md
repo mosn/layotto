@@ -7,7 +7,7 @@
 该示例的架构如下图，启动的进程有：Redis、Layotto、一个演示用的client程序（其中包含两个协程，并发抢锁）
 
 ![img.png](../../../img/lock/img.png)
-### step 1. 部署 Redis
+### step 1. 部署 Redis 和 Layotto
 
 <!-- tabs:start -->
 #### **使用 Docker Compose**
