@@ -58,7 +58,7 @@ docker-compose up -d
 > [!TIP|label: 不适合 Windows 用户]
 > Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker-compose 部署
 
-##### step 1.1. 用 Docker 运行 Redis
+#### step 2.1. 用 Docker 运行 Redis
 1. 取最新版的 Redis 镜像。
 这里我们拉取官方的最新版本的镜像：
 
@@ -86,7 +86,7 @@ docker run -itd --name redis-test -p 6380:6379 redis
 
 -p 6380:6379：映射容器服务的 6379 端口到宿主机的 6380 端口。外部可以直接通过宿主机ip:6380 访问到 Redis 的服务。
 
-##### step 1.2. 编译、运行 Layotto
+#### step 2.2. 编译、运行 Layotto
 
 将项目代码下载到本地后，切换代码目录：
 

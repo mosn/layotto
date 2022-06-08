@@ -28,7 +28,7 @@ You can run Redis with Docker, then compile and run Layotto locally.
 > [!TIP|label: Not for Windows users]
 > Layotto fails to compile under Windows. Windows users are recommended to deploy using docker-compose
 
-##### step 1.1. Run Redis with Docker
+#### step 1.1. Run Redis with Docker
 
 1. Get the latest version of Redis docker image
 
@@ -60,7 +60,7 @@ Parameter Description:
 
 `-p 6380:6379`: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
 
-##### step 1.2. Compile and Run Layotto
+#### step 1.2. Compile and Run Layotto
 
 After downloading the project code to the local, change the code directory:
 
