@@ -20,7 +20,6 @@ Use the tool to execute all shell scripts in a markdown file sequentially, i.e. 
 ```
 ~~~
 
-Use the tool to execute all shell scripts in a markdown file sequentially, i.e. all scripts wrapped in:
 ~~~markdown
 ```bash
 ```
