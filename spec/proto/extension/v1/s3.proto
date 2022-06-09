@@ -7,7 +7,7 @@ import "google/protobuf/empty.proto";
 option go_package = "mosn.io/layotto/spec/proto/extension/v1;s3";
 
 service S3 {
-  rpc InitClient(InitRequest) returns (google.protobuf.Empty){}
+  rpc InitClient(InitInput) returns (google.protobuf.Empty){}
   rpc PutObject(stream PutObjectInput) returns(PutObjectOutput){}
   rpc GetObject(GetObjectInput) returns (stream GetObjectOutput){}
   rpc DeleteObject(DeleteObjectInput) returns (DeleteObjectOutput){}
@@ -29,7 +29,7 @@ service S3 {
   rpc ListObjectVersions(ListObjectVersionsInput) returns(ListObjectVersionsOutput){}
 }
 
-message InitRequest {
+message InitInput {
 	string store_name = 1;
 	map<string, string> metadata = 2;
 }

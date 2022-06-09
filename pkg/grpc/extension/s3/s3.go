@@ -70,7 +70,7 @@ func (s *S3Server) Register(rawGrpcServer *rawGRPC.Server) error {
 	return nil
 }
 
-func (s *S3Server) InitClient(ctx context.Context, req *s3.InitRequest) (*emptypb.Empty, error) {
+func (s *S3Server) InitClient(ctx context.Context, req *s3.InitInput) (*emptypb.Empty, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
