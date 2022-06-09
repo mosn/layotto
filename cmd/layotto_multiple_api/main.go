@@ -18,6 +18,7 @@ package main
 
 import (
 	"encoding/json"
+	"mosn.io/layotto/components/file/aliyun"
 	"os"
 	"strconv"
 	"time"
@@ -249,7 +250,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliOSS", aliyun.NewAliCloudFile),
+			file.NewFileFactory("aliyunOSS", aliyun.NewAliCloudFile),
 			file.NewFileFactory("minioOSS", minio.NewMinioOss),
 			file.NewFileFactory("awsOSS", aws.NewAwsFile),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),

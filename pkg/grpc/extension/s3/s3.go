@@ -72,7 +72,7 @@ func (s *S3Server) Register(rawGrpcServer *rawGRPC.Server) error {
 
 func (s *S3Server) InitClient(ctx context.Context, req *s3.InitRequest) (*emptypb.Empty, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	err := s.ossInstance[req.StoreName].InitClient(ctx, &l8s3.InitRequest{Metadata: req.Metadata})
 	if err != nil {
@@ -92,7 +92,7 @@ func transferData(source interface{}, target interface{}) error {
 
 func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.S3_GetObjectServer) error {
 	if s.ossInstance[req.StoreName] == nil {
-		return status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
+		return status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.GetObjectInput{}
 	err := transferData(req, st)
@@ -177,7 +177,7 @@ func (s *S3Server) PutObject(stream s3.S3_PutObjectServer) error {
 	}
 
 	if s.ossInstance[req.StoreName] == nil {
-		return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	fileReader := newPutObjectStreamReader(req.Body, stream)
 
@@ -201,7 +201,7 @@ func (s *S3Server) PutObject(stream s3.S3_PutObjectServer) error {
 
 func (s *S3Server) DeleteObject(ctx context.Context, req *s3.DeleteObjectInput) (*s3.DeleteObjectOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.DeleteObjectInput{}
 	err := transferData(req, st)
@@ -221,7 +221,7 @@ func (s *S3Server) DeleteObject(ctx context.Context, req *s3.DeleteObjectInput) 
 }
 func (s *S3Server) PutObjectTagging(ctx context.Context, req *s3.PutBucketTaggingInput) (*s3.PutBucketTaggingOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.PutBucketTaggingInput{}
 	err := transferData(req, st)
@@ -241,7 +241,7 @@ func (s *S3Server) PutObjectTagging(ctx context.Context, req *s3.PutBucketTaggin
 }
 func (s *S3Server) DeleteObjectTagging(ctx context.Context, req *s3.DeleteObjectTaggingInput) (*s3.DeleteObjectTaggingOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.DeleteObjectTaggingInput{}
 	err := transferData(req, st)
@@ -261,7 +261,7 @@ func (s *S3Server) DeleteObjectTagging(ctx context.Context, req *s3.DeleteObject
 }
 func (s *S3Server) GetObjectTagging(ctx context.Context, req *s3.GetObjectTaggingInput) (*s3.GetObjectTaggingOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.GetObjectTaggingInput{}
 	err := transferData(req, st)
@@ -281,7 +281,7 @@ func (s *S3Server) GetObjectTagging(ctx context.Context, req *s3.GetObjectTaggin
 }
 func (s *S3Server) CopyObject(ctx context.Context, req *s3.CopyObjectInput) (*s3.CopyObjectOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.CopyObjectInput{}
 	err := transferData(req, st)
@@ -301,7 +301,7 @@ func (s *S3Server) CopyObject(ctx context.Context, req *s3.CopyObjectInput) (*s3
 }
 func (s *S3Server) DeleteObjects(ctx context.Context, req *s3.DeleteObjectsInput) (*s3.DeleteObjectsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.DeleteObjectsInput{}
 	err := transferData(req, st)
@@ -321,7 +321,7 @@ func (s *S3Server) DeleteObjects(ctx context.Context, req *s3.DeleteObjectsInput
 }
 func (s *S3Server) ListObjects(ctx context.Context, req *s3.ListObjectsInput) (*s3.ListObjectsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.ListObjectsInput{}
 	err := transferData(req, st)
@@ -341,7 +341,7 @@ func (s *S3Server) ListObjects(ctx context.Context, req *s3.ListObjectsInput) (*
 }
 func (s *S3Server) GetObjectAcl(ctx context.Context, req *s3.GetObjectAclInput) (*s3.GetObjectAclOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.GetObjectAclInput{}
 	err := transferData(req, st)
@@ -361,7 +361,7 @@ func (s *S3Server) GetObjectAcl(ctx context.Context, req *s3.GetObjectAclInput) 
 }
 func (s *S3Server) PutObjectAcl(ctx context.Context, req *s3.PutObjectAclInput) (*s3.PutObjectAclOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.PutObjectAclInput{}
 	err := transferData(req, st)
@@ -381,7 +381,7 @@ func (s *S3Server) PutObjectAcl(ctx context.Context, req *s3.PutObjectAclInput) 
 }
 func (s *S3Server) RestoreObject(ctx context.Context, req *s3.RestoreObjectInput) (*s3.RestoreObjectOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.RestoreObjectInput{}
 	err := transferData(req, st)
@@ -401,7 +401,7 @@ func (s *S3Server) RestoreObject(ctx context.Context, req *s3.RestoreObjectInput
 }
 func (s *S3Server) CreateMultipartUpload(ctx context.Context, req *s3.CreateMultipartUploadInput) (*s3.CreateMultipartUploadOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.CreateMultipartUploadInput{}
 	err := transferData(req, st)
@@ -463,7 +463,7 @@ func (s *S3Server) UploadPart(stream s3.S3_UploadPartServer) error {
 	}
 
 	if s.ossInstance[req.StoreName] == nil {
-		return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	fileReader := newUploadPartStreamReader(req.Body, stream)
 
@@ -486,7 +486,7 @@ func (s *S3Server) UploadPart(stream s3.S3_UploadPartServer) error {
 }
 func (s *S3Server) UploadPartCopy(ctx context.Context, req *s3.UploadPartCopyInput) (*s3.UploadPartCopyOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.UploadPartCopyInput{}
 	err := transferData(req, st)
@@ -506,7 +506,7 @@ func (s *S3Server) UploadPartCopy(ctx context.Context, req *s3.UploadPartCopyInp
 }
 func (s *S3Server) CompleteMultipartUpload(ctx context.Context, req *s3.CompleteMultipartUploadInput) (*s3.CompleteMultipartUploadOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.CompleteMultipartUploadInput{}
 	err := transferData(req, st)
@@ -526,7 +526,7 @@ func (s *S3Server) CompleteMultipartUpload(ctx context.Context, req *s3.Complete
 }
 func (s *S3Server) AbortMultipartUpload(ctx context.Context, req *s3.AbortMultipartUploadInput) (*s3.AbortMultipartUploadOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.AbortMultipartUploadInput{}
 	err := transferData(req, st)
@@ -546,7 +546,7 @@ func (s *S3Server) AbortMultipartUpload(ctx context.Context, req *s3.AbortMultip
 }
 func (s *S3Server) ListMultipartUploads(ctx context.Context, req *s3.ListMultipartUploadsInput) (*s3.ListMultipartUploadsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.ListMultipartUploadsInput{}
 	err := transferData(req, st)
@@ -566,7 +566,7 @@ func (s *S3Server) ListMultipartUploads(ctx context.Context, req *s3.ListMultipa
 }
 func (s *S3Server) ListObjectVersions(ctx context.Context, req *s3.ListObjectVersionsInput) (*s3.ListObjectVersionsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.ListObjectVersionsInput{}
 	err := transferData(req, st)

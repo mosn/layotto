@@ -34,18 +34,18 @@ func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (
 		return nil, errors.New("invalid config for aws oss")
 	}
 	for _, data := range m {
-		customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-			if region == data.Region {
-				return aws.Endpoint{
-					PartitionID:       "aliyun",
-					URL:               "https://" + data.EndPoint,
-					SigningRegion:     data.Region,
-					HostnameImmutable: true,
-				}, nil
-			}
-			// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
-			return aws.Endpoint{}, &aws.EndpointNotFoundError{}
-		})
+		// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
+		//customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+		//	if region == data.Region {
+		//		return aws.Endpoint{
+		//			PartitionID:       "aliyun",
+		//			URL:               "https://" + data.EndPoint,
+		//			SigningRegion:     data.Region,
+		//			HostnameImmutable: true,
+		//		}, nil
+		//	}
+		//	return aws.Endpoint{}, &aws.EndpointNotFoundError{}
+		//})
 
 		optFunc := []func(options *aws_config.LoadOptions) error{
 			aws_config.WithRegion(data.Region),
@@ -55,7 +55,7 @@ func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (
 					Source: defaultCredentialsSource,
 				},
 			}),
-			aws_config.WithEndpointResolverWithOptions(customResolver),
+			//aws_config.WithEndpointResolverWithOptions(customResolver),
 		}
 
 		cfg, err := aws_config.LoadDefaultConfig(context.TODO(), optFunc...)
