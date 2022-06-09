@@ -172,6 +172,7 @@ import (
 	"mosn.io/layotto/pkg/runtime"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
+	"mosn.io/layotto/diagnostics/jaeger"
 	lprotocol "mosn.io/layotto/diagnostics/protocol"
 	lsky "mosn.io/layotto/diagnostics/skywalking"
 )
@@ -526,6 +527,7 @@ func ExtensionsRegister(_ *cli.Context) {
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
 	trace.RegisterTracerBuilder("SOFATracer", "layotto", diagnostics.NewTracer)
 	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
+	trace.RegisterTracerBuilder("Jaeger", lprotocol.Layotto, jaeger.NewGrpcJaegerTracer)
 
 }
 
