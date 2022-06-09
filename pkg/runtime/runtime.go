@@ -395,7 +395,7 @@ func (m *MosnRuntime) initOss(oss ...*file.OssFactory) error {
 
 	// register all oss store services implementation
 	m.ossRegistry.Register(oss...)
-	for name, config := range m.runtimeConfig.Files {
+	for name, config := range m.runtimeConfig.Oss {
 		c, err := m.ossRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create oss component %s failed", config.Type)

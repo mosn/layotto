@@ -22,6 +22,20 @@
                           "hello": "greeting"
                         }
                       },
+                      "oss": {
+                        "oss_demo": {
+                          "type": "aliyunOSS",
+                          "metadata": [
+                            {
+                              "endpoint": "127.0.0.1:9000",
+                              "accessKeyID": "layotto",
+                              "accessKeySecret": "layotto_secret",
+                              "SSL":false,
+                              "region":"us-east-1"
+                            }
+                          ]
+                        }
+                      },
                       "file": {
                         "file_demo": {
                           "type": "minioOSS",

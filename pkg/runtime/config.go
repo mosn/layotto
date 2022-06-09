@@ -49,6 +49,7 @@ type MosnRuntimeConfig struct {
 	PubSubManagement       map[string]pubsub.Config            `json:"pub_subs"`
 	StateManagement        map[string]state.Config             `json:"state"`
 	Files                  map[string]file.FileConfig          `json:"file"`
+	Oss                    map[string]file.FileConfig          `json:"oss"`
 	LockManagement         map[string]lock.Config              `json:"lock"`
 	SequencerManagement    map[string]sequencer.Config         `json:"sequencer"`
 	Bindings               map[string]bindings.Metadata        `json:"bindings"`
