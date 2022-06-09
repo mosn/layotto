@@ -19,16 +19,17 @@ package s3
 import (
 	"context"
 	"encoding/json"
+	"io"
+	"sync"
+
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"io"
 	l8s3 "mosn.io/layotto/components/file"
 	"mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/spec/proto/extension/v1"
+	s3 "mosn.io/layotto/spec/proto/extension/v1"
 	"mosn.io/pkg/log"
-	"sync"
 )
 
 var (
@@ -223,6 +224,7 @@ func (s *S3Server) PutObjectTagging(ctx context.Context, req *s3.PutBucketTaggin
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
+
 	st := &l8s3.PutBucketTaggingInput{}
 	err := transferData(req, st)
 	if err != nil {

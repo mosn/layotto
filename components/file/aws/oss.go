@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
+	"time"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	aws_config "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -11,11 +14,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/jinzhu/copier"
-	"io"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/file/factory"
 	"mosn.io/pkg/log"
-	"time"
 )
 
 const (
@@ -34,19 +35,6 @@ func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (
 		return nil, errors.New("invalid config for aws oss")
 	}
 	for _, data := range m {
-		// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
-		//customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-		//	if region == data.Region {
-		//		return aws.Endpoint{
-		//			PartitionID:       "aliyun",
-		//			URL:               "https://" + data.EndPoint,
-		//			SigningRegion:     data.Region,
-		//			HostnameImmutable: true,
-		//		}, nil
-		//	}
-		//	return aws.Endpoint{}, &aws.EndpointNotFoundError{}
-		//})
-
 		optFunc := []func(options *aws_config.LoadOptions) error{
 			aws_config.WithRegion(data.Region),
 			aws_config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
@@ -55,7 +43,6 @@ func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (
 					Source: defaultCredentialsSource,
 				},
 			}),
-			//aws_config.WithEndpointResolverWithOptions(customResolver),
 		}
 
 		cfg, err := aws_config.LoadDefaultConfig(context.TODO(), optFunc...)

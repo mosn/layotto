@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	storeName   = "file_demo"
+	storeName   = "oss_demo"
 	storageType = "Standard"
 )
 
@@ -357,7 +357,7 @@ func main() {
 		return
 	}
 	c := s3.NewS3Client(conn)
-	req := &s3.InitRequest{StoreName: storeName}
+	req := &s3.InitInput{StoreName: storeName}
 	_, err = c.InitClient(context.Background(), req)
 	if err != nil {
 		fmt.Printf("Init client fail,err:%+v", err)

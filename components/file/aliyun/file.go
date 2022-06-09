@@ -21,8 +21,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"mosn.io/layotto/components/file/util"
 	"strconv"
+
+	"mosn.io/layotto/components/file/util"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 

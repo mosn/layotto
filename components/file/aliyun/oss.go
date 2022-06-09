@@ -3,8 +3,9 @@ package aliyun
 import (
 	"context"
 	"encoding/json"
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"io"
+
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/file/factory"
 )
