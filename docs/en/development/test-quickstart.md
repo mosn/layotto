@@ -21,6 +21,7 @@ Use the tool to execute all shell scripts in a markdown file sequentially, i.e. 
 ~~~
 
 Note: The script wrapped in `bash` blocks will NOT be run.
+~~~markdown
 ```bash
 ```
 ~~~
