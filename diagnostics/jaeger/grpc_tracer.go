@@ -28,13 +28,11 @@ import (
 	"github.com/uber/jaeger-client-go/config"
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/log"
-	"mosn.io/mosn/pkg/trace"
 	"mosn.io/mosn/pkg/trace/jaeger"
 	"mosn.io/mosn/pkg/types"
 
 	ltrace "mosn.io/layotto/components/trace"
 	"mosn.io/layotto/diagnostics/grpc"
-	"mosn.io/layotto/diagnostics/protocol"
 )
 
 const (
@@ -61,10 +59,6 @@ type grpcJaegerSpan struct {
 	trace      *grpcJaegerTracer
 	jaegerSpan opentracing.Span
 	spanCtx    jaegerc.SpanContext
-}
-
-func init() {
-	trace.RegisterTracerBuilder(jaeger.DriverName, protocol.Layotto, NewGrpcJaegerTracer)
 }
 
 func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {

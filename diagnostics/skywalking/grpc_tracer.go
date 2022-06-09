@@ -26,17 +26,11 @@ import (
 	language_agent "github.com/SkyAPM/go2sky/reporter/grpc/language-agent"
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/log"
-	"mosn.io/mosn/pkg/trace"
 	"mosn.io/mosn/pkg/trace/skywalking"
 	"mosn.io/mosn/pkg/types"
 
 	ltrace "mosn.io/layotto/components/trace"
-	"mosn.io/layotto/diagnostics/protocol"
 )
-
-func init() {
-	trace.RegisterTracerBuilder(skywalking.SkyDriverName, protocol.Layotto, NewGrpcSkyTracer)
-}
 
 func NewGrpcSkyTracer(_ map[string]interface{}) (api.Tracer, error) {
 	return &grpcSkyTracer{}, nil
