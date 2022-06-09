@@ -396,13 +396,13 @@ func (m *MosnRuntime) initOss(oss ...*file.OssFactory) error {
 	// register all oss store services implementation
 	m.ossRegistry.Register(oss...)
 	for name, config := range m.runtimeConfig.Files {
-		c, err := m.ossRegistry.Create(name)
+		c, err := m.ossRegistry.Create(config.Type)
 		if err != nil {
-			m.errInt(err, "create oss component %s failed", name)
+			m.errInt(err, "create oss component %s failed", config.Type)
 			return err
 		}
 		if err := c.InitConfig(context.TODO(), &config); err != nil {
-			m.errInt(err, "init oss component %s failed", name)
+			m.errInt(err, "init oss component %s failed", config.Type)
 			return err
 		}
 		m.oss[name] = c
@@ -419,7 +419,7 @@ func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
 	for name, config := range m.runtimeConfig.Files {
 		c, err := m.fileRegistry.Create(config.Type)
 		if err != nil {
-			m.errInt(err, "create files component %s failed", name)
+			m.errInt(err, "create files component %s failed", config.Type)
 			return err
 		}
 		if err := c.Init(context.TODO(), &config); err != nil {

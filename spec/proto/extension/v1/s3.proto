@@ -3,7 +3,6 @@ syntax = "proto3";
 package mosn.proto.runtime.v1;
 
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 
 option go_package = "mosn.io/layotto/spec/proto/extension/v1;s3";
 
@@ -92,6 +91,7 @@ message PutBucketTaggingInput{
     string bucket = 2;
     string key = 3;
     map<string, string> tags = 4;
+    string version_id = 5;
 }
 message PutBucketTaggingOutput{
 
@@ -115,14 +115,23 @@ message GetObjectTaggingOutput{
     map<string, string> tags = 1;
 }
 
+message CopySource{
+    string copy_source_bucket = 1;
+    string copy_source_key = 2;
+    string copy_source_version_id = 3;
+}
 message CopyObjectInput{
     string store_name = 1;
     string bucket = 2;
     string key = 3;
-    string copy_source = 4;
+    CopySource copy_source = 4;
+}
+message CopyObjectResult{
+	string etag = 1;
+	int64 LastModified = 2;
 }
 message CopyObjectOutput{
-
+    CopyObjectResult CopyObjectResult = 1;
 }
 
 
@@ -139,8 +148,14 @@ message DeleteObjectsInput{
     string bucket = 2;
     Delete Delete = 3;
 }
+message DeletedObject{
+	bool delete_marker = 1;
+	string delete_marker_version_id = 2;
+	string key = 3;
+	string version_id = 4;
+}
 message DeleteObjectsOutput{
-
+	repeated DeletedObject deleted = 1;
 }
 
 message ListObjectsInput{
@@ -173,7 +188,7 @@ message Owner{
 message Object{
     string etag = 1;
     string key = 2;
-    google.protobuf.Timestamp last_modified = 3;
+    int64 last_modified = 3;
     Owner owner = 4;
     int64 size = 5;
     string storage_class = 6;
@@ -233,7 +248,7 @@ message CreateMultipartUploadInput{
     string content_language = 9;
     string content_type = 10;
     string expected_bucket_owner = 11;
-    google.protobuf.Timestamp expires = 12;
+    int64 expires = 12;
     string grant_full_control = 13;
     string grant_read = 14;
     string grant_read_acp = 15;
@@ -241,7 +256,7 @@ message CreateMultipartUploadInput{
     map<string, string> meta_data = 17;
     string object_lock_legal_hold_status = 18;
     string object_lock_mode = 19;
-    google.protobuf.Timestamp object_lock_retain_until_date = 20;
+    int64 object_lock_retain_until_date = 20;
     string request_payer = 21;
     string sse_customer_algorithm = 22;
     string sse_customer_key = 23;
@@ -256,7 +271,7 @@ message CreateMultipartUploadInput{
 message CreateMultipartUploadOutput{
     string bucket = 1;
     string key = 2;
-    google.protobuf.Timestamp abort_date = 3;
+    int64 abort_date = 3;
     string abort_rule_id = 4;
     bool bucket_key_enabled = 5;
     string request_charged = 6;
@@ -297,14 +312,16 @@ message UploadPartCopyInput{
     string store_name = 1;
     string bucket = 2;
     string key = 3;
-    string copy_source = 4;
+    CopySource copy_source = 4;
     int32  part_number = 5;
     string upload_id = 6;
+    int64 start_position = 7;
+    int64 part_size = 8;
 }
 
 message CopyPartResult{
     string etag = 1;
-    google.protobuf.Timestamp last_modified = 2;
+    int64 last_modified = 2;
 }
 message UploadPartCopyOutput{
     bool bucket_key_enabled = 1;
@@ -374,12 +391,12 @@ message Initiator{
     string id = 2;
 }
 message MultipartUpload{
-    google.protobuf.Timestamp Initiated = 1;
+    int64 initiated = 1;
     Initiator initiator = 2;
     string key = 3;
     Owner owner = 4;
     string storage_class = 5;
-    string UploadId = 6;
+    string upload_id = 6;
 }
 message ListMultipartUploadsOutput{
     string bucket = 1;
@@ -410,7 +427,7 @@ message ListObjectVersionsInput{
 message DeleteMarkerEntry{
     bool is_latest = 1;
     string key = 2;
-    google.protobuf.Timestamp last_modified = 3;
+    int64 last_modified = 3;
     Owner owner = 4;
     string version_id = 5;
 }
@@ -418,7 +435,7 @@ message ObjectVersion{
     string etag = 1;
     bool is_latest = 2;
     string key = 3;
-    google.protobuf.Timestamp last_modified = 4;
+    int64 last_modified = 4;
     Owner owner = 5;
     int64 size = 6;
     string storage_class = 7;

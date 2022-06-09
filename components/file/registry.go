@@ -103,10 +103,10 @@ func (r *OssStoreRegistry) Register(fs ...*OssFactory) {
 	}
 }
 
-func (r *OssStoreRegistry) Create(name string) (Oss, error) {
-	if f, ok := r.files[name]; ok {
-		r.info.LoadComponent(ServiceName, name)
+func (r *OssStoreRegistry) Create(compType string) (Oss, error) {
+	if f, ok := r.files[compType]; ok {
+		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", name)
+	return nil, fmt.Errorf("service component %s is not regsitered", compType)
 }

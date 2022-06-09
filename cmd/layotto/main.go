@@ -18,6 +18,7 @@ package main
 
 import (
 	"encoding/json"
+	"mosn.io/layotto/components/file/aliyun"
 	"os"
 	"strconv"
 	"time"
@@ -32,7 +33,6 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 	"mosn.io/api"
-	"mosn.io/layotto/components/file/alicloud"
 	"mosn.io/layotto/components/file/aws"
 	"mosn.io/layotto/components/file/minio"
 	"mosn.io/layotto/components/file/qiniu"
@@ -240,7 +240,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliOSS", alicloud.NewAliCloudOSS),
+			file.NewFileFactory("aliyunOSS", aliyun.NewAliCloudFile),
 			file.NewFileFactory("minioOSS", minio.NewMinioOss),
 			file.NewFileFactory("awsOSS", aws.NewAwsFile),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
@@ -249,6 +249,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		),
 		runtime.WithOssFactory(
 			file.NewOssFactory("awsOSS", aws.NewAwsOss),
+		),
+		runtime.WithOssFactory(
+			file.NewOssFactory("aliyunOSS", aliyun.NewAliyunOss),
 		),
 
 		// PubSub

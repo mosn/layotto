@@ -18,8 +18,12 @@ package file
 
 import (
 	"context"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"errors"
 	"io"
+)
+
+var (
+	ErrNotSpecifyEndpoint = errors.New("should specific endpoint in metadata")
 )
 
 type Oss interface {
@@ -78,7 +82,7 @@ type GetObjectInput struct {
 
 type PutObjectInput struct {
 	DataStream       io.Reader
-	Acl              string `protobuf:"bytes,2,opt,name=acl,proto3" json:"acl,omitempty"`
+	ACL              string `protobuf:"bytes,2,opt,name=acl,proto3" json:"acl,omitempty"`
 	Bucket           string `protobuf:"bytes,4,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	Key              string `protobuf:"bytes,5,opt,name=key,proto3" json:"key,omitempty"`
 	BucketKeyEnabled bool   `protobuf:"varint,6,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
@@ -87,7 +91,7 @@ type PutObjectInput struct {
 
 type PutObjectOutput struct {
 	BucketKeyEnabled bool   `protobuf:"varint,1,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
-	Etag             string `protobuf:"bytes,2,opt,name=etag,proto3" json:"etag,omitempty"`
+	ETag             string `protobuf:"bytes,2,opt,name=etag,proto3" json:"etag,omitempty"`
 }
 
 type DeleteObjectInput struct {
@@ -101,9 +105,10 @@ type DeleteObjectOutput struct {
 }
 
 type PutBucketTaggingInput struct {
-	Bucket string            `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key    string            `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	Tags   map[string]string `protobuf:"bytes,3,rep,name=tags,proto3" json:"tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Bucket    string            `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	Key       string            `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	Tags      map[string]string `protobuf:"bytes,4,rep,name=tags,proto3" json:"tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	VersionId string            `protobuf:"bytes,5,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
 type PutBucketTaggingOutput struct {
 }
@@ -124,12 +129,24 @@ type GetObjectTaggingOutput struct {
 	Tags map[string]string `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
+type CopySource struct {
+	CopySourceBucket    string `protobuf:"bytes,1,opt,name=copy_source_bucket,json=copySourceBucket,proto3" json:"copy_source_bucket,omitempty"`
+	CopySourceKey       string `protobuf:"bytes,2,opt,name=copy_source_key,json=copySourceKey,proto3" json:"copy_source_key,omitempty"`
+	CopySourceVersionId string `protobuf:"bytes,3,opt,name=copy_source_version_id,json=copySourceVersionId,proto3" json:"copy_source_version_id,omitempty"`
+}
+
 type CopyObjectInput struct {
-	Bucket     string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key        string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	CopySource string `protobuf:"bytes,3,opt,name=copy_source,json=copySource,proto3" json:"copy_source,omitempty"`
+	StoreName  string      `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	Bucket     string      `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	Key        string      `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	CopySource *CopySource `protobuf:"bytes,4,opt,name=copy_source,json=copySource,proto3" json:"copy_source,omitempty"`
 }
 type CopyObjectOutput struct {
+	CopyObjectResult *CopyObjectResult `protobuf:"bytes,1,opt,name=CopyObjectResult,proto3" json:"CopyObjectResult,omitempty"`
+}
+type CopyObjectResult struct {
+	ETag         string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
+	LastModified int64  `protobuf:"varint,2,opt,name=LastModified,proto3" json:"LastModified,omitempty"`
 }
 
 type DeleteObjectsInput struct {
@@ -146,6 +163,14 @@ type ObjectIdentifier struct {
 }
 
 type DeleteObjectsOutput struct {
+	Deleted []*DeletedObject `protobuf:"bytes,1,rep,name=deleted,proto3" json:"deleted,omitempty"`
+}
+
+type DeletedObject struct {
+	DeleteMarker          bool   `protobuf:"varint,1,opt,name=delete_marker,json=deleteMarker,proto3" json:"delete_marker,omitempty"`
+	DeleteMarkerVersionId string `protobuf:"bytes,2,opt,name=delete_marker_version_id,json=deleteMarkerVersionId,proto3" json:"delete_marker_version_id,omitempty"`
+	Key                   string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	VersionId             string `protobuf:"bytes,4,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
 
 type ListObjectsInput struct {
@@ -171,16 +196,16 @@ type ListObjectsOutput struct {
 	Prefix         string    `protobuf:"bytes,10,opt,name=prefix,proto3" json:"prefix,omitempty"`
 }
 type Object struct {
-	Etag         string                 `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
-	Key          string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	LastModified *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
-	Owner        *Owner                 `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
-	Size         int64                  `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`
-	StorageClass string                 `protobuf:"bytes,6,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
+	ETag         string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
+	Key          string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	LastModified int64  `protobuf:"bytes,3,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
+	Owner        *Owner `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
+	Size         int64  `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`
+	StorageClass string `protobuf:"bytes,6,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
 }
 type Owner struct {
 	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	ID          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 type GetObjectAclInput struct {
@@ -199,9 +224,9 @@ type Grant struct {
 type Grantee struct {
 	DisplayName  string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	EmailAddress string `protobuf:"bytes,2,opt,name=email_address,json=emailAddress,proto3" json:"email_address,omitempty"`
-	Id           string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	ID           string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	Type         string `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	Uri          string `protobuf:"bytes,5,opt,name=uri,proto3" json:"uri,omitempty"`
+	URI          string `protobuf:"bytes,5,opt,name=uri,proto3" json:"uri,omitempty"`
 }
 
 type PutObjectAclInput struct {
@@ -223,49 +248,49 @@ type RestoreObjectOutput struct {
 }
 
 type CreateMultipartUploadInput struct {
-	Bucket                    string                 `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key                       string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	Acl                       string                 `protobuf:"bytes,3,opt,name=acl,proto3" json:"acl,omitempty"`
-	BucketKeyEnabled          bool                   `protobuf:"varint,4,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
-	CacheControl              string                 `protobuf:"bytes,5,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
-	ContentDisposition        string                 `protobuf:"bytes,6,opt,name=content_disposition,json=contentDisposition,proto3" json:"content_disposition,omitempty"`
-	ContentEncoding           string                 `protobuf:"bytes,7,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempty"`
-	ContentLanguage           string                 `protobuf:"bytes,8,opt,name=content_language,json=contentLanguage,proto3" json:"content_language,omitempty"`
-	ContentType               string                 `protobuf:"bytes,9,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
-	ExpectedBucketOwner       string                 `protobuf:"bytes,10,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
-	Expires                   *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=expires,proto3" json:"expires,omitempty"`
-	GrantFullControl          string                 `protobuf:"bytes,12,opt,name=grant_full_control,json=grantFullControl,proto3" json:"grant_full_control,omitempty"`
-	GrantRead                 string                 `protobuf:"bytes,13,opt,name=grant_read,json=grantRead,proto3" json:"grant_read,omitempty"`
-	GrantReadAcp              string                 `protobuf:"bytes,14,opt,name=grant_read_acp,json=grantReadAcp,proto3" json:"grant_read_acp,omitempty"`
-	GrantWriteAcp             string                 `protobuf:"bytes,15,opt,name=grant_write_acp,json=grantWriteAcp,proto3" json:"grant_write_acp,omitempty"`
-	MetaData                  map[string]string      `protobuf:"bytes,16,rep,name=meta_data,json=metaData,proto3" json:"meta_data,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	ObjectLockLegalHoldStatus string                 `protobuf:"bytes,17,opt,name=object_lock_legal_hold_status,json=objectLockLegalHoldStatus,proto3" json:"object_lock_legal_hold_status,omitempty"`
-	ObjectLockMode            string                 `protobuf:"bytes,18,opt,name=object_lock_mode,json=objectLockMode,proto3" json:"object_lock_mode,omitempty"`
-	ObjectLockRetainUntilDate *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=object_lock_retain_until_date,json=objectLockRetainUntilDate,proto3" json:"object_lock_retain_until_date,omitempty"`
-	RequestPayer              string                 `protobuf:"bytes,20,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
-	SseCustomerAlgorithm      string                 `protobuf:"bytes,21,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKey            string                 `protobuf:"bytes,22,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
-	SseCustomerKeyMd5         string                 `protobuf:"bytes,23,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
-	SseKmsEncryptionContext   string                 `protobuf:"bytes,24,opt,name=sse_kms_encryption_context,json=sseKmsEncryptionContext,proto3" json:"sse_kms_encryption_context,omitempty"`
-	SseKmsKeyId               string                 `protobuf:"bytes,25,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
-	ServerSideEncryption      string                 `protobuf:"bytes,26,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
-	StorageClass              string                 `protobuf:"bytes,27,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
-	Tagging                   string                 `protobuf:"bytes,28,opt,name=tagging,proto3" json:"tagging,omitempty"`
-	WebsiteRedirectLocation   string                 `protobuf:"bytes,29,opt,name=website_redirect_location,json=websiteRedirectLocation,proto3" json:"website_redirect_location,omitempty"`
+	Bucket                    string            `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	Key                       string            `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	ACL                       string            `protobuf:"bytes,3,opt,name=acl,proto3" json:"acl,omitempty"`
+	BucketKeyEnabled          bool              `protobuf:"varint,4,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
+	CacheControl              string            `protobuf:"bytes,5,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
+	ContentDisposition        string            `protobuf:"bytes,6,opt,name=content_disposition,json=contentDisposition,proto3" json:"content_disposition,omitempty"`
+	ContentEncoding           string            `protobuf:"bytes,7,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempty"`
+	ContentLanguage           string            `protobuf:"bytes,8,opt,name=content_language,json=contentLanguage,proto3" json:"content_language,omitempty"`
+	ContentType               string            `protobuf:"bytes,9,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	ExpectedBucketOwner       string            `protobuf:"bytes,10,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
+	Expires                   int64             `protobuf:"bytes,11,opt,name=expires,proto3" json:"expires,omitempty"`
+	GrantFullControl          string            `protobuf:"bytes,12,opt,name=grant_full_control,json=grantFullControl,proto3" json:"grant_full_control,omitempty"`
+	GrantRead                 string            `protobuf:"bytes,13,opt,name=grant_read,json=grantRead,proto3" json:"grant_read,omitempty"`
+	GrantReadACP              string            `protobuf:"bytes,14,opt,name=grant_read_acp,json=grantReadAcp,proto3" json:"grant_read_acp,omitempty"`
+	GrantWriteACP             string            `protobuf:"bytes,15,opt,name=grant_write_acp,json=grantWriteAcp,proto3" json:"grant_write_acp,omitempty"`
+	MetaData                  map[string]string `protobuf:"bytes,16,rep,name=meta_data,json=metaData,proto3" json:"meta_data,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	ObjectLockLegalHoldStatus string            `protobuf:"bytes,17,opt,name=object_lock_legal_hold_status,json=objectLockLegalHoldStatus,proto3" json:"object_lock_legal_hold_status,omitempty"`
+	ObjectLockMode            string            `protobuf:"bytes,18,opt,name=object_lock_mode,json=objectLockMode,proto3" json:"object_lock_mode,omitempty"`
+	ObjectLockRetainUntilDate int64             `protobuf:"bytes,19,opt,name=object_lock_retain_until_date,json=objectLockRetainUntilDate,proto3" json:"object_lock_retain_until_date,omitempty"`
+	RequestPayer              string            `protobuf:"bytes,20,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	SSECustomerAlgorithm      string            `protobuf:"bytes,21,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
+	SSECustomerKey            string            `protobuf:"bytes,22,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
+	SSECustomerKeyMD5         string            `protobuf:"bytes,23,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	SSEKMSEncryptionContext   string            `protobuf:"bytes,24,opt,name=sse_kms_encryption_context,json=sseKmsEncryptionContext,proto3" json:"sse_kms_encryption_context,omitempty"`
+	SSEKMSKeyId               string            `protobuf:"bytes,25,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
+	ServerSideEncryption      string            `protobuf:"bytes,26,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
+	StorageClass              string            `protobuf:"bytes,27,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
+	Tagging                   string            `protobuf:"bytes,28,opt,name=tagging,proto3" json:"tagging,omitempty"`
+	WebsiteRedirectLocation   string            `protobuf:"bytes,29,opt,name=website_redirect_location,json=websiteRedirectLocation,proto3" json:"website_redirect_location,omitempty"`
 }
 type CreateMultipartUploadOutput struct {
-	Bucket                  string                 `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key                     string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	AbortDate               *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=abort_date,json=abortDate,proto3" json:"abort_date,omitempty"`
-	AbortRuleId             string                 `protobuf:"bytes,4,opt,name=abort_rule_id,json=abortRuleId,proto3" json:"abort_rule_id,omitempty"`
-	BucketKeyEnabled        bool                   `protobuf:"varint,5,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
-	RequestCharged          string                 `protobuf:"bytes,6,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
-	SseCustomerAlgorithm    string                 `protobuf:"bytes,7,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKeyMd5       string                 `protobuf:"bytes,8,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
-	SseKmsEncryptionContext string                 `protobuf:"bytes,9,opt,name=sse_kms_encryption_context,json=sseKmsEncryptionContext,proto3" json:"sse_kms_encryption_context,omitempty"`
-	SseKmsKeyId             string                 `protobuf:"bytes,10,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
-	ServerSideEncryption    string                 `protobuf:"bytes,11,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
-	UploadId                string                 `protobuf:"bytes,12,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
+	Bucket                  string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	Key                     string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	AbortDate               int64  `protobuf:"bytes,3,opt,name=abort_date,json=abortDate,proto3" json:"abort_date,omitempty"`
+	AbortRuleId             string `protobuf:"bytes,4,opt,name=abort_rule_id,json=abortRuleId,proto3" json:"abort_rule_id,omitempty"`
+	BucketKeyEnabled        bool   `protobuf:"varint,5,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
+	RequestCharged          string `protobuf:"bytes,6,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
+	SSECustomerAlgorithm    string `protobuf:"bytes,7,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
+	SSECustomerKeyMD5       string `protobuf:"bytes,8,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	SSEKMSEncryptionContext string `protobuf:"bytes,9,opt,name=sse_kms_encryption_context,json=sseKmsEncryptionContext,proto3" json:"sse_kms_encryption_context,omitempty"`
+	SSEKMSKeyId             string `protobuf:"bytes,10,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
+	ServerSideEncryption    string `protobuf:"bytes,11,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
+	UploadId                string `protobuf:"bytes,12,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
 }
 
 type UploadPartInput struct {
@@ -285,7 +310,7 @@ type UploadPartInput struct {
 }
 type UploadPartOutput struct {
 	BucketKeyEnabled     bool   `protobuf:"varint,1,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
-	Etag                 string `protobuf:"bytes,2,opt,name=etag,proto3" json:"etag,omitempty"`
+	ETag                 string `protobuf:"bytes,2,opt,name=etag,proto3" json:"etag,omitempty"`
 	RequestCharged       string `protobuf:"bytes,3,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
 	SseCustomerAlgorithm string `protobuf:"bytes,4,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
 	SseCustomerKeyMd5    string `protobuf:"bytes,5,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
@@ -294,11 +319,14 @@ type UploadPartOutput struct {
 }
 
 type UploadPartCopyInput struct {
-	Bucket     string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key        string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	CopySource string `protobuf:"bytes,3,opt,name=copy_source,json=copySource,proto3" json:"copy_source,omitempty"`
-	PartNumber int32  `protobuf:"varint,4,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
-	UploadId   string `protobuf:"bytes,5,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
+	StoreName     string      `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	Bucket        string      `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	Key           string      `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	CopySource    *CopySource `protobuf:"bytes,4,opt,name=copy_source,json=copySource,proto3" json:"copy_source,omitempty"`
+	PartNumber    int32       `protobuf:"varint,5,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
+	UploadId      string      `protobuf:"bytes,6,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
+	StartPosition int64       `protobuf:"varint,7,opt,name=start_position,json=startPosition,proto3" json:"start_position,omitempty"`
+	PartSize      int64       `protobuf:"varint,8,opt,name=part_size,json=partSize,proto3" json:"part_size,omitempty"`
 }
 type UploadPartCopyOutput struct {
 	BucketKeyEnabled     bool            `protobuf:"varint,1,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
@@ -311,8 +339,8 @@ type UploadPartCopyOutput struct {
 	ServerSideEncryption string          `protobuf:"bytes,8,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
 }
 type CopyPartResult struct {
-	Etag         string                 `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
-	LastModified *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
+	ETag         string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
+	LastModified int64  `protobuf:"bytes,2,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
 }
 
 type CompleteMultipartUploadInput struct {
@@ -327,14 +355,14 @@ type CompletedMultipartUpload struct {
 	Parts []*CompletedPart `protobuf:"bytes,1,rep,name=parts,proto3" json:"parts,omitempty"`
 }
 type CompletedPart struct {
-	Etag       string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
+	ETag       string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
 	PartNumber int32  `protobuf:"varint,2,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
 }
 type CompleteMultipartUploadOutput struct {
 	Bucket               string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	Key                  string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
 	BucketKeyEnabled     bool   `protobuf:"varint,3,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
-	Etag                 string `protobuf:"bytes,4,opt,name=etag,proto3" json:"etag,omitempty"`
+	ETag                 string `protobuf:"bytes,4,opt,name=etag,proto3" json:"etag,omitempty"`
 	Expiration           string `protobuf:"bytes,5,opt,name=expiration,proto3" json:"expiration,omitempty"`
 	Location             string `protobuf:"bytes,6,opt,name=location,proto3" json:"location,omitempty"`
 	RequestCharged       string `protobuf:"bytes,7,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
@@ -379,16 +407,16 @@ type ListMultipartUploadsOutput struct {
 	Uploads            []*MultipartUpload `protobuf:"bytes,12,rep,name=uploads,proto3" json:"uploads,omitempty"`
 }
 type MultipartUpload struct {
-	Initiated    *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=Initiated,proto3" json:"Initiated,omitempty"`
-	Initiator    *Initiator             `protobuf:"bytes,2,opt,name=initiator,proto3" json:"initiator,omitempty"`
-	Key          string                 `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
-	Owner        *Owner                 `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
-	StorageClass string                 `protobuf:"bytes,5,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
-	UploadId     string                 `protobuf:"bytes,6,opt,name=UploadId,proto3" json:"UploadId,omitempty"`
+	Initiated    int64      `protobuf:"bytes,1,opt,name=initiated,proto3" json:"initiated,omitempty"`
+	Initiator    *Initiator `protobuf:"bytes,2,opt,name=initiator,proto3" json:"initiator,omitempty"`
+	Key          string     `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	Owner        *Owner     `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
+	StorageClass string     `protobuf:"bytes,5,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
+	UploadId     string     `protobuf:"bytes,6,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
 }
 type Initiator struct {
 	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	ID          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 type ListObjectVersionsInput struct {
@@ -417,19 +445,19 @@ type ListObjectVersionsOutput struct {
 	Versions            []*ObjectVersion     `protobuf:"bytes,13,rep,name=versions,proto3" json:"versions,omitempty"`
 }
 type DeleteMarkerEntry struct {
-	IsLatest     bool                   `protobuf:"varint,1,opt,name=is_latest,json=isLatest,proto3" json:"is_latest,omitempty"`
-	Key          string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	LastModified *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
-	Owner        *Owner                 `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
-	VersionId    string                 `protobuf:"bytes,5,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	IsLatest     bool   `protobuf:"varint,1,opt,name=is_latest,json=isLatest,proto3" json:"is_latest,omitempty"`
+	Key          string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	LastModified int64  `protobuf:"bytes,3,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
+	Owner        *Owner `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
+	VersionId    string `protobuf:"bytes,5,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
 type ObjectVersion struct {
-	Etag         string                 `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
-	IsLatest     bool                   `protobuf:"varint,2,opt,name=is_latest,json=isLatest,proto3" json:"is_latest,omitempty"`
-	Key          string                 `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
-	LastModified *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
-	Owner        *Owner                 `protobuf:"bytes,5,opt,name=owner,proto3" json:"owner,omitempty"`
-	Size         int64                  `protobuf:"varint,6,opt,name=size,proto3" json:"size,omitempty"`
-	StorageClass string                 `protobuf:"bytes,7,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
-	VersionId    string                 `protobuf:"bytes,8,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	ETag         string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
+	IsLatest     bool   `protobuf:"varint,2,opt,name=is_latest,json=isLatest,proto3" json:"is_latest,omitempty"`
+	Key          string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	LastModified int64  `protobuf:"bytes,4,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
+	Owner        *Owner `protobuf:"bytes,5,opt,name=owner,proto3" json:"owner,omitempty"`
+	Size         int64  `protobuf:"varint,6,opt,name=size,proto3" json:"size,omitempty"`
+	StorageClass string `protobuf:"bytes,7,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
+	VersionId    string `protobuf:"bytes,8,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }

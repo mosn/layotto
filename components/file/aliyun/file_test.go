@@ -14,7 +14,7 @@
 * limitations under the License.
  */
 
-package alicloud
+package aliyun
 
 import (
 	"context"
@@ -41,7 +41,7 @@ const (
 
 func TestInit(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudOSS()
+	oss := NewAliCloudFile()
 	err := oss.Init(context.TODO(), &fc)
 	assert.Equal(t, err.Error(), "invalid argument")
 	fc.Metadata = []byte(data)
@@ -50,33 +50,33 @@ func TestInit(t *testing.T) {
 }
 
 func TestSelectClient(t *testing.T) {
-	ossObject := &AliCloudOSS{metadata: make(map[string]*OssMetadata), client: make(map[string]*oss.Client)}
+	ossObject := &AliyunOSS{metadata: make(map[string]*OssMetadata), client: make(map[string]*oss.Client)}
 
-	client, err := ossObject.selectClient()
+	client, err := ossObject.selectClient(map[string]string{}, "")
 	assert.Equal(t, err.Error(), "should specific endpoint in metadata")
 	assert.Nil(t, client)
 
 	client1 := &oss.Client{}
 	ossObject.client["127.0.0.1"] = client1
-	client, err = ossObject.selectClient()
+	client, err = ossObject.selectClient(map[string]string{}, "")
 	assert.Equal(t, client, client1)
 	assert.Nil(t, err)
 
 	client2 := &oss.Client{}
 	ossObject.client["0.0.0.0"] = client2
-	client, err = ossObject.selectClient()
+	client, err = ossObject.selectClient(map[string]string{}, "")
 	assert.Equal(t, err.Error(), "should specific endpoint in metadata")
 	assert.Nil(t, client)
 }
 
 func TestGetBucket(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudOSS()
+	oss := NewAliCloudFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
 
-	ac := oss.(*AliCloudOSS)
+	ac := oss.(*AliyunOSS)
 	mt := make(map[string]string)
 
 	bucket, err := ac.getBucket("/", mt)
@@ -94,12 +94,12 @@ func TestGetBucket(t *testing.T) {
 
 func TestGetClient(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudOSS()
+	oss := NewAliCloudFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
 
-	ac := oss.(*AliCloudOSS)
+	ac := oss.(*AliyunOSS)
 	mt := &OssMetadata{
 		Endpoint:        "endpoint",
 		AccessKeyID:     "ak",
@@ -115,12 +115,12 @@ func TestGetClient(t *testing.T) {
 
 func TestCheckMetadata(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudOSS()
+	oss := NewAliCloudFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
 
-	ac := oss.(*AliCloudOSS)
+	ac := oss.(*AliyunOSS)
 	mt := &OssMetadata{
 		Endpoint:        "",
 		AccessKeyID:     "",
@@ -138,7 +138,7 @@ func TestCheckMetadata(t *testing.T) {
 
 func TestPut(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudOSS()
+	oss := NewAliCloudFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
@@ -156,7 +156,7 @@ func TestPut(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudOSS()
+	oss := NewAliCloudFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
@@ -177,7 +177,7 @@ func TestGet(t *testing.T) {
 
 func TestStat(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudOSS()
+	oss := NewAliCloudFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
@@ -198,7 +198,7 @@ func TestStat(t *testing.T) {
 
 func TestList(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudOSS()
+	oss := NewAliCloudFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
@@ -220,7 +220,7 @@ func TestList(t *testing.T) {
 
 func TestDel(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudOSS()
+	oss := NewAliCloudFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)

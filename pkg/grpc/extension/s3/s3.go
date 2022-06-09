@@ -71,11 +71,14 @@ func (s *S3Server) Register(rawGrpcServer *rawGRPC.Server) error {
 }
 
 func (s *S3Server) InitClient(ctx context.Context, req *s3.InitRequest) (*emptypb.Empty, error) {
-	//if s.config.Metadata[Provider] == "" {
-	//	return nil, errors.New("please specific the oss provider in configure file")
-	//}
-
-	return &emptypb.Empty{}, nil
+	if s.ossInstance[req.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "not supported store type: %+v", req.StoreName)
+	}
+	err := s.ossInstance[req.StoreName].InitClient(ctx, &l8s3.InitRequest{Metadata: req.Metadata})
+	if err != nil {
+		log.DefaultLogger.Errorf("InitClient fail, err: %+v", err)
+	}
+	return &emptypb.Empty{}, err
 }
 
 func transferData(source interface{}, target interface{}) error {

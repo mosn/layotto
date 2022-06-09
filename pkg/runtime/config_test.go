@@ -15,7 +15,6 @@ package runtime
 
 import (
 	"encoding/json"
-	"mosn.io/layotto/components/file/alicloud"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,7 +41,7 @@ func TestConfig(t *testing.T) {
 	mscf, err := ParseRuntimeConfig([]byte(data))
 	assert.Nil(t, err)
 	v := mscf.Files["aliOSS"]
-	m := make([]*alicloud.OssMetadata, 0)
+	m := make([]*aliyun.OssMetadata, 0)
 	err = json.Unmarshal(v.Metadata, &m)
 	assert.Nil(t, err)
 	for _, x := range m {

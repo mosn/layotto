@@ -18,6 +18,9 @@ package aws
 
 import (
 	"context"
+	"fmt"
+	"github.com/jinzhu/copier"
+	"reflect"
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -121,4 +124,25 @@ func TestAwsOss_Get(t *testing.T) {
 	req.FileName = "/a.txt"
 	_, err = oss.Get(context.Background(), req)
 	assert.Equal(t, err.Error(), "awsoss get file[/a.txt] fail,err: invalid fileName format")
+}
+
+type fun = func() (string, error)
+
+func TestCopier(t *testing.T) {
+	hello := "hello"
+	target := &file.ListObjectsOutput{}
+	source := &s3.ListObjectsOutput{Delimiter: &hello, EncodingType: "encoding type"}
+	re := reflect.TypeOf(source)
+	h, _ := re.Elem().FieldByName("EncodingType")
+	fmt.Println(h.Type.Name(), h.Type.Kind())
+	err := copier.Copy(target, source)
+	if err != nil {
+		t.Fail()
+	}
+	var s fun
+	if s == nil {
+		fmt.Printf("s is nil \n")
+	}
+	fmt.Println(target)
+
 }

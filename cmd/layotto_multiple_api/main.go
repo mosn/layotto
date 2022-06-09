@@ -42,7 +42,6 @@ import (
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
 	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
 	"mosn.io/layotto/components/custom"
-	"mosn.io/layotto/components/file/alicloud"
 	"mosn.io/layotto/components/file/aws"
 	"mosn.io/layotto/components/file/minio"
 	"mosn.io/layotto/components/file/qiniu"
@@ -250,7 +249,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliOSS", alicloud.NewAliCloudOSS),
+			file.NewFileFactory("aliOSS", aliyun.NewAliCloudFile),
 			file.NewFileFactory("minioOSS", minio.NewMinioOss),
 			file.NewFileFactory("awsOSS", aws.NewAwsFile),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
