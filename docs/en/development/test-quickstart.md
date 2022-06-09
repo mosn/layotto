@@ -14,19 +14,17 @@ Let's use the tool to test the documentation automatically!
 
 ## Principle
 
-Use the tool to execute all shell scripts in a markdown document in order.
+Use the tool to execute all shell scripts in a markdown file sequentially, i.e. all scripts wrapped in:
 ~~~markdown
 ```shell
 ```
 ~~~
-Wrapped up script.
 
-Note that it will not be executed with.
+Use the tool to execute all shell scripts in a markdown file sequentially, i.e. all scripts wrapped in:
 ~~~markdown
 ```bash
 ```
 ~~~
-Wrapped up script.
 
 ## step 1. Install `mdx`
 see https://github.com/seeflood/mdx#installation
