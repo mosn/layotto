@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/openzipkin/zipkin-go"
+	reporterhttp "github.com/openzipkin/zipkin-go/reporter/http"
 	"mosn.io/api"
 	ltrace "mosn.io/layotto/components/trace"
 	"mosn.io/layotto/diagnostics/protocol"
@@ -31,9 +32,11 @@ import (
 const (
 	PORT = "9005"
 
-	SERVICE_NAME              = "layotto"
-	ZIPKIN_HTTP_ENDPOINT      = "http://127.0.0.1:9411/api/v1/spans"
+	service_name              = "layotto"
+	defaultReporterEndpoint   = "http://127.0.0.1:9411/api/v2/spans"
 	ZIPKIN_RECORDER_HOST_PORT = "127.0.0.1:9000"
+	configs                   = "config"
+	reporter_endpoint         = "reporter_endpoint"
 )
 
 type grpcZipTracer struct {
@@ -44,8 +47,27 @@ func init() {
 	trace.RegisterTracerBuilder("ZipKin", protocol.Layotto, NewGrpcZipTracer)
 }
 
-func NewGrpcZipTracer(_ map[string]interface{}) (api.Tracer, error) {
-	return nil, nil
+func NewGrpcZipTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
+	reporter := reporterhttp.NewReporter(getReporterEndpoint(traceCfg))
+	tracer, err := zipkin.NewTracer(reporter)
+	if err != nil {
+
+	}
+
+	return &grpcZipTracer{
+		tracer,
+	}, nil
+}
+
+func getReporterEndpoint(traceCfg map[string]interface{}) string {
+	if cfg, ok := traceCfg[configs]; ok {
+		endpoint := cfg.(map[string]interface{})
+		if point, ok := endpoint[reporter_endpoint]; ok {
+			return point.(string)
+		}
+	}
+
+	return defaultReporterEndpoint
 }
 
 func (tracer *grpcZipTracer) Start(ctx context.Context, request interface{}, _ time.Time) api.Span {
