@@ -20,7 +20,7 @@ Use the tool to execute all shell scripts in a markdown file sequentially, i.e. 
 ```
 ~~~
 
-~~~markdown
+Note: The script wrapped in `bash` blocks will NOT be run.
 ```bash
 ```
 ~~~
