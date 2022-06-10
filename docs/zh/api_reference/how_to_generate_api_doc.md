@@ -1,9 +1,10 @@
 # 如何基于proto文件生成代码、接口文档
-注：以下命令需要在 layotto 项目下运行
 
 ## 如何把 proto 文件编译成`.pb.go`代码
 <!-- tabs:start -->
 ### **Make 命令生成(推荐)**
+本地启动 docker 后，在项目根目录下运行：
+
 ```bash
 make proto.code
 ```
@@ -29,6 +30,8 @@ protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_o
 
 <!-- tabs:start -->
 ### **Make 命令生成(推荐)**
+本地启动 docker 后，在项目根目录下运行：
+
 ```bash
 make proto.doc
 ```
