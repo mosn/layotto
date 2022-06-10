@@ -14,5 +14,10 @@
 #limitations under the License.
 
 version: '3.3'
-#services:
-
+services:
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    restart: always
+    ports:
+      - "9411:9411"

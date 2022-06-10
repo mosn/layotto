@@ -20,43 +20,66 @@ import (
 	"context"
 	"time"
 
+	"mosn.io/layotto/diagnostics/grpc"
+
 	"github.com/openzipkin/zipkin-go"
 	reporterhttp "github.com/openzipkin/zipkin-go/reporter/http"
 	"mosn.io/api"
 	ltrace "mosn.io/layotto/components/trace"
-	"mosn.io/layotto/diagnostics/protocol"
-	"mosn.io/mosn/pkg/trace"
 	"mosn.io/mosn/pkg/types"
+	"mosn.io/pkg/log"
 )
 
 const (
-	PORT = "9005"
+	service_name       = "service_name"
+	reporter_endpoint  = "reporter_endpoint"
+	reporter_host_post = "reporter_host_post"
+	configs            = "config"
 
-	service_name              = "layotto"
-	defaultReporterEndpoint   = "http://127.0.0.1:9411/api/v2/spans"
-	ZIPKIN_RECORDER_HOST_PORT = "127.0.0.1:9000"
-	configs                   = "config"
-	reporter_endpoint         = "reporter_endpoint"
+	defaultReporterEndpoint = "http://127.0.0.1:9411/api/v2/spans"
+	defaultServiceName      = "layotto"
+	defaultReporterHostPost = "127.0.0.1:9000"
 )
 
 type grpcZipTracer struct {
 	*zipkin.Tracer
 }
 
-func init() {
-	trace.RegisterTracerBuilder("ZipKin", protocol.Layotto, NewGrpcZipTracer)
+type grpcZipSpan struct {
+	*ltrace.Span
+	tracer *grpcZipTracer
+	ctx    context.Context
+	span   zipkin.Span
 }
 
 func NewGrpcZipTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 	reporter := reporterhttp.NewReporter(getReporterEndpoint(traceCfg))
-	tracer, err := zipkin.NewTracer(reporter)
+	endpoint, err := zipkin.NewEndpoint(getServerName(traceCfg), getRecorderHostPort(traceCfg))
 	if err != nil {
+		log.DefaultLogger.Errorf("[layotto] [zipkin] [tracer] unable to create zipkin reporter endpoint")
+		return nil, err
+	}
 
+	tracer, err := zipkin.NewTracer(reporter, zipkin.WithLocalEndpoint(endpoint))
+	if err != nil {
+		log.DefaultLogger.Errorf("[layotto] [zipkin] [tracer] cannot initialize zipkin Tracer")
+		return nil, err
 	}
 
 	return &grpcZipTracer{
 		tracer,
 	}, nil
+}
+
+func getRecorderHostPort(traceCfg map[string]interface{}) string {
+	if cfg, ok := traceCfg[configs]; ok {
+		recorderHostPort := cfg.(map[string]interface{})
+		if point, ok := recorderHostPort[reporter_host_post]; ok {
+			return point.(string)
+		}
+	}
+
+	return defaultReporterHostPost
 }
 
 func getReporterEndpoint(traceCfg map[string]interface{}) string {
@@ -70,21 +93,36 @@ func getReporterEndpoint(traceCfg map[string]interface{}) string {
 	return defaultReporterEndpoint
 }
 
-func (tracer *grpcZipTracer) Start(ctx context.Context, request interface{}, _ time.Time) api.Span {
-	//info, ok := request.(*grpc.RequestInfo)
+func getServerName(traceCfg map[string]interface{}) string {
+	if cfg, ok := traceCfg[configs]; ok {
+		serverName := cfg.(map[string]interface{})
+		if name, ok := serverName[service_name]; ok {
+			return name.(string)
+		}
+	}
 
-	return nil
+	return defaultServiceName
 }
 
-type grpcZipSpan struct {
-	*ltrace.Span
-	tracer *grpcZipTracer
-	ctx    context.Context
-	span   zipkin.Span
+func (t *grpcZipTracer) Start(ctx context.Context, request interface{}, _ time.Time) api.Span {
+	info, ok := request.(*grpc.RequestInfo)
+	if !ok {
+		log.DefaultLogger.Debugf("[layotto] [zipkin] [tracer] unable to get request header, downstream trace ignored")
+		return nil
+	}
+
+	span := t.StartSpan(info.FullMethod)
+
+	return &grpcZipSpan{
+		tracer: t,
+		ctx:    ctx,
+		Span:   &ltrace.Span{},
+		span:   span,
+	}
 }
 
 func (h *grpcZipSpan) TraceId() string {
-	return ""
+	return h.span.Context().TraceID.String()
 }
 
 func (h *grpcZipSpan) InjectContext(requestHeaders types.HeaderMap, requestInfo api.RequestInfo) {

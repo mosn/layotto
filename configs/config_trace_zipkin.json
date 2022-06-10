@@ -62,9 +62,9 @@
     "enable": true,
     "driver": "Zipkin",
     "config": {
-      "reporter": "gRPC",
-      "backend_service": "127.0.0.1:11800",
-      "service_name": "layotto"
+      "service_name": "layotto",
+      "reporter_endpoint": "http://127.0.0.1:9411/api/v2/spans",
+      "reporter_host_post": "127.0.0.1:9000"
     }
   },
   "metrics": {
