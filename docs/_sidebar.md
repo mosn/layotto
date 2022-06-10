@@ -1,9 +1,9 @@
 - [Home](/en/README.md)
 - Quick start
+  - [Use State API](en/start/state/start.md)
   - Use Configuration API
     - [Use Apollo as configuration center](en/start/configuration/start-apollo.md)
     - [Use Etcd as configuration center](en/start/configuration/start.md)
-  - [Use State API](en/start/state/start.md)
   - [Use Pub/Sub API](en/start/pubsub/start.md)
   - [Use Distributed Lock API](en/start/lock/start.md)
   - [Use Sequencer API](en/start/sequencer/start.md)
@@ -78,6 +78,7 @@
   - [FaaS design](en/design/faas/faas-poc-design.md)
 - Contributing
   - [Document Contribution Guide](en/development/contributing-doc.md)
+  - [Automate testing of Quickstart documentation with tools](en/development/test-quickstart.md)
   - [Component Development Guide](en/development/developing-component.md)
   - You wanna modify proto files or API definition?
     - [Development specification when adding API](en/development/developing-api.md)
