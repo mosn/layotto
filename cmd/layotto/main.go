@@ -173,6 +173,7 @@ import (
 	"mosn.io/layotto/diagnostics/jaeger"
 	lprotocol "mosn.io/layotto/diagnostics/protocol"
 	lsky "mosn.io/layotto/diagnostics/skywalking"
+	"mosn.io/layotto/diagnostics/zipkin"
 )
 
 // loggerForDaprComp is constructed for reusing dapr's components.
@@ -517,6 +518,7 @@ func ExtensionsRegister(_ *cli.Context) {
 	trace.RegisterTracerBuilder("SOFATracer", lprotocol.Layotto, diagnostics.NewTracer)
 	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
 	trace.RegisterTracerBuilder("Jaeger", lprotocol.Layotto, jaeger.NewGrpcJaegerTracer)
+	trace.RegisterTracerBuilder("Zipkin", lprotocol.Layotto, zipkin.NewGrpcZipTracer)
 }
 
 func main() {

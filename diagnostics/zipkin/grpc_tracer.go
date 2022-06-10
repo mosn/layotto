@@ -1,23 +1,24 @@
 /*
- * Copyright 2021 Layotto Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+* Copyright 2021 Layotto Authors
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
  */
 
 package zipkin
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"mosn.io/layotto/diagnostics/grpc"
@@ -113,6 +114,9 @@ func (t *grpcZipTracer) Start(ctx context.Context, request interface{}, _ time.T
 
 	span := t.StartSpan(info.FullMethod)
 
+	fmt.Println(info.FullMethod)
+	fmt.Println(span.Context().TraceID)
+
 	return &grpcZipSpan{
 		tracer: t,
 		ctx:    ctx,
@@ -121,16 +125,16 @@ func (t *grpcZipTracer) Start(ctx context.Context, request interface{}, _ time.T
 	}
 }
 
-func (h *grpcZipSpan) TraceId() string {
-	return h.span.Context().TraceID.String()
+func (s *grpcZipSpan) TraceId() string {
+	return s.span.Context().TraceID.String()
 }
 
-func (h *grpcZipSpan) InjectContext(requestHeaders types.HeaderMap, requestInfo api.RequestInfo) {
+func (s *grpcZipSpan) InjectContext(requestHeaders types.HeaderMap, requestInfo api.RequestInfo) {
 }
 
-func (h *grpcZipSpan) SetRequestInfo(requestInfo api.RequestInfo) {
+func (s *grpcZipSpan) SetRequestInfo(requestInfo api.RequestInfo) {
 }
 
-func (h *grpcZipSpan) FinishSpan() {
-	h.span.Finish()
+func (s *grpcZipSpan) FinishSpan() {
+	s.span.Finish()
 }
