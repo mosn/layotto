@@ -370,7 +370,7 @@ func (c *runtimeClient) GetBulkSecret(ctx context.Context, in *GetBulkSecretRequ
 }
 
 // RuntimeServer is the server API for Runtime service.
-// All implementations must embed UnimplementedRuntimeServer
+// All implementations should embed UnimplementedRuntimeServer
 // for forward compatibility
 type RuntimeServer interface {
 	//SayHello used for test
@@ -422,10 +422,9 @@ type RuntimeServer interface {
 	GetSecret(context.Context, *GetSecretRequest) (*GetSecretResponse, error)
 	// Gets a bulk of secrets
 	GetBulkSecret(context.Context, *GetBulkSecretRequest) (*GetBulkSecretResponse, error)
-	mustEmbedUnimplementedRuntimeServer()
 }
 
-// UnimplementedRuntimeServer must be embedded to have forward compatible implementations.
+// UnimplementedRuntimeServer should be embedded to have forward compatible implementations.
 type UnimplementedRuntimeServer struct {
 }
 
@@ -501,7 +500,6 @@ func (UnimplementedRuntimeServer) GetSecret(context.Context, *GetSecretRequest) 
 func (UnimplementedRuntimeServer) GetBulkSecret(context.Context, *GetBulkSecretRequest) (*GetBulkSecretResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBulkSecret not implemented")
 }
-func (UnimplementedRuntimeServer) mustEmbedUnimplementedRuntimeServer() {}
 
 // UnsafeRuntimeServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to RuntimeServer will

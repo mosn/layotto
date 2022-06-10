@@ -57,17 +57,16 @@ func (c *appCallbackClient) OnTopicEvent(ctx context.Context, in *TopicEventRequ
 }
 
 // AppCallbackServer is the server API for AppCallback service.
-// All implementations must embed UnimplementedAppCallbackServer
+// All implementations should embed UnimplementedAppCallbackServer
 // for forward compatibility
 type AppCallbackServer interface {
 	// Lists all topics subscribed by this app.
 	ListTopicSubscriptions(context.Context, *emptypb.Empty) (*ListTopicSubscriptionsResponse, error)
 	// Subscribes events from Pubsub
 	OnTopicEvent(context.Context, *TopicEventRequest) (*TopicEventResponse, error)
-	mustEmbedUnimplementedAppCallbackServer()
 }
 
-// UnimplementedAppCallbackServer must be embedded to have forward compatible implementations.
+// UnimplementedAppCallbackServer should be embedded to have forward compatible implementations.
 type UnimplementedAppCallbackServer struct {
 }
 
@@ -77,7 +76,6 @@ func (UnimplementedAppCallbackServer) ListTopicSubscriptions(context.Context, *e
 func (UnimplementedAppCallbackServer) OnTopicEvent(context.Context, *TopicEventRequest) (*TopicEventResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OnTopicEvent not implemented")
 }
-func (UnimplementedAppCallbackServer) mustEmbedUnimplementedAppCallbackServer() {}
 
 // UnsafeAppCallbackServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to AppCallbackServer will

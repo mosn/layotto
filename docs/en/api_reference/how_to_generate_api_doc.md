@@ -18,7 +18,7 @@ This command uses docker to run protoc and generate `.pb.go` code files.
 
 ```bash
 cd spec/proto/runtime/v1
-protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative *.proto
+protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=require_unimplemented_servers=false,paths=source_relative *.proto
 ```
 <!-- tabs:end -->
 ## How to generate API reference doc according to the proto files

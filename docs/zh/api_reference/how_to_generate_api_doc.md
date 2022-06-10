@@ -21,7 +21,7 @@ make proto.code
 
 ```bash
 cd spec/proto/runtime/v1
-protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative *.proto
+protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=require_unimplemented_servers=false,paths=source_relative *.proto
 ```
 <!-- tabs:end -->
 ## 如何基于proto文件生成接口文档
