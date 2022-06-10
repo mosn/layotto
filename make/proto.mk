@@ -22,67 +22,14 @@ proto.gen.doc:
     -v  $(ROOT_DIR)/spec/proto/runtime/v1:/protos \
     pseudomuto/protoc-gen-doc  --doc_opt=/protos/template.tmpl,appcallback_v1.md appcallback.proto
 
-#
-#
-#.PHONY: app.image.multiarch
-#app.image.multiarch: image.verify  $(foreach p,$(APP_PLATFORMS),$(addprefix app.image., $(addprefix $(p)., $(APPS))))
-#
-#.PHONY: app.image.%
-#app.image.%:
-#	$(eval PLATFORM := $(word 1,$(subst ., ,$*)))
-#	$(eval APP := $(word 2,$(subst ., ,$*)))
-#	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
-#	$(eval IMAGE_PLAT := $(subst _,/,$(PLATFORM)))
-#	@echo "===========> Building docker image $(APP) $(VERSION) for $(IMAGE_PLAT)"
-#	@mkdir -p $(TMP_DIR)/$(APP)
-#	@cat $(ROOT_DIR)/docker/app/$(APP)/Dockerfile\
-#		>$(TMP_DIR)/$(APP)/Dockerfile
-#	$(eval BUILD_SUFFIX := $(_DOCKER_BUILD_EXTRA_ARGS) --pull -t $(REGISTRY_PREFIX)/$(APP)-$(ARCH):$(VERSION) $(TMP_DIR)/$(APP))
-#	$(DOCKER) build --platform $(IMAGE_PLAT) $(BUILD_SUFFIX)
-#
-#.PHONY: checker.deadlink
-#checker.deadlink:
-#	@echo "===========> Checking Dead Links"
-#	sh ${SCRIPT_DIR}/check-dead-link.sh
-#
-#.PHONY: checker.license
-#checker.license:
-#	# For more details: https://github.com/apache/skywalking-eyes#docker-image
-#	docker run -it --rm -v $(ROOT_DIR):/github/workspace apache/skywalking-eyes header check
-#
-#.PHONY: checker.license.fix
-#checker.license.fix:
-#	# For more details: https://github.com/apache/skywalking-eyes#docker-image
-#	docker run -it --rm -v $(ROOT_DIR):/github/workspace apache/skywalking-eyes header fix
-#
-#QUICKSTART_VERSION ?= default
-#
-#.PHONY: checker.quickstart
-#checker.quickstart:
-#	@echo "===========> Checking QuickStart Doc"
-#	sh ${SCRIPT_DIR}/test-quickstart.sh ${QUICKSTART_VERSION}
-#
-#.PHONY: checker.coverage
-#checker.coverage:
-#	@echo "===========> Coverage Analysis"
-#	sh ${SCRIPT_DIR}/report.sh
-#
-#.PHONY: integration.wasm
-#integration.wasm: app.image.linux_amd64.faas
-#	@echo "===========> Integration Test With WASM"
-#	$(eval ACTION := sh ./wasm_test.sh)
-#	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
-#	$(eval BUILD_IMAGE := $(REGISTRY_PREFIX)/faas-$(ARCH):$(VERSION))
-#	$(eval WORKDIR := -w /go/src/${PROJECT_NAME} )
-#	$(eval INTEGRATE_SUFFIX := -v $(ROOT_DIR):/go/src/${PROJECT_NAME} -v ${TEST_WASM_DIR}/wasm/wasm_test.sh:/go/src/${PROJECT_NAME}/wasm_test.sh $(WORKDIR))
-#	$(DOCKER) run --rm $(INTEGRATE_SUFFIX) $(BUILD_IMAGE) $(ACTION)
-#
-#.PHONY: integration.runtime
-#integration.runtime: app.image.linux_amd64.integrate
-#	@echo "===========> Integration Test With Runtime"
-#	$(eval ACTION := sh ./integrate_test.sh)
-#	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
-#	$(eval BUILD_IMAGE := $(REGISTRY_PREFIX)/integrate-$(ARCH):$(VERSION))
-#	$(eval WORKDIR := -w /go/src/${PROJECT_NAME} )
-#	$(eval INTEGRATE_SUFFIX := -v $(ROOT_DIR):/go/src/${PROJECT_NAME} -v ${TEST_RUNTIME_DIR}/runtime/integrate_test.sh:/go/src/${PROJECT_NAME}/integrate_test.sh $(WORKDIR))
-#	$(DOCKER) run --rm $(INTEGRATE_SUFFIX) ${BUILD_IMAGE} $(ACTION)
+.PHONY: proto.gen.init
+proto.gen.init:
+	 go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+	 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+
+.PHONY: proto.gen.code
+proto.gen.code:
+	$(DOCKER) build -t layotto/protoc $(ROOT_DIR)/docker/proto && \
+	$(DOCKER) run --rm \
+		-v  $(ROOT_DIR)/spec/proto/runtime/v1:/api/proto \
+		layotto/protoc

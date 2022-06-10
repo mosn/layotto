@@ -255,6 +255,20 @@ proto.doc:
 	@$(MAKE) proto.gen.doc
 
 # ==============================================================================
+## proto.init: Install protoc-gen-go and protoc-gen-go-grpc
+# ==============================================================================
+.PHONY: proto.init
+proto.init:
+	@$(MAKE) proto.gen.init
+
+# ==============================================================================
+## proto.code: Generate pb.go code according to the proto files.
+# ==============================================================================
+.PHONY: proto.code
+proto.code:
+	@$(MAKE) proto.gen.code
+
+# ==============================================================================
 ## all: Run format codes, check codes, build Layotto codes for host platform with one command
 # ==============================================================================
 .PHONY: all
