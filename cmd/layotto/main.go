@@ -170,6 +170,7 @@ import (
 	_ "mosn.io/layotto/pkg/wasm"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
+	"mosn.io/layotto/diagnostics/jaeger"
 	lprotocol "mosn.io/layotto/diagnostics/protocol"
 	lsky "mosn.io/layotto/diagnostics/skywalking"
 )
@@ -430,7 +431,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 var cmdStart = cli.Command{
 	Name:  "start",
-	Usage: "start runtime. For example:  ./layotto start -c configs/config_in_memory.json",
+	Usage: "start runtime. For example:  ./layotto start -c configs/config_standalone.json",
 	Flags: []cli.Flag{
 		cli.StringFlag{
 			Name:   "config, c",
@@ -515,7 +516,7 @@ func ExtensionsRegister(_ *cli.Context) {
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
 	trace.RegisterTracerBuilder("SOFATracer", lprotocol.Layotto, diagnostics.NewTracer)
 	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
-
+	trace.RegisterTracerBuilder("Jaeger", lprotocol.Layotto, jaeger.NewGrpcJaegerTracer)
 }
 
 func main() {

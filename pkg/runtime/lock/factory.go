@@ -16,13 +16,13 @@ package lock
 import "mosn.io/layotto/components/lock"
 
 type Factory struct {
-	Name          string
+	CompType      string
 	FactoryMethod func() lock.LockStore
 }
 
-func NewFactory(name string, f func() lock.LockStore) *Factory {
+func NewFactory(compType string, f func() lock.LockStore) *Factory {
 	return &Factory{
-		Name:          name,
+		CompType:      compType,
 		FactoryMethod: f,
 	}
 }

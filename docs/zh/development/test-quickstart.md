@@ -5,14 +5,26 @@ Quickstart 是项目的门面, 如果新用户进入仓库后，发现 Quickstar
 
 但是……定期手动测试 Quickstart、修复文档中的异常，这个过程实在太花时间了：
 
-![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*fTI5RbfAK3gAAAAAAAAAAAAAARQnAQ)
+<img src="https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*fTI5RbfAK3gAAAAAAAAAAAAAARQnAQ" width="30%" height="30%">
 
 烦死了！
 
 我们用工具自动测试文档吧！
 
 ## 原理
-用工具按顺序执行 markdown 文档里的所有 shell 脚本
+用工具按顺序执行 markdown 文档里的所有 shell 脚本, 即, 所有用
+~~~markdown
+```shell
+```
+~~~
+包裹起来的脚本。
+
+注意，不会执行用 
+~~~markdown
+```bash
+```
+~~~
+包裹起来的脚本哦。
 
 ## step 1. 安装 `mdx`
 见 https://github.com/seeflood/mdx#installation
@@ -107,7 +119,7 @@ docker rm -f redis-test
 
 其中有一段脚本会运行 Layotto, 但是如果运行它就会 hang 住，导致测试工具没法继续运行下一条命令：
 ```bash
-./layotto start -c ../../configs/config_state_redis.json
+./layotto start -c ../../configs/config_redis.json
 ```
 
 怎么办呢？
@@ -118,7 +130,7 @@ docker rm -f redis-test
 
 ~~~
 ```shell @background
-./layotto start -c ../../configs/config_in_memory.json
+./layotto start -c ../../configs/config_standalone.json
 ```
 ~~~
 
@@ -128,12 +140,12 @@ docker rm -f redis-test
 
 ```bash
     ```bash
-    ./layotto start -c ../../configs/config_state_redis.json
+    ./layotto start -c ../../configs/config_redis.json
     ```
     
     <!-- The command below will be run when testing this file 
     ```shell
-    nohup ./layotto start -c ../../configs/config_state_redis.json &
+    nohup ./layotto start -c ../../configs/config_redis.json &
     ```
     -->
 ```
@@ -174,6 +186,8 @@ cd ${project_path}/demo/state/redis/
     cd demo/state/redis/
     go run .
     ```
+### 其他 markdown 注解
+mdx 工具提供了很多"markdown 注解"，帮助您编写"可以运行的 markdown 文件"。感兴趣可以查看[mdx文档](https://github.com/seeflood/mdx#usage)
 
 ### 修复报错，看看效果吧!
 经过一顿修复，我再次运行文档:
@@ -209,7 +223,39 @@ DeleteState succeeded.key:key1
 DeleteState succeeded.key:key2
 redis-test
 ```
+## step 5. 修改 CI,自动测试新写的 quickstart 文档
+如果您新写了一篇 quickstart 文档, 并且自测能正常运行，下一步可以修改 CI，实现"每次有人提 Pull request 时，工具自动测试这篇 quickstart 文档能跑通"。
 
-## Future work
-- 优化所有 Quickstart 文档，让文档具有"可测性"
-- 在 CI pipeline 中自动测试所有 Quickstart
+修改方法是：
+
+1. 修改脚本 `etc/script/test-quickstart.sh`，把您的文档添加到其中:
+
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*ZPRlRa7a-0QAAAAAAAAAAAAAARQnAQ)
+
+2. 如果需要在文档运行前、运行后自动释放一些资源（比如自动 kill 进程、删除 docker 容器），可以在脚本里添加要释放的资源。举个例子，如果想实现"每次运行完一篇文档后，自动 kill etcd 进程"，可以在脚本中添加:
+
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*0th0Q7yn5MIAAAAAAAAAAAAAARQnAQ)
+
+3. 完成上述改动后，就可以测试新的 CI 了。 
+   
+在项目根目录下运行 
+```shell
+make style.quickstart
+```
+会测试这些文档:
+
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*I7LRSryXwWYAAAAAAAAAAAAAARQnAQ)
+
+> [!TIP|label: 本地运行需谨慎，该脚本会删除一些 docker 容器]
+> 该命令会删除包含图中关键字的 Docker 容器，如果您不希望删除这些容器，还是不要本地运行了：
+> ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*N3CIRb0883kAAAAAAAAAAAAAARQnAQ)
+
+
+而如果运行:
+
+```shell
+make style.quickstart QUICKSTART_VERSION=1.17
+```
+会测试以下文档(这些文档在 golang 1.17 及以上的版本才能运行成功):
+
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*X3F9QJSKq3QAAAAAAAAAAAAAARQnAQ)

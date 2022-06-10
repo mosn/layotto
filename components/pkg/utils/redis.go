@@ -28,7 +28,7 @@ import (
 const (
 	db                     = "db"
 	host                   = "redisHost"
-	hosts                  = "redisHosts"
+	redisHosts             = "redisHosts"
 	password               = "redisPassword"
 	enableTLS              = "enableTLS"
 	maxRetries             = "maxRetries"
@@ -151,12 +151,12 @@ type RedisClusterMetadata struct {
 
 func ParseRedisClusterMetadata(properties map[string]string) (RedisClusterMetadata, error) {
 	m := RedisClusterMetadata{}
-	if val, ok := properties[hosts]; ok && val != "" {
-		hosts := strings.Split(val, ",")
-		m.Hosts = hosts
-	} else {
-		return m, errors.New("redis store error: missing hosts address")
+	val, ok := properties[redisHosts]
+	if !ok || val == "" {
+		return m, errors.New("redis store error: missing redisHosts address")
 	}
+	hosts := strings.Split(val, ",")
+	m.Hosts = hosts
 
 	if val, ok := properties[password]; ok && val != "" {
 		m.Password = val
@@ -189,28 +189,35 @@ func ParseRedisClusterMetadata(properties map[string]string) (RedisClusterMetada
 		m.MaxRetryBackoff = time.Duration(parsedVal)
 	}
 
+	m.DB = defaultDB
 	if val, ok := properties[db]; ok && val != "" {
 		parsedVal, err := strconv.Atoi(val)
 		if err != nil {
 			return m, fmt.Errorf("redis store error: can't parse db field: %s", err)
 		}
 		m.DB = parsedVal
-	} else {
-		m.DB = defaultDB
 	}
+
+	con, err := getConcurrency(properties)
+	if err != nil {
+		return m, err
+	}
+	m.Concurrency = con
+	return m, nil
+}
+
+func getConcurrency(properties map[string]string) (int, error) {
+	result := runtime.NumCPU()
 	if val, ok := properties[concurrency]; ok && val != "" {
 		con, err := strconv.Atoi(val)
 		if err != nil {
-			return m, fmt.Errorf("redis store error: can't parse concurrency field: %s", err)
+			return result, fmt.Errorf("redis store error: can't parse concurrency field: %s", err)
 		}
-		if con <= 0 {
-			con = runtime.NumCPU()
+		if con > 0 {
+			result = con
 		}
-		m.Concurrency = con
-	} else {
-		m.Concurrency = runtime.NumCPU()
 	}
-	return m, nil
+	return result, nil
 }
 
 func GetMiliTimestamp(i int64) int64 {

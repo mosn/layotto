@@ -225,7 +225,7 @@ func (m *MinioOss) createOssClient(meta *MinioMetaData) (*minio.Core, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &minio.Core{client}, nil
+	return &minio.Core{Client: client}, nil
 }
 
 func (m *MinioOss) selectClient(meta map[string]string) (client *minio.Core, err error) {

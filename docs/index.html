@@ -17,7 +17,7 @@
 </head>
 <body>
 <div id="app"></div>
-<script src="//cdn.jsdelivr.net/npm/docsify-edit-on-github"></script>
+<script src="./js/index.js"></script>
 <script>
     window.$docsify = {
         alias: {
@@ -70,11 +70,11 @@
             color: "var(--theme-color,#42b983)",
             height: "3px",
         },
-        timeUpdater: {
-            text: ">last update time of this doc: {docsify-updated}",
-            formatUpdated: "{YYYY}/{MM}/{DD}",
-            whereToPlace: "bottom",  // "top" or "bottom", default to "bottom"
-        },
+        // timeUpdater: {
+        //     text: ">last update time of this doc: {docsify-updated}",
+        //     formatUpdated: "{YYYY}/{MM}/{DD}",
+        //     whereToPlace: "bottom",  // "top" or "bottom", default to "bottom"
+        // },
         // plugins: [
         //     EditOnGithubPlugin.create("https://github.com/mosn/layotto/tree/main/docs"
         //         , null
@@ -85,27 +85,29 @@
     }
 </script>
 <!-- Docsify v4 -->
-<script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-<script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
+<script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/docsify/4.12.2/docsify.min.js"></script>
+<script src="./js/docsify-sidebar-collapse.min.js"></script>
 
-<script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+<!--//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js-->
+<script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/docsify/4.9.0/plugins/search.min.js"></script>
 
 <!--see https://docsify.js.org/#/zh-cn/plugins?id=%e5%9b%be%e7%89%87%e7%bc%a9%e6%94%be-zoom-image-->
-<script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+<script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/docsify/4.12.2/plugins/zoom-image.js"></script>
 
-<script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+<!--//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js-->
+<script src="//lib.baomitu.com/docsify-copy-code/2.1.1/docsify-copy-code.min.js"></script>
 
 <!-- docsify-tabs (latest v1.x.x) -->
-<script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+<script src="./js/docsify-tabs.min.js"></script>
 
 <!-- https://github.com/fzankl/docsify-plugin-flexible-alerts -->
-<script src="https://unpkg.com/docsify-plugin-flexible-alerts"></script>
+<script src="./js/docsify-plugin-flexible-alerts.min.js"></script>
 
 <!-- https://github.com/HerbertHe/docsify-progress -->
-<script src="https://cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script>
+<script src="./js/progress.js"></script>
 
 <!-- https://github.com/pfeak/docsify-updated-->
-<script src="https://cdn.jsdelivr.net/npm/docsify-updated/src/time-updater.min.js"></script>
+<!-- <script src="./js/time-updater.min.js"></script> -->
 
 </body>
 </html>

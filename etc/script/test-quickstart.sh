@@ -9,6 +9,7 @@ set -e
 
 GO_VERSION=${1:-"default"}
 
+# By default,we test these docs with golang 1.14
 quickstarts_in_default="docs/en/start/configuration/start.md
   docs/zh/start/configuration/start.md
   docs/en/start/state/start.md
@@ -28,11 +29,18 @@ quickstarts_in_default="docs/en/start/configuration/start.md
   docs/en/start/actuator/start.md
   docs/zh/start/trace/trace.md
   docs/en/start/trace/trace.md
+  docs/en/start/trace/skywalking.md
   docs/zh/start/trace/skywalking.md
+  docs/zh/start/trace/prometheus.md
+  docs/en/start/trace/prometheus.md
+  docs/zh/start/trace/jaeger.md
   docs/en/start/wasm/start.md
   docs/zh/start/wasm/start.md
+  docs/en/start/secret/start.md
+  docs/zh/start/secret/start.md
 "
 
+# In advance mod, we test these docs with golang 1.17
 quickstarts_in_advance="docs/en/start/rpc/dubbo_json_rpc.md
 docs/zh/start/rpc/dubbo_json_rpc.md"
 
@@ -48,7 +56,7 @@ sh etc/script/download_etcd.sh
 # release all resources
 release_resource() {
   # kill processes
-  processes="layotto layotto_wasmer etcd go"
+  processes="layotto layotto_wasmer etcd server client go"
   for key in ${processes}; do
     if killall $key; then
       echo "$key released"

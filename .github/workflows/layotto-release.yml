@@ -18,20 +18,35 @@ jobs:
       - name: Format Go
         run: |
            make check.style
-  
+
+  resolve-modules:
+    name: "👀 Resolve Go Modules"
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout Sources
+        uses: actions/checkout@v2
+      - id: set-matrix
+        run: sh ./etc/script/resolve-modules.sh
   golangci-lint:
     name: "👀 Go CI Linter"
-    needs: [style-check]
+    needs: [ style-check,resolve-modules ]
     runs-on: ubuntu-20.04
+    strategy:
+      matrix: ${{ fromJson(needs.resolve-modules.outputs.matrix) }}
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Go
-      if: ${{ startsWith(github.ref, 'refs/tags/') }}
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.18.1
-    - name: Go Lint Test
-      run: make check.lint                                                                                                                                                                                                                                                                                                                                                                                                                                       
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.14.15
+      - name: Go Lint Test
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.46.2
+          working-directory: ${{ matrix.workdir }}
+          args: "--out-${NO_FUTURE}format colored-line-number"
 
   go-unit-test:
     name: "👀 Go Unit Test"
@@ -108,6 +123,16 @@ jobs:
           path: _output/darwin/amd64/layotto
           retention-days: 5
           if-no-files-found: error
+      - name: Compress Artifact
+        run: zip layotto.darwin_amd64.zip layotto
+        working-directory: _output/darwin/amd64
+      - name: Upload Artifact to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: _output/darwin/amd64/layotto.darwin_amd64.zip
+          tag: ${{ github.ref }}
+
 
   build-binary-darwin-arm64-artifact:
     name:  "🧳 Darwin ARM64 Artifact"
@@ -130,6 +155,15 @@ jobs:
           path: _output/darwin/arm64/layotto
           retention-days: 5
           if-no-files-found: error
+      - name: Compress Artifact
+        run: zip layotto.darwin_arm64.zip layotto
+        working-directory: _output/darwin/arm64
+      - name: Upload Artifact to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: _output/darwin/arm64/layotto.darwin_arm64.zip
+          tag: ${{ github.ref }}
 
   build-binary-linux-amd64-artifact:
     name:  "🧳 Linux AMD64 Artifact"
@@ -152,6 +186,15 @@ jobs:
           path: _output/linux/amd64/layotto
           retention-days: 5
           if-no-files-found: error
+      - name: Compress Artifact
+        run: zip layotto.linux_amd64.zip layotto
+        working-directory: _output/linux/amd64
+      - name: Upload Artifact to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: _output/linux/amd64/layotto.linux_amd64.zip
+          tag: ${{ github.ref }}
 
   build-binary-linux-arm64-artifact:
     name:  "🧳 Linux ARM64 Artifact"
@@ -174,6 +217,15 @@ jobs:
           path: _output/linux/arm64/layotto
           retention-days: 5
           if-no-files-found: error
+      - name: Compress Artifact
+        run: zip layotto.linux_arm64.zip layotto
+        working-directory: _output/linux/arm64
+      - name: Upload Artifact to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: _output/linux/arm64/layotto.linux_arm64.zip
+          tag: ${{ github.ref }}
 
   build-wasm-binary-linux-amd64-artifact:
     name:  "🧳 Linux AMD64 WASM Artifact"
@@ -197,6 +249,15 @@ jobs:
       #     path: _output/linux/amd64/layotto
       #     retention-days: 5
       #     if-no-files-found: error
+      # - name: Compress Artifact
+      #   run: zip layotto.wasm.linux_amd64.zip layotto
+      #   working-directory: _output/linux/amd64
+      # - name: Upload Artifact to Release
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: _output/linux/amd64/layotto.wasm.linux_amd64.zip
+      #     tag: ${{ github.ref }}
 
   build-push-wasm-image:
     name:  "🎉 Linux AMD64 WASM Image"

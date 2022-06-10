@@ -31,15 +31,9 @@ import (
 	"mosn.io/layotto/components/pkg/mock"
 )
 
-func TestNew(t *testing.T) {
-	s := NewQiniuOSS()
-	assert.NotNil(t, s)
-}
-
-func TestInit(t *testing.T) {
-	oss := NewQiniuOSS()
-
-	data := `[
+const (
+	endpointAddress = "endpoint_address"
+	metadata        = `[
 				{
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
@@ -47,7 +41,8 @@ func TestInit(t *testing.T) {
 					"bucket": "xc2022"
 				}
 			]`
-	data2 := `[
+
+	metadata2 = `[
 				{
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
@@ -56,19 +51,28 @@ func TestInit(t *testing.T) {
 					"useHTTPS": true
 				}
 			]`
+)
+
+func TestNew(t *testing.T) {
+	s := NewQiniuOSS()
+	assert.NotNil(t, s)
+}
+
+func TestInit(t *testing.T) {
+	oss := NewQiniuOSS()
 	fc := file.FileConfig{}
 	err := oss.Init(context.Background(), &fc)
 	assert.Error(t, err)
 
-	fc.Metadata = []byte(data)
+	fc.Metadata = []byte(metadata)
 	err = oss.Init(context.Background(), &fc)
 	assert.NoError(t, err)
 
-	fc.Metadata = []byte(data2)
+	fc.Metadata = []byte(metadata2)
 	err = oss.Init(context.Background(), &fc)
 	assert.Error(t, err)
 
-	fc.Metadata = []byte(data + ",")
+	fc.Metadata = []byte(metadata + ",")
 	err = oss.Init(context.Background(), &fc)
 	assert.Error(t, err)
 
@@ -120,16 +124,8 @@ func TestCheckMetadata(t *testing.T) {
 
 func TestSelectClient(t *testing.T) {
 	oss := NewQiniuOSS().(*QiniuOSS)
-	data := `[
-				{
-					"endpoint": "endpoint_address",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"bucket": "xc2022"
-				}
-			]`
 	fc := file.FileConfig{}
-	fc.Metadata = []byte(data)
+	fc.Metadata = []byte(metadata)
 	err := oss.Init(context.Background(), &fc)
 	assert.NoError(t, err)
 
@@ -144,7 +140,7 @@ func TestSelectClient(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, client)
 
-	mt[endpointKey] = "endpoint_address"
+	mt[endpointKey] = endpointAddress
 	client, err = oss.selectClient(mt)
 	assert.NoError(t, err)
 	assert.NotNil(t, client)
@@ -180,16 +176,8 @@ func TestSelectClientWithMulti(t *testing.T) {
 
 func TestPut(t *testing.T) {
 	oss := NewQiniuOSS()
-	data := `[
-				{
-					"endpoint": "endpoint_address",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"bucket": "xc2022"
-				}
-			]`
 	fc := file.FileConfig{}
-	fc.Metadata = []byte(data)
+	fc.Metadata = []byte(metadata)
 	err := oss.Init(context.Background(), &fc)
 	assert.NoError(t, err)
 
@@ -203,11 +191,11 @@ func TestPut(t *testing.T) {
 	err = oss.Put(context.Background(), st)
 	assert.Error(t, err)
 
-	st.Metadata[endpointKey] = "endpoint_address"
+	st.Metadata[endpointKey] = endpointAddress
 	err = oss.Put(context.Background(), st)
 	assert.Error(t, err)
 
-	st.Metadata[fileSizeKey] = "endpoint_address"
+	st.Metadata[fileSizeKey] = endpointAddress
 	err = oss.Put(context.Background(), st)
 	assert.Error(t, err)
 
@@ -250,16 +238,8 @@ func TestGet(t *testing.T) {
 
 func TestDel(t *testing.T) {
 	oss := NewQiniuOSS()
-	data := `[
-				{
-					"endpoint": "endpoint_address",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"bucket": "xc2022"
-				}
-			]`
 	fc := file.FileConfig{}
-	fc.Metadata = []byte(data)
+	fc.Metadata = []byte(metadata)
 	err := oss.Init(context.Background(), &fc)
 	assert.NoError(t, err)
 
@@ -272,23 +252,15 @@ func TestDel(t *testing.T) {
 	err = oss.Del(context.Background(), st)
 	assert.Error(t, err)
 
-	st.Metadata[endpointKey] = "endpoint_address"
+	st.Metadata[endpointKey] = endpointAddress
 	err = oss.Del(context.Background(), st)
 	assert.Error(t, err)
 }
 
 func TestStat(t *testing.T) {
 	oss := NewQiniuOSS().(*QiniuOSS)
-	data := `[
-				{
-					"endpoint": "endpoint_address",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"bucket": "xc2022"
-				}
-			]`
 	fc := file.FileConfig{}
-	fc.Metadata = []byte(data)
+	fc.Metadata = []byte(metadata)
 	err := oss.Init(context.Background(), &fc)
 	assert.NoError(t, err)
 
@@ -303,7 +275,7 @@ func TestStat(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, resp)
 
-	st.Metadata[endpointKey] = "endpoint_address"
+	st.Metadata[endpointKey] = endpointAddress
 	resp, err = oss.Stat(context.Background(), st)
 	assert.Error(t, err)
 	assert.Nil(t, resp)
@@ -316,7 +288,7 @@ func TestStat(t *testing.T) {
 	bm.EXPECT().Stat(gomock.Eq("xc2022"), gomock.Eq("a.txt")).Return(storage.FileInfo{}, nil)
 	mockOss(oss, bm, fu)
 
-	st.Metadata[endpointKey] = "endpoint_address"
+	st.Metadata[endpointKey] = endpointAddress
 	resp, err = oss.Stat(context.Background(), st)
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
@@ -325,16 +297,8 @@ func TestStat(t *testing.T) {
 
 func TestList(t *testing.T) {
 	oss := NewQiniuOSS().(*QiniuOSS)
-	data := `[
-				{
-					"endpoint": "endpoint_address",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"bucket": "xc2022"
-				}
-			]`
 	fc := file.FileConfig{}
-	fc.Metadata = []byte(data)
+	fc.Metadata = []byte(metadata)
 	err := oss.Init(context.Background(), &fc)
 	assert.NoError(t, err)
 
@@ -350,7 +314,7 @@ func TestList(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, resp)
 
-	st.Metadata[endpointKey] = "endpoint_address"
+	st.Metadata[endpointKey] = endpointAddress
 	resp, err = oss.List(context.Background(), st)
 	assert.Error(t, err)
 	assert.Nil(t, resp)
@@ -371,7 +335,7 @@ func TestList(t *testing.T) {
 	bm.EXPECT().ListFiles(gomock.Eq("xc2022"), gomock.Eq("b/"), gomock.Any(), gomock.Any(), gomock.Any()).Return(items, make([]string, 0), "", false, nil)
 	mockOss(oss, bm, fu)
 
-	st.Metadata[endpointKey] = "endpoint_address"
+	st.Metadata[endpointKey] = endpointAddress
 	resp, err = oss.List(context.Background(), st)
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)

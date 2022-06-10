@@ -90,17 +90,6 @@ Put接口入参主要有三个，多了一个data字段用来传输文件内容�
 | data | 文件内容 | no（允许用户上传空数据，每个component可以做具体实现）|
 | metadata | 元数据，该字段用户可以用来指定component需要的一些字段，（eg:权限，用户名等） | yes|
 
-#### Put接口
-
-Put接口入参主要有三个，多了一个data字段用来传输文件内容：
-
-| **参数名** | **意义** | **是否必传** |
-| --- | --- | --- | --- | --- | --- | --- |
-| store_name | 后端对应的components（eg: aliOSS, awsOSS） | yes |
-| name | 文件名字 | yes|
-| data | 文件内容 | no（允许用户上传空数据，每个component可以做具体实现）|
-| metadata | 元数据，该字段用户可以用来指定component需要的一些字段，（eg:权限，用户名等） | yes|
-
 
 #### List和Del接口
 
@@ -120,7 +109,8 @@ Put接口入参主要有三个，多了一个data字段用来传输文件内容�
 
 {
     "file": {
-      "aliOSS": {
+      "file_demo": {
+        "type": "aliOSS",
         "metadata":[
           {
             "endpoint": "endpoint_address",

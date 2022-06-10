@@ -19,6 +19,8 @@ package runtime
 import (
 	"encoding/json"
 
+	"mosn.io/layotto/pkg/runtime/secretstores"
+
 	"mosn.io/layotto/components/custom"
 
 	"mosn.io/layotto/pkg/runtime/bindings"
@@ -50,7 +52,7 @@ type MosnRuntimeConfig struct {
 	LockManagement         map[string]lock.Config              `json:"lock"`
 	SequencerManagement    map[string]sequencer.Config         `json:"sequencer"`
 	Bindings               map[string]bindings.Metadata        `json:"bindings"`
-	SecretStoresManagement map[string]bindings.Metadata        `json:"secretStores"`
+	SecretStoresManagement map[string]secretstores.Metadata    `json:"secret_store"`
 	// <component type,component name,config>
 	// e.g. <"super_pubsub","etcd",config>
 	CustomComponent map[string]map[string]custom.Config `json:"custom_component,omitempty"`

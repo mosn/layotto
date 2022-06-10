@@ -14,6 +14,7 @@
 package sequencer
 
 type Config struct {
+	Type       string            `json:"type"`
 	BiggerThan map[string]int64  `json:"biggerThan"`
 	Metadata   map[string]string `json:"metadata"`
 }

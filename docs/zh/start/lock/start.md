@@ -1,13 +1,31 @@
-# 基于redis使用分布式锁
+# 基于 Redis 使用分布式锁
 
 ## 快速开始
 
-该示例展示了如何通过Layotto调用redis，进行分布式锁的抢锁、解锁操作。
+该示例展示了如何通过Layotto调用 Redis，进行分布式锁的抢锁、解锁操作。
 
-该示例的架构如下图，启动的进程有：redis、Layotto、一个演示用的client程序（其中包含两个协程，并发抢锁）
+该示例的架构如下图，启动的进程有：Redis、Layotto、一个演示用的client程序（其中包含两个协程，并发抢锁）
 
 ![img.png](../../../img/lock/img.png)
-### 第一步：部署redis
+### step 1. 部署 Redis 和 Layotto
+
+<!-- tabs:start -->
+#### **使用 Docker Compose**
+您可以用 docker-compose 启动 Redis 和 Layotto
+
+```bash
+cd docker/layotto-redis
+# Start redis and layotto with docker-compose
+docker-compose up -d
+```
+
+#### **本地编译（不适合 Windows)**
+您可以使用 Docker 运行 Redis，然后本地编译、运行 Layotto。
+
+> [!TIP|label: 不适合 Windows 用户]
+> Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker-compose 部署
+
+#### step 1.1. 用 Docker 运行 Redis
 
 1. 取最新版的 Redis 镜像。
 这里我们拉取官方的最新版本的镜像：
@@ -17,16 +35,17 @@ docker pull redis:latest
 ```
 
 2. 查看本地镜像
-   使用以下命令来查看是否已安装了 redis：
+使用以下命令来查看是否已安装了 Redis：
 
 ```shell
 docker images
 ```
+
 ![img.png](../../../img/mq/start/img.png)
 
 3. 运行容器
 
-安装完成后，我们可以使用以下命令来运行 redis 容器：
+安装完成后，我们可以使用以下命令来运行 Redis 容器：
 
 ```shell
 docker run -itd --name redis-test -p 6380:6379 redis
@@ -36,7 +55,7 @@ docker run -itd --name redis-test -p 6380:6379 redis
 
 -p 6380:6379：映射容器服务的 6379 端口到宿主机的 6380 端口。外部可以直接通过宿主机ip:6380 访问到 Redis 的服务。
 
-### 第二步：运行Layotto
+#### step 1.2. 运行 Layotto
 
 将项目代码下载到本地后，切换代码目录：
 
@@ -53,15 +72,17 @@ go build -o layotto
 完成后目录下会生成layotto文件，运行它：
 
 ```shell @background
-./layotto start -c ../../configs/config_lock_redis.json
+./layotto start -c ../../configs/config_redis.json
 ```
 
-### 第三步：运行客户端程序，调用Layotto抢锁/解锁
+<!-- tabs:end -->
+
+### step 2. 运行客户端程序，调用Layotto抢锁/解锁
 
 ```shell
- cd ${project_path}/demo/lock/redis/
+ cd ${project_path}/demo/lock/common/
  go build -o client
- ./client
+ ./client -s "lock_demo"
 ```
 
 打印出如下信息则代表调用成功：

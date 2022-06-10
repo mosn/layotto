@@ -30,17 +30,17 @@ import (
 	grpc_api "mosn.io/layotto/pkg/grpc"
 )
 
-const componentType = "helloworld"
+const kind = "helloworld"
 
 // This demo will always use this component name.
-const componentName = "in-memory"
+const componentName = "demo"
 
 func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
 	// 1. convert custom components
 	name2component := make(map[string]component.HelloWorld)
 	if len(ac.CustomComponent) != 0 {
 		// we only care about those components of type "helloworld"
-		name2comp, ok := ac.CustomComponent[componentType]
+		name2comp, ok := ac.CustomComponent[kind]
 		if ok && len(name2comp) > 0 {
 			for name, v := range name2comp {
 				// convert them using type assertion

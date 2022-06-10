@@ -1,7 +1,7 @@
 # Etcd
 
 ## metadata fields
-Example: configs/config_lock_etcd.json
+Example: configs/runtime_config.json
 
 | Field | Required | Description |
 | --- | --- | --- |
@@ -39,7 +39,7 @@ go build
 
 Execute after the compilation is successful:
 ```shell @background
-./layotto start -c ../../configs/config_lock_etcd.json
+./layotto start -c ../../configs/runtime_config.json
 ```
 
 ## Run Demo

@@ -213,6 +213,13 @@ style.quickstart:
 	@$(MAKE) checker.quickstart
 
 # ==============================================================================
+## license: Add license headers for code files.
+# ==============================================================================
+.PHONY: license
+license:
+	@$(MAKE) checker.license.fix
+
+# ==============================================================================
 ## integrate.wasm: Run integration test with wasm.
 # ==============================================================================
 .PHONY: integrate.wasm
@@ -243,7 +250,7 @@ clean:
 ## all: Run format codes, check codes, build Layotto codes for host platform with one command
 # ==============================================================================
 .PHONY: all
-all: format check.style check.unit check.lint build
+all: clean format check style.quickstart clean
 
 # ==============================================================================
 # Usage

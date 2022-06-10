@@ -31,8 +31,12 @@ import (
 	"mosn.io/layotto/components/trace"
 )
 
+const (
+	defaultGroup = "default"
+	defaultLabel = "default"
+)
+
 type EtcdV3ConfigStore struct {
-	name   string
 	client *clientv3.Client
 	sync.RWMutex
 	subscribeKey map[string]string
@@ -44,11 +48,11 @@ type EtcdV3ConfigStore struct {
 }
 
 func (c *EtcdV3ConfigStore) GetDefaultGroup() string {
-	return "default"
+	return defaultGroup
 }
 
 func (c *EtcdV3ConfigStore) GetDefaultLabel() string {
-	return "default"
+	return defaultLabel
 }
 
 func NewStore() configstores.Store {

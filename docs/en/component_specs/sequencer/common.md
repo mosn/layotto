@@ -4,7 +4,19 @@
 The json configuration file has the following structure:
 ```json
 "sequencer": {
-  "<STORE NAME>": {
+  "<Component A Name>": {
+    "type": "Component A Name",
+    "biggerThan": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    },
+    "metadata": {
+      "<KEY>": "<VALUE>",
+      "<KEY>": "<VALUE>"
+    }
+  },
+  "<Component B Name>": {
+    "type": "Component B Name",
     "biggerThan": {
       "<KEY>": "<VALUE>",
       "<KEY>": "<VALUE>"
@@ -16,12 +28,13 @@ The json configuration file has the following structure:
   }
 }
 ```
-You can configure the key/value configuration items that the component cares about in the metadata. For example, [Etcd component configuration](https://github.com/mosn/layotto/blob/main/configs/config_sequencer_etcd.json) is as follows:
+You can configure the key/value configuration items that the component cares about in the metadata. For example, [Etcd component configuration](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) is as follows:
 
 
 ```json
 "sequencer": {
-  "etcd": {
+  "sequencer_demo": {
+    "type": "etcd",
     "biggerThan": {
       "key1": 1,
       "key2": 111

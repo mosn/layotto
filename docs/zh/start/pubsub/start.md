@@ -14,8 +14,51 @@ Layotto Pub/Sub API的设计目标是定义一套统一的消息发布/订阅API
 
 ![img_1.png](../../../img/mq/start/img_1.png)
 
-### 第一步：部署redis
+### step 1. 启动 Subscriber 程序,订阅事件
+```shell
+ cd ${project_path}/demo/pubsub/server/
+ go build -o subscriber
+```
 
+```shell @background
+ ./subscriber -s pub_subs_demo
+```
+打印出如下信息则代表启动成功：
+
+```bash
+Start listening on port 9999 ...... 
+```
+
+> [!TIP|label: Subscriber 程序做了什么？]
+> 该程序会启动一个gRPC服务器，开放两个接口：
+> - ListTopicSubscriptions
+>
+> 调用该接口会返回应用订阅的Topic。本程序会返回"topic1"
+>
+> - OnTopicEvent
+>
+> 当有新的事件发生时，Layotto会调用该接口，将新事件通知给Subscriber。
+>
+> 本程序接收到新事件后，会将事件打印到命令行。
+
+### step 2. 部署 Redis 和 Layotto
+<!-- tabs:start -->
+#### **使用 Docker Compose**
+您可以用 docker-compose 启动 Redis 和 Layotto
+
+```bash
+cd docker/layotto-redis
+# Start redis and layotto with docker-compose
+docker-compose up -d
+```
+
+#### **本地编译（不适合 Windows)**
+您可以使用 Docker 运行 Redis，然后本地编译、运行 Layotto。
+
+> [!TIP|label: 不适合 Windows 用户]
+> Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker-compose 部署
+
+#### step 2.1. 用 Docker 运行 Redis
 1. 取最新版的 Redis 镜像。
 这里我们拉取官方的最新版本的镜像：
 
@@ -43,36 +86,7 @@ docker run -itd --name redis-test -p 6380:6379 redis
 
 -p 6380:6379：映射容器服务的 6379 端口到宿主机的 6380 端口。外部可以直接通过宿主机ip:6380 访问到 Redis 的服务。
 
-### 第二步：启动Subscriber程序,订阅事件
-```shell
- cd ${project_path}/demo/pubsub/redis/server/
- go build -o subscriber
-```
-
-```shell @background
- ./subscriber
-```
-打印出如下信息则代表启动成功：
-
-```bash
-Start listening on port 9999 ...... 
-```
-
-解释：
-
-该程序会启动一个gRPC服务器，开放两个接口：
-
-- ListTopicSubscriptions
-
-调用该接口会返回应用订阅的Topic。本程序会返回"topic1"
-
-- OnTopicEvent
-
-当有新的事件发生时，Layotto会调用该接口，将新事件通知给Subscriber。
-
-本程序接收到新事件后，会将事件打印到命令行。
-
-### 第三步：运行Layotto
+#### step 2.2. 编译、运行 Layotto
 
 将项目代码下载到本地后，切换代码目录：
 
@@ -91,13 +105,14 @@ go build -o layotto
 ```shell @background
 ./layotto start -c ../../configs/config_redis.json
 ```
+<!-- tabs:end -->
 
-### 第四步：运行Publisher程序，调用Layotto发布事件
+### step 3. 运行Publisher程序，调用Layotto发布事件
 
 ```shell
- cd ${project_path}/demo/pubsub/redis/client/
+ cd ${project_path}/demo/pubsub/client/
  go build -o publisher
- ./publisher
+ ./publisher -s pub_subs_demo
 ```
 
 打印出如下信息则代表调用成功：
@@ -106,7 +121,7 @@ go build -o layotto
 Published a new event.Topic: topic1 ,Data: value1 
 ```
 
-### 第五步：检查Subscriber收到的事件消息
+### step 4. 检查Subscriber收到的事件消息
 
 回到subscriber的命令行，会看到接收到了新消息：
 
@@ -114,6 +129,24 @@ Published a new event.Topic: topic1 ,Data: value1
 Start listening on port 9999 ...... 
 Received a new event.Topic: topic1 , Data:value1 
 ```
+
+### step 5. 销毁容器，释放资源
+<!-- tabs:start -->
+#### **关闭 Docker Compose**
+如果您是用 docker-compose 启动的 Redis 和 Layotto，可以按以下方式关闭：
+
+```bash
+cd ${project_path}/docker/layotto-redis
+docker-compose stop
+```
+#### **销毁 Redis Docker 容器**
+如果您是用 Docker 启动的 Redis，可以按以下方式销毁 Redis 容器：
+
+```shell
+docker rm -f redis-test
+```
+<!-- tabs:end -->
+
 
 ### 下一步
 #### 这个Publisher程序做了什么？
