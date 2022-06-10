@@ -3,6 +3,7 @@
 Sequencer API用于生成分布式唯一、自增id。
 
 Sequencer API支持声明对自增的需求，包括趋势递增(WEAK)和严格递增(STRONG)
+
 ## 快速开始
 
 该示例展示了如何通过Layotto调用Etcd，生成分布式唯一、自增id。

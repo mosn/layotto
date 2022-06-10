@@ -4,31 +4,34 @@ Thank you for your support in Layotto!
 
 This document describes how to modify/add documents. Documentation for this repository is written in Markdown.
 
-## Document Path description
+## 1. Document Path description
 
 Documents are stored in the 'docs/' directory, where 'docs/en' stores English documents and 'docs/zh' stores Chinese documents.
 
 ![img_2.png](../../img/development/doc/img_2.png)
 
-## How to Add a New Document
+## 2. Documentation Site Description
+Files under docs/ directory will be automatically deployed to github pages and rendered through [docsify](https://docsify.js.org/#/).
+
+Generally speaking, after the .md file is merged into the main branch, you can see the new page on the Layotto's documentation site, and all deployment and rendering processes are done automatically.
+
+## 3. How to Add a New Document
+### step 1. Write a new markdown file
 To add a document, create a folder and a .md file based on the directory structure. For example, if you want to write a design document for the distributed lock API, just create a new directory:
 
 ![img_1.png](../../img/development/doc/img_1.png)
 
-2. Remember to update the sidebar after adding new documents or revising existing documents.
+### step 2. Update the sidebar
+Remember to update the sidebar after adding new documents or revising existing documents.
 
 Chinese sidebar: 'docs/zh/_sidebar.md'
 
 English sidebar: 'docs/_sidebar.md'
 
-3. After writing the above Markdown files, submitting pr and merging it into the main branch, new documents are now available on the official website.
+### step 3. Submit a Pull request 
+After writing the above Markdown files, submitting pr and merging it into the main branch, new documents are now available on the official website.
 
-## Documentation Site Description
-Files under docs/ directory will be automatically deployed to github pages and rendered through [docsify](https://docsify.js.org/#/).
-
-Generally speaking, after the .md file is merged into the main branch, you can see the new page on the Layotto's documentation site, and all deployment and rendering processes are done automatically.
-
-## Common Pitfalls: Hyperlinks Within Documents
+## 4. Tips on Hyperlinks
 
 One annoying problem with Docsify is that the use of hyperlinks are confusing.
 
@@ -57,7 +60,7 @@ b. Use the full Url. Such as:
 see [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json):
 ```
 
-## Picture Catalog and Link
+## 5. Tips on image links
 Images are stored under docs/img/ directory for the purpose that the Docsify site can access it
 
 ![img.png](../../img/development/doc/img.png)
