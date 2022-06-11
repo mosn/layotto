@@ -16,11 +16,13 @@ package postgresql
 
 import (
 	"database/sql/driver"
-	"github.com/DATA-DOG/go-sqlmock"
-	"mosn.io/layotto/components/pkg/utils"
 	"testing"
+
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/components/pkg/utils"
 
 	"mosn.io/layotto/components/sequencer"
 )
@@ -69,14 +71,11 @@ func TestPostgresqlSequencer_GetNextId(t *testing.T) {
 		t.Errorf("init metadata error: %v", err)
 	}
 
-
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-
-
 
 	mock.ExpectExec("CREATE TABLE IF NOT EXISTS layotto_incr\n(\n    id bigint NOT NULL,\n    value_id bigint NOT NULL,\n    biz_tag character(255) COLLATE pg_catalog.\"default\" NOT NULL,\n    create_time bigint,\n    update_time bigint,\n    CONSTRAINT layotto_incr_pkey PRIMARY KEY (id)\n)\nWITH (\n    OIDS = FALSE\n)\nTABLESPACE pg_default;")
 	rows := sqlmock.NewRows([]string{"id", "value_id", "biz_tag", "create_time", "update_time"}).AddRow([]driver.Value{1, 10, meta.BizTag, 111111, 111111}...)
@@ -84,7 +83,6 @@ func TestPostgresqlSequencer_GetNextId(t *testing.T) {
 	mock.ExpectQuery("select").WillReturnRows(rows)
 	mock.ExpectExec("update").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
-
 
 	p.db = db
 	p.metadata = meta
@@ -120,6 +118,7 @@ func TestPostgresqlSequencer_GetSegment(t *testing.T) {
 	//assert.NoError(t, err)
 	//p.Close()
 }
+
 //
 //func TestLocalNextId(t *testing.T) {
 //
