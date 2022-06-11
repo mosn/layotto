@@ -23,6 +23,8 @@ import (
 
 	"mosn.io/pkg/log"
 
+	_ "github.com/lib/pq"
+
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
 )
@@ -93,8 +95,8 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 	p.db = utils.NewPostgresqlCli(metadata)
 
 	var model PostgresqlModel
-	queryParams := fmt.Sprintf(`select value_id, biz_tag, create_time, update_time from %v where biz_tag = $1`, p.metadata.TableName)
-	err = p.db.QueryRow(queryParams, req.Key).Scan(&model.ValueId, &model.BizTag, &model.CreateTime, &model.UpdateTime)
+	queryParams := fmt.Sprintf(`select id, value_id, biz_tag, create_time, update_time from %s where biz_tag = $1`, p.metadata.TableName)
+	err = p.db.QueryRow(queryParams, req.Key).Scan(&model.ID, &model.ValueId, &model.BizTag, &model.CreateTime, &model.UpdateTime)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +110,7 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 		}
 	}()
 	var res sql.Result
-	updateParams := fmt.Sprintf(`update %v set value_id = value_id + 1, update_time = $1 where biz_tag = $2`, p.metadata.TableName)
+	updateParams := fmt.Sprintf(`update %s set value_id = value_id + 1, update_time = $1 where biz_tag = $2`, p.metadata.TableName)
 	if tx != nil {
 		res, err = tx.ExecContext(p.ctx, updateParams, time.Now().Unix(), req.Key)
 	} else {
@@ -147,8 +149,8 @@ func (p *PostgresqlSequencer) GetSegment(req *sequencer.GetSegmentRequest) (bool
 	p.db = utils.NewPostgresqlCli(metadata)
 
 	var model PostgresqlModel
-	queryParams := fmt.Sprintf(`select value_id, biz_tag, create_time, update_time from %s where biz_tag = $1`, p.metadata.TableName)
-	err = p.db.QueryRow(queryParams, req.Key).Scan(&model.ValueId, &model.BizTag, &model.CreateTime, &model.UpdateTime)
+	queryParams := fmt.Sprintf(`select id, value_id, biz_tag, create_time, update_time from %s where biz_tag = $1`, p.metadata.TableName)
+	err = p.db.QueryRow(queryParams, req.Key).Scan(&model.ID, &model.ValueId, &model.BizTag, &model.CreateTime, &model.UpdateTime)
 	if err != nil {
 		return false, nil, err
 	}
