@@ -15,6 +15,7 @@
 package postgresql
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -86,28 +87,34 @@ func TestPostgresqlSequencer_GetNextId(t *testing.T) {
 
 	p.db = db
 
-	resp, err := p.GetNextId(&sequencer.GetNextIdRequest{Key: p.metadata.BizTag, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: initMap()})
+	_, err = p.GetNextId(&sequencer.GetNextIdRequest{Key: p.metadata.BizTag, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: initMap()})
 
 	if err != nil {
-		t.Errorf("error was not expected while updating stats: %s", err)
+		fmt.Printf("error was not expected while updating stats: %v", err)
 	}
 
-	p.logger.Infof("get nextId is: %d", resp.NextId)
+	//p.logger.Infof("get n?extId is: %d", resp.NextId)
 	assert.NoError(t, err)
 	p.Close()
 }
 
 func TestPostgresqlSequencer_GetSegment(t *testing.T) {
 	p := NewPostgresqlSequencer(log.DefaultLogger)
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Errorf("mock db error: %v", err)
+	}
+	defer db.Close()
+
 	cfg := sequencer.Configuration{
 		Properties: initMap(),
 		BiggerThan: make(map[string]int64),
 	}
-	err := p.Init(cfg)
+	err = p.Init(cfg)
+	if err != nil {
+		t.Errorf("init postgresql cli error: %v", err)
+	}
 	assert.Nil(t, err)
-
-	db, mock, err := sqlmock.New()
-	defer db.Close()
 
 	//rows := sqlmock.NewRows([]string{"id", "value_id", "biz_tag", "create_time", "update_time"}).AddRow([]driver.Value{1, 1, p.metadata.BizTag, time.Now().Unix(), time.Now().Unix()}...)
 	mock.ExpectBegin()
