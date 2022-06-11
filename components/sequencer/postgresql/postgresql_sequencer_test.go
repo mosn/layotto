@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	// this package is SQL driver
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/pkg/log"
@@ -72,9 +73,9 @@ func TestPostgresqlSequencer_GetNextId(t *testing.T) {
 	assert.Nil(t, err)
 
 	db, mock, err := sqlmock.New()
-	//if err != nil {
-	//	t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	//}
+	if err != nil {
+		t.Fatalf("an error '%v' was not expected when opening a stub database connection", err)
+	}
 	//rows := sqlmock.NewRows([]string{"id", "value_id", "biz_tag", "create_time", "update_time"}).AddRow([]driver.Value{1, 1, p.metadata.BizTag, time.Now().Unix(), time.Now().Unix()}...)
 	mock.ExpectBegin()
 	//mock.ExpectQuery("select").WillReturnRows(rows)
