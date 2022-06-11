@@ -18,6 +18,7 @@ package main
 
 import (
 	"encoding/json"
+	sequencer_postgresql "mosn.io/layotto/components/sequencer/postgresql"
 	"os"
 	"strconv"
 	"time"
@@ -402,6 +403,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
 				return sequencer_inmemory.NewInMemorySequencer()
+			}),
+			runtime_sequencer.NewFactory("postgresql", func() sequencer.Store {
+				return sequencer_postgresql.NewPostgresqlSequencer(log.DefaultLogger)
 			}),
 		),
 		// secretstores
