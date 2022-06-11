@@ -18,10 +18,11 @@ package main
 
 import (
 	"encoding/json"
-	sequencer_postgresql "mosn.io/layotto/components/sequencer/postgresql"
 	"os"
 	"strconv"
 	"time"
+
+	sequencer_postgresql "mosn.io/layotto/components/sequencer/postgresql"
 
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"

@@ -17,14 +17,16 @@ package postgresql
 import (
 	"context"
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
-	"mosn.io/pkg/log"
-	"testing"
-	"time"
 )
 
 func initMap() map[string]string {

@@ -1,0 +1,109 @@
+{
+  "servers": [
+    {
+      "default_log_path": "stdout",
+      "default_log_level": "DEBUG",
+      "routers": [
+        {
+          "router_config_name": "actuator_dont_need_router"
+        }
+      ],
+      "listeners": [
+        {
+          "name": "grpc",
+          "address": "127.0.0.1:34904",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "hellos": {
+                        "quick_start_demo": {
+                          "type": "helloworld",
+                          "hello": "greeting"
+                        }
+                      },
+                      "state": {
+                        "state_demo": {
+                          "type": "redis",
+                          "metadata": {
+                            "redisHost": "localhost:6380",
+                            "redisPassword": ""
+                          }
+                        }
+                      },
+                      "sequencer": {
+                        "sequencer_demo": {
+                          "type": "postgresql",
+                          "metadata": {
+                            "host": "localhost",
+                            "port": "5432",
+                            "username": "postgres",
+                            "password": "213213",
+                            "db": "test_db",
+                            "tableName": "layotto_incr",
+                            "bizTag": "test"
+                          }
+                        }
+                      },
+                      "lock": {
+                        "lock_demo": {
+                          "type": "redis",
+                          "metadata": {
+                            "redisHost": "localhost:6380",
+                            "redisPassword": ""
+                          }
+                        }
+                      },
+                      "pub_subs": {
+                        "pub_subs_demo": {
+                          "type": "redis",
+                          "metadata": {
+                            "redisHost": "localhost:6380",
+                            "redisPassword": ""
+                          }
+                        }
+                      },
+                      "app": {
+                        "app_id": "app1",
+                        "grpc_callback_port": 9999
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "actuator",
+          "address": "127.0.0.1:34999",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "proxy",
+                  "config": {
+                    "downstream_protocol": "Http1",
+                    "upstream_protocol": "Http1",
+                    "router_config_name": "actuator_dont_need_router"
+                  }
+                }
+              ]
+            }
+          ],
+          "stream_filters": [
+            {
+              "type": "actuator_filter"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

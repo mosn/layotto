@@ -18,10 +18,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
+
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
-	"mosn.io/pkg/log"
-	"time"
 )
 
 // PostgresqlModel postgresql model
@@ -63,8 +65,8 @@ func (p *PostgresqlSequencer) Init(config sequencer.Configuration) error {
 
 	p.ctx, p.cancel = context.WithCancel(context.Background())
 
-	for key, needValue := range p.biggerThan {
-		if needValue <= 0 {
+	for key, value := range p.biggerThan {
+		if value <= 0 {
 			continue
 		}
 		var model PostgresqlModel
@@ -74,7 +76,7 @@ func (p *PostgresqlSequencer) Init(config sequencer.Configuration) error {
 			p.logger.Errorf("get nextId error, biz_tag: %s, err: %v", key, err)
 			return err
 		}
-		if model.ID < needValue {
+		if model.ID < value {
 			return fmt.Errorf("postgresql sequenccer error: can not satisfy biggerThan guarantee.key: %s,key in postgres: %s", key, p.metadata.TableName)
 		}
 	}
