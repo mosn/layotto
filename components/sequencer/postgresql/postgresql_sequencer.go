@@ -89,7 +89,9 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 	var model PostgresqlModel
 	queryParams := fmt.Sprintf(`select id, value_id, biz_tag, create_time, update_time from %s where biz_tag = $1`, p.metadata.TableName)
 	err := p.db.QueryRow(queryParams, req.Key).Scan(&model.ID, &model.ValueId, &model.BizTag, &model.CreateTime, &model.UpdateTime)
-
+	if err != nil {
+		return nil, err
+	}
 	tx, err := p.db.Begin()
 	defer func() {
 		if err != nil {
@@ -101,11 +103,11 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 	}()
 	var res sql.Result
 	updateParams := fmt.Sprintf(`update %v set value_id = value_id + 1, update_time = $1 where biz_tag = $2`, p.metadata.TableName)
-	//if tx != nil {
-	//	res, err = tx.ExecContext(p.ctx, updateParams, time.Now().Unix(), req.Key)
-	//} else {
-	//}
-	res, err = p.db.ExecContext(p.ctx, updateParams, time.Now().Unix(), req.Key)
+	if tx != nil {
+		res, err = tx.ExecContext(p.ctx, updateParams, time.Now().Unix(), req.Key)
+	} else {
+		res, err = p.db.ExecContext(p.ctx, updateParams, time.Now().Unix(), req.Key)
+	}
 	if err != nil {
 		return nil, err
 	}
