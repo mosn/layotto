@@ -94,6 +94,7 @@ func TestPostgresqlSequencer_GetNextId(t *testing.T) {
 
 	p.logger.Infof("get nextId is: %d", resp.NextId)
 	assert.NoError(t, err)
+	p.Close()
 }
 
 func TestPostgresqlSequencer_GetSegment(t *testing.T) {
@@ -121,6 +122,7 @@ func TestPostgresqlSequencer_GetSegment(t *testing.T) {
 
 	_, _, err = p.GetSegment(req)
 	assert.NoError(t, err)
+	p.Close()
 }
 
 //func TestLocalNextId(t *testing.T) {
