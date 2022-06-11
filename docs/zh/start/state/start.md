@@ -6,13 +6,30 @@ API支持批量CRUD操作，支持声明对并发安全和数据一致性的要�
 
 ## 快速开始
 
-该示例展示了如何通过Layotto调用redis，进行状态数据的增删改查。
+该示例展示了如何通过Layotto调用 Redis，进行状态数据的增删改查。
 
-该示例的架构如下图，启动的进程有：redis、Layotto、客户端程程序
+该示例的架构如下图，启动的进程有：Redis、Layotto、客户端程程序
 
-![img.png](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/state/img.png)
+![img.png](../../../img/state/img.png)
 
-### 第一步：部署存储系统（redis）
+### step 1. 启动 Redis 和 Layotto
+<!-- tabs:start -->
+#### **使用 Docker Compose**
+您可以用 docker-compose 启动 Redis 和 Layotto
+
+```bash
+cd docker/layotto-redis
+# Start redis and layotto with docker-compose
+docker-compose up -d
+```
+
+#### **本地编译（不适合 Windows)**
+您可以使用 Docker 运行 Redis，然后本地编译、运行 Layotto。
+
+> [!TIP|label: 不适合 Windows 用户]
+> Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker-compose 部署
+
+#### step 1.1. 用 Docker 运行 Redis
 
 1. 取最新版的 Redis 镜像。
 这里我们拉取官方的最新版本的镜像：
@@ -23,17 +40,17 @@ docker pull redis:latest
 
 2. 查看本地镜像
    
-使用以下命令来查看是否已安装了 redis：
+使用以下命令来查看是否已安装了 Redis：
 
 ```shell
 docker images
 ```
 
-![img.png](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/mq/start/img.png)
+![img.png](../../../img/mq/start/img.png)
 
 3. 运行容器
 
-安装完成后，我们可以使用以下命令来运行 redis 容器：
+安装完成后，我们可以使用以下命令来运行 Redis 容器：
 
 ```shell
 docker run -itd --name redis-test -p 6380:6379 redis
@@ -43,7 +60,7 @@ docker run -itd --name redis-test -p 6380:6379 redis
 
 -p 6380:6379：映射容器服务的 6379 端口到宿主机的 6380 端口。外部可以直接通过宿主机ip:6380 访问到 Redis 的服务。
 
-### 第二步：运行Layotto
+#### step 1.2. 编译、运行 Layotto
 
 将项目代码下载到本地后，切换代码目录：
 
@@ -63,8 +80,9 @@ go build -o layotto
 ```shell @background
 ./layotto start -c ../../configs/config_redis.json
 ```
+<!-- tabs:end -->
 
-### 第三步：运行客户端程序，调用Layotto进行增删改查
+### step 2. 运行客户端程序，调用Layotto进行增删改查
 
 ```shell
 # open a new terminal tab
@@ -90,11 +108,22 @@ DeleteState succeeded.key:key1
 DeleteState succeeded.key:key2
 ```
 
-### step 4. 销毁 redis 容器，释放资源
+### step 3. 销毁容器，释放资源
+<!-- tabs:start -->
+#### **关闭 Docker Compose**
+如果您是用 docker-compose 启动的 Redis 和 Layotto，可以按以下方式关闭：
+
+```bash
+cd ${project_path}/docker/layotto-redis
+docker-compose stop
+```
+#### **销毁 Redis Docker 容器**
+如果您是用 Docker 启动的 Redis，可以按以下方式销毁 Redis 容器：
 
 ```shell
 docker rm -f redis-test
 ```
+<!-- tabs:end -->
 
 ### 下一步
 #### 这个客户端程序做了什么？
