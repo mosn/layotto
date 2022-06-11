@@ -26,13 +26,13 @@ import (
 )
 
 const (
-	key = "key666"
+	key = "test"
 )
 
 var storeName string
 
 func init() {
-	flag.StringVar(&storeName, "s", "", "set `storeName`")
+	flag.StringVar(&storeName, "postgresql", "", "set `storeName`")
 }
 
 func main() {

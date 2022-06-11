@@ -17,6 +17,7 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -88,11 +89,8 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 	var model PostgresqlModel
 	queryParams := fmt.Sprintf(`select id, value_id, biz_tag, create_time, update_time from %s where biz_tag = $1`, p.metadata.TableName)
 	err := p.db.QueryRow(queryParams, req.Key).Scan(&model.ID, &model.ValueId, &model.BizTag, &model.CreateTime, &model.UpdateTime)
+
 	tx, err := p.db.Begin()
-	if err != nil {
-		p.logger.Errorf("tx start error: %v", err)
-		return nil, err
-	}
 	defer func() {
 		if err != nil {
 			err := tx.Rollback()
@@ -101,21 +99,23 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 			}
 		}
 	}()
-	if err == sql.ErrNoRows {
-		insertParams := fmt.Sprintf(`INSERT INTO %s(
-			value_id, biz_tag, create_time, update_time)
-		VALUES (%d, %s, %d, %d)`, p.metadata.TableName, 1, req.Key, time.Now().Unix(), time.Now().Unix())
-		model.ValueId = 1
-		_, err = tx.ExecContext(p.ctx, insertParams)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		updateParams := fmt.Sprintf(`update %v set value_id = value_id + 1, update_time = $1 where biz_tag = $2`, p.metadata.TableName)
-		_, err = tx.ExecContext(p.ctx, updateParams, time.Now().Unix(), req.Key)
-		if err != nil {
-			return nil, err
-		}
+	var res sql.Result
+	updateParams := fmt.Sprintf(`update %v set value_id = value_id + 1, update_time = $1 where biz_tag = $2`, p.metadata.TableName)
+	//if tx != nil {
+	//	res, err = tx.ExecContext(p.ctx, updateParams, time.Now().Unix(), req.Key)
+	//} else {
+	//}
+	res, err = p.db.ExecContext(p.ctx, updateParams, time.Now().Unix(), req.Key)
+	if err != nil {
+		return nil, err
+	}
+
+	rowsId, err := res.RowsAffected()
+	if err != nil {
+		return nil, err
+	}
+	if rowsId == 0 {
+		return nil, errors.New("no update")
 	}
 
 	if err != nil {
@@ -124,7 +124,7 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 	}
 
 	return &sequencer.GetNextIdResponse{
-		NextId: model.ID,
+		NextId: model.ValueId,
 	}, nil
 }
 
@@ -136,10 +136,6 @@ func (p *PostgresqlSequencer) GetSegment(req *sequencer.GetSegmentRequest) (bool
 	queryParams := fmt.Sprintf(`select value_id, biz_tag, create_time, update_time from %s where biz_tag = $1`, p.metadata.TableName)
 	err := p.db.QueryRow(queryParams, req.Key).Scan(model.ValueId, model.BizTag, model.CreateTime, model.UpdateTime)
 	tx, err := p.db.Begin()
-	if err != nil {
-		p.logger.Errorf("tx start error: %v", err)
-		return false, nil, err
-	}
 	defer func() {
 		if err != nil {
 			err := tx.Rollback()
@@ -148,27 +144,33 @@ func (p *PostgresqlSequencer) GetSegment(req *sequencer.GetSegmentRequest) (bool
 			}
 		}
 	}()
-	if err == sql.ErrNoRows {
-		insertParams := fmt.Sprintf(`INSERT INTO %s(
-			value_id, biz_tag, create_time, update_time)
-		VALUES (%d, %s, %d, %d)`, p.metadata.TableName, 1, req.Key, time.Now().Unix(), time.Now().Unix())
-		model.ValueId = 1
-		_, err = tx.ExecContext(p.ctx, insertParams)
-		if err != nil {
-			return false, nil, err
-		}
+	var res sql.Result
+	model.ValueId += int64(req.Size)
+	updateParams := fmt.Sprintf(`update %v set value_id = $1, update_time = $2 where biz_tag = $3`, p.metadata.TableName)
+	if tx != nil {
+		res, err = tx.ExecContext(p.ctx, updateParams, model.ValueId, time.Now().Unix(), req.Key)
 	} else {
-		model.ValueId += int64(req.Size)
-		updateParams := fmt.Sprintf(`update %v set value_id = $1, update_time = $2 where biz_tag = $3`, p.metadata.TableName)
-		_, err = tx.ExecContext(p.ctx, updateParams, model.ValueId, time.Now().Unix(), req.Key)
-		if err != nil {
-			return false, nil, err
-		}
+		res, err = tx.ExecContext(p.ctx, updateParams, model.ValueId, time.Now().Unix(), req.Key)
+	}
+	if err != nil {
+		return false, nil, err
+	}
+
+	rowsId, err := res.RowsAffected()
+	if err != nil {
+		return false, nil, err
+	}
+	if rowsId == 0 {
+		return false, nil, errors.New("no update")
+	}
+
+	if err != nil {
+		return false, nil, err
 	}
 
 	return false, &sequencer.GetSegmentResponse{
-		From: model.ID - int64(req.Size) + 1,
-		To:   model.ID,
+		From: model.ValueId - int64(req.Size) + 1,
+		To:   model.ValueId,
 	}, nil
 }
 

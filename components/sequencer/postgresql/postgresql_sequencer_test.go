@@ -15,7 +15,6 @@
 package postgresql
 
 import (
-	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -25,7 +24,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"mosn.io/pkg/log"
 
-	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
 )
 
@@ -127,18 +125,32 @@ func TestPostgresqlSequencer_GetSegment(t *testing.T) {
 }
 
 func TestLocalNextId(t *testing.T) {
-	params, err := utils.ParsePostgresqlMetaData(initMap())
-	if err != nil {
 
+	//db := utils.NewPostgresqlCli(params)
+	p := NewPostgresqlSequencer(log.DefaultLogger)
+	cfg := sequencer.Configuration{
+		Properties: initMap(),
+		BiggerThan: make(map[string]int64),
 	}
-	cli := utils.NewPostgresqlCli(params)
-	ctx, _ := context.WithCancel(context.Background())
-
-	updateParams := fmt.Sprintf(`update %v set value_id = value_id + 1, update_time = $1 where biz_tag = $2`, "layotto_incr")
-	_, err = cli.ExecContext(ctx, updateParams, time.Now().Unix(), "test")
+	err := p.Init(cfg)
 	if err != nil {
-		fmt.Println("err: ", err)
+		panic(err)
 	}
+	for i := 0; i < 10; i++ {
+		resp, err := p.GetNextId(&sequencer.GetNextIdRequest{Key: p.metadata.BizTag, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: nil})
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("next id : ", resp.NextId)
+	}
+
+	//ctx, _ := context.WithCancel(context.Background())
+	////
+	//updateParams := fmt.Sprintf(`update %v set value_id = value_id + 1, update_time = $1 where biz_tag = $2`, "layotto_incr")
+	//_, err = db.ExecContext(ctx, updateParams, time.Now().Unix(), "test")
+	//if err != nil {
+	//	fmt.Println("err: ", err)
+	//}
 }
 
 func TestInsert(t *testing.T) {
