@@ -23,6 +23,7 @@ import (
 
 	"mosn.io/pkg/log"
 
+	_ "github.com/lib/pq"
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
 )
