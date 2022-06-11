@@ -13,7 +13,56 @@ The architecture of this example is shown in the figure below. The running proce
 
 ![img_1.png](../../../img/mq/start/img_1.png)
 
-### Step 1. Deploy and Run Redis in Docker
+### Step 1. Start the Subscriber
+Build:
+
+```shell
+ cd ${project_path}/demo/pubsub/server/
+ go build -o subscriber
+ ```
+
+Start subscriber:
+
+```shell @background
+ ./subscriber -s pub_subs_demo
+```
+If the following information is printed out, it means the startup is successful:
+
+```bash
+Start listening on port 9999 ...... 
+```
+
+> [!TIP|label: What did this subscriber do]
+> The Subscriber program started a gRPC server and exported two gRPC API:
+>
+> - ListTopicSubscriptions
+>
+> Calling this API will return the topics subscribed by the application. This program will return "topic1"
+>
+> - OnTopicEvent
+>
+> When a new event occurs, Layotto will call this API to notify the Subscriber of the new event.
+>
+> After the program receives a new event, it will print the event to the command line.
+
+### Step 2. Deploy Redis and Layotto
+<!-- tabs:start -->
+#### **with Docker Compose**
+You can start Redis and Layotto with docker-compose
+
+```bash
+cd docker/layotto-redis
+# Start redis and layotto with docker-compose
+docker-compose up -d
+```
+
+#### **Compile locally (not for Windows)**
+You can run Redis with Docker, then compile and run Layotto locally.
+
+> [!TIP|label: Not for Windows users]
+> Layotto fails to compile under Windows. Windows users are recommended to deploy using docker-compose
+
+#### step 2.1. Run Redis with Docker
 
 1. Get the latest version of Redis image.
    
@@ -44,40 +93,7 @@ Parameter Description:
 
 `-p 6380:6379`: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
 
-### Step 2. Start the Subscriber program and subscribe to events
-Build:
-
-```shell
- cd ${project_path}/demo/pubsub/server/
- go build -o subscriber
- ```
-
-Start subscriber:
-
-```shell @background
- ./subscriber -s pub_subs_demo
-```
-If the following information is printed out, it means the startup is successful:
-
-```bash
-Start listening on port 9999 ...... 
-```
-
-Explanation:
-
-The program will start a gRPC server and open two API:
-
-- ListTopicSubscriptions
-
-Calling this API will return the topics subscribed by the application. This program will return "topic1"
-
-- OnTopicEvent
-
-When a new event occurs, Layotto will call this API to notify the Subscriber of the new event.
-
-After the program receives a new event, it will print the event to the command line.
-
-### Step 3. Run Layotto
+#### Step 2.2. Run Layotto
 
 After downloading the project code to the local, switch the code directory and compile:
 
@@ -94,8 +110,9 @@ After completion, the layotto file will be generated in the directory, run it:
 ```shell @background
 ./layotto start -c ../../configs/config_redis.json
 ```
+<!-- tabs:end -->
 
-### Step 4. Run the Publisher program and call Layotto to publish events
+### Step 3. Run the Publisher program and call Layotto to publish events
 
 ```shell
  cd ${project_path}/demo/pubsub/client/
@@ -109,7 +126,7 @@ If the following information is printed, the call is successful:
 Published a new event.Topic: topic1 ,Data: value1 
 ```
 
-### Step 5. Check the event message received by the subscriber
+### Step 4. Check the event message received by the subscriber
 
 Go back to the subscriber's command line and you will see that a new message has been received:
 
@@ -117,6 +134,23 @@ Go back to the subscriber's command line and you will see that a new message has
 Start listening on port 9999 ...... 
 Received a new event.Topic: topic1 , Data:value1 
 ```
+
+### step 5. Stop containers and release resources
+<!-- tabs:start -->
+#### **Docker Compose**
+If you started Redis and Layotto with docker-compose, you can shut them down as follows:
+
+```bash
+cd ${project_path}/docker/layotto-redis
+docker-compose stop
+```
+
+#### **Destroy the Redis container**
+If you started Redis with Docker, you can destroy the Redis container as follows:
+```shell
+docker rm -f redis-test
+```
+<!-- tabs:end -->
 
 ### Next Step
 #### What did this client Demo do?
