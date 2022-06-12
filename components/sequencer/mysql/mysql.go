@@ -25,7 +25,6 @@ import (
 )
 
 var rw sync.RWMutex
-var wg sync.WaitGroup
 
 type MySQLSequencer struct {
 	metadata   utils.MySQLMetadata
