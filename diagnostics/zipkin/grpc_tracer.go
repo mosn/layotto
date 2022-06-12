@@ -18,7 +18,6 @@ package zipkin
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"mosn.io/layotto/diagnostics/protocol"
@@ -122,9 +121,6 @@ func (t *grpcZipTracer) Start(ctx context.Context, request interface{}, _ time.T
 	}
 
 	span := t.StartSpan(info.FullMethod)
-
-	fmt.Println(info.FullMethod)
-	fmt.Println(span.Context().TraceID)
 
 	return &grpcZipSpan{
 		tracer: t,
