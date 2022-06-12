@@ -71,7 +71,7 @@
   ],
   "tracing": {
     "enable": true,
-    "driver": "zipkin",
+    "driver": "Zipkin",
     "config": {
       "config": {
         "config": {

@@ -21,6 +21,9 @@ import (
 	"fmt"
 	"time"
 
+	"mosn.io/layotto/diagnostics/protocol"
+	"mosn.io/mosn/pkg/trace"
+
 	"mosn.io/layotto/diagnostics/grpc"
 
 	"github.com/openzipkin/zipkin-go"
@@ -41,6 +44,10 @@ const (
 	defaultServiceName      = "layotto"
 	defaultReporterHostPost = "127.0.0.1:9000"
 )
+
+func init() {
+	trace.RegisterTracerBuilder("zipkin", protocol.Layotto, NewGrpcZipTracer)
+}
 
 type grpcZipTracer struct {
 	*zipkin.Tracer
@@ -66,6 +73,8 @@ func NewGrpcZipTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 		log.DefaultLogger.Errorf("[layotto] [zipkin] [tracer] cannot initialize zipkin Tracer")
 		return nil, err
 	}
+
+	log.DefaultLogger.Infof("[layotto] [zipkin] [tracer] create success")
 
 	return &grpcZipTracer{
 		tracer,
