@@ -24,7 +24,8 @@ import (
 	"mosn.io/layotto/components/sequencer"
 )
 
-var lock sync.Mutex
+var rw sync.RWMutex
+var wg sync.WaitGroup
 
 type MySQLSequencer struct {
 	metadata   utils.MySQLMetadata
@@ -73,9 +74,6 @@ func (e *MySQLSequencer) Init(config sequencer.Configuration) error {
 
 func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.GetNextIdResponse, error) {
 
-	lock.Lock()
-	defer lock.Unlock()
-
 	metadata, err := utils.ParseMySQLMetadata(req.Metadata)
 	metadata.Db = e.db
 	var Key string
@@ -92,19 +90,21 @@ func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.
 	err = begin.QueryRow("SELECT sequencer_key, sequencer_value, version FROM ? WHERE sequencer_key = ?", metadata.TableName, req.Key).Scan(&Key, &Value, &oldVersion)
 
 	if err == sql.ErrNoRows {
+		rw.Lock()
 		Value = 1
 		Version = 1
 		_, err := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value, version) VALUES(?,?,?)", metadata.TableName, req.Key, Value, Version)
+		rw.Unlock()
 		if err != nil {
 			return nil, err
 		}
+
 	} else {
 		_, err := begin.Exec("UPDATE ? SET sequencer_value +=1, version += 1 WHERE sequencer_key = ? and version = ?", metadata.TableName, req.Key, oldVersion)
 		if err != nil {
 			return nil, err
 		}
 	}
-
 	defer e.Close(metadata.Db)
 
 	return &sequencer.GetNextIdResponse{
@@ -113,9 +113,6 @@ func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.
 }
 
 func (e *MySQLSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support bool, result *sequencer.GetSegmentResponse, err error) {
-
-	lock.Lock()
-	defer lock.Unlock()
 
 	if req.Size == 0 {
 		return true, nil, nil
@@ -137,12 +134,13 @@ func (e *MySQLSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support b
 	if err != nil {
 		return false, nil, err
 	}
-
 	err = begin.QueryRow("SELECT sequencer_key, sequencer_value, version FROM ? WHERE sequencer_key == ?", metadata.TableName, req.Key).Scan(&Key, &Value, &oldVersion)
 	if err == sql.ErrNoRows {
+		rw.Lock()
 		Value = int64(req.Size)
 		Version = 1
 		_, err := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value, version) VALUES(?,?,?)", metadata.TableName, req.Key, Value, Version)
+		rw.Unlock()
 		if err != nil {
 			return false, nil, err
 		}
@@ -154,7 +152,6 @@ func (e *MySQLSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support b
 			return false, nil, err1
 		}
 	}
-
 	defer e.Close(metadata.Db)
 
 	return false, &sequencer.GetSegmentResponse{
