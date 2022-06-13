@@ -20,9 +20,6 @@ import (
 	"context"
 	"time"
 
-	"mosn.io/layotto/diagnostics/protocol"
-	"mosn.io/mosn/pkg/trace"
-
 	"mosn.io/layotto/diagnostics/grpc"
 
 	"github.com/openzipkin/zipkin-go"
@@ -43,10 +40,6 @@ const (
 	defaultServiceName      = "layotto"
 	defaultReporterHostPost = "127.0.0.1:9000"
 )
-
-func init() {
-	trace.RegisterTracerBuilder("zipkin", protocol.Layotto, NewGrpcZipTracer)
-}
 
 type grpcZipTracer struct {
 	*zipkin.Tracer
