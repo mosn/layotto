@@ -34,7 +34,7 @@ import (
 const (
 	service_name       = "service_name"
 	reporter_endpoint  = "reporter_endpoint"
-	reporter_host_post = "recorder_host_post"
+	recorder_host_post = "recorder_host_post"
 	configs            = "config"
 
 	defaultReporterEndpoint = "http://127.0.0.1:9411/api/v2/spans"
@@ -78,7 +78,7 @@ func NewGrpcZipTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 func getRecorderHostPort(traceCfg map[string]interface{}) string {
 	if cfg, ok := traceCfg[configs]; ok {
 		recorderHostPort := cfg.(map[string]interface{})
-		if point, ok := recorderHostPort[reporter_host_post]; ok {
+		if point, ok := recorderHostPort[recorder_host_post]; ok {
 			return point.(string)
 		}
 	}
