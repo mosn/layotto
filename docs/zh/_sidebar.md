@@ -26,6 +26,7 @@
         - [Metrics 接入 Prometheus](zh/start/trace/prometheus.md)
         - [Trace 接入 Skywalking](zh/start/trace/skywalking.md)
         - [Trace 接入 Jaeger](zh/start/trace/jaeger.md)
+        - [Trace 接入 Zipkin](zh/start/trace/zipkin.md)
     - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - [用户手册](zh/building_blocks/)
