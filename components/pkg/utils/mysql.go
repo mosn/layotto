@@ -68,7 +68,8 @@ func NewMySQLClient(meta MySQLMetadata) error {
 	if !exists {
 		createTable := fmt.Sprintf(`CREATE TABLE %s (
 			sequencer_key VARCHAR(255),
-			sequencer_value INT);`, val.TableName)
+			sequencer_value INT,
+			UNIQUE INDEX (sequencer_key));`, val.TableName)
 		_, err = meta.Db.Exec(createTable)
 		if err != nil {
 			return err

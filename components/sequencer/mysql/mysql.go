@@ -16,15 +16,11 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
-	"sync"
-
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
 )
-
-var rw sync.RWMutex
 
 type MySQLSequencer struct {
 	metadata   utils.MySQLMetadata
@@ -89,18 +85,18 @@ func (e *MySQLSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.
 	err = begin.QueryRow("SELECT sequencer_key, sequencer_value, version FROM ? WHERE sequencer_key = ?", metadata.TableName, req.Key).Scan(&Key, &Value, &oldVersion)
 
 	if err == sql.ErrNoRows {
-		rw.Lock()
 		Value = 1
 		Version = 1
 		_, err := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value, version) VALUES(?,?,?)", metadata.TableName, req.Key, Value, Version)
-		rw.Unlock()
 		if err != nil {
+			begin.Rollback()
 			return nil, err
 		}
 
 	} else {
 		_, err := begin.Exec("UPDATE ? SET sequencer_value +=1, version += 1 WHERE sequencer_key = ? and version = ?", metadata.TableName, req.Key, oldVersion)
 		if err != nil {
+			begin.Rollback()
 			return nil, err
 		}
 	}
@@ -135,12 +131,11 @@ func (e *MySQLSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support b
 	}
 	err = begin.QueryRow("SELECT sequencer_key, sequencer_value, version FROM ? WHERE sequencer_key == ?", metadata.TableName, req.Key).Scan(&Key, &Value, &oldVersion)
 	if err == sql.ErrNoRows {
-		rw.Lock()
 		Value = int64(req.Size)
 		Version = 1
 		_, err := begin.Exec("INSERT INTO ?(sequencer_key, sequencer_value, version) VALUES(?,?,?)", metadata.TableName, req.Key, Value, Version)
-		rw.Unlock()
 		if err != nil {
+			begin.Rollback()
 			return false, nil, err
 		}
 
@@ -148,6 +143,7 @@ func (e *MySQLSequencer) GetSegment(req *sequencer.GetSegmentRequest) (support b
 		Value += int64(req.Size)
 		_, err1 := begin.Exec("UPDATE ? SET sequencer_value = ?, version += 1 WHERE sequencer_key = ? AND version = ?", metadata.TableName, Value, req.Key, oldVersion)
 		if err1 != nil {
+			begin.Rollback()
 			return false, nil, err1
 		}
 	}
