@@ -100,7 +100,7 @@
     - 想要修改proto文件或API定义？
         - [新增API时的开发规范](zh/development/developing-api.md)
         - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
-        - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
+        - [如何基于proto文件生成代码、接口文档](zh/api_reference/how_to_generate_api_doc.md)  
     - [Layotto 四大 Github Workflows 说明](zh/development/github-workflows.md)
     - [Layotto 命令行工具指南](zh/development/commands.md)
     - [发布手册](zh/development/release-guide.md)
