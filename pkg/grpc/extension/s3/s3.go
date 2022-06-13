@@ -586,3 +586,42 @@ func (s *S3Server) ListObjectVersions(ctx context.Context, req *s3.ListObjectVer
 		return output, nil
 	}
 }
+
+func (s *S3Server) HeadObject(ctx context.Context, req *s3.HeadObjectInput) (*s3.HeadObjectOutput, error) {
+	if s.ossInstance[req.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
+	}
+	st := &l8s3.HeadObjectInput{}
+	err := transferData(req, st)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for ListObjectVersions,err: %+v", err)
+	}
+	if resp, err := s.ossInstance[req.StoreName].HeadObject(ctx, st); err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	} else {
+		output := &s3.HeadObjectOutput{}
+		err := transferData(resp, output)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "transfer response data fail for ListObjectVersions,err: %+v", err)
+		}
+		return output, nil
+	}
+}
+
+func (s *S3Server) IsObjectExist(ctx context.Context, req *s3.IsObjectExistInput) (*s3.IsObjectExistOutput, error) {
+	if s.ossInstance[req.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
+	}
+	st := &l8s3.IsObjectExistInput{}
+	err := transferData(req, st)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for IsObjectExist,err: %+v", err)
+	}
+	if resp, err := s.ossInstance[req.StoreName].IsObjectExist(ctx, st); err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	} else {
+		output := &s3.IsObjectExistOutput{}
+		output.FileExist = resp.FileExist
+		return output, nil
+	}
+}

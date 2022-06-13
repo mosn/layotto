@@ -73,7 +73,14 @@ func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (io
 	if err != nil {
 		return nil, err
 	}
-	body, err := bucket.GetObject(req.Key)
+	body, err := bucket.GetObject(req.Key,
+		IfUnmodifiedSince(req.IfUnmodifiedSince),
+		IfModifiedSince(req.IfModifiedSince),
+		IfMatch(req.IfMatch),
+		IfNoneMatch(req.IfNoneMatch),
+		oss.Range(req.Start, req.End),
+		AcceptEncoding(req.AcceptEncoding),
+	)
 	return body, err
 }
 
@@ -86,7 +93,22 @@ func (a *AliyunOSS) PutObject(ctx context.Context, req *file.PutObjectInput) (*f
 	if err != nil {
 		return nil, err
 	}
-	err = bucket.PutObject(req.Key, req.DataStream)
+	metaOption := []oss.Option{
+		CacheControl(req.CacheControl),
+		ContentDisposition(req.ContentDisposition),
+		ContentEncoding(req.ContentEncoding),
+		Expires(req.Expires),
+		ServerSideEncryption(req.ServerSideEncryption),
+		ObjectACL(req.ACL),
+	}
+	for k, v := range req.Meta {
+		o := oss.Meta(k, v)
+		metaOption = append(metaOption, o)
+	}
+
+	err = bucket.PutObject(req.Key, req.DataStream,
+		metaOption...,
+	)
 	return &file.PutObjectOutput{}, err
 }
 
@@ -99,7 +121,7 @@ func (a *AliyunOSS) DeleteObject(ctx context.Context, req *file.DeleteObjectInpu
 	if err != nil {
 		return nil, err
 	}
-	err = bucket.DeleteObject(req.Key)
+	err = bucket.DeleteObject(req.Key, RequestPayer(req.RequestPayer))
 	return &file.DeleteObjectOutput{}, err
 }
 func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *file.DeleteObjectsInput) (*file.DeleteObjectsOutput, error) {
@@ -115,7 +137,7 @@ func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *file.DeleteObjectsIn
 	for _, v := range req.Delete.Objects {
 		objects = append(objects, v.Key)
 	}
-	resp, err := bucket.DeleteObjects(objects)
+	resp, err := bucket.DeleteObjects(objects, oss.DeleteObjectsQuiet(req.Delete.Quiet))
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +149,6 @@ func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *file.DeleteObjectsIn
 	return out, err
 }
 
-//object标签
 func (a *AliyunOSS) PutObjectTagging(ctx context.Context, req *file.PutBucketTaggingInput) (*file.PutBucketTaggingOutput, error) {
 	cli, err := a.selectClient(map[string]string{}, endpointKey)
 	if err != nil {
@@ -142,7 +163,7 @@ func (a *AliyunOSS) PutObjectTagging(ctx context.Context, req *file.PutBucketTag
 		tag := oss.Tag{Key: k, Value: v}
 		tagging.Tags = append(tagging.Tags, tag)
 	}
-	err = bucket.PutObjectTagging(req.Key, tagging)
+	err = bucket.PutObjectTagging(req.Key, tagging, VersionId(req.VersionId))
 	return nil, err
 }
 
@@ -382,7 +403,6 @@ func (a *AliyunOSS) ListMultipartUploads(ctx context.Context, req *file.ListMult
 	return output, err
 }
 
-//未测试
 func (a *AliyunOSS) RestoreObject(ctx context.Context, req *file.RestoreObjectInput) (*file.RestoreObjectOutput, error) {
 	cli, err := a.selectClient(map[string]string{}, endpointKey)
 	if err != nil {
@@ -397,7 +417,6 @@ func (a *AliyunOSS) RestoreObject(ctx context.Context, req *file.RestoreObjectIn
 	return output, err
 }
 
-//当前不允许该操作
 func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *file.ListObjectVersionsInput) (*file.ListObjectVersionsOutput, error) {
 	cli, err := a.selectClient(map[string]string{}, endpointKey)
 	if err != nil {
@@ -452,4 +471,44 @@ func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *file.ListObject
 	}
 
 	return output, err
+}
+
+func (a *AliyunOSS) HeadObject(ctx context.Context, req *file.HeadObjectInput) (*file.HeadObjectOutput, error) {
+	cli, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	bucket, err := cli.Bucket(req.Bucket)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := bucket.GetObjectMeta(req.Key)
+	if err != nil {
+		return nil, err
+	}
+	output := &file.HeadObjectOutput{ResultMetadata: map[string]string{}}
+	for k, v := range resp {
+		for _, t := range v {
+			//if key exist,concatenated with commas
+			if _, ok := output.ResultMetadata[k]; ok {
+				output.ResultMetadata[k] = output.ResultMetadata[k] + "," + t
+			} else {
+				output.ResultMetadata[k] = t
+			}
+		}
+	}
+	return output, err
+}
+
+func (a *AliyunOSS) IsObjectExist(ctx context.Context, req *file.IsObjectExistInput) (*file.IsObjectExistOutput, error) {
+	cli, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	bucket, err := cli.Bucket(req.Bucket)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := bucket.IsObjectExist(req.Key)
+	return &file.IsObjectExistOutput{FileExist: resp}, err
 }

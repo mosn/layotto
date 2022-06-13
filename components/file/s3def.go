@@ -48,6 +48,8 @@ type Oss interface {
 	AbortMultipartUpload(context.Context, *AbortMultipartUploadInput) (*AbortMultipartUploadOutput, error)
 	ListMultipartUploads(context.Context, *ListMultipartUploadsInput) (*ListMultipartUploadsOutput, error)
 	ListObjectVersions(context.Context, *ListObjectVersionsInput) (*ListObjectVersionsOutput, error)
+	HeadObject(context.Context, *HeadObjectInput) (*HeadObjectOutput, error)
+	IsObjectExist(context.Context, *IsObjectExistInput) (*IsObjectExistOutput, error)
 }
 
 type BaseConfig struct {
@@ -61,32 +63,40 @@ type GetObjectInput struct {
 	Bucket                     string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	ExpectedBucketOwner        string `protobuf:"bytes,3,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
 	IfMatch                    string `protobuf:"bytes,4,opt,name=if_match,json=ifMatch,proto3" json:"if_match,omitempty"`
-	IfModifiedSince            string `protobuf:"bytes,5,opt,name=if_modified_since,json=ifModifiedSince,proto3" json:"if_modified_since,omitempty"`
+	IfModifiedSince            int64  `protobuf:"varint,5,opt,name=if_modified_since,json=ifModifiedSince,proto3" json:"if_modified_since,omitempty"`
 	IfNoneMatch                string `protobuf:"bytes,6,opt,name=if_none_match,json=ifNoneMatch,proto3" json:"if_none_match,omitempty"`
-	IfUnmodifiedSince          string `protobuf:"bytes,7,opt,name=if_unmodified_since,json=ifUnmodifiedSince,proto3" json:"if_unmodified_since,omitempty"`
+	IfUnmodifiedSince          int64  `protobuf:"varint,7,opt,name=if_unmodified_since,json=ifUnmodifiedSince,proto3" json:"if_unmodified_since,omitempty"`
 	Key                        string `protobuf:"bytes,8,opt,name=key,proto3" json:"key,omitempty"`
 	PartNumber                 int64  `protobuf:"varint,9,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
-	Range                      string `protobuf:"bytes,10,opt,name=range,proto3" json:"range,omitempty"`
-	RequestPayer               string `protobuf:"bytes,11,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
-	ResponseCacheControl       string `protobuf:"bytes,12,opt,name=response_cache_control,json=responseCacheControl,proto3" json:"response_cache_control,omitempty"`
-	ResponseContentDisposition string `protobuf:"bytes,13,opt,name=response_content_disposition,json=responseContentDisposition,proto3" json:"response_content_disposition,omitempty"`
-	ResponseContentEncoding    string `protobuf:"bytes,14,opt,name=response_content_encoding,json=responseContentEncoding,proto3" json:"response_content_encoding,omitempty"`
-	ResponseContentLanguage    string `protobuf:"bytes,15,opt,name=response_content_language,json=responseContentLanguage,proto3" json:"response_content_language,omitempty"`
-	ResponseContentType        string `protobuf:"bytes,16,opt,name=response_content_type,json=responseContentType,proto3" json:"response_content_type,omitempty"`
-	ResponseExpires            string `protobuf:"bytes,17,opt,name=response_expires,json=responseExpires,proto3" json:"response_expires,omitempty"`
-	SseCustomerAlgorithm       string `protobuf:"bytes,18,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKey             string `protobuf:"bytes,19,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
-	SseCustomerKeyMd5          string `protobuf:"bytes,20,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
-	VersionId                  string `protobuf:"bytes,21,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	Start                      int64  `protobuf:"varint,10,opt,name=start,proto3" json:"start,omitempty"`
+	End                        int64  `protobuf:"varint,11,opt,name=end,proto3" json:"end,omitempty"`
+	RequestPayer               string `protobuf:"bytes,12,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	ResponseCacheControl       string `protobuf:"bytes,13,opt,name=response_cache_control,json=responseCacheControl,proto3" json:"response_cache_control,omitempty"`
+	ResponseContentDisposition string `protobuf:"bytes,14,opt,name=response_content_disposition,json=responseContentDisposition,proto3" json:"response_content_disposition,omitempty"`
+	ResponseContentEncoding    string `protobuf:"bytes,15,opt,name=response_content_encoding,json=responseContentEncoding,proto3" json:"response_content_encoding,omitempty"`
+	ResponseContentLanguage    string `protobuf:"bytes,16,opt,name=response_content_language,json=responseContentLanguage,proto3" json:"response_content_language,omitempty"`
+	ResponseContentType        string `protobuf:"bytes,17,opt,name=response_content_type,json=responseContentType,proto3" json:"response_content_type,omitempty"`
+	ResponseExpires            string `protobuf:"bytes,18,opt,name=response_expires,json=responseExpires,proto3" json:"response_expires,omitempty"`
+	SseCustomerAlgorithm       string `protobuf:"bytes,19,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
+	SseCustomerKey             string `protobuf:"bytes,20,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
+	SseCustomerKeyMd5          string `protobuf:"bytes,21,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	VersionId                  string `protobuf:"bytes,22,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	AcceptEncoding             string `protobuf:"bytes,23,opt,name=accept_encoding,json=acceptEncoding,proto3" json:"accept_encoding,omitempty"`
 }
 
 type PutObjectInput struct {
-	DataStream       io.Reader
-	ACL              string `protobuf:"bytes,2,opt,name=acl,proto3" json:"acl,omitempty"`
-	Bucket           string `protobuf:"bytes,4,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key              string `protobuf:"bytes,5,opt,name=key,proto3" json:"key,omitempty"`
-	BucketKeyEnabled bool   `protobuf:"varint,6,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
-	CacheControl     string `protobuf:"bytes,7,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
+	DataStream           io.Reader
+	ACL                  string            `protobuf:"bytes,2,opt,name=acl,proto3" json:"acl,omitempty"`
+	Body                 []byte            `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
+	Bucket               string            `protobuf:"bytes,4,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	Key                  string            `protobuf:"bytes,5,opt,name=key,proto3" json:"key,omitempty"`
+	BucketKeyEnabled     bool              `protobuf:"varint,6,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
+	CacheControl         string            `protobuf:"bytes,7,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
+	ContentDisposition   string            `protobuf:"bytes,8,opt,name=content_disposition,json=contentDisposition,proto3" json:"content_disposition,omitempty"`
+	ContentEncoding      string            `protobuf:"bytes,9,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempty"`
+	Expires              int64             `protobuf:"varint,10,opt,name=expires,proto3" json:"expires,omitempty"`
+	ServerSideEncryption string            `protobuf:"bytes,11,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
+	Meta                 map[string]string `protobuf:"bytes,12,rep,name=meta,proto3" json:"meta,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 type PutObjectOutput struct {
@@ -95,8 +105,9 @@ type PutObjectOutput struct {
 }
 
 type DeleteObjectInput struct {
-	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key    string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	Bucket       string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	Key          string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	RequestPayer string `protobuf:"bytes,4,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
 }
 type DeleteObjectOutput struct {
 	DeleteMarker   bool   `protobuf:"varint,1,opt,name=delete_marker,json=deleteMarker,proto3" json:"delete_marker,omitempty"`
@@ -460,4 +471,33 @@ type ObjectVersion struct {
 	Size         int64  `protobuf:"varint,6,opt,name=size,proto3" json:"size,omitempty"`
 	StorageClass string `protobuf:"bytes,7,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
 	VersionId    string `protobuf:"bytes,8,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+}
+
+type HeadObjectInput struct {
+	Bucket               string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	Key                  string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	ChecksumMode         string `protobuf:"bytes,4,opt,name=checksum_mode,json=checksumMode,proto3" json:"checksum_mode,omitempty"`
+	ExpectedBucketOwner  string `protobuf:"bytes,5,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
+	IfMatch              string `protobuf:"bytes,6,opt,name=if_match,json=ifMatch,proto3" json:"if_match,omitempty"`
+	IfModifiedSince      int64  `protobuf:"varint,7,opt,name=if_modified_since,json=ifModifiedSince,proto3" json:"if_modified_since,omitempty"`
+	IfNoneMatch          string `protobuf:"bytes,8,opt,name=if_none_match,json=ifNoneMatch,proto3" json:"if_none_match,omitempty"`
+	IfUnmodifiedSince    int64  `protobuf:"varint,9,opt,name=if_unmodified_since,json=ifUnmodifiedSince,proto3" json:"if_unmodified_since,omitempty"`
+	PartNumber           int32  `protobuf:"varint,10,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
+	RequestPayer         string `protobuf:"bytes,11,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	SseCustomerAlgorithm string `protobuf:"bytes,12,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
+	SseCustomerKey       string `protobuf:"bytes,13,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
+	SseCustomerKeyMd5    string `protobuf:"bytes,14,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	VersionId            string `protobuf:"bytes,15,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+}
+type HeadObjectOutput struct {
+	// Metadata pertaining to the operation's result.
+	ResultMetadata map[string]string `protobuf:"bytes,1,rep,name=ResultMetadata,proto3" json:"ResultMetadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+}
+
+type IsObjectExistInput struct {
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	Key    string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+}
+type IsObjectExistOutput struct {
+	FileExist bool `protobuf:"varint,1,opt,name=file_exist,json=fileExist,proto3" json:"file_exist,omitempty"`
 }

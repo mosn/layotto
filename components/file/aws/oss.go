@@ -598,3 +598,11 @@ func (a *AwsOss) ListObjectVersions(ctx context.Context, req *file.ListObjectVer
 	}
 	return output, err
 }
+
+func (a *AwsOss) HeadObject(ctx context.Context, req *file.HeadObjectInput) (*file.HeadObjectOutput, error) {
+	return nil, nil
+}
+
+func (a *AwsOss) IsObjectExist(context.Context, *file.IsObjectExistInput) (*file.IsObjectExistOutput, error) {
+	return nil, nil
+}

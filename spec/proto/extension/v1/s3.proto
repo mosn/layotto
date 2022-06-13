@@ -27,6 +27,8 @@ service S3 {
   rpc AbortMultipartUpload(AbortMultipartUploadInput) returns(AbortMultipartUploadOutput){}
   rpc ListMultipartUploads(ListMultipartUploadsInput) returns(ListMultipartUploadsOutput){}
   rpc ListObjectVersions(ListObjectVersionsInput) returns(ListObjectVersionsOutput){}
+  rpc HeadObject(HeadObjectInput) returns(HeadObjectOutput){}
+  rpc IsObjectExist(IsObjectExistInput) returns(IsObjectExistOutput){}
 }
 
 message InitInput {
@@ -39,23 +41,25 @@ message GetObjectInput {
   string bucket = 2;
   string expected_bucket_owner = 3;
   string if_match = 4;
-  string if_modified_since = 5;
+  int64 if_modified_since = 5;
   string if_none_match = 6;
-  string if_unmodified_since = 7;
+  int64 if_unmodified_since = 7;
   string key = 8;
   int64  part_number = 9;
-  string range = 10;
-  string request_payer = 11;
-  string response_cache_control = 12;
-  string response_content_disposition = 13;
-  string response_content_encoding = 14;
-  string response_content_language = 15;
-  string response_content_type = 16;
-  string response_expires = 17;
-  string sse_customer_algorithm = 18;
-  string sse_customer_key = 19;
-  string sse_customer_key_md5 = 20;
-  string version_id = 21;
+  int64  start = 10;
+  int64  end = 11;
+  string request_payer = 12;
+  string response_cache_control = 13;
+  string response_content_disposition = 14;
+  string response_content_encoding = 15;
+  string response_content_language = 16;
+  string response_content_type = 17;
+  string response_expires = 18;
+  string sse_customer_algorithm = 19;
+  string sse_customer_key = 20;
+  string sse_customer_key_md5 = 21;
+  string version_id = 22;
+  string accept_encoding = 23;
 }
 message GetObjectOutput {
   bytes body = 1;
@@ -69,6 +73,11 @@ message PutObjectInput{
     string key = 5;
     bool bucket_key_enabled = 6;
     string cache_control = 7;
+    string content_disposition = 8;
+    string content_encoding = 9;
+    int64 expires = 10;
+    string server_side_encryption = 11;
+    map<string, string> meta = 12;
 }
 message PutObjectOutput{
     bool bucket_key_enabled = 1;
@@ -79,6 +88,7 @@ message DeleteObjectInput{
     string store_name = 1;
     string bucket = 2;
     string key = 3;
+    string request_payer = 4;
 }
 message DeleteObjectOutput{
     bool delete_marker = 1;
@@ -146,7 +156,8 @@ message ObjectIdentifier{
 message DeleteObjectsInput{
     string store_name = 1;
     string bucket = 2;
-    Delete Delete = 3;
+    Delete delete = 3;
+    string request_payer = 4;
 }
 message DeletedObject{
 	bool delete_marker = 1;
@@ -455,4 +466,35 @@ message ListObjectVersionsOutput{
     string prefix = 11;
     string version_id_marker = 12;
     repeated ObjectVersion versions = 13;
+}
+
+message HeadObjectInput{
+    string store_name = 1;
+    string bucket = 2;
+    string key = 3;
+    string checksum_mode = 4;
+    string expected_bucket_owner = 5;
+    string if_match = 6;
+    int64  if_modified_since = 7;
+    string if_none_match = 8;
+    int64  if_unmodified_since = 9;
+    int32  part_number = 10;
+    string request_payer = 11;
+    string sse_customer_algorithm = 12;
+    string sse_customer_key = 13;
+    string sse_customer_key_md5 = 14;
+    string version_id = 15;
+}
+message HeadObjectOutput{
+	// Metadata pertaining to the operation's result.
+	map<string, string> ResultMetadata = 1;
+}
+
+message IsObjectExistInput{
+    string store_name = 1;
+    string bucket = 2;
+    string key = 3;
+}
+message IsObjectExistOutput{
+    bool file_exist = 1;
 }
