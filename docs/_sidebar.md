@@ -80,10 +80,10 @@
   - [Document Contribution Guide](en/development/contributing-doc.md)
   - [Automate testing of Quickstart documentation with tools](en/development/test-quickstart.md)
   - [Component Development Guide](en/development/developing-component.md)
-  - You wanna modify proto files or API definition?
+  - Want to modify proto files or API definition?
     - [Development specification when adding API](en/development/developing-api.md)
     - [Comment specification of proto file](en/api_reference/comment_spec_of_proto.md)
-    - [How to generate API document based on the proto files](en/api_reference/how_to_generate_api_doc.md)
+    - [How to generate pb code and API reference](en/api_reference/how_to_generate_api_doc.md)
   - [Layotto Github Workflows Guide](en/development/github-workflows.md)
   - [Layotto Commands Guide](en/development/commands.md)
   - [Layotto contributor guide](en/development/CONTRIBUTING.md)
