@@ -40,9 +40,9 @@ func main() {
 		})
 		if err != nil {
 			fmt.Println("get an error: ", err)
-			panic(err)
+		} else {
+			fmt.Println("get a message: ", r.GetHello())
 		}
-		fmt.Println("get a message: ", r.GetHello())
 	}
 
 }
