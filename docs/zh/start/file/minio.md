@@ -10,7 +10,7 @@ Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blo
 您可以使用 docker-compose 启动 MinIO 和 Layotto
 
 ```bash
-cd docker/layotto-file
+cd docker/layotto-minio
 # Start MinIO and layotto with docker-compose
 docker-compose up -d
 ```
@@ -101,7 +101,7 @@ go build client.go
 如果您是用 docker-compose 启动的 MinIO 和 Layotto，可以按以下方式关闭：
 
 ```bash
-cd ${project_path}/docker/layotto-file
+cd ${project_path}/docker/layotto-minio
 docker-compose stop
 ```
 #### **销毁 MinIO Docker 容器**

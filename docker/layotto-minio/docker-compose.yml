@@ -21,7 +21,7 @@ services:
     command:
       - 'start'
     volumes:
-      - ./config_file.json:/runtime/configs/config.json
+      - ./config_minio.json:/runtime/configs/config.json
     ports:
       - 34904:34904
       - 34903:34903
