@@ -606,3 +606,22 @@ func (a *AwsOss) HeadObject(ctx context.Context, req *file.HeadObjectInput) (*fi
 func (a *AwsOss) IsObjectExist(context.Context, *file.IsObjectExistInput) (*file.IsObjectExistOutput, error) {
 	return nil, nil
 }
+
+func (a *AwsOss) SignURL(ctx context.Context, req *file.SignURLInput) (*file.SignURLOutput, error) {
+	return nil, nil
+}
+
+func (a *AwsOss) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *file.UpdateBandwidthRateLimitInput) error {
+	return nil
+}
+
+func (a *AwsOss) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *file.UpdateBandwidthRateLimitInput) error {
+	return nil
+}
+func (a *AwsOss) AppendObject(ctx context.Context, req *file.AppendObjectInput) (*file.AppendObjectOutput, error) {
+	return nil, nil
+}
+
+func (a *AwsOss) ListParts(ctx context.Context, req *file.ListPartsInput) (*file.ListPartsOutput, error) {
+	return nil, nil
+}

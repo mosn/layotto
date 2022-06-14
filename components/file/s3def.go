@@ -50,6 +50,11 @@ type Oss interface {
 	ListObjectVersions(context.Context, *ListObjectVersionsInput) (*ListObjectVersionsOutput, error)
 	HeadObject(context.Context, *HeadObjectInput) (*HeadObjectOutput, error)
 	IsObjectExist(context.Context, *IsObjectExistInput) (*IsObjectExistOutput, error)
+	SignURL(context.Context, *SignURLInput) (*SignURLOutput, error)
+	UpdateDownLoadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) error
+	UpdateUpLoadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) error
+	AppendObject(context.Context, *AppendObjectInput) (*AppendObjectOutput, error)
+	ListParts(context.Context, *ListPartsInput) (*ListPartsOutput, error)
 }
 
 type BaseConfig struct {
@@ -82,12 +87,12 @@ type GetObjectInput struct {
 	SseCustomerKeyMd5          string `protobuf:"bytes,21,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
 	VersionId                  string `protobuf:"bytes,22,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 	AcceptEncoding             string `protobuf:"bytes,23,opt,name=accept_encoding,json=acceptEncoding,proto3" json:"accept_encoding,omitempty"`
+	SignedUrl                  string `protobuf:"bytes,24,opt,name=signed_url,json=signedUrl,proto3" json:"signed_url,omitempty"`
 }
 
 type PutObjectInput struct {
 	DataStream           io.Reader
 	ACL                  string            `protobuf:"bytes,2,opt,name=acl,proto3" json:"acl,omitempty"`
-	Body                 []byte            `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
 	Bucket               string            `protobuf:"bytes,4,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	Key                  string            `protobuf:"bytes,5,opt,name=key,proto3" json:"key,omitempty"`
 	BucketKeyEnabled     bool              `protobuf:"varint,6,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
@@ -96,7 +101,8 @@ type PutObjectInput struct {
 	ContentEncoding      string            `protobuf:"bytes,9,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempty"`
 	Expires              int64             `protobuf:"varint,10,opt,name=expires,proto3" json:"expires,omitempty"`
 	ServerSideEncryption string            `protobuf:"bytes,11,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
-	Meta                 map[string]string `protobuf:"bytes,12,rep,name=meta,proto3" json:"meta,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SignedUrl            string            `protobuf:"bytes,12,opt,name=signed_url,json=signedUrl,proto3" json:"signed_url,omitempty"`
+	Meta                 map[string]string `protobuf:"bytes,13,rep,name=meta,proto3" json:"meta,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 type PutObjectOutput struct {
@@ -105,9 +111,10 @@ type PutObjectOutput struct {
 }
 
 type DeleteObjectInput struct {
-	Bucket       string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key          string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	RequestPayer string `protobuf:"bytes,4,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	Bucket       string `json:"bucket,omitempty"`
+	Key          string `json:"key,omitempty"`
+	RequestPayer string `json:"request_payer,omitempty"`
+	VersionId    string `json:"version_id,omitempty"`
 }
 type DeleteObjectOutput struct {
 	DeleteMarker   bool   `protobuf:"varint,1,opt,name=delete_marker,json=deleteMarker,proto3" json:"delete_marker,omitempty"`
@@ -147,10 +154,15 @@ type CopySource struct {
 }
 
 type CopyObjectInput struct {
-	StoreName  string      `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	Bucket     string      `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	Key        string      `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	CopySource *CopySource `protobuf:"bytes,4,opt,name=copy_source,json=copySource,proto3" json:"copy_source,omitempty"`
+	Tagging    string      `json:"tagging,omitempty"`
+	Expires    int64       `json:"expires,omitempty"`
+	// Specifies whether the metadata is copied from the source object or replaced with metadata provided in the request.
+	MetadataDirective string `json:"metadata_directive,omitempty"`
+	// A map of metadata to store with the object in S3.
+	Metadata map[string]string `json:"metadata,omitempty"`
 }
 type CopyObjectOutput struct {
 	CopyObjectResult *CopyObjectResult `protobuf:"bytes,1,opt,name=CopyObjectResult,proto3" json:"CopyObjectResult,omitempty"`
@@ -383,7 +395,7 @@ type CompleteMultipartUploadOutput struct {
 }
 
 type AbortMultipartUploadInput struct {
-	Bucket              string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	Bucket              string `json:"bucket,omitempty"`
 	Key                 string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
 	ExpectedBucketOwner string `protobuf:"bytes,3,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
 	RequestPayer        string `protobuf:"bytes,4,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
@@ -474,30 +486,95 @@ type ObjectVersion struct {
 }
 
 type HeadObjectInput struct {
-	Bucket               string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key                  string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
-	ChecksumMode         string `protobuf:"bytes,4,opt,name=checksum_mode,json=checksumMode,proto3" json:"checksum_mode,omitempty"`
-	ExpectedBucketOwner  string `protobuf:"bytes,5,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
-	IfMatch              string `protobuf:"bytes,6,opt,name=if_match,json=ifMatch,proto3" json:"if_match,omitempty"`
-	IfModifiedSince      int64  `protobuf:"varint,7,opt,name=if_modified_since,json=ifModifiedSince,proto3" json:"if_modified_since,omitempty"`
-	IfNoneMatch          string `protobuf:"bytes,8,opt,name=if_none_match,json=ifNoneMatch,proto3" json:"if_none_match,omitempty"`
-	IfUnmodifiedSince    int64  `protobuf:"varint,9,opt,name=if_unmodified_since,json=ifUnmodifiedSince,proto3" json:"if_unmodified_since,omitempty"`
-	PartNumber           int32  `protobuf:"varint,10,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
-	RequestPayer         string `protobuf:"bytes,11,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
-	SseCustomerAlgorithm string `protobuf:"bytes,12,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKey       string `protobuf:"bytes,13,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
-	SseCustomerKeyMd5    string `protobuf:"bytes,14,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
-	VersionId            string `protobuf:"bytes,15,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	Bucket               string `json:"bucket,omitempty"`
+	Key                  string `json:"key,omitempty"`
+	ChecksumMode         string `json:"checksum_mode,omitempty"`
+	ExpectedBucketOwner  string `json:"expected_bucket_owner,omitempty"`
+	IfMatch              string `json:"if_match,omitempty"`
+	IfModifiedSince      int64  `json:"if_modified_since,omitempty"`
+	IfNoneMatch          string `json:"if_none_match,omitempty"`
+	IfUnmodifiedSince    int64  `json:"if_unmodified_since,omitempty"`
+	PartNumber           int32  `json:"part_number,omitempty"`
+	RequestPayer         string `json:"request_payer,omitempty"`
+	SseCustomerAlgorithm string `json:"sse_customer_algorithm,omitempty"`
+	SseCustomerKey       string `json:"sse_customer_key,omitempty"`
+	SseCustomerKeyMd5    string `json:"sse_customer_key_md5,omitempty"`
+	VersionId            string `json:"version_id,omitempty"`
+	WithDetails          bool   `json:"with_details,omitempty"`
 }
 type HeadObjectOutput struct {
 	// Metadata pertaining to the operation's result.
-	ResultMetadata map[string]string `protobuf:"bytes,1,rep,name=ResultMetadata,proto3" json:"ResultMetadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	ResultMetadata map[string]string `json:"ResultMetadata,omitempty"`
 }
 
 type IsObjectExistInput struct {
-	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key    string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	Bucket string `json:"bucket,omitempty"`
+	Key    string `json:"key,omitempty"`
 }
 type IsObjectExistOutput struct {
-	FileExist bool `protobuf:"varint,1,opt,name=file_exist,json=fileExist,proto3" json:"file_exist,omitempty"`
+	FileExist bool `json:"file_exist,omitempty"`
+}
+
+type SignURLInput struct {
+	StoreName    string `json:"store_name,omitempty"`
+	Bucket       string `json:"bucket,omitempty"`
+	Key          string `json:"key,omitempty"`
+	Method       string `json:"method,omitempty"`
+	ExpiredInSec int64  `json:"expired_in_sec,omitempty"`
+}
+type SignURLOutput struct {
+	SignedUrl string `json:"signed_url,omitempty"`
+}
+
+type UpdateBandwidthRateLimitInput struct {
+	// The average upload/download bandwidth rate limit in bits per second.
+	AverageRateLimitInBitsPerSec int64 `json:"average_rate_limit_in_bits_per_sec,omitempty"`
+	//Resource name of gateway
+	GatewayResourceName string `json:"gateway_resource_name,omitempty"`
+}
+
+type AppendObjectInput struct {
+	DataStream           io.Reader
+	Bucket               string            `json:"bucket,omitempty"`
+	Key                  string            `json:"key,omitempty"`
+	Position             int64             `json:"position,omitempty"`
+	ACL                  string            `json:"acl,omitempty"`
+	CacheControl         string            `json:"cache_control,omitempty"`
+	ContentDisposition   string            `json:"content_disposition,omitempty"`
+	ContentEncoding      string            `json:"content_encoding,omitempty"`
+	ContentMd5           string            `json:"content_md5,omitempty"`
+	Expires              int64             `json:"expires,omitempty"`
+	StorageClass         string            `json:"storage_class,omitempty"`
+	ServerSideEncryption string            `json:"server_side_encryption,omitempty"`
+	Meta                 string            `json:"meta,omitempty"`
+	Tags                 map[string]string `json:"tags,omitempty"`
+}
+type AppendObjectOutput struct {
+	AppendPosition int64 `json:"append_position,omitempty"`
+}
+
+type ListPartsInput struct {
+	Bucket              string `json:"bucket,omitempty"`
+	Key                 string `json:"key,omitempty"`
+	ExpectedBucketOwner string `json:"expected_bucket_owner,omitempty"`
+	MaxParts            int64  `json:"max_parts,omitempty"`
+	PartNumberMarker    int64  `json:"part_number_marker,omitempty"`
+	RequestPayer        string `json:"request_payer,omitempty"`
+	UploadId            string `json:"upload_id,omitempty"`
+}
+type ListPartsOutput struct {
+	Bucket               string  `json:"bucket,omitempty"`
+	Key                  string  `json:"key,omitempty"`
+	UploadId             string  `json:"upload_id,omitempty"`
+	NextPartNumberMarker string  `json:"next_part_number_marker,omitempty"`
+	MaxParts             int64   `json:"max_parts,omitempty"`
+	IsTruncated          bool    `json:"is_truncated,omitempty"`
+	Parts                []*Part `json:"parts,omitempty"`
+}
+
+type Part struct {
+	Etag         string `json:"etag,omitempty"`
+	LastModified int64  `json:"last_modified,omitempty"`
+	PartNumber   int64  `json:"part_number,omitempty"`
+	Size         int64  `json:"size,omitempty"`
 }

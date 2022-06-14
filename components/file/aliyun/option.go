@@ -220,6 +220,11 @@ func MetadataDirective(value string) oss.Option {
 	return oss.MetadataDirective(oss.MetadataDirectiveType(value))
 }
 
+// Meta is an option to set Meta header
+func Meta(key, value string) oss.Option {
+	return oss.Meta(key, value)
+}
+
 // ServerSideEncryption is an option to set X-Oss-Server-Side-Encryption header
 func ServerSideEncryption(value string) oss.Option {
 	if value == "" {

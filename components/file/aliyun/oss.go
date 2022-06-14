@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"net/http"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"mosn.io/layotto/components/file"
@@ -73,6 +74,11 @@ func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (io
 	if err != nil {
 		return nil, err
 	}
+	//user can use SignedUrl to get file without ak、sk
+	if req.SignedUrl != "" {
+		body, err := bucket.GetObjectWithURL(req.SignedUrl)
+		return body, err
+	}
 	body, err := bucket.GetObject(req.Key,
 		IfUnmodifiedSince(req.IfUnmodifiedSince),
 		IfModifiedSince(req.IfModifiedSince),
@@ -105,10 +111,16 @@ func (a *AliyunOSS) PutObject(ctx context.Context, req *file.PutObjectInput) (*f
 		o := oss.Meta(k, v)
 		metaOption = append(metaOption, o)
 	}
-
-	err = bucket.PutObject(req.Key, req.DataStream,
-		metaOption...,
-	)
+	//user can use SignedUrl to put file without ak、sk
+	if req.SignedUrl != "" {
+		err = bucket.PutObjectWithURL(req.SignedUrl, req.DataStream,
+			metaOption...,
+		)
+	} else {
+		err = bucket.PutObject(req.Key, req.DataStream,
+			metaOption...,
+		)
+	}
 	return &file.PutObjectOutput{}, err
 }
 
@@ -121,7 +133,7 @@ func (a *AliyunOSS) DeleteObject(ctx context.Context, req *file.DeleteObjectInpu
 	if err != nil {
 		return nil, err
 	}
-	err = bucket.DeleteObject(req.Key, RequestPayer(req.RequestPayer))
+	err = bucket.DeleteObject(req.Key, RequestPayer(req.RequestPayer), VersionId(req.VersionId))
 	return &file.DeleteObjectOutput{}, err
 }
 func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *file.DeleteObjectsInput) (*file.DeleteObjectsOutput, error) {
@@ -133,17 +145,18 @@ func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *file.DeleteObjectsIn
 	if err != nil {
 		return nil, err
 	}
-	var objects []string
+	var objects []oss.DeleteObject
 	for _, v := range req.Delete.Objects {
-		objects = append(objects, v.Key)
+		object := oss.DeleteObject{Key: v.Key, VersionId: v.VersionId}
+		objects = append(objects, object)
 	}
-	resp, err := bucket.DeleteObjects(objects, oss.DeleteObjectsQuiet(req.Delete.Quiet))
+	resp, err := bucket.DeleteObjectVersions(objects, oss.DeleteObjectsQuiet(req.Delete.Quiet))
 	if err != nil {
 		return nil, err
 	}
 	out := &file.DeleteObjectsOutput{}
-	for _, v := range resp.DeletedObjects {
-		object := &file.DeletedObject{Key: v}
+	for _, v := range resp.DeletedObjectsDetail {
+		object := &file.DeletedObject{Key: v.Key, VersionId: v.VersionId, DeleteMarker: v.DeleteMarker, DeleteMarkerVersionId: v.DeleteMarkerVersionId}
 		out.Deleted = append(out.Deleted, object)
 	}
 	return out, err
@@ -275,7 +288,14 @@ func (a *AliyunOSS) CopyObject(ctx context.Context, req *file.CopyObjectInput) (
 	if err != nil {
 		return nil, err
 	}
-	resp, err := bucket.CopyObject(req.CopySource.CopySourceKey, req.Key, VersionId(req.CopySource.CopySourceVersionId))
+	var options []oss.Option
+	for k, v := range req.Metadata {
+		option := Meta(k, v)
+		options = append(options, option)
+	}
+	options = append(options, MetadataDirective(req.MetadataDirective))
+	options = append(options, VersionId(req.CopySource.CopySourceVersionId))
+	resp, err := bucket.CopyObject(req.CopySource.CopySourceKey, req.Key, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -482,11 +502,16 @@ func (a *AliyunOSS) HeadObject(ctx context.Context, req *file.HeadObjectInput) (
 	if err != nil {
 		return nil, err
 	}
-	resp, err := bucket.GetObjectMeta(req.Key)
+	output := &file.HeadObjectOutput{ResultMetadata: map[string]string{}}
+	var resp http.Header
+	if req.WithDetails {
+		resp, err = bucket.GetObjectDetailedMeta(req.Key)
+	} else {
+		resp, err = bucket.GetObjectMeta(req.Key)
+	}
 	if err != nil {
 		return nil, err
 	}
-	output := &file.HeadObjectOutput{ResultMetadata: map[string]string{}}
 	for k, v := range resp {
 		for _, t := range v {
 			//if key exist,concatenated with commas
@@ -511,4 +536,90 @@ func (a *AliyunOSS) IsObjectExist(ctx context.Context, req *file.IsObjectExistIn
 	}
 	resp, err := bucket.IsObjectExist(req.Key)
 	return &file.IsObjectExistOutput{FileExist: resp}, err
+}
+
+func (a *AliyunOSS) SignURL(ctx context.Context, req *file.SignURLInput) (*file.SignURLOutput, error) {
+	cli, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	bucket, err := cli.Bucket(req.Bucket)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := bucket.SignURL(req.Key, oss.HTTPMethod(req.Method), req.ExpiredInSec)
+	return &file.SignURLOutput{SignedUrl: resp}, err
+}
+
+func (a *AliyunOSS) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *file.UpdateBandwidthRateLimitInput) error {
+	cli, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return err
+	}
+	err = cli.LimitDownloadSpeed(int(req.AverageRateLimitInBitsPerSec))
+	return err
+}
+
+func (a *AliyunOSS) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *file.UpdateBandwidthRateLimitInput) error {
+	cli, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return err
+	}
+	err = cli.LimitUploadSpeed(int(req.AverageRateLimitInBitsPerSec))
+	return err
+}
+
+func (a *AliyunOSS) AppendObject(ctx context.Context, req *file.AppendObjectInput) (*file.AppendObjectOutput, error) {
+	cli, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	bucket, err := cli.Bucket(req.Bucket)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := bucket.AppendObject(req.Key, req.DataStream, req.Position,
+		CacheControl(req.CacheControl),
+		ContentDisposition(req.ContentDisposition),
+		ContentEncoding(req.ContentEncoding),
+		Expires(req.Expires),
+		ServerSideEncryption(req.ServerSideEncryption),
+		ObjectACL(req.ACL),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &file.AppendObjectOutput{AppendPosition: resp}, err
+}
+
+func (a *AliyunOSS) ListParts(ctx context.Context, req *file.ListPartsInput) (*file.ListPartsOutput, error) {
+	cli, err := a.selectClient(map[string]string{}, endpointKey)
+	if err != nil {
+		return nil, err
+	}
+	bucket, err := cli.Bucket(req.Bucket)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := bucket.ListUploadedParts(oss.InitiateMultipartUploadResult{Bucket: req.Bucket, Key: req.Key, UploadID: req.UploadId},
+		MaxParts(int(req.MaxParts)),
+		PartNumberMarker(int(req.PartNumberMarker)),
+		RequestPayer(req.RequestPayer),
+	)
+	if err != nil {
+		return nil, err
+	}
+	out := &file.ListPartsOutput{
+		Bucket:               resp.Bucket,
+		Key:                  resp.Key,
+		UploadId:             resp.UploadID,
+		NextPartNumberMarker: resp.NextPartNumberMarker,
+		MaxParts:             int64(resp.MaxParts),
+		IsTruncated:          resp.IsTruncated,
+	}
+	for _, v := range resp.UploadedParts {
+		part := &file.Part{Etag: v.ETag, LastModified: v.LastModified.Unix(), PartNumber: int64(v.PartNumber), Size: int64(v.Size)}
+		out.Parts = append(out.Parts, part)
+	}
+	return out, err
 }

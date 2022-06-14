@@ -625,3 +625,113 @@ func (s *S3Server) IsObjectExist(ctx context.Context, req *s3.IsObjectExistInput
 		return output, nil
 	}
 }
+
+func (s *S3Server) SignURL(ctx context.Context, req *s3.SignURLInput) (*s3.SignURLOutput, error) {
+	if s.ossInstance[req.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
+	}
+	st := &l8s3.SignURLInput{}
+	err := transferData(req, st)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for SignURL,err: %+v", err)
+	}
+	if resp, err := s.ossInstance[req.StoreName].SignURL(ctx, st); err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	} else {
+		output := &s3.SignURLOutput{}
+		output.SignedUrl = resp.SignedUrl
+		return output, nil
+	}
+}
+
+func (s *S3Server) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+	if s.ossInstance[req.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
+	}
+	st := &l8s3.UpdateBandwidthRateLimitInput{}
+	err := transferData(req, st)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for UpdateDownLoadBandwidthRateLimit,err: %+v", err)
+	}
+	if err := s.ossInstance[req.StoreName].UpdateDownLoadBandwidthRateLimit(ctx, st); err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (s *S3Server) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+	if s.ossInstance[req.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
+	}
+	st := &l8s3.UpdateBandwidthRateLimitInput{}
+	err := transferData(req, st)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for UpdateUpLoadBandwidthRateLimit,err: %+v", err)
+	}
+	if err := s.ossInstance[req.StoreName].UpdateUpLoadBandwidthRateLimit(ctx, st); err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &emptypb.Empty{}, nil
+}
+
+type appendObjectStreamReader struct {
+	data   []byte
+	server s3.S3_AppendObjectServer
+}
+
+func newAppendObjectStreamReader(data []byte, server s3.S3_AppendObjectServer) *appendObjectStreamReader {
+	return &appendObjectStreamReader{data: data, server: server}
+}
+
+func (r *appendObjectStreamReader) Read(p []byte) (int, error) {
+	var count int
+	total := len(p)
+	for {
+		if len(r.data) > 0 {
+			n := copy(p[count:], r.data)
+			r.data = r.data[n:]
+			count += n
+			if count == total {
+				return count, nil
+			}
+		}
+		req, err := r.server.Recv()
+		if err != nil {
+			if err != io.EOF {
+				log.DefaultLogger.Errorf("recv data from grpc stream fail, err:%+v", err)
+			}
+			return count, err
+		}
+		r.data = req.Body
+	}
+}
+
+func (s *S3Server) AppendObject(stream s3.S3_AppendObjectServer) error {
+	req, err := stream.Recv()
+	if err != nil {
+		//if client send eof error directly, return nil
+		if err == io.EOF {
+			return nil
+		}
+		return status.Errorf(codes.Internal, "receive file data fail: err: %+v", err)
+	}
+
+	if s.ossInstance[req.StoreName] == nil {
+		return status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
+	}
+	fileReader := newAppendObjectStreamReader(req.Body, stream)
+
+	st := &l8s3.AppendObjectInput{}
+	err = transferData(req, st)
+	if err != nil {
+		return status.Errorf(codes.InvalidArgument, "transfer request data fail for AppendObject,err: %+v", err)
+	}
+	st.DataStream = fileReader
+	if resp, err := s.ossInstance[req.StoreName].AppendObject(stream.Context(), st); err != nil {
+		return status.Errorf(codes.Internal, err.Error())
+	} else {
+		output := &s3.AppendObjectOutput{}
+		output.AppendPosition = resp.AppendPosition
+		return stream.SendAndClose(output)
+	}
+}

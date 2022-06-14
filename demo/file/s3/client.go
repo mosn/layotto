@@ -4,8 +4,9 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	s3 "mosn.io/layotto/spec/proto/extension/v1"
 	"os"
+
+	s3 "mosn.io/layotto/spec/proto/extension/v1"
 
 	"google.golang.org/grpc"
 )
@@ -350,6 +351,23 @@ func TestRestore() {
 
 }
 
+func TestObjectExist() {
+	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+	if err != nil {
+		fmt.Printf("conn build failed,err:%+v", err)
+		return
+	}
+	c := s3.NewS3Client(conn)
+	req := &s3.IsObjectExistInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "client"}
+	resp, err := c.IsObjectExist(context.Background(), req)
+	if err != nil {
+		fmt.Printf("TestObjectExist fail, err: %+v \n", err)
+		return
+	}
+	fmt.Printf("TestObjectExist success, resp: %+v\n", resp.FileExist)
+
+}
+
 func main() {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
@@ -403,5 +421,8 @@ func main() {
 
 	if os.Args[1] == "restore" {
 		TestRestore()
+	}
+	if os.Args[1] == "exist" {
+		TestObjectExist()
 	}
 }
