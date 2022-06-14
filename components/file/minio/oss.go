@@ -22,8 +22,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"mosn.io/layotto/components/file/util"
 	"strconv"
+
+	"mosn.io/layotto/components/file/util"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
 

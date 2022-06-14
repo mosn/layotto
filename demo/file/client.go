@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	s3 "mosn.io/layotto/spec/proto/extension/v1"
 	"os"
 	"strconv"
+
+	s3 "mosn.io/layotto/spec/proto/extension/v1"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"

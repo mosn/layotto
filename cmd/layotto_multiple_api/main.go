@@ -18,10 +18,11 @@ package main
 
 import (
 	"encoding/json"
-	"mosn.io/layotto/components/file/aliyun"
 	"os"
 	"strconv"
 	"time"
+
+	"mosn.io/layotto/components/file/aliyun"
 
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"

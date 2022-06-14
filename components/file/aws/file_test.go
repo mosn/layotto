@@ -19,9 +19,10 @@ package aws
 import (
 	"context"
 	"fmt"
-	"github.com/jinzhu/copier"
 	"reflect"
 	"testing"
+
+	"github.com/jinzhu/copier"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/stretchr/testify/assert"

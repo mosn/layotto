@@ -29,9 +29,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/jinzhu/copier"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/file/factory"
-	"mosn.io/pkg/log"
 )
 
 const (

@@ -240,7 +240,7 @@ func TestPart() {
 	}
 	fmt.Printf("UploadPartCopy success, resp: %+v \n", resp2)
 
-	req3 := &s3.CompleteMultipartUploadInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "multicopy.jpg", UploadId: resp.UploadId, MultipartUpload: &s3.CompletedMultipartUpload{Parts: []*s3.CompletedPart{&s3.CompletedPart{Etag: resp2.CopyPartResult.Etag, PartNumber: req2.PartNumber}}}}
+	req3 := &s3.CompleteMultipartUploadInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "multicopy.jpg", UploadId: resp.UploadId, MultipartUpload: &s3.CompletedMultipartUpload{Parts: []*s3.CompletedPart{{Etag: resp2.CopyPartResult.Etag, PartNumber: req2.PartNumber}}}}
 	resp3, err := c.CompleteMultipartUpload(context.Background(), req3)
 	if err != nil {
 		fmt.Printf("CompleteMultipartUpload fail, err: %+v \n", err)

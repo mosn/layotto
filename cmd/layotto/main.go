@@ -18,10 +18,11 @@ package main
 
 import (
 	"encoding/json"
-	"mosn.io/layotto/components/file/aliyun"
 	"os"
 	"strconv"
 	"time"
+
+	"mosn.io/layotto/components/file/aliyun"
 
 	mosn_jaeger "mosn.io/mosn/pkg/trace/jaeger"
 
@@ -35,12 +36,13 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 	"mosn.io/api"
+	"mosn.io/mosn/pkg/stagemanager"
+	"mosn.io/mosn/pkg/trace/skywalking"
+
 	"mosn.io/layotto/components/file/aws"
 	"mosn.io/layotto/components/file/minio"
 	"mosn.io/layotto/components/file/qiniu"
 	"mosn.io/layotto/components/file/tencentcloud"
-	"mosn.io/mosn/pkg/stagemanager"
-	"mosn.io/mosn/pkg/trace/skywalking"
 
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/diagnostics"
