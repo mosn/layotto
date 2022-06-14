@@ -133,7 +133,6 @@ func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.S3_GetObjectServe
 			return nil
 		}
 	}
-	return nil
 }
 
 type putObjectStreamReader struct {
@@ -189,16 +188,16 @@ func (s *S3Server) PutObject(stream s3.S3_PutObjectServer) error {
 		return status.Errorf(codes.InvalidArgument, "transfer request data fail for PutObject,err: %+v", err)
 	}
 	st.DataStream = fileReader
-	if resp, err := s.ossInstance[req.StoreName].PutObject(stream.Context(), st); err != nil {
+	var resp *l8s3.PutObjectOutput
+	if resp, err = s.ossInstance[req.StoreName].PutObject(stream.Context(), st); err != nil {
 		return status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.PutObjectOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return status.Errorf(codes.Internal, "transfer response data fail for PutObject,err: %+v", err)
-		}
-		return stream.SendAndClose(output)
 	}
+	output := &s3.PutObjectOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return status.Errorf(codes.Internal, "transfer response data fail for PutObject,err: %+v", err)
+	}
+	return stream.SendAndClose(output)
 }
 
 func (s *S3Server) DeleteObject(ctx context.Context, req *s3.DeleteObjectInput) (*s3.DeleteObjectOutput, error) {
@@ -210,16 +209,16 @@ func (s *S3Server) DeleteObject(ctx context.Context, req *s3.DeleteObjectInput) 
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for DeleteObject,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].DeleteObject(ctx, st); err != nil {
+	var resp *l8s3.DeleteObjectOutput
+	if resp, err = s.ossInstance[req.StoreName].DeleteObject(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.DeleteObjectOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for DeleteObject,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.DeleteObjectOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for DeleteObject,err: %+v", err)
+	}
+	return output, nil
 }
 func (s *S3Server) PutObjectTagging(ctx context.Context, req *s3.PutBucketTaggingInput) (*s3.PutBucketTaggingOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -231,16 +230,16 @@ func (s *S3Server) PutObjectTagging(ctx context.Context, req *s3.PutBucketTaggin
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for PutObjectTagging,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].PutObjectTagging(ctx, st); err != nil {
+	var resp *l8s3.PutBucketTaggingOutput
+	if resp, err = s.ossInstance[req.StoreName].PutObjectTagging(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.PutBucketTaggingOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for PutObjectTagging,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.PutBucketTaggingOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for PutObjectTagging,err: %+v", err)
+	}
+	return output, nil
 }
 func (s *S3Server) DeleteObjectTagging(ctx context.Context, req *s3.DeleteObjectTaggingInput) (*s3.DeleteObjectTaggingOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -251,16 +250,16 @@ func (s *S3Server) DeleteObjectTagging(ctx context.Context, req *s3.DeleteObject
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for DeleteObjectTagging,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].DeleteObjectTagging(ctx, st); err != nil {
+	var resp *l8s3.DeleteObjectTaggingOutput
+	if resp, err = s.ossInstance[req.StoreName].DeleteObjectTagging(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.DeleteObjectTaggingOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for DeleteObjectTagging,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.DeleteObjectTaggingOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for DeleteObjectTagging,err: %+v", err)
+	}
+	return output, nil
 }
 func (s *S3Server) GetObjectTagging(ctx context.Context, req *s3.GetObjectTaggingInput) (*s3.GetObjectTaggingOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -271,16 +270,16 @@ func (s *S3Server) GetObjectTagging(ctx context.Context, req *s3.GetObjectTaggin
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for GetObjectTagging,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].GetObjectTagging(ctx, st); err != nil {
+	var resp *l8s3.GetObjectTaggingOutput
+	if resp, err = s.ossInstance[req.StoreName].GetObjectTagging(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.GetObjectTaggingOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for GetObjectTagging,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.GetObjectTaggingOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for GetObjectTagging,err: %+v", err)
+	}
+	return output, nil
 }
 func (s *S3Server) CopyObject(ctx context.Context, req *s3.CopyObjectInput) (*s3.CopyObjectOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -291,16 +290,17 @@ func (s *S3Server) CopyObject(ctx context.Context, req *s3.CopyObjectInput) (*s3
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for CopyObject,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].CopyObject(ctx, st); err != nil {
+	var resp *l8s3.CopyObjectOutput
+	if resp, err = s.ossInstance[req.StoreName].CopyObject(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.CopyObjectOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for CopyObject,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.CopyObjectOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for CopyObject,err: %+v", err)
+	}
+	return output, nil
+
 }
 func (s *S3Server) DeleteObjects(ctx context.Context, req *s3.DeleteObjectsInput) (*s3.DeleteObjectsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -311,16 +311,17 @@ func (s *S3Server) DeleteObjects(ctx context.Context, req *s3.DeleteObjectsInput
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for DeleteObjects,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].DeleteObjects(ctx, st); err != nil {
+	var resp *l8s3.DeleteObjectsOutput
+	if resp, err = s.ossInstance[req.StoreName].DeleteObjects(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.DeleteObjectsOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for DeleteObjects,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.DeleteObjectsOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for DeleteObjects,err: %+v", err)
+	}
+	return output, nil
+
 }
 func (s *S3Server) ListObjects(ctx context.Context, req *s3.ListObjectsInput) (*s3.ListObjectsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -331,16 +332,17 @@ func (s *S3Server) ListObjects(ctx context.Context, req *s3.ListObjectsInput) (*
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for ListObjects,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].ListObjects(ctx, st); err != nil {
+	var resp *l8s3.ListObjectsOutput
+	if resp, err = s.ossInstance[req.StoreName].ListObjects(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.ListObjectsOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for ListObjects,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.ListObjectsOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for ListObjects,err: %+v", err)
+	}
+	return output, nil
+
 }
 func (s *S3Server) GetObjectAcl(ctx context.Context, req *s3.GetObjectAclInput) (*s3.GetObjectAclOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -351,16 +353,17 @@ func (s *S3Server) GetObjectAcl(ctx context.Context, req *s3.GetObjectAclInput) 
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for GetObjectAcl,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].GetObjectAcl(ctx, st); err != nil {
+	var resp *l8s3.GetObjectAclOutput
+	if resp, err = s.ossInstance[req.StoreName].GetObjectAcl(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.GetObjectAclOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for GetObjectAcl,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.GetObjectAclOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for GetObjectAcl,err: %+v", err)
+	}
+	return output, nil
+
 }
 func (s *S3Server) PutObjectAcl(ctx context.Context, req *s3.PutObjectAclInput) (*s3.PutObjectAclOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -371,16 +374,17 @@ func (s *S3Server) PutObjectAcl(ctx context.Context, req *s3.PutObjectAclInput) 
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for PutObjectAcl,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].PutObjectAcl(ctx, st); err != nil {
+	var resp *l8s3.PutObjectAclOutput
+	if resp, err = s.ossInstance[req.StoreName].PutObjectAcl(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.PutObjectAclOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for PutObjectAcl,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.PutObjectAclOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for PutObjectAcl,err: %+v", err)
+	}
+	return output, nil
+
 }
 func (s *S3Server) RestoreObject(ctx context.Context, req *s3.RestoreObjectInput) (*s3.RestoreObjectOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -391,16 +395,17 @@ func (s *S3Server) RestoreObject(ctx context.Context, req *s3.RestoreObjectInput
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for RestoreObject,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].RestoreObject(ctx, st); err != nil {
+	var resp *l8s3.RestoreObjectOutput
+	if resp, err = s.ossInstance[req.StoreName].RestoreObject(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.RestoreObjectOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for RestoreObject,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.RestoreObjectOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for RestoreObject,err: %+v", err)
+	}
+	return output, nil
+
 }
 func (s *S3Server) CreateMultipartUpload(ctx context.Context, req *s3.CreateMultipartUploadInput) (*s3.CreateMultipartUploadOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -411,16 +416,17 @@ func (s *S3Server) CreateMultipartUpload(ctx context.Context, req *s3.CreateMult
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for CreateMultipartUpload,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].CreateMultipartUpload(ctx, st); err != nil {
+	var resp *l8s3.CreateMultipartUploadOutput
+	if resp, err = s.ossInstance[req.StoreName].CreateMultipartUpload(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.CreateMultipartUploadOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for CreateMultipartUpload,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.CreateMultipartUploadOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for CreateMultipartUpload,err: %+v", err)
+	}
+	return output, nil
+
 }
 
 type uploadPartStreamReader struct {
@@ -476,16 +482,17 @@ func (s *S3Server) UploadPart(stream s3.S3_UploadPartServer) error {
 		return status.Errorf(codes.InvalidArgument, "transfer request data fail for UploadPart,err: %+v", err)
 	}
 	st.DataStream = fileReader
-	if resp, err := s.ossInstance[req.StoreName].UploadPart(stream.Context(), st); err != nil {
+	var resp *l8s3.UploadPartOutput
+	if resp, err = s.ossInstance[req.StoreName].UploadPart(stream.Context(), st); err != nil {
 		return status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.UploadPartOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return status.Errorf(codes.Internal, "transfer response data fail for UploadPart,err: %+v", err)
-		}
-		return stream.SendAndClose(output)
 	}
+	output := &s3.UploadPartOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return status.Errorf(codes.Internal, "transfer response data fail for UploadPart,err: %+v", err)
+	}
+	return stream.SendAndClose(output)
+
 }
 func (s *S3Server) UploadPartCopy(ctx context.Context, req *s3.UploadPartCopyInput) (*s3.UploadPartCopyOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -496,16 +503,17 @@ func (s *S3Server) UploadPartCopy(ctx context.Context, req *s3.UploadPartCopyInp
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for UploadPartCopy,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].UploadPartCopy(ctx, st); err != nil {
+	var resp *l8s3.UploadPartCopyOutput
+	if resp, err = s.ossInstance[req.StoreName].UploadPartCopy(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.UploadPartCopyOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for UploadPartCopy,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.UploadPartCopyOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for UploadPartCopy,err: %+v", err)
+	}
+	return output, nil
+
 }
 func (s *S3Server) CompleteMultipartUpload(ctx context.Context, req *s3.CompleteMultipartUploadInput) (*s3.CompleteMultipartUploadOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -516,16 +524,17 @@ func (s *S3Server) CompleteMultipartUpload(ctx context.Context, req *s3.Complete
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for CompleteMultipartUpload,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].CompleteMultipartUpload(ctx, st); err != nil {
+	var resp *l8s3.CompleteMultipartUploadOutput
+	if resp, err = s.ossInstance[req.StoreName].CompleteMultipartUpload(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.CompleteMultipartUploadOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for CompleteMultipartUpload,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.CompleteMultipartUploadOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for CompleteMultipartUpload,err: %+v", err)
+	}
+	return output, nil
+
 }
 func (s *S3Server) AbortMultipartUpload(ctx context.Context, req *s3.AbortMultipartUploadInput) (*s3.AbortMultipartUploadOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -536,16 +545,17 @@ func (s *S3Server) AbortMultipartUpload(ctx context.Context, req *s3.AbortMultip
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for AbortMultipartUpload,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].AbortMultipartUpload(ctx, st); err != nil {
+	var resp *l8s3.AbortMultipartUploadOutput
+	if resp, err = s.ossInstance[req.StoreName].AbortMultipartUpload(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.AbortMultipartUploadOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for AbortMultipartUpload,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.AbortMultipartUploadOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for AbortMultipartUpload,err: %+v", err)
+	}
+	return output, nil
+
 }
 func (s *S3Server) ListMultipartUploads(ctx context.Context, req *s3.ListMultipartUploadsInput) (*s3.ListMultipartUploadsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -556,16 +566,16 @@ func (s *S3Server) ListMultipartUploads(ctx context.Context, req *s3.ListMultipa
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for AbortMultipartUpload,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].ListMultipartUploads(ctx, st); err != nil {
+	var resp *l8s3.ListMultipartUploadsOutput
+	if resp, err = s.ossInstance[req.StoreName].ListMultipartUploads(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.ListMultipartUploadsOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for AbortMultipartUpload,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.ListMultipartUploadsOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for AbortMultipartUpload,err: %+v", err)
+	}
+	return output, nil
 }
 func (s *S3Server) ListObjectVersions(ctx context.Context, req *s3.ListObjectVersionsInput) (*s3.ListObjectVersionsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
@@ -576,16 +586,17 @@ func (s *S3Server) ListObjectVersions(ctx context.Context, req *s3.ListObjectVer
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for ListObjectVersions,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].ListObjectVersions(ctx, st); err != nil {
+	var resp *l8s3.ListObjectVersionsOutput
+	if resp, err = s.ossInstance[req.StoreName].ListObjectVersions(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.ListObjectVersionsOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for ListObjectVersions,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.ListObjectVersionsOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for ListObjectVersions,err: %+v", err)
+	}
+	return output, nil
+
 }
 
 func (s *S3Server) HeadObject(ctx context.Context, req *s3.HeadObjectInput) (*s3.HeadObjectOutput, error) {
@@ -597,16 +608,17 @@ func (s *S3Server) HeadObject(ctx context.Context, req *s3.HeadObjectInput) (*s3
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for ListObjectVersions,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].HeadObject(ctx, st); err != nil {
+	var resp *l8s3.HeadObjectOutput
+	if resp, err = s.ossInstance[req.StoreName].HeadObject(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.HeadObjectOutput{}
-		err := transferData(resp, output)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "transfer response data fail for ListObjectVersions,err: %+v", err)
-		}
-		return output, nil
 	}
+	output := &s3.HeadObjectOutput{}
+	err = transferData(resp, output)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "transfer response data fail for ListObjectVersions,err: %+v", err)
+	}
+	return output, nil
+
 }
 
 func (s *S3Server) IsObjectExist(ctx context.Context, req *s3.IsObjectExistInput) (*s3.IsObjectExistOutput, error) {
@@ -618,13 +630,13 @@ func (s *S3Server) IsObjectExist(ctx context.Context, req *s3.IsObjectExistInput
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for IsObjectExist,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].IsObjectExist(ctx, st); err != nil {
+	var resp *l8s3.IsObjectExistOutput
+	if resp, err = s.ossInstance[req.StoreName].IsObjectExist(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.IsObjectExistOutput{}
-		output.FileExist = resp.FileExist
-		return output, nil
 	}
+	output := &s3.IsObjectExistOutput{}
+	output.FileExist = resp.FileExist
+	return output, nil
 }
 
 func (s *S3Server) SignURL(ctx context.Context, req *s3.SignURLInput) (*s3.SignURLOutput, error) {
@@ -636,13 +648,13 @@ func (s *S3Server) SignURL(ctx context.Context, req *s3.SignURLInput) (*s3.SignU
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for SignURL,err: %+v", err)
 	}
-	if resp, err := s.ossInstance[req.StoreName].SignURL(ctx, st); err != nil {
+	var resp *l8s3.SignURLOutput
+	if resp, err = s.ossInstance[req.StoreName].SignURL(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.SignURLOutput{}
-		output.SignedUrl = resp.SignedUrl
-		return output, nil
 	}
+	output := &s3.SignURLOutput{}
+	output.SignedUrl = resp.SignedUrl
+	return output, nil
 }
 
 func (s *S3Server) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
@@ -728,13 +740,14 @@ func (s *S3Server) AppendObject(stream s3.S3_AppendObjectServer) error {
 		return status.Errorf(codes.InvalidArgument, "transfer request data fail for AppendObject,err: %+v", err)
 	}
 	st.DataStream = fileReader
-	if resp, err := s.ossInstance[req.StoreName].AppendObject(stream.Context(), st); err != nil {
+	var resp *l8s3.AppendObjectOutput
+	if resp, err = s.ossInstance[req.StoreName].AppendObject(stream.Context(), st); err != nil {
 		return status.Errorf(codes.Internal, err.Error())
-	} else {
-		output := &s3.AppendObjectOutput{}
-		output.AppendPosition = resp.AppendPosition
-		return stream.SendAndClose(output)
 	}
+	output := &s3.AppendObjectOutput{}
+	output.AppendPosition = resp.AppendPosition
+	return stream.SendAndClose(output)
+
 }
 
 func (s *S3Server) ListParts(ctx context.Context, req *s3.ListPartsInput) (*s3.ListPartsOutput, error) {
