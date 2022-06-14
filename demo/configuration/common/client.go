@@ -101,7 +101,7 @@ func testSubscribeWithSDK(ctx context.Context, cli client.Client) {
 	go func() {
 		for resp := range ch {
 			if resp.Err != nil {
-				panic(err)
+				panic(resp.Err)
 			}
 			marshal, err := json.Marshal(resp.Item)
 			if err != nil {
