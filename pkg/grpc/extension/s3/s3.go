@@ -735,3 +735,24 @@ func (s *S3Server) AppendObject(stream s3.S3_AppendObjectServer) error {
 		return stream.SendAndClose(output)
 	}
 }
+
+func (s *S3Server) ListParts(ctx context.Context, req *s3.ListPartsInput) (*s3.ListPartsOutput, error) {
+	if s.ossInstance[req.StoreName] == nil {
+		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
+	}
+	st := &l8s3.ListPartsInput{}
+	err := transferData(req, st)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for ListParts,err: %+v", err)
+	}
+	resp, err := s.ossInstance[req.StoreName].ListParts(ctx, st)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	out := &s3.ListPartsOutput{}
+	err = transferData(resp, out)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "transfer response data fail for ListParts,err: %+v", err)
+	}
+	return out, nil
+}
