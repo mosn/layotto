@@ -24,13 +24,17 @@ const (
 )
 
 func TestGet(fileName string) {
+	// dial
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		panic(err)
 	}
 
+	// new client
 	c := runtimev1pb.NewRuntimeClient(conn)
+
+	// getFile
 	req := &runtimev1pb.GetFileRequest{StoreName: storeName, Name: fileName}
 	cli, err := c.GetFile(context.Background(), req)
 	if err != nil {
@@ -41,14 +45,15 @@ func TestGet(fileName string) {
 	for {
 		resp, err := cli.Recv()
 		if err != nil {
-			fmt.Println("recv file failed")
 			if err.Error() != "EOF" {
+				fmt.Println("recv file failed")
 				panic(err)
 			}
 			break
 		}
 		pic = append(pic, resp.Data...)
 	}
+	fmt.Println("GetFile successfully. Result:")
 	fmt.Println(string(pic))
 }
 
