@@ -244,7 +244,7 @@ func (a *AliyunOSS) GetObjectAcl(ctx context.Context, req *file.GetObjectAclInpu
 		return nil, err
 	}
 	output := &file.GetObjectAclOutput{Owner: &file.Owner{DisplayName: resp.Owner.DisplayName, ID: resp.Owner.ID}}
-	grant := &file.Grant{&file.Grantee{DisplayName: resp.Owner.DisplayName, ID: resp.Owner.ID}, resp.ACL}
+	grant := &file.Grant{Grantee: &file.Grantee{DisplayName: resp.Owner.DisplayName, ID: resp.Owner.ID}, Permission: resp.ACL}
 	output.Grants = append(output.Grants, grant)
 	return output, err
 }

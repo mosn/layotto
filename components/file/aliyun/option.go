@@ -389,13 +389,6 @@ func StorageClass(value string) oss.Option {
 	return oss.StorageClass(oss.StorageClassType(value))
 }
 
-// Checkpoint configuration
-type cpConfig struct {
-	IsEnable bool
-	FilePath string
-	DirPath  string
-}
-
 // ResponseContentType is an option to set response-content-type param
 func ResponseContentType(value string) oss.Option {
 	if value == "" {

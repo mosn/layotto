@@ -36,9 +36,7 @@ import (
 
 const (
 	endpointKey              = "endpoint"
-	bucketKey                = "bucket"
 	defaultCredentialsSource = "provider"
-	fileLength               = "length"
 )
 
 // AwsOss is a binding for aws oss storage.
