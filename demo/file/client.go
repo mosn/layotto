@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -59,7 +58,7 @@ func TestGet(fileName string) {
 }
 
 func TestPut(fileName string, value string) {
-	conn, err := grpc.Dial("127.0.0.1:11004", grpc.WithInsecure())
+	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		panic(err)
@@ -74,7 +73,6 @@ func TestPut(fileName string, value string) {
 		panic(err)
 	}
 	req.Data = []byte(value)
-	meta["length"] = strconv.Itoa(len(value))
 	stream.Send(req)
 	_, err = stream.CloseAndRecv()
 	if err != nil {
@@ -84,7 +82,7 @@ func TestPut(fileName string, value string) {
 }
 
 func TestList(bucketName string) {
-	conn, err := grpc.Dial("127.0.0.1:11004", grpc.WithInsecure())
+	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		panic(err)
@@ -113,7 +111,7 @@ func TestList(bucketName string) {
 }
 
 func TestDel(fileName string) {
-	conn, err := grpc.Dial("127.0.0.1:11004", grpc.WithInsecure())
+	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
@@ -132,7 +130,7 @@ func TestDel(fileName string) {
 }
 
 func TestStat(fileName string) {
-	conn, err := grpc.Dial("127.0.0.1:11004", grpc.WithInsecure())
+	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		panic(err)
