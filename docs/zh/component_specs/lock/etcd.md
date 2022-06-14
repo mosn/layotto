@@ -45,8 +45,8 @@ go build
 ## 运行 Demo
 
 ````shell
-cd ${project_path}/demo/lock/etcd/
+ cd ${project_path}/demo/lock/common/
  go build -o client
- ./client
+ ./client -s "lock_demo"
 ````
 
