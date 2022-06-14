@@ -27,7 +27,7 @@ func TestGet(fileName string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
-		return
+		panic(err)
 	}
 
 	c := runtimev1pb.NewRuntimeClient(conn)
@@ -35,7 +35,7 @@ func TestGet(fileName string) {
 	cli, err := c.GetFile(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)
-		return
+		panic(err)
 	}
 	pic := make([]byte, 0)
 	for {
@@ -56,7 +56,7 @@ func TestPut(fileName string, value string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
-		return
+		panic(err)
 	}
 	meta := make(map[string]string)
 	meta["storageType"] = storageType
@@ -65,13 +65,14 @@ func TestPut(fileName string, value string) {
 	stream, err := c.PutFile(context.TODO())
 	if err != nil {
 		fmt.Printf("put file failed:%+v", err)
-		return
+		panic(err)
 	}
 	req.Data = []byte(value)
 	stream.Send(req)
 	_, err = stream.CloseAndRecv()
 	if err != nil {
 		fmt.Printf("cannot receive response: %+v", err)
+		panic(err)
 	}
 }
 
@@ -79,7 +80,7 @@ func TestList(bucketName string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
-		return
+		panic(err)
 	}
 	meta := make(map[string]string)
 	meta["storageType"] = storageType
@@ -91,7 +92,7 @@ func TestList(bucketName string) {
 		resp, err := c.ListFile(context.Background(), listReq)
 		if err != nil {
 			fmt.Printf("list file fail, err: %+v", err)
-			return
+			panic(err)
 		}
 		marker = resp.Marker
 		if !resp.IsTruncated {
@@ -118,7 +119,7 @@ func TestDel(fileName string) {
 	_, err = c.DelFile(context.Background(), listReq)
 	if err != nil {
 		fmt.Printf("list file fail, err: %+v \n", err)
-		return
+		panic(err)
 	}
 	fmt.Printf("delete file success \n")
 }
@@ -127,7 +128,7 @@ func TestStat(fileName string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
-		return
+		panic(err)
 	}
 	meta := make(map[string]string)
 	meta["storageType"] = storageType

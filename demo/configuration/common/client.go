@@ -101,8 +101,7 @@ func testSubscribeWithSDK(ctx context.Context, cli client.Client) {
 	go func() {
 		for resp := range ch {
 			if resp.Err != nil {
-				fmt.Println("subscribe failed", resp.Err)
-				continue
+				panic(err)
 			}
 			marshal, err := json.Marshal(resp.Item)
 			if err != nil {
@@ -193,9 +192,8 @@ func testSet(ctx context.Context, cli client.Client) {
 	saveRequest := &client.SaveConfigurationRequest{StoreName: storeName, AppId: appid}
 	saveRequest.Items = append(saveRequest.Items, item1)
 	saveRequest.Items = append(saveRequest.Items, item2)
-	if cli.SaveConfiguration(ctx, saveRequest) != nil {
-		fmt.Println("save key failed")
-		return
+	if err := cli.SaveConfiguration(ctx, saveRequest); err != nil {
+		panic(err)
 	}
 	fmt.Println("save key success")
 }
@@ -205,7 +203,7 @@ func testGet(ctx context.Context, cli client.Client) {
 	items, err := cli.GetConfiguration(ctx, getRequest)
 	//validate
 	if err != nil {
-		fmt.Printf("get configuration failed %+v \n", err)
+		panic(err)
 	}
 	for _, item := range items {
 		fmt.Printf("get configuration after save, %+v \n", item)
@@ -214,9 +212,8 @@ func testGet(ctx context.Context, cli client.Client) {
 
 func testDelete(ctx context.Context, cli client.Client) {
 	request := &client.ConfigurationRequestItem{StoreName: storeName, AppId: appid, Group: group, Label: "prod", Keys: []string{"key1", "haha"}}
-	if cli.DeleteConfiguration(ctx, request) != nil {
-		fmt.Println("delete key failed")
-		return
+	if err := cli.DeleteConfiguration(ctx, request); err != nil {
+		panic(err)
 	}
 	fmt.Printf("delete keys success\n")
 }
