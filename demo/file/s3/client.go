@@ -38,7 +38,7 @@ func TestGetObjectInput(fileName string) {
 		return
 	}
 
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req := &s3.GetObjectInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: fileName}
 	cli, err := c.GetObject(context.Background(), req)
 	if err != nil {
@@ -65,7 +65,7 @@ func TestPutObject(fileName string, value string) {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req := &s3.PutObjectInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: fileName}
 	stream, err := c.PutObject(context.TODO())
 	if err != nil {
@@ -86,7 +86,7 @@ func TestListObjects() {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	marker := ""
 	for {
 		req := &s3.ListObjectsInput{StoreName: storeName, Bucket: "antsys-wenxuwan", MaxKeys: 2, Marker: marker}
@@ -112,7 +112,7 @@ func TestDeleteObject(fileName string) {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req := &s3.DeleteObjectInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: fileName}
 	resp, err := c.DeleteObject(context.Background(), req)
 	if err != nil {
@@ -128,7 +128,7 @@ func TestDeleteObjects(fileName1, fileName2 string) {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req2 := &s3.DeleteObjectsInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Delete: &s3.Delete{}}
 	object1 := &s3.ObjectIdentifier{Key: fileName1}
 	object2 := &s3.ObjectIdentifier{Key: fileName2}
@@ -148,7 +148,7 @@ func TestTagging() {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req := &s3.PutBucketTaggingInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "王文学.jpg", Tags: map[string]string{"Abc": "123", "Def": "456"}}
 	_, err = c.PutObjectTagging(context.Background(), req)
 	if err != nil {
@@ -188,7 +188,7 @@ func TestAcl() {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req := &s3.GetObjectAclInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "王文学.jpg"}
 	resp, err := c.GetObjectAcl(context.Background(), req)
 	if err != nil {
@@ -213,7 +213,7 @@ func TestCopyObject() {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req := &s3.CopyObjectInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "王文学.jpg.copy", CopySource: &s3.CopySource{CopySourceKey: "王文学.jpg"}}
 	resp, err := c.CopyObject(context.Background(), req)
 	if err != nil {
@@ -230,7 +230,7 @@ func TestPart() {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req := &s3.CreateMultipartUploadInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "multicopy.jpg"}
 	resp, err := c.CreateMultipartUpload(context.Background(), req)
 	if err != nil {
@@ -338,7 +338,7 @@ func TestListVersion() {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req := &s3.ListObjectVersionsInput{StoreName: storeName, Bucket: "antsys-wenxuwan"}
 	resp, err := c.ListObjectVersions(context.Background(), req)
 	if err != nil {
@@ -355,7 +355,7 @@ func TestRestore() {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req := &s3.RestoreObjectInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "client"}
 	resp, err := c.RestoreObject(context.Background(), req)
 	if err != nil {
@@ -372,7 +372,7 @@ func TestObjectExist() {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req := &s3.IsObjectExistInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "client"}
 	resp, err := c.IsObjectExist(context.Background(), req)
 	if err != nil {
@@ -389,7 +389,7 @@ func main() {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
-	c := s3.NewS3Client(conn)
+	c := s3.NewObjectStorageServiceClient(conn)
 	req := &s3.InitInput{StoreName: storeName}
 	_, err = c.InitClient(context.Background(), req)
 	if err != nil {
