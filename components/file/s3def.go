@@ -29,7 +29,7 @@ var (
 type Oss interface {
 	InitConfig(context.Context, *FileConfig) error
 	InitClient(context.Context, *InitRequest) error
-	GetObject(context.Context, *GetObjectInput) (io.ReadCloser, error)
+	GetObject(context.Context, *GetObjectInput) (*GetObjectOutput, error)
 	PutObject(context.Context, *PutObjectInput) (*PutObjectOutput, error)
 	DeleteObject(context.Context, *DeleteObjectInput) (*DeleteObjectOutput, error)
 	PutObjectTagging(context.Context, *PutBucketTaggingInput) (*PutBucketTaggingOutput, error)
@@ -88,6 +88,27 @@ type GetObjectInput struct {
 	VersionId                  string `protobuf:"bytes,22,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 	AcceptEncoding             string `protobuf:"bytes,23,opt,name=accept_encoding,json=acceptEncoding,proto3" json:"accept_encoding,omitempty"`
 	SignedUrl                  string `protobuf:"bytes,24,opt,name=signed_url,json=signedUrl,proto3" json:"signed_url,omitempty"`
+}
+
+type GetObjectOutput struct {
+	DataStream         io.ReadCloser
+	CacheControl       string            `protobuf:"bytes,2,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
+	ContentDisposition string            `protobuf:"bytes,3,opt,name=content_disposition,json=contentDisposition,proto3" json:"content_disposition,omitempty"`
+	ContentEncoding    string            `protobuf:"bytes,4,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempty"`
+	ContentLanguage    string            `protobuf:"bytes,5,opt,name=content_language,json=contentLanguage,proto3" json:"content_language,omitempty"`
+	ContentLength      int64             `protobuf:"varint,6,opt,name=content_length,json=contentLength,proto3" json:"content_length,omitempty"`
+	ContentRange       string            `protobuf:"bytes,7,opt,name=content_range,json=contentRange,proto3" json:"content_range,omitempty"`
+	ContentType        string            `protobuf:"bytes,8,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	DeleteMarker       bool              `protobuf:"varint,9,opt,name=delete_marker,json=deleteMarker,proto3" json:"delete_marker,omitempty"`
+	Etag               string            `protobuf:"bytes,10,opt,name=etag,proto3" json:"etag,omitempty"`
+	Expiration         string            `protobuf:"bytes,11,opt,name=expiration,proto3" json:"expiration,omitempty"`
+	Expires            string            `protobuf:"bytes,12,opt,name=expires,proto3" json:"expires,omitempty"`
+	LastModified       int64             `protobuf:"varint,13,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
+	VersionId          string            `protobuf:"bytes,14,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	TagCount           int64             `protobuf:"varint,15,opt,name=tag_count,json=tagCount,proto3" json:"tag_count,omitempty"`
+	StorageClass       string            `protobuf:"bytes,16,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
+	PartsCount         int64             `protobuf:"varint,17,opt,name=parts_count,json=partsCount,proto3" json:"parts_count,omitempty"`
+	Metadata           map[string]string `protobuf:"bytes,18,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 type PutObjectInput struct {

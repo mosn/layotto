@@ -19,7 +19,6 @@ package aliyun
 import (
 	"context"
 	"encoding/json"
-	"io"
 	"net/http"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
@@ -82,7 +81,7 @@ func (a *AliyunOSS) InitClient(ctx context.Context, req *file.InitRequest) error
 	return nil
 }
 
-func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (io.ReadCloser, error) {
+func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (*file.GetObjectOutput, error) {
 	client, err := a.selectClient(map[string]string{}, "")
 	if err != nil {
 		return nil, err
@@ -94,7 +93,7 @@ func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (io
 	//user can use SignedUrl to get file without ak、sk
 	if req.SignedUrl != "" {
 		body, err := bucket.GetObjectWithURL(req.SignedUrl)
-		return body, err
+		return &file.GetObjectOutput{DataStream: body}, err
 	}
 	body, err := bucket.GetObject(req.Key,
 		IfUnmodifiedSince(req.IfUnmodifiedSince),
@@ -104,7 +103,8 @@ func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (io
 		oss.Range(req.Start, req.End),
 		AcceptEncoding(req.AcceptEncoding),
 	)
-	return body, err
+
+	return &file.GetObjectOutput{DataStream: body}, err
 }
 
 func (a *AliyunOSS) PutObject(ctx context.Context, req *file.PutObjectInput) (*file.PutObjectOutput, error) {

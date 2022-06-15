@@ -19,7 +19,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"io"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -98,7 +97,7 @@ func (a *AwsOss) InitClient(ctx context.Context, req *file.InitRequest) error {
 	return nil
 }
 
-func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (io.ReadCloser, error) {
+func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (*file.GetObjectOutput, error) {
 	input := &s3.GetObjectInput{
 		Bucket: &req.Bucket,
 		Key:    &req.Key,
@@ -111,7 +110,7 @@ func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (io.Re
 	if err != nil {
 		return nil, err
 	}
-	return ob.Body, nil
+	return &file.GetObjectOutput{DataStream: ob.Body}, nil
 }
 
 func (a *AwsOss) PutObject(ctx context.Context, req *file.PutObjectInput) (*file.PutObjectOutput, error) {

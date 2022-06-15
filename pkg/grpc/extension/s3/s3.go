@@ -101,7 +101,7 @@ func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.ObjectStorageServ
 	if err != nil {
 		return status.Errorf(codes.InvalidArgument, "transfer request data fail for GetObject,err: %+v", err)
 	}
-	data, err := s.ossInstance[req.StoreName].GetObject(stream.Context(), st)
+	result, err := s.ossInstance[req.StoreName].GetObject(stream.Context(), st)
 	if err != nil {
 		return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
 	}
@@ -112,19 +112,24 @@ func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.ObjectStorageServ
 		buf = make([]byte, 102400)
 	}
 	defer func() {
-		data.Close()
+		result.DataStream.Close()
 		*buffsPtr = buf
 		bytesPool.Put(buffsPtr)
 	}()
 
 	for {
-		length, err := data.Read(buf)
+		length, err := result.DataStream.Read(buf)
 		if err != nil && err != io.EOF {
 			log.DefaultLogger.Warnf("get file fail, err: %+v", err)
 			return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
 		}
 		if err == nil || (err == io.EOF && length != 0) {
-			resp := &s3.GetObjectOutput{Body: buf[:length]}
+			resp := &s3.GetObjectOutput{}
+			err := transferData(result, resp)
+			if err != nil {
+				return status.Errorf(codes.InvalidArgument, "transfer request data fail for GetObject,err: %+v", err)
+			}
+			resp.Body = buf[:length]
 			if err = stream.Send(resp); err != nil {
 				return status.Errorf(codes.Internal, "send file data fail,err: %+v", err)
 			}
