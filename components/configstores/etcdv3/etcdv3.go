@@ -71,7 +71,7 @@ func (c *EtcdV3ConfigStore) Init(config *configstores.StoreConfig) error {
 		Endpoints:   config.Address,
 		DialTimeout: time.Duration(t) * time.Second,
 	})
-	c.name = config.Name
+	c.name = config.StoreName
 	return err
 }
 
@@ -174,7 +174,7 @@ func (c *EtcdV3ConfigStore) Delete(ctx context.Context, req *configstores.Delete
 }
 
 func (c *EtcdV3ConfigStore) processWatchResponse(resp *clientv3.WatchResponse) {
-	res := &configstores.SubscribeResp{Name: c.name, AppId: c.appIdKey}
+	res := &configstores.SubscribeResp{StoreName: c.name, AppId: c.appIdKey}
 	item := &configstores.ConfigurationItem{}
 	if len(resp.Events) == 0 {
 		return
