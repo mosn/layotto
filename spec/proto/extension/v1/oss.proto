@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package mosn.proto.runtime.v1;
+package spec.proto.extension.v1;
 
 import "google/protobuf/empty.proto";
 
 option go_package = "mosn.io/layotto/spec/proto/extension/v1;s3";
 
-service S3 {
+service ObjectStorageService{
   rpc InitClient(InitInput) returns (google.protobuf.Empty){}
   rpc PutObject(stream PutObjectInput) returns(PutObjectOutput){}
   rpc GetObject(GetObjectInput) returns (stream GetObjectOutput){}
@@ -69,6 +69,23 @@ message GetObjectInput {
 }
 message GetObjectOutput {
   bytes body = 1;
+  string cache_control = 2;
+  string content_disposition = 3;
+  string content_encoding = 4;
+  string content_language = 5;
+  int64 content_length = 6;
+  string content_range = 7;
+  string content_type = 8;
+  bool delete_marker = 9;
+  string etag = 10;
+  string expiration = 11;
+  string expires = 12;
+  int64 last_modified = 13;
+  string version_id = 14;
+  int64 tag_count = 15;
+  string storage_class = 16;
+  int64 parts_count = 17;
+  map<string, string> metadata = 18;
 }
 
 message PutObjectInput{

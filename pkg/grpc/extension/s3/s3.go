@@ -68,7 +68,7 @@ func (s *S3Server) Init(conn *rawGRPC.ClientConn) error {
 }
 
 func (s *S3Server) Register(rawGrpcServer *rawGRPC.Server) error {
-	s3.RegisterS3Server(rawGrpcServer, s)
+	s3.RegisterObjectStorageServiceServer(rawGrpcServer, s)
 	return nil
 }
 
@@ -92,7 +92,7 @@ func transferData(source interface{}, target interface{}) error {
 	return err
 }
 
-func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.S3_GetObjectServer) error {
+func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.ObjectStorageService_GetObjectServer) error {
 	if s.ossInstance[req.StoreName] == nil {
 		return status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -137,10 +137,10 @@ func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.S3_GetObjectServe
 
 type putObjectStreamReader struct {
 	data   []byte
-	server s3.S3_PutObjectServer
+	server s3.ObjectStorageService_PutObjectServer
 }
 
-func newPutObjectStreamReader(data []byte, server s3.S3_PutObjectServer) *putObjectStreamReader {
+func newPutObjectStreamReader(data []byte, server s3.ObjectStorageService_PutObjectServer) *putObjectStreamReader {
 	return &putObjectStreamReader{data: data, server: server}
 }
 
@@ -167,7 +167,7 @@ func (r *putObjectStreamReader) Read(p []byte) (int, error) {
 	}
 }
 
-func (s *S3Server) PutObject(stream s3.S3_PutObjectServer) error {
+func (s *S3Server) PutObject(stream s3.ObjectStorageService_PutObjectServer) error {
 	req, err := stream.Recv()
 	if err != nil {
 		//if client send eof error directly, return nil
@@ -431,10 +431,10 @@ func (s *S3Server) CreateMultipartUpload(ctx context.Context, req *s3.CreateMult
 
 type uploadPartStreamReader struct {
 	data   []byte
-	server s3.S3_UploadPartServer
+	server s3.ObjectStorageService_UploadPartServer
 }
 
-func newUploadPartStreamReader(data []byte, server s3.S3_UploadPartServer) *uploadPartStreamReader {
+func newUploadPartStreamReader(data []byte, server s3.ObjectStorageService_UploadPartServer) *uploadPartStreamReader {
 	return &uploadPartStreamReader{data: data, server: server}
 }
 
@@ -461,7 +461,7 @@ func (r *uploadPartStreamReader) Read(p []byte) (int, error) {
 	}
 }
 
-func (s *S3Server) UploadPart(stream s3.S3_UploadPartServer) error {
+func (s *S3Server) UploadPart(stream s3.ObjectStorageService_UploadPartServer) error {
 	req, err := stream.Recv()
 	if err != nil {
 		//if client send eof error directly, return nil
@@ -689,10 +689,10 @@ func (s *S3Server) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *s3.U
 
 type appendObjectStreamReader struct {
 	data   []byte
-	server s3.S3_AppendObjectServer
+	server s3.ObjectStorageService_AppendObjectServer
 }
 
-func newAppendObjectStreamReader(data []byte, server s3.S3_AppendObjectServer) *appendObjectStreamReader {
+func newAppendObjectStreamReader(data []byte, server s3.ObjectStorageService_AppendObjectServer) *appendObjectStreamReader {
 	return &appendObjectStreamReader{data: data, server: server}
 }
 
@@ -719,7 +719,7 @@ func (r *appendObjectStreamReader) Read(p []byte) (int, error) {
 	}
 }
 
-func (s *S3Server) AppendObject(stream s3.S3_AppendObjectServer) error {
+func (s *S3Server) AppendObject(stream s3.ObjectStorageService_AppendObjectServer) error {
 	req, err := stream.Recv()
 	if err != nil {
 		//if client send eof error directly, return nil
