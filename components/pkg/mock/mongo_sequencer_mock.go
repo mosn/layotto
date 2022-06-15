@@ -184,7 +184,7 @@ func (d *MockMongoSequencerSingleResult) Decode(v interface{}) error {
 	ref := reflect.ValueOf(v)
 	if ref.Kind() == reflect.Ptr {
 		elem := ref.Elem()
-		Id := elem.FieldByName("ID")
+		Id := elem.FieldByName("Id")
 		*(*string)(unsafe.Pointer(Id.Addr().Pointer())) = id
 
 		v := elem.FieldByName("Sequencer_value")
