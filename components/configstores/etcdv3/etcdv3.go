@@ -41,7 +41,7 @@ type EtcdV3ConfigStore struct {
 	sync.RWMutex
 	subscribeKey map[string]string
 	appIdKey     string
-	storeName    string
+	name    string
 	// cancel is the func, call cancel will stop watching on the appIdKey
 	cancel       context.CancelFunc
 	watchStarted bool
@@ -71,7 +71,7 @@ func (c *EtcdV3ConfigStore) Init(config *configstores.StoreConfig) error {
 		Endpoints:   config.Address,
 		DialTimeout: time.Duration(t) * time.Second,
 	})
-	c.storeName = config.StoreName
+	c.name = config.Name
 	return err
 }
 
@@ -174,7 +174,7 @@ func (c *EtcdV3ConfigStore) Delete(ctx context.Context, req *configstores.Delete
 }
 
 func (c *EtcdV3ConfigStore) processWatchResponse(resp *clientv3.WatchResponse) {
-	res := &configstores.SubscribeResp{StoreName: c.storeName, AppId: c.appIdKey}
+	res := &configstores.SubscribeResp{Name: c.name, AppId: c.appIdKey}
 	item := &configstores.ConfigurationItem{}
 	if len(resp.Events) == 0 {
 		return
@@ -209,7 +209,7 @@ func (c *EtcdV3ConfigStore) watch() {
 // Subscribe gets configuration from configuration store and subscribe the updates.
 func (c *EtcdV3ConfigStore) Subscribe(req *configstores.SubscribeReq, ch chan *configstores.SubscribeResp) error {
 	c.appIdKey = req.AppId
-	c.storeName = req.StoreName
+	c.name = req.Name
 	c.watchRespCh = ch
 	c.Lock()
 	defer c.Unlock()
