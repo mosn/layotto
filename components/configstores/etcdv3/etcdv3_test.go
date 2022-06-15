@@ -182,7 +182,7 @@ func (suite *ClientTestSuite) Subscribe() {
 	var i int
 	ch := make(chan *configstores.SubscribeResp)
 	subReq.AppId = appId
-	subReq.StoreName = "config_demo"
+	subReq.Name = "config_demo"
 	subReq.Group = defaultGroup
 	subReq.Label = defaultLabel
 	subReq.Keys = []string{"sofa"}
@@ -192,13 +192,13 @@ func (suite *ClientTestSuite) Subscribe() {
 		if i == 0 {
 			assert.Equal(suite.T(), event.Items[0].Key, "sofa")
 			assert.Equal(suite.T(), event.Items[0].Content, "v1")
-			assert.Equal(suite.T(), event.StoreName, "config_demo")
+			assert.Equal(suite.T(), event.Name, "config_demo")
 			i++
 			continue
 		}
 		assert.Equal(suite.T(), event.Items[0].Key, "sofa")
 		assert.Equal(suite.T(), event.Items[0].Content, "")
-		assert.Equal(suite.T(), event.StoreName, "config_demo")
+		assert.Equal(suite.T(), event.Name, "config_demo")
 
 	}
 	wg.Done()
