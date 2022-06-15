@@ -61,6 +61,10 @@ image.build: image.verify  $(addprefix image.build., $(addprefix $(IMAGE_PLAT).,
 .PHONY: image.build.multiarch
 image.build.multiarch: image.verify  $(foreach p,$(IMAGE_PLATFORMS),$(addprefix image.build., $(addprefix $(p)., $(IMAGES))))
 
+.PHONY: image.proxyv2.build
+image.proxyv2.build: go.build.linux_amd64.layotto
+	cd $(ROOT_DIR)/docker/proxyv2 && $(DOCKER) build --no-cache --rm -t layotto/proxyv2:latest .
+
 .PHONY: image.build.%
 image.build.%: go.build.%
 	$(eval IMAGE := $(COMMAND))
