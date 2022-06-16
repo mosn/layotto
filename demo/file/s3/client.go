@@ -149,7 +149,7 @@ func TestTagging() {
 		return
 	}
 	c := s3.NewObjectStorageServiceClient(conn)
-	req := &s3.PutBucketTaggingInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "王文学.jpg", Tags: map[string]string{"Abc": "123", "Def": "456"}}
+	req := &s3.PutObjectTaggingInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "王文学.jpg", Tags: map[string]string{"Abc": "123", "Def": "456"}}
 	_, err = c.PutObjectTagging(context.Background(), req)
 	if err != nil {
 		fmt.Printf("PutObjectTagging fail, err: %+v \n", err)
