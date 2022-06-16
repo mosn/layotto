@@ -179,7 +179,7 @@ func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *file.DeleteObjectsIn
 	return out, err
 }
 
-func (a *AliyunOSS) PutObjectTagging(ctx context.Context, req *file.PutBucketTaggingInput) (*file.PutBucketTaggingOutput, error) {
+func (a *AliyunOSS) PutObjectTagging(ctx context.Context, req *file.PutObjectTaggingInput) (*file.PutObjectTaggingOutput, error) {
 	cli, err := a.selectClient(map[string]string{}, endpointKey)
 	if err != nil {
 		return nil, err

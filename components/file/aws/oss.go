@@ -146,7 +146,7 @@ func (a *AwsOss) DeleteObject(ctx context.Context, req *file.DeleteObjectInput) 
 	return &file.DeleteObjectOutput{DeleteMarker: resp.DeleteMarker, RequestCharged: string(resp.RequestCharged), VersionId: *resp.VersionId}, err
 }
 
-func (a *AwsOss) PutObjectTagging(ctx context.Context, req *file.PutBucketTaggingInput) (*file.PutBucketTaggingOutput, error) {
+func (a *AwsOss) PutObjectTagging(ctx context.Context, req *file.PutObjectTaggingInput) (*file.PutObjectTaggingOutput, error) {
 	client, err := a.selectClient(map[string]string{}, endpointKey)
 	if err != nil {
 		return nil, err
@@ -163,7 +163,7 @@ func (a *AwsOss) PutObjectTagging(ctx context.Context, req *file.PutBucketTaggin
 		input.Tagging.TagSet = append(input.Tagging.TagSet, types.Tag{Key: &k, Value: &v})
 	}
 	_, err = client.PutObjectTagging(ctx, input)
-	return &file.PutBucketTaggingOutput{}, err
+	return &file.PutObjectTaggingOutput{}, err
 }
 func (a *AwsOss) DeleteObjectTagging(ctx context.Context, req *file.DeleteObjectTaggingInput) (*file.DeleteObjectTaggingOutput, error) {
 	client, err := a.selectClient(map[string]string{}, endpointKey)

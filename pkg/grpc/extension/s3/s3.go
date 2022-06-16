@@ -225,21 +225,21 @@ func (s *S3Server) DeleteObject(ctx context.Context, req *s3.DeleteObjectInput) 
 	}
 	return output, nil
 }
-func (s *S3Server) PutObjectTagging(ctx context.Context, req *s3.PutBucketTaggingInput) (*s3.PutBucketTaggingOutput, error) {
+func (s *S3Server) PutObjectTagging(ctx context.Context, req *s3.PutObjectTaggingInput) (*s3.PutObjectTaggingOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 
-	st := &l8s3.PutBucketTaggingInput{}
+	st := &l8s3.PutObjectTaggingInput{}
 	err := transferData(req, st)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for PutObjectTagging,err: %+v", err)
 	}
-	var resp *l8s3.PutBucketTaggingOutput
+	var resp *l8s3.PutObjectTaggingOutput
 	if resp, err = s.ossInstance[req.StoreName].PutObjectTagging(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s3.PutBucketTaggingOutput{}
+	output := &s3.PutObjectTaggingOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for PutObjectTagging,err: %+v", err)

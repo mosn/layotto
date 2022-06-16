@@ -32,7 +32,7 @@ type Oss interface {
 	GetObject(context.Context, *GetObjectInput) (*GetObjectOutput, error)
 	PutObject(context.Context, *PutObjectInput) (*PutObjectOutput, error)
 	DeleteObject(context.Context, *DeleteObjectInput) (*DeleteObjectOutput, error)
-	PutObjectTagging(context.Context, *PutBucketTaggingInput) (*PutBucketTaggingOutput, error)
+	PutObjectTagging(context.Context, *PutObjectTaggingInput) (*PutObjectTaggingOutput, error)
 	DeleteObjectTagging(context.Context, *DeleteObjectTaggingInput) (*DeleteObjectTaggingOutput, error)
 	GetObjectTagging(context.Context, *GetObjectTaggingInput) (*GetObjectTaggingOutput, error)
 	CopyObject(context.Context, *CopyObjectInput) (*CopyObjectOutput, error)
@@ -143,13 +143,13 @@ type DeleteObjectOutput struct {
 	VersionId      string `protobuf:"bytes,3,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
 
-type PutBucketTaggingInput struct {
+type PutObjectTaggingInput struct {
 	Bucket    string            `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	Key       string            `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	Tags      map[string]string `protobuf:"bytes,4,rep,name=tags,proto3" json:"tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	VersionId string            `protobuf:"bytes,5,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
-type PutBucketTaggingOutput struct {
+type PutObjectTaggingOutput struct {
 }
 
 type DeleteObjectTaggingInput struct {
