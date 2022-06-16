@@ -43,7 +43,7 @@ We are working on the official Layotto image and the solution for deploying to K
 
 ## 2.Toggle existing MOSN to Layotto for MOSN users
 
-Existing MOSN can be migrated directly to replace the MOSN image in the sidecar with Layotto image.
+Existing MOSN can be upgraded to Layotto by replacing the MOSN sidecar image with Layotto image.
 
 Explanation:
 
@@ -55,7 +55,7 @@ So.
 
 > replace MOSN with Layotto == replace MOSN with "MOSN + a special grpcFilter"
 
-There is no essential difference, just pay attention to the version, the versions Layotto and MOSN must correspond to each other.
+There is no essential difference between Layotto and MOSN, just pay attention to the versions of them, which must correspond to each other.
 
 The previously released Layotto v0.3.0 corresponds to MOSN version v0.24.1
 
@@ -65,14 +65,14 @@ There are two options to upgrade.
 
 - Upgrade sidecar container using k8s native solution
   
-- [Smooth upgrade with automatic migrate existing persistent connections](https://mosn.io/en/docs/concept/smooth-upgrade/)
+- [Hot upgrade: upgrade the sidecar without affecting the business](https://mosn.io/en/docs/concept/smooth-upgrade/)
 
-The advantage of smooth upgrade is that it can automatically migrate persistent connections, which can be seen in detail by clicking the above document.
+The advantage of hot upgrade is that it can automatically migrate persistent connections, which can be seen in detail by clicking the above document.
 
-The options to achieve smooth upgrade are
+The solutions to achieve hot upgrade are as follows:
 
-- The MOSN listens for SIGHUP, sends a SIGHUP signal to the MOSN process, and generates a new MOSN process via ForkExec.
+- Register a SIGHUP event listener with MOSN, and send a SIGHUP signal to the MOSN process to call ForkExec to generate a new MOSN process.
   
-- Restarting a new MOSN process directly. Cross-container upgrades require Operator support.
+- Directly start a new MOSN process.
 
-- [OpenKruise hot upgrades in-place](https://mosn.io/blog/posts/mosn-sidecarset-hotupgrade/)
+- [Hot upgrade using OpenKruise](https://mosn.io/blog/posts/mosn-sidecarset-hotupgrade/)
