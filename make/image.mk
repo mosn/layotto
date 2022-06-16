@@ -64,7 +64,11 @@ image.build.multiarch: image.verify  $(foreach p,$(IMAGE_PLATFORMS),$(addprefix 
 .PHONY: image.proxyv2.build
 image.proxyv2.build: go.build.linux_amd64.layotto
 	cp $(OUTPUT_DIR)/linux/amd64/layotto $(ROOT_DIR)/docker/proxyv2
-	cd $(ROOT_DIR)/docker/proxyv2 && $(DOCKER) build --no-cache --rm -t layotto/proxyv2:latest .
+	cd $(ROOT_DIR)/docker/proxyv2 && $(DOCKER) build --no-cache --rm -t layotto/proxyv2:$(VERSION) .
+
+.PHONY: image.proxyv2.push
+image.proxyv2.push:
+	$(DOCKER) push layotto/proxyv2:$(VERSION)
 
 .PHONY: image.build.%
 image.build.%: go.build.%
