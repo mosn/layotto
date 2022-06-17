@@ -44,7 +44,8 @@ type AliyunOSS struct {
 }
 
 type OssMetadata struct {
-	Buckets         []string `json:"buckets"`
+	Buckets         []string `json:"buckets"` // contained buckets in this oss client
+	Uid             string   `json:"uid"`     // specify the uid of oss client
 	Endpoint        string   `json:"endpoint"`
 	AccessKeyID     string   `json:"accessKeyID"`
 	AccessKeySecret string   `json:"accessKeySecret"`
@@ -242,7 +243,6 @@ func (s *AliyunOSS) getBucket(fileName string, metaData map[string]string) (*oss
 }
 
 func (s *AliyunOSS) selectClient(bucket string) (*oss.Client, error) {
-
 	if client, ok := s.client[bucket]; ok {
 		return client, nil
 	}

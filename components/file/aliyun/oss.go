@@ -54,11 +54,11 @@ func AliyunDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string
 		if err != nil {
 			return nil, err
 		}
+		clients[v.Uid] = client
 		for _, bucketName := range v.Buckets {
 			if _, ok := clients[bucketName]; ok {
 				return nil, errors.New("incorrect configuration, bucketName must be unique")
 			}
-			clients[bucketName] = client
 		}
 	}
 	return clients, nil
