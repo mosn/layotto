@@ -194,6 +194,14 @@ func IfNoneMatch(value string) oss.Option {
 	return oss.IfNoneMatch(value)
 }
 
+// Range is an option to set Range header, [start, end]
+func Range(start, end int64) oss.Option {
+	if start == 0 && end == 0 {
+		return nil
+	}
+	return oss.Range(start, end)
+}
+
 // CopySourceIfMatch is an option to set X-Oss-Copy-Source-If-Match header
 func CopySourceIfMatch(value string) oss.Option {
 	if value == "" {

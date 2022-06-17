@@ -104,7 +104,7 @@ func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (*f
 		IfModifiedSince(req.IfModifiedSince),
 		IfMatch(req.IfMatch),
 		IfNoneMatch(req.IfNoneMatch),
-		oss.Range(req.Start, req.End),
+		Range(req.Start, req.End),
 		AcceptEncoding(req.AcceptEncoding),
 	)
 
