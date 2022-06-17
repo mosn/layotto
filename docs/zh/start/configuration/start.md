@@ -16,7 +16,7 @@ docker-compose up -d
 ```
 
 #### **本地编译（不适合 Windows)**
-您可以使用 Docker 运行 MinIO，然后本地编译、运行 Layotto。
+您可以使用 Docker 运行 etcd，然后本地编译、运行 Layotto。
 
 > [!TIP|label: 不适合 Windows 用户]
 > Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker-compose 部署
