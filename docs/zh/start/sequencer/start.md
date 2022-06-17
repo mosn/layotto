@@ -12,7 +12,22 @@ Sequencer API支持声明对自增的需求，包括趋势递增(WEAK)和严格�
 
 ![img.png](../../../img/sequencer/etcd/img.png)
 
-### 第一步：部署存储系统（Etcd）
+### step 1. 启动 etcd 和 Layotto
+<!-- tabs:start -->
+#### **使用 Docker Compose**
+您可以使用 docker-compose 启动 etcd 和 Layotto
+
+```bash
+cd docker/layotto-etcd
+# Start etcd and layotto with docker-compose
+docker-compose up -d
+```
+
+#### **本地编译（不适合 Windows)**
+您可以使用 Docker 运行 etcd，然后本地编译、运行 Layotto。
+> [!TIP|label: 不适合 Windows 用户]
+> Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker-compose 部署
+### step 1.1：部署存储系统（Etcd）
 
 etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/quickstart/)
 
@@ -28,7 +43,7 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 
 默认监听地址为 `localhost:2379`
 
-### 第二步：运行Layotto
+### step 1.2：运行Layotto
 
 将项目代码下载到本地后，切换代码目录：
 
@@ -47,8 +62,9 @@ go build -o layotto
 ```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
+<!-- tabs:end -->
 
-### 第三步：运行客户端程序，调用Layotto生成唯一id
+### step 2. 运行客户端程序，调用Layotto生成唯一id
 
 ```shell
  cd ${project_path}/demo/sequencer/common/

@@ -7,8 +7,22 @@ The architecture of this demo is shown in the figure below. The processes starte
 ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*dzGaSb78UCoAAAAAAAAAAAAAARQnAQ)
 
 [Then config file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) claims `etcd` in the `config_store` section, but users can change it to other configuration center they want (currently only support etcd and apollo).
+### step 1. Deploy etcd and Layotto
+<!-- tabs:start -->
+#### **with Docker Compose**
+You can start etcd and Layotto with docker-compose
 
-## Start etcd
+```bash
+cd docker/layotto-etcd
+# Start etcd and layotto with docker-compose
+docker-compose up -d
+```
+#### **Compile locally (not for Windows)**
+You can run etcd with Docker, then compile and run Layotto locally.
+
+> [!TIP|label: Not for Windows users]
+> Layotto fails to compile under Windows. Windows users are recommended to deploy using docker-compose
+#### step 1.1 Start etcd
 If you want to run this demo, you need to start a etcd server first.
 
 You can download etcd from `https://github.com/etcd-io/etcd/releases` （You can also use docker.）
@@ -20,7 +34,7 @@ start it:
 
 Then you can access etcd with the address `localhost:2379`.
 
-## Start Layotto
+#### step 1.2 Start Layotto
 Build Layotto:
 
 ```shell
@@ -35,8 +49,9 @@ Run it:
 ```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
+<!-- tabs:end -->
 
-## Start client APP
+### step 2. Start client APP
 
 ```shell
  cd ${project_path}/demo/configuration/common
