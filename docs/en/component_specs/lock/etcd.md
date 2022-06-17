@@ -45,8 +45,8 @@ Execute after the compilation is successful:
 ## Run Demo
 
 ```shell
-cd ${project_path}/demo/lock/etcd/
+ cd ${project_path}/demo/lock/common/
  go build -o client
- ./client
+ ./client -s "lock_demo"
 ```
 

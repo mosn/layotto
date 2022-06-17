@@ -22,7 +22,11 @@ import (
 	"strconv"
 	"time"
 
+<<<<<<< HEAD
 	sequencer_postgresql "mosn.io/layotto/components/sequencer/postgresql"
+=======
+	mosn_jaeger "mosn.io/mosn/pkg/trace/jaeger"
+>>>>>>> 2aa9090a110bf12058fde1c884b4703cd55b7420
 
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
@@ -521,7 +525,7 @@ func ExtensionsRegister(_ *cli.Context) {
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
 	trace.RegisterTracerBuilder("SOFATracer", lprotocol.Layotto, diagnostics.NewTracer)
 	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
-	trace.RegisterTracerBuilder("Jaeger", lprotocol.Layotto, jaeger.NewGrpcJaegerTracer)
+	trace.RegisterTracerBuilder(mosn_jaeger.DriverName, lprotocol.Layotto, jaeger.NewGrpcJaegerTracer)
 }
 
 func main() {
