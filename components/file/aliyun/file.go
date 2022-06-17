@@ -19,6 +19,7 @@ package aliyun
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -37,21 +38,21 @@ const (
 
 // AliyunOSS is a binding for an AliCloud OSS storage bucketKey
 type AliyunOSS struct {
-	metadata map[string]*OssMetadata
-	client   map[string]*oss.Client
-	method   string
-	rawData  json.RawMessage
+	client  map[string]*oss.Client
+	method  string
+	rawData json.RawMessage
 }
 
 type OssMetadata struct {
-	Endpoint        string `json:"endpoint"`
-	AccessKeyID     string `json:"accessKeyID"`
-	AccessKeySecret string `json:"accessKeySecret"`
-	Region          string `json:"region"`
+	Buckets         []string `json:"buckets"`
+	Endpoint        string   `json:"endpoint"`
+	AccessKeyID     string   `json:"accessKeyID"`
+	AccessKeySecret string   `json:"accessKeySecret"`
+	Region          string   `json:"region"`
 }
 
 func NewAliCloudFile() file.File {
-	oss := &AliyunOSS{metadata: make(map[string]*OssMetadata), client: make(map[string]*oss.Client)}
+	oss := &AliyunOSS{client: make(map[string]*oss.Client)}
 	return oss
 }
 
@@ -71,8 +72,13 @@ func (s *AliyunOSS) Init(ctx context.Context, metadata *file.FileConfig) error {
 		if err != nil {
 			return err
 		}
-		s.metadata[v.Endpoint] = v
-		s.client[v.Endpoint] = client
+		//use bucket as key, client as value
+		for _, bucketName := range v.Buckets {
+			if _, ok := s.client[bucketName]; ok {
+				return errors.New("incorrect configuration, bucketName must be unique")
+			}
+			s.client[bucketName] = client
+		}
 	}
 	return nil
 }
@@ -217,7 +223,7 @@ func (s *AliyunOSS) getBucket(fileName string, metaData map[string]string) (*oss
 		ossClient = s.client[endpointKey]
 	} else {
 		// if user not specify endpoint, try to use default client
-		ossClient, err = s.selectClient(map[string]string{}, "")
+		ossClient, err = s.selectClient("")
 		if err != nil {
 			return nil, err
 		}
@@ -235,12 +241,10 @@ func (s *AliyunOSS) getBucket(fileName string, metaData map[string]string) (*oss
 	return bucket, nil
 }
 
-func (s *AliyunOSS) selectClient(meta map[string]string, key string) (*oss.Client, error) {
-	// exist specific client with key endpoint
-	if ep, ok := meta[key]; ok {
-		if client, ok := s.client[ep]; ok {
-			return client, nil
-		}
+func (s *AliyunOSS) selectClient(bucket string) (*oss.Client, error) {
+
+	if client, ok := s.client[bucket]; ok {
+		return client, nil
 	}
 	// if not specify endpoint, select default one
 	if len(s.client) == 1 {

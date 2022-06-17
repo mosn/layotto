@@ -50,7 +50,7 @@ func TestInit(t *testing.T) {
 }
 
 func TestSelectClient(t *testing.T) {
-	ossObject := &AliyunOSS{metadata: make(map[string]*OssMetadata), client: make(map[string]*oss.Client)}
+	ossObject := &AliyunOSS{client: make(map[string]*oss.Client)}
 
 	client, err := ossObject.selectClient(map[string]string{}, "")
 	assert.Equal(t, err.Error(), "should specific endpoint in metadata")

@@ -27,11 +27,20 @@
                           "type": "aliyunOSS",
                           "metadata": [
                             {
-                              "endpoint": "127.0.0.1:9000",
+                              "buckets" : ["bucket1","bucket2"],
+                              "endpoint": "aliyun1",
                               "accessKeyID": "layotto",
                               "accessKeySecret": "layotto_secret",
                               "SSL":false,
                               "region":"us-east-1"
+                            },
+                            {
+                              "buckets" : ["bucket1","bucket2"],
+                              "endpoint": "aliyun2",
+                              "accessKeyID": "layotto",
+                              "accessKeySecret": "layotto_secret",
+                              "SSL":false,
+                              "region":"us-east-2"
                             }
                           ]
                         }

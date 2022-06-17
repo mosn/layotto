@@ -15,3 +15,33 @@
  */
 
 package aliyun
+
+import (
+	"testing"
+
+	"mosn.io/layotto/components/file"
+
+	"github.com/stretchr/testify/assert"
+
+	"mosn.io/layotto/components/file/factory"
+)
+
+const (
+	conf = `[
+				{
+					"endpoint": "endpoint_address",
+					"accessKeyID": "accessKey",
+					"accessKeySecret": "secret"
+				}
+			]`
+)
+
+func TestInitAliyunOss(t *testing.T) {
+	NewAliyunOss()
+	f := factory.GetInitFunc(DefaultClientInitFunc)
+	assert.Equal(t, f, AliyunDefaultInitFunc)
+	clients, err := f([]byte("hello"), map[string]string{})
+	assert.Equal(t, err, file.ErrInvalid)
+	assert.Equal(t, nil, clients)
+	//oss.InitConfig(context.TODO(), file.FileConfig{})
+}
