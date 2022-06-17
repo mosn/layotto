@@ -13,7 +13,7 @@ The architecture of this example is shown in the figure below, and the processes
 ![img.png](../../../img/sequencer/etcd/img.png)
 ### step 1. Deploy etcd and Layotto
 <!-- tabs:start -->
-#### **with Docker Compose**
+#### **With Docker Compose**
 You can start etcd and Layotto with docker-compose
 
 ```bash
@@ -84,6 +84,22 @@ Next id:next_id:9
 Next id:next_id:10  
 Demo success!
 ```
+### step 3. Stop containers and release resources
+<!-- tabs:start -->
+#### **Docker Compose**
+If you started etcd and Layotto with docker-compose, you can shut them down as follows:
+
+```bash
+cd ${project_path}/docker/layotto-etcd
+docker-compose stop
+```
+
+#### **Destroy the etcd container**
+If you started etcd with Docker, you can destroy the etcd container as follows:
+```shell
+docker rm -f etcd
+```
+<!-- tabs:end -->
 
 ### Next step
 #### What does this client program do?

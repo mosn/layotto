@@ -9,7 +9,7 @@ The architecture of this demo is shown in the figure below. The processes starte
 [Then config file](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) claims `etcd` in the `config_store` section, but users can change it to other configuration center they want (currently only support etcd and apollo).
 ### step 1. Deploy etcd and Layotto
 <!-- tabs:start -->
-#### **with Docker Compose**
+#### **With Docker Compose**
 You can start etcd and Layotto with docker-compose
 
 ```bash
@@ -75,6 +75,22 @@ delete keys success
 write start
 receive subscribe resp store_name:"config_demo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
 ```
+### step 3. Stop containers and release resources
+<!-- tabs:start -->
+#### **Docker Compose**
+If you started etcd and Layotto with docker-compose, you can shut them down as follows:
+
+```bash
+cd ${project_path}/docker/layotto-etcd
+docker-compose stop
+```
+
+#### **Destroy the etcd container**
+If you started etcd with Docker, you can destroy the etcd container as follows:
+```shell
+docker rm -f etcd
+```
+<!-- tabs:end -->
 
 ## Next step
 ### What did this demo do?
