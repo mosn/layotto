@@ -37,7 +37,7 @@ var (
 	currentAQS                                                              = 0  // 并发控制
 	lastTimestamp       int64                                               = -1 //上次id产生的时间，防止时间回拨
 	once                sync.Once
-	instance            *singleton
+	instance            *Singleton
 	lock                sync.Mutex
 	logger              log.Logger
 )
@@ -46,7 +46,7 @@ const (
 	timeStart = 1655540588 // 系统开始时间
 )
 
-type singleton struct {
+type Singleton struct {
 }
 
 const (
@@ -54,7 +54,7 @@ const (
 )
 
 // GetInstanceWM 获取singleton对象 单例模式
-func GetInstanceWM(machine, machineRoom int64) *singleton {
+func GetInstanceWM(machine, machineRoom int64) *Singleton {
 	if machine > maxMachineIdBit || machine < 0 {
 		logger.Fatalf("the max lengths of the machine ID exceeds the maxMachineIdBit, maxMachineIdBit: %d ", maxMachineIdBit)
 		return nil
@@ -64,14 +64,14 @@ func GetInstanceWM(machine, machineRoom int64) *singleton {
 		return nil
 	}
 	once.Do(func() {
-		instance = &singleton{}
+		instance = &Singleton{}
 	})
 	machineId = machine
 	machineRoomId = machineRoom
 	return instance
 }
 
-func (s *singleton) NextID() (int64, error) {
+func (s *Singleton) NextID() (int64, error) {
 	lock.Lock()
 	defer lock.Unlock()
 	timestamp := time.Now().Unix() // 这儿注意下，golang是否有效率问题
