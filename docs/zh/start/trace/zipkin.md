@@ -28,6 +28,7 @@
 | reporter_endpoint | Y   | 链路日志输出，默认为http://127.0.0.1:9411/api/v2/spans |
 | recorder_host_post     | Y   | 当前服务端口号，默认为127.0.0.1:9000                                  |
 
+注意：目前只支持Http方式的Reporter。
 
 ## 运行ZipKin
 
