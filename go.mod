@@ -22,7 +22,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/json-iterator/go v1.1.12
 	github.com/opentracing/opentracing-go v1.2.0
-	github.com/openzipkin/zipkin-go v0.4.0
+	github.com/openzipkin/zipkin-go v0.2.2
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
@@ -34,7 +34,7 @@ require (
 	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9 // indirect
 	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c // indirect
 	golang.org/x/tools v0.1.10 // indirect
-	google.golang.org/grpc v1.41.0
+	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
 	google.golang.org/protobuf v1.28.0
 	mosn.io/api v1.0.0
