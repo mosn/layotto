@@ -31,12 +31,10 @@ require (
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.28.0
 	go.uber.org/automaxprocs v1.4.0 // indirect
-	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9 // indirect
-	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c // indirect
 	golang.org/x/tools v0.1.10 // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
-	google.golang.org/protobuf v1.28.0
+	google.golang.org/protobuf v1.27.1
 	mosn.io/api v1.0.0
 	mosn.io/layotto/components v0.0.0-20220413092851-55c58dbb1a23
 	mosn.io/layotto/spec v0.0.0-20220413092851-55c58dbb1a23
