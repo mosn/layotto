@@ -66,9 +66,9 @@ release_resource() {
   # remove containers
   keywords="redis skywalking hangzhouzk minio"
   for key in ${keywords}; do
-    if [ $(docker container ls | grep $key | wc -l) -gt 0 ]; then
+    if [ $(docker container ls -a | grep $key | wc -l) -gt 0 ]; then
       echo "Deleting containers of $key : " $to_delete
-      docker rm -f $(docker container ls | grep $key | awk '{ print $1 }')
+      docker rm -f $(docker container ls -a | grep $key | awk '{ print $1 }')
     fi
   done
 }
