@@ -272,6 +272,12 @@ jobs:
       - name: Push Image to DockerHub
         run: |
           make image.push.linux_amd64.layotto VERSION=latest
+      - name: Build layotto/proxyv2:latest Image
+        run: |
+          make image.proxyv2.build VERSION=latest
+      - name: Push layotto/proxyv2:latest Image to DockerHub
+        run: |
+          make image.proxyv2.push VERSION=latest
 
   build-push-linux-arm64-image:
     name: "🎉 Linux ARMD64 Image"
