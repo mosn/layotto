@@ -53,8 +53,8 @@ func GetInstanceWM(machine, machineRoom int64) *singleton {
 	once.Do(func() {
 		instance = &singleton{}
 	})
-	machineId = int64(machine)
-	machineRoomId = int64(machineRoom)
+	machineId = machine
+	machineRoomId = machineRoom
 	return instance
 }
 
