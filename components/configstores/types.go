@@ -63,7 +63,7 @@ type DeleteRequest struct {
 // SubscribeReq is the object describing a subscription request
 type SubscribeReq struct {
 	AppId     string
-	Name      string
+	StoreName string
 	Group     string
 	Label     string
 	Keys      []string

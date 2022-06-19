@@ -144,7 +144,7 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 				req.Label = store.GetDefaultLabel()
 			}
 			// 1.3.3. delegate to the component
-			store.Subscribe(&configstores.SubscribeReq{AppId: req.AppId, Name: req.StoreName, Group: req.Group, Label: req.Label, Keys: req.Keys, Metadata: req.Metadata}, respCh)
+			store.Subscribe(&configstores.SubscribeReq{AppId: req.AppId, StoreName: req.StoreName, Group: req.Group, Label: req.Label, Keys: req.Keys, Metadata: req.Metadata}, respCh)
 			subscribedStore = append(subscribedStore, store)
 		}
 	}, nil)
