@@ -23,6 +23,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jarcoal/httpmock"
+
 	"github.com/golang/mock/gomock"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/stretchr/testify/assert"
@@ -205,6 +207,12 @@ func TestPut(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", `=~^http(s)?://example.com`,
+		httpmock.NewStringResponder(200, ""))
+
 	oss := NewQiniuOSS()
 	data := `[
 				{
