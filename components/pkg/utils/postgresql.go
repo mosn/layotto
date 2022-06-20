@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 
+	// I have to blank-import this package
 	_ "github.com/lib/pq"
 	"mosn.io/pkg/log"
 )
