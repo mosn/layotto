@@ -209,7 +209,6 @@ func (c *EtcdV3ConfigStore) watch() {
 // Subscribe gets configuration from configuration store and subscribe the updates.
 func (c *EtcdV3ConfigStore) Subscribe(req *configstores.SubscribeReq, ch chan *configstores.SubscribeResp) error {
 	c.appIdKey = req.AppId
-	c.storeName = req.StoreName
 	c.watchRespCh = ch
 	c.Lock()
 	defer c.Unlock()
