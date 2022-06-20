@@ -22,11 +22,9 @@ import (
 	"strconv"
 	"time"
 
-<<<<<<< HEAD
-	sequencer_postgresql "mosn.io/layotto/components/sequencer/postgresql"
-=======
 	mosn_jaeger "mosn.io/mosn/pkg/trace/jaeger"
->>>>>>> 2aa9090a110bf12058fde1c884b4703cd55b7420
+
+	sequencer_postgresql "mosn.io/layotto/components/sequencer/postgresql"
 
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"

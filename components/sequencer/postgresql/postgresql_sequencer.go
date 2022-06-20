@@ -88,34 +88,15 @@ func (p *PostgresqlSequencer) Init(config sequencer.Configuration) error {
 
 func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.GetNextIdResponse, error) {
 
-	metadata, err := utils.ParsePostgresqlMetaData(req.Metadata)
-	if err != nil {
-		return nil, err
-	}
-	p.db = utils.NewPostgresqlCli(metadata)
-
 	var model PostgresqlModel
 	queryParams := fmt.Sprintf(`select id, value_id, biz_tag, create_time, update_time from %s where biz_tag = $1`, p.metadata.TableName)
-	err = p.db.QueryRow(queryParams, req.Key).Scan(&model.ID, &model.ValueId, &model.BizTag, &model.CreateTime, &model.UpdateTime)
+	err := p.db.QueryRow(queryParams, req.Key).Scan(&model.ID, &model.ValueId, &model.BizTag, &model.CreateTime, &model.UpdateTime)
 	if err != nil {
 		return nil, err
 	}
-	tx, err := p.db.Begin()
-	defer func() {
-		if err != nil {
-			err := tx.Rollback()
-			if err != sql.ErrTxDone && err != nil {
-				log.DefaultLogger.Infof("rollback error")
-			}
-		}
-	}()
 	var res sql.Result
 	updateParams := fmt.Sprintf(`update %s set value_id = value_id + 1, update_time = $1 where biz_tag = $2`, p.metadata.TableName)
-	if tx != nil {
-		res, err = tx.ExecContext(p.ctx, updateParams, time.Now().Unix(), req.Key)
-	} else {
-		res, err = p.db.ExecContext(p.ctx, updateParams, time.Now().Unix(), req.Key)
-	}
+	res, err = p.db.Exec(updateParams, time.Now().Unix(), req.Key)
 	if err != nil {
 		return nil, err
 	}
@@ -140,37 +121,18 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 
 func (p *PostgresqlSequencer) GetSegment(req *sequencer.GetSegmentRequest) (bool, *sequencer.GetSegmentResponse, error) {
 	if req.Size == 0 {
-		return true, nil, nil
+		return false, nil, nil
 	}
-	metadata, err := utils.ParsePostgresqlMetaData(req.Metadata)
-	if err != nil {
-		return false, nil, err
-	}
-	p.db = utils.NewPostgresqlCli(metadata)
-
 	var model PostgresqlModel
 	queryParams := fmt.Sprintf(`select id, value_id, biz_tag, create_time, update_time from %s where biz_tag = $1`, p.metadata.TableName)
-	err = p.db.QueryRow(queryParams, req.Key).Scan(&model.ID, &model.ValueId, &model.BizTag, &model.CreateTime, &model.UpdateTime)
+	err := p.db.QueryRow(queryParams, req.Key).Scan(&model.ID, &model.ValueId, &model.BizTag, &model.CreateTime, &model.UpdateTime)
 	if err != nil {
 		return false, nil, err
 	}
-	tx, err := p.db.Begin()
-	defer func() {
-		if err != nil {
-			err := tx.Rollback()
-			if err != sql.ErrTxDone && err != nil {
-				log.DefaultLogger.Infof("rollback error")
-			}
-		}
-	}()
 	var res sql.Result
 	model.ValueId += int64(req.Size)
 	updateParams := fmt.Sprintf(`update %v set value_id = $1, update_time = $2 where biz_tag = $3`, p.metadata.TableName)
-	if tx != nil {
-		res, err = tx.ExecContext(p.ctx, updateParams, model.ValueId, time.Now().Unix(), req.Key)
-	} else {
-		res, err = tx.ExecContext(p.ctx, updateParams, model.ValueId, time.Now().Unix(), req.Key)
-	}
+	res, err = p.db.Exec(updateParams, model.ValueId, time.Now().Unix(), req.Key)
 	if err != nil {
 		return false, nil, err
 	}

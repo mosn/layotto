@@ -18,10 +18,10 @@ import (
 	"database/sql/driver"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"mosn.io/pkg/log"
-
-	"mosn.io/layotto/components/pkg/utils"
 
 	"mosn.io/layotto/components/sequencer"
 )
@@ -29,9 +29,9 @@ import (
 func initMap() map[string]string {
 	vals := make(map[string]string)
 	vals["host"] = "127.0.0.1"
-	vals["port"] = "5432"
-	vals["username"] = "postgres"
-	vals["password"] = "213213"
+	vals["port"] = "54321"
+	vals["username"] = "postgres1"
+	vals["password"] = "2132132"
 	vals["db"] = "test_db"
 	vals["tableName"] = "layotto_incr"
 	vals["bizTag"] = "test11"
@@ -57,18 +57,14 @@ func TestPostgresqlSequencer_Init(t *testing.T) {
 	mock.ExpectQuery("select exists").WillReturnRows(rows)
 
 	err = p.Init(cfg)
-	//if err != nil {
-	//	t.Errorf("init postgresql error: %v", err)
-	//}
-	//assert.Nil(t, err)
+	if err != nil {
+		t.Errorf("init postgresql error: %v", err)
+	}
+	assert.Nil(t, err)
 }
 
 func TestPostgresqlSequencer_GetNextId(t *testing.T) {
 	p := NewPostgresqlSequencer(log.DefaultLogger)
-	meta, err := utils.ParsePostgresqlMetaData(initMap())
-	if err != nil {
-		t.Errorf("init metadata error: %v", err)
-	}
 
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -76,21 +72,23 @@ func TestPostgresqlSequencer_GetNextId(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectExec("CREATE TABLE IF NOT EXISTS layotto_incr\n(\n    id bigint NOT NULL,\n    value_id bigint NOT NULL,\n    biz_tag character(255) COLLATE pg_catalog.\"default\" NOT NULL,\n    create_time bigint,\n    update_time bigint,\n    CONSTRAINT layotto_incr_pkey PRIMARY KEY (id)\n)\nWITH (\n    OIDS = FALSE\n)\nTABLESPACE pg_default;")
-	rows := sqlmock.NewRows([]string{"id", "value_id", "biz_tag", "create_time", "update_time"}).AddRow([]driver.Value{1, 10, meta.BizTag, 111111, 111111}...)
-	mock.ExpectBegin()
+	rows := sqlmock.NewRows([]string{"id", "value_id", "biz_tag", "create_time", "update_time"}).AddRow([]driver.Value{1, 10, "test11", 111111, 111111}...)
 	mock.ExpectQuery("select").WillReturnRows(rows)
 	mock.ExpectExec("update").WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
 
 	p.db = db
-	p.metadata = meta
+	req := &sequencer.GetNextIdRequest{
+		Key:      "test11",
+		Options:  sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG},
+		Metadata: initMap(),
+	}
 
-	_, err = p.GetNextId(&sequencer.GetNextIdRequest{Key: meta.BizTag, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: initMap()})
+	assert.NotNil(t, req)
+	_, err = p.GetNextId(req)
 
-	//if err != nil {
-	//	t.Errorf("get id error: %v", err)
-	//}
+	if err != nil {
+		t.Errorf("get id error: %v", err)
+	}
 
 	//assert.Nil(t, err)
 }
@@ -103,19 +101,14 @@ func TestPostgresqlSequencer_GetSegment(t *testing.T) {
 	}
 	defer db.Close()
 
-	//rows := sqlmock.NewRows([]string{"value_id", "biz_tag", "create_time", "update_time"}).AddRow(1, "test", 11, 11)
-	mock.ExpectBegin()
-	//mock.ExpectQuery("select value_id, biz_tag, create_time, update_time from layotto_incr where biz_tag = $1").WithArgs( "test").WillReturnRows(rows)
-	//mock.ExpectExec("update layotto_incr set value_id = 3, update_time = ? where biz_tag = ?").WithArgs(1, "test").WillReturnResult(sqlmock.NewResult(1, 1))
-
-	mock.ExpectCommit()
-
+	rows := sqlmock.NewRows([]string{"id", "value_id", "biz_tag", "create_time", "update_time"}).AddRow([]driver.Value{1, 10, "test11", 111111, 111111}...)
+	mock.ExpectQuery("select").WillReturnRows(rows)
+	mock.ExpectExec("update").WillReturnResult(sqlmock.NewResult(1, 1))
 	req := &sequencer.GetSegmentRequest{Size: 10, Key: p.metadata.BizTag, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: initMap()}
 	p.db = db
 
 	_, _, err = p.GetSegment(req)
-	//assert.NoError(t, err)
-	//p.Close()
+	assert.NoError(t, err)
 }
 
 //
