@@ -23,6 +23,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/jarcoal/httpmock"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/stretchr/testify/assert"
@@ -73,6 +74,11 @@ func TestGetFromPrivate(t *testing.T) {
 	m := mock.NewMockFormUploader(ctrl)
 	bm := mock.NewMockBucketManager(ctrl)
 	defer ctrl.Finish()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", `=~^http(s)?://example.com`,
+		httpmock.NewStringResponder(200, ""))
 
 	s := newMockQiniuOSSClient("ak", "sk", "xc2022", "https://example.com", true, m, bm)
 
@@ -96,6 +102,11 @@ func TestGetFromPublic(t *testing.T) {
 	m := mock.NewMockFormUploader(ctrl)
 	bm := mock.NewMockBucketManager(ctrl)
 	defer ctrl.Finish()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", `=~^http(s)?://example.com`,
+		httpmock.NewStringResponder(200, ""))
 
 	s := newMockQiniuOSSClient("ak", "sk", "xc2022", "https://example.com", false, m, bm)
 
