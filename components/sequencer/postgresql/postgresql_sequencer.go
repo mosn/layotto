@@ -23,6 +23,7 @@ import (
 
 	"mosn.io/pkg/log"
 
+	// I have to blank-import this package
 	_ "github.com/lib/pq"
 
 	"mosn.io/layotto/components/pkg/utils"
