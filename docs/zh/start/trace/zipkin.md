@@ -11,22 +11,20 @@
     "driver": "Zipkin",
     "config": {
       "config": {
-        "config": {
-          "service_name": "layotto",
-          "reporter_endpoint": "http://127.0.0.1:9411/api/v2/spans",
-          "recorder_host_post": "127.0.0.1:9000"
-        }
+        "service_name": "layotto",
+        "reporter_endpoint": "http://127.0.0.1:9411/api/v2/spans",
+        "recorder_host_post": "127.0.0.1:34904"
       }
     }
   }
 }
 
 ```
-| 字段   | 必填  | 说明                                           |
-|------|-----|----------------------------------------------|
-| service_name | Y   | 服务名称，默认为layotto                              |
-| reporter_endpoint | Y   | 链路日志输出，默认为http://127.0.0.1:9411/api/v2/spans |
-| recorder_host_post     | Y   | 当前服务端口号，默认为127.0.0.1:9000                                  |
+| 字段   | 必填  | 说明                       |
+|------|-----|--------------------------|
+| service_name | Y   | 当前服务名称，例如layotto         |
+| reporter_endpoint | Y   | 链路日志上报url                |
+| recorder_host_post     | Y   | 当前服务端口信息，例如layotto服务的端口为127.0.0.1:34904 |
 
 注意：目前只支持Http方式的Reporter。
 
@@ -40,13 +38,25 @@ docker-compose -f zipkin-docker-compose.yaml up -d
 
 ## 运行layotto
 
-可以按照如下方式启动一个layotto的server：
+<!-- tabs:start -->
 
-切换目录:
+#### **使用 Docker**
 
-```shell
-cd ${project_path}/cmd/layotto_multiple_api
+您可以用 docker 启动 Layotto
+
+```bash
+docker run -d \
+  -v "$(pwd)/configs/config_trace_zipkin.json:/runtime/configs/config.json" \
+  -p 34904:34904 --network=zipkin_default --name layotto \
+  layotto/layotto start
 ```
+
+#### **本地编译（不适合 Windows)**
+您可以本地编译、运行 Layotto。
+
+> [!TIP|label: 不适合 Windows 用户]
+> Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker 部署
+
 
 构建:
 
@@ -59,6 +69,7 @@ go build -o layotto
 ```shell @background
 ./layotto start -c ../../configs/config_trace_zipkin.json 
 ```
+<!-- tabs:end -->
 
 ## 运行 Demo
 
@@ -85,6 +96,14 @@ go build -o layotto
 ![](../../../img/trace/zipkin.png)
 
 ## 清理资源
+
+如果您使用 Docker 启动 Layotto，记得删除容器：
+
+```bash
+docker rm -f layotto
+```
+
+记得关闭 zipkin:
 
 ```shell
 cd ${project_path}/diagnostics/zipkin

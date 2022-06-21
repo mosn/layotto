@@ -64,13 +64,9 @@
     "enable": true,
     "driver": "Zipkin",
     "config": {
-      "config": {
-        "config": {
-          "service_name": "layotto",
-          "reporter_endpoint": "http://127.0.0.1:9411/api/v2/spans",
-          "recorder_host_post": "127.0.0.1:9000"
-        }
-      }
+      "service_name": "layotto",
+      "reporter_endpoint": "http://127.0.0.1:9411/api/v2/spans",
+      "recorder_host_post": "127.0.0.1:34904"
     }
   },
   "metrics": {
