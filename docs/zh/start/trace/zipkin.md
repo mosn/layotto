@@ -60,6 +60,10 @@ docker run -d \
 
 构建:
 
+```shell
+cd cmd/layotto_multiple_api/
+```
+
 ```shell @if.not.exist layotto
 go build -o layotto
 ```
