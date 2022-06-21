@@ -82,7 +82,7 @@ go build -o layotto
 
 访问：http://localhost:9411/zipkin/?serviceName=layotto&lookback=15m&endTs=1655559536414&limit=10
 
-![](../../../img/trace/zipkin.png)
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*WodlQKsN5UcAAAAAAAAAAAAAARQnAQ)
 
 ## 清理资源
 
