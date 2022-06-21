@@ -49,7 +49,6 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 如果您想把应用部署到不同的云平台（例如将阿里云上的应用部署到 AWS），您只需要在 Layotto 提供的 [配置文件](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json)
 里修改配置、指定自己想用的基础设施类型，不需要修改应用的代码就能让应用拥有"跨云部署"能力，大大提高了程序的可移植性。
 
-![系统架构图](../img/runtime-architecture.png)
 <img src="https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*oRkFR63JB7cAAAAAAAAAAAAAARQnAQ" />
 
 ## 快速开始
