@@ -27,9 +27,7 @@ Example: configs/config_trace_skywalking.json
 ## Run skywalking
 
 ```shell
-cd ${project_path}/diagnostics/skywalking
-
-docker-compose -f skywalking-docker-compose.yaml up -d
+docker-compose -f diagnostics/skywalking/skywalking-docker-compose.yaml up -d
 ```
 
 ## Run layotto
@@ -39,7 +37,7 @@ You can run Layotto with docker
 
 ```bash
 docker run -d \
-  -v "$(pwd)/../../configs/config_trace_skywalking.json:/runtime/configs/config.json" \
+  -v "$(pwd)/configs/config_trace_skywalking.json:/runtime/configs/config.json" \
   -p 34904:34904 --network=skywalking_default --name layotto \
   layotto/layotto start
 ```

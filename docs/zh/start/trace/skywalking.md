@@ -37,7 +37,7 @@ docker-compose -f diagnostics/skywalking/skywalking-docker-compose.yaml up -d
 
 ```bash
 docker run -d \
-  -v "$(pwd)/../../configs/config_trace_skywalking.json:/runtime/configs/config.json" \
+  -v "$(pwd)/configs/config_trace_skywalking.json:/runtime/configs/config.json" \
   -p 34904:34904 --network=skywalking_default --name layotto \
   layotto/layotto start
 ```
