@@ -11,8 +11,22 @@ This example shows how to call Etcd through Layotto to generate a distributed un
 The architecture of this example is shown in the figure below, and the processes started are: Etcd, Layotto, and client programs
 
 ![img.png](../../../img/sequencer/etcd/img.png)
+### step 1. Deploy etcd and Layotto
+<!-- tabs:start -->
+#### **With Docker Compose**
+You can start etcd and Layotto with docker-compose
 
-### Step 1: Deploy the storage system (Etcd)
+```bash
+cd docker/layotto-etcd
+# Start etcd and layotto with docker-compose
+docker-compose up -d
+```
+#### **Compile locally (not for Windows)**
+You can run etcd with Docker, then compile and run Layotto locally.
+
+> [!TIP|label: Not for Windows users]
+> Layotto fails to compile under Windows. Windows users are recommended to deploy using docker-compose
+#### step 1.1 Deploy the storage system (Etcd)
 
 For the deployment of etcd, please refer to etcd's [Official Document](https://etcd.io/docs/v3.5/quickstart/)
 
@@ -27,7 +41,7 @@ Once the download is finished,execute the command to start:
 ```
 
 The default listening address is `localhost:2379`
-### Step 2: Run Layotto
+#### step 1.2 Run Layotto
 
 After downloading the project code to the local, switch the code directory and compile:
 
@@ -44,8 +58,9 @@ Once finished, the layotto file will be generated in the directory, run it:
 ```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
+<!-- tabs:end -->
 
-### Step 3: Run the client program and call Layotto to generate a unique id
+### step 2. Run the client program and call Layotto to generate a unique id
 
 ```shell
  cd ${project_path}/demo/sequencer/common/
@@ -69,6 +84,22 @@ Next id:next_id:9
 Next id:next_id:10  
 Demo success!
 ```
+### step 3. Stop containers and release resources
+<!-- tabs:start -->
+#### **Docker Compose**
+If you started etcd and Layotto with docker-compose, you can shut them down as follows:
+
+```bash
+cd ${project_path}/docker/layotto-etcd
+docker-compose stop
+```
+
+#### **Destroy the etcd container**
+If you started etcd with Docker, you can destroy the etcd container as follows:
+```shell
+docker rm -f etcd
+```
+<!-- tabs:end -->
 
 ### Next step
 #### What does this client program do?
