@@ -39,6 +39,7 @@ type Repository interface {
 type repoConfig struct {
 	addr          string
 	appId         string
+	storeName     string
 	env           string
 	cluster       string
 	namespaceName string

@@ -27,7 +27,10 @@ import (
 	"mosn.io/layotto/components/configstores"
 )
 
-const testAppId = "test_app"
+const (
+	testAppId     = "test_app"
+	testStoreName = "test_storename"
+)
 
 type MockRepo struct {
 	c *ConfigStore
@@ -43,6 +46,10 @@ func (m *MockRepo) getAllTags(group string, keyWithLabel string) (tags map[strin
 
 func (m *MockRepo) GetAppId() string {
 	return testAppId
+}
+
+func (m *MockRepo) GetStoreName() string {
+	return testStoreName
 }
 
 const ns = "application"
@@ -69,7 +76,7 @@ func Test_changeListener_OnChange(t *testing.T) {
 	go func() {
 		select {
 		case c2 := <-ch:
-			assert.Equal(t, c2.StoreName, "apollo")
+			assert.Equal(t, c2.StoreName, testStoreName)
 			assert.Equal(t, c2.AppId, testAppId)
 			assert.True(t, len(c2.Items) == 1)
 			assert.True(t, c2.Items[0].Key == "key1")
