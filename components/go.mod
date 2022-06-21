@@ -6,6 +6,7 @@ require (
 	github.com/alicebob/miniredis/v2 v2.16.0
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.8+incompatible
 	github.com/apache/dubbo-go-hessian2 v1.7.0
+	github.com/apolloconfig/agollo/v4 v4.2.0
 	github.com/aws/aws-sdk-go-v2 v1.9.1
 	github.com/aws/aws-sdk-go-v2/config v1.8.2
 	github.com/aws/aws-sdk-go-v2/credentials v1.4.2
