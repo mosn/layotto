@@ -98,11 +98,12 @@ func (a *AwsOss) InitClient(ctx context.Context, req *file.InitRequest) error {
 }
 
 func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (*file.GetObjectOutput, error) {
-	input := &s3.GetObjectInput{
-		Bucket: &req.Bucket,
-		Key:    &req.Key,
-	}
+	input := &s3.GetObjectInput{}
 	client, err := a.selectClient(map[string]string{}, "")
+	if err != nil {
+		return nil, err
+	}
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +111,13 @@ func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (*file
 	if err != nil {
 		return nil, err
 	}
-	return &file.GetObjectOutput{DataStream: ob.Body}, nil
+	out := &file.GetObjectOutput{}
+	err = copier.Copy(out, ob)
+	if err != nil {
+		return nil, err
+	}
+	out.DataStream = ob.Body
+	return out, nil
 }
 
 func (a *AwsOss) PutObject(ctx context.Context, req *file.PutObjectInput) (*file.PutObjectOutput, error) {
@@ -118,16 +125,19 @@ func (a *AwsOss) PutObject(ctx context.Context, req *file.PutObjectInput) (*file
 	if err != nil {
 		return nil, err
 	}
+	input := &s3.PutObjectInput{}
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
 	uploader := manager.NewUploader(client)
-	resp, err := uploader.Upload(context.TODO(), &s3.PutObjectInput{
-		Bucket: &req.Bucket,
-		Key:    &req.Key,
-		Body:   req.DataStream,
-	})
+	resp, err := uploader.Upload(context.TODO(), input)
 	if err != nil {
 		return nil, err
 	}
-	return &file.PutObjectOutput{BucketKeyEnabled: resp.BucketKeyEnabled, ETag: *resp.ETag}, err
+	out := &file.PutObjectOutput{}
+	err = copier.Copy(out, resp)
+	if err != nil {
+		return nil, err
+	}
+	return out, err
 }
 
 func (a *AwsOss) DeleteObject(ctx context.Context, req *file.DeleteObjectInput) (*file.DeleteObjectOutput, error) {
@@ -638,5 +648,5 @@ func (a *AwsOss) AppendObject(ctx context.Context, req *file.AppendObjectInput) 
 }
 
 func (a *AwsOss) ListParts(ctx context.Context, req *file.ListPartsInput) (*file.ListPartsOutput, error) {
-	return nil, nil
+	return nil, errors.New("ListParts not supported on AWS")
 }
