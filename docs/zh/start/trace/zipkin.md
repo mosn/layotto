@@ -31,9 +31,7 @@
 ## 运行ZipKin
 
 ```shell
-cd ${project_path}/diagnostics/zipkin
-
-docker-compose -f zipkin-docker-compose.yaml up -d
+docker-compose -f diagnostics/zipkin/zipkin-docker-compose.yaml up -d
 ```
 
 ## 运行layotto
