@@ -35,6 +35,7 @@ type RepoForListener interface {
 	splitKey(keyWithLabel string) (key string, label string)
 	getAllTags(group string, keyWithLabel string) (tags map[string]string, err error)
 	GetAppId() string
+	GetStoreName() string
 }
 
 func newChangeListener(c RepoForListener) *changeListener {
@@ -79,7 +80,7 @@ func (lis *changeListener) notify(s *subscriber, keyWithLabel string, change *st
 		}
 	}()
 	// 2 prepare response
-	res := &configstores.SubscribeResp{StoreName: storename, AppId: lis.store.GetAppId()}
+	res := &configstores.SubscribeResp{StoreName: lis.store.GetStoreName(), AppId: lis.store.GetAppId()}
 	item := &configstores.ConfigurationItem{}
 	item.Group = s.group
 	item.Key, item.Label = lis.store.splitKey(keyWithLabel)

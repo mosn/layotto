@@ -17,7 +17,6 @@
 package apollo
 
 const (
-	storename                  = "apollo"
 	defaultTagsNamespace       = "sidecar_config_tags"
 	defaultDelimiter           = "@$"
 	defaultNamespace           = "application"
