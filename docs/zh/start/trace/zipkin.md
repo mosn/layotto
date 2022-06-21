@@ -59,7 +59,7 @@ docker run -d \
 构建:
 
 ```shell
-cd cmd/layotto_multiple_api/
+cd ${project_path}/cmd/layotto_multiple_api/
 ```
 
 ```shell @if.not.exist layotto
@@ -75,24 +75,11 @@ go build -o layotto
 
 ## 运行 Demo
 
-对应的调用端代码在[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go) 中，运行它会调用layotto的SayHello接口：
-
-切换目录:
-
 ```shell
  cd ${project_path}/demo/flowcontrol/
+ go run client.go
 ``` 
 
-构建:
-
-```shell @if.not.exist client 
- go build -o client
-```
-运行:
-
-```shell
-./client
-```
 访问：http://localhost:9411/zipkin/?serviceName=layotto&lookback=15m&endTs=1655559536414&limit=10
 
 ![](../../../img/trace/zipkin.png)
