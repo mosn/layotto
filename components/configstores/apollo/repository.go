@@ -19,8 +19,8 @@ package apollo
 import (
 	"fmt"
 
-	"github.com/zouyx/agollo/v4"
-	agolloConfig "github.com/zouyx/agollo/v4/env/config"
+	"github.com/apolloconfig/agollo/v4"
+	agolloConfig "github.com/apolloconfig/agollo/v4/env/config"
 	"mosn.io/pkg/log"
 )
 
@@ -54,7 +54,7 @@ func init() {
 
 //Implement Repository interface
 type AgolloRepository struct {
-	client *agollo.Client
+	client agollo.Client
 	cfg    *repoConfig
 }
 

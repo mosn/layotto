@@ -199,6 +199,8 @@ github.com/apache/thrift v0.12.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb
 github.com/apache/thrift v0.13.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
 github.com/apache/thrift v0.14.0 h1:vqZ2DP42i8th2OsgCcYZkirtbzvpZEFx53LiWDJXIAs=
 github.com/apache/thrift v0.14.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
+github.com/apolloconfig/agollo/v4 v4.2.0 h1:FkE8acffsUhnRnjyi37eOq6JpfUhQKuNccG2jXB3Mco=
+github.com/apolloconfig/agollo/v4 v4.2.0/go.mod h1:SuvTjtg0p4UlSzSbik+ibLRr6oR1xRsfy65QzP3GEAs=
 github.com/ardielle/ardielle-go v1.5.2 h1:TilHTpHIQJ27R1Tl/iITBzMwiUGSlVfiVhwDNGM3Zj4=
 github.com/ardielle/ardielle-go v1.5.2/go.mod h1:I4hy1n795cUhaVt/ojz83SNVCYIGsAFAONtv2Dr7HUI=
 github.com/ardielle/ardielle-tools v1.5.4/go.mod h1:oZN+JRMnqGiIhrzkRN9l26Cej9dEx4jeNG6A+AdkShk=
@@ -1422,8 +1424,6 @@ github.com/yuin/gopher-lua v0.0.0-20200816102855-ee81675732da h1:NimzV1aGyq29m5u
 github.com/yuin/gopher-lua v0.0.0-20200816102855-ee81675732da/go.mod h1:E1AXubJBdNmFERAOucpDIxNzeGfLzg0mYh+UfMWdChA=
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
 github.com/ziutek/mymysql v1.5.4/go.mod h1:LMSpPZ6DbqWFxNCHW77HeMg9I646SAhApZ/wKdgO/C0=
-github.com/zouyx/agollo/v4 v4.0.7 h1:aUwdnCz+1jExZbZvN1nZ+kKjn62Ula5joekZHTccj2E=
-github.com/zouyx/agollo/v4 v4.0.7/go.mod h1:unhojnZiGLlT4gLpWz3Oa7sGcChZWv/1DJBkV6s8uAE=
 go.beyondstorage.io/endpoint v1.2.0/go.mod h1:oZ7Z7HZ7mAo337JBLjuCF/DM66HVEUu6+hw68c3UcLs=
 go.beyondstorage.io/services/hdfs v0.3.0/go.mod h1:yU0eL80JczPPuR5hoK21Dck0H9gXDBu3WN51Od7wtlo=
 go.beyondstorage.io/v5 v5.0.0/go.mod h1:3wV9gCQnqu7tD/3LMeo2yimUKIeTSHpTc6wHSb0yY20=
