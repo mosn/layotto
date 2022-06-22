@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/apolloconfig/agollo/v4/storage"
 	"github.com/stretchr/testify/assert"
-	"github.com/zouyx/agollo/v4/storage"
 
 	"mosn.io/layotto/components/configstores"
 )

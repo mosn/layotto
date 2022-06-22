@@ -19,7 +19,7 @@ package apollo
 import (
 	"time"
 
-	"github.com/zouyx/agollo/v4/storage"
+	"github.com/apolloconfig/agollo/v4/storage"
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/configstores"

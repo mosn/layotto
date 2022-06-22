@@ -6,6 +6,7 @@ require (
 	github.com/alicebob/miniredis/v2 v2.16.0
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.8+incompatible
 	github.com/apache/dubbo-go-hessian2 v1.7.0
+	github.com/apolloconfig/agollo/v4 v4.2.0
 	github.com/aws/aws-sdk-go-v2 v1.9.1
 	github.com/aws/aws-sdk-go-v2/config v1.8.2
 	github.com/aws/aws-sdk-go-v2/credentials v1.4.2
@@ -26,7 +27,6 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.33
 	github.com/valyala/fasthttp v1.26.0
-	github.com/zouyx/agollo/v4 v4.0.7
 	go.beyondstorage.io/services/hdfs v0.3.0
 	go.beyondstorage.io/v5 v5.0.0
 	go.etcd.io/etcd/api/v3 v3.5.0
