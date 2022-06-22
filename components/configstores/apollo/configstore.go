@@ -173,6 +173,7 @@ func (c *ConfigStore) doInit(config *configstores.StoreConfig) error {
 	kvRepoConfig := &repoConfig{
 		addr:           addr,
 		appId:          appId,
+		storeName:      config.StoreName,
 		env:            c.env,
 		cluster:        metadata["cluster"],
 		namespaceName:  metadata["namespace_name"],
@@ -207,6 +208,13 @@ func (c *ConfigStore) GetAppId() string {
 		return ""
 	}
 	return c.kvConfig.appId
+}
+
+func (c *ConfigStore) GetStoreName() string {
+	if c.kvConfig == nil {
+		return ""
+	}
+	return c.kvConfig.storeName
 }
 
 // Get gets configuration from configuration store.

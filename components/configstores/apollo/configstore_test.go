@@ -125,6 +125,10 @@ func TestConfigStore_read(t *testing.T) {
 	assert.True(t, store.GetAppId() == "testApplication_yang")
 	assert.True(t, store.GetDefaultGroup() != "")
 	assert.True(t, store.GetDefaultLabel() == "")
+
+	// get storeName
+	assert.True(t, store.GetStoreName() == "config_demo")
+
 	//	get key
 	var req configstores.GetRequest
 	req.AppId = appId
@@ -255,6 +259,7 @@ func setup(t *testing.T) (*ConfigStore, *configstores.StoreConfig) {
     "address": [
         "http://106.54.227.205:8080"
     ],
+	"store_name": "config_demo",
     "metadata": {
         "app_id": "testApplication_yang",
         "cluster": "default",

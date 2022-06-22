@@ -33,6 +33,7 @@ quickstarts_in_default="docs/en/start/configuration/start.md
   docs/zh/start/trace/skywalking.md
   docs/zh/start/trace/prometheus.md
   docs/en/start/trace/prometheus.md
+  docs/zh/start/trace/zipkin.md
   docs/zh/start/trace/jaeger.md
   docs/en/start/wasm/start.md
   docs/zh/start/wasm/start.md
