@@ -117,12 +117,14 @@ DeleteState succeeded.key:key2
 cd ${project_path}/docker/layotto-redis
 docker-compose stop
 ```
+
 #### **销毁 Redis Docker 容器**
 如果您是用 Docker 启动的 Redis，可以按以下方式销毁 Redis 容器：
 
 ```shell
 docker rm -f redis-test
 ```
+
 <!-- tabs:end -->
 
 ### 下一步

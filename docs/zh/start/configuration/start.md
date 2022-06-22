@@ -53,6 +53,7 @@ go build -o layotto
 ```
 
 编译成功后执行:
+
 ```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
@@ -84,6 +85,7 @@ delete keys success
 write start
 receive subscribe resp store_name:"config_demo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
 ```
+
 ### step 3.销毁容器,释放资源
 <!-- tabs:start -->
 #### **关闭 Docker Compose**
@@ -93,6 +95,7 @@ receive subscribe resp store_name:"config_demo" app_id:"apollo" items:<key:"heih
 cd ${project_path}/docker/layotto-etcd
 docker-compose stop
 ```
+
 #### **销毁 etcd Docker 容器**
 如果您是用 Docker 启动的 etcd，可以按以下方式销毁 etcd 容器：
 

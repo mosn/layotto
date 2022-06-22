@@ -121,9 +121,11 @@ docker-compose stop
 
 #### **Destroy the Redis container**
 If you started Redis with Docker, you can destroy the Redis container as follows:
+
 ```shell
 docker rm -f redis-test
 ```
+
 <!-- tabs:end -->
 
 ### Next step

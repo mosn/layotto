@@ -86,29 +86,37 @@ message DelFileRequest {
 ```
 
 ### Get File
+
 ```protobuf
   // Get file with stream
   rpc GetFile(GetFileRequest) returns (stream GetFileResponse) {}
 ```
+
 To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.
 
 ### Put File
+
 ```protobuf
   // Put file with stream
   rpc PutFile(stream PutFileRequest) returns (google.protobuf.Empty) {}
 ```
+
 To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.
 
 ### Delete File
+
 ```protobuf
 // Delete specific file
 rpc DelFile(DelFileRequest) returns (google.protobuf.Empty){}
 ```
+
 To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.
 
 ### List File
+
 ```protobuf
 // List all files
 rpc ListFile(ListFileRequest) returns (ListFileResp){}
 ```
+
 To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.

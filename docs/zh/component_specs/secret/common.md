@@ -4,6 +4,7 @@
 **配置文件结构**
 
 json配置文件有如下结构：
+
 ```json
 "secret_store": {
   "<Component A Name>": {
@@ -22,7 +23,9 @@ json配置文件有如下结构：
     }
 }
 ```
+
 本地文件秘钥、本地环境变量、k8s秘钥的配置例子：
+
 ```json
        "secret_store": {
                         "secret_demo": {

@@ -17,6 +17,7 @@ cd docker/layotto-etcd
 # Start etcd and layotto with docker-compose
 docker-compose up -d
 ```
+
 #### **Compile locally (not for Windows)**
 You can run etcd with Docker, then compile and run Layotto locally.
 
@@ -28,6 +29,7 @@ If you want to run this demo, you need to start a etcd server first.
 You can download etcd from `https://github.com/etcd-io/etcd/releases` （You can also use docker.）
 
 start it:
+
 ```shell @background
 ./etcd
 ```
@@ -46,9 +48,11 @@ go build
 ```
 
 Run it:
+
 ```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
+
 <!-- tabs:end -->
 
 ### step 2. Start client APP
@@ -75,6 +79,7 @@ delete keys success
 write start
 receive subscribe resp store_name:"config_demo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
 ```
+
 ### step 3. Stop containers and release resources
 <!-- tabs:start -->
 #### **Docker Compose**
@@ -87,9 +92,11 @@ docker-compose stop
 
 #### **Destroy the etcd container**
 If you started etcd with Docker, you can destroy the etcd container as follows:
+
 ```shell
 docker rm -f etcd
 ```
+
 <!-- tabs:end -->
 
 ## Next step
