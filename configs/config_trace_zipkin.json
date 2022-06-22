@@ -62,10 +62,11 @@
   ],
   "tracing": {
     "enable": true,
-    "driver": "jaeger",
+    "driver": "Zipkin",
     "config": {
       "service_name": "layotto",
-      "strategy": "collector"
+      "reporter_endpoint": "http://127.0.0.1:9411/api/v2/spans",
+      "recorder_host_post": "127.0.0.1:34904"
     }
   },
   "metrics": {
@@ -79,6 +80,4 @@
     ]
   }
 }
-
-
 
