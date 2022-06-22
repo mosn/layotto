@@ -1,9 +1,6 @@
 name: Layotto Env Pipeline 🌊
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
