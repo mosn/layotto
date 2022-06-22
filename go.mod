@@ -1,6 +1,6 @@
 module mosn.io/layotto
 
-go 1.17
+go 1.14
 
 require (
 	cloud.google.com/go/kms v1.4.0 // indirect
