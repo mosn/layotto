@@ -10,9 +10,7 @@
     "enable": true,
     "driver": "jaeger",
     "config": {
-      "config": {
-        "service_name": "layotto"
-      }
+      "service_name": "layotto"
     }
   }
 }
