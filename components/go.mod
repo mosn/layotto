@@ -1,6 +1,6 @@
 module mosn.io/layotto/components
 
-go 1.17
+go 1.14
 
 require (
 	github.com/alicebob/miniredis/v2 v2.16.0
