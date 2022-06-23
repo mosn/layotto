@@ -35,6 +35,7 @@ Layotto client sdk封装了grpc调用的逻辑，使用sdk调用State API的示�
 ```
 
 #### 入参
+
 ```protobuf
 
 // SaveStateRequest is the message to save multiple states into state store.
@@ -106,41 +107,52 @@ message StateOptions {
   StateConsistency consistency = 2;
 }
 ```
+
 #### 返回
 
 `google.protobuf.Empty`
 
 ### Get State
+
 ```protobuf
   // Gets the state for a specific key.
   rpc GetState(GetStateRequest) returns (GetStateResponse) {}
 ```
+
 为避免文档和代码不一致，详细入参和返回值请参考[proto文件](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto)
 
 ### Get bulk state
+
 ```protobuf
   // Gets a bulk of state items for a list of keys
   rpc GetBulkState(GetBulkStateRequest) returns (GetBulkStateResponse) {}
 ```
+
 为避免文档和代码不一致，详细入参和返回值请参考[proto文件](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto)
 
 ### Delete state
+
 ```protobuf
   // Deletes the state for a specific key.
   rpc DeleteState(DeleteStateRequest) returns (google.protobuf.Empty) {}
 ```
+
 为避免文档和代码不一致，详细入参和返回值请参考[proto文件](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto)
 
 ### Delete bulk state
+
 ```protobuf
   // Deletes a bulk of state items for a list of keys
   rpc DeleteBulkState(DeleteBulkStateRequest) returns (google.protobuf.Empty) {}
 ```
+
 为避免文档和代码不一致，详细入参和返回值请参考[proto文件](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto)
 
 ### State transactions
+
 ```protobuf
   // Executes transactions for a specified store
   rpc ExecuteStateTransaction(ExecuteStateTransactionRequest) returns (google.protobuf.Empty) {}
 ```
+
 为避免文档和代码不一致，详细入参和返回值请参考[proto文件](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto)

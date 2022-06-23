@@ -11,6 +11,7 @@
 Layotto client sdk封装了grpc调用的逻辑，使用sdk调用分布式锁 API的示例可以参考[快速开始：使用分布式锁API](zh/start/lock/start.md)
 
 ### TryLock
+
 ```protobuf
 // A non-blocking method trying to get a lock with ttl.
 rpc TryLock(TryLockRequest)returns (TryLockResponse) {}
@@ -66,7 +67,9 @@ import "github.com/google/uuid"
 //...
 req.LockOwner = uuid.New().String()
 ```
+
 ### Unlock
+
 ```protobuf
   rpc Unlock(UnlockRequest)returns (UnlockResponse) {}
 ```

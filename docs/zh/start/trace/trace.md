@@ -18,6 +18,7 @@
   }
 ]
 ```
+
 这段配置可以开启layotto的trace能力，让layotto在接到请求后打印链路追踪日志。用户可以通过配置来指定trace日志上报的方式，以及spanId,traceId等字段的生成方式。
 
 可以按照如下方式启动一个layotto的server：
@@ -94,6 +95,7 @@ type Span struct {
     operationName string
 }
 ```
+
 Span结构定义了layotto和其component之间传递的数据结构，如下图所示，component可以通过tags将自己的信息传递到layotto，layotto做
 统一的trace上报：
 
@@ -126,6 +128,7 @@ exporter接口定了如何将Span的信息上报给远端，对应配置中的ex
 #### Span的上下文传递：
 
 ##### Layotto侧
+
 ```go
 GenerateNewContext(ctx context.Context, span api.Span) context.Context
 ```
@@ -135,6 +138,7 @@ GenerateNewContext用于生成新的context，我们通过mosnctx可以将该con
 ```go
 ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
 ```
+
 可以参考代码中的[OpenGenerator](https://github.com/mosn/layotto/blob/main/diagnostics/genetator.go) 的实现
 
 ##### Component侧
@@ -177,6 +181,7 @@ curl --location --request GET 'http://127.0.0.1:34903/metrics'
 详见 [mosn代码](https://github.com/mosn/mosn/blob/70751eae7a13dd1b3ac84c31b1ba85c45945ef69/pkg/filter/stream/grpcmetric/metric.go#L54)
 
 #### 展示metrics数据
+
 ```json
   "metrics": {
     "sinks": [

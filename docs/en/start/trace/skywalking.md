@@ -32,7 +32,7 @@ docker-compose -f diagnostics/skywalking/skywalking-docker-compose.yaml up -d
 
 ## Run layotto
 <!-- tabs:start -->
-#### **with Docker**
+### **with Docker**
 You can run Layotto with docker
 
 ```bash
@@ -42,7 +42,7 @@ docker run -d \
   layotto/layotto start
 ```
 
-#### **Compile locally (not for Windows)**
+### **Compile locally (not for Windows)**
 You can compile and run Layotto locally.
 
 > [!TIP|label: Not for Windows users]
@@ -53,6 +53,7 @@ cd ${project_path}/cmd/layotto_multiple_api/
 ```
 
 Build it:
+
 ```shell @if.not.exist layotto
 go build -o layotto
 ```
@@ -62,6 +63,7 @@ Run it:
 ```shell @background
 ./layotto start -c ../../configs/config_trace_skywalking.json
 ```
+
 <!-- tabs:end -->
 
 ## Run Demo
@@ -71,11 +73,13 @@ Run it:
 ```
 
 Build the demo client:
+
 ```shell @if.not.exist client
  go build -o client
 ```
 
 Run the demo client:
+
 ```shell 
  ./client
 ```

@@ -112,6 +112,7 @@
 
 注：demo的代码里如果出现不该有的错误，可以直接panic。后续我们会直接用demo跑集成测试，如果panic了代表集成测试没有通过。
 例如demo/lock/redis/client.go 里：
+
 ```go
     //....
 	cli, err := client.NewClient()

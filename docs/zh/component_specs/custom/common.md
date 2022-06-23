@@ -11,6 +11,7 @@ Layotto 中的组件分为两种：
 允许您自己扩展自己的组件，比如[使用指南](zh/design/api_plugin/design?id=_24-使用指南) 中的 `HelloWorld` 组件。
 
 ## 配置文件结构
+
 ```json
   "custom_component": {
     "<Kind>": {

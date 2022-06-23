@@ -88,6 +88,7 @@ Next id:next_id:9
 Next id:next_id:10  
 Demo success!
 ```
+
 ### step 3.销毁容器,释放资源
 <!-- tabs:start -->
 #### **关闭 Docker Compose**
@@ -97,12 +98,14 @@ Demo success!
 cd ${project_path}/docker/layotto-etcd
 docker-compose stop
 ```
+
 #### **销毁 etcd Docker 容器**
 如果您是用 Docker 启动的 etcd，可以按以下方式销毁 etcd 容器：
 
 ```shell
 docker rm -f etcd
 ```
+
 <!-- tabs:end -->
 
 ### 下一步

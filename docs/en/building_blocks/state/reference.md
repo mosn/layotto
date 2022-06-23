@@ -35,6 +35,7 @@ Used to save a batch of status data
 ```
 
 #### parameters
+
 ```protobuf
 
 // SaveStateRequest is the message to save multiple states into state store.
@@ -106,41 +107,52 @@ message StateOptions {
   StateConsistency consistency = 2;
 }
 ```
+
 #### return
 
 `google.protobuf.Empty`
 
 ### Get State
+
 ```protobuf
   // Gets the state for a specific key.
   rpc GetState(GetStateRequest) returns (GetStateResponse) {}
 ```
+
 To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.
 
 ### Get bulk state
+
 ```protobuf
   // Gets a bulk of state items for a list of keys
   rpc GetBulkState(GetBulkStateRequest) returns (GetBulkStateResponse) {}
 ```
+
 To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.
 
 ### Delete state
+
 ```protobuf
   // Deletes the state for a specific key.
   rpc DeleteState(DeleteStateRequest) returns (google.protobuf.Empty) {}
 ```
+
 To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.
 
 ### Delete bulk state
+
 ```protobuf
   // Deletes a bulk of state items for a list of keys
   rpc DeleteBulkState(DeleteBulkStateRequest) returns (google.protobuf.Empty) {}
 ```
+
 To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.
 
 ### State transactions
+
 ```protobuf
   // Executes transactions for a specified store
   rpc ExecuteStateTransaction(ExecuteStateTransactionRequest) returns (google.protobuf.Empty) {}
 ```
+
 To avoid inconsistencies between this document and the code, please refer to [the newest proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values.

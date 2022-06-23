@@ -20,6 +20,7 @@ The actual key stored in apollo will be 'key@$label' and the value will be raw v
 Tags will be stored in a special namespace 'sidecar_config_tags',
 
 with key='group@$key@$label' and value=
+
 ```json
 {
   "tag1": "tag1value",
@@ -49,6 +50,7 @@ A: Legacy systems using apollo can't migrate to our sidecar if we design like th
 2. Save/delete APIs might be incompatible.The sidecar use fixed 'cluster' field configurated in config.json and fixed 'env' field in code,which means users can't pass 'cluster' and 'env' field as a parameter for save/delete API when they want to change some configuration items with other appid.
 
 ### config.json for sidecar
+
 ```json
 {
   "config_store": {
@@ -77,6 +79,7 @@ There isn't any official apollo sdk for Go,so I choose the repo with most stars 
 
 Some problems with the sdk: 
 1. Users must declare all namespaces in AppConfig before connecting to the server and constructing a client,like:
+
 ```go
 	c := &config.AppConfig{
 		AppID:          "testApplication_yang",
