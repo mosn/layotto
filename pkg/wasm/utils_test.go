@@ -17,16 +17,13 @@
 package wasm
 
 import (
-	"context"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-// Endpoint is used to storage data.
-type Endpoint interface {
-	Handle(ctx context.Context, filter *Filter) (map[string]interface{}, error)
-}
+func Test_filter(t *testing.T) {
+	values := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	assert.Equal(t, []int{2, 4, 6, 8, 10}, filter(values, func(item int) bool { return item%2 == 0 }))
 
-type ParamsScanner interface {
-	//Next get the next param.
-	Next() string
-	HasNext() bool
 }
