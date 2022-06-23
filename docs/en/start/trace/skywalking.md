@@ -32,7 +32,7 @@ docker-compose -f diagnostics/skywalking/skywalking-docker-compose.yaml up -d
 
 ## Run layotto
 <!-- tabs:start -->
-#### **with Docker**
+### **with Docker**
 You can run Layotto with docker
 
 ```bash
@@ -42,7 +42,7 @@ docker run -d \
   layotto/layotto start
 ```
 
-#### **Compile locally (not for Windows)**
+### **Compile locally (not for Windows)**
 You can compile and run Layotto locally.
 
 > [!TIP|label: Not for Windows users]

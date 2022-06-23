@@ -75,7 +75,7 @@ before starting the demo，you must install some components as follows：
    
 ## 4. Using istio to dynamically change routing policy
 
-#### A. route according to version
+### A. route according to version
 1. Run the following command to create destination rules
    
    ```
@@ -98,7 +98,7 @@ before starting the demo，you must install some components as follows：
    hello, i am layotto v1
    ```
    
-#### B. route according to a specific header
+### B. route according to a specific header
 1. Run the following command to modify the routing rules to access the v1 service when the request header contains `name:layotto`, and other access to the v2 service
    
    ```

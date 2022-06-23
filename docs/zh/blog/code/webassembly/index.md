@@ -454,9 +454,9 @@ func (a *ABIContext) CallWasmFunction(funcName string, args ...interface{}) (int
 ```
 
 3、WASMER 虚拟机经过处理调用 WASM 插件的具体函数，比如例子中的 OnHttpRequestBody 函数
-  // function, _ := instance.Exports.GetFunction("exported_function")
+  // function, _:= instance.Exports.GetFunction("exported_function")
   // nativeFunction = function.Native()
-  //   _ = nativeFunction(1, 2, 3)
+  //_ = nativeFunction(1, 2, 3)
   // Native 会将 Function 转换为可以调用的原生 Go 函数
 
 ```go

@@ -73,7 +73,7 @@ MOSN作为Istio官方认可的数据面实现，这里就对Layotto如何跟Isti
    
 ## 四、使用Istio动态改变路由策略
 
-#### A、按version路由能力
+### A、按version路由能力
 1. 执行如下命令创建destination rules
    
    ```
@@ -96,7 +96,7 @@ MOSN作为Istio官方认可的数据面实现，这里就对Layotto如何跟Isti
    hello, i am layotto v1
    ```
 
-#### B、按header信息进行路由
+### B、按header信息进行路由
 1. 执行如下命令把路由规则修改为请求header中包含`name:layotto`时会访问v1服务，其他则访问v2服务
   
    ```
