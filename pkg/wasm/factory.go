@@ -94,8 +94,8 @@ func (f *FilterConfigFactory) CreateFilterChain(context context.Context, callbac
 }
 
 func (f *FilterConfigFactory) IsRegister(id string) bool {
-	plugin, _ := f.router.GetRandomPluginByID(id)
-	return plugin != nil
+	plugin, err := f.router.GetRandomPluginByID(id)
+	return err == nil && plugin != nil
 }
 
 func (f *FilterConfigFactory) Install(conf map[string]interface{}) error {

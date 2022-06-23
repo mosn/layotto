@@ -25,11 +25,21 @@ import (
 )
 
 func TestGetFactory(t *testing.T) {
-	factory := GetFactory()
-	assert.Equal(t, 0, len(factory.config))
-	assert.Equal(t, int32(1), factory.RootContextID)
-	assert.Equal(t, 0, len(factory.plugins))
-	assert.Equal(t, make(map[string]*Group), factory.router.routes)
+	assert.Equal(t, factory, GetFactory())
+}
+
+func TestFilterConfigFactory_Install(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	engine := mock.NewMockWasmVM(ctrl)
+	wasm.RegisterWasmEngine("wasmer", engine)
+
+	conf := make(map[string]interface{})
+	config := "{\"name\":\"id_1\",\"instance_num\":2,\"vm_config\":{\"engine\":\"wasmer\",\"path\":\"nofile\"}}"
+	err := json.Unmarshal([]byte(config), &conf)
+	assert.NoError(t, err)
+	err = factory.Install(conf)
+	assert.NoError(t, err)
 }
 
 func TestCreateProxyWasmFilterFactory(t *testing.T) {
