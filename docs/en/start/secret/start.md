@@ -18,6 +18,7 @@ cd ${project_path}/cmd/layotto
 ```
 
 build:
+
 ```shell @if.not.exist layotto
 go build -o layotto
 ```

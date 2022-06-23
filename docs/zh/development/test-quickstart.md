@@ -13,17 +13,21 @@ Quickstart 是项目的门面, 如果新用户进入仓库后，发现 Quickstar
 
 ## 原理
 用工具按顺序执行 markdown 文档里的所有 shell 脚本, 即, 所有用
+
 ~~~markdown
 ```shell
 ```
 ~~~
+
 包裹起来的脚本。
 
 注意，不会执行用 
+
 ~~~markdown
 ```bash
 ```
 ~~~
+
 包裹起来的脚本哦。
 
 ## step 1. 安装 `mdx`
@@ -50,6 +54,7 @@ mdx docs/en/start/state/start.md
 这也是"测试驱动开发"的思想，优化文档，让文档具有"可测试性"吧。
 
 比如，我运行 state API 的 Quickstart 文档，发现报错:
+
 ```bash
 SaveState succeeded.key:key1 , value: hello world 
 GetState succeeded.[key:key1 etag:1]: hello world
@@ -104,6 +109,7 @@ docker rm -f redis-test
 所以即使文档里不删除容器，也不影响 github workflow 跑测试。
 #### 不想让某条命令被执行，怎么办?
 `mdx` 默认情况下只会执行 shell 代码块，即这么写的代码块： 
+
 ```shell
 ```shell
 ```
@@ -118,6 +124,7 @@ docker rm -f redis-test
 还是以 docs/en/start/state/start.md 为例。
 
 其中有一段脚本会运行 Layotto, 但是如果运行它就会 hang 住，导致测试工具没法继续运行下一条命令：
+
 ```bash
 ./layotto start -c ../../configs/config_redis.json
 ```
@@ -165,6 +172,7 @@ docker rm -f redis-test
 
 ##### 解决方案1.
 用 `${project_path}` 变量,代表项目根路径，见 https://github.com/seeflood/mdx#cd-project_path
+
 ```shell 
 cd ${project_path}/demo/state/redis/
 ```
@@ -186,16 +194,19 @@ cd ${project_path}/demo/state/redis/
     cd demo/state/redis/
     go run .
     ```
+
 ### 其他 markdown 注解
 mdx 工具提供了很多"markdown 注解"，帮助您编写"可以运行的 markdown 文件"。感兴趣可以查看[mdx文档](https://github.com/seeflood/mdx#usage)
 
 ### 修复报错，看看效果吧!
 经过一顿修复，我再次运行文档:
+
 ```shell
 mdx docs/en/start/state/start.md
 ```
 
 文档不报错了，能正常运行并退出:
+
 ```bash
 admindeMacBook-Pro-2:layotto qunli$ mdx docs/en/start/state/start.md
 latest: Pulling from library/redis
@@ -223,6 +234,7 @@ DeleteState succeeded.key:key1
 DeleteState succeeded.key:key2
 redis-test
 ```
+
 ## step 5. 修改 CI,自动测试新写的 quickstart 文档
 如果您新写了一篇 quickstart 文档, 并且自测能正常运行，下一步可以修改 CI，实现"每次有人提 Pull request 时，工具自动测试这篇 quickstart 文档能跑通"。
 
@@ -239,9 +251,11 @@ redis-test
 3. 完成上述改动后，就可以测试新的 CI 了。 
    
 在项目根目录下运行 
+
 ```shell
 make style.quickstart
 ```
+
 会测试这些文档:
 
 ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*I7LRSryXwWYAAAAAAAAAAAAAARQnAQ)
@@ -256,6 +270,7 @@ make style.quickstart
 ```shell
 make style.quickstart QUICKSTART_VERSION=1.17
 ```
+
 会测试以下文档(这些文档在 golang 1.17 及以上的版本才能运行成功):
 
 ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*X3F9QJSKq3QAAAAAAAAAAAAAARQnAQ)

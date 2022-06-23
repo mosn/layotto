@@ -48,6 +48,7 @@ The client demo calls Layotto to add, delete, modify, and query configuration
 ```shell
  cd ${project_path}/demo/configuration/common
 ```
+
 ```shell @if.not.exist client
  go build -o client
 ```

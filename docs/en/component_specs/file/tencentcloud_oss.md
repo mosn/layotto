@@ -25,7 +25,7 @@ visit https://console.cloud.tencent.com/cos/bucket to create bucket
 
 visit https://console.cloud.tencent.com/cam/capi to create AK and SK
 
-After the above operation steps are completed, configure endpoint, AK and SK to ` configs/config_file_tencentcloud_oss.JSON` file
+After the above operation steps are completed, configure endpoint, AK and SK to `configs/config_file_tencentcloud_oss.JSON` file
 
 ## Run layotto
 

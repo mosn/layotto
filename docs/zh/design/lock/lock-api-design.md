@@ -26,6 +26,7 @@
 最基础的加锁、解锁功能。TryLock非阻塞，如果没有抢到锁直接返回
 
 proto:
+
 ```protobuf
 // Distributed Lock API
 rpc TryLock(TryLockRequest)returns (TryLockResponse) {}
@@ -115,6 +116,7 @@ A: 入参增加feature option，组件也要实现Support()接口
 
 ### 2.1.2. 续租
 #### Solution A: add an API "LockKeepAlive"
+
 ```protobuf
 rpc LockKeepAlive(stream LockKeepAliveRequest) returns (stream LockKeepAliveResponse){}
   
@@ -139,6 +141,7 @@ message LockKeepAliveResponse {
   Status status = 2;
 }
 ```
+
 续租的入参、返回结果都是stream,这里参考etcd的实现，app和sidecar只需要维护一个连接，每次用锁需要续租的时候都复用该连接传递续租请求。
 
 **Q: 为啥不把续租作为一个stream参数塞到tryLock里？**
@@ -178,6 +181,7 @@ try{
 这就要求业务在开发时要往心跳检测里上报一些细粒度的状态。
 
 我们可以定义http callback接口,由actuator轮询检测，约定callback返回的数据结构为：
+
 ```json
 {
   "status": "UP",

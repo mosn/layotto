@@ -3,6 +3,7 @@
 
 Avoid adding empty lines between comments  symbols `//`.If there is a blank line in the comments, the tool(protoc-gen-doc) will generate malformed documents.
 bad case:
+
 ```
 message  BadCase{
   // XXXXXXXX
@@ -13,7 +14,9 @@ message  BadCase{
   field A
 }
 ```
+
 good case:
+
 ```
 message  GoodCase{
   // XXXXXXXX
@@ -22,11 +25,13 @@ message  GoodCase{
   field A
 }
 ```
+
 Or you can use another annotation symbol directly `/*  */`
 
 
 If you want to have some comment in your proto files, but don't want them to be part of the docs, you can simply prefix the comment with `@exclude`.
 Example: include only the comment for the id field
+
 ```
 /**
  * @exclude

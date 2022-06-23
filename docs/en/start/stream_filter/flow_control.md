@@ -24,6 +24,7 @@ There is a config of flow control in [runtime_config.json](https://github.com/mo
     }
 ]
 ```
+
 this can help `/spec.proto.runtime.v1.Runtime/SayHello` method has a flow control feature, which means we can only access this method below 5 times in 1 second.
 
 this code of the client is here [client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go)，the logic is very simple, send 10 times request to the server，and the result is below:

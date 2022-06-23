@@ -75,6 +75,7 @@ The path adopts restful style. After different Endpoints are registered in Actua
 ```
 
 For example: 
+
 ```
 /actuator/health/liveness
 ```
@@ -97,6 +98,7 @@ The paths registered by default are:
 ### 2.2.2. Health Endpoint
 #### /actuator/health/liveness
 GET
+
 ```json
 // http://localhost:8080/actuator/health/liveness
 // HTTP/1.1 200 OK
@@ -113,11 +115,13 @@ GET
   }
 }
 ```
+
 Return field description:
 
 HTTP status code 200 means success, other (status code above 400) means failure.
 
 There are three types of status fields:
+
 ```go
 var (
 	// INIT means it is starting
@@ -131,6 +135,7 @@ var (
 
 #### /actuator/health/readiness
 GET
+
 ```json
 // http://localhost:8080/actuator/health/readiness
 // HTTP/1.1 503 SERVICE UNAVAILABLE
@@ -144,11 +149,13 @@ GET
   }
 }
 ```
+
 ### 2.2.3. Info Endpoint
 
 #### /actuator/info
 
 GET
+
 ```json
 // http://localhost:8080/actuator/health/liveness
 // HTTP/1.1 200 OK
@@ -194,6 +201,7 @@ explanation:
 The request arrives at the mosn, enters Layotto through the stream filter, and calls the Actuator.
 
 The http protocol implementation class (struct) of the stream filter layer is DispatchFilter, which is responsible for dispatching requests and calling Actuator according to the http path:
+
 ```go
 
 type DispatchFilter struct {
@@ -209,6 +217,7 @@ func (dis *DispatchFilter) OnDestroy() {}
 func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
 }
 ```
+
 The protocol layer is decoupled from Actuator. If the API of other protocols is needed in the future, the stream filter of this protocol can be implemented.
 
 ### 2.4.2. Requests will be assigned to Endpoints inside Actuator
@@ -216,6 +225,7 @@ The protocol layer is decoupled from Actuator. If the API of other protocols is 
 Drawing lessons from the design of spring boot: Actuator abstracts the concept of Endpoint, which supports on-demand expansion and injection of Endpoint. 
 
 Built-in Endpoints are health Endpoint and info Endpoint.
+
 ```go
 type Actuator struct {
 	endpointRegistry map[string]Endpoint
@@ -231,6 +241,7 @@ func (act *Actuator) AddEndpoint(name string, ep Endpoint) {
 }
 
 ```
+
 When a new request arrives at Actuator,it will be assigned to the corresponding Endpoint according to the path. 
 
 For example, /actuator/health/readiness will be assigned to health.Endpoint
@@ -238,16 +249,19 @@ For example, /actuator/health/readiness will be assigned to health.Endpoint
 ### 2.4.3. health.Endpoint collect information from all the implementation of health.Indicator
 
 The components that need to report health check information should implement the Indicator interface and inject it into health.Endpoint:
+
 ```go
 type Indicator interface {
 	Report() Health
 }
 ```
+
 When a new request arrives,health.Endpoint will collect information from all the implementation of health.Indicator
 
 ### 2.4.4. info.Endpoint collect information from all the implementation of info.Contributor
 
 Components that need to report runtime information should implement the Contributor interface and inject it into info.Endpoint:
+
 ```go
 type Contributor interface {
 	GetInfo() (info interface{}, err error)

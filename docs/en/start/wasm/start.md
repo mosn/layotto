@@ -26,6 +26,7 @@ The example only needs a Redis server that can be used normally. As for where it
 Here, we run redis with docker:
 
 Run redis container:
+
 ```shell
 docker run -d --name redis-test -p 6379:6379 redis
 ```
@@ -64,6 +65,7 @@ go build -tags wasmer -o ./layotto_wasmer ./cmd/layotto/main.go
 ```
 
 Run it:
+
 ```shell @background
 ./layotto_wasmer start -c ./demo/faas/config.json
 ```
@@ -71,6 +73,7 @@ Run it:
 **Note: You need to modify the redis address as needed, the default address is: localhost:6379**
 
 #### step 3. send request
+
 ```shell
 curl -H 'id:id_1' 'localhost:2045?name=book1'
 ```
