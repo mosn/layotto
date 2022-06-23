@@ -39,7 +39,7 @@ func initMap() map[string]string {
 }
 
 func TestPostgresqlSequencer_Init(t *testing.T) {
-	db, mock, err := sqlmock.New()
+	db, _, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
@@ -53,8 +53,11 @@ func TestPostgresqlSequencer_Init(t *testing.T) {
 		BiggerThan: make(map[string]int64),
 	}
 
-	rows := sqlmock.NewRows([]string{"exist"}).AddRow(0)
-	mock.ExpectQuery("select exists").WillReturnRows(rows)
+	//rows := sqlmock.NewRows([]string{"count"}).AddRow(0)
+	//selectTableExist := fmt.Sprintf("select count(*) from information_schema.tables \nwhere table_schema='public' and table_type='BASE TABLE' \nand table_name='tablename';")
+	//mock.ExpectQuery(selectTableExist).WillReturnRows(rows)
+	//
+	//mock.ExpectExec("create").WillReturnResult(sqlmock.NewResult(1, 1))
 
 	err = p.Init(cfg)
 	if err != nil {

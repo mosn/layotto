@@ -104,5 +104,19 @@ func NewPostgresqlCli(meta PostgresqlMetaData) *sql.DB {
 		return nil
 	}
 	log.DefaultLogger.Infof("success connected")
+	var ID int
+	selectTableExist := fmt.Sprintf("select count(*) from information_schema.tables \nwhere table_schema='public' and table_type='BASE TABLE' \nand table_name='tablename';")
+	err = postDB.QueryRow(selectTableExist).Scan(&ID)
+	if err != nil {
+		log.DefaultLogger.Errorf(" Failed to query whether the table exist error, err: %v", err)
+	}
+	if ID == 0 {
+		createSql := fmt.Sprintf("CREATE TABLE IF NOT EXISTS public.%s\n(\n    id bigint NOT NULL,\n    value_id bigint NOT NULL,\n    biz_tag character(255) COLLATE pg_catalog.\"default\" NOT NULL,\n    create_time bigint,\n    update_time bigint,\n    CONSTRAINT layotto_incr_pkey PRIMARY KEY (id)\n)\nWITH (\n    OIDS = FALSE\n)\nTABLESPACE pg_default;", meta.TableName)
+		_, err = postDB.Exec(createSql)
+		if err != nil {
+			log.DefaultLogger.Errorf("create table failed， err: %v", err)
+			return nil
+		}
+	}
 	return postDB
 }
