@@ -33,14 +33,17 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 > brew install redis
 > redis-server /usr/local/etc/redis.conf
 ```
-注：如果redis安装在本机器，Virtualbox内的虚拟机是无法访问到redis的, 需要把 redis.conf 中的 protected-mode 修改为 no.同时增加 bind * -::*， 让其监听所有接口。
+
+注：如果redis安装在本机器，Virtualbox内的虚拟机是无法访问到redis的, 需要把 redis.conf 中的 protected-mode 修改为 no.同时增加 `bind * -::*`， 让其监听所有接口。
 
 #### B、以 virtualbox + containerd 模式启动 minikube
+
 ```
 > minikube start --driver=virtualbox --container-runtime=containerd
 ```
 
 #### C、安装 Layotto
+
 ```
 > git clone https://github.com/mosn/layotto.git
 > cd layotto
@@ -51,6 +54,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 > sudo chmod +x layotto
 > sudo mv layotto /usr/bin/
 ```
+
 **注1：需要把`./demo/faas/config.json`中的 redis 地址修改为实际地址（安装redis的宿主机ip），默认地址为：localhost:6379。**
 
 **注2：需要把`./demo/faas/config.json`中的 wasm 文件的路径修改为`/home/docker/function_1.wasm`跟`/home/docker/function_2.wasm`， 两个wasm文件在后面会被自动注入。**
@@ -70,13 +74,16 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 #### E、修改&重启 containerd
 
 增加 laytto 运行时的配置。
+
 ```
 > minikube ssh
 > sudo vi /etc/containerd/config.toml
 [plugins.cri.containerd.runtimes.layotto]
   runtime_type = "io.containerd.layotto.v2"
 ```
+
 重启 containerd 让最新配置生效
+
 ```
 sudo systemctl restart containerd
 ```
@@ -92,12 +99,14 @@ sudo systemctl restart containerd
 ### 四、快速开始
 
 #### A、启动 Layotto
+
 ```
 > minikube ssh 
 > layotto start -c /home/docker/config.json
 ```
 
 #### B、创建 Layotto 运行时
+
 ```
 > kubectl apply -f ./demo/faas/layotto-runtimeclass.yaml
 runtimeclass.node.k8s.io/layotto created
@@ -105,6 +114,7 @@ runtimeclass.node.k8s.io/layotto created
 
 #### C、创建 Function
 该操作会将function_1.wasm和function_2.wasm自动注入到Virtualbox虚拟机中。
+
 ```
 > kubectl apply -f ./demo/faas/function-1.yaml
 pod/function-1 created
@@ -114,6 +124,7 @@ pod/function-2 created
 ```
 
 #### D、写入库存数据到 Redis
+
 ```
 > redis-cli
 127.0.0.1:6379> set book1 100
@@ -121,6 +132,7 @@ OK
 ```
 
 #### E、发送请求
+
 ```
 > minikube ip
 192.168.99.117

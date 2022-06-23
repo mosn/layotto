@@ -6,6 +6,7 @@
 ![jsonrpc.jpg](../../../img/rpc/jsonrpc.jpg)
 
 ### step 2. 编译运行layotto
+
 ```shell @if.not.exist layotto
 go build -o layotto cmd/layotto/main.go
 ```
@@ -18,11 +19,13 @@ go build -o layotto cmd/layotto/main.go
 
 这里使用了`dubbo-go-samples`提供的示例服务。
 下载示例：
+
 ```shell @catch
 git clone https://github.com/apache/dubbo-go-samples.git
 ```
 
 启动 zookeeper:
+
 ```shell
 cd dubbo-go-samples
 git reset --hard f0d1e1076397a4736de080ffb16cd0963c8c2f9d
@@ -37,6 +40,7 @@ export DUBBO_GO_CONFIG_PATH="../conf/dubbogo.yml"
 ```
 
 构建 dubbo server:
+
 ```shell @if.not.exist server
 go build -o server .
 ```
@@ -48,6 +52,7 @@ go build -o server .
 ```
 
 ### step 4. 通过GPRC接口发起调用
+
 ```shell @cd ${project_path}
 go run demo/rpc/dubbo_json_rpc/dubbo_json_client/client.go -d '{"jsonrpc":"2.0","method":"GetUser","params":["A003"],"id":9527}'
 ```

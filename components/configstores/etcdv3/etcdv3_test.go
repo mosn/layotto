@@ -191,12 +191,13 @@ func (suite *ClientTestSuite) Subscribe() {
 		if i == 0 {
 			assert.Equal(suite.T(), event.Items[0].Key, "sofa")
 			assert.Equal(suite.T(), event.Items[0].Content, "v1")
+			assert.Equal(suite.T(), event.StoreName, "etcd")
 			i++
 			continue
 		}
 		assert.Equal(suite.T(), event.Items[0].Key, "sofa")
 		assert.Equal(suite.T(), event.Items[0].Content, "")
-
+		assert.Equal(suite.T(), event.StoreName, "etcd")
 	}
 	wg.Done()
 }

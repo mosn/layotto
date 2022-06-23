@@ -64,10 +64,8 @@
     "enable": true,
     "driver": "jaeger",
     "config": {
-      "config": {
-        "service_name": "layotto",
-        "strategy": "collector"
-      }
+      "service_name": "layotto",
+      "strategy": "collector"
     }
   },
   "metrics": {

@@ -22,9 +22,11 @@ Q: 什么场景需要趋势递增？
 1. 对b+树类的db(例如MYSQL)来说,趋势递增的主键能更好的利用缓存（cache friendly）。
 
 2. 拿来排序查最新数据。比如需求是查最新的100条消息，开发者不想新增个时间戳字段、建索引，如果id本身是递增的，那么查最新的100条消息时直接按id排序即可：
+
 ```
 select * from message order by message-id limit 100
 ```
+
 这在使用nosql的时候很常见，因为nosql在时间戳字段上加索引很难
 
 - 全局单调递增
@@ -39,6 +41,7 @@ Layotto client sdk封装了grpc调用的逻辑，使用sdk调用Sequencer API的
 使用前需要先对组件进行配置，详细的配置说明见[Sequencer组件文档](zh/component_specs/sequencer/common.md)
 
 ### Get next unique id
+
 ```protobuf
 // Sequencer API
 // Get next unique id with some auto-increment guarantee
@@ -75,4 +78,5 @@ message GetNextIdResponse{
   int64 next_id = 1;
 }
 ```
+
 为避免文档和代码不一致，详细入参和返回值请参考[proto文件](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto)

@@ -6,6 +6,7 @@ require (
 	github.com/alicebob/miniredis/v2 v2.16.0
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.0+incompatible
 	github.com/apache/dubbo-go-hessian2 v1.7.0
+	github.com/apolloconfig/agollo/v4 v4.2.0
 	github.com/aws/aws-sdk-go-v2 v1.16.4
 	github.com/aws/aws-sdk-go-v2/config v1.15.9
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.4
@@ -17,6 +18,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/consul/api v1.3.0
+	github.com/jarcoal/httpmock v1.2.0
 	github.com/jinzhu/copier v0.3.6-0.20220506024824-3e39b055319a
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/minio/minio-go/v7 v7.0.15
@@ -27,7 +29,6 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.33
 	github.com/valyala/fasthttp v1.26.0
-	github.com/zouyx/agollo/v4 v4.0.7
 	go.beyondstorage.io/services/hdfs v0.3.0
 	go.beyondstorage.io/v5 v5.0.0
 	go.etcd.io/etcd/api/v3 v3.5.0
