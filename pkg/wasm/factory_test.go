@@ -24,6 +24,14 @@ import (
 	"mosn.io/mosn/pkg/wasm"
 )
 
+func TestGetFactory(t *testing.T) {
+	factory := GetFactory()
+	assert.Equal(t, 0, len(factory.config))
+	assert.Equal(t, int32(1), factory.RootContextID)
+	assert.Equal(t, 0, len(factory.plugins))
+	assert.Equal(t, make(map[string]*Group), factory.router.routes)
+}
+
 func TestCreateProxyWasmFilterFactory(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
