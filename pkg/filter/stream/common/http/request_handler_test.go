@@ -41,7 +41,7 @@ func Test_GetRequestData_isOk(t *testing.T) {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, ContextKeyRequestData{}, expectedByte)
 	expected := make(map[string]interface{})
-	err := json.Unmarshal(expectedByte, &expected)
+	_ = json.Unmarshal(expectedByte, &expected)
 	data, err := GetRequestData(ctx)
 	assert.Nil(t, err)
 	assert.Equal(t, expected, data)
