@@ -14,6 +14,7 @@ For another example, on the Dashboard for SRE, by calling Actuator API, you can 
 Used to check the health status of Layotto and app. The health status can be used to determine "whether restarting is needed".
 
 GET,no parameters.
+
 ```json
 // http://localhost:8080/actuator/health/liveness
 // HTTP/1.1 200 OK
@@ -30,11 +31,13 @@ GET,no parameters.
   }
 }
 ```
+
 Return field description:
 
 HTTP status code 200 means success, other (status code above 400) means failure.
 
 There are three types of status fields:
+
 ```go
 var (
 	// INIT means it is starting
@@ -57,6 +60,7 @@ A: The liveness check is used to check some unrecoverable faults, "Do we need to
 Readiness is used to check some temporary and recoverable states. For example, the application is warming up the cache. It needs to tell the infrastructure "Don't lead traffic to me now". After it finishes warming up, the infrastructure will reinvoke the API and get the result "I am ready to serve customers"
 
 GET,no parameters.
+
 ```json
 // http://localhost:8080/actuator/health/readiness
 // HTTP/1.1 503 SERVICE UNAVAILABLE
@@ -79,6 +83,7 @@ Note: By default, the API will only return the health status of Layotto. If you 
 Used to view the runtime metadata of Layotto and app. 
 
 GET,no parameters.
+
 ```json
 // http://localhost:8080/actuator/health/liveness
 // HTTP/1.1 200 OK
@@ -113,6 +118,7 @@ Actuator API path adopts restful style. After different Endpoints are registered
 ```
 
 For example:
+
 ```
 /actuator/health/liveness
 ```

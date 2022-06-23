@@ -4,9 +4,9 @@
 本示例架构如下图，启动的进程有：客户端程程序、Layotto、etcd 。
 
 ![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*dzGaSb78UCoAAAAAAAAAAAAAARQnAQ)
-### step 1. 启动 etcd 和 Layotto
+## step 1. 启动 etcd 和 Layotto
 <!-- tabs:start -->
-#### **使用 Docker Compose**
+### **使用 Docker Compose**
 您可以使用 docker-compose 启动 etcd 和 Layotto
 
 ```bash
@@ -15,12 +15,12 @@ cd docker/layotto-etcd
 docker-compose up -d
 ```
 
-#### **本地编译（不适合 Windows)**
+### **本地编译（不适合 Windows)**
 您可以使用 Docker 运行 etcd，然后本地编译、运行 Layotto。
 
 > [!TIP|label: 不适合 Windows 用户]
 > Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker-compose 部署
-#### step 1.1 启动 etcd
+### step 1.1 启动 etcd
 
 etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/quickstart/)
 
@@ -40,7 +40,7 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 
 默认监听地址为 `localhost:2379`
 
-#### step 1.2 启动 layotto
+### step 1.2 启动 layotto
 
 ```shell
 cd ${project_path}/cmd/layotto
@@ -53,6 +53,7 @@ go build -o layotto
 ```
 
 编译成功后执行:
+
 ```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
@@ -60,7 +61,7 @@ go build -o layotto
 > 解释：[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 是 Layotto 的配置文件，它在 `config_store` 中声明了使用 etcd 作为配置中心。用户可以更改配置文件，改成使用自己想要用的其他配置中心（目前支持 etcd 和 apollo）。
 <!-- tabs:end -->
 
-### step 2. 启动测试demo
+## step 2. 启动测试demo
 
 ```shell
  cd ${project_path}/demo/configuration/common
@@ -84,16 +85,18 @@ delete keys success
 write start
 receive subscribe resp store_name:"config_demo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
 ```
-### step 3.销毁容器,释放资源
+
+## step 3.销毁容器,释放资源
 <!-- tabs:start -->
-#### **关闭 Docker Compose**
+### **关闭 Docker Compose**
 如果您是用 docker-compose 启动的 etcd 和 Layotto，可以按以下方式关闭：
 
 ```bash
 cd ${project_path}/docker/layotto-etcd
 docker-compose stop
 ```
-#### **销毁 etcd Docker 容器**
+
+### **销毁 etcd Docker 容器**
 如果您是用 Docker 启动的 etcd，可以按以下方式销毁 etcd 容器：
 
 ```shell

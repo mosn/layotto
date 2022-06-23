@@ -15,6 +15,7 @@ Layotto Pub/Sub API的设计目标是定义一套统一的消息发布/订阅API
 ![img_1.png](../../../img/mq/start/img_1.png)
 
 ### step 1. 启动 Subscriber 程序,订阅事件
+
 ```shell
  cd ${project_path}/demo/pubsub/server/
  go build -o subscriber
@@ -23,6 +24,7 @@ Layotto Pub/Sub API的设计目标是定义一套统一的消息发布/订阅API
 ```shell @background
  ./subscriber -s pub_subs_demo
 ```
+
 打印出如下信息则代表启动成功：
 
 ```bash
@@ -72,6 +74,7 @@ docker pull redis:latest
 ```shell
 docker images
 ```
+
 ![img.png](../../../img/mq/start/img.png)
 
 3. 运行容器
@@ -105,6 +108,7 @@ go build -o layotto
 ```shell @background
 ./layotto start -c ../../configs/config_redis.json
 ```
+
 <!-- tabs:end -->
 
 ### step 3. 运行Publisher程序，调用Layotto发布事件
@@ -139,12 +143,14 @@ Received a new event.Topic: topic1 , Data:value1
 cd ${project_path}/docker/layotto-redis
 docker-compose stop
 ```
+
 #### **销毁 Redis Docker 容器**
 如果您是用 Docker 启动的 Redis，可以按以下方式销毁 Redis 容器：
 
 ```shell
 docker rm -f redis-test
 ```
+
 <!-- tabs:end -->
 
 

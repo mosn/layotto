@@ -21,6 +21,7 @@ cd docker/layotto-etcd
 # Start etcd and layotto with docker-compose
 docker-compose up -d
 ```
+
 #### **Compile locally (not for Windows)**
 You can run etcd with Docker, then compile and run Layotto locally.
 
@@ -84,6 +85,7 @@ Next id:next_id:9
 Next id:next_id:10  
 Demo success!
 ```
+
 ### step 3. Stop containers and release resources
 <!-- tabs:start -->
 #### **Docker Compose**
@@ -96,9 +98,11 @@ docker-compose stop
 
 #### **Destroy the etcd container**
 If you started etcd with Docker, you can destroy the etcd container as follows:
+
 ```shell
 docker rm -f etcd
 ```
+
 <!-- tabs:end -->
 
 ### Next step

@@ -31,6 +31,7 @@ Used to publish events to the specified topic
 // Publishes events to the specific topic.
 rpc PublishEvent(PublishEventRequest) returns (google.protobuf.Empty) {}
 ```
+
 To avoid inconsistencies between the documentation and the code, please refer to [runtime.proto](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values
 
 ### Subscribe to events

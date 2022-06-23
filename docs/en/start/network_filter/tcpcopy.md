@@ -3,6 +3,7 @@
 ## Introduction
 
 When you run the demo according to the quick-start document [Configuration demo with apollo](en/start/configuration/start-apollo.md), you may notice that there is such a configuration in the configuration file config_apollo.json:
+
 ```json
                 {
                   "type": "tcpcopy",
@@ -16,6 +17,7 @@ When you run the demo according to the quick-start document [Configuration demo 
                     }
                   }
 ```
+
 The meaning of this configuration is to load the tcpcopy plug-in at startup to dump the tcp traffic.
 
 After enabling this configuration, when Layotto receives a request and the conditions for traffic dump are met, it will write the binary request data to the local file system.

@@ -20,9 +20,11 @@ Q: 什么场景需要趋势递增？
 1. 对b+树类的db(例如MYSQL)来说,趋势递增的主键能更好的利用缓存（cache friendly）。
 
 2. 拿来排序查最新数据。比如需求是查最新的100条消息，开发者不想新增个时间戳字段、建索引，如果id本身是递增的，那么查最新的100条消息时直接按id排序即可：
+
 ```
 select * from message order by message-id limit 100
 ```
+
 这在使用nosql的时候很常见，因为nosql在时间戳字段上加索引很难
 
 - sharding内单调递增。比如[Tidb的自增id](https://docs.pingcap.com/zh/tidb/stable/auto-increment) 能保证单台服务器上生成的id递增，没法保证全局（在多台服务器上）单调递增
@@ -57,6 +59,7 @@ select * from message order by message-id limit 100
 
 ## 3. grpc API设计
 ### 3.1. proto定义
+
 ```protobuf
 // Sequencer API
 rpc GetNextId(GetNextIdRequest )returns (GetNextIdResponse) {}
@@ -136,6 +139,7 @@ API中原先定义了用户传参SequencerOptions.Uniqueness枚举值 ,其中WEA
 存在争议，本期先不添加该枚举值。默认返回的结果一定能保证全局唯一(STRONG)。
 
 ## 4. 组件API
+
 ```go
 package sequencer
 
@@ -216,6 +220,7 @@ type Configuration struct {
 **Q: 要不要在runtime层实现缓存?**
 
 如果runtime做缓存，需要组件实现方法：
+
 ```go
 GetSegment(*GetSegmentRequest) (support bool, result *GetSegmentResponse, err error)
 ```

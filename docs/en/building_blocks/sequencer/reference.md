@@ -24,9 +24,11 @@ Q: What scenarios will I need an increasing trend?
 1. For b+ tree type db (such as MYSQL), the primary key with increasing trend can make better use of cache (cache friendly).
 
 2. When you want to use the id to sort and query the latest data. For example, the requirement is to check the latest 100 messages, and the developer does not want to add a timestamp field and build an index on it. If the id itself is incremented, then the latest 100 messages can be sorted by id directly:
+
 ```
 select * from message order by message-id limit 100
 ```
+
 This is very common when using nosql, because it is difficult for nosql to index on another timestamp field
 
 - Global monotonically increasing
@@ -40,6 +42,7 @@ Layotto client sdk encapsulates the logic of grpc calling. For an example of usi
 
 The components need to be configured before use. For detailed configuration options, see [Sequencer component document](en/component_specs/sequencer/common.md)
 ### Get next unique id
+
 ```protobuf
 // Sequencer API
 // Get next unique id with some auto-increment guarantee
@@ -76,4 +79,5 @@ message GetNextIdResponse{
   int64 next_id = 1;
 }
 ```
+
 To avoid inconsistencies between the documentation and the code, please refer to [proto file](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) for detailed input parameters and return values
