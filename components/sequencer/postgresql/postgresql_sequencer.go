@@ -19,6 +19,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"sync"
 	"time"
 
 	"mosn.io/pkg/log"
@@ -49,6 +50,10 @@ type PostgresqlSequencer struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 }
+
+var (
+	lock sync.Mutex
+)
 
 func NewPostgresqlSequencer(logger log.ErrorLogger) *PostgresqlSequencer {
 	p := &PostgresqlSequencer{
@@ -103,7 +108,8 @@ func (p *PostgresqlSequencer) Init(config sequencer.Configuration) error {
 }
 
 func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.GetNextIdResponse, error) {
-
+	lock.Lock()
+	defer lock.Unlock()
 	var model PostgresqlModel
 	queryParams := fmt.Sprintf(`select id, value_id, biz_tag, create_time, update_time from %s where biz_tag = $1`, p.metadata.TableName)
 	err := p.db.QueryRow(queryParams, req.Key).Scan(&model.ID, &model.ValueId, &model.BizTag, &model.CreateTime, &model.UpdateTime)
@@ -136,6 +142,8 @@ func (p *PostgresqlSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*seque
 }
 
 func (p *PostgresqlSequencer) GetSegment(req *sequencer.GetSegmentRequest) (bool, *sequencer.GetSegmentResponse, error) {
+	lock.Lock()
+	defer lock.Unlock()
 	if req.Size == 0 {
 		return false, nil, nil
 	}

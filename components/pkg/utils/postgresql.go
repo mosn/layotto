@@ -18,7 +18,7 @@ import (
 	"errors"
 	"fmt"
 
-	// I have to blank-import this package
+	// Package pq is a pure Go Postgres driver for the database/sql package
 	_ "github.com/lib/pq"
 	"mosn.io/pkg/log"
 )
