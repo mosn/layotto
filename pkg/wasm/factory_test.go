@@ -28,6 +28,10 @@ func TestGetFactory(t *testing.T) {
 	assert.Equal(t, factory, GetFactory())
 }
 
+func TestFilterConfigFactory_IsRegister(t *testing.T) {
+	assert.False(t, factory.IsRegister("id_1"))
+}
+
 func TestFilterConfigFactory_Install(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -40,6 +44,20 @@ func TestFilterConfigFactory_Install(t *testing.T) {
 	assert.NoError(t, err)
 	err = factory.Install(conf)
 	assert.NoError(t, err)
+}
+
+func TestFilterConfigFactory_Install_WithErrorConfig(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	engine := mock.NewMockWasmVM(ctrl)
+	wasm.RegisterWasmEngine("wasmer", engine)
+
+	conf := make(map[string]interface{})
+	config := "{\"name\":\"id_1\"}"
+	err := json.Unmarshal([]byte(config), &conf)
+	assert.NoError(t, err)
+	err = factory.Install(conf)
+	assert.Equal(t, "nil vm config", err.Error())
 }
 
 func TestCreateProxyWasmFilterFactory(t *testing.T) {
