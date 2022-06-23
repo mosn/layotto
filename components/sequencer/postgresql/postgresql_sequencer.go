@@ -23,7 +23,7 @@ import (
 
 	"mosn.io/pkg/log"
 
-	// I have to blank-import this package
+	// Package pq is a pure Go Postgres driver for the database/sql package
 	_ "github.com/lib/pq"
 
 	"mosn.io/layotto/components/pkg/utils"
@@ -68,6 +68,21 @@ func (p *PostgresqlSequencer) Init(config sequencer.Configuration) error {
 	p.biggerThan = config.BiggerThan
 
 	p.ctx, p.cancel = context.WithCancel(context.Background())
+
+	var ID int
+	selectTableExist := fmt.Sprintf("select count(*) from information_schema.tables \nwhere table_schema='public' and table_type='BASE TABLE' \nand table_name='tablename';")
+	err = p.db.QueryRow(selectTableExist).Scan(&ID)
+	if err != nil {
+		p.logger.Errorf(" Failed to query whether the table exist error, err: %v", err)
+	}
+	if ID == 0 {
+		createSql := fmt.Sprintf("CREATE TABLE IF NOT EXISTS public.%s\n(\n    id bigint NOT NULL,\n    value_id bigint NOT NULL,\n    biz_tag character(255) COLLATE pg_catalog.\"default\" NOT NULL,\n    create_time bigint,\n    update_time bigint,\n    CONSTRAINT layotto_incr_pkey PRIMARY KEY (id)\n)\nWITH (\n    OIDS = FALSE\n)\nTABLESPACE pg_default;", p.metadata.TableName)
+		_, err = p.db.Exec(createSql)
+		if err != nil {
+			p.logger.Errorf("create table failed， err: %v", err)
+			return err
+		}
+	}
 
 	for key, value := range p.biggerThan {
 		if value <= 0 {
