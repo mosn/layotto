@@ -44,7 +44,6 @@ func (wasm *Wasm) AddEndpoint(name string, ep http.Endpoint) {
 	_, ok := wasm.endpointRegistry[name]
 	if ok {
 		log.DefaultLogger.Warnf("Duplicate Endpoint name:  %v !", name)
-		return
 	}
 	wasm.endpointRegistry[name] = ep
 }

@@ -44,7 +44,6 @@ func (act *Actuator) AddEndpoint(name string, ep http.Endpoint) {
 	_, ok := act.endpointRegistry[name]
 	if ok {
 		log.DefaultLogger.Warnf("Duplicate Endpoint name:  %v !", name)
-		return
 	}
 	act.endpointRegistry[name] = ep
 }
