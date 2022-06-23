@@ -34,7 +34,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 > redis-server /usr/local/etc/redis.conf
 ```
 
-注：如果redis安装在本机器，Virtualbox内的虚拟机是无法访问到redis的, 需要把 redis.conf 中的 protected-mode 修改为 no.同时增加 bind *-::*， 让其监听所有接口。
+注：如果redis安装在本机器，Virtualbox内的虚拟机是无法访问到redis的, 需要把 redis.conf 中的 protected-mode 修改为 no.同时增加 `bind * -::*`， 让其监听所有接口。
 
 #### B、以 virtualbox + containerd 模式启动 minikube
 
