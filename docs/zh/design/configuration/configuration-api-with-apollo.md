@@ -26,7 +26,7 @@ Tags将以key=`group@$key@$label` and value=
 }
 ```
 
-的格式存储在`sidecar_config_tags`中特定的namespace
+的格式存储在特定的namespace `sidecar_config_tags`中
 
 **Q: 为什么不用一个item存储value和tags以减小查询的次数，例如:**
 
