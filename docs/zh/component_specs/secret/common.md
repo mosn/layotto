@@ -31,7 +31,7 @@ json配置文件有如下结构：
                         "secret_demo": {
                           "type": "local.file",
                           "metadata": {
-                            "secretsFile": "../../configs/config_secret_local_file.json"
+                            "secretsFile": "config_secret_local_file.json"
                           }
                         },
                         "secret_demo1": {
