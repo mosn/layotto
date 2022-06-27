@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/alicebob/miniredis/v2 v2.16.0
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.0+incompatible
-	github.com/apache/dubbo-go-hessian2 v1.7.0
+	github.com/apache/dubbo-go-hessian2 v1.10.2
 	github.com/apolloconfig/agollo/v4 v4.2.0
 	github.com/aws/aws-sdk-go-v2 v1.16.4
 	github.com/aws/aws-sdk-go-v2/config v1.15.9
@@ -39,9 +39,9 @@ require (
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
 	google.golang.org/grpc v1.38.0
-	mosn.io/api v0.0.0-20211217011300-b851d129be01
-	mosn.io/mosn v0.25.1-0.20211217125944-69b50c40af81
-	mosn.io/pkg v0.0.0-20211217101631-d914102d1baf
+	mosn.io/api v1.0.0
+	mosn.io/mosn v1.0.2-0.20220624093205-6d37b64a8f06
+	mosn.io/pkg v1.0.0
 )
 
 replace github.com/klauspost/compress => github.com/klauspost/compress v1.13.1
