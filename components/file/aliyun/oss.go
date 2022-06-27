@@ -19,7 +19,6 @@ package aliyun
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"net/http"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
@@ -43,7 +42,7 @@ func init() {
 }
 
 func AliyunDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (map[string]interface{}, error) {
-	m := make([]*OssMetadata, 0)
+	m := make([]*file.OssMetadata, 0)
 	clients := make(map[string]interface{})
 	err := json.Unmarshal(staticConf, &m)
 	if err != nil {
@@ -57,8 +56,9 @@ func AliyunDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string
 		clients[v.Uid] = client
 		for _, bucketName := range v.Buckets {
 			if _, ok := clients[bucketName]; ok {
-				return nil, errors.New("incorrect configuration, bucketName must be unique")
+				continue
 			}
+			clients[bucketName] = client
 		}
 	}
 	return clients, nil

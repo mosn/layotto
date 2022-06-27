@@ -19,9 +19,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	aws_config "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
@@ -43,7 +46,7 @@ func init() {
 }
 
 func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (map[string]interface{}, error) {
-	m := make([]*AwsOssMetaData, 0)
+	m := make([]*file.OssMetadata, 0)
 	err := json.Unmarshal(staticConf, &m)
 	clients := make(map[string]interface{})
 	if err != nil {
@@ -64,7 +67,14 @@ func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (
 		if err != nil {
 			return nil, err
 		}
-		clients[data.EndPoint] = s3.NewFromConfig(cfg)
+		client := s3.NewFromConfig(cfg)
+		clients[data.Uid] = client
+		for _, bucketName := range data.Buckets {
+			if _, ok := clients[bucketName]; ok {
+				continue
+			}
+
+		}
 	}
 	return clients, nil
 }
@@ -72,7 +82,7 @@ func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (
 func NewAwsOss() file.Oss {
 	return &AwsOss{
 		client: make(map[string]*s3.Client),
-		meta:   make(map[string]*AwsOssMetaData),
+		meta:   make(map[string]*file.OssMetadata),
 	}
 }
 
@@ -99,7 +109,7 @@ func (a *AwsOss) InitClient(ctx context.Context, req *file.InitRequest) error {
 
 func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (*file.GetObjectOutput, error) {
 	input := &s3.GetObjectInput{}
-	client, err := a.selectClient(map[string]string{}, "")
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -121,12 +131,16 @@ func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (*file
 }
 
 func (a *AwsOss) PutObject(ctx context.Context, req *file.PutObjectInput) (*file.PutObjectOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
 	input := &s3.PutObjectInput{}
 	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	if err != nil {
+		return nil, err
+	}
+	input.Body = req.DataStream
 	uploader := manager.NewUploader(client)
 	resp, err := uploader.Upload(context.TODO(), input)
 	if err != nil {
@@ -145,7 +159,7 @@ func (a *AwsOss) DeleteObject(ctx context.Context, req *file.DeleteObjectInput) 
 		Bucket: &req.Bucket,
 		Key:    &req.Key,
 	}
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -157,17 +171,15 @@ func (a *AwsOss) DeleteObject(ctx context.Context, req *file.DeleteObjectInput) 
 }
 
 func (a *AwsOss) PutObjectTagging(ctx context.Context, req *file.PutObjectTaggingInput) (*file.PutObjectTaggingOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
-	input := &s3.PutObjectTaggingInput{
-		Bucket:    &req.Bucket,
-		Key:       &req.Key,
-		Tagging:   &types.Tagging{},
-		VersionId: &req.VersionId,
+	input := &s3.PutObjectTaggingInput{Tagging: &types.Tagging{}}
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	if err != nil {
+		return nil, err
 	}
-
 	for k, v := range req.Tags {
 		k, v := k, v
 		input.Tagging.TagSet = append(input.Tagging.TagSet, types.Tag{Key: &k, Value: &v})
@@ -176,13 +188,14 @@ func (a *AwsOss) PutObjectTagging(ctx context.Context, req *file.PutObjectTaggin
 	return &file.PutObjectTaggingOutput{}, err
 }
 func (a *AwsOss) DeleteObjectTagging(ctx context.Context, req *file.DeleteObjectTaggingInput) (*file.DeleteObjectTaggingOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
-	input := &s3.DeleteObjectTaggingInput{
-		Bucket: &req.Bucket,
-		Key:    &req.Key,
+	input := &s3.DeleteObjectTaggingInput{}
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	if err != nil {
+		return nil, err
 	}
 	resp, err := client.DeleteObjectTagging(ctx, input)
 	if err != nil {
@@ -192,13 +205,14 @@ func (a *AwsOss) DeleteObjectTagging(ctx context.Context, req *file.DeleteObject
 }
 
 func (a *AwsOss) GetObjectTagging(ctx context.Context, req *file.GetObjectTaggingInput) (*file.GetObjectTaggingOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
-	input := &s3.GetObjectTaggingInput{
-		Bucket: &req.Bucket,
-		Key:    &req.Key,
+	input := &s3.GetObjectTaggingInput{}
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	if err != nil {
+		return nil, err
 	}
 	resp, err := client.GetObjectTagging(ctx, input)
 	if err != nil {
@@ -213,27 +227,29 @@ func (a *AwsOss) GetObjectTagging(ctx context.Context, req *file.GetObjectTaggin
 }
 
 func (a *AwsOss) CopyObject(ctx context.Context, req *file.CopyObjectInput) (*file.CopyObjectOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
 
 	//TODO: should support objects accessed through access points
-	copySource := req.CopySource.CopySourceBucket + "/" + req.CopySource.CopySourceKey + "?versionId=" + req.CopySource.CopySourceVersionId
+	copySource := req.CopySource.CopySourceBucket + "/" + req.CopySource.CopySourceKey
+	if req.CopySource.CopySourceVersionId != "" {
+		copySource += "?versionId=" + req.CopySource.CopySourceVersionId
+	}
 	input := &s3.CopyObjectInput{
 		Bucket:     &req.Bucket,
 		Key:        &req.Key,
 		CopySource: &copySource,
 	}
-	_, err = client.CopyObject(ctx, input)
+	resp, err := client.CopyObject(ctx, input)
 	if err != nil {
 		return nil, err
 	}
-
-	return &file.CopyObjectOutput{}, err
+	return &file.CopyObjectOutput{CopyObjectResult: &file.CopyObjectResult{ETag: *resp.CopyObjectResult.ETag, LastModified: resp.CopyObjectResult.LastModified.Unix()}}, err
 }
 func (a *AwsOss) DeleteObjects(ctx context.Context, req *file.DeleteObjectsInput) (*file.DeleteObjectsOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -242,52 +258,45 @@ func (a *AwsOss) DeleteObjects(ctx context.Context, req *file.DeleteObjectsInput
 		Delete: &types.Delete{},
 	}
 	for _, v := range req.Delete.Objects {
-		object := types.ObjectIdentifier{Key: &v.Key, VersionId: &v.VersionId}
-		input.Delete.Objects = append(input.Delete.Objects, object)
+		object := &types.ObjectIdentifier{}
+		err = copier.CopyWithOption(object, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+		if err != nil {
+			return nil, err
+		}
+		input.Delete.Objects = append(input.Delete.Objects, *object)
 	}
-	_, err = client.DeleteObjects(ctx, input)
+	resp, err := client.DeleteObjects(ctx, input)
 	if err != nil {
 		return nil, err
 	}
-	return &file.DeleteObjectsOutput{}, err
+	output := &file.DeleteObjectsOutput{}
+	copier.Copy(output, resp)
+	return output, err
 }
 func (a *AwsOss) ListObjects(ctx context.Context, req *file.ListObjectsInput) (*file.ListObjectsOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
-	//input := &s3.ListObjectsInput{
-	//	Bucket:              &req.Bucket,
-	//	Delimiter:           &req.Delimiter,
-	//	EncodingType:        types.EncodingType(req.EncodingType),
-	//	ExpectedBucketOwner: &req.ExpectedBucketOwner,
-	//	Marker:              &req.Marker,
-	//	MaxKeys:             req.MaxKeys,
-	//	Prefix:              &req.Prefix,
-	//	RequestPayer:        types.RequestPayer(req.RequestPayer),
-	//}
 
 	input := &s3.ListObjectsInput{}
-	copier.Copy(input, req)
+	err = copier.CopyWithOption(
+		input,
+		req,
+		copier.Option{
+			IgnoreEmpty: true,
+			DeepCopy:    true,
+			Converters:  []copier.TypeConverter{str2point},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
 	resp, err := client.ListObjects(ctx, input)
 	if err != nil {
 		return nil, err
 	}
-
-	//output := &file.ListObjectsOutput{Delimiter: *(resp.Delimiter), EncodingType: string(resp.EncodingType), IsTruncated: resp.IsTruncated, Marker: *(resp.Marker),
-	//	MaxKeys: resp.MaxKeys, Name: *(resp.Name), NextMarker: *(resp.NextMarker), Prefix: *(resp.Prefix),
-	//}
-	//
-	//for _, v := range resp.CommonPrefixes {
-	//	output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
-	//}
-	//
-	//for _, v := range resp.Contents {
-	//	object := &file.Object{Etag: *v.ETag, Key: *v.Key, Size: v.Size, StorageClass: string(v.StorageClass), Owner: &file.Owner{DisplayName: *v.Owner.DisplayName, ID: *v.Owner.ID}, LastModified: &timestamppb.Timestamp{Seconds: int64(v.LastModified.Second()), Nanos: int32(v.LastModified.Nanosecond())}}
-	//	output.Contents = append(output.Contents, object)
-	//}
 	output := &file.ListObjectsOutput{}
-
 	err = copier.CopyWithOption(output, resp, copier.Option{
 		IgnoreEmpty: true,
 		DeepCopy:    true,
@@ -307,7 +316,7 @@ func (a *AwsOss) ListObjects(ctx context.Context, req *file.ListObjectsInput) (*
 	return output, err
 }
 func (a *AwsOss) GetObjectAcl(ctx context.Context, req *file.GetObjectAclInput) (*file.GetObjectAclOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -319,16 +328,22 @@ func (a *AwsOss) GetObjectAcl(ctx context.Context, req *file.GetObjectAclInput) 
 	if err != nil {
 		return nil, err
 	}
-	output := &file.GetObjectAclOutput{Owner: &file.Owner{}, RequestCharged: string(resp.RequestCharged)}
+	output := &file.GetObjectAclOutput{
+		Owner:          &file.Owner{DisplayName: *resp.Owner.DisplayName, ID: *resp.Owner.ID},
+		RequestCharged: string(resp.RequestCharged),
+	}
 	for _, v := range resp.Grants {
-		output.Grants = append(output.Grants, &file.Grant{Grantee: &file.Grantee{DisplayName: *v.Grantee.DisplayName, EmailAddress: *v.Grantee.DisplayName,
-			ID: *v.Grantee.ID, Type: string(v.Grantee.Type), URI: *v.Grantee.URI,
-		}, Permission: string(v.Permission)})
+		grant := &file.Grant{}
+		grantee := &file.Grantee{}
+		copier.Copy(grantee, v.Grantee)
+		grant.Permission = string(v.Permission)
+		grant.Grantee = grantee
+		output.Grants = append(output.Grants, grant)
 	}
 	return output, err
 }
 func (a *AwsOss) PutObjectAcl(ctx context.Context, req *file.PutObjectAclInput) (*file.PutObjectAclOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -344,7 +359,7 @@ func (a *AwsOss) PutObjectAcl(ctx context.Context, req *file.PutObjectAclInput) 
 	return &file.PutObjectAclOutput{RequestCharged: string(resp.RequestCharged)}, err
 }
 func (a *AwsOss) RestoreObject(ctx context.Context, req *file.RestoreObjectInput) (*file.RestoreObjectOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -359,28 +374,20 @@ func (a *AwsOss) RestoreObject(ctx context.Context, req *file.RestoreObjectInput
 	return &file.RestoreObjectOutput{RequestCharged: string(resp.RequestCharged), RestoreOutputPath: *resp.RestoreOutputPath}, err
 }
 func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *file.CreateMultipartUploadInput) (*file.CreateMultipartUploadOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
 	input := &s3.CreateMultipartUploadInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
-		Converters: []copier.TypeConverter{
-			{
-				SrcType: int64(0),
-				DstType: &time.Time{},
-				Fn: func(src interface{}) (interface{}, error) {
-					s, ok := src.(int64)
-					if !ok {
-						return nil, errors.New("src type not matching")
-					}
-					t := time.Unix(0, s)
-					return &t, nil
-				},
-			},
-		}})
+	err = copier.CopyWithOption(
+		input,
+		req,
+		copier.Option{
+			IgnoreEmpty: true,
+			DeepCopy:    true,
+			Converters:  []copier.TypeConverter{int642time},
+		},
+	)
 	if err != nil {
 		log.DefaultLogger.Errorf("copy CreateMultipartUploadInput fail, err: %+v", err)
 		return nil, err
@@ -390,127 +397,105 @@ func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *file.CreateMult
 		return nil, err
 	}
 	output := &file.CreateMultipartUploadOutput{}
-	copier.CopyWithOption(output, resp, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
-		Converters: []copier.TypeConverter{
-			{
-				SrcType: &time.Time{},
-				DstType: int64(0),
-				Fn: func(src interface{}) (interface{}, error) {
-					s, ok := src.(*time.Time)
-					if !ok {
-						return nil, errors.New("src type not matching")
-					}
-					return s.Unix(), nil
-				},
-			},
+	copier.CopyWithOption(
+		output,
+		resp,
+		copier.Option{
+			IgnoreEmpty: true,
+			DeepCopy:    true,
+			Converters:  []copier.TypeConverter{time2int64},
 		},
-	})
+	)
 	return output, err
 }
 func (a *AwsOss) UploadPart(ctx context.Context, req *file.UploadPartInput) (*file.UploadPartOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
-	input := &s3.UploadPartInput{
-		Body:                 req.DataStream,
-		Bucket:               &req.Bucket,
-		Key:                  &req.Key,
-		ContentLength:        req.ContentLength,
-		ContentMD5:           &req.ContentMd5,
-		ExpectedBucketOwner:  &req.ExpectedBucketOwner,
-		PartNumber:           req.PartNumber,
-		RequestPayer:         types.RequestPayer(req.RequestPayer),
-		SSECustomerAlgorithm: &req.SseCustomerAlgorithm,
-		SSECustomerKey:       &req.SseCustomerKey,
-		SSECustomerKeyMD5:    &req.SseCustomerKeyMd5,
-		UploadId:             &req.UploadId,
-	}
-	resp, err := client.UploadPart(ctx, input)
+	input := &s3.UploadPartInput{}
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
 	if err != nil {
 		return nil, err
 	}
-	output := &file.UploadPartOutput{BucketKeyEnabled: resp.BucketKeyEnabled, ETag: *resp.ETag, RequestCharged: string(resp.RequestCharged),
-		SseCustomerAlgorithm: *resp.SSECustomerAlgorithm, SseCustomerKeyMd5: *resp.SSECustomerKeyMD5, SseKmsKeyId: *resp.SSECustomerKeyMD5,
-		ServerSideEncryption: string(resp.ServerSideEncryption),
+	input.Body = req.DataStream
+	resp, err := client.UploadPart(
+		ctx,
+		input,
+		s3.WithAPIOptions(
+			v4.SwapComputePayloadSHA256ForUnsignedPayloadMiddleware,
+		),
+	)
+	if err != nil {
+		return nil, err
+	}
+	output := &file.UploadPartOutput{}
+	err = copier.Copy(output, resp)
+	if err != nil {
+		return nil, err
 	}
 	return output, err
 }
 func (a *AwsOss) UploadPartCopy(ctx context.Context, req *file.UploadPartCopyInput) (*file.UploadPartCopyOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
 
 	//TODO: should support objects accessed through access points
-	copySource := req.CopySource.CopySourceBucket + "/" + req.CopySource.CopySourceKey + "?versionId=" + req.CopySource.CopySourceVersionId
-	input := &s3.UploadPartCopyInput{
-		Bucket:     &req.Bucket,
-		Key:        &req.Key,
-		CopySource: &copySource,
-		PartNumber: req.PartNumber,
-		UploadId:   &req.UploadId,
+	copySource := req.CopySource.CopySourceBucket + "/" + req.CopySource.CopySourceKey
+	if req.CopySource.CopySourceVersionId != "" {
+		copySource += "?versionId=" + req.CopySource.CopySourceVersionId
 	}
+	input := &s3.UploadPartCopyInput{}
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	if err != nil {
+		return nil, err
+	}
+	input.CopySource = &copySource
 	resp, err := client.UploadPartCopy(ctx, input)
 	if err != nil {
 		return nil, err
 	}
-	//LastModified := &timestamppb.Timestamp{Seconds: int64(resp.CopyPartResult.LastModified.Second()), Nanos: int32(resp.CopyPartResult.LastModified.Nanosecond())}
-	output := &file.UploadPartCopyOutput{BucketKeyEnabled: resp.BucketKeyEnabled, RequestCharged: string(resp.RequestCharged),
-		//CopyPartResult:       &file.CopyPartResult{ETag: *resp.CopyPartResult.ETag, LastModified: LastModified},
-		CopySourceVersionId:  *resp.CopySourceVersionId,
-		SseCustomerAlgorithm: *resp.SSECustomerAlgorithm, SseCustomerKeyMd5: *resp.SSECustomerKeyMD5, SseKmsKeyId: *resp.SSECustomerKeyMD5,
-		ServerSideEncryption: string(resp.ServerSideEncryption),
-	}
+	output := &file.UploadPartCopyOutput{}
+	err = copier.Copy(output, resp)
 	return output, err
 }
 func (a *AwsOss) CompleteMultipartUpload(ctx context.Context, req *file.CompleteMultipartUploadInput) (*file.CompleteMultipartUploadOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
-	input := &s3.CompleteMultipartUploadInput{
-		Bucket:              &req.Bucket,
-		Key:                 &req.Key,
-		UploadId:            &req.UploadId,
-		RequestPayer:        types.RequestPayer(req.RequestPayer),
-		ExpectedBucketOwner: &req.ExpectedBucketOwner,
-		MultipartUpload:     &types.CompletedMultipartUpload{},
-	}
-	for _, v := range req.MultipartUpload.Parts {
-		input.MultipartUpload.Parts = append(input.MultipartUpload.Parts, types.CompletedPart{ETag: &v.ETag, PartNumber: v.PartNumber})
+	input := &s3.CompleteMultipartUploadInput{MultipartUpload: &types.CompletedMultipartUpload{}}
+	err = copier.CopyWithOption(
+		input,
+		req,
+		copier.Option{
+			IgnoreEmpty: true,
+			DeepCopy:    true,
+			Converters:  []copier.TypeConverter{str2point},
+		},
+	)
+	if err != nil {
+		return nil, err
 	}
 	resp, err := client.CompleteMultipartUpload(ctx, input)
 	if err != nil {
 		return nil, err
 	}
-	output := &file.CompleteMultipartUploadOutput{
-		Bucket:               *resp.Bucket,
-		Key:                  *resp.Key,
-		BucketKeyEnabled:     resp.BucketKeyEnabled,
-		ETag:                 *resp.ETag,
-		Expiration:           *resp.Expiration,
-		Location:             *resp.Location,
-		RequestCharged:       string(resp.RequestCharged),
-		SseKmsKeyId:          *resp.SSEKMSKeyId,
-		ServerSideEncryption: string(resp.ServerSideEncryption),
-		VersionId:            *resp.VersionId,
-	}
+	output := &file.CompleteMultipartUploadOutput{}
+	err = copier.Copy(output, resp)
 	return output, err
 }
 func (a *AwsOss) AbortMultipartUpload(ctx context.Context, req *file.AbortMultipartUploadInput) (*file.AbortMultipartUploadOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
-	input := &s3.AbortMultipartUploadInput{
-		Bucket:              &req.Bucket,
-		Key:                 &req.Key,
-		UploadId:            &req.UploadId,
-		RequestPayer:        types.RequestPayer(req.RequestPayer),
-		ExpectedBucketOwner: &req.ExpectedBucketOwner,
+	input := &s3.AbortMultipartUploadInput{}
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	if err != nil {
+		return nil, err
 	}
 	resp, err := client.AbortMultipartUpload(ctx, input)
 	if err != nil {
@@ -522,31 +507,26 @@ func (a *AwsOss) AbortMultipartUpload(ctx context.Context, req *file.AbortMultip
 	return output, err
 }
 func (a *AwsOss) ListMultipartUploads(ctx context.Context, req *file.ListMultipartUploadsInput) (*file.ListMultipartUploadsOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
-	input := &s3.ListMultipartUploadsInput{
-		Bucket:              &req.Bucket,
-		ExpectedBucketOwner: &req.ExpectedBucketOwner,
+	input := &s3.ListMultipartUploadsInput{}
+
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	if err != nil {
+		return nil, err
 	}
+
 	resp, err := client.ListMultipartUploads(ctx, input)
 	if err != nil {
 		return nil, err
 	}
-	output := &file.ListMultipartUploadsOutput{
-		Bucket:             *resp.Bucket,
-		Delimiter:          *resp.Delimiter,
-		EncodingType:       string(resp.EncodingType),
-		IsTruncated:        resp.IsTruncated,
-		KeyMarker:          *resp.KeyMarker,
-		MaxUploads:         resp.MaxUploads,
-		NextKeyMarker:      *resp.NextKeyMarker,
-		NextUploadIdMarker: *resp.NextUploadIdMarker,
-		Prefix:             *resp.Prefix,
-		UploadIdMarker:     *resp.UploadIdMarker,
+	output := &file.ListMultipartUploadsOutput{CommonPrefixes: []string{}, Uploads: []*file.MultipartUpload{}}
+	err = copier.Copy(output, resp)
+	if err != nil {
+		return nil, err
 	}
-
 	for _, v := range resp.CommonPrefixes {
 		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
 	}
@@ -564,37 +544,24 @@ func (a *AwsOss) ListMultipartUploads(ctx context.Context, req *file.ListMultipa
 	return output, err
 }
 func (a *AwsOss) ListObjectVersions(ctx context.Context, req *file.ListObjectVersionsInput) (*file.ListObjectVersionsOutput, error) {
-	client, err := a.selectClient(map[string]string{}, endpointKey)
+	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
 	}
-	input := &s3.ListObjectVersionsInput{
-		Bucket:              &req.Bucket,
-		Delimiter:           &req.Delimiter,
-		EncodingType:        types.EncodingType(req.EncodingType),
-		ExpectedBucketOwner: &req.ExpectedBucketOwner,
-		KeyMarker:           &req.KeyMarker,
-		MaxKeys:             req.MaxKeys,
-		Prefix:              &req.Prefix,
-		VersionIdMarker:     &req.VersionIdMarker,
+	input := &s3.ListObjectVersionsInput{}
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	if err != nil {
+		return nil, err
 	}
 	resp, err := client.ListObjectVersions(ctx, input)
 	if err != nil {
 		return nil, err
 	}
-	output := &file.ListObjectVersionsOutput{
-		Delimiter:           *resp.Delimiter,
-		EncodingType:        string(resp.EncodingType),
-		IsTruncated:         resp.IsTruncated,
-		KeyMarker:           *resp.KeyMarker,
-		MaxKeys:             resp.MaxKeys,
-		Name:                *resp.Name,
-		NextKeyMarker:       *resp.NextKeyMarker,
-		NextVersionIdMarker: *resp.NextVersionIdMarker,
-		Prefix:              *resp.Prefix,
-		VersionIdMarker:     *resp.VersionIdMarker,
+	output := &file.ListObjectVersionsOutput{}
+	err = copier.Copy(output, resp)
+	if err != nil {
+		return nil, err
 	}
-
 	for _, v := range resp.CommonPrefixes {
 		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
 	}
@@ -610,10 +577,10 @@ func (a *AwsOss) ListObjectVersions(ctx context.Context, req *file.ListObjectVer
 	}
 	for _, v := range resp.Versions {
 		version := &file.ObjectVersion{
-			ETag:     *v.ETag,
-			IsLatest: v.IsLatest,
-			Key:      *v.Key,
-			//LastModified: timestamppb.New(*v.LastModified),
+			ETag:         *v.ETag,
+			IsLatest:     v.IsLatest,
+			Key:          *v.Key,
+			LastModified: v.LastModified.Unix(),
 			Owner:        &file.Owner{DisplayName: *v.Owner.DisplayName, ID: *v.Owner.ID},
 			Size:         v.Size,
 			StorageClass: string(v.StorageClass),
@@ -628,11 +595,48 @@ func (a *AwsOss) HeadObject(ctx context.Context, req *file.HeadObjectInput) (*fi
 	return nil, nil
 }
 
-func (a *AwsOss) IsObjectExist(context.Context, *file.IsObjectExistInput) (*file.IsObjectExistOutput, error) {
-	return nil, nil
+func (a *AwsOss) IsObjectExist(ctx context.Context, req *file.IsObjectExistInput) (*file.IsObjectExistOutput, error) {
+	client, err := a.selectClient(req.Bucket)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.HeadObjectInput{Bucket: &req.Bucket, Key: &req.Key}
+	_, err = client.HeadObject(ctx, input)
+	if err != nil {
+		errorMsg := err.Error()
+		if strings.Contains(errorMsg, "StatusCode: 404") {
+			return &file.IsObjectExistOutput{FileExist: false}, nil
+		}
+		return nil, err
+	}
+	return &file.IsObjectExistOutput{FileExist: true}, nil
 }
 
 func (a *AwsOss) SignURL(ctx context.Context, req *file.SignURLInput) (*file.SignURLOutput, error) {
+	client, err := a.selectClient(req.Bucket)
+	if err != nil {
+		return nil, err
+	}
+	resignClient := s3.NewPresignClient(client)
+	switch strings.ToUpper(req.Method) {
+	case "GET":
+		input := &s3.GetObjectInput{Bucket: &req.Bucket, Key: &req.Key}
+		resp, err := resignClient.PresignGetObject(ctx, input, s3.WithPresignExpires(time.Duration(req.ExpiredInSec)))
+		if err != nil {
+			return nil, err
+		}
+		return &file.SignURLOutput{SignedUrl: resp.URL}, nil
+	case "PUT":
+		input := &s3.PutObjectInput{Bucket: &req.Bucket, Key: &req.Key}
+		resp, err := resignClient.PresignPutObject(ctx, input, s3.WithPresignExpires(time.Duration(req.ExpiredInSec)))
+		if err != nil {
+			return nil, err
+		}
+		return &file.SignURLOutput{SignedUrl: resp.URL}, nil
+	default:
+		return nil, errors.New(fmt.Sprintf("not supported method %+v now", req.Method))
+	}
+
 	return nil, nil
 }
 
@@ -644,9 +648,9 @@ func (a *AwsOss) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *file.U
 	return nil
 }
 func (a *AwsOss) AppendObject(ctx context.Context, req *file.AppendObjectInput) (*file.AppendObjectOutput, error) {
-	return nil, nil
+	return nil, errors.New("AppendObject method not supported on AWS")
 }
 
 func (a *AwsOss) ListParts(ctx context.Context, req *file.ListPartsInput) (*file.ListPartsOutput, error) {
-	return nil, errors.New("ListParts not supported on AWS")
+	return nil, errors.New("ListParts method not supported on AWS")
 }

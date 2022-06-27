@@ -17,32 +17,41 @@
 package aws
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/jinzhu/copier"
 )
 
 func TestCopyWithConverterStrToStrPointer(t *testing.T) {
+	type S1 struct {
+		name string
+	}
+
+	type S2 struct {
+		name string
+	}
+
 	type SrcStruct struct {
 		Field1 string
+		s      *S1
 	}
 
 	type DestStruct struct {
 		Field1 *string
+		s      *S2
 	}
 
-	src := SrcStruct{}
+	src := SrcStruct{s: &S1{name: "s1"}}
 
 	var dst DestStruct
 
-	err := copier.Copy(&src, &dst)
+	err := copier.Copy(&dst, &src)
 
 	if err != nil {
 		t.Fatalf(`Should be able to copy from src to dst object. %v`, err)
 		return
 	}
 
-	if src.Field1 != "" {
-		t.Fatalf("got %q, wanted nil", src.Field1)
-	}
+	fmt.Println(dst.Field1, dst.s)
 }

@@ -43,15 +43,6 @@ type AliyunOSS struct {
 	rawData json.RawMessage
 }
 
-type OssMetadata struct {
-	Buckets         []string `json:"buckets"` // contained buckets in this oss client
-	Uid             string   `json:"uid"`     // specify the uid of oss client
-	Endpoint        string   `json:"endpoint"`
-	AccessKeyID     string   `json:"accessKeyID"`
-	AccessKeySecret string   `json:"accessKeySecret"`
-	Region          string   `json:"region"`
-}
-
 func NewAliCloudFile() file.File {
 	oss := &AliyunOSS{client: make(map[string]*oss.Client)}
 	return oss
@@ -59,7 +50,7 @@ func NewAliCloudFile() file.File {
 
 // Init does metadata parsing and connection creation
 func (s *AliyunOSS) Init(ctx context.Context, metadata *file.FileConfig) error {
-	m := make([]*OssMetadata, 0)
+	m := make([]*file.OssMetadata, 0)
 	err := json.Unmarshal(metadata.Metadata, &m)
 	if err != nil {
 		return file.ErrInvalid
@@ -201,14 +192,14 @@ func (s *AliyunOSS) Stat(ctx context.Context, request *file.FileMetaRequest) (*f
 	return resp, nil
 }
 
-func (s *AliyunOSS) checkMetadata(m *OssMetadata) bool {
+func (s *AliyunOSS) checkMetadata(m *file.OssMetadata) bool {
 	if m.AccessKeySecret == "" || m.Endpoint == "" || m.AccessKeyID == "" {
 		return false
 	}
 	return true
 }
 
-func (s *AliyunOSS) getClient(metadata *OssMetadata) (*oss.Client, error) {
+func (s *AliyunOSS) getClient(metadata *file.OssMetadata) (*oss.Client, error) {
 	client, err := oss.New(metadata.Endpoint, metadata.AccessKeyID, metadata.AccessKeySecret)
 	if err != nil {
 		return nil, err

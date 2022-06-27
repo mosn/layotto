@@ -42,62 +42,59 @@ const (
 // AwsOss is a binding for aws oss storage.
 type AwsOss struct {
 	client  map[string]*s3.Client
-	meta    map[string]*AwsOssMetaData
+	meta    map[string]*file.OssMetadata
 	method  string
 	rawData json.RawMessage
-}
-
-// AwsOssMetaData describe a aws-oss instance.
-type AwsOssMetaData struct {
-	Region          string `json:"region"`   // eg. us-west-2
-	EndPoint        string `json:"endpoint"` // eg. protocol://service-code.region-code.amazonaws.com
-	AccessKeyID     string `json:"accessKeyID"`
-	AccessKeySecret string `json:"accessKeySecret"`
 }
 
 func NewAwsFile() file.File {
 	return &AwsOss{
 		client: make(map[string]*s3.Client),
-		meta:   make(map[string]*AwsOssMetaData),
+		meta:   make(map[string]*file.OssMetadata),
 	}
 }
 
 // Init instance by config.
 func (a *AwsOss) Init(ctx context.Context, config *file.FileConfig) error {
-	m := make([]*AwsOssMetaData, 0)
+	m := make([]*file.OssMetadata, 0)
 	err := json.Unmarshal(config.Metadata, &m)
 	if err != nil {
 		return errors.New("invalid config for aws oss")
 	}
 	for _, data := range m {
-		if !data.isAwsMetaValid() {
+		if !a.isAwsMetaValid(data) {
 			return errors.New("invalid config for aws oss")
 		}
 		client, err := a.createOssClient(data)
 		if err != nil {
 			continue
 		}
-		a.client[data.EndPoint] = client
-		a.meta[data.EndPoint] = data
+		//use bucket as key, client as value
+		for _, bucketName := range data.Buckets {
+			if _, ok := a.client[bucketName]; ok {
+				return errors.New("incorrect configuration, bucketName must be unique")
+			}
+			a.client[bucketName] = client
+		}
 	}
 	return nil
 }
 
 // isAwsMetaValid check if the metadata valid.
-func (am *AwsOssMetaData) isAwsMetaValid() bool {
-	if am.AccessKeySecret == "" || am.EndPoint == "" || am.AccessKeyID == "" {
+func (a *AwsOss) isAwsMetaValid(v *file.OssMetadata) bool {
+	if v.AccessKeySecret == "" || v.Endpoint == "" || v.AccessKeyID == "" {
 		return false
 	}
 	return true
 }
 
 // createOssClient by input meta info.
-func (a *AwsOss) createOssClient(meta *AwsOssMetaData) (*s3.Client, error) {
+func (a *AwsOss) createOssClient(meta *file.OssMetadata) (*s3.Client, error) {
 	customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 		if region == meta.Region {
 			return aws.Endpoint{
 				PartitionID:       "awsoss",
-				URL:               "https://" + meta.EndPoint,
+				URL:               "https://" + meta.Endpoint,
 				SigningRegion:     meta.Region,
 				HostnameImmutable: true,
 			}, nil
@@ -135,7 +132,7 @@ func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
 	if err != nil {
 		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	client, err := a.selectClient(st.Metadata, endpointKey)
+	client, err := a.selectClient(bucket)
 	if err != nil {
 		return err
 	}
@@ -153,16 +150,13 @@ func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
 }
 
 // selectClient choose aws client from exist client-map, key is endpoint, value is client instance.
-func (a *AwsOss) selectClient(meta map[string]string, key string) (*s3.Client, error) {
-	// exist specific client with key endpoint
-	if ep, ok := meta[key]; ok {
-		if client, ok := a.client[ep]; ok {
-			return client, nil
-		}
+func (s *AwsOss) selectClient(bucket string) (*s3.Client, error) {
+	if client, ok := s.client[bucket]; ok {
+		return client, nil
 	}
 	// if not specify endpoint, select default one
-	if len(a.client) == 1 {
-		for _, client := range a.client {
+	if len(s.client) == 1 {
+		for _, client := range s.client {
 			return client, nil
 		}
 	}
@@ -183,7 +177,7 @@ func (a *AwsOss) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, e
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(st.Metadata, endpointKey)
+	client, err := a.selectClient(bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -207,7 +201,7 @@ func (a *AwsOss) List(ctx context.Context, st *file.ListRequest) (*file.ListResp
 		Marker:  &st.Marker,
 		Prefix:  &prefix,
 	}
-	client, err := a.selectClient(st.Metadata, endpointKey)
+	client, err := a.selectClient(bucket)
 	if err != nil {
 		return nil, fmt.Errorf("list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
 	}
@@ -244,7 +238,7 @@ func (a *AwsOss) Del(ctx context.Context, st *file.DelRequest) error {
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(st.Metadata, endpointKey)
+	client, err := a.selectClient(bucket)
 	if err != nil {
 		return err
 	}
@@ -267,7 +261,7 @@ func (a *AwsOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.File
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(st.Metadata, endpointKey)
+	client, err := a.selectClient(bucket)
 	if err != nil {
 		return nil, err
 	}

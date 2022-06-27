@@ -356,9 +356,9 @@ type UploadPartOutput struct {
 	BucketKeyEnabled     bool   `protobuf:"varint,1,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
 	ETag                 string `protobuf:"bytes,2,opt,name=etag,proto3" json:"etag,omitempty"`
 	RequestCharged       string `protobuf:"bytes,3,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
-	SseCustomerAlgorithm string `protobuf:"bytes,4,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKeyMd5    string `protobuf:"bytes,5,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
-	SseKmsKeyId          string `protobuf:"bytes,6,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
+	SSECustomerAlgorithm string `protobuf:"bytes,4,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
+	SSECustomerKeyMD5    string `protobuf:"bytes,5,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	SSEKMSKeyId          string `protobuf:"bytes,6,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
 	ServerSideEncryption string `protobuf:"bytes,7,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
 }
 
@@ -377,9 +377,9 @@ type UploadPartCopyOutput struct {
 	CopyPartResult       *CopyPartResult `protobuf:"bytes,2,opt,name=copy_part_result,json=copyPartResult,proto3" json:"copy_part_result,omitempty"`
 	CopySourceVersionId  string          `protobuf:"bytes,3,opt,name=copy_source_version_id,json=copySourceVersionId,proto3" json:"copy_source_version_id,omitempty"`
 	RequestCharged       string          `protobuf:"bytes,4,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
-	SseCustomerAlgorithm string          `protobuf:"bytes,5,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKeyMd5    string          `protobuf:"bytes,6,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
-	SseKmsKeyId          string          `protobuf:"bytes,7,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
+	SSECustomerAlgorithm string          `protobuf:"bytes,5,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
+	SSECustomerKeyMD5    string          `protobuf:"bytes,6,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	SSEKMSKeyId          string          `protobuf:"bytes,7,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
 	ServerSideEncryption string          `protobuf:"bytes,8,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
 }
 type CopyPartResult struct {
@@ -410,7 +410,7 @@ type CompleteMultipartUploadOutput struct {
 	Expiration           string `protobuf:"bytes,5,opt,name=expiration,proto3" json:"expiration,omitempty"`
 	Location             string `protobuf:"bytes,6,opt,name=location,proto3" json:"location,omitempty"`
 	RequestCharged       string `protobuf:"bytes,7,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
-	SseKmsKeyId          string `protobuf:"bytes,8,opt,name=sse_kms_keyId,json=sseKmsKeyId,proto3" json:"sse_kms_keyId,omitempty"`
+	SSEKMSKeyId          string `protobuf:"bytes,8,opt,name=sse_kms_keyId,json=sseKmsKeyId,proto3" json:"sse_kms_keyId,omitempty"`
 	ServerSideEncryption string `protobuf:"bytes,9,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
 	VersionId            string `protobuf:"bytes,10,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
@@ -537,7 +537,6 @@ type IsObjectExistOutput struct {
 }
 
 type SignURLInput struct {
-	StoreName    string `json:"store_name,omitempty"`
 	Bucket       string `json:"bucket,omitempty"`
 	Key          string `json:"key,omitempty"`
 	Method       string `json:"method,omitempty"`
