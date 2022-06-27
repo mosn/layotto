@@ -22,6 +22,12 @@ import (
 	"strconv"
 	"time"
 
+	mosn_zipkin "mosn.io/mosn/pkg/trace/zipkin"
+
+	"mosn.io/layotto/diagnostics/zipkin"
+
+	mosn_jaeger "mosn.io/mosn/pkg/trace/jaeger"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
 	"github.com/dapr/components-contrib/secretstores/aws/secretmanager"
@@ -516,7 +522,8 @@ func ExtensionsRegister(_ *cli.Context) {
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
 	trace.RegisterTracerBuilder("SOFATracer", lprotocol.Layotto, diagnostics.NewTracer)
 	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
-	trace.RegisterTracerBuilder("Jaeger", lprotocol.Layotto, jaeger.NewGrpcJaegerTracer)
+	trace.RegisterTracerBuilder(mosn_jaeger.DriverName, lprotocol.Layotto, jaeger.NewGrpcJaegerTracer)
+	trace.RegisterTracerBuilder(mosn_zipkin.DriverName, lprotocol.Layotto, zipkin.NewGrpcZipTracer)
 }
 
 func main() {

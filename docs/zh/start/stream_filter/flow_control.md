@@ -22,6 +22,7 @@
     }
 ]
 ```
+
 这段配置就是让`/spec.proto.runtime.v1.Runtime/SayHello`接口具备限流能力，1s只能调用5次。
 
 对应的调用端代码在[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go) 中，代码逻辑很简单，就是想服务端发起10次调用，调用结果如下：

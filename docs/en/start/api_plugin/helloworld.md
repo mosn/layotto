@@ -39,12 +39,14 @@ Check the code in [`main.go`](https://github.com/mosn/layotto/blob/d74ff0e8940e0
 ```
 
 ## step 2. invoke the helloworld API
+
 ```shell
 # change directory 
 cd ${project_path}/cmd/layotto_multiple_api
 # run demo client
 go run client/main.go
 ```
+
 The result will be:
 
 ```bash

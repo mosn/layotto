@@ -34,6 +34,7 @@ The most basic locking and unlocking API.
 TryLock is non-blocking, it return directly if the lock is not obtained.
 
 proto:
+
 ```protobuf
   // Distributed Lock API
   // A non-blocking method trying to get a lock with ttl.
@@ -98,6 +99,7 @@ message UnlockResponse {
 }
 
 ```
+
 **Q: What is the time unit of the expire field?**
 
 A: Seconds.
@@ -184,6 +186,7 @@ An option is to ensure that the heartbeat interval low enough, such as 1 time pe
 2. How to ensure reliable failure detection?
 
 For example, the following java code `unlock()` method may fail:
+
 ```java
 try{
 
@@ -191,6 +194,7 @@ try{
   lock.unlock()
 }
 ```
+
 If it is a lock in JVM, unlock can guarantee success (unless the entire JVM fails), but unlock may fail if it is called via the network. How to ensure that the heartbeat is interrupted after the call fails?
 
 Here shows the corner case:
@@ -203,6 +207,7 @@ Here shows the corner case:
 Solving this case requires the app to report some fine-grained status with the heartbeat.
 
 We can define a http callback SPI, which is polled and detected by the sidecar, and the data structure returned by the callback is as follows:
+
 ```json
 {
   "status": "UP",
@@ -218,6 +223,7 @@ We can define a http callback SPI, which is polled and detected by the sidecar, 
   }
 }
 ```
+
 The application has to handle status collection, reporting, cleaning up after the report is successful, and limiting the map capacity (for example, what if the map is too large when report fails too much times?), which requires the app to implement some complex logic, and it must be put in the SDK.
 
 3. This implementation is actually the same as Solution A. It opens a separate connection for status management and failure detection, and user reports the status through this public connection when necessary.

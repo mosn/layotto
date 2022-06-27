@@ -21,11 +21,13 @@ docs/目录下的文件，会被自动部署到github pages，通过[docsify](ht
 这里概括一下步骤：
 
 step 1. 安装 docsify
+
 ```shell
 npm i docsify-cli -g
 ```
 
 step 2. 启动文档站点
+
 ```shell
 # 在 layotto 项目根目录下执行
 docsify serve docs

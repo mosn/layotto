@@ -17,6 +17,7 @@ redis组件在丢数据的情况下可能生成重复id，为了避免重复id�
 ## 怎么启动Redis
 如果想启动redis的demo，需要先用Docker启动一个Redis
 命令：
+
 ```shell
 docker pull redis:latest
 docker run -itd --name redis-test -p 6379:6379 redis
@@ -28,9 +29,11 @@ docker run -itd --name redis-test -p 6379:6379 redis
 cd ${project_path}/cmd/layotto
 go build
 ````
+
 >如果 build 报错，可以在项目根目录执行 `go mod vendor`
 
 编译成功后执行:
+
 ````shell
 ./layotto start -c ../../configs/config_redis.json
 ````

@@ -2,6 +2,7 @@
 **Configuration file structure**
 
 The json configuration file has the following structure:
+
 ```json
 "state": {
     "<Component A Name>": {
@@ -20,6 +21,7 @@ The json configuration file has the following structure:
     }
 }
 ```
+
 You can configure the key/value configuration items that the component cares about in the metadata. For example, [redis component configuration](https://github.com/mosn/layotto/blob/main/configs/config_redis.json) is as follows:
 
 ```json

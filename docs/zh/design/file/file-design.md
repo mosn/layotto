@@ -1,6 +1,6 @@
 # File API 设计文档
 
-### API
+## API
 
 API定义主要依据常用的文件操作来定义的，分为增删改查四个接口，对于Get/Put接口来说，文件的上传和下载需要支持流传输。因此接口定义如下：
 
@@ -21,7 +21,7 @@ API定义主要依据常用的文件操作来定义的，分为增删改查四�
 关于接口的定义的讨论可以参照[issue98](https://github.com/mosn/layotto/issues/98)
 
 
-### 参数定义
+## 参数定义
 
 
 ```protobuf
@@ -69,7 +69,7 @@ message DelFileRequest {
 }
 ```
 
-#### Get接口
+### Get接口
 
 Get的入参主要有三个：
 
@@ -79,7 +79,7 @@ Get的入参主要有三个：
 | name | 文件名字 | yes|
 | metadata | 元数据，该字段用户可以用来指定component需要的一些字段，（eg:权限，用户名等） | yes|
 
-#### Put接口
+### Put接口
 
 Put接口入参主要有三个，多了一个data字段用来传输文件内容：
 
@@ -91,7 +91,7 @@ Put接口入参主要有三个，多了一个data字段用来传输文件内容�
 | metadata | 元数据，该字段用户可以用来指定component需要的一些字段，（eg:权限，用户名等） | yes|
 
 
-#### List和Del接口
+### List和Del接口
 
 两个接口的参数是一样的：
 
@@ -101,7 +101,7 @@ Put接口入参主要有三个，多了一个data字段用来传输文件内容�
 | name | 文件名字 | yes|
 | metadata | 元数据，该字段用户可以用来指定component需要的一些字段，（eg:权限，用户名等） | yes|
 
-#### 配置参数
+### 配置参数
 
 配置参数，不同的component可以配置不同格式，比如aliOSS的配置如下：
 

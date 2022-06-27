@@ -296,6 +296,7 @@ func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactor
 			m.errInt(err, "create configstore's component %s failed", name)
 			return err
 		}
+		config.StoreName = name
 		if err := c.Init(&config); err != nil {
 			m.errInt(err, "init configstore's component %s failed", name)
 			return err

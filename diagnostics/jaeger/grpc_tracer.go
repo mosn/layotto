@@ -46,7 +46,6 @@ const (
 	appIDKey                 = "APP_ID"
 	defaultCollectorEndpoint = "http://127.0.0.1:14268/api/traces"
 	defaultStrategy          = "collector"
-	configs                  = "config"
 )
 
 type grpcJaegerTracer struct {
@@ -114,11 +113,8 @@ func NewGrpcJaegerTracer(traceCfg map[string]interface{}) (api.Tracer, error) {
 }
 
 func getAgentHost(traceCfg map[string]interface{}) string {
-	if cfg, ok := traceCfg[configs]; ok {
-		host := cfg.(map[string]interface{})
-		if agentHost, ok := host[agentHost]; ok {
-			return agentHost.(string)
-		}
+	if agentHost, ok := traceCfg[agentHost]; ok {
+		return agentHost.(string)
 	}
 
 	//if TRACE is not set, get it from the env variable
@@ -130,9 +126,7 @@ func getAgentHost(traceCfg map[string]interface{}) string {
 }
 
 func getStrategy(traceCfg map[string]interface{}) (string, error) {
-	if cfg, ok := traceCfg[configs]; ok {
-		str := cfg.(map[string]interface{})
-		k, ok := str[strategy]
+	if k, ok := traceCfg[strategy]; ok {
 		if ok && (k.(string) == defaultStrategy || k.(string) == "agent") {
 			return k.(string), nil
 		} else if ok {
@@ -144,22 +138,16 @@ func getStrategy(traceCfg map[string]interface{}) (string, error) {
 }
 
 func getCollectorEndpoint(traceCfg map[string]interface{}) string {
-	if cfg, ok := traceCfg[configs]; ok {
-		endpoint := cfg.(map[string]interface{})
-		if collectorEndpoint, ok := endpoint[collectorEndpoint]; ok {
-			return collectorEndpoint.(string)
-		}
+	if collectorEndpoint, ok := traceCfg[collectorEndpoint]; ok {
+		return collectorEndpoint.(string)
 	}
 
 	return defaultCollectorEndpoint
 }
 
 func getServiceName(traceCfg map[string]interface{}) string {
-	if cfg, ok := traceCfg[configs]; ok {
-		name := cfg.(map[string]interface{})
-		if service, ok := name[serviceName]; ok {
-			return service.(string)
-		}
+	if service, ok := traceCfg[serviceName]; ok {
+		return service.(string)
 	}
 
 	//if service_name is not set, get it from the env variable

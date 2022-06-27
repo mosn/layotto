@@ -9,9 +9,9 @@ This document explains Layotto's four workflows in Github:
 
 The workflow contains one or more tasks, It improves the standardization and security of the code in layotto, simplifies repetitive steps of development / build / release. The following is a detailed explanation of the above four workflows.
 
-### Layotto Env Pipeline 🌊
+## Layotto Env Pipeline 🌊
 
-#### Job Task Content
+### Job Task Content
 
 Layotto Env Pipeline is mainly responsible for the project of layotto and the specification of relevant environment,it current contains the following tasks：
 
@@ -22,7 +22,7 @@ Layotto Env Pipeline is mainly responsible for the project of layotto and the sp
 + DeadLink Validation (Check the deadLink in document)
 + CodeQL (Analysis of CodeQL)
 
-#### Job Trigger Event
+### Job Trigger Event
 
 Layotto Env Pipeline Task Trigger Events:
 
@@ -83,11 +83,11 @@ Layotto Env Pipeline Task Trigger Events:
       - cron: '0 4 * * 5' timed tasks
   ```
 
-### Layotto Dev Pipeline 🌊 (Before Merged)
+## Layotto Dev Pipeline 🌊 (Before Merged)
 
 ![release.png](../../img/development/workflow/workflow-dev.png)
 
-#### Job Task Content
+### Job Task Content
 
 The layotto dev pipeline (before merged)  is mainly responsible for verifying the code after submitting the PR, which currently includes the following tasks:
 
@@ -103,7 +103,7 @@ The layotto dev pipeline (before merged)  is mainly responsible for verifying th
 + Linux ARM64 Artifact : Build linux arm64 binary verification for code
 + Linux AMD64 WASM Artifact : Build linux AMD64 binary verification for layotto wasm
 
-#### Job Trigger Event
+### Job Trigger Event
 
 ```
     on:
@@ -119,11 +119,11 @@ The layotto dev pipeline (before merged)  is mainly responsible for verifying th
         - '**/*.md'
 ```
 
-### Layotto Dev Pipeline 🌊 (After Merged)
+## Layotto Dev Pipeline 🌊 (After Merged)
 
 ![release.png](../../img/development/workflow/workflow-merge.png)
 
-#### Job Task Content
+### Job Task Content
 
 The layotto dev pipeline (after merged)  is mainly responsible for the verification and release of the combined layotto code, which currently includes the following tasks：
 
@@ -142,7 +142,7 @@ The layotto dev pipeline (after merged)  is mainly responsible for the verificat
 + Linux AMD64 Image : Release the latest version of layotto wasm image. The image specification is layotto/layotto:latest
 + Linux ARMD64 Image : Release the latest version of layotto wasm image. The image specification is layotto/layotto.arm64:latest
 
-#### Job Trigger Event
+### Job Trigger Event
 
 ```
     on:
@@ -158,11 +158,11 @@ The layotto dev pipeline (after merged)  is mainly responsible for the verificat
         - '**/*.md'
 ```
 
-### Layotto Release Pipeline 🌊
+## Layotto Release Pipeline 🌊
 
 ![release.png](../../img/development/workflow/workflow-release.png)
 
-#### Job Task Content
+### Job Task Content
 
 The layotto release pipeline  is mainly responsible for the release and verification of the new version of layotto, which currently includes the following tasks :
 
@@ -181,7 +181,7 @@ The layotto release pipeline  is mainly responsible for the release and verifica
 + Linux AMD64 Image : Release the latest version of layotto wasm image. The image specification is layotto/layotto:{latest_tagname}
 + Linux ARMD64 Image : Release the latest version of layotto wasm image. The image specification is layotto/layotto.arm64:{latest_tagname}
 
-#### Job Trigger Event
+### Job Trigger Event
 
 ```
     on:

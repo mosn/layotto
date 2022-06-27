@@ -20,6 +20,7 @@ In order to avoid data loss and duplicate IDs, you need to use stand-alone redis
 If you want to run the redis demo, you need to start a Redis server with Docker first.
 
 command:
+
 ```shell
 docker pull redis:latest
 docker run -itd --name redis-test -p 6379:6379 redis
@@ -31,9 +32,11 @@ docker run -itd --name redis-test -p 6379:6379 redis
 cd ${project_path}/cmd/layotto
 go build
 ````
+
 >If build reports an error, it can be executed in the root directory of the project `go mod vendor`
 
 Execute after the compilation is successful:
+
 ````shell
 ./layotto start -c ../../configs/config_redis.json
 ````

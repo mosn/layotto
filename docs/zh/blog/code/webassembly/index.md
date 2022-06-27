@@ -33,6 +33,7 @@ WebAssemly 简称 WASM，是一种运行在沙箱化的执行环境中的可移�
 VM：Virtual Machine 虚拟机，Runtime类型有：wasmtime、Wasmer、V8、 Lucet、WAMR、wasm3，本文例子中使用 wasmer
 
 1、首先看 [quickstart例子](https://mosn.io/layotto/#/zh/start/wasm/start) 中 stream filter 的配置，如下可以看到配置中有两个 WASM 插件，使用 wasmer VM 分别启动一个实例，详见如下配置：
+
 ```json
  "stream_filters": [
             {
@@ -58,7 +59,9 @@ VM：Virtual Machine 虚拟机，Runtime类型有：wasmtime、Wasmer、V8、 Lu
             }
           ]
 ```
+
 上述配置中 function1 主要逻辑就是接收 HTTP 请求，然后通过 ABI 调用 function2，并返回 function2 结果，详见如下代码：
+
 ```go
 func (ctx *httpHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.Action {
 	//1. get request body
@@ -87,7 +90,9 @@ func (ctx *httpHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.
 	return types.ActionContinue
 }
 ```
+
 function2 主要逻辑就是接收 HTTP 请求，然后通过 ABI 调用 redis，并返回 redis 结果，详见如下代码：
+
 ```go
 func (ctx *httpHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.Action {
 	//1. get request body
@@ -112,6 +117,7 @@ func (ctx *httpHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.
 ```
 
 2、对应图1 WASM 框架 中的 Manager 部分，在 Mosn filter Init 阶段进行初始化，详见如下代码：
+
 ```go
 // Create a proxy factory for WasmFilter
 func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilterChainFactory, error) {
@@ -185,6 +191,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 ```
 
 3、对应图1 WASM 框架中 VM 部分，NewWasmPlugin 用来创建初始化 WASM 插件，其中 VM、Module 和 Instance 分别对应 WASM 中的虚拟机、模块和实例，详见如下代码：
+
 ```go
 func NewWasmPlugin(wasmConfig v2.WasmPluginConfig) (types.WasmPlugin, error) {
 	// check instance num
@@ -254,6 +261,7 @@ actual := plugin.EnsureInstanceNum(wasmConfig.InstanceNum)
 ```
 
 4、 对应图1 WASM 框架 中的 ABI 部分，OnPluginStart 方法中会调用 proxy-wasm-go-host 的对应方法对 ABI 的 Exports 和 Imports 等进行相关设置。
+
 ```go
 // Execute the plugin of FilterConfigFactory
 func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
@@ -327,6 +335,7 @@ Layotto 中 WASM 的工作流程大致如下图2 Layotto & Mosn WASM 工作流�
 <center>图2 Layotto & Mosn WASM 工作流程 </center>
 
 1、由 Layotto 底层 Mosn 收到请求，经过 workpool 调度，在 proxy downstream 中按照配置依次执行 StreamFilterChain 到 Wasm StreamFilter 的 OnReceive 方法，具体逻辑详见如下代码：
+
 ```go
 func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
 	// 获取 WASM 插件的 id
@@ -422,6 +431,7 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 ```
 
 2、proxy-wasm-go-host 将 Mosn 请求三元组编码成规范指定的格式，并调用Proxy-Wasm ABI 规范中的 proxy_on_request_headers 等对应接口，调用 WASMER 虚拟机将请求信息传至 WASM 插件。
+
 ```go
 func (a *ABIContext) CallWasmFunction(funcName string, args ...interface{}) (interface{}, Action, error) {
 	ff, err := a.Instance.GetExportsFunc(funcName)
@@ -444,10 +454,11 @@ func (a *ABIContext) CallWasmFunction(funcName string, args ...interface{}) (int
 ```
 
 3、WASMER 虚拟机经过处理调用 WASM 插件的具体函数，比如例子中的 OnHttpRequestBody 函数
-  // function, _ := instance.Exports.GetFunction("exported_function")
+  // function, _:= instance.Exports.GetFunction("exported_function")
   // nativeFunction = function.Native()
-  //   _ = nativeFunction(1, 2, 3)
+  //_ = nativeFunction(1, 2, 3)
   // Native 会将 Function 转换为可以调用的原生 Go 函数
+
 ```go
 func (self *Function) Native() NativeFunction {
 	...
@@ -479,6 +490,7 @@ func (self *Function) Native() NativeFunction {
 ```
 
 4、proxy-wasm-go-sdk 将请求数据从规范格式转换为便于用户使用的格式，然后调用用户扩展代码。proxy-wasm-go-sdk 基于 proxy-wasm/spec 实现，定义了函数访问系统资源及基础设施服务的接口，并在此基础上结合 Runtime API 的思路，增加了对基础设施访问的ABI。
+
 ```go
 // function1主要逻辑就是接收 HTTP 请求，然后通过 ABI 调用 function2，并返回 function2 结果，具体代码如下所示
 func (ctx *httpHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.Action {
@@ -512,6 +524,7 @@ func (ctx *httpHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.
 5、WASM 插件通过初始化时 RegisterFunc 注册的 ABI Imports 函数，比如例子中 Function1 RPC 调用 Function2 的 ProxyInvokeService，Function2 用以获取 Redis 中指定 Key 的 Valye 的 ProxyGetState，具体代码如下所示：
 
 Function1 通过 ProxyInvokeService 调用 Function2，ProxyInvokeService 对应 Imports 函数 proxy_invoke_service
+
 ```go
 func ProxyInvokeService(instance common.WasmInstance, idPtr int32, idSize int32, methodPtr int32, methodSize int32, paramPtr int32, paramSize int32, resultPtr int32, resultSize int32) int32 {
 	id, err := instance.GetMemory(uint64(idPtr), uint64(idSize))
@@ -540,7 +553,9 @@ func ProxyInvokeService(instance common.WasmInstance, idPtr int32, idSize int32,
 	return copyIntoInstance(instance, ret, resultPtr, resultSize).Int32()
 }
 ```
+
 Function2 通过 ProxyGetState 获取 Redis 中指定 Key 的 Valye， ProxyGetState 对应 Imports 函数 proxy_get_state
+
 ```go
 func ProxyGetState(instance common.WasmInstance, storeNamePtr int32, storeNameSize int32, keyPtr int32, keySize int32, valuePtr int32, valueSize int32) int32 {
 	storeName, err := instance.GetMemory(uint64(storeNamePtr), uint64(storeNameSize))
@@ -563,6 +578,7 @@ func ProxyGetState(instance common.WasmInstance, storeNamePtr int32, storeNameSi
 	return copyIntoInstance(instance, ret, valuePtr, valueSize).Int32()
 }
 ```
+
 以上 Layotto rpc 流程简要说是通过两个虚拟连接借助 Dapr API 和 底层 Mosn 实现 [5],具体可参见前序文章[Layotto源码解析——处理RPC请求](https://mosn.io/layotto/#/zh/blog/code/layotto-rpc/index)，从 Redis 中获取数据可直接阅读 Dapr State 相关代码，在此不一一展开了。
 
 ### FaaS模式
@@ -577,6 +593,7 @@ func ProxyGetState(instance common.WasmInstance, storeNamePtr int32, storeNameSi
 <center>图3 Layotto FaaS Workflow </center>
 
 这里简单看一下 containerd-shim-layotto-v2 的主函数，可以看到 shim.Run 设置的 WASM 的运行时为 io.containerd.layotto.v2，也就是 containerd 中 plugins.cri.containerd.runtimes 对应插件的 runtime_type。当创建 Pod 时，在 yaml 的 spec 中指定 runtimeClassName: layotto，经过调度，最终 kubelet 就会通过 cri-plugin 调用 containerd 中的 containerd-shim-layotto-v2 运行时来进行加载和运行等相关处理。
+
 ```go
 func main() {
 	startLayotto()

@@ -111,6 +111,7 @@ For example, when implementing distributed locks using ZooKeeper, you need some 
 ![img_7.png](../../img/development/component/img_7.png)
 
 Note: If there are errors in the demo code that shouldn't be there , you can panic directly. Later, we will directly use demo to run the integration test. If panic occurs, it means that the integration test fails. For example the demo/lock/redis/client.go:
+
 ```go
     //....
   cli, err := client.NewClient()
