@@ -22,8 +22,9 @@ import (
 	"strconv"
 	"time"
 
-	"mosn.io/layotto/components/file/aliyun"
 	mosn_zipkin "mosn.io/mosn/pkg/trace/zipkin"
+
+	"mosn.io/layotto/components/file/aliyun"
 
 	"mosn.io/layotto/diagnostics/zipkin"
 
