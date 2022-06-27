@@ -349,7 +349,7 @@ func (s *S3Server) ListObjects(ctx context.Context, req *s3.ListObjectsInput) (*
 	return output, nil
 
 }
-func (s *S3Server) GetObjectAcl(ctx context.Context, req *s3.GetObjectAclInput) (*s3.GetObjectAclOutput, error) {
+func (s *S3Server) GetObjectCannedAcl(ctx context.Context, req *s3.GetObjectCannedAclInput) (*s3.GetObjectCannedAclOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -359,10 +359,10 @@ func (s *S3Server) GetObjectAcl(ctx context.Context, req *s3.GetObjectAclInput) 
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for GetObjectAcl,err: %+v", err)
 	}
 	var resp *l8s3.GetObjectCannedAclOutput
-	if resp, err = s.ossInstance[req.StoreName].GetObjectAcl(ctx, st); err != nil {
+	if resp, err = s.ossInstance[req.StoreName].GetObjectCannedAcl(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s3.GetObjectAclOutput{}
+	output := &s3.GetObjectCannedAclOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for GetObjectAcl,err: %+v", err)
@@ -370,7 +370,7 @@ func (s *S3Server) GetObjectAcl(ctx context.Context, req *s3.GetObjectAclInput) 
 	return output, nil
 
 }
-func (s *S3Server) PutObjectAcl(ctx context.Context, req *s3.PutObjectAclInput) (*s3.PutObjectAclOutput, error) {
+func (s *S3Server) PutObjectCannedAcl(ctx context.Context, req *s3.PutObjectCannedAclInput) (*s3.PutObjectCannedAclOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -380,10 +380,10 @@ func (s *S3Server) PutObjectAcl(ctx context.Context, req *s3.PutObjectAclInput) 
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for PutObjectAcl,err: %+v", err)
 	}
 	var resp *l8s3.PutObjectCannedAclOutput
-	if resp, err = s.ossInstance[req.StoreName].PutObjectAcl(ctx, st); err != nil {
+	if resp, err = s.ossInstance[req.StoreName].PutObjectCannedAcl(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s3.PutObjectAclOutput{}
+	output := &s3.PutObjectCannedAclOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for PutObjectAcl,err: %+v", err)
