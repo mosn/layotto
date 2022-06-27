@@ -517,9 +517,9 @@ type HeadObjectInput struct {
 	IfUnmodifiedSince    int64  `json:"if_unmodified_since,omitempty"`
 	PartNumber           int32  `json:"part_number,omitempty"`
 	RequestPayer         string `json:"request_payer,omitempty"`
-	SseCustomerAlgorithm string `json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKey       string `json:"sse_customer_key,omitempty"`
-	SseCustomerKeyMd5    string `json:"sse_customer_key_md5,omitempty"`
+	SSECustomerAlgorithm string `json:"sse_customer_algorithm,omitempty"`
+	SSECustomerKey       string `json:"sse_customer_key,omitempty"`
+	SSECustomerKeyMD5    string `json:"sse_customer_key_md5,omitempty"`
 	VersionId            string `json:"version_id,omitempty"`
 	WithDetails          bool   `json:"with_details,omitempty"`
 }

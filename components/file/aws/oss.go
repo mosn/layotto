@@ -592,7 +592,17 @@ func (a *AwsOss) ListObjectVersions(ctx context.Context, req *file.ListObjectVer
 }
 
 func (a *AwsOss) HeadObject(ctx context.Context, req *file.HeadObjectInput) (*file.HeadObjectOutput, error) {
-	return nil, nil
+	client, err := a.selectClient(req.Bucket)
+	if err != nil {
+		return nil, err
+	}
+	input := &s3.HeadObjectInput{}
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	resp, err := client.HeadObject(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	return &file.HeadObjectOutput{ResultMetadata: resp.Metadata}, nil
 }
 
 func (a *AwsOss) IsObjectExist(ctx context.Context, req *file.IsObjectExistInput) (*file.IsObjectExistOutput, error) {
