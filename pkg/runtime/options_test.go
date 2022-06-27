@@ -22,8 +22,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var haha map[string]string
-
 func TestWithErrInterceptor(t *testing.T) {
 	cnt := 0
 	var f ErrInterceptor = func(err error, format string, args ...interface{}) {

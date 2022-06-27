@@ -17,9 +17,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"mosn.io/layotto/components/file"
 
-	"mosn.io/layotto/components/file/aliyun"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestConfig(t *testing.T) {
@@ -43,7 +43,7 @@ func TestConfig(t *testing.T) {
 	mscf, err := ParseRuntimeConfig([]byte(data))
 	assert.Nil(t, err)
 	v := mscf.Files["aliOSS"]
-	m := make([]*aliyun.OssMetadata, 0)
+	m := make([]*file.OssMetadata, 0)
 	err = json.Unmarshal(v.Metadata, &m)
 	assert.Nil(t, err)
 	for _, x := range m {
