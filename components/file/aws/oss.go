@@ -315,34 +315,10 @@ func (a *AwsOss) ListObjects(ctx context.Context, req *file.ListObjectsInput) (*
 		}})
 	return output, err
 }
-func (a *AwsOss) GetObjectAcl(ctx context.Context, req *file.GetObjectAclInput) (*file.GetObjectAclOutput, error) {
-	client, err := a.selectClient(req.Bucket)
-	if err != nil {
-		return nil, err
-	}
-	input := &s3.GetObjectAclInput{
-		Bucket: &req.Bucket,
-		Key:    &req.Key,
-	}
-	resp, err := client.GetObjectAcl(ctx, input)
-	if err != nil {
-		return nil, err
-	}
-	output := &file.GetObjectAclOutput{
-		Owner:          &file.Owner{DisplayName: *resp.Owner.DisplayName, ID: *resp.Owner.ID},
-		RequestCharged: string(resp.RequestCharged),
-	}
-	for _, v := range resp.Grants {
-		grant := &file.Grant{}
-		grantee := &file.Grantee{}
-		copier.Copy(grantee, v.Grantee)
-		grant.Permission = string(v.Permission)
-		grant.Grantee = grantee
-		output.Grants = append(output.Grants, grant)
-	}
-	return output, err
+func (a *AwsOss) GetObjectCannedAcl(ctx context.Context, req *file.GetObjectCannedAclInput) (*file.GetObjectCannedAclOutput, error) {
+	return nil, errors.New("GetObjectCannedAcl method not supported on AWS")
 }
-func (a *AwsOss) PutObjectAcl(ctx context.Context, req *file.PutObjectAclInput) (*file.PutObjectAclOutput, error) {
+func (a *AwsOss) PutObjectCannedAcl(ctx context.Context, req *file.PutObjectCannedAclInput) (*file.PutObjectCannedAclOutput, error) {
 	client, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
@@ -356,7 +332,7 @@ func (a *AwsOss) PutObjectAcl(ctx context.Context, req *file.PutObjectAclInput) 
 	if err != nil {
 		return nil, err
 	}
-	return &file.PutObjectAclOutput{RequestCharged: string(resp.RequestCharged)}, err
+	return &file.PutObjectCannedAclOutput{RequestCharged: string(resp.RequestCharged)}, err
 }
 func (a *AwsOss) RestoreObject(ctx context.Context, req *file.RestoreObjectInput) (*file.RestoreObjectOutput, error) {
 	client, err := a.selectClient(req.Bucket)

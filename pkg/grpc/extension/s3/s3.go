@@ -353,12 +353,12 @@ func (s *S3Server) GetObjectAcl(ctx context.Context, req *s3.GetObjectAclInput) 
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
-	st := &l8s3.GetObjectAclInput{}
+	st := &l8s3.GetObjectCannedAclInput{}
 	err := transferData(req, st)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for GetObjectAcl,err: %+v", err)
 	}
-	var resp *l8s3.GetObjectAclOutput
+	var resp *l8s3.GetObjectCannedAclOutput
 	if resp, err = s.ossInstance[req.StoreName].GetObjectAcl(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -374,12 +374,12 @@ func (s *S3Server) PutObjectAcl(ctx context.Context, req *s3.PutObjectAclInput) 
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
-	st := &l8s3.PutObjectAclInput{}
+	st := &l8s3.PutObjectCannedAclInput{}
 	err := transferData(req, st)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for PutObjectAcl,err: %+v", err)
 	}
-	var resp *l8s3.PutObjectAclOutput
+	var resp *l8s3.PutObjectCannedAclOutput
 	if resp, err = s.ossInstance[req.StoreName].PutObjectAcl(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

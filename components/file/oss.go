@@ -38,8 +38,8 @@ type Oss interface {
 	CopyObject(context.Context, *CopyObjectInput) (*CopyObjectOutput, error)
 	DeleteObjects(context.Context, *DeleteObjectsInput) (*DeleteObjectsOutput, error)
 	ListObjects(context.Context, *ListObjectsInput) (*ListObjectsOutput, error)
-	GetObjectAcl(context.Context, *GetObjectAclInput) (*GetObjectAclOutput, error)
-	PutObjectAcl(context.Context, *PutObjectAclInput) (*PutObjectAclOutput, error)
+	GetObjectCannedAcl(context.Context, *GetObjectCannedAclInput) (*GetObjectCannedAclOutput, error)
+	PutObjectCannedAcl(context.Context, *PutObjectCannedAclInput) (*PutObjectCannedAclOutput, error)
 	RestoreObject(context.Context, *RestoreObjectInput) (*RestoreObjectOutput, error)
 	CreateMultipartUpload(context.Context, *CreateMultipartUploadInput) (*CreateMultipartUploadOutput, error)
 	UploadPart(context.Context, *UploadPartInput) (*UploadPartOutput, error)
@@ -252,33 +252,22 @@ type Owner struct {
 	ID          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 }
 
-type GetObjectAclInput struct {
+type GetObjectCannedAclInput struct {
 	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	Key    string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
 }
-type GetObjectAclOutput struct {
-	Grants         []*Grant `protobuf:"bytes,1,rep,name=grants,proto3" json:"grants,omitempty"`
-	Owner          *Owner   `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
-	RequestCharged string   `protobuf:"bytes,3,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
-}
-type Grant struct {
-	Grantee    *Grantee `protobuf:"bytes,1,opt,name=grantee,proto3" json:"grantee,omitempty"`
-	Permission string   `protobuf:"bytes,2,opt,name=permission,proto3" json:"permission,omitempty"`
-}
-type Grantee struct {
-	DisplayName  string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	EmailAddress string `protobuf:"bytes,2,opt,name=email_address,json=emailAddress,proto3" json:"email_address,omitempty"`
-	ID           string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
-	Type         string `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	URI          string `protobuf:"bytes,5,opt,name=uri,proto3" json:"uri,omitempty"`
+type GetObjectCannedAclOutput struct {
+	CannedAcl      string `protobuf:"bytes,1,opt,name=canned_acl,json=cannedAcl,proto3" json:"canned_acl,omitempty"`
+	Owner          *Owner `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
+	RequestCharged string `protobuf:"bytes,3,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
 }
 
-type PutObjectAclInput struct {
+type PutObjectCannedAclInput struct {
 	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	Key    string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
 	Acl    string `protobuf:"bytes,3,opt,name=acl,proto3" json:"acl,omitempty"`
 }
-type PutObjectAclOutput struct {
+type PutObjectCannedAclOutput struct {
 	RequestCharged string `protobuf:"bytes,1,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
 }
 

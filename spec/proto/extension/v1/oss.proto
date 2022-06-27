@@ -20,8 +20,8 @@ service ObjectStorageService{
     rpc CopyObject(CopyObjectInput) returns(CopyObjectOutput){}
     rpc DeleteObjects(DeleteObjectsInput) returns(DeleteObjectsOutput){}
     rpc ListObjects(ListObjectsInput) returns(ListObjectsOutput){}
-    rpc GetObjectAcl(GetObjectAclInput) returns(GetObjectAclOutput){}
-    rpc PutObjectAcl(PutObjectAclInput) returns(PutObjectAclOutput){}
+    rpc GetObjectCannedAcl(GetObjectCannedAclInput) returns(GetObjectCannedAclOutput){}
+    rpc PutObjectCannedAcl(PutObjectCannedAclInput) returns(PutObjectCannedAclOutput){}
     rpc RestoreObject(RestoreObjectInput) returns(RestoreObjectOutput){}
     rpc CreateMultipartUpload(CreateMultipartUploadInput) returns(CreateMultipartUploadOutput){}
     rpc UploadPart(stream UploadPartInput) returns(UploadPartOutput){}
@@ -470,38 +470,22 @@ message Object{
     string storage_class = 6;
 }
 
-message Grantee{
-    string display_name = 1;
-    string email_address = 2;
-    // The canonical user ID of the grantee.
-    string id = 3;
-    string type = 4;
-    // URI of the grantee group.
-    string uri = 5;
-}
-
-// Container for grant information.
-message Grant{
-    Grantee grantee = 1;
-    // Specifies the permission given to the grantee.
-    string permission = 2;
-}
-message GetObjectAclInput{
+message GetObjectCannedAclInput{
     string store_name = 1;
     string bucket = 2;
     string key = 3;
     // VersionId used to reference a specific version of the object
     string version_id = 4;
 }
-message GetObjectAclOutput{
-    repeated Grant grants = 1;
+message GetObjectCannedAclOutput{
+    string canned_acl = 1;
     Owner owner = 2;
     // If present, indicates that the requester was successfully charged for the
     // request.
     string request_charged = 3;
 }
 
-message PutObjectAclInput{
+message PutObjectCannedAclInput{
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -510,7 +494,7 @@ message PutObjectAclInput{
     // VersionId used to reference a specific version of the object.
     string version_id = 5;
 }
-message PutObjectAclOutput{
+message PutObjectCannedAclOutput{
     string request_charged = 1;
 }
 

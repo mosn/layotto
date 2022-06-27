@@ -30,8 +30,8 @@ type ObjectStorageServiceClient interface {
 	CopyObject(ctx context.Context, in *CopyObjectInput, opts ...grpc.CallOption) (*CopyObjectOutput, error)
 	DeleteObjects(ctx context.Context, in *DeleteObjectsInput, opts ...grpc.CallOption) (*DeleteObjectsOutput, error)
 	ListObjects(ctx context.Context, in *ListObjectsInput, opts ...grpc.CallOption) (*ListObjectsOutput, error)
-	GetObjectAcl(ctx context.Context, in *GetObjectAclInput, opts ...grpc.CallOption) (*GetObjectAclOutput, error)
-	PutObjectAcl(ctx context.Context, in *PutObjectAclInput, opts ...grpc.CallOption) (*PutObjectAclOutput, error)
+	GetObjectCannedAcl(ctx context.Context, in *GetObjectCannedAclInput, opts ...grpc.CallOption) (*GetObjectCannedAclOutput, error)
+	PutObjectCannedAcl(ctx context.Context, in *PutObjectCannedAclInput, opts ...grpc.CallOption) (*PutObjectCannedAclOutput, error)
 	RestoreObject(ctx context.Context, in *RestoreObjectInput, opts ...grpc.CallOption) (*RestoreObjectOutput, error)
 	CreateMultipartUpload(ctx context.Context, in *CreateMultipartUploadInput, opts ...grpc.CallOption) (*CreateMultipartUploadOutput, error)
 	UploadPart(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_UploadPartClient, error)
@@ -195,18 +195,18 @@ func (c *objectStorageServiceClient) ListObjects(ctx context.Context, in *ListOb
 	return out, nil
 }
 
-func (c *objectStorageServiceClient) GetObjectAcl(ctx context.Context, in *GetObjectAclInput, opts ...grpc.CallOption) (*GetObjectAclOutput, error) {
-	out := new(GetObjectAclOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/GetObjectAcl", in, out, opts...)
+func (c *objectStorageServiceClient) GetObjectCannedAcl(ctx context.Context, in *GetObjectCannedAclInput, opts ...grpc.CallOption) (*GetObjectCannedAclOutput, error) {
+	out := new(GetObjectCannedAclOutput)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/GetObjectCannedAcl", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *objectStorageServiceClient) PutObjectAcl(ctx context.Context, in *PutObjectAclInput, opts ...grpc.CallOption) (*PutObjectAclOutput, error) {
-	out := new(PutObjectAclOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/PutObjectAcl", in, out, opts...)
+func (c *objectStorageServiceClient) PutObjectCannedAcl(ctx context.Context, in *PutObjectCannedAclInput, opts ...grpc.CallOption) (*PutObjectCannedAclOutput, error) {
+	out := new(PutObjectCannedAclOutput)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/PutObjectCannedAcl", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -412,8 +412,8 @@ type ObjectStorageServiceServer interface {
 	CopyObject(context.Context, *CopyObjectInput) (*CopyObjectOutput, error)
 	DeleteObjects(context.Context, *DeleteObjectsInput) (*DeleteObjectsOutput, error)
 	ListObjects(context.Context, *ListObjectsInput) (*ListObjectsOutput, error)
-	GetObjectAcl(context.Context, *GetObjectAclInput) (*GetObjectAclOutput, error)
-	PutObjectAcl(context.Context, *PutObjectAclInput) (*PutObjectAclOutput, error)
+	GetObjectCannedAcl(context.Context, *GetObjectCannedAclInput) (*GetObjectCannedAclOutput, error)
+	PutObjectCannedAcl(context.Context, *PutObjectCannedAclInput) (*PutObjectCannedAclOutput, error)
 	RestoreObject(context.Context, *RestoreObjectInput) (*RestoreObjectOutput, error)
 	CreateMultipartUpload(context.Context, *CreateMultipartUploadInput) (*CreateMultipartUploadOutput, error)
 	UploadPart(ObjectStorageService_UploadPartServer) error
@@ -465,11 +465,11 @@ func (UnimplementedObjectStorageServiceServer) DeleteObjects(context.Context, *D
 func (UnimplementedObjectStorageServiceServer) ListObjects(context.Context, *ListObjectsInput) (*ListObjectsOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListObjects not implemented")
 }
-func (UnimplementedObjectStorageServiceServer) GetObjectAcl(context.Context, *GetObjectAclInput) (*GetObjectAclOutput, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetObjectAcl not implemented")
+func (UnimplementedObjectStorageServiceServer) GetObjectCannedAcl(context.Context, *GetObjectCannedAclInput) (*GetObjectCannedAclOutput, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetObjectCannedAcl not implemented")
 }
-func (UnimplementedObjectStorageServiceServer) PutObjectAcl(context.Context, *PutObjectAclInput) (*PutObjectAclOutput, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PutObjectAcl not implemented")
+func (UnimplementedObjectStorageServiceServer) PutObjectCannedAcl(context.Context, *PutObjectCannedAclInput) (*PutObjectCannedAclOutput, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PutObjectCannedAcl not implemented")
 }
 func (UnimplementedObjectStorageServiceServer) RestoreObject(context.Context, *RestoreObjectInput) (*RestoreObjectOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RestoreObject not implemented")
@@ -719,38 +719,38 @@ func _ObjectStorageService_ListObjects_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ObjectStorageService_GetObjectAcl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetObjectAclInput)
+func _ObjectStorageService_GetObjectCannedAcl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetObjectCannedAclInput)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).GetObjectAcl(ctx, in)
+		return srv.(ObjectStorageServiceServer).GetObjectCannedAcl(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/GetObjectAcl",
+		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/GetObjectCannedAcl",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).GetObjectAcl(ctx, req.(*GetObjectAclInput))
+		return srv.(ObjectStorageServiceServer).GetObjectCannedAcl(ctx, req.(*GetObjectCannedAclInput))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ObjectStorageService_PutObjectAcl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PutObjectAclInput)
+func _ObjectStorageService_PutObjectCannedAcl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PutObjectCannedAclInput)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).PutObjectAcl(ctx, in)
+		return srv.(ObjectStorageServiceServer).PutObjectCannedAcl(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/PutObjectAcl",
+		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/PutObjectCannedAcl",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).PutObjectAcl(ctx, req.(*PutObjectAclInput))
+		return srv.(ObjectStorageServiceServer).PutObjectCannedAcl(ctx, req.(*PutObjectCannedAclInput))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1081,12 +1081,12 @@ var ObjectStorageService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ObjectStorageService_ListObjects_Handler,
 		},
 		{
-			MethodName: "GetObjectAcl",
-			Handler:    _ObjectStorageService_GetObjectAcl_Handler,
+			MethodName: "GetObjectCannedAcl",
+			Handler:    _ObjectStorageService_GetObjectCannedAcl_Handler,
 		},
 		{
-			MethodName: "PutObjectAcl",
-			Handler:    _ObjectStorageService_PutObjectAcl_Handler,
+			MethodName: "PutObjectCannedAcl",
+			Handler:    _ObjectStorageService_PutObjectCannedAcl_Handler,
 		},
 		{
 			MethodName: "RestoreObject",

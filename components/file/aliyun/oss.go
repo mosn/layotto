@@ -234,7 +234,7 @@ func (a *AliyunOSS) GetObjectTagging(ctx context.Context, req *file.GetObjectTag
 	return out, err
 }
 
-func (a *AliyunOSS) GetObjectAcl(ctx context.Context, req *file.GetObjectAclInput) (*file.GetObjectAclOutput, error) {
+func (a *AliyunOSS) GetObjectCannedAcl(ctx context.Context, req *file.GetObjectCannedAclInput) (*file.GetObjectCannedAclOutput, error) {
 	cli, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
@@ -247,12 +247,10 @@ func (a *AliyunOSS) GetObjectAcl(ctx context.Context, req *file.GetObjectAclInpu
 	if err != nil {
 		return nil, err
 	}
-	output := &file.GetObjectAclOutput{Owner: &file.Owner{DisplayName: resp.Owner.DisplayName, ID: resp.Owner.ID}}
-	grant := &file.Grant{Grantee: &file.Grantee{DisplayName: resp.Owner.DisplayName, ID: resp.Owner.ID}, Permission: resp.ACL}
-	output.Grants = append(output.Grants, grant)
+	output := &file.GetObjectCannedAclOutput{CannedAcl: resp.ACL, Owner: &file.Owner{DisplayName: resp.Owner.DisplayName, ID: resp.Owner.ID}}
 	return output, err
 }
-func (a *AliyunOSS) PutObjectAcl(ctx context.Context, req *file.PutObjectAclInput) (*file.PutObjectAclOutput, error) {
+func (a *AliyunOSS) PutObjectCannedAcl(ctx context.Context, req *file.PutObjectCannedAclInput) (*file.PutObjectCannedAclOutput, error) {
 	cli, err := a.selectClient(req.Bucket)
 	if err != nil {
 		return nil, err
@@ -262,7 +260,7 @@ func (a *AliyunOSS) PutObjectAcl(ctx context.Context, req *file.PutObjectAclInpu
 		return nil, err
 	}
 	err = bucket.SetObjectACL(req.Key, oss.ACLType(req.Acl))
-	output := &file.PutObjectAclOutput{}
+	output := &file.PutObjectCannedAclOutput{}
 	return output, err
 }
 func (a *AliyunOSS) ListObjects(ctx context.Context, req *file.ListObjectsInput) (*file.ListObjectsOutput, error) {
