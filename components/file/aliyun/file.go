@@ -64,6 +64,7 @@ func (s *AliyunOSS) Init(ctx context.Context, metadata *file.FileConfig) error {
 		if err != nil {
 			return err
 		}
+		s.client[v.Uid] = client
 		//use bucket as key, client as value
 		for _, bucketName := range v.Buckets {
 			if _, ok := s.client[bucketName]; ok {
@@ -210,19 +211,12 @@ func (s *AliyunOSS) getClient(metadata *file.OssMetadata) (*oss.Client, error) {
 func (s *AliyunOSS) getBucket(fileName string, metaData map[string]string) (*oss.Bucket, error) {
 	var ossClient *oss.Client
 	var err error
-	// get oss client
-	if _, ok := metaData[endpointKey]; ok {
-		ossClient = s.client[endpointKey]
-	} else {
-		// if user not specify endpoint, try to use default client
-		ossClient, err = s.selectClient("")
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	// get oss bucket
 	bucketName, err := util.GetBucketName(fileName)
+	if err != nil {
+		return nil, err
+	}
+	ossClient, err = s.selectClient(bucketName)
 	if err != nil {
 		return nil, err
 	}

@@ -39,9 +39,8 @@ const (
 func TestInitAliyunOss(t *testing.T) {
 	NewAliyunOss()
 	f := factory.GetInitFunc(DefaultClientInitFunc)
-	assert.Equal(t, f, AliyunDefaultInitFunc)
 	clients, err := f([]byte("hello"), map[string]string{})
 	assert.Equal(t, err, file.ErrInvalid)
-	assert.Equal(t, nil, clients)
+	assert.Nil(t, clients)
 	//oss.InitConfig(context.TODO(), file.FileConfig{})
 }
