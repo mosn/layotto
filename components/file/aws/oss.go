@@ -73,7 +73,7 @@ func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (
 			if _, ok := clients[bucketName]; ok {
 				continue
 			}
-
+			clients[bucketName] = client
 		}
 	}
 	return clients, nil
@@ -574,6 +574,9 @@ func (a *AwsOss) HeadObject(ctx context.Context, req *file.HeadObjectInput) (*fi
 	}
 	input := &s3.HeadObjectInput{}
 	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	if err != nil {
+		return nil, err
+	}
 	resp, err := client.HeadObject(ctx, input)
 	if err != nil {
 		return nil, err
@@ -620,10 +623,8 @@ func (a *AwsOss) SignURL(ctx context.Context, req *file.SignURLInput) (*file.Sig
 		}
 		return &file.SignURLOutput{SignedUrl: resp.URL}, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("not supported method %+v now", req.Method))
+		return nil, fmt.Errorf("not supported method %+v now", req.Method)
 	}
-
-	return nil, nil
 }
 
 func (a *AwsOss) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *file.UpdateBandwidthRateLimitInput) error {

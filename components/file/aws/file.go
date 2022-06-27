@@ -150,13 +150,13 @@ func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
 }
 
 // selectClient choose aws client from exist client-map, key is endpoint, value is client instance.
-func (s *AwsOss) selectClient(bucket string) (*s3.Client, error) {
-	if client, ok := s.client[bucket]; ok {
+func (a *AwsOss) selectClient(bucket string) (*s3.Client, error) {
+	if client, ok := a.client[bucket]; ok {
 		return client, nil
 	}
 	// if not specify endpoint, select default one
-	if len(s.client) == 1 {
-		for _, client := range s.client {
+	if len(a.client) == 1 {
+		for _, client := range a.client {
 			return client, nil
 		}
 	}

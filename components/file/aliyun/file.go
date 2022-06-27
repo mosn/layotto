@@ -32,7 +32,6 @@ import (
 )
 
 const (
-	endpointKey    = "endpoint"
 	storageTypeKey = "storageType"
 )
 

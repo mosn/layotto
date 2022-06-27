@@ -27,8 +27,25 @@ import (
 )
 
 const (
-	conf = `[
+	confWithoutUidAndBucket = `[
 				{
+					"endpoint": "endpoint_address",
+					"accessKeyID": "accessKey",
+					"accessKeySecret": "secret"
+				}
+			]`
+	confWithUid = `[
+				{	
+					"uid": "123",
+					"endpoint": "endpoint_address",
+					"accessKeyID": "accessKey",
+					"accessKeySecret": "secret"
+				}
+			]`
+	confWithUidAndBucket = `[
+				{	
+					"uid": "123",
+					"buckets": ["bucket1","bucket2"],
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret"
@@ -42,5 +59,40 @@ func TestInitAliyunOss(t *testing.T) {
 	clients, err := f([]byte("hello"), map[string]string{})
 	assert.Equal(t, err, file.ErrInvalid)
 	assert.Nil(t, clients)
-	//oss.InitConfig(context.TODO(), file.FileConfig{})
+	clients, err = f([]byte(confWithoutUidAndBucket), map[string]string{})
+	assert.NotEqual(t, file.ErrInvalid, err)
+	assert.NotNil(t, clients)
+	client, ok := clients[""]
+	assert.Equal(t, true, ok)
+	assert.NotNil(t, client)
+
+	clients, err = f([]byte(confWithUid), map[string]string{})
+	assert.NotEqual(t, file.ErrInvalid, err)
+	assert.NotNil(t, clients)
+	client, ok = clients[""]
+	assert.Equal(t, false, ok)
+	assert.Nil(t, client)
+	client, ok = clients["123"]
+	assert.Equal(t, true, ok)
+	assert.NotNil(t, client)
+
+	clients, err = f([]byte(confWithUidAndBucket), map[string]string{})
+	assert.NotEqual(t, file.ErrInvalid, err)
+	assert.NotNil(t, clients)
+	client, ok = clients[""]
+	assert.Equal(t, false, ok)
+	assert.Nil(t, client)
+
+	client, ok = clients["123"]
+	assert.Equal(t, true, ok)
+	assert.NotNil(t, client)
+
+	client, ok = clients["bucket1"]
+	assert.Equal(t, true, ok)
+	assert.NotNil(t, client)
+
+	client, ok = clients["bucket2"]
+	assert.Equal(t, true, ok)
+	assert.NotNil(t, client)
+
 }
