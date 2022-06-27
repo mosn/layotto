@@ -190,16 +190,16 @@ func TestAcl(name string) {
 		return
 	}
 	c := s3.NewObjectStorageServiceClient(conn)
-	req := &s3.GetObjectAclInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: name}
-	resp, err := c.GetObjectAcl(context.Background(), req)
+	req := &s3.GetObjectCannedAclInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: name}
+	resp, err := c.GetObjectCannedAcl(context.Background(), req)
 	if err != nil {
 		fmt.Printf("GetObjectAcl fail, err: %+v \n", err)
 		return
 	}
 	fmt.Printf("get acl success, resp: %+v\n", resp)
 
-	putRequest := &s3.PutObjectAclInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: name, Acl: "public-read-write"}
-	resp2, err := c.PutObjectAcl(context.Background(), putRequest)
+	putRequest := &s3.PutObjectCannedAclInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: name, Acl: "public-read-write"}
+	resp2, err := c.PutObjectCannedAcl(context.Background(), putRequest)
 	if err != nil {
 		fmt.Printf("TestAcl fail, err: %+v \n", err)
 		return
