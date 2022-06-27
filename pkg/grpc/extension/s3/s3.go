@@ -46,11 +46,6 @@ var (
 	}
 )
 
-const (
-	Region   = "region"
-	EndPoint = "endpoint"
-)
-
 type S3Server struct {
 	appId       string
 	ossInstance map[string]l8s3.Oss
