@@ -35,7 +35,6 @@ import (
 )
 
 const (
-	endpointKey              = "endpoint"
 	defaultCredentialsSource = "provider"
 )
 
