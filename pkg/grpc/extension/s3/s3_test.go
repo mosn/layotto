@@ -283,3 +283,493 @@ func TestListObjects(t *testing.T) {
 	assert.Equal(t, true, resp.IsTruncated)
 	assert.Equal(t, "delimiter", resp.Delimiter)
 }
+
+//TestGetObjectCannedAcl
+func TestGetObjectCannedAcl(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.GetObjectCannedAclInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+		Key:       "key",
+		VersionId: "versionId",
+	}
+	_, err := s3Server.GetObjectCannedAcl(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.GetObjectCannedAclOutput{CannedAcl: "public-read-write", RequestCharged: "yes"}
+	mockossServer.EXPECT().GetObjectCannedAcl(ctx,
+		&l8s3.GetObjectCannedAclInput{
+			Bucket:    "layotto",
+			Key:       "key",
+			VersionId: "versionId",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.GetObjectCannedAcl(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "public-read-write", resp.CannedAcl)
+	assert.Equal(t, "yes", resp.RequestCharged)
+}
+
+//TestPutObjectCannedAcl
+func TestPutObjectCannedAcl(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.PutObjectCannedAclInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+		Key:       "key",
+		VersionId: "versionId",
+	}
+	_, err := s3Server.PutObjectCannedAcl(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.PutObjectCannedAclOutput{RequestCharged: "yes"}
+	mockossServer.EXPECT().PutObjectCannedAcl(ctx,
+		&l8s3.PutObjectCannedAclInput{
+			Bucket:    "layotto",
+			Key:       "key",
+			VersionId: "versionId",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.PutObjectCannedAcl(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "yes", resp.RequestCharged)
+}
+
+//TestRestoreObject
+func TestRestoreObject(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.RestoreObjectInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+		Key:       "key",
+		VersionId: "versionId",
+	}
+	_, err := s3Server.RestoreObject(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.RestoreObjectOutput{RestoreOutputPath: "yes", RequestCharged: "yes"}
+	mockossServer.EXPECT().RestoreObject(ctx,
+		&l8s3.RestoreObjectInput{
+			Bucket:    "layotto",
+			Key:       "key",
+			VersionId: "versionId",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.RestoreObject(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "yes", resp.RequestCharged)
+	assert.Equal(t, "yes", resp.RestoreOutputPath)
+}
+
+//TestCreateMultipartUpload
+func TestCreateMultipartUpload(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.CreateMultipartUploadInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+		Key:       "key",
+	}
+	_, err := s3Server.CreateMultipartUpload(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.CreateMultipartUploadOutput{Bucket: "layotto", Key: "object", UploadId: "123"}
+	mockossServer.EXPECT().CreateMultipartUpload(ctx,
+		&l8s3.CreateMultipartUploadInput{
+			Bucket: "layotto",
+			Key:    "key",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.CreateMultipartUpload(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "123", resp.UploadId)
+	assert.Equal(t, "layotto", resp.Bucket)
+	assert.Equal(t, "object", resp.Key)
+}
+
+//TestUploadPartCopy
+func TestUploadPartCopy(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.UploadPartCopyInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+		Key:       "key",
+	}
+	_, err := s3Server.UploadPartCopy(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.UploadPartCopyOutput{BucketKeyEnabled: true, CopyPartResult: &l8s3.CopyPartResult{ETag: "123", LastModified: 456}}
+	mockossServer.EXPECT().UploadPartCopy(ctx,
+		&l8s3.UploadPartCopyInput{
+			Bucket: "layotto",
+			Key:    "key",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.UploadPartCopy(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "123", resp.CopyPartResult.Etag)
+	assert.Equal(t, int64(456), resp.CopyPartResult.LastModified)
+	assert.Equal(t, true, resp.BucketKeyEnabled)
+}
+
+//TestCompleteMultipartUpload
+func TestCompleteMultipartUpload(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.CompleteMultipartUploadInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+		Key:       "key",
+		UploadId:  "123",
+	}
+	_, err := s3Server.CompleteMultipartUpload(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.CompleteMultipartUploadOutput{
+		BucketKeyEnabled: true,
+		Expiration:       "expiration",
+		ETag:             "etag",
+	}
+	mockossServer.EXPECT().CompleteMultipartUpload(ctx,
+		&l8s3.CompleteMultipartUploadInput{
+			Bucket:   "layotto",
+			Key:      "key",
+			UploadId: "123",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.CompleteMultipartUpload(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "expiration", resp.Expiration)
+	assert.Equal(t, "etag", resp.Etag)
+	assert.Equal(t, true, resp.BucketKeyEnabled)
+}
+
+//TestAbortMultipartUpload
+func TestAbortMultipartUpload(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.AbortMultipartUploadInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+		Key:       "key",
+		UploadId:  "123",
+	}
+	_, err := s3Server.AbortMultipartUpload(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.AbortMultipartUploadOutput{
+		RequestCharged: "true",
+	}
+	mockossServer.EXPECT().AbortMultipartUpload(ctx,
+		&l8s3.AbortMultipartUploadInput{
+			Bucket:   "layotto",
+			Key:      "key",
+			UploadId: "123",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.AbortMultipartUpload(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "true", resp.RequestCharged)
+}
+
+//TestListMultipartUploads
+func TestListMultipartUploads(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.ListMultipartUploadsInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+	}
+	_, err := s3Server.ListMultipartUploads(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.ListMultipartUploadsOutput{
+		Bucket: "layotto",
+	}
+	mockossServer.EXPECT().ListMultipartUploads(ctx,
+		&l8s3.ListMultipartUploadsInput{
+			Bucket: "layotto",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.ListMultipartUploads(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "layotto", resp.Bucket)
+}
+
+//TestListObjectVersions
+func TestListObjectVersions(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.ListObjectVersionsInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+		KeyMarker: "marker",
+	}
+	_, err := s3Server.ListObjectVersions(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.ListObjectVersionsOutput{
+		Delimiter: "layotto",
+	}
+	mockossServer.EXPECT().ListObjectVersions(ctx,
+		&l8s3.ListObjectVersionsInput{
+			Bucket:    "layotto",
+			KeyMarker: "marker",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.ListObjectVersions(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "layotto", resp.Delimiter)
+}
+
+//TestHeadObject
+func TestHeadObject(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.HeadObjectInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+		Key:       "object",
+	}
+	_, err := s3Server.HeadObject(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.HeadObjectOutput{
+		ResultMetadata: map[string]string{"key": "value"},
+	}
+	mockossServer.EXPECT().HeadObject(ctx,
+		&l8s3.HeadObjectInput{
+			Bucket: "layotto",
+			Key:    "object",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.HeadObject(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, map[string]string{"key": "value"}, resp.ResultMetadata)
+}
+
+//TestIsObjectExist
+func TestIsObjectExist(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.IsObjectExistInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+		Key:       "object",
+	}
+	_, err := s3Server.IsObjectExist(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.IsObjectExistOutput{
+		FileExist: true,
+	}
+	mockossServer.EXPECT().IsObjectExist(ctx,
+		&l8s3.IsObjectExistInput{
+			Bucket: "layotto",
+			Key:    "object",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.IsObjectExist(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, true, resp.FileExist)
+}
+
+//TestSignURL
+func TestSignURL(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.SignURLInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+		Key:       "object",
+	}
+	_, err := s3Server.SignURL(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.SignURLOutput{
+		SignedUrl: "http://object",
+	}
+	mockossServer.EXPECT().SignURL(ctx,
+		&l8s3.SignURLInput{
+			Bucket: "layotto",
+			Key:    "object",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.SignURL(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "http://object", resp.SignedUrl)
+}
+
+//TestUpdateDownLoadBandwidthRateLimit
+func TestUpdateDownLoadBandwidthRateLimit(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.UpdateBandwidthRateLimitInput{
+		StoreName:                    "NoStore",
+		AverageRateLimitInBitsPerSec: 1,
+	}
+	_, err := s3Server.UpdateDownLoadBandwidthRateLimit(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	mockossServer.EXPECT().UpdateDownLoadBandwidthRateLimit(ctx,
+		&l8s3.UpdateBandwidthRateLimitInput{
+			AverageRateLimitInBitsPerSec: 1,
+		},
+	).Return(nil)
+	req.StoreName = MOCKSERVER
+	_, err = s3Server.UpdateDownLoadBandwidthRateLimit(ctx, req)
+	assert.Nil(t, err)
+}
+
+//TestUpdateUpLoadBandwidthRateLimit
+func TestUpdateUpLoadBandwidthRateLimit(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.UpdateBandwidthRateLimitInput{
+		StoreName:                    "NoStore",
+		AverageRateLimitInBitsPerSec: 1,
+	}
+	_, err := s3Server.UpdateUpLoadBandwidthRateLimit(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	mockossServer.EXPECT().UpdateUpLoadBandwidthRateLimit(ctx,
+		&l8s3.UpdateBandwidthRateLimitInput{
+			AverageRateLimitInBitsPerSec: 1,
+		},
+	).Return(nil)
+	req.StoreName = MOCKSERVER
+	_, err = s3Server.UpdateUpLoadBandwidthRateLimit(ctx, req)
+	assert.Nil(t, err)
+}
+
+//TestListParts
+func TestListParts(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.ListPartsInput{
+		StoreName: "NoStore",
+		Bucket:    "layotto",
+	}
+	_, err := s3Server.ListParts(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.ListPartsOutput{
+		Bucket: "layotto",
+		Key:    "object",
+	}
+	mockossServer.EXPECT().ListParts(ctx,
+		&l8s3.ListPartsInput{
+			Bucket: "layotto",
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err := s3Server.ListParts(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "layotto", resp.Bucket)
+}

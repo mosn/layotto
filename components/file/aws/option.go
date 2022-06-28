@@ -17,34 +17,17 @@
 package aws
 
 import (
-	"errors"
 	"time"
 
 	"github.com/jinzhu/copier"
 )
 
-var str = "'"
 var (
-	str2point = copier.TypeConverter{
-		SrcType: copier.String,
-		DstType: &str,
-		Fn: func(src interface{}) (interface{}, error) {
-			s, _ := src.(string)
-			// return nil on empty string
-			if s == "" {
-				return nil, nil
-			}
-			return &s, nil
-		},
-	}
 	int642time = copier.TypeConverter{
 		SrcType: int64(0),
 		DstType: &time.Time{},
 		Fn: func(src interface{}) (interface{}, error) {
-			s, ok := src.(int64)
-			if !ok {
-				return nil, errors.New("src type not matching")
-			}
+			s, _ := src.(int64)
 			t := time.Unix(s, 0)
 			return &t, nil
 		},
@@ -53,10 +36,7 @@ var (
 		SrcType: &time.Time{},
 		DstType: int64(0),
 		Fn: func(src interface{}) (interface{}, error) {
-			s, ok := src.(*time.Time)
-			if !ok {
-				return nil, errors.New("src type not matching")
-			}
+			s, _ := src.(*time.Time)
 			return s.Unix(), nil
 		},
 	}

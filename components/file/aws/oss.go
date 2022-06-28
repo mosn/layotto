@@ -113,7 +113,7 @@ func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (*file
 	if err != nil {
 		return nil, err
 	}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func (a *AwsOss) PutObject(ctx context.Context, req *file.PutObjectInput) (*file
 		return nil, err
 	}
 	input := &s3.PutObjectInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +176,7 @@ func (a *AwsOss) PutObjectTagging(ctx context.Context, req *file.PutObjectTaggin
 		return nil, err
 	}
 	input := &s3.PutObjectTaggingInput{Tagging: &types.Tagging{}}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -193,7 +193,7 @@ func (a *AwsOss) DeleteObjectTagging(ctx context.Context, req *file.DeleteObject
 		return nil, err
 	}
 	input := &s3.DeleteObjectTaggingInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +210,7 @@ func (a *AwsOss) GetObjectTagging(ctx context.Context, req *file.GetObjectTaggin
 		return nil, err
 	}
 	input := &s3.GetObjectTaggingInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -259,7 +259,7 @@ func (a *AwsOss) DeleteObjects(ctx context.Context, req *file.DeleteObjectsInput
 	}
 	for _, v := range req.Delete.Objects {
 		object := &types.ObjectIdentifier{}
-		err = copier.CopyWithOption(object, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+		err = copier.CopyWithOption(object, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 		if err != nil {
 			return nil, err
 		}
@@ -286,7 +286,7 @@ func (a *AwsOss) ListObjects(ctx context.Context, req *file.ListObjectsInput) (*
 		copier.Option{
 			IgnoreEmpty: true,
 			DeepCopy:    true,
-			Converters:  []copier.TypeConverter{str2point},
+			Converters:  []copier.TypeConverter{},
 		},
 	)
 	if err != nil {
@@ -390,7 +390,7 @@ func (a *AwsOss) UploadPart(ctx context.Context, req *file.UploadPartInput) (*fi
 		return nil, err
 	}
 	input := &s3.UploadPartInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -424,7 +424,7 @@ func (a *AwsOss) UploadPartCopy(ctx context.Context, req *file.UploadPartCopyInp
 		copySource += "?versionId=" + req.CopySource.CopySourceVersionId
 	}
 	input := &s3.UploadPartCopyInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -449,7 +449,7 @@ func (a *AwsOss) CompleteMultipartUpload(ctx context.Context, req *file.Complete
 		copier.Option{
 			IgnoreEmpty: true,
 			DeepCopy:    true,
-			Converters:  []copier.TypeConverter{str2point},
+			Converters:  []copier.TypeConverter{},
 		},
 	)
 	if err != nil {
@@ -469,7 +469,7 @@ func (a *AwsOss) AbortMultipartUpload(ctx context.Context, req *file.AbortMultip
 		return nil, err
 	}
 	input := &s3.AbortMultipartUploadInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -489,7 +489,7 @@ func (a *AwsOss) ListMultipartUploads(ctx context.Context, req *file.ListMultipa
 	}
 	input := &s3.ListMultipartUploadsInput{}
 
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -525,7 +525,7 @@ func (a *AwsOss) ListObjectVersions(ctx context.Context, req *file.ListObjectVer
 		return nil, err
 	}
 	input := &s3.ListObjectVersionsInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -573,7 +573,7 @@ func (a *AwsOss) HeadObject(ctx context.Context, req *file.HeadObjectInput) (*fi
 		return nil, err
 	}
 	input := &s3.HeadObjectInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}

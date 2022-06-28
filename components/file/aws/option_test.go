@@ -36,9 +36,9 @@ func TestCopierOption(t *testing.T) {
 		TestInt64toTime *time.Time
 	}
 	timer := time.Now().Unix()
-	srcValue := &ValueWithInt64{TestInt64toTime: timer, TestString: ""}
+	srcValue := &ValueWithInt64{TestInt64toTime: timer}
 	destValue := &ValueWithTimer{}
-	err := copier.CopyWithOption(destValue, srcValue, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{str2point, int642time}})
+	err := copier.CopyWithOption(destValue, srcValue, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{int642time}})
 	assert.Nil(t, err)
 	assert.Nil(t, destValue.TestString)
 	assert.Equal(t, timer, destValue.TestInt64toTime.Unix())

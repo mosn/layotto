@@ -260,27 +260,30 @@ type Owner struct {
 }
 
 type GetObjectCannedAclInput struct {
-	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key    string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	Bucket    string `json:"bucket,omitempty"`
+	Key       string `json:"key,omitempty"`
+	VersionId string `json:"version_id,omitempty"`
 }
 type GetObjectCannedAclOutput struct {
-	CannedAcl      string `protobuf:"bytes,1,opt,name=canned_acl,json=cannedAcl,proto3" json:"canned_acl,omitempty"`
-	Owner          *Owner `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
-	RequestCharged string `protobuf:"bytes,3,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
+	CannedAcl      string `json:"canned_acl,omitempty"`
+	Owner          *Owner `json:"owner,omitempty"`
+	RequestCharged string `json:"request_charged,omitempty"`
 }
 
 type PutObjectCannedAclInput struct {
-	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key    string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	Acl    string `protobuf:"bytes,3,opt,name=acl,proto3" json:"acl,omitempty"`
+	Bucket    string `json:"bucket,omitempty"`
+	Key       string `json:"key,omitempty"`
+	Acl       string `json:"acl,omitempty"`
+	VersionId string `json:"version_id,omitempty"`
 }
 type PutObjectCannedAclOutput struct {
 	RequestCharged string `protobuf:"bytes,1,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
 }
 
 type RestoreObjectInput struct {
-	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key    string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	Bucket    string `json:"bucket,omitempty"`
+	Key       string `json:"key,omitempty"`
+	VersionId string `json:"version_id,omitempty"`
 }
 type RestoreObjectOutput struct {
 	RequestCharged    string `protobuf:"bytes,1,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
@@ -359,14 +362,13 @@ type UploadPartOutput struct {
 }
 
 type UploadPartCopyInput struct {
-	StoreName     string      `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket        string      `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key           string      `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
-	CopySource    *CopySource `protobuf:"bytes,4,opt,name=copy_source,json=copySource,proto3" json:"copy_source,omitempty"`
-	PartNumber    int32       `protobuf:"varint,5,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
-	UploadId      string      `protobuf:"bytes,6,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
-	StartPosition int64       `protobuf:"varint,7,opt,name=start_position,json=startPosition,proto3" json:"start_position,omitempty"`
-	PartSize      int64       `protobuf:"varint,8,opt,name=part_size,json=partSize,proto3" json:"part_size,omitempty"`
+	Bucket        string      `json:"bucket,omitempty"`
+	Key           string      `json:"key,omitempty"`
+	CopySource    *CopySource `json:"copy_source,omitempty"`
+	PartNumber    int32       `json:"part_number,omitempty"`
+	UploadId      string      `json:"upload_id,omitempty"`
+	StartPosition int64       `json:"start_position,omitempty"`
+	PartSize      int64       `json:"part_size,omitempty"`
 }
 type UploadPartCopyOutput struct {
 	BucketKeyEnabled     bool            `protobuf:"varint,1,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
@@ -521,7 +523,7 @@ type HeadObjectInput struct {
 }
 type HeadObjectOutput struct {
 	// Metadata pertaining to the operation's result.
-	ResultMetadata map[string]string `json:"ResultMetadata,omitempty"`
+	ResultMetadata map[string]string `json:"result_metadata,omitempty"`
 }
 
 type IsObjectExistInput struct {
