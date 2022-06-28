@@ -29,12 +29,7 @@ func TestPointerToString(t *testing.T) {
 	assert.Equal(t, PointerToString(&s), "")
 }
 
-func TestGetPrefixConfigFilePathNormalCase(t *testing.T) {
+func TestGetPrefixConfigFilePath(t *testing.T) {
 	os.Args = append(os.Args, "-c", "../../configs/config_standalone.json")
 	assert.Equal(t, "../../configs/", GetPrefixConfigFilePath())
-}
-
-func TestGetPrefixConfigFilePathSimpleCase(t *testing.T) {
-	os.Args = append(os.Args, "-c", "./config_standalone.json")
-	assert.Equal(t, "./", GetPrefixConfigFilePath())
 }
