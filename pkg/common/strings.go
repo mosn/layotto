@@ -16,10 +16,29 @@
 
 package common
 
+import (
+	"os"
+	"strings"
+)
+
 // PointerToString convert *string to string
 func PointerToString(value *string) string {
 	if value == nil {
 		return ""
 	}
 	return *value
+}
+
+func GetPrefixConfigFilePath() string {
+	prefix := ""
+	for i, str := range os.Args {
+		if str == "-c" {
+			strs := strings.Split(os.Args[i+1], "/")
+			for _, s := range strs[:len(strs)-1] {
+				prefix = prefix + s + "/"
+			}
+			break
+		}
+	}
+	return prefix
 }

@@ -20,13 +20,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/dapr/components-contrib/secretstores"
 
 	"mosn.io/layotto/components/custom"
+	"mosn.io/layotto/pkg/common"
 	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
 
 	"github.com/dapr/components-contrib/bindings"
@@ -517,16 +517,7 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFa
 	// 1. register all factory methods.
 	m.secretStoresRegistry.Register(factorys...)
 	// 2. loop initializing
-	prefix := ""
-	for i, str := range os.Args {
-		if str == "-c" {
-			strs := strings.Split(os.Args[i+1], "/")
-			for _, s := range strs[:len(strs)-1] {
-				prefix = prefix + s + "/"
-			}
-			break
-		}
-	}
+	prefix := common.GetPrefixConfigFilePath()
 	for name, config := range m.runtimeConfig.SecretStoresManagement {
 		// join secretsFile path and check is it exist.
 		if config.Type == "local.file" {
