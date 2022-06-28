@@ -19,6 +19,7 @@ package s3
 import (
 	"context"
 	"errors"
+	"io"
 	"testing"
 
 	mockoss "mosn.io/layotto/pkg/mock/components/oss"
@@ -119,20 +120,27 @@ func TestPutObject(t *testing.T) {
 
 	// Test GetObject function
 	ctx := context.TODO()
-	mockServer := mocks3.NewMockObjectStorageService_PutObjectServer(ctrl)
+	mockStream := mocks3.NewMockObjectStorageService_PutObjectServer(ctrl)
 	putObjectReq := &s3.PutObjectInput{StoreName: "NoStore", Bucket: "layotto", Key: "object", Body: []byte("put")}
-	mockServer.EXPECT().Recv().Return(putObjectReq, nil)
-	err := s3Server.PutObject(mockServer)
+	mockStream.EXPECT().Recv().Return(putObjectReq, nil)
+	err := s3Server.PutObject(mockStream)
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
 
 	putObjectReq.StoreName = MOCKSERVER
 	output := &file.PutObjectOutput{ETag: "tag"}
-	mockServer.EXPECT().Context().Return(ctx)
-	mockServer.EXPECT().Recv().Return(putObjectReq, nil)
-	mockServer.EXPECT().SendAndClose(&s3.PutObjectOutput{Etag: "tag"}).Times(1)
-	mockossServer.EXPECT().PutObject(ctx, &l8s3.PutObjectInput{DataStream: newPutObjectStreamReader(putObjectReq.Body, mockServer), Bucket: "layotto", Key: "object"}).Return(output, nil)
-	err = s3Server.PutObject(mockServer)
+	mockStream.EXPECT().Context().Return(ctx)
+	mockStream.EXPECT().Recv().Return(putObjectReq, nil)
+	mockStream.EXPECT().SendAndClose(&s3.PutObjectOutput{Etag: "tag"}).Times(1)
+	mockossServer.EXPECT().PutObject(ctx, &l8s3.PutObjectInput{DataStream: newPutObjectStreamReader(putObjectReq.Body, mockStream), Bucket: "layotto", Key: "object"}).Return(output, nil)
+	err = s3Server.PutObject(mockStream)
 	assert.Nil(t, err)
+
+	mockStream.EXPECT().Recv().Return(nil, io.EOF)
+	stream := newPutObjectStreamReader(putObjectReq.Body, mockStream)
+	data := make([]byte, 5, 5)
+	n, err := stream.Read(data)
+	assert.Equal(t, 3, n)
+	assert.Equal(t, io.EOF, err)
 }
 
 // TestUploadPart
@@ -161,6 +169,13 @@ func TestUploadPart(t *testing.T) {
 	mockossServer.EXPECT().UploadPart(ctx, &l8s3.UploadPartInput{DataStream: newUploadPartStreamReader(UploadPartReq.Body, mockStream), Bucket: "layotto", Key: "object"}).Return(output, nil)
 	err = s3Server.UploadPart(mockStream)
 	assert.Nil(t, err)
+
+	mockStream.EXPECT().Recv().Return(nil, io.EOF)
+	stream := newUploadPartStreamReader(UploadPartReq.Body, mockStream)
+	data := make([]byte, 5, 5)
+	n, err := stream.Read(data)
+	assert.Equal(t, 3, n)
+	assert.Equal(t, io.EOF, err)
 }
 
 // TestAppendObject
@@ -189,6 +204,13 @@ func TestAppendObject(t *testing.T) {
 	mockossServer.EXPECT().AppendObject(ctx, &l8s3.AppendObjectInput{DataStream: newAppendObjectStreamReader(req.Body, mockStream), Bucket: "layotto", Key: "object"}).Return(output, nil)
 	err = s3Server.AppendObject(mockStream)
 	assert.Nil(t, err)
+
+	mockStream.EXPECT().Recv().Return(nil, io.EOF)
+	stream := newAppendObjectStreamReader(req.Body, mockStream)
+	data := make([]byte, 5, 5)
+	n, err := stream.Read(data)
+	assert.Equal(t, 3, n)
+	assert.Equal(t, io.EOF, err)
 }
 
 // TestDeleteObject
