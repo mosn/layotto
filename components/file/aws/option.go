@@ -45,7 +45,7 @@ var (
 			if !ok {
 				return nil, errors.New("src type not matching")
 			}
-			t := time.Unix(0, s)
+			t := time.Unix(s, 0)
 			return &t, nil
 		},
 	}

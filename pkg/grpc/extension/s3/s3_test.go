@@ -21,9 +21,11 @@ import (
 	"errors"
 	"testing"
 
+	mockoss "mosn.io/layotto/pkg/mock/components/oss"
+
 	"mosn.io/pkg/buffer"
 
-	mock_s3 "mosn.io/layotto/pkg/mock/runtime/oss"
+	mocks3 "mosn.io/layotto/pkg/mock/runtime/oss"
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
@@ -35,8 +37,6 @@ import (
 	l8s3 "mosn.io/layotto/components/file"
 
 	"github.com/golang/mock/gomock"
-
-	mock_oss "mosn.io/layotto/pkg/mock/components/oss"
 
 	"mosn.io/layotto/pkg/grpc"
 )
@@ -50,11 +50,13 @@ func (m *MockDataStream) Close() error {
 	return nil
 }
 
-func TestS3Server(t *testing.T) {
+//TestInitClient
+func TestInitClient(t *testing.T) {
+	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
 	ctrl := gomock.NewController(t)
-	mockoss := mock_oss.NewMockOss(ctrl)
-	ac.Oss["mockoss"] = mockoss
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss["mockossServer"] = mockossServer
 	NewS3Server(ac)
 	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
 
@@ -63,29 +65,217 @@ func TestS3Server(t *testing.T) {
 	ctx := context.TODO()
 	_, err := s3Server.InitClient(ctx, initReq)
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
-	mockoss.EXPECT().InitClient(ctx, &l8s3.InitRequest{Metadata: initReq.Metadata}).Return(nil)
-	initReq.StoreName = "mockoss"
+	mockossServer.EXPECT().InitClient(ctx, &l8s3.InitRequest{Metadata: initReq.Metadata}).Return(nil)
+	initReq.StoreName = "mockossServer"
 	_, err = s3Server.InitClient(ctx, initReq)
 	assert.Nil(t, err)
-
-	mockoss.EXPECT().InitClient(ctx, &l8s3.InitRequest{Metadata: initReq.Metadata}).Return(errors.New("init fail"))
+	mockossServer.EXPECT().InitClient(ctx, &l8s3.InitRequest{Metadata: initReq.Metadata}).Return(errors.New("init fail"))
 	_, err = s3Server.InitClient(ctx, initReq)
 	assert.Equal(t, err.Error(), "init fail")
 
+}
+
+// TestGetObject
+func TestGetObject(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss["mockossServer"] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
 	// Test GetObject function
-	mockServer := mock_s3.NewMockObjectStorageService_GetObjectServer(ctrl)
+	ctx := context.TODO()
+	mockServer := mocks3.NewMockObjectStorageService_GetObjectServer(ctrl)
 	getObjectReq := &s3.GetObjectInput{StoreName: "NoStore", Bucket: "layotto", Key: "object"}
-	err = s3Server.GetObject(getObjectReq, mockServer)
+	err := s3Server.GetObject(getObjectReq, mockServer)
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
 	iobuf := buffer.NewIoBufferBytes([]byte("hello"))
 	dataStream := &MockDataStream{iobuf}
 	output := &file.GetObjectOutput{Etag: "tag"}
 	output.DataStream = dataStream
 	mockServer.EXPECT().Context().Return(ctx)
-	mockoss.EXPECT().GetObject(ctx, &l8s3.GetObjectInput{Bucket: "layotto", Key: "object"}).Return(output, nil)
-	getObjectReq.StoreName = "mockoss"
+	mockossServer.EXPECT().GetObject(ctx, &l8s3.GetObjectInput{Bucket: "layotto", Key: "object"}).Return(output, nil)
+	getObjectReq.StoreName = "mockossServer"
 	mockServer.EXPECT().Send(&s3.GetObjectOutput{Body: []byte("hello"), Etag: "tag"}).Times(1)
 	err = s3Server.GetObject(getObjectReq, mockServer)
 	assert.Nil(t, err)
+}
 
+// TestDeleteObject
+func TestDeleteObject(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss["mockossServer"] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	deleteObjectReq := &s3.DeleteObjectInput{StoreName: "NoStore", Bucket: "layotto", Key: "object"}
+	_, err := s3Server.DeleteObject(ctx, deleteObjectReq)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.DeleteObjectOutput{DeleteMarker: false, VersionId: "123"}
+	mockossServer.EXPECT().DeleteObject(ctx, &l8s3.DeleteObjectInput{Bucket: "layotto", Key: "object"}).Return(output, nil)
+	deleteObjectReq.StoreName = "mockossServer"
+	resp, err := s3Server.DeleteObject(ctx, deleteObjectReq)
+	assert.Nil(t, err)
+	assert.Equal(t, false, resp.DeleteMarker)
+	assert.Equal(t, "123", resp.VersionId)
+}
+
+//TestPutObjectTagging
+func TestPutObjectTagging(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss["mockossServer"] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.PutObjectTaggingInput{StoreName: "NoStore", Bucket: "layotto", Key: "object", Tags: map[string]string{"key": "value"}, VersionId: "123"}
+	_, err := s3Server.PutObjectTagging(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.PutObjectTaggingOutput{}
+	mockossServer.EXPECT().PutObjectTagging(ctx, &l8s3.PutObjectTaggingInput{Bucket: "layotto", Key: "object", VersionId: "123", Tags: map[string]string{"key": "value"}}).Return(output, nil)
+	req.StoreName = "mockossServer"
+	_, err = s3Server.PutObjectTagging(ctx, req)
+	assert.Nil(t, err)
+}
+
+//TestDeleteObjectTagging
+func TestDeleteObjectTagging(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss["mockossServer"] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.DeleteObjectTaggingInput{StoreName: "NoStore", Bucket: "layotto", Key: "object", VersionId: "123"}
+	_, err := s3Server.DeleteObjectTagging(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.DeleteObjectTaggingOutput{VersionId: "123"}
+	mockossServer.EXPECT().DeleteObjectTagging(ctx, &l8s3.DeleteObjectTaggingInput{Bucket: "layotto", Key: "object", VersionId: "123"}).Return(output, nil)
+	req.StoreName = "mockossServer"
+	_, err = s3Server.DeleteObjectTagging(ctx, req)
+	assert.Nil(t, err)
+}
+
+//TestGetObjectTagging
+func TestGetObjectTagging(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss["mockossServer"] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.GetObjectTaggingInput{StoreName: "NoStore", Bucket: "layotto", Key: "object", VersionId: "123"}
+	_, err := s3Server.GetObjectTagging(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.GetObjectTaggingOutput{Tags: map[string]string{"key": "value"}, VersionId: "123"}
+	mockossServer.EXPECT().GetObjectTagging(ctx, &l8s3.GetObjectTaggingInput{Bucket: "layotto", Key: "object", VersionId: "123"}).Return(output, nil)
+	req.StoreName = "mockossServer"
+	resp, err := s3Server.GetObjectTagging(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "value", resp.Tags["key"])
+	assert.Equal(t, "123", resp.VersionId)
+}
+
+//TestCopyObject
+func TestCopyObject(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss["mockossServer"] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.CopyObjectInput{StoreName: "NoStore", Bucket: "layotto", Key: "object"}
+	_, err := s3Server.CopyObject(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.CopyObjectOutput{CopyObjectResult: &l8s3.CopyObjectResult{ETag: "etag"}}
+	mockossServer.EXPECT().CopyObject(ctx, &l8s3.CopyObjectInput{Bucket: "layotto", Key: "object"}).Return(output, nil)
+	req.StoreName = "mockossServer"
+	resp, err := s3Server.CopyObject(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, "etag", resp.CopyObjectResult.Etag)
+}
+
+//TestDeleteObjects
+func TestDeleteObjects(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss["mockossServer"] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.DeleteObjectsInput{StoreName: "NoStore", Bucket: "layotto", Delete: &s3.Delete{Quiet: true, Objects: []*s3.ObjectIdentifier{{Key: "object", VersionId: "version"}}}}
+	_, err := s3Server.DeleteObjects(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.DeleteObjectsOutput{Deleted: []*l8s3.DeletedObject{{DeleteMarker: true, VersionId: "version"}}}
+	mockossServer.EXPECT().DeleteObjects(ctx, &l8s3.DeleteObjectsInput{Bucket: "layotto", Delete: &l8s3.Delete{Quiet: true, Objects: []*l8s3.ObjectIdentifier{{Key: "object", VersionId: "version"}}}}).Return(output, nil)
+	req.StoreName = "mockossServer"
+	resp, err := s3Server.DeleteObjects(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, true, resp.Deleted[0].DeleteMarker)
+	assert.Equal(t, "version", resp.Deleted[0].VersionId)
+}
+
+//TestListObjects
+func TestListObjects(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss["mockossServer"] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	ctx := context.TODO()
+	req := &s3.ListObjectsInput{
+		StoreName:           "NoStore",
+		Bucket:              "layotto",
+		Delimiter:           "delimiter",
+		EncodingType:        "EncodingType",
+		ExpectedBucketOwner: "ExpectedBucketOwner",
+		Marker:              "Marker",
+		MaxKeys:             1,
+		Prefix:              "Prefix",
+		RequestPayer:        "RequestPayer",
+	}
+	_, err := s3Server.ListObjects(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output := &l8s3.ListObjectsOutput{Delimiter: "delimiter", IsTruncated: true}
+	mockossServer.EXPECT().ListObjects(ctx,
+		&l8s3.ListObjectsInput{
+			Bucket:              "layotto",
+			Delimiter:           "delimiter",
+			EncodingType:        "EncodingType",
+			ExpectedBucketOwner: "ExpectedBucketOwner",
+			Marker:              "Marker",
+			MaxKeys:             1,
+			Prefix:              "Prefix",
+			RequestPayer:        "RequestPayer",
+		},
+	).Return(output, nil)
+	req.StoreName = "mockossServer"
+	resp, err := s3Server.ListObjects(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, true, resp.IsTruncated)
+	assert.Equal(t, "delimiter", resp.Delimiter)
 }

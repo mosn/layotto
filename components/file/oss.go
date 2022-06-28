@@ -153,19 +153,26 @@ type PutObjectTaggingOutput struct {
 }
 
 type DeleteObjectTaggingInput struct {
-	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key    string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	Bucket              string `json:"bucket,omitempty"`
+	Key                 string `json:"key,omitempty"`
+	VersionId           string `json:"version_id,omitempty"`
+	ExpectedBucketOwner string `json:"expected_bucket_owner,omitempty"`
 }
 type DeleteObjectTaggingOutput struct {
 	VersionId string `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
 
 type GetObjectTaggingInput struct {
-	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key    string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	Bucket              string `json:"bucket,omitempty"`
+	Key                 string `json:"key,omitempty"`
+	VersionId           string ` json:"version_id,omitempty"`
+	ExpectedBucketOwner string `json:"expected_bucket_owner,omitempty"`
+	RequestPayer        string ` json:"request_payer,omitempty"`
 }
 type GetObjectTaggingOutput struct {
-	Tags map[string]string `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Tags           map[string]string `json:"tags,omitempty"`
+	VersionId      string            `json:"version_id,omitempty"`
+	ResultMetadata map[string]string `json:"result_metadata,omitempty"`
 }
 
 type CopySource struct {
@@ -186,7 +193,7 @@ type CopyObjectInput struct {
 	Metadata map[string]string `json:"metadata,omitempty"`
 }
 type CopyObjectOutput struct {
-	CopyObjectResult *CopyObjectResult `protobuf:"bytes,1,opt,name=CopyObjectResult,proto3" json:"CopyObjectResult,omitempty"`
+	CopyObjectResult *CopyObjectResult `json:"copy_object_result,omitempty"`
 }
 type CopyObjectResult struct {
 	ETag         string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
@@ -194,8 +201,8 @@ type CopyObjectResult struct {
 }
 
 type DeleteObjectsInput struct {
-	Bucket string  `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Delete *Delete `protobuf:"bytes,2,opt,name=Delete,proto3" json:"Delete,omitempty"`
+	Bucket string  `json:"bucket,omitempty"`
+	Delete *Delete `json:"delete,omitempty"`
 }
 type Delete struct {
 	Objects []*ObjectIdentifier `protobuf:"bytes,1,rep,name=objects,proto3" json:"objects,omitempty"`
