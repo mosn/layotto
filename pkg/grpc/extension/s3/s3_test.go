@@ -107,6 +107,34 @@ func TestGetObject(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+// TestPutObject
+func TestPutObject(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	// Test GetObject function
+	ctx := context.TODO()
+	mockServer := mocks3.NewMockObjectStorageService_PutObjectServer(ctrl)
+	putObjectReq := &s3.PutObjectInput{StoreName: "NoStore", Bucket: "layotto", Key: "object", Body: []byte("put")}
+	mockServer.EXPECT().Recv().Return(putObjectReq, nil)
+	err := s3Server.PutObject(mockServer)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+
+	putObjectReq.StoreName = MOCKSERVER
+	output := &file.PutObjectOutput{ETag: "tag"}
+	mockServer.EXPECT().Context().Return(ctx)
+	mockServer.EXPECT().Recv().Return(putObjectReq, nil)
+	mockServer.EXPECT().SendAndClose(&s3.PutObjectOutput{Etag: "tag"}).Times(1)
+	mockossServer.EXPECT().PutObject(ctx, &l8s3.PutObjectInput{DataStream: newPutObjectStreamReader(putObjectReq.Body, mockServer), Bucket: "layotto", Key: "object"}).Return(output, nil)
+	err = s3Server.PutObject(mockServer)
+	assert.Nil(t, err)
+}
+
 // TestDeleteObject
 func TestDeleteObject(t *testing.T) {
 	// prepare oss server
