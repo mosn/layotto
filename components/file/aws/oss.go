@@ -50,7 +50,7 @@ func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (
 	err := json.Unmarshal(staticConf, &m)
 	clients := make(map[string]interface{})
 	if err != nil {
-		return nil, errors.New("invalid config for aws oss")
+		return nil, file.ErrInvalid
 	}
 	for _, data := range m {
 		optFunc := []func(options *aws_config.LoadOptions) error{
@@ -85,7 +85,6 @@ func NewAwsOss() file.Oss {
 		meta:   make(map[string]*file.OssMetadata),
 	}
 }
-
 func (a *AwsOss) InitConfig(ctx context.Context, config *file.FileConfig) error {
 	a.method = config.Method
 	a.rawData = config.Metadata
@@ -232,6 +231,9 @@ func (a *AwsOss) CopyObject(ctx context.Context, req *file.CopyObjectInput) (*fi
 		return nil, err
 	}
 
+	if req.CopySource == nil {
+		return nil, errors.New("must specific copy_source")
+	}
 	//TODO: should support objects accessed through access points
 	copySource := req.CopySource.CopySourceBucket + "/" + req.CopySource.CopySourceKey
 	if req.CopySource.CopySourceVersionId != "" {
@@ -257,13 +259,15 @@ func (a *AwsOss) DeleteObjects(ctx context.Context, req *file.DeleteObjectsInput
 		Bucket: &req.Bucket,
 		Delete: &types.Delete{},
 	}
-	for _, v := range req.Delete.Objects {
-		object := &types.ObjectIdentifier{}
-		err = copier.CopyWithOption(object, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
-		if err != nil {
-			return nil, err
+	if req.Delete != nil {
+		for _, v := range req.Delete.Objects {
+			object := &types.ObjectIdentifier{}
+			err = copier.CopyWithOption(object, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
+			if err != nil {
+				return nil, err
+			}
+			input.Delete.Objects = append(input.Delete.Objects, *object)
 		}
-		input.Delete.Objects = append(input.Delete.Objects, *object)
 	}
 	resp, err := client.DeleteObjects(ctx, input)
 	if err != nil {
@@ -628,11 +632,11 @@ func (a *AwsOss) SignURL(ctx context.Context, req *file.SignURLInput) (*file.Sig
 }
 
 func (a *AwsOss) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *file.UpdateBandwidthRateLimitInput) error {
-	return nil
+	return errors.New("UpdateDownLoadBandwidthRateLimit method not supported now")
 }
 
 func (a *AwsOss) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *file.UpdateBandwidthRateLimitInput) error {
-	return nil
+	return errors.New("UpdateUpLoadBandwidthRateLimit method not supported now")
 }
 func (a *AwsOss) AppendObject(ctx context.Context, req *file.AppendObjectInput) (*file.AppendObjectOutput, error) {
 	return nil, errors.New("AppendObject method not supported on AWS")

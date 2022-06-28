@@ -119,7 +119,7 @@ type PutObjectInput struct {
 	BucketKeyEnabled     bool              `protobuf:"varint,6,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
 	CacheControl         string            `protobuf:"bytes,7,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
 	ContentDisposition   string            `protobuf:"bytes,8,opt,name=content_disposition,json=contentDisposition,proto3" json:"content_disposition,omitempty"`
-	ContentEncoding      string            `protobuf:"bytes,9,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempty"`
+	ContentEncoding      string            `protobuf:"bytes,9,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempPutObjectInputty"`
 	Expires              int64             `protobuf:"varint,10,opt,name=expires,proto3" json:"expires,omitempty"`
 	ServerSideEncryption string            `protobuf:"bytes,11,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
 	SignedUrl            string            `protobuf:"bytes,12,opt,name=signed_url,json=signedUrl,proto3" json:"signed_url,omitempty"`

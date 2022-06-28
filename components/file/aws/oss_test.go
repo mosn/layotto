@@ -1,32 +1,16 @@
-/*
-* Copyright 2021 Layotto Authors
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
- */
-
-package aliyun
+package aws
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"mosn.io/pkg/buffer"
 
 	"mosn.io/layotto/components/file"
+	"mosn.io/layotto/components/file/factory"
 
 	"github.com/stretchr/testify/assert"
-
-	"mosn.io/layotto/components/file/factory"
 )
 
 const (
@@ -56,8 +40,8 @@ const (
 			]`
 )
 
-func TestInitAliyunOss(t *testing.T) {
-	NewAliyunOss()
+func TestAwsDefaultInitFunc(t *testing.T) {
+	NewAwsOss()
 	f := factory.GetInitFunc(DefaultClientInitFunc)
 	clients, err := f([]byte("hello"), map[string]string{})
 	assert.Equal(t, err, file.ErrInvalid)
@@ -97,18 +81,17 @@ func TestInitAliyunOss(t *testing.T) {
 	client, ok = clients["bucket2"]
 	assert.Equal(t, true, ok)
 	assert.NotNil(t, client)
-
 }
 
-func TestAliyunOss(t *testing.T) {
-	instance := NewAliyunOss()
+func TestAwsOss(t *testing.T) {
+	instance := NewAwsOss()
 	err := instance.InitConfig(context.TODO(), &file.FileConfig{Method: "", Metadata: []byte(confWithoutUidAndBucket)})
 	assert.Nil(t, err)
 	err = instance.InitClient(context.TODO(), &file.InitRequest{})
 	assert.Nil(t, err)
 
 	appendObjectResp, err := instance.AppendObject(context.TODO(), &file.AppendObjectInput{})
-	assert.NotNil(t, err)
+	assert.Equal(t, errors.New("AppendObject method not supported on AWS"), err)
 	assert.Nil(t, appendObjectResp)
 
 	_, err = instance.AbortMultipartUpload(context.TODO(), &file.AbortMultipartUploadInput{})
@@ -118,8 +101,12 @@ func TestAliyunOss(t *testing.T) {
 	assert.NotNil(t, err)
 
 	_, err = instance.CopyObject(context.TODO(), &file.CopyObjectInput{})
-	assert.NotNil(t, err)
+	assert.Equal(t, errors.New("must specific copy_source"), err)
 
+	_, err = instance.CopyObject(context.TODO(), &file.CopyObjectInput{
+		CopySource: &file.CopySource{CopySourceBucket: "bucket", CopySourceKey: "key"},
+	})
+	assert.NotEqual(t, errors.New("must specific copy_source"), err)
 	_, err = instance.CreateMultipartUpload(context.TODO(), &file.CreateMultipartUploadInput{})
 	assert.NotNil(t, err)
 
@@ -178,9 +165,9 @@ func TestAliyunOss(t *testing.T) {
 	assert.NotNil(t, err)
 
 	err = instance.UpdateDownLoadBandwidthRateLimit(context.TODO(), &file.UpdateBandwidthRateLimitInput{})
-	assert.Nil(t, err)
+	assert.NotNil(t, err)
 
 	err = instance.UpdateUpLoadBandwidthRateLimit(context.TODO(), &file.UpdateBandwidthRateLimitInput{})
-	assert.Nil(t, err)
+	assert.NotNil(t, err)
 
 }
