@@ -135,6 +135,62 @@ func TestPutObject(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+// TestUploadPart
+func TestUploadPart(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	// Test GetObject function
+	ctx := context.TODO()
+	mockStream := mocks3.NewMockObjectStorageService_UploadPartServer(ctrl)
+	UploadPartReq := &s3.UploadPartInput{StoreName: "NoStore", Bucket: "layotto", Key: "object", Body: []byte("put")}
+	mockStream.EXPECT().Recv().Return(UploadPartReq, nil)
+	err := s3Server.UploadPart(mockStream)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+
+	UploadPartReq.StoreName = MOCKSERVER
+	output := &file.UploadPartOutput{ETag: "tag"}
+	mockStream.EXPECT().Context().Return(ctx)
+	mockStream.EXPECT().Recv().Return(UploadPartReq, nil)
+	mockStream.EXPECT().SendAndClose(&s3.UploadPartOutput{Etag: "tag"}).Times(1)
+	mockossServer.EXPECT().UploadPart(ctx, &l8s3.UploadPartInput{DataStream: newUploadPartStreamReader(UploadPartReq.Body, mockStream), Bucket: "layotto", Key: "object"}).Return(output, nil)
+	err = s3Server.UploadPart(mockStream)
+	assert.Nil(t, err)
+}
+
+// TestAppendObject
+func TestAppendObject(t *testing.T) {
+	// prepare oss server
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ctrl := gomock.NewController(t)
+	mockossServer := mockoss.NewMockOss(ctrl)
+	ac.Oss[MOCKSERVER] = mockossServer
+	NewS3Server(ac)
+	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+
+	// Test GetObject function
+	ctx := context.TODO()
+	mockStream := mocks3.NewMockObjectStorageService_AppendObjectServer(ctrl)
+	req := &s3.AppendObjectInput{StoreName: "NoStore", Bucket: "layotto", Key: "object", Body: []byte("put")}
+	mockStream.EXPECT().Recv().Return(req, nil)
+	err := s3Server.AppendObject(mockStream)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+
+	req.StoreName = MOCKSERVER
+	output := &file.AppendObjectOutput{AppendPosition: 123}
+	mockStream.EXPECT().Context().Return(ctx)
+	mockStream.EXPECT().Recv().Return(req, nil)
+	mockStream.EXPECT().SendAndClose(&s3.AppendObjectOutput{AppendPosition: 123}).Times(1)
+	mockossServer.EXPECT().AppendObject(ctx, &l8s3.AppendObjectInput{DataStream: newAppendObjectStreamReader(req.Body, mockStream), Bucket: "layotto", Key: "object"}).Return(output, nil)
+	err = s3Server.AppendObject(mockStream)
+	assert.Nil(t, err)
+}
+
 // TestDeleteObject
 func TestDeleteObject(t *testing.T) {
 	// prepare oss server
