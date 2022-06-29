@@ -23,9 +23,9 @@ import (
 
 	mockoss "mosn.io/layotto/pkg/mock/components/oss"
 
-	"mosn.io/pkg/buffer"
-
+	lgrpc "google.golang.org/grpc"
 	mocks3 "mosn.io/layotto/pkg/mock/runtime/oss"
+	"mosn.io/pkg/buffer"
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
@@ -64,11 +64,16 @@ func TestInitClient(t *testing.T) {
 	ac.Oss[MOCKSERVER] = mockossServer
 	NewS3Server(ac)
 	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
+	err := s3Server.Init(nil)
+	assert.Nil(t, err)
+	server := lgrpc.NewServer()
+	err = s3Server.Register(server)
+	assert.Nil(t, err)
 
 	// Test InitClient function
 	initReq := &s3.InitInput{StoreName: "NoStore", Metadata: map[string]string{"k": "v"}}
 	ctx := context.TODO()
-	_, err := s3Server.InitClient(ctx, initReq)
+	_, err = s3Server.InitClient(ctx, initReq)
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
 	mockossServer.EXPECT().InitClient(ctx, &l8s3.InitRequest{Metadata: initReq.Metadata}).Return(nil)
 	initReq.StoreName = MOCKSERVER
