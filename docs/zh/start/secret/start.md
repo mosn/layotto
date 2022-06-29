@@ -15,10 +15,13 @@ Secret API支持获取单个和所有secret
 ```shell
 cd ${project_path}/cmd/layotto
 ```
+
 构建:
+
 ```shell @if.not.exist layotto
 go build -o layotto
 ```
+
 完成后目录下会生成layotto文件，运行它：
 
 ```shell @background
@@ -34,6 +37,7 @@ go build -o layotto
 ```shell @if.not.exist client
  go build -o client
 ```
+
 ```shell
  ./client -s "secret_demo"
 ```

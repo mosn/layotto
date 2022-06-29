@@ -4,9 +4,11 @@ Note: the commands below should be executed under layotto directory
 ## How to compile the proto files into `.pb.go` code
 <!-- tabs:start -->
 ### **Make cmmand(recommended)**
+
 ```bash
 make proto.code
 ```
+
 This command uses docker to run protoc and generate `.pb.go` code files.
 
 ### **Install protoc**
@@ -20,15 +22,18 @@ This command uses docker to run protoc and generate `.pb.go` code files.
 cd spec/proto/runtime/v1
 protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=require_unimplemented_servers=false,paths=source_relative *.proto
 ```
+
 <!-- tabs:end -->
 ## How to generate API reference doc according to the proto files
 We can use [protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc) and docker to generate api documents,the command is as follows:  
 
 <!-- tabs:start -->
 ### **Make command(recommended)**
+
 ```bash
 make proto.doc
 ```
+
 This command uses docker to run protoc-gen-doc and generate docs.
 
 ### **Use docker to run protoc-gen-doc**

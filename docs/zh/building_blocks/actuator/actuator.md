@@ -16,6 +16,7 @@ Actuator API一般是给运维系统用的，比如k8s调用Actuator API监控La
 GET
 
 不需要传参
+
 ```json
 // http://localhost:8080/actuator/health/liveness
 // HTTP/1.1 200 OK
@@ -32,10 +33,12 @@ GET
   }
 }
 ```
+
 返回字段说明：
 HTTP状态码200代表成功，其他(400以上的状态码)代表失败
 
 status字段有三种：
+
 ```go
 var (
 	// INIT means it is starting
@@ -59,6 +62,7 @@ A: liveness检查用于检查一些不可恢复的故障，"是否需要重启"�
 而readiness用于检查一些临时性、可恢复的状态，比如应用正在预热缓存，需要告诉基础设施"先别把流量引到我这里来"，等过会预热好了，基础设施再调readiness检查的接口，会得到结果"我准备好了，可以接客了"
 
 GET,不需要传参
+
 ```json
 // http://localhost:8080/actuator/health/readiness
 // HTTP/1.1 503 SERVICE UNAVAILABLE
@@ -81,6 +85,7 @@ GET,不需要传参
 用于查询Layotto和App的运行时元数据
 
 GET
+
 ```json
 // http://localhost:8080/actuator/health/liveness
 // HTTP/1.1 200 OK

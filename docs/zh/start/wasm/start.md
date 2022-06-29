@@ -23,6 +23,7 @@ Layotto支持加载编译好的WASM文件，并通过`proxy_abi_version_0_2_0`�
 这里以用 Docker 安装 Redis 为例，进行介绍。
 
 启动 Redis 容器:
+
 ```shell
 docker run -d --name redis-test -p 6379:6379 redis
 ```
@@ -62,6 +63,7 @@ go build -tags wasmer -o ./layotto_wasmer ./cmd/layotto/main.go
 ```
 
 运行:
+
 ```shell @background
 ./layotto_wasmer start -c ./demo/faas/config.json
 ```

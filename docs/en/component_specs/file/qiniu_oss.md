@@ -20,7 +20,7 @@ Example：configs/config_file_qiniu_oss.json
 
 2.get keys https://portal.qiniu.com/user/key
 
-After the above operation steps are completed, configure endpoint, AK and SK to ` configs/config_file_qiniu_oss.json`
+After the above operation steps are completed, configure endpoint, AK and SK to `configs/config_file_qiniu_oss.json`
 file
 
 ## Run layotto

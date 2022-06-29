@@ -3,6 +3,7 @@ This component can access secrets from local files, environment variables, k8s, 
 **Configuration file structure**
 
 The json configuration file has the following structure:
+
 ```json
 "secret_store": {
   "<Component A Name>": {
@@ -21,7 +22,9 @@ The json configuration file has the following structure:
     }
 }
 ```
+
 Configuration examples of local file keys, local environment variables, and k8s keys:
+
 ```json
        "secret_store": {
                         "secret_demo": {

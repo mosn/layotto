@@ -15,12 +15,14 @@ Let's use the tool to test the documentation automatically!
 ## Principle
 
 Use the tool to execute all shell scripts in a markdown file sequentially, i.e. all scripts wrapped in:
+
 ~~~markdown
 ```shell
 ```
 ~~~
 
 Note: The script wrapped in `bash` blocks will NOT be run.
+
 ~~~markdown
 ```bash
 ```
@@ -37,6 +39,7 @@ Similarly, if the documentation will start containers like redis with Docker, yo
 ## step 3. Running documentation
 
 As an example, run the Quickstart documentation for the state API:
+
 ```shell
 mdx docs/en/start/state/start.md 
 ```
@@ -49,6 +52,7 @@ If the document runs with an error, it means that the case needs to be optimized
 This is also the idea of "test-driven development", optimize the documentation to make it "testable", right?
 
 For example, I ran the Quickstart documentation for the state API and found an error:
+
 ```bash
 SaveState succeeded.key:key1 , value: hello world 
 GetState succeeded.[key:key1 etag:1]: hello world
@@ -68,6 +72,7 @@ main.main()
         /Users/qunli/projects/layotto/demo/state/redis/client.go:57 +0x2f4
 exit status 2
 ```
+
 After some troubleshooting, we found that the demo client did not pass the `etag` field when deleting the specified key, which caused the demo to run abnormally.
 
 See, through the automated testing documentation, we found a Quickstart bug :)
@@ -85,6 +90,7 @@ if err := cli.SaveBulkState(ctx, store, item, &item2); err != nil {
 	panic(err)
 }
 ```
+
 In addition to judging errors, the demo should also verify the test results, and panic directly if it does not meet expectations. This is equivalent to UT, after calling a method, the result of the call needs to be verified.
 
 The advantage of this is that once the Quickstart does not meet expectations, the demo will exit abnormally, allowing automated tools to find "the test failed! Find someone to fix it!"
@@ -104,6 +110,7 @@ So even if the container is not deleted in the document, it will not affect the 
 
 #### What should I do if I don't want a certain command to be executed?
 `mdx` by default will only execute shell code blocks, i.e. code blocks written like this:
+
 ```shell
 ```shell
 ```
@@ -118,6 +125,7 @@ If you don't want a block of code to be executed, you can change the shell to so
 Again, take docs/en/start/state/start.md as an example.
 
 One of the scripts will run Layotto, but if you run it it will hang, preventing the test tool from continuing to run the next command:
+
 ```bash
 ./layotto start -c ../../configs/config_redis.json
 ```
@@ -192,6 +200,7 @@ Add a hidden script to switch directories. For example write:
     cd demo/state/redis/
     go run .
     ```
+
 ### Other markdown annotations
 
 The mdx tool provides many "markdown annotations" to help you write "runnable markdown files". If you are interested, you can check the [mdx documentation](https://github.com/seeflood/mdx#usage)
@@ -199,12 +208,14 @@ The mdx tool provides many "markdown annotations" to help you write "runnable ma
 ### Fix the error and see the effect!
 
 After a fix, I ran the document again:
+
 ```shell
 mdx docs/en/start/state/start.md
 ```
 
 
 The document does not report an error, it can run normally and exit:
+
 ```bash
 admindeMacBook-Pro-2:layotto qunli$ mdx docs/en/start/state/start.md
 latest: Pulling from library/redis
@@ -251,6 +262,7 @@ The modification method is:
 3. After making the above changes, it is time to test the new CI.
 
 Run in the project root directory
+
 ```shell
 make style.quickstart
 ```
@@ -266,6 +278,7 @@ These documents will be tested:
 
 
 whereas if you run:
+
 ```shell
 make style.quickstart QUICKSTART_VERSION=1.17
 ```

@@ -100,6 +100,7 @@ Actuator内部抽象出Endpoint概念，新请求到达服务器后，Actuator�
 #### /actuator/health/liveness
 
 GET
+
 ```json
 // http://localhost:8080/actuator/health/liveness
 // HTTP/1.1 200 OK
@@ -116,9 +117,11 @@ GET
   }
 }
 ```
+
 返回字段说明：
 HTTP状态码200代表成功，其他(400以上的状态码)代表失败
 status字段有三种：
+
 ```go
 var (
 	// INIT means it is starting
@@ -133,6 +136,7 @@ var (
 #### /actuator/health/readiness
 
 GET
+
 ```json
 // http://localhost:8080/actuator/health/readiness
 // HTTP/1.1 503 SERVICE UNAVAILABLE
@@ -146,11 +150,13 @@ GET
   }
 }
 ```
+
 ### 2.2.3. Info Endpoint
 
 #### /actuator/info
 
 GET
+
 ```json
 // http://localhost:8080/actuator/health/liveness
 // HTTP/1.1 200 OK
@@ -197,6 +203,7 @@ GET
 ### 2.4.1. 请求到达mosn，通过stream filter进入Layotto、调用Actuator
 
 stream filter层的http协议实现类(struct)为DispatchFilter，负责按http路径分发请求、调用Actuator:
+
 ```go
 
 type DispatchFilter struct {
@@ -212,12 +219,14 @@ func (dis *DispatchFilter) OnDestroy() {}
 func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
 }
 ```
+
 协议层和Actuator解耦，如果未来需要其他协议的接口，可以实现该协议的stream filter
 
 ### 2.4.2. 请求分发给Actuator内部的Endpoint
 
 参考spring boot actuator的设计：
 Actuator抽象出Endpoint概念，支持按需扩展、注入Endpoint。先内置实现health和info Endpoint。
+
 ```go
 type Actuator struct {
 	endpointRegistry map[string]Endpoint
@@ -233,26 +242,31 @@ func (act *Actuator) AddEndpoint(name string, ep Endpoint) {
 }
 
 ```
+
 来请求后，根据路径将请求分发给对应的Endpoint。比如/actuator/health/readiness会分发给health.Endpoint
 
 ### 2.4.3. health.Endpoint将请求分发给health.Indicator的实现
 
 需要上报健康检查信息的组件实现Indicator接口、注入进health.Endpoint：
+
 ```go
 type Indicator interface {
 	Report() Health
 }
 ```
+
 health.Endpoint将请求分发给health.Indicator的实现
 
 ### 2.4.4. info.Endpoint将请求分发给info.Contributor的实现
 
 需要上报运行时信息的组件实现Contributor接口、注入进info.Endpoint：
+
 ```go
 type Contributor interface {
 	GetInfo() (info interface{}, err error)
 }
 ```
+
 info.Endpoint将请求分发给info.Contributor的实现
 
 # 三、详细设计

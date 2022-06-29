@@ -6,6 +6,7 @@
 ![jsonrpc.jpg](../../../img/rpc/jsonrpc.jpg)
 
 ### step 2. Compile and start layotto
+
 ```shell @if.not.exist layotto
 go build -o layotto cmd/layotto/main.go
 ```
@@ -36,6 +37,7 @@ export DUBBO_GO_CONFIG_PATH="../conf/dubbogo.yml"
 ```
 
 Build dubbo server:
+
 ```shell @if.not.exist server
 go build -o server .
 ```
@@ -47,6 +49,7 @@ Start dubbo server:
 ```
 
 ### step 4. call runtime InvokerService api.
+
 ```shell @cd ${project_path}
 go run demo/rpc/dubbo_json_rpc/dubbo_json_client/client.go -d '{"jsonrpc":"2.0","method":"GetUser","params":["A003"],"id":9527}'
 ```

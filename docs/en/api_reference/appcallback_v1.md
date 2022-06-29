@@ -12,7 +12,7 @@ This document is automaticallly generated from the [`.proto`](https://github.com
 
 <a name="spec.proto.runtime.v1.AppCallback"></a>
 
-### [gRPC Service] AppCallback
+## [gRPC Service] AppCallback
 AppCallback V1 allows user application to interact with runtime.
 User application needs to implement AppCallback service if it needs to
 receive message from runtime.
@@ -28,7 +28,7 @@ receive message from runtime.
 <a name="spec.proto.runtime.v1.ListTopicSubscriptionsResponse"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-### ListTopicSubscriptionsResponse
+## ListTopicSubscriptionsResponse
 ListTopicSubscriptionsResponse is the message including the list of the subscribing topics.
 
 
@@ -44,7 +44,7 @@ ListTopicSubscriptionsResponse is the message including the list of the subscrib
 <a name="spec.proto.runtime.v1.TopicEventRequest"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-### TopicEventRequest
+## TopicEventRequest
 TopicEventRequest message is compatible with CloudEvent spec v1.0
 https://github.com/cloudevents/spec/blob/v1.0/spec.md
 
@@ -69,7 +69,7 @@ https://github.com/cloudevents/spec/blob/v1.0/spec.md
 <a name="spec.proto.runtime.v1.TopicEventRequest.MetadataEntry"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-### TopicEventRequest.MetadataEntry
+## TopicEventRequest.MetadataEntry
 
 
 
@@ -86,7 +86,7 @@ https://github.com/cloudevents/spec/blob/v1.0/spec.md
 <a name="spec.proto.runtime.v1.TopicEventResponse"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-### TopicEventResponse
+## TopicEventResponse
 TopicEventResponse is response from app on published message
 
 
@@ -102,7 +102,7 @@ TopicEventResponse is response from app on published message
 <a name="spec.proto.runtime.v1.TopicSubscription"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-### TopicSubscription
+## TopicSubscription
 TopicSubscription represents topic and metadata.
 
 
@@ -120,7 +120,7 @@ TopicSubscription represents topic and metadata.
 <a name="spec.proto.runtime.v1.TopicSubscription.MetadataEntry"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-### TopicSubscription.MetadataEntry
+## TopicSubscription.MetadataEntry
 
 
 
@@ -138,7 +138,7 @@ TopicSubscription represents topic and metadata.
 
 <a name="spec.proto.runtime.v1.TopicEventResponse.TopicEventResponseStatus"></a>
 
-### TopicEventResponse.TopicEventResponseStatus
+## TopicEventResponse.TopicEventResponseStatus
 TopicEventResponseStatus allows apps to have finer control over handling of the message.
 
 | Name | Number | Description |
