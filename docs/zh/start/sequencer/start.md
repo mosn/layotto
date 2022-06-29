@@ -62,6 +62,7 @@ go build -o layotto
 ```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
+
 <!-- tabs:end -->
 
 ### step 2. 运行客户端程序，调用Layotto生成唯一id
@@ -69,6 +70,7 @@ go build -o layotto
 #### **Go**
 
 构建、运行 go 语言 demo:
+
 ```shell
  cd ${project_path}/demo/sequencer/common/
  go build -o client
@@ -91,6 +93,7 @@ Next id:next_id:9
 Next id:next_id:10  
 Demo success!
 ```
+
 #### **Java**
 
 Download java sdk and examples:

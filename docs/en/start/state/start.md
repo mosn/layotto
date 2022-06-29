@@ -88,6 +88,7 @@ The layotto file will be generated in the directory, run it:
 #### **Go**
 
 Build and run the golang demo:
+
 ```shell
 # open a new terminal tab
 # change directory to ${your project path}/demo/state/common/

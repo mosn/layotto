@@ -80,6 +80,7 @@ go build -o layotto
 ```shell @background
 ./layotto start -c ../../configs/config_redis.json
 ```
+
 <!-- tabs:end -->
 
 ### step 2. 运行客户端程序，调用Layotto进行增删改查

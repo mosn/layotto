@@ -59,6 +59,7 @@ Once finished, the layotto file will be generated in the directory, run it:
 ```shell @background
 ./layotto start -c ../../configs/runtime_config.json
 ```
+
 <!-- tabs:end -->
 
 ### step 2. Run the client program and call Layotto to generate a unique id
@@ -88,6 +89,7 @@ Next id:next_id:9
 Next id:next_id:10  
 Demo success!
 ```
+
 #### **Java**
 
 Download java sdk and examples:
