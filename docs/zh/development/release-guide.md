@@ -6,13 +6,13 @@ Layotto 发布周期暂定为每季度发布一次。
 
 ## 发布 checklist
 
-#### Step1: 检查当前迭代的 [Roadmap](https://github.com/mosn/layotto/projects) 
+### Step1: 检查当前迭代的 [Roadmap](https://github.com/mosn/layotto/projects) 
     
 1. 检查进行中的任务
 2. 检查未完成的任务
 3. 与负责人确认任务状态和发布内容
 
-#### Step2: 创建发布 tag， push 至 github 并检查工作流
+### Step2: 创建发布 tag， push 至 github 并检查工作流
 
 1. 规范：请按照 `v{majorVersion}.{subVersion}.{latestVersion}` 格式创建 tag。
    
@@ -36,7 +36,7 @@ Layotto 发布周期暂定为每季度发布一次。
 
 ![release.png](../../img/development/workflow/release.png)
 
-#### Step3: Draft a new release 并编写发布报告
+### Step3: Draft a new release 并编写发布报告
 
 > 发布报告可以先用 github 的功能自动生成，再基于生成的内容做修改。
 
@@ -44,14 +44,14 @@ Layotto 发布周期暂定为每季度发布一次。
 
 ![img_1.png](../../img/development/release/img_1.png) 
 
-#### Step4: 上传多平台架构的 Binaries
+### Step4: 上传多平台架构的 Binaries
 > 2022/05/04更新：这一步可以忽略。打 tag 发布后，Layotto 的 Release Pipeline 会自动上传二进制文件，无需手动上传。PR 见 https://github.com/mosn/layotto/pull/566
 
 > 如果没有自动上传，可以手动将 `步骤 2` 中构建的多平台 Artifacts 下载、上传
 
 ![img.png](../../img/development/release/img.png)
 
-#### Step5: 确认发布
+### Step5: 确认发布
 
 1. 点击发布
 2. 社区周知

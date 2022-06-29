@@ -1,58 +1,62 @@
-# API plugin: register your own API
-This is a demo to show you how to register your own API.
+# API 插件: 注册您自己的API
+这是一个向您展示如何注册您自己的API的演示程序。
 
-Layotto has the api-plugin feature to let you add your own API based on your need.
+Layotto现有api-plugin的功能让你根据您的需要添加您自己的API
 
-## step 1. start Layotto with a new helloworld API
-Change directory:
+## step 1. 使用一个新的helloworld API运行Layotto
+切换目录：
 
 ```shell
-# change directory 
+# 切换目录 
 cd ${project_path}/cmd/layotto_multiple_api
 ```
 
-Build Layotto :
+编译Layotto：
 
 ```shell @if.not.exist layotto
-# build it
+# 编译命令
 go build -o layotto
 ```
 
-Run Layotto:
+运行Layotto：
+
 ```shell @background
 ./layotto start -c ../../configs/config_standalone.json
 ```
 
-Q: What happened?
+Q: 这其中发生了什么？
 
-Check the code in [`main.go`](https://github.com/mosn/layotto/blob/d74ff0e8940e0eb9c73b1d3275a17d29be36bd5c/cmd/layotto_multiple_api/main.go#L203) and you will find a new API was registered during startup:
+检查[`main.go`](https://github.com/mosn/layotto/blob/d74ff0e8940e0eb9c73b1d3275a17d29be36bd5c/cmd/layotto_multiple_api/main.go#L203) 中的代码，然后你会发现Layotto在启动期间注册了一个新的API：
 
 ```go
-		// register your grpc API here
+		// 在这里注册您的grpc API
         runtime.WithGrpcAPI(
-            // default grpc API
+            // 默认的grpc API
             default_api.NewGrpcAPI,
-            // a demo to show how to register your own API
+            // 一个展示如何注册您自己的API的示例
             helloworld_api.NewHelloWorldAPI,
         ),
 ```
 
-## step 2. invoke the helloworld API
+## step 2. 调用这个helloworld API
+
 ```shell
-# change directory 
+# 切换目录 
 cd ${project_path}/cmd/layotto_multiple_api
-# run demo client
+# 运行客户端示例
 go run client/main.go
 ```
-The result will be:
+
+这个结果将会是：
 
 ```bash
 Greeting: Hello world
 ```
 
-This message is the response of the helloworld API you just registered in step 1.
+这个消息是您在步骤1中刚刚注册的helloworld API的响应结果。
 
-## Next
-You can refer to the demo code to implement your own API. Have a try !
+## 下一步
 
-For more details,you can refer to the [design doc](zh/design/api_plugin/design.md)
+您可以参考演示的代码来实现你自己的API。快来试试吧！
+
+想要了解更多的详情，您可以参考[设计文档](zh/design/api_plugin/design.md)

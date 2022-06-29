@@ -32,6 +32,7 @@ Layotto client sdk封装了grpc调用的逻辑，使用sdk调用Pub/Sub API的�
 // Publishes events to the specific topic.
 rpc PublishEvent(PublishEventRequest) returns (google.protobuf.Empty) {}
 ```
+
 为避免文档和代码不一致，详细入参和返回值请参考[runtime.proto](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto)
 
 ### 订阅事件

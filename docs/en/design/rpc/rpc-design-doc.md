@@ -34,6 +34,7 @@ Mosn's xprotocol support popular protocols such as dubbo、thrift...
 In layotto, we design a convenient way to support xprotocols. The only task need to be finished is convert RPC request and response to xprotocol frames.
 
 #### config params
+
 ```bigquery
 {
   "mosn": {

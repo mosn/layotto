@@ -74,6 +74,7 @@ Dapr的组件库可以直接复用；下文讨论sdk和proto是否复用、怎�
 
 ### 2.2.2. Between APP and Layotto
 用和Dapr一样的grpc API
+
 ```protobuf
 service AppCallback {
   // Lists all topics subscribed by this app.
@@ -84,6 +85,7 @@ service AppCallback {
 
 }
 ```
+
 ```protobuf
 service Dapr {
   // Publishes events to the specific topic.
@@ -91,6 +93,7 @@ service Dapr {
 }
 
 ```
+
 ### 2.2.3. Between Layotto and Component
 用和Dapr一样的；
 PublishRequest.Data和NewMessage.Data里面放符合CloudEvent 1.0规范的json数据（能反序列化放进map[string]interface{} ）

@@ -26,6 +26,7 @@ Start subscriber:
 ```shell @background
  ./subscriber -s pub_subs_demo
 ```
+
 If the following information is printed out, it means the startup is successful:
 
 ```bash
@@ -79,6 +80,7 @@ Use the following command to check whether Redis is installed:
 ```shell
 docker images
 ```
+
 ![img.png](../../../img/mq/start/img.png)
 
 3. Run the container
@@ -110,6 +112,7 @@ After completion, the layotto file will be generated in the directory, run it:
 ```shell @background
 ./layotto start -c ../../configs/config_redis.json
 ```
+
 <!-- tabs:end -->
 
 ### Step 3. Run the Publisher program and call Layotto to publish events
@@ -147,9 +150,11 @@ docker-compose stop
 
 #### **Destroy the Redis container**
 If you started Redis with Docker, you can destroy the Redis container as follows:
+
 ```shell
 docker rm -f redis-test
 ```
+
 <!-- tabs:end -->
 
 ### Next Step
