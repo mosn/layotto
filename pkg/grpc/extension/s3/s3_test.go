@@ -44,6 +44,7 @@ import (
 
 const (
 	MOCKSERVER = "mockossServer"
+	ByteSize   = 5
 )
 
 type MockDataStream struct {
@@ -137,7 +138,7 @@ func TestPutObject(t *testing.T) {
 
 	mockStream.EXPECT().Recv().Return(nil, io.EOF)
 	stream := newPutObjectStreamReader(putObjectReq.Body, mockStream)
-	data := make([]byte, 5, 5)
+	data := make([]byte, ByteSize, ByteSize)
 	n, err := stream.Read(data)
 	assert.Equal(t, 3, n)
 	assert.Equal(t, io.EOF, err)
@@ -172,7 +173,7 @@ func TestUploadPart(t *testing.T) {
 
 	mockStream.EXPECT().Recv().Return(nil, io.EOF)
 	stream := newUploadPartStreamReader(UploadPartReq.Body, mockStream)
-	data := make([]byte, 5, 5)
+	data := make([]byte, ByteSize, ByteSize)
 	n, err := stream.Read(data)
 	assert.Equal(t, 3, n)
 	assert.Equal(t, io.EOF, err)
@@ -207,7 +208,7 @@ func TestAppendObject(t *testing.T) {
 
 	mockStream.EXPECT().Recv().Return(nil, io.EOF)
 	stream := newAppendObjectStreamReader(req.Body, mockStream)
-	data := make([]byte, 5, 5)
+	data := make([]byte, ByteSize, ByteSize)
 	n, err := stream.Read(data)
 	assert.Equal(t, 3, n)
 	assert.Equal(t, io.EOF, err)
