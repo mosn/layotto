@@ -138,7 +138,7 @@ func TestPutObject(t *testing.T) {
 
 	mockStream.EXPECT().Recv().Return(nil, io.EOF)
 	stream := newPutObjectStreamReader(putObjectReq.Body, mockStream)
-	data := make([]byte, ByteSize, ByteSize)
+	data := make([]byte, ByteSize)
 	n, err := stream.Read(data)
 	assert.Equal(t, 3, n)
 	assert.Equal(t, io.EOF, err)
@@ -173,7 +173,7 @@ func TestUploadPart(t *testing.T) {
 
 	mockStream.EXPECT().Recv().Return(nil, io.EOF)
 	stream := newUploadPartStreamReader(UploadPartReq.Body, mockStream)
-	data := make([]byte, ByteSize, ByteSize)
+	data := make([]byte, ByteSize)
 	n, err := stream.Read(data)
 	assert.Equal(t, 3, n)
 	assert.Equal(t, io.EOF, err)
@@ -208,7 +208,7 @@ func TestAppendObject(t *testing.T) {
 
 	mockStream.EXPECT().Recv().Return(nil, io.EOF)
 	stream := newAppendObjectStreamReader(req.Body, mockStream)
-	data := make([]byte, ByteSize, ByteSize)
+	data := make([]byte, ByteSize)
 	n, err := stream.Read(data)
 	assert.Equal(t, 3, n)
 	assert.Equal(t, io.EOF, err)
