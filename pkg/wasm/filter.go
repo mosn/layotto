@@ -173,10 +173,7 @@ func (f *Filter) releaseUsedInstance() error {
 // Destruction of filters
 func (f *Filter) OnDestroy() {
 	f.destroyOnce.Do(func() {
-		err := f.releaseUsedInstance()
-		if err != nil {
-			return
-		}
+		_ = f.releaseUsedInstance()
 	})
 }
 

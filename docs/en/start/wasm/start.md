@@ -95,7 +95,7 @@ docker rm -f redis-test
 
 ### Dynamic Load
 
-We can specify the WASM file to load in `./demo/faas/config.json` config file:
+We can specify the WASM file to be loaded in `./demo/faas/config.json` config file:
 
 ```json
 "config": {

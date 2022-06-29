@@ -19,6 +19,7 @@ package http
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 
 	"github.com/valyala/fasthttp"
 	"mosn.io/api"
@@ -74,21 +75,21 @@ func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap,
 	json, err := endpoint.Handle(ctx, resolver)
 	var code int
 	if err != nil {
-		code = HttpInternalServerErrorCode
+		code = http.StatusInternalServerError
 	} else {
-		code = HttpSuccessCode
+		code = http.StatusOK
 	}
 	dis.writeJsonResult(json, code)
 	return api.StreamFilterStop
 }
 
 func (dis *DispatchFilter) write404() {
-	dis.writeJsonResult(nil, HttpNotFoundCode)
+	dis.writeJsonResult(nil, http.StatusNotFound)
 }
 
 func (dis *DispatchFilter) writeJsonResult(jsonObject map[string]interface{}, code int) {
 	if code == 0 {
-		code = HttpSuccessCode
+		code = http.StatusOK
 	}
 	// 0. marshal
 	var byteSlice []byte
@@ -97,7 +98,7 @@ func (dis *DispatchFilter) writeJsonResult(jsonObject map[string]interface{}, co
 		byteSlice, err = json.Marshal(jsonObject)
 		if err != nil {
 			log.DefaultLogger.Errorf("[%v][dispatch_filter]error when marshal result:%v", dis.filterType, err)
-			code = HttpInternalServerErrorCode
+			code = http.StatusInternalServerError
 		}
 	}
 	// 1. header

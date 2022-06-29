@@ -112,14 +112,23 @@ func removeWatchFile(cfg *filterConfigItem) {
 		log.DefaultLogger.Errorf("[proxywasm] [watcher] removeWatchFile fail to stop watch wasm file, err: %v", err)
 	}
 
-	dir := filepath.Dir(path)
-	if err := watcher.Remove(dir); err != nil {
-		log.DefaultLogger.Errorf("[proxywasm] [watcher] removeWatchFile fail to stop watch wasm dir, err: %v", err)
-		return
-	}
-
 	delete(configs, path)
 	delete(factories, path)
+
+	dir := filepath.Dir(path)
+	canRemoveDirWatcher := true
+	for key := range configs {
+		if strings.HasPrefix(key, dir) {
+			canRemoveDirWatcher = false
+			break
+		}
+	}
+	if canRemoveDirWatcher {
+		if err := watcher.Remove(dir); err != nil {
+			log.DefaultLogger.Errorf("[proxywasm] [watcher] removeWatchFile fail to stop watch wasm dir, err: %v", err)
+			return
+		}
+	}
 
 	log.DefaultLogger.Infof("[proxywasm] [watcher] removeWatchFile stop to watch wasm file and its dir: %s", path)
 }
