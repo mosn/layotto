@@ -107,7 +107,7 @@ func TestOptionNotNil(t *testing.T) {
 	assert.NotNil(t, CopySourceIfNoneMatch(" "))
 	assert.NotNil(t, CopySourceIfModifiedSince(1))
 	assert.NotNil(t, CopySourceIfUnmodifiedSince(1))
-	assert.Nil(t, IfUnmodifiedSince(1))
+	assert.NotNil(t, IfUnmodifiedSince(1))
 	assert.NotNil(t, MetadataDirective(" "))
 	assert.NotNil(t, Meta(" ", " "))
 	assert.NotNil(t, ServerSideEncryption(" "))
