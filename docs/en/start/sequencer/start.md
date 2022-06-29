@@ -94,7 +94,7 @@ Demo success!
 
 Download java sdk and examples:
 
-```shell
+```shell @if.not.exist java-sdk
 git clone https://github.com/layotto/java-sdk
 ```
 
