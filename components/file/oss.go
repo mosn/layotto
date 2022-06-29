@@ -113,17 +113,17 @@ type GetObjectOutput struct {
 
 type PutObjectInput struct {
 	DataStream           io.Reader
-	ACL                  string            `protobuf:"bytes,2,opt,name=acl,proto3" json:"acl,omitempty"`
-	Bucket               string            `protobuf:"bytes,4,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key                  string            `protobuf:"bytes,5,opt,name=key,proto3" json:"key,omitempty"`
-	BucketKeyEnabled     bool              `protobuf:"varint,6,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
-	CacheControl         string            `protobuf:"bytes,7,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
-	ContentDisposition   string            `protobuf:"bytes,8,opt,name=content_disposition,json=contentDisposition,proto3" json:"content_disposition,omitempty"`
-	ContentEncoding      string            `protobuf:"bytes,9,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempPutObjectInputty"`
-	Expires              int64             `protobuf:"varint,10,opt,name=expires,proto3" json:"expires,omitempty"`
-	ServerSideEncryption string            `protobuf:"bytes,11,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
-	SignedUrl            string            `protobuf:"bytes,12,opt,name=signed_url,json=signedUrl,proto3" json:"signed_url,omitempty"`
-	Meta                 map[string]string `protobuf:"bytes,13,rep,name=meta,proto3" json:"meta,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	ACL                  string            `json:"acl,omitempty"`
+	Bucket               string            `json:"bucket,omitempty"`
+	Key                  string            `json:"key,omitempty"`
+	BucketKeyEnabled     bool              `json:"bucket_key_enabled,omitempty"`
+	CacheControl         string            `json:"cache_control,omitempty"`
+	ContentDisposition   string            `json:"content_disposition,omitempty"`
+	ContentEncoding      string            `json:"content_encoding,omitempty"`
+	Expires              int64             `json:"expires,omitempty"`
+	ServerSideEncryption string            `json:"server_side_encryption,omitempty"`
+	SignedUrl            string            `json:"signed_url,omitempty"`
+	Meta                 map[string]string `json:"meta,omitempty"`
 }
 
 type PutObjectOutput struct {
