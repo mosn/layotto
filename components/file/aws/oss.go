@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 
@@ -235,15 +236,17 @@ func (a *AwsOss) CopyObject(ctx context.Context, req *file.CopyObjectInput) (*fi
 	if req.CopySource == nil {
 		return nil, errors.New("must specific copy_source")
 	}
+
 	//TODO: should support objects accessed through access points
 	copySource := req.CopySource.CopySourceBucket + "/" + req.CopySource.CopySourceKey
 	if req.CopySource.CopySourceVersionId != "" {
 		copySource += "?versionId=" + req.CopySource.CopySourceVersionId
 	}
+	copySourceUrlEncode := url.QueryEscape(copySource)
 	input := &s3.CopyObjectInput{
 		Bucket:     &req.Bucket,
 		Key:        &req.Key,
-		CopySource: &copySource,
+		CopySource: &copySourceUrlEncode,
 	}
 	resp, err := client.CopyObject(ctx, input)
 	if err != nil {
@@ -318,6 +321,11 @@ func (a *AwsOss) ListObjects(ctx context.Context, req *file.ListObjectsInput) (*
 				},
 			},
 		}})
+	// if not return NextMarker, use the value of the last Key in the response as the marker
+	if output.IsTruncated && output.NextMarker == "" {
+		index := len(output.Contents) - 1
+		output.NextMarker = output.Contents[index].Key
+	}
 	return output, err
 }
 func (a *AwsOss) GetObjectCannedAcl(ctx context.Context, req *file.GetObjectCannedAclInput) (*file.GetObjectCannedAclOutput, error) {
@@ -615,14 +623,14 @@ func (a *AwsOss) SignURL(ctx context.Context, req *file.SignURLInput) (*file.Sig
 	switch strings.ToUpper(req.Method) {
 	case "GET":
 		input := &s3.GetObjectInput{Bucket: &req.Bucket, Key: &req.Key}
-		resp, err := resignClient.PresignGetObject(ctx, input, s3.WithPresignExpires(time.Duration(req.ExpiredInSec)))
+		resp, err := resignClient.PresignGetObject(ctx, input, s3.WithPresignExpires(time.Duration((req.ExpiredInSec)*int64(time.Second))))
 		if err != nil {
 			return nil, err
 		}
 		return &file.SignURLOutput{SignedUrl: resp.URL}, nil
 	case "PUT":
 		input := &s3.PutObjectInput{Bucket: &req.Bucket, Key: &req.Key}
-		resp, err := resignClient.PresignPutObject(ctx, input, s3.WithPresignExpires(time.Duration(req.ExpiredInSec)))
+		resp, err := resignClient.PresignPutObject(ctx, input, s3.WithPresignExpires(time.Duration(req.ExpiredInSec*int64(time.Second))))
 		if err != nil {
 			return nil, err
 		}

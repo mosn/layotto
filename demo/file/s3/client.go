@@ -21,7 +21,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"time"
+	"strconv"
 
 	s3 "mosn.io/layotto/spec/proto/extension/v1"
 
@@ -194,9 +194,9 @@ func TestAcl(name string) {
 	resp, err := c.GetObjectCannedAcl(context.Background(), req)
 	if err != nil {
 		fmt.Printf("GetObjectAcl fail, err: %+v \n", err)
-		return
+	} else {
+		fmt.Printf("get acl success, resp: %+v\n", resp)
 	}
-	fmt.Printf("get acl success, resp: %+v\n", resp)
 
 	putRequest := &s3.PutObjectCannedAclInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: name, Acl: "public-read-write"}
 	resp2, err := c.PutObjectCannedAcl(context.Background(), putRequest)
@@ -225,7 +225,7 @@ func TestCopyObject(name string) {
 
 }
 
-func TestPart() {
+func TestPart(name string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
@@ -248,7 +248,7 @@ func TestPart() {
 	}
 	fmt.Printf("ListMultipartUploads success, resp: %+v \n", resp1)
 
-	req2 := &s3.UploadPartCopyInput{StoreName: storeName, Bucket: "antsys-wenxuwan", PartNumber: 1, UploadId: resp.UploadId, Key: "multicopy.jpg", StartPosition: 0, PartSize: 1000, CopySource: &s3.CopySource{CopySourceBucket: "antsys-wenxuwan", CopySourceKey: "hello2.txt"}}
+	req2 := &s3.UploadPartCopyInput{StoreName: storeName, Bucket: "antsys-wenxuwan", PartNumber: 1, UploadId: resp.UploadId, Key: "multicopy.jpg", StartPosition: 0, PartSize: 1000, CopySource: &s3.CopySource{CopySourceBucket: "antsys-wenxuwan", CopySourceKey: name}}
 	resp2, err := c.UploadPartCopy(context.Background(), req2)
 	if err != nil {
 		fmt.Printf("UploadPartCopy fail, err: %+v \n", err)
@@ -302,7 +302,7 @@ func TestPart() {
 		if err != nil || 0 == n {
 			break
 		}
-		req6.Body = dataByte
+		req6.Body = dataByte[:n]
 		req6.ContentLength = int64(n)
 		req6.PartNumber = req6.PartNumber + 1
 		stream, err := c.UploadPart(context.TODO())
@@ -324,6 +324,13 @@ func TestPart() {
 		parts = append(parts, part)
 	}
 	fmt.Printf("UploadPart success, parts: %+v \n", parts)
+	req8 := &s3.ListPartsInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "海贼王.jpg", UploadId: resp5.UploadId}
+	resp8, err := c.ListParts(context.Background(), req8)
+	if err != nil {
+		fmt.Printf("ListPartsInput fail, err: %+v \n", err)
+	} else {
+		fmt.Printf("ListPartsInput success, resp: %+v \n", resp8)
+	}
 	req7 := &s3.CompleteMultipartUploadInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: "海贼王.jpg", UploadId: resp5.UploadId, MultipartUpload: &s3.CompletedMultipartUpload{Parts: parts}}
 	resp7, err := c.CompleteMultipartUpload(context.Background(), req7)
 	if err != nil {
@@ -420,7 +427,7 @@ func TestSign(name, method string) {
 		return
 	}
 	c := s3.NewObjectStorageServiceClient(conn)
-	req := &s3.SignURLInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: name, ExpiredInSec: int64(10 * time.Minute), Method: method}
+	req := &s3.SignURLInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: name, ExpiredInSec: int64(10), Method: method}
 	resp, err := c.SignURL(context.Background(), req)
 	if err != nil {
 		fmt.Printf("SignURLInput fail, err: %+v \n", err)
@@ -428,6 +435,50 @@ func TestSign(name, method string) {
 	}
 	fmt.Printf("SignURLInput success, resp: %+v\n", resp.SignedUrl)
 
+}
+
+func TestAppend(fileName, data, position string) {
+	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+	if err != nil {
+		fmt.Printf("conn build failed,err:%+v", err)
+		return
+	}
+	c := s3.NewObjectStorageServiceClient(conn)
+	ps, _ := strconv.Atoi(position)
+	req := &s3.AppendObjectInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: fileName, Body: []byte(data), Position: int64(ps)}
+	stream, err := c.AppendObject(context.Background())
+	if err != nil {
+		fmt.Printf("AppendObject fail,err:%+v", err)
+		return
+	}
+	err = stream.Send(req)
+	if err != nil {
+		fmt.Printf("AppendObject fail,err:%+v", err)
+		return
+	}
+	resp, err := stream.CloseAndRecv()
+	if err != nil {
+		fmt.Printf("AppendObject fail,err:%+v", err)
+		return
+	}
+	fmt.Printf("AppendObject success,resp: %+v \n", resp)
+}
+
+func TestHeadObject(fileName string) {
+	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+	if err != nil {
+		fmt.Printf("conn build failed,err:%+v", err)
+		return
+	}
+	c := s3.NewObjectStorageServiceClient(conn)
+	req := &s3.HeadObjectInput{StoreName: storeName, Bucket: "antsys-wenxuwan", Key: fileName}
+	resp, err := c.HeadObject(context.Background(), req)
+	if err != nil {
+		fmt.Printf("HeadObjectInput fail,err:%+v", err)
+		return
+	}
+
+	fmt.Printf("HeadObjectInput success,resp: %+v \n", resp)
 }
 
 func main() {
@@ -474,7 +525,7 @@ func main() {
 	}
 
 	if os.Args[1] == "part" {
-		TestPart()
+		TestPart(os.Args[2])
 	}
 
 	if os.Args[1] == "version" {
@@ -493,5 +544,13 @@ func main() {
 
 	if os.Args[1] == "sign" {
 		TestSign(os.Args[2], os.Args[3])
+	}
+
+	if os.Args[1] == "append" {
+		TestAppend(os.Args[2], os.Args[3], os.Args[4])
+	}
+
+	if os.Args[1] == "head" {
+		TestHeadObject(os.Args[2])
 	}
 }

@@ -185,5 +185,4 @@ func TestAwsOss(t *testing.T) {
 
 	err = instance.UpdateUpLoadBandwidthRateLimit(context.TODO(), &file.UpdateBandwidthRateLimitInput{})
 	assert.NotNil(t, err)
-
 }
