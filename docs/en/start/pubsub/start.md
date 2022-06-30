@@ -143,11 +143,16 @@ git clone https://github.com/layotto/java-sdk
 cd java-sdk
 ```
 
-Build and run it:
+Build:
 
-```shell
+```shell @if.not.exist examples-pubsub-publisher/target/examples-pubsub-publisher-1.1.0-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-pubsub-publisher/pom.xml clean package
+```
+
+Run it:
+
+```shell
 # run the example
 java -jar examples-pubsub-publisher/target/examples-pubsub-publisher-1.1.0-jar-with-dependencies.jar
 ```
