@@ -108,12 +108,16 @@ git clone https://github.com/layotto/java-sdk
 cd java-sdk
 ```
 
-构建、运行:
+构建:
 
-```shell
+```shell @if.not.exist examples-sequencer/target/examples-sequencer-1.1.0-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-sequencer/pom.xml clean package
-# run the example
+```
+
+运行:
+
+```shell
 java -jar examples-sequencer/target/examples-sequencer-1.1.0-jar-with-dependencies.jar
 ```
 

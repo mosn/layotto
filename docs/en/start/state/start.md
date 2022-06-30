@@ -125,12 +125,16 @@ git clone https://github.com/layotto/java-sdk
 cd java-sdk
 ```
 
-Build and run it:
+Build the demo:
 
-```shell
+```shell @if.not.exist examples-state/target/examples-state-1.1.0-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-state/pom.xml clean package
-# run the example
+```
+
+Run it:
+
+```
 java -jar examples-state/target/examples-state-1.1.0-jar-with-dependencies.jar
 ```
 

@@ -102,12 +102,16 @@ git clone https://github.com/layotto/java-sdk
 cd java-sdk
 ```
 
-Build and run the demo:
+Build the demo:
 
-```shell
+```shell @if.not.exist examples-sequencer/target/examples-sequencer-1.1.0-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-sequencer/pom.xml clean package
-# run the example
+```
+
+Run it:
+
+```shell
 java -jar examples-sequencer/target/examples-sequencer-1.1.0-jar-with-dependencies.jar
 ```
 

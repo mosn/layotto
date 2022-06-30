@@ -127,12 +127,16 @@ git clone https://github.com/layotto/java-sdk
 cd java-sdk
 ```
 
-构建、运行:
+构建:
 
-```shell
+```shell @if.not.exist examples-state/target/examples-state-1.1.0-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-state/pom.xml clean package
-# run the example
+```
+
+运行:
+
+```
 java -jar examples-state/target/examples-state-1.1.0-jar-with-dependencies.jar
 ```
 
