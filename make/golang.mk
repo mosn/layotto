@@ -114,7 +114,7 @@ go.test: go.test.verify
 .PHONY: go.style
 go.style:  
 	@echo "===========> Running go style check"
-	$(MAKE) format && git status && [[ -z `git status -s` ]]
+	$(MAKE) format && git status && [[ -z `git status -s` ]] || echo -e "\n${RED}Error: there are uncommitted changes after formatting all the code. ${GREEN}\nHow to fix it:${NO_COLOR} please 'make format' and then use git to commit all those changed files. "
 
 .PHONY: go.format.verify
 go.format.verify:  
