@@ -39,6 +39,7 @@ import (
 type AppConfig struct {
 	AppId            string `json:"app_id"`
 	GrpcCallbackPort int    `json:"grpc_callback_port"`
+	GrpcCallbackHost string `json:"grpc_callback_host"`
 }
 
 type MosnRuntimeConfig struct {

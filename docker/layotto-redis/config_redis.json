@@ -65,7 +65,8 @@
                       },
                       "app": {
                         "app_id": "app1",
-                        "grpc_callback_port": 9999
+                        "grpc_callback_port": 9999,
+                        "grpc_callback_host": "host.docker.internal"
                       }
                     }
                   }
