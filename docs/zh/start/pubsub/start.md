@@ -15,27 +15,57 @@ Layotto Pub/Sub API的设计目标是定义一套统一的消息发布/订阅API
 ![img_1.png](../../../img/mq/start/img_1.png)
 
 ### step 1. 启动 Subscriber 程序,订阅事件
+<!-- tabs:start -->
+#### **Go**
+编译 golang 写的 subscriber:
 
 ```shell
- cd ${project_path}/demo/pubsub/server/
+ cd demo/pubsub/server/
  go build -o subscriber
 ```
+
+运行:
 
 ```shell @background
  ./subscriber -s pub_subs_demo
 ```
 
-打印出如下信息则代表启动成功：
+#### **Java**
+
+下载 java sdk 和 examples:
 
 ```bash
-Start listening on port 9999 ...... 
+git clone https://github.com/layotto/java-sdk
+```
+
+切换目录:
+
+```bash
+cd java-sdk
+```
+
+构建、运行:
+
+```bash
+# build example jar
+mvn -f examples-pubsub-subscriber/pom.xml clean package
+# run the example
+java -jar examples-pubsub-subscriber/target/examples-pubsub-subscriber-1.1.0-jar-with-dependencies.jar
+```
+
+<!-- tabs:end -->
+
+打印出以下信息说明运行成功:
+
+```bash
+Start listening on port 9999 ......
 ```
 
 > [!TIP|label: Subscriber 程序做了什么？]
 > 该程序会启动一个gRPC服务器，开放两个接口：
 > - ListTopicSubscriptions
 >
-> 调用该接口会返回应用订阅的Topic。本程序会返回"topic1"
+> 调用该接口会返回应用订阅的Topic。本程序会返回"topic1"和 "hello"
 >
 > - OnTopicEvent
 >
@@ -61,25 +91,7 @@ docker-compose up -d
 > Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker-compose 部署
 
 #### step 2.1. 用 Docker 运行 Redis
-1. 取最新版的 Redis 镜像。
-这里我们拉取官方的最新版本的镜像：
-
-```shell
-docker pull redis:latest
-```
-
-2. 查看本地镜像
-   使用以下命令来查看是否已安装了 redis：
-
-```shell
-docker images
-```
-
-![img.png](../../../img/mq/start/img.png)
-
-3. 运行容器
-
-安装完成后，我们可以使用以下命令来运行 redis 容器：
+我们可以使用以下命令来运行 Redis 容器：
 
 ```shell
 docker run -itd --name redis-test -p 6380:6379 redis
@@ -112,6 +124,9 @@ go build -o layotto
 <!-- tabs:end -->
 
 ### step 3. 运行Publisher程序，调用Layotto发布事件
+<!-- tabs:start -->
+#### **Go**
+编译 golang 写的 publisher:
 
 ```shell
  cd ${project_path}/demo/pubsub/client/
@@ -119,10 +134,42 @@ go build -o layotto
  ./publisher -s pub_subs_demo
 ```
 
+#### **Java**
+
+下载 java sdk 和 examples:
+
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+切换目录:
+
+```shell
+cd java-sdk
+```
+
+构建:
+
+```shell @if.not.exist examples-pubsub-publisher/target/examples-pubsub-publisher-1.1.0-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-pubsub-publisher/pom.xml clean package
+```
+
+运行:
+
+```shell
+# run the example
+java -jar examples-pubsub-publisher/target/examples-pubsub-publisher-1.1.0-jar-with-dependencies.jar
+```
+
+
+<!-- tabs:end -->
+
 打印出如下信息则代表调用成功：
 
 ```bash
-Published a new event.Topic: topic1 ,Data: value1 
+Published a new event.Topic: hello ,Data: world
+Published a new event.Topic: topic1 ,Data: value1
 ```
 
 ### step 4. 检查Subscriber收到的事件消息
@@ -130,8 +177,9 @@ Published a new event.Topic: topic1 ,Data: value1
 回到subscriber的命令行，会看到接收到了新消息：
 
 ```bash
-Start listening on port 9999 ...... 
-Received a new event.Topic: topic1 , Data:value1 
+Start listening on port 9999 ......
+Received a new event.Topic: topic1 , Data: value1
+Received a new event.Topic: hello , Data: world
 ```
 
 ### step 5. 销毁容器，释放资源
