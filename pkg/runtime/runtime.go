@@ -496,16 +496,22 @@ func (m *MosnRuntime) initAppCallbackConnection() error {
 	if m.runtimeConfig == nil || m.runtimeConfig.AppManagement.GrpcCallbackPort == 0 {
 		return nil
 	}
+	// get callback address
+	host := m.runtimeConfig.AppManagement.GrpcCallbackHost
+	if host == "" {
+		host = "127.0.0.1"
+	}
 	port := m.runtimeConfig.AppManagement.GrpcCallbackPort
+	address := fmt.Sprintf("%v:%v", host, port)
 	opts := []rawGRPC.DialOption{
 		rawGRPC.WithInsecure(),
 	}
 	// dial
 	ctx, cancel := context.WithTimeout(context.Background(), dialTimeout)
 	defer cancel()
-	conn, err := rawGRPC.DialContext(ctx, fmt.Sprintf("127.0.0.1:%v", port), opts...)
+	conn, err := rawGRPC.DialContext(ctx, address, opts...)
 	if err != nil {
-		log.DefaultLogger.Warnf("[runtime]failed to init callback client at port %v : %s", port, err)
+		log.DefaultLogger.Warnf("[runtime]failed to init callback client to address %v : %s", address, err)
 		return err
 	}
 	m.AppCallbackConn = conn

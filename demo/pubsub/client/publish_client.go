@@ -24,8 +24,6 @@ import (
 	client "mosn.io/layotto/sdk/go-sdk/client"
 )
 
-const topicName = "topic1"
-
 var storeName string
 
 func init() {
@@ -43,16 +41,17 @@ func main() {
 		panic(err)
 	}
 	// 2. publish a new event
-	testPublish(cli)
+	testPublish(cli, "hello", "world")
+	testPublish(cli, "topic1", "value1")
 	cli.Close()
 }
 
-func testPublish(cli client.Client) error {
-	data := []byte("value1")
-	err := cli.PublishEvent(context.Background(), storeName, topicName, data)
+func testPublish(cli client.Client, topic string, value string) error {
+	data := []byte(value)
+	err := cli.PublishEvent(context.Background(), storeName, topic, data)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Published a new event.Topic: %s ,Data: %s \n", topicName, data)
+	fmt.Printf("Published a new event.Topic: %s ,Data: %s \n", topic, data)
 	return err
 }

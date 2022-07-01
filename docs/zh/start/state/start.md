@@ -80,9 +80,14 @@ go build -o layotto
 ```shell @background
 ./layotto start -c ../../configs/config_redis.json
 ```
+
 <!-- tabs:end -->
 
 ### step 2. 运行客户端程序，调用Layotto进行增删改查
+<!-- tabs:start -->
+#### **Go**
+
+构建、运行 go 语言 demo:
 
 ```shell
 # open a new terminal tab
@@ -107,6 +112,46 @@ GetBulkState succeeded.key:key5 ,value: ,etag: ,metadata:map[]
 DeleteState succeeded.key:key1
 DeleteState succeeded.key:key2
 ```
+
+#### **Java**
+
+Download java sdk and examples:
+
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+切换目录:
+
+```shell
+cd java-sdk
+```
+
+构建:
+
+```shell @if.not.exist examples-state/target/examples-state-1.1.0-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-state/pom.xml clean package
+```
+
+运行:
+
+```
+java -jar examples-state/target/examples-state-1.1.0-jar-with-dependencies.jar
+```
+
+打印出以下信息说明运行成功:
+
+```bash
+SaveState succeeded.key:key1 , value: v11
+GetState succeeded. key:key1  value:v11
+DeleteState succeeded. key:key1
+GetState after delete. key:key1  value:
+SaveBulkState succeeded. key:key1 , key2
+GetBulkState succeeded. key:key2
+```
+
+<!-- tabs:end -->
 
 ### step 3. 销毁容器，释放资源
 <!-- tabs:start -->
