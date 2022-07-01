@@ -29,8 +29,6 @@ import (
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
-const topicName = "topic1"
-
 var storeName string
 
 func init() {
@@ -68,14 +66,19 @@ func (a *AppCallbackServerImpl) ListTopicSubscriptions(ctx context.Context, empt
 	result := &runtimev1pb.ListTopicSubscriptionsResponse{}
 	ts := &runtimev1pb.TopicSubscription{
 		PubsubName: storeName,
-		Topic:      topicName,
+		Topic:      "hello",
 		Metadata:   nil,
 	}
 	result.Subscriptions = append(result.Subscriptions, ts)
+	result.Subscriptions = append(result.Subscriptions, &runtimev1pb.TopicSubscription{
+		PubsubName: storeName,
+		Topic:      "topic1",
+		Metadata:   nil,
+	})
 	return result, nil
 }
 
 func (a *AppCallbackServerImpl) OnTopicEvent(ctx context.Context, request *runtimev1pb.TopicEventRequest) (*runtimev1pb.TopicEventResponse, error) {
-	fmt.Printf("Received a new event.Topic: %s , Data:%s \n", request.Topic, request.Data)
+	fmt.Printf("Received a new event.Topic: %s , Data: %s \n", request.Topic, request.Data)
 	return &runtimev1pb.TopicEventResponse{}, nil
 }
