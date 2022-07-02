@@ -10,9 +10,7 @@
     "enable": true,
     "driver": "jaeger",
     "config": {
-      "config": {
-        "service_name": "layotto"
-      }
+      "service_name": "layotto"
     }
   }
 }
@@ -70,6 +68,7 @@ go build -o layotto
 ```shell @if.not.exist client 
  go build -o client
 ```
+
 运行:
 
 ```shell

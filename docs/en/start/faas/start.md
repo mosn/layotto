@@ -33,14 +33,17 @@ The example only needs a Redis server that can be used normally. As for where it
 > brew install redis
 > redis-server /usr/local/etc/redis.conf
 ```
+
 **Note: If you want external services to connect to redis, you need to modify the protected-mode in redis.conf to no,At the same time, add bind * -::* to let it monitor all interfaces.**
 
 #### B、Start minikube in virtualbox + containerd mode
+
 ```
 > minikube start --driver=virtualbox --container-runtime=containerd
 ```
 
 #### C、Compile & install Layotto
+
 ```
 > git clone https://github.com/mosn/layotto.git
 > cd layotto
@@ -51,6 +54,7 @@ The example only needs a Redis server that can be used normally. As for where it
 > sudo chmod +x layotto
 > sudo mv layotto /usr/bin/
 ```
+
 **Note1: You need to modify the redis address as needed, the default address is: localhost:6379**
 
 **Note2: Need to modify the path of the wasm file in `./demo/faas/config.json` to `/home/docker/function_1.wasm` and `/home/docker/function_2.wasm`**
@@ -70,18 +74,22 @@ The example only needs a Redis server that can be used normally. As for where it
 #### E、Modify & restart containerd
 
 Add laytto runtime configuration.
+
 ```
 > minikube ssh
 > sudo vi /etc/containerd/config.toml
 [plugins.cri.containerd.runtimes.layotto]
   runtime_type = "io.containerd.layotto.v2"
 ```
+
 Restart containerd for the latest configuration to take effect
+
 ```
 sudo systemctl restart containerd
 ```
 
 #### F、Install wasmer
+
 ```
 > curl -L -O https://github.com/wasmerio/wasmer/releases/download/2.0.0/wasmer-linux-amd64.tar.gz
 > tar zxvf wasmer-linux-amd64.tar.gz
@@ -91,12 +99,14 @@ sudo systemctl restart containerd
 ### 4. Quickstart
 
 #### A、Start Layotto
+
 ```
 > minikube ssh 
 > layotto start -c /home/docker/config.json
 ```
 
 #### B、Create Layotto runtime
+
 ```
 > kubectl apply -f ./demo/faas/layotto-runtimeclass.yaml
 runtimeclass.node.k8s.io/layotto created
@@ -104,6 +114,7 @@ runtimeclass.node.k8s.io/layotto created
 
 #### C、Create Function
 This operation will automatically inject function_1.wasm and function_2.wasm into the Virtualbox virtual machine.
+
 ```
 > kubectl apply -f ./demo/faas/function-1.yaml
 pod/function-1 created
@@ -113,6 +124,7 @@ pod/function-2 created
 ```
 
 #### D、Write inventory to Redis
+
 ```
 > redis-cli
 127.0.0.1:6379> set book1 100
@@ -120,6 +132,7 @@ OK
 ```
 
 #### E、Send request
+
 ```
 > minikube ip
 192.168.99.117

@@ -8,6 +8,7 @@
 ```bash
 make proto.code
 ```
+
 该命令会用 docker 启动 protoc，生成`.pb.go`代码。
 
 这种方式更方便，开发者不需要修改本地 protoc 版本，省去了很多烦恼。
@@ -35,6 +36,7 @@ protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_o
 ```bash
 make proto.doc
 ```
+
 该命令会用 docker 启动 protoc-gen-doc，生成文档
 
 ### **用 docker 启动 protoc-gen-doc**

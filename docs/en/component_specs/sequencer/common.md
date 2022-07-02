@@ -2,6 +2,7 @@
 **Configuration file structure**
 
 The json configuration file has the following structure:
+
 ```json
 "sequencer": {
   "<Component A Name>": {
@@ -28,6 +29,7 @@ The json configuration file has the following structure:
   }
 }
 ```
+
 You can configure the key/value configuration items that the component cares about in the metadata. For example, [Etcd component configuration](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) is as follows:
 
 

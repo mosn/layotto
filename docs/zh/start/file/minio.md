@@ -23,6 +23,7 @@ docker-compose up -d
 #### step 1.1. 启动 MinIO 服务
 
 您可以使用 Docker 启动本地MinIO服务, 参考[官方文档](http://docs.minio.org.cn/docs/master/minio-docker-quickstart-guide)
+
 ```shell
 docker run -d -p 9000:9000 -p 9090:9090 --name minio \
 -e "MINIO_ROOT_USER=layotto" \
@@ -104,6 +105,7 @@ go build client.go
 cd ${project_path}/docker/layotto-minio
 docker-compose stop
 ```
+
 #### **销毁 MinIO Docker 容器**
 如果您是用 Docker 启动的 MinIO，可以按以下方式销毁 MinIO 容器：
 

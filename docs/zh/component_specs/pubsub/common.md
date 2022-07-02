@@ -2,6 +2,7 @@
 **配置文件结构**
 
 json配置文件有如下结构：
+
 ```json
 "pub_subs": {
   "<Component A Name>": {

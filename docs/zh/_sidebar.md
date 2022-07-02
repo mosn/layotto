@@ -24,6 +24,7 @@
     - 可观测性  
         - [Trace, Metrics](zh/start/trace/trace.md)
         - [Trace 接入 Skywalking](zh/start/trace/skywalking.md)
+        - [Trace 接入 Zipkin](zh/start/trace/zipkin.md)
         - [Trace 接入 Jaeger](zh/start/trace/jaeger.md)
         - [Metrics 接入 Prometheus](zh/start/trace/prometheus.md)
     - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)

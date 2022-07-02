@@ -24,6 +24,7 @@ Layotto Env Pipeline 流水线主要负责 Layotto 的项目以及相关环境�
 
 Layotto Env Pipeline 流水线任务触发方式：
 + Title Validation: 
+  
     ```
     pull_request:
         types:
@@ -33,7 +34,9 @@ Layotto Env Pipeline 流水线任务触发方式：
         - labeled PR 添加 Label
         - unlabeled PR 取消 Label
     ```
+  
 + Quickstart Validation: 
+  
     ```
     push:
         branches:
@@ -42,13 +45,17 @@ Layotto Env Pipeline 流水线任务触发方式：
         branches:
         - main 提交 PR
     ```
+  
 + Update Stale Status: 
+  
     ```
     on:
     schedule:
         - cron: '30 1 * * *' 定时任务
     ```
+  
 + License Validation: 
+  
     ```
     push:
         branches:
@@ -57,13 +64,17 @@ Layotto Env Pipeline 流水线任务触发方式：
         branches:
         - main 提交 PR
     ```
+  
 + DeadLink Validation: 
+  
     ```
     pull_request:
         branches:
         - main 提交 PR
     ```
+  
 + CodeQL: 
+  
     ```
     schedule:
         - cron: '0 4 * * 5' 定时任务

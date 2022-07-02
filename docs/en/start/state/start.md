@@ -84,6 +84,10 @@ The layotto file will be generated in the directory, run it:
 <!-- tabs:end -->
 
 ### step 2. Run the client program, call Layotto to add, delete, modify and query
+<!-- tabs:start -->
+#### **Go**
+
+Build and run the golang demo:
 
 ```shell
 # open a new terminal tab
@@ -109,6 +113,44 @@ DeleteState succeeded.key:key1
 DeleteState succeeded.key:key2
 ```
 
+#### **Java**
+
+Download java sdk and examples:
+
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+```shell
+cd java-sdk
+```
+
+Build the demo:
+
+```shell @if.not.exist examples-state/target/examples-state-1.1.0-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-state/pom.xml clean package
+```
+
+Run it:
+
+```
+java -jar examples-state/target/examples-state-1.1.0-jar-with-dependencies.jar
+```
+
+The demo will print the following message:
+
+```bash
+SaveState succeeded.key:key1 , value: v11
+GetState succeeded. key:key1  value:v11
+DeleteState succeeded. key:key1
+GetState after delete. key:key1  value:
+SaveBulkState succeeded. key:key1 , key2
+GetBulkState succeeded. key:key2
+```
+
+<!-- tabs:end -->
+
 ### step 3. Stop containers and release resources
 <!-- tabs:start -->
 #### **Docker Compose**
@@ -121,9 +163,11 @@ docker-compose stop
 
 #### **Destroy the Redis container**
 If you started Redis with Docker, you can destroy the Redis container as follows:
+
 ```shell
 docker rm -f redis-test
 ```
+
 <!-- tabs:end -->
 
 ### Next step

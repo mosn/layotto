@@ -19,6 +19,7 @@ It is recommended that you monitor zookeeper carefully and prevent the overflow.
 If you want to run the zookeeper demo, you need to start a Zookeeper server with Docker first.
 
 command:
+
 ```shell
 docker pull zookeeper
 docker run --privileged=true -d --name zookeeper --publish 2181:2181  -d zookeeper:latest
@@ -30,9 +31,11 @@ docker run --privileged=true -d --name zookeeper --publish 2181:2181  -d zookeep
 cd ${project_path}/cmd/layotto
 go build
 ````
+
 >If build reports an error, it can be executed in the root directory of the project `go mod vendor`
 
 Execute after the compilation is successful:
+
 ````shell
 ./layotto start -c ../../configs/config_zookeeper.json
 ````

@@ -32,7 +32,7 @@ docker-compose -f diagnostics/skywalking/skywalking-docker-compose.yaml up -d
 
 ## 运行 layotto
 <!-- tabs:start -->
-#### **使用 Docker**
+### **使用 Docker**
 您可以用 docker 启动 Layotto
 
 ```bash
@@ -42,7 +42,7 @@ docker run -d \
   layotto/layotto start
 ```
 
-#### **本地编译（不适合 Windows)**
+### **本地编译（不适合 Windows)**
 您可以本地编译、运行 Layotto。
 
 > [!TIP|label: 不适合 Windows 用户]
