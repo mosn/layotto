@@ -37,7 +37,7 @@ var (
 		if lis == nil {
 			return common.Error(common.InternalCode, "[rpc]invalid listener name")
 		}
-		lis.GetListenerCallbacks().OnAccept(conn, false, nil, nil, nil)
+		lis.GetListenerCallbacks().OnAccept(conn, false, nil, nil, nil, nil)
 		return nil
 	}
 

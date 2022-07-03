@@ -65,3 +65,10 @@ etc/script/mdx
 etcd
 layotto_wasmer
 nohup.out
+/demo/lock/common/client
+/demo/secret/common/client
+/demo/pubsub/client/publisher
+/demo/pubsub/server/subscriber
+
+# production of dead link checker
+/result.txt
