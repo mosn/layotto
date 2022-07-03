@@ -45,6 +45,7 @@ import (
 	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
 	"mosn.io/layotto/components/custom"
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
+	"mosn.io/layotto/components/secret"
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/grpc/default_api"
@@ -439,6 +440,11 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithCustomComponentFactory("helloworld",
 			custom.NewComponentFactory("in-memory", component.NewInMemoryHelloWorld),
 			custom.NewComponentFactory("goodbye", component.NewSayGoodbyeHelloWorld),
+		),
+		runtime.WithSecretWrapperFactory(
+			secret.NewWrapperFactory("local.file", func() secret.Wrapper {
+				return secret.NewLocalFileWrapper()
+			}),
 		),
 	)
 	return server, err

@@ -42,6 +42,7 @@ import (
 	"mosn.io/mosn/pkg/trace/skywalking"
 
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
+	"mosn.io/layotto/components/secret"
 	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
@@ -430,6 +431,11 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			secretstores_loader.NewFactory("local.env", func() secretstores.SecretStore {
 				return secretstore_env.NewEnvSecretStore(loggerForDaprComp)
+			}),
+		),
+		runtime.WithSecretWrapperFactory(
+			secret.NewWrapperFactory("local.file", func() secret.Wrapper {
+				return secret.NewLocalFileWrapper()
 			}),
 		))
 	return server, err

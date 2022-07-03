@@ -17,7 +17,6 @@
 package common
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -27,9 +26,4 @@ func TestPointerToString(t *testing.T) {
 	assert.Equal(t, PointerToString(nil), "")
 	s := ""
 	assert.Equal(t, PointerToString(&s), "")
-}
-
-func TestGetPrefixConfigFilePath(t *testing.T) {
-	os.Args = append(os.Args, "-c", "../../configs/config_standalone.json")
-	assert.Equal(t, "../../configs/", GetPrefixConfigFilePath())
 }
