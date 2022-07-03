@@ -29,7 +29,7 @@ type DefaultInjector struct {
 //InjectSecretRef  inject secret to metaData
 func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string]string) error {
 
-	if items == nil || len(items) == 0 {
+	if len(items) == 0 {
 		return nil
 	}
 
