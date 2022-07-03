@@ -30,7 +30,7 @@ Configuration examples of local file keys, local environment variables, and k8s 
                         "secret_demo": {
                           "type": "local.file",
                           "metadata": {
-                            "secretsFile": "config_secret_local_file.json"
+                            "secretsFile": "secret_local_file.json"
                           }
                         },
                         "secret_demo1": {

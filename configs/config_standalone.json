@@ -59,7 +59,7 @@
                         "secret_demo": {
                           "type": "local.file",
                           "metadata": {
-                            "secretsFile": "config_secret_local_file.json"
+                            "secretsFile": "secret_local_file.json"
                           }
                         },
                         "secret_demo1": {
