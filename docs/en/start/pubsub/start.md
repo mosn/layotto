@@ -14,10 +14,12 @@ The architecture of this example is shown in the figure below. The running proce
 ![img_1.png](../../../img/mq/start/img_1.png)
 
 ### Step 1. Start the Subscriber
-Build:
+<!-- tabs:start -->
+#### **Go**
+Build the golang subscriber
 
 ```shell
- cd ${project_path}/demo/pubsub/server/
+ cd demo/pubsub/server/
  go build -o subscriber
  ```
 
@@ -26,6 +28,29 @@ Start subscriber:
 ```shell @background
  ./subscriber -s pub_subs_demo
 ```
+
+#### **Java**
+
+Download the java sdk and examples:
+
+```bash
+git clone https://github.com/layotto/java-sdk
+```
+
+```bash
+cd java-sdk
+```
+
+Build and run it:
+
+```bash
+# build example jar
+mvn -f examples-pubsub-subscriber/pom.xml clean package
+# run the example
+java -jar examples-pubsub-subscriber/target/examples-pubsub-subscriber-1.1.0-jar-with-dependencies.jar
+```
+
+<!-- tabs:end -->
 
 If the following information is printed out, it means the startup is successful:
 
@@ -38,7 +63,7 @@ Start listening on port 9999 ......
 >
 > - ListTopicSubscriptions
 >
-> Calling this API will return the topics subscribed by the application. This program will return "topic1"
+> Calling this API will return the topics subscribed by the application. This program will return "topic1" and "hello"
 >
 > - OnTopicEvent
 >
@@ -65,27 +90,7 @@ You can run Redis with Docker, then compile and run Layotto locally.
 
 #### step 2.1. Run Redis with Docker
 
-1. Get the latest version of Redis image.
-   
-Here we pull the latest version of the official image:
-
-```shell
-docker pull redis:latest
-```
-
-2. Check local mirror
-
-Use the following command to check whether Redis is installed:
-
-```shell
-docker images
-```
-
-![img.png](../../../img/mq/start/img.png)
-
-3. Run the container
-
-After the installation is complete, we can use the following command to run the Redis container:
+We can use the following command to run the Redis container:
 
 ```shell
 docker run -itd --name redis-test -p 6380:6379 redis
@@ -116,6 +121,9 @@ After completion, the layotto file will be generated in the directory, run it:
 <!-- tabs:end -->
 
 ### Step 3. Run the Publisher program and call Layotto to publish events
+<!-- tabs:start -->
+#### **Go**
+Build the golang publisher:
 
 ```shell
  cd ${project_path}/demo/pubsub/client/
@@ -123,10 +131,39 @@ After completion, the layotto file will be generated in the directory, run it:
  ./publisher -s pub_subs_demo
 ```
 
+#### **Java**
+
+Download the java sdk and examples:
+
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+```shell
+cd java-sdk
+```
+
+Build:
+
+```shell @if.not.exist examples-pubsub-publisher/target/examples-pubsub-publisher-1.1.0-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-pubsub-publisher/pom.xml clean package
+```
+
+Run it:
+
+```shell
+# run the example
+java -jar examples-pubsub-publisher/target/examples-pubsub-publisher-1.1.0-jar-with-dependencies.jar
+```
+
+<!-- tabs:end -->
+
 If the following information is printed, the call is successful:
 
 ```bash
-Published a new event.Topic: topic1 ,Data: value1 
+Published a new event.Topic: hello ,Data: world
+Published a new event.Topic: topic1 ,Data: value1
 ```
 
 ### Step 4. Check the event message received by the subscriber
@@ -134,8 +171,9 @@ Published a new event.Topic: topic1 ,Data: value1
 Go back to the subscriber's command line and you will see that a new message has been received:
 
 ```bash
-Start listening on port 9999 ...... 
-Received a new event.Topic: topic1 , Data:value1 
+Start listening on port 9999 ......
+Received a new event.Topic: topic1 , Data: value1
+Received a new event.Topic: hello , Data: world
 ```
 
 ### step 5. Stop containers and release resources
