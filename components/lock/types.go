@@ -13,10 +13,13 @@
 // limitations under the License.
 package lock
 
+import "mosn.io/layotto/components/ref"
+
 type Feature string
 
 // Lock's metadata
 type Config struct {
+	ref.Config
 	Type     string            `json:"type"`
 	Metadata map[string]string `json:"metadata"`
 }

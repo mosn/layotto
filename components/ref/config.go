@@ -18,9 +18,9 @@ package ref
 
 //Config is ref json config
 type Config struct {
-	ComponentRef     []*ComponentRef
-	SecretRef        []*Item
-	ConfigurationRef []*Item
+	ComponentRef     []*ComponentRef `json:"component_ref"`
+	SecretRef        []*Item         `json:"secret_ref"`
+	ConfigurationRef []*Item         `json:"configuration_ref"`
 }
 
 type ComponentRef struct {
