@@ -85,7 +85,6 @@ type MosnRuntime struct {
 	sequencers      map[string]sequencer.Store
 	outputBindings  map[string]bindings.OutputBinding
 	secretStores    map[string]secretstores.SecretStore
-	secretWrapper   map[string]secret.Wrapper
 	customComponent map[string]map[string]custom.Component
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
