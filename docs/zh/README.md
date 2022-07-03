@@ -1,6 +1,6 @@
 <div align="center">
   <h1>Layotto (L8): To be the next layer of OSI layer 7</h1>
-  <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/logo/grey2-1.svg" height="120px">
+  <img src="https://gw.alipayobjects.com/zos/bmw-prod/65518bfc-8ba5-4234-a5c5-2bc065e3a5f0.svg" height="120px">
 
 [![Layotto Env Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml)
 [![Layotto Dev Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml)
@@ -49,7 +49,7 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 如果您想把应用部署到不同的云平台（例如将阿里云上的应用部署到 AWS），您只需要在 Layotto 提供的 [配置文件](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json)
 里修改配置、指定自己想用的基础设施类型，不需要修改应用的代码就能让应用拥有"跨云部署"能力，大大提高了程序的可移植性。
 
-![系统架构图](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
+<img src="https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*oRkFR63JB7cAAAAAAAAAAAAAARQnAQ" />
 
 ## 快速开始
 
@@ -63,48 +63,48 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 | API            | status |                              quick start                              |                                components                                 | desc                             |
 | -------------- | :----: | :-------------------------------------------------------------------: | :-----------------------------------------------------------------------: | -------------------------------- |
-| State          |   ✅   |        [demo](https://mosn.io/layotto/#/zh/start/state/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/state/common)     | 提供读写 KV 模型存储的数据的能力 |
-| Pub/Sub        |   ✅   |        [demo](https://mosn.io/layotto/#/zh/start/pubsub/start)        |     [list](https://mosn.io/layotto/#/zh/component_specs/pubsub/redis)     | 提供消息的发布/订阅能力          |
-| Service Invoke |   ✅   |       [demo](https://mosn.io/layotto/#/zh/start/rpc/helloworld)       |         [list](https://mosn.io/layotto/#/zh/start/rpc/helloworld)         | 通过 MOSN 进行服务调用           |
-| Config         |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/configuration/start-apollo) | [list](https://mosn.io/layotto/#/zh/component_specs/configuration/apollo) | 提供配置增删改查及订阅的能力     |
-| Lock           |   ✅   |         [demo](https://mosn.io/layotto/#/zh/start/lock/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/lock/common)      | 提供 lock/unlock 分布式锁的实现  |
-| Sequencer      |   ✅   |      [demo](https://mosn.io/layotto/#/zh/start/sequencer/start)       |   [list](https://mosn.io/layotto/#/zh/component_specs/sequencer/common)   | 提供获取分布式自增 ID 的能力     |
-| File           |   ✅   |         [demo](https://mosn.io/layotto/#/zh/start/file/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/file/common)      | 提供访问文件的能力               |
-| Binding        |   ✅   |                                 TODO                                  |                                   TODO                                    | 提供透传数据的能力               |
+| State          |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/state/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/state/common)     | 提供读写 KV 模型存储的数据的能力 |
+| Pub/Sub        |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/pubsub/start)        |     [list](https://mosn.io/layotto/#/zh/component_specs/pubsub/redis)     | 提供消息的发布/订阅能力          |
+| Service Invoke |   ✅    |       [demo](https://mosn.io/layotto/#/zh/start/rpc/helloworld)       |         [list](https://mosn.io/layotto/#/zh/start/rpc/helloworld)         | 通过 MOSN 进行服务调用           |
+| Config         |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/configuration/start-apollo) | [list](https://mosn.io/layotto/#/zh/component_specs/configuration/apollo) | 提供配置增删改查及订阅的能力     |
+| Lock           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/lock/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/lock/common)      | 提供 lock/unlock 分布式锁的实现  |
+| Sequencer      |   ✅    |      [demo](https://mosn.io/layotto/#/zh/start/sequencer/start)       |   [list](https://mosn.io/layotto/#/zh/component_specs/sequencer/common)   | 提供获取分布式自增 ID 的能力     |
+| File           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/file/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/file/common)      | 提供访问文件的能力               |
+| Binding        |   ✅    |                                 TODO                                  |                                   TODO                                    | 提供透传数据的能力               |
 
 ### 可扩展性
 
 | feature  | status |                           quick start                            | desc                        |
 | -------- | :----: | :--------------------------------------------------------------: | --------------------------- |
-| API 插件 |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/api_plugin/helloworld) | 为 Layotto 添加您自己的 API |
+| API 插件 |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/api_plugin/helloworld) | 为 Layotto 添加您自己的 API |
 
 ### 可观测性
 
 
-| feature    | status |                         quick start                         | desc                  |
-|------------| :----: |:-----------------------------------------------------------:|-----------------------|
-| Skywalking |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/trace/skywalking) | Layotto 接入 Skywalking |
+| feature    | status |                         quick start                         | desc                    |
+| ---------- | :----: | :---------------------------------------------------------: | ----------------------- |
+| Skywalking |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/trace/skywalking) | Layotto 接入 Skywalking |
 
 
 ### Actuator
 
 | feature        | status |                        quick start                        | desc                                  |
 | -------------- | :----: | :-------------------------------------------------------: | ------------------------------------- |
-| Health Check   |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/actuator/start) | 查询 Layotto 依赖的各种组件的健康状态 |
-| Metadata Query |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/actuator/start) | 查询 Layotto 或应用对外暴露的元信息   |
+| Health Check   |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/actuator/start) | 查询 Layotto 依赖的各种组件的健康状态 |
+| Metadata Query |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/actuator/start) | 查询 Layotto 或应用对外暴露的元信息   |
 
 ### 流量控制
 
 | feature      | status |                              quick start                              | desc                                       |
 | ------------ | :----: | :-------------------------------------------------------------------: | ------------------------------------------ |
-| TCP Copy     |   ✅   |   [demo](https://mosn.io/layotto/#/zh/start/network_filter/tcpcopy)   | 把 Layotto 收到的 TCP 数据 dump 到本地文件 |
-| Flow Control |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/stream_filter/flow_control) | 限制访问 Layotto 对外提供的 API            |
+| TCP Copy     |   ✅    |   [demo](https://mosn.io/layotto/#/zh/start/network_filter/tcpcopy)   | 把 Layotto 收到的 TCP 数据 dump 到本地文件 |
+| Flow Control |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/stream_filter/flow_control) | 限制访问 Layotto 对外提供的 API            |
 
 ### 在 Sidecar 中用 WebAssembly (WASM) 写业务逻辑
 
 | feature        | status |                      quick start                      | desc                                                             |
 | -------------- | :----: | :---------------------------------------------------: | ---------------------------------------------------------------- |
-| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/wasm/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上         |
+| Go (TinyGo)    |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/wasm/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上         |
 | Rust           | 待开发 |                        待开发                         | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上           |
 | AssemblyScript | 待开发 |                        待开发                         | 把用 AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上 |
 
@@ -112,7 +112,7 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 | feature        | status |                      quick start                      | desc                                                                                      |
 | -------------- | :----: | :---------------------------------------------------: | ----------------------------------------------------------------------------------------- |
-| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。         |
+| Go (TinyGo)    |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。         |
 | Rust           | 待开发 |                        待开发                         | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。           |
 | AssemblyScript | 待开发 |                        待开发                         | 把用 AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。 |
 
@@ -120,7 +120,7 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 | feature | status |                      quick start                       | desc                          |
 | ------- | :----: | :----------------------------------------------------: | ----------------------------- |
-| istio   |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/istio/start) | 跟 istio 集成，作为它的数据面 |
+| istio   |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/istio/start) | 跟 istio 集成，作为它的数据面 |
 
 ## Landscapes
 
@@ -132,10 +132,10 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 ## 社区
 
-| 平台                                          | 联系方式                                                                                                                                             |
-| :-------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 💬 [钉钉](https://www.dingtalk.com/zh) (用户群) | 群号: 31912621 或者扫描下方二维码 <br> <img src="https://raw.githubusercontent.com/mosn/layotto/main/docs/img/ding-talk-group-1.png" height="200px"> <br> |
-| 💬 [钉钉](https://www.dingtalk.com/zh) (社区会议群) | 群号：41585216 <br> [Layotto 在每周五晚 8 点进行社区会议，欢迎所有人](zh/community/meeting.md) |
+| 平台                                               | 联系方式                                                                                                                                                     |
+| :------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 💬 [钉钉](https://www.dingtalk.com/zh) (用户群)     | 群号: 31912621 或者扫描下方二维码 <br> <img src="https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*--KAT7yyxXoAAAAAAAAAAAAAARQnAQ" height="200px"> <br> |
+| 💬 [钉钉](https://www.dingtalk.com/zh) (社区会议群) | 群号：41585216 <br> [Layotto 在每周五晚 8 点进行社区会议，欢迎所有人](zh/community/meeting.md)                                                               |
 
 [comment]: <> (| 💬 [微信]&#40;https://www.wechat.com/&#41; | 扫描下方二维码添加好友，她会邀请您加入微信群 <br> <img src="../img/wechat-group.jpg" height="200px">)
 
@@ -172,7 +172,7 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 [Pubsub API 与 Dapr Component 的兼容性](zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
 
-[Configuration API with Apollo(英文)](en/design/configuration/configuration-api-with-apollo.md)
+[Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)
 
 [RPC 设计文档](zh/design/rpc/rpc设计文档.md)
 

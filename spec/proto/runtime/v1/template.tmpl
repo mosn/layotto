@@ -12,7 +12,7 @@ This document is automaticallly generated from the [`.proto`](https://github.com
 {{range .Services}}
 <a name="{{.FullName}}"></a>
 
-### [gRPC Service] {{.Name}}
+## [gRPC Service] {{.Name}}
 {{.Description}}
 
 | Method Name | Request Type | Response Type | Description |
@@ -26,7 +26,7 @@ This document is automaticallly generated from the [`.proto`](https://github.com
 <a name="{{.FullName}}"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-### {{.LongName}}
+## {{.LongName}}
 {{.Description}}
 
 {{if .HasFields}}
@@ -50,7 +50,7 @@ This document is automaticallly generated from the [`.proto`](https://github.com
 {{range .Enums}}
 <a name="{{.FullName}}"></a>
 
-### {{.LongName}}
+## {{.LongName}}
 {{.Description}}
 
 | Name | Number | Description |
@@ -64,7 +64,7 @@ This document is automaticallly generated from the [`.proto`](https://github.com
 {{if .HasExtensions}}
 <a name="{{$file_name}}-extensions"></a>
 
-### File-level Extensions
+## File-level Extensions
 | Extension | Type | Base | Number | Description |
 | --------- | ---- | ---- | ------ | ----------- |
 {{range .Extensions -}}

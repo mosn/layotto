@@ -11,7 +11,9 @@
 cd ${project_path}/cmd/layotto
 go build
 ````
+
 编译成功后执行:
+
 ````shell
 ./layotto start -c ../../configs/config_standalone.json
 ````

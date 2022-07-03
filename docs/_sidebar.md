@@ -1,9 +1,9 @@
 - [Home](/en/README.md)
 - Quick start
+  - [Use State API](en/start/state/start.md)
   - Use Configuration API
     - [Use Apollo as configuration center](en/start/configuration/start-apollo.md)
     - [Use Etcd as configuration center](en/start/configuration/start.md)
-  - [Use State API](en/start/state/start.md)
   - [Use Pub/Sub API](en/start/pubsub/start.md)
   - [Use Distributed Lock API](en/start/lock/start.md)
   - [Use Sequencer API](en/start/sequencer/start.md)
@@ -18,9 +18,10 @@
     - [Dump TCP Traffic](en/start/network_filter/tcpcopy.md)
   - Flow Control on the 7th layer network
     - [Method Level Flow Control](en/start/stream_filter/flow_control.md)
-  - [Observability (trace, metric)](en/start/trace/trace.md)
+  - Observability
+    - [Tracing & Metrics](en/start/trace/trace.md)
+    - [Skywalking tracing](en/start/trace/skywalking.md)
     - [Prometheus metrics](en/start/trace/prometheus.md)
-    - [Skywalking trace](en/start/trace/skywalking.md)
   - [Health check and metadata query](en/start/actuator/start.md)
   - [Run business logic in Layotto using WASM](en/start/wasm/start.md)
   - [FaaS model based on WASM and Runtime](en/start/faas/start.md)
@@ -69,6 +70,7 @@
         - [Zookeeper](en/component_specs/sequencer/zookeeper.md)
         - [MongoDB](en/component_specs/sequencer/mongo.md)
       - [Secret Store](en/component_specs/secret/common.md)
+  - [How to deploy and upgrade Layotto](en/operation/)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
@@ -78,11 +80,12 @@
   - [FaaS design](en/design/faas/faas-poc-design.md)
 - Contributing
   - [Document Contribution Guide](en/development/contributing-doc.md)
+  - [Automate testing of Quickstart documentation with tools](en/development/test-quickstart.md)
   - [Component Development Guide](en/development/developing-component.md)
-  - You wanna modify proto files or API definition?
+  - Want to modify proto files or API definition?
     - [Development specification when adding API](en/development/developing-api.md)
     - [Comment specification of proto file](en/api_reference/comment_spec_of_proto.md)
-    - [How to generate API document based on the proto files](en/api_reference/how_to_generate_api_doc.md)
+    - [How to generate pb code and API reference](en/api_reference/how_to_generate_api_doc.md)
   - [Layotto Github Workflows Guide](en/development/github-workflows.md)
   - [Layotto Commands Guide](en/development/commands.md)
   - [Layotto contributor guide](en/development/CONTRIBUTING.md)

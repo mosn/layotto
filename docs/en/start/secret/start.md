@@ -18,6 +18,7 @@ cd ${project_path}/cmd/layotto
 ```
 
 build:
+
 ```shell @if.not.exist layotto
 go build -o layotto
 ```
@@ -28,7 +29,7 @@ Once finished, the layotto file will be generated in the directory, run it:
 ./layotto start -c ../../configs/config_standalone.json
 ```
 
-### Step 2: Run the client program and call Layotto to generate a unique id
+### Step 2: Run the client program and call Layotto to get the secret
 
 ```shell
  cd ${project_path}/demo/secret/common/

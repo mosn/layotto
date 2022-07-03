@@ -23,6 +23,7 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 访问 https://github.com/etcd-io/etcd/releases 下载对应操作系统的 etcd（也可用 docker）
 
 下载完成执行命令启动：
+
 ````shell
 ./etcd
 ````
@@ -35,9 +36,11 @@ etcd的启动方式可以参考etcd的[官方文档](https://etcd.io/docs/v3.5/q
 cd ${project_path}/cmd/layotto
 go build
 ````
+
 >如果 build 报错，可以在项目根目录执行 `go mod vendor`
 
 编译成功后执行:
+
 ````shell
 ./layotto start -c ../../configs/runtime_config.json
 ````
@@ -45,8 +48,8 @@ go build
 ## 运行 Demo
 
 ````shell
-cd ${project_path}/demo/lock/etcd/
+ cd ${project_path}/demo/lock/common/
  go build -o client
- ./client
+ ./client -s "lock_demo"
 ````
 

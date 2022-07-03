@@ -31,6 +31,23 @@ docker-compose -f diagnostics/skywalking/skywalking-docker-compose.yaml up -d
 ```
 
 ## 运行 layotto
+<!-- tabs:start -->
+### **使用 Docker**
+您可以用 docker 启动 Layotto
+
+```bash
+docker run -d \
+  -v "$(pwd)/configs/config_trace_skywalking.json:/runtime/configs/config.json" \
+  -p 34904:34904 --network=skywalking_default --name layotto \
+  layotto/layotto start
+```
+
+### **本地编译（不适合 Windows)**
+您可以本地编译、运行 Layotto。
+
+> [!TIP|label: 不适合 Windows 用户]
+> Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker 部署
+
 构建:
 
 ```shell
@@ -47,6 +64,7 @@ go build -o layotto
 ```shell @background
 ./layotto start -c ../../configs/config_trace_skywalking.json
 ```
+<!-- tabs:end -->
 
 ## 运行 Demo
 
@@ -60,8 +78,16 @@ go run client.go
 ![](../../../img/trace/sky.png)
 
 ## 清理资源
+如果您使用 Docker 启动 Layotto，记得删除容器：
+
+```bash
+docker rm -f layotto
+```
+
+记得关闭 skywalking:
 
 ```shell
 cd ${project_path}/diagnostics/skywalking
+
 docker-compose -f skywalking-docker-compose.yaml down
 ```

@@ -12,6 +12,7 @@ Layotto client sdk encapsulates the logic of grpc calling. For an example of usi
 
 
 ### TryLock
+
 ```protobuf
 // A non-blocking method trying to get a lock with ttl.
 rpc TryLock(TryLockRequest)returns (TryLockResponse) {}
@@ -67,6 +68,7 @@ req.LockOwner = uuid.New().String()
 ```
 
 ### Unlock
+
 ```protobuf
   rpc Unlock(UnlockRequest)returns (UnlockResponse) {}
 ```

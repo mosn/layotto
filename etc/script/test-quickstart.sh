@@ -33,6 +33,8 @@ quickstarts_in_default="docs/en/start/configuration/start.md
   docs/zh/start/trace/skywalking.md
   docs/zh/start/trace/prometheus.md
   docs/en/start/trace/prometheus.md
+  docs/zh/start/trace/zipkin.md
+  docs/zh/start/trace/jaeger.md
   docs/en/start/wasm/start.md
   docs/zh/start/wasm/start.md
   docs/en/start/secret/start.md
@@ -65,9 +67,9 @@ release_resource() {
   # remove containers
   keywords="redis skywalking hangzhouzk minio"
   for key in ${keywords}; do
-    if [ $(docker container ls | grep $key | wc -l) -gt 0 ]; then
+    if [ $(docker container ls -a | grep $key | wc -l) -gt 0 ]; then
       echo "Deleting containers of $key : " $to_delete
-      docker rm -f $(docker container ls | grep $key | awk '{ print $1 }')
+      docker rm -f $(docker container ls -a | grep $key | awk '{ print $1 }')
     fi
   done
 }

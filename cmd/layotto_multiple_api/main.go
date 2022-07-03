@@ -31,6 +31,8 @@ import (
 	sercetstores_kubernetes "github.com/dapr/components-contrib/secretstores/kubernetes"
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
+	mosn_jaeger "mosn.io/mosn/pkg/trace/jaeger"
+	mosn_zipkin "mosn.io/mosn/pkg/trace/zipkin"
 
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
 
@@ -175,8 +177,10 @@ import (
 	"mosn.io/layotto/pkg/runtime"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
+	"mosn.io/layotto/diagnostics/jaeger"
 	lprotocol "mosn.io/layotto/diagnostics/protocol"
 	lsky "mosn.io/layotto/diagnostics/skywalking"
+	"mosn.io/layotto/diagnostics/zipkin"
 )
 
 // loggerForDaprComp is constructed for reusing dapr's components.
@@ -528,7 +532,8 @@ func ExtensionsRegister(_ *cli.Context) {
 	trace.RegisterTracerBuilder("SOFATracer", protocol.HTTP1, tracehttp.NewTracer)
 	trace.RegisterTracerBuilder("SOFATracer", "layotto", diagnostics.NewTracer)
 	trace.RegisterTracerBuilder(skywalking.SkyDriverName, lprotocol.Layotto, lsky.NewGrpcSkyTracer)
-
+	trace.RegisterTracerBuilder(mosn_jaeger.DriverName, lprotocol.Layotto, jaeger.NewGrpcJaegerTracer)
+	trace.RegisterTracerBuilder(mosn_zipkin.DriverName, lprotocol.Layotto, zipkin.NewGrpcZipTracer)
 }
 
 func main() {

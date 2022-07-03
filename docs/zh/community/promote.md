@@ -7,6 +7,12 @@
 - 贡献过一个有价值的PR，例如一个 Easy 级别的社区开发任务
 - 有意愿一起维护社区
 
+### 如何申请成为 Member
+可以在 [discussion 区](https://github.com/mosn/layotto/discussions) 发个帖、简单自我介绍下，比如提交过哪些pr, 对哪方面的技术感兴趣，后续有兴趣一起做哪方面的贡献。如果不想透露隐私，就不写个人信息。
+
+这个环节的目的是让大家互相认识一下，简单写几句话即可。
+
+参考 https://github.com/mosn/layotto/discussions/675
 
 ### 职责
 Member 需要一起帮忙回复issue/pr，triage（把issue分配给对应模块的负责人）

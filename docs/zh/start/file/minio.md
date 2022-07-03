@@ -4,9 +4,26 @@
 
 Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/file/client.go) ,该示例实现了文件的增删改查操作。
 
-### 第一步：启动 MinIO 服务
+### step 1. 启动 MinIO 和 Layotto
+<!-- tabs:start -->
+#### **使用 Docker Compose**
+您可以使用 docker-compose 启动 MinIO 和 Layotto
+
+```bash
+cd docker/layotto-minio
+# Start MinIO and layotto with docker-compose
+docker-compose up -d
+```
+
+#### **本地编译（不适合 Windows)**
+您可以使用 Docker 运行 MinIO，然后本地编译、运行 Layotto。
+
+> [!TIP|label: 不适合 Windows 用户]
+> Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker-compose 部署
+#### step 1.1. 启动 MinIO 服务
 
 您可以使用 Docker 启动本地MinIO服务, 参考[官方文档](http://docs.minio.org.cn/docs/master/minio-docker-quickstart-guide)
+
 ```shell
 docker run -d -p 9000:9000 -p 9090:9090 --name minio \
 -e "MINIO_ROOT_USER=layotto" \
@@ -15,8 +32,7 @@ docker run -d -p 9000:9000 -p 9090:9090 --name minio \
 minio/minio server /data --console-address ':9090'
 ```
 
-
-### 第二步：启动layotto
+#### step 1.2. 启动layotto
 
 layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/blob/main/configs/config_file.json) ，如下所示
 
@@ -56,8 +72,9 @@ go build -o layotto
 ```shell @background
 ./layotto start -c ../../configs/config_file.json
 ```
+<!-- tabs:end -->
 
-### 第三步：启动测试demo
+### step 2. 启动测试demo
 
 Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/file/client.go)
 
@@ -78,6 +95,24 @@ go build client.go
 # 删除layotto.txt文件
 ./client del test/hello/layotto.txt
 ```
+
+### step 3. 销毁容器，释放资源
+<!-- tabs:start -->
+#### **关闭 Docker Compose**
+如果您是用 docker-compose 启动的 MinIO 和 Layotto，可以按以下方式关闭：
+
+```bash
+cd ${project_path}/docker/layotto-minio
+docker-compose stop
+```
+
+#### **销毁 MinIO Docker 容器**
+如果您是用 Docker 启动的 MinIO，可以按以下方式销毁 MinIO 容器：
+
+```shell
+docker rm -f minio
+```
+<!-- tabs:end -->
 
 #### 细节以后再说，继续体验其他API
 通过左侧的导航栏，继续体验别的API吧！

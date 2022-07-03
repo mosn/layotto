@@ -13,28 +13,84 @@ The architecture of this example is shown in the figure below. The running proce
 
 ![img_1.png](../../../img/mq/start/img_1.png)
 
-### Step 1. Deploy and Run Redis in Docker
-
-1. Get the latest version of Redis image.
-   
-Here we pull the latest version of the official image:
-
-```shell
-docker pull redis:latest
-```
-
-2. Check local mirror
-
-Use the following command to check whether Redis is installed:
+### Step 1. Start the Subscriber
+<!-- tabs:start -->
+#### **Go**
+Build the golang subscriber
 
 ```shell
-docker images
+ cd demo/pubsub/server/
+ go build -o subscriber
+ ```
+
+Start subscriber:
+
+```shell @background
+ ./subscriber -s pub_subs_demo
 ```
-![img.png](../../../img/mq/start/img.png)
 
-3. Run the container
+#### **Java**
 
-After the installation is complete, we can use the following command to run the Redis container:
+Download the java sdk and examples:
+
+```bash
+git clone https://github.com/layotto/java-sdk
+```
+
+```bash
+cd java-sdk
+```
+
+Build and run it:
+
+```bash
+# build example jar
+mvn -f examples-pubsub-subscriber/pom.xml clean package
+# run the example
+java -jar examples-pubsub-subscriber/target/examples-pubsub-subscriber-1.1.0-jar-with-dependencies.jar
+```
+
+<!-- tabs:end -->
+
+If the following information is printed out, it means the startup is successful:
+
+```bash
+Start listening on port 9999 ...... 
+```
+
+> [!TIP|label: What did this subscriber do]
+> The Subscriber program started a gRPC server and exported two gRPC API:
+>
+> - ListTopicSubscriptions
+>
+> Calling this API will return the topics subscribed by the application. This program will return "topic1" and "hello"
+>
+> - OnTopicEvent
+>
+> When a new event occurs, Layotto will call this API to notify the Subscriber of the new event.
+>
+> After the program receives a new event, it will print the event to the command line.
+
+### Step 2. Deploy Redis and Layotto
+<!-- tabs:start -->
+#### **with Docker Compose**
+You can start Redis and Layotto with docker-compose
+
+```bash
+cd docker/layotto-redis
+# Start redis and layotto with docker-compose
+docker-compose up -d
+```
+
+#### **Compile locally (not for Windows)**
+You can run Redis with Docker, then compile and run Layotto locally.
+
+> [!TIP|label: Not for Windows users]
+> Layotto fails to compile under Windows. Windows users are recommended to deploy using docker-compose
+
+#### step 2.1. Run Redis with Docker
+
+We can use the following command to run the Redis container:
 
 ```shell
 docker run -itd --name redis-test -p 6380:6379 redis
@@ -44,40 +100,7 @@ Parameter Description:
 
 `-p 6380:6379`: Map port 6379 of the container to port 6380 of the host. The outside can directly access the Redis service through the host ip:6380.
 
-### Step 2. Start the Subscriber program and subscribe to events
-Build:
-
-```shell
- cd ${project_path}/demo/pubsub/server/
- go build -o subscriber
- ```
-
-Start subscriber:
-
-```shell @background
- ./subscriber -s pub_subs_demo
-```
-If the following information is printed out, it means the startup is successful:
-
-```bash
-Start listening on port 9999 ...... 
-```
-
-Explanation:
-
-The program will start a gRPC server and open two API:
-
-- ListTopicSubscriptions
-
-Calling this API will return the topics subscribed by the application. This program will return "topic1"
-
-- OnTopicEvent
-
-When a new event occurs, Layotto will call this API to notify the Subscriber of the new event.
-
-After the program receives a new event, it will print the event to the command line.
-
-### Step 3. Run Layotto
+#### Step 2.2. Run Layotto
 
 After downloading the project code to the local, switch the code directory and compile:
 
@@ -95,7 +118,12 @@ After completion, the layotto file will be generated in the directory, run it:
 ./layotto start -c ../../configs/config_redis.json
 ```
 
-### Step 4. Run the Publisher program and call Layotto to publish events
+<!-- tabs:end -->
+
+### Step 3. Run the Publisher program and call Layotto to publish events
+<!-- tabs:start -->
+#### **Go**
+Build the golang publisher:
 
 ```shell
  cd ${project_path}/demo/pubsub/client/
@@ -103,20 +131,69 @@ After completion, the layotto file will be generated in the directory, run it:
  ./publisher -s pub_subs_demo
 ```
 
+#### **Java**
+
+Download the java sdk and examples:
+
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+```shell
+cd java-sdk
+```
+
+Build:
+
+```shell @if.not.exist examples-pubsub-publisher/target/examples-pubsub-publisher-1.1.0-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-pubsub-publisher/pom.xml clean package
+```
+
+Run it:
+
+```shell
+# run the example
+java -jar examples-pubsub-publisher/target/examples-pubsub-publisher-1.1.0-jar-with-dependencies.jar
+```
+
+<!-- tabs:end -->
+
 If the following information is printed, the call is successful:
 
 ```bash
-Published a new event.Topic: topic1 ,Data: value1 
+Published a new event.Topic: hello ,Data: world
+Published a new event.Topic: topic1 ,Data: value1
 ```
 
-### Step 5. Check the event message received by the subscriber
+### Step 4. Check the event message received by the subscriber
 
 Go back to the subscriber's command line and you will see that a new message has been received:
 
 ```bash
-Start listening on port 9999 ...... 
-Received a new event.Topic: topic1 , Data:value1 
+Start listening on port 9999 ......
+Received a new event.Topic: topic1 , Data: value1
+Received a new event.Topic: hello , Data: world
 ```
+
+### step 5. Stop containers and release resources
+<!-- tabs:start -->
+#### **Docker Compose**
+If you started Redis and Layotto with docker-compose, you can shut them down as follows:
+
+```bash
+cd ${project_path}/docker/layotto-redis
+docker-compose stop
+```
+
+#### **Destroy the Redis container**
+If you started Redis with Docker, you can destroy the Redis container as follows:
+
+```shell
+docker rm -f redis-test
+```
+
+<!-- tabs:end -->
 
 ### Next Step
 #### What did this client Demo do?

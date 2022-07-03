@@ -1,9 +1,9 @@
 - [首页](/zh/README.md)
 - [快速开始](/zh/start/)
+    - [使用State API](zh/start/state/start.md)
     - 使用Configuration API
         - [使用Apollo配置中心](zh/start/configuration/start-apollo.md)
         - [使用Etcd配置中心](zh/start/configuration/start.md)
-    - [使用State API](zh/start/state/start.md)
     - [使用Pub/Sub API](zh/start/pubsub/start.md)
     - [使用分布式锁 API](zh/start/lock/start.md)
     - [使用Sequencer API生成分布式自增id](zh/start/sequencer/start.md)
@@ -23,8 +23,10 @@
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
     - 可观测性  
         - [Trace, Metrics](zh/start/trace/trace.md)
-        - [Metrics 接入 Prometheus](zh/start/trace/prometheus.md)
         - [Trace 接入 Skywalking](zh/start/trace/skywalking.md)
+        - [Trace 接入 Zipkin](zh/start/trace/zipkin.md)
+        - [Trace 接入 Jaeger](zh/start/trace/jaeger.md)
+        - [Metrics 接入 Prometheus](zh/start/trace/prometheus.md)
     - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
 - [用户手册](zh/building_blocks/)
@@ -98,7 +100,7 @@
     - 想要修改proto文件或API定义？
         - [新增API时的开发规范](zh/development/developing-api.md)
         - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
-        - [如何基于proto文件生成接口文档](zh/api_reference/how_to_generate_api_doc.md)  
+        - [如何基于proto文件生成代码、接口文档](zh/api_reference/how_to_generate_api_doc.md)  
     - [Layotto 四大 Github Workflows 说明](zh/development/github-workflows.md)
     - [Layotto 命令行工具指南](zh/development/commands.md)
     - [发布手册](zh/development/release-guide.md)

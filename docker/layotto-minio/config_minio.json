@@ -1,0 +1,53 @@
+{
+    "servers": [
+      {
+        "default_log_path": "stdout",
+        "default_log_level": "DEBUG",
+        "listeners": [
+          {
+            "name": "grpc",
+            "address": "0.0.0.0:34904",
+            "bind_port": true,
+            "filter_chains": [
+              {
+                "filters": [
+                  {
+                    "type": "grpc",
+                    "config": {
+                      "server_name": "runtime",
+                      "grpc_config": {
+                        "hellos": {
+                          "quick_start_demo": {
+                            "type": "helloworld",
+                            "hello": "greeting"
+                          }
+                        },
+                        "file": {
+                          "file_demo": {
+                            "type": "minioOSS",
+                            "metadata": [
+                              {
+                                "endpoint": "minio:9000",
+                                "accessKeyID": "layotto",
+                                "accessKeySecret": "layotto_secret",
+                                "SSL":false,
+                                "region":"us-east-1"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "pprof": {
+      "debug": true,
+      "port_value": 34902
+    }
+  }

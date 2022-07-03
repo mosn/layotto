@@ -50,6 +50,7 @@ In the future, when everyone really sits together to reach a consensus and build
 
 ### 2.2.2. Between APP and Layotto
 Use the same grpc API as Dapr
+
 ```protobuf
 service AppCallback {
   // Lists all topics subscribed by this app.
@@ -60,6 +61,7 @@ service AppCallback {
 
 }
 ```
+
 ```protobuf
 service Dapr {
   // Publishes events to the specific topic.
@@ -67,6 +69,7 @@ service Dapr {
 }
 
 ```
+
 ### 2.2.3. Between Layotto and Component
 Use the same as Dapr;
 PublishRequest.Data and NewMessage.Data put json data conforming to CloudEvent 1.0 specification (can be deserialized and put into map[string]interface{})

@@ -32,6 +32,7 @@ func init() {
 ```
 
 cmd 的 action 开始执行：
+
 ```
 	Action: func(c *cli.Context) error {
 		app := mosn.NewMosn()
@@ -60,6 +61,7 @@ cmd 的 action 开始执行：
 ### 2.回调函数NewRuntimeGrpcServer分析
 
 MOSN 启动的时候回调 NewRuntimeGrpcServer ，data 是未解析的配置文件，opts 是 grpc 的配置项，返回 Grpc server
+
 ```
 func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrpc.RegisteredServer, error) {
 	// 将原始的配置文件解析成结构体形式。
@@ -132,6 +134,7 @@ type MosnRuntime struct {
 ```
 
 runtime 的 run 函数逻辑如下:
+
 ```
 func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	// 启动标志
@@ -188,6 +191,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 }
 
 ```
+
 组件的初始化函数 initRuntime ：
 
 ```
@@ -207,7 +211,9 @@ func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	return nil
 }
 ```
+
 DefaultInitRuntimeStage 组件初始化逻辑，调用每个组件的 init 方法:
+
 ```
 func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	 ...
@@ -251,6 +257,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	return nil
 }
 ```
+
 以 file 组件为例，看下初始化函数：
 
 ```
@@ -275,6 +282,7 @@ func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
 	return nil
 }
 ```
+
 至此 MOSN、Grpc、Layotto 都已经启动完成，通过 Grpc 的接口就可以调用到组件的代码逻辑。
 
 ## 总结

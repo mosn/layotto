@@ -11,8 +11,23 @@ This example shows how to call Etcd through Layotto to generate a distributed un
 The architecture of this example is shown in the figure below, and the processes started are: Etcd, Layotto, and client programs
 
 ![img.png](../../../img/sequencer/etcd/img.png)
+### step 1. Deploy etcd and Layotto
+<!-- tabs:start -->
+#### **With Docker Compose**
+You can start etcd and Layotto with docker-compose
 
-### Step 1: Deploy the storage system (Etcd)
+```bash
+cd docker/layotto-etcd
+# Start etcd and layotto with docker-compose
+docker-compose up -d
+```
+
+#### **Compile locally (not for Windows)**
+You can run etcd with Docker, then compile and run Layotto locally.
+
+> [!TIP|label: Not for Windows users]
+> Layotto fails to compile under Windows. Windows users are recommended to deploy using docker-compose
+#### step 1.1 Deploy the storage system (Etcd)
 
 For the deployment of etcd, please refer to etcd's [Official Document](https://etcd.io/docs/v3.5/quickstart/)
 
@@ -27,7 +42,7 @@ Once the download is finished,execute the command to start:
 ```
 
 The default listening address is `localhost:2379`
-### Step 2: Run Layotto
+#### step 1.2 Run Layotto
 
 After downloading the project code to the local, switch the code directory and compile:
 
@@ -45,7 +60,12 @@ Once finished, the layotto file will be generated in the directory, run it:
 ./layotto start -c ../../configs/runtime_config.json
 ```
 
-### Step 3: Run the client program and call Layotto to generate a unique id
+<!-- tabs:end -->
+
+### step 2. Run the client program and call Layotto to generate a unique id
+<!-- tabs:start -->
+#### **Go**
+Build and run the golang demo:
 
 ```shell
  cd ${project_path}/demo/sequencer/common/
@@ -70,11 +90,82 @@ Next id:next_id:10
 Demo success!
 ```
 
+#### **Java**
+
+Download java sdk and examples:
+
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+```shell
+cd java-sdk
+```
+
+Build the demo:
+
+```shell @if.not.exist examples-sequencer/target/examples-sequencer-1.1.0-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-sequencer/pom.xml clean package
+```
+
+Run it:
+
+```shell
+java -jar examples-sequencer/target/examples-sequencer-1.1.0-jar-with-dependencies.jar
+```
+
+If the following information is printed, the demo is successful:
+
+```bash
+Try to get next id.Key: examples
+Next id: 1
+Try to get next id.Key: examples
+Next id: 2
+Try to get next id.Key: examples
+Next id: 3
+Try to get next id.Key: examples
+Next id: 4
+Try to get next id.Key: examples
+Next id: 5
+Try to get next id.Key: examples
+Next id: 6
+Try to get next id.Key: examples
+Next id: 7
+Try to get next id.Key: examples
+Next id: 8
+Try to get next id.Key: examples
+Next id: 9
+Try to get next id.Key: examples
+Next id: 10
+```
+
+<!-- tabs:end -->
+
+### step 3. Stop containers and release resources
+<!-- tabs:start -->
+#### **Docker Compose**
+If you started etcd and Layotto with docker-compose, you can shut them down as follows:
+
+```bash
+cd ${project_path}/docker/layotto-etcd
+docker-compose stop
+```
+
+#### **Destroy the etcd container**
+If you started etcd with Docker, you can destroy the etcd container as follows:
+
+```shell
+docker rm -f etcd
+```
+
+<!-- tabs:end -->
+
 ### Next step
 #### What does this client program do?
-The demo client program uses the golang version SDK provided by Layotto, calls the Layotto Sequencer API, and generates a distributed unique, self-increasing id.
+The demo client program uses the SDK provided by Layotto, calls the Layotto Sequencer API, and generates a distributed unique, self-increasing id.
 
-The sdk is located in the `sdk` directory, and users can call the API provided by Layotto through the sdk.
+The golang sdk is located in the `sdk` directory, and the java sdk is in https://github.com/layotto/java-sdk
 
 In addition to using sdk, you can also interact with Layotto directly through grpc in any language you like.
 
