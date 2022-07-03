@@ -268,6 +268,9 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initInputBinding(o.services.inputBinding...); err != nil {
 		return err
 	}
+	if err := m.initSecretWrapper(o.services.secretWrapper...); err != nil {
+		return err
+	}
 	return m.initSecretStores(o.services.secretStores...)
 }
 
@@ -522,6 +525,9 @@ func (m *MosnRuntime) initInputBinding(factorys ...*mbindings.InputBindingFactor
 }
 
 func (m *MosnRuntime) initSecretWrapper(factorys ...*secret.WrapperFactory) error {
+	if factorys == nil {
+		return nil
+	}
 	log.DefaultLogger.Infof("[runtime] start initializing SecretWrapper components")
 	// 1. register all factory methods.
 	m.secretWrapperRegistry.Register(factorys...)
