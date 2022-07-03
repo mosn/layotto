@@ -17,10 +17,12 @@
 package ref
 
 import (
-	"github.com/stretchr/testify/assert"
-	mock "mosn.io/layotto/pkg/mock"
-	"mosn.io/layotto/pkg/mock/components/secret"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"mosn.io/layotto/pkg/mock"
+	"mosn.io/layotto/pkg/mock/components/secret"
 )
 
 func TestRefContainer(t *testing.T) {

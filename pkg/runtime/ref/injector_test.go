@@ -17,11 +17,13 @@
 package ref
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
+
 	"mosn.io/layotto/components/ref"
 	"mosn.io/layotto/pkg/mock"
 	"mosn.io/layotto/pkg/mock/components/secret"
-	"testing"
 )
 
 func TestInject(t *testing.T) {
