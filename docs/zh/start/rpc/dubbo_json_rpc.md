@@ -20,7 +20,7 @@ go build -o layotto ./cmd/layotto
 这里使用了`dubbo-go-samples`提供的示例服务。
 下载示例：
 
-```shell @catch
+```shell @if.not.exist dubbo-go-samples
 git clone https://github.com/apache/dubbo-go-samples.git
 ```
 

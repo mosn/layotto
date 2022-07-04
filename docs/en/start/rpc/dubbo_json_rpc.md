@@ -19,7 +19,7 @@ go build -o layotto ./cmd/layotto
 
 use `dubbo-go-samples` repo's example server.
 
-```shell @catch
+```shell @if.not.exist dubbo-go-samples
 git clone https://github.com/apache/dubbo-go-samples.git
 ```
 
