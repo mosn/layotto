@@ -18,9 +18,9 @@ The following software needs to be installed to run this demo:
 
    Follow the instructions on the official website.
 
-3. [virtualbox](https://www.virtualbox.org/)
+3. [virtualbox](https://www.oracle.com/virtualization/technologies/vm/virtualbox.html)
    
-   Download the installation package from the official website and install it. You can also use [homebrew](https://brew.sh/) to install it on mac.If the startup fails after installation, please refer to [The host-only adapter we just created is not visible](https://github.com/kubernetes/minikube/issues/3614).
+   Download the installation package from the official website and install it. You can also use [homebrew](https://brew.sh/) to install it on mac. If the startup fails after installation, please refer to [The host-only adapter we just created is not visible](https://github.com/kubernetes/minikube/issues/3614).
 
 
 ### 3. Setup
