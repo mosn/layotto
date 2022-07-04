@@ -27,14 +27,15 @@ import (
 )
 
 const (
-	MySQLUrl         = "localhost:xxxxx"
-	Value            = 1
-	Key              = "sequenceKey"
-	Size             = 50
-	Version          = 1
-	tableName        = "layotto_sequencer"
-	connectionString = "connectionString"
-	dataBaseName     = "layotto"
+	MySQLUrl     = "localhost:3306"
+	Value        = 1
+	Key          = "sequenceKey"
+	Size         = 50
+	Version      = 1
+	tableName    = "layotto_sequencer"
+	dataBaseName = "layotto"
+	userName     = "root"
+	password     = "123456"
 )
 
 func TestMySQLSequencer_Init(t *testing.T) {
@@ -43,7 +44,6 @@ func TestMySQLSequencer_Init(t *testing.T) {
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
-	defer db.Close()
 
 	comp := NewMySQLSequencer(log.DefaultLogger)
 	comp.db = db
@@ -52,14 +52,15 @@ func TestMySQLSequencer_Init(t *testing.T) {
 		Properties: make(map[string]string),
 		BiggerThan: make(map[string]int64),
 	}
+	mock.ExpectBegin()
+	mock.ExpectExec("CREATE TABLE IF NOT EXISTS").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
 
-	rows := sqlmock.NewRows([]string{"exists"}).AddRow(0)
-	mock.ExpectQuery("SELECT EXISTS").WillReturnRows(rows)
-	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
-
-	cfg.Properties["tableNameKey"] = tableName
-	cfg.Properties["connectionString"] = connectionString
+	cfg.Properties["tableName"] = tableName
 	cfg.Properties["dataBaseName"] = dataBaseName
+	cfg.Properties["userName"] = userName
+	cfg.Properties["password"] = password
+	cfg.Properties["mysqlUrl"] = MySQLUrl
 	err = comp.Init(cfg)
 
 	assert.Nil(t, err)
@@ -79,14 +80,16 @@ func TestMySQLSequencer_GetNextId(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
 	mock.ExpectExec("UPDATE").WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", "sequenceKey", Value, Version).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO").WithArgs(tableName, Key, Value, Version).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
 
 	properties["tableName"] = tableName
-	properties["connectionString"] = connectionString
 	properties["dataBaseName"] = dataBaseName
+	properties["userName"] = userName
+	properties["password"] = password
+	properties["mysqlUrl"] = MySQLUrl
 
 	req := &sequencer.GetNextIdRequest{Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
@@ -114,14 +117,16 @@ func TestMySQLSequencer_GetSegment(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
 	mock.ExpectExec("UPDATE").WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", Key, Size, Version).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO").WithArgs(tableName, Key, Size, Version).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
 
 	properties["tableName"] = tableName
-	properties["connectionString"] = connectionString
 	properties["dataBaseName"] = dataBaseName
+	properties["userName"] = userName
+	properties["password"] = password
+	properties["mysqlUrl"] = MySQLUrl
 
 	req := &sequencer.GetSegmentRequest{Size: Size, Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
@@ -169,14 +174,16 @@ func TestMySQLSequencer_Segment_Insert(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnError(sql.ErrNoRows)
-	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", Key, Size, Version).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO").WithArgs(tableName, Key, Size, Version).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
 
 	properties["tableName"] = tableName
-	properties["connectionString"] = connectionString
 	properties["dataBaseName"] = dataBaseName
+	properties["userName"] = userName
+	properties["password"] = password
+	properties["mysqlUrl"] = MySQLUrl
 
 	segmentReq := &sequencer.GetSegmentRequest{Size: Size, Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 	comp.db = db
@@ -198,14 +205,16 @@ func TestMySQLSequencer_GetNextId_Insert(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnError(sql.ErrNoRows)
-	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", "sequenceKey", Value, Version).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO").WithArgs(tableName, Key, Value, Version).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
 
 	properties["tableName"] = tableName
-	properties["connectionString"] = connectionString
 	properties["dataBaseName"] = dataBaseName
+	properties["userName"] = userName
+	properties["password"] = password
+	properties["mysqlUrl"] = MySQLUrl
 
 	req := &sequencer.GetNextIdRequest{Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
@@ -231,8 +240,10 @@ func TestMySQLSequencer_GetNextId_InsertError(t *testing.T) {
 	properties := make(map[string]string)
 
 	properties["tableName"] = tableName
-	properties["connectionString"] = connectionString
 	properties["dataBaseName"] = dataBaseName
+	properties["userName"] = userName
+	properties["password"] = password
+	properties["mysqlUrl"] = MySQLUrl
 
 	req := &sequencer.GetNextIdRequest{Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
@@ -253,14 +264,16 @@ func TestMySQLSequencer_Segment_InsertError(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT").WillReturnError(sql.ErrNoRows)
-	mock.ExpectExec("INSERT INTO").WithArgs("layotto_sequencer", Key, Size).WillReturnError(errors.New("insert error"))
+	mock.ExpectExec("INSERT INTO").WithArgs(tableName, Key, Size).WillReturnError(errors.New("insert error"))
 	mock.ExpectCommit()
 
 	properties := make(map[string]string)
 
 	properties["tableName"] = tableName
-	properties["connectionString"] = connectionString
 	properties["dataBaseName"] = dataBaseName
+	properties["userName"] = userName
+	properties["password"] = password
+	properties["mysqlUrl"] = MySQLUrl
 
 	segmentReq := &sequencer.GetSegmentRequest{Size: Size, Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 	comp.db = db
@@ -287,8 +300,10 @@ func TestMySQLSequencer_GetNextId_UpdateError(t *testing.T) {
 	properties := make(map[string]string)
 
 	properties["tableName"] = tableName
-	properties["connectionString"] = connectionString
 	properties["dataBaseName"] = dataBaseName
+	properties["userName"] = userName
+	properties["password"] = password
+	properties["mysqlUrl"] = MySQLUrl
 
 	req := &sequencer.GetNextIdRequest{Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 
@@ -317,8 +332,10 @@ func TestMySQLSequencer_Segment_UpdateError(t *testing.T) {
 	properties := make(map[string]string)
 
 	properties["tableName"] = tableName
-	properties["connectionString"] = connectionString
 	properties["dataBaseName"] = dataBaseName
+	properties["userName"] = userName
+	properties["password"] = password
+	properties["mysqlUrl"] = MySQLUrl
 
 	req := &sequencer.GetSegmentRequest{Size: Size, Key: Key, Options: sequencer.SequencerOptions{AutoIncrement: sequencer.STRONG}, Metadata: properties}
 

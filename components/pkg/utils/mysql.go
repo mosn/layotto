@@ -25,15 +25,19 @@ var (
 const (
 	defaultTableName    = "layotto_sequencer"
 	defaultTableNameKey = "tableName"
-	connectionStringKey = "connectionString"
 	dataBaseName        = "dataBaseName"
+	userName            = "userName"
+	defaultPassword     = "password"
+	mysqlUrl            = "mysqlUrl"
 )
 
 type MySQLMetadata struct {
-	TableName        string
-	ConnectionString string
-	DataBaseName     string
-	Db               *sql.DB
+	TableName    string
+	DataBaseName string
+	UserName     string
+	Password     string
+	MysqlUrl     string
+	Db           *sql.DB
 }
 
 func ParseMySQLMetadata(properties map[string]string) (MySQLMetadata, error) {
@@ -42,13 +46,17 @@ func ParseMySQLMetadata(properties map[string]string) (MySQLMetadata, error) {
 	if val, ok := properties[defaultTableNameKey]; ok && val != "" {
 		m.TableName = val
 	}
-
-	if val, ok := properties[connectionStringKey]; ok && val != "" {
-		m.ConnectionString = val
-	}
-
 	if val, ok := properties[dataBaseName]; ok && val != "" {
 		m.DataBaseName = val
+	}
+	if val, ok := properties[userName]; ok && val != "" {
+		m.UserName = val
+	}
+	if val, ok := properties[defaultPassword]; ok && val != "" {
+		m.Password = val
+	}
+	if val, ok := properties[mysqlUrl]; ok && val != "" {
+		m.MysqlUrl = val
 	}
 	return m, nil
 }
@@ -56,36 +64,18 @@ func ParseMySQLMetadata(properties map[string]string) (MySQLMetadata, error) {
 func NewMySQLClient(meta MySQLMetadata) error {
 
 	val := meta
-
 	if val.TableName == "" {
 		val.TableName = defaultTableName
 	}
-
-	exists, err := tableExists(val)
-	if err != nil {
-		return err
-	}
-	if !exists {
-		createTable := fmt.Sprintf(`CREATE TABLE %s (
+	meta.Db.Begin()
+	createTable := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (
 			sequencer_key VARCHAR(255),
 			sequencer_value INT,
 			UNIQUE INDEX (sequencer_key));`, val.TableName)
-		_, err = meta.Db.Exec(createTable)
-		if err != nil {
-			return err
-		}
+	_, err := meta.Db.Exec(createTable)
+	defer meta.Db.Close()
+	if err != nil {
+		return err
 	}
-
 	return nil
-}
-
-func tableExists(meta MySQLMetadata) (bool, error) {
-	exists := ""
-
-	query := `SELECT EXISTS (
-		SELECT * FROM ? WHERE TABLE_NAME = ?
-		) AS 'exists'`
-	err := meta.Db.QueryRow(query, meta.DataBaseName, meta.TableName).Scan(&exists)
-
-	return exists == "1", err
 }
