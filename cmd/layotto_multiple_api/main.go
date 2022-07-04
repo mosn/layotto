@@ -22,6 +22,8 @@ import (
 	"strconv"
 	"time"
 
+	sequencer_postgresql "mosn.io/layotto/components/sequencer/postgresql"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
 	"github.com/dapr/components-contrib/secretstores/aws/secretmanager"
@@ -406,6 +408,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
 				return sequencer_inmemory.NewInMemorySequencer()
+			}),
+			runtime_sequencer.NewFactory("postgresql", func() sequencer.Store {
+				return sequencer_postgresql.NewPostgresqlSequencer(log.DefaultLogger)
 			}),
 		),
 		// secretstores
