@@ -8,7 +8,7 @@
 ### step 2. 编译运行layotto
 
 ```shell @if.not.exist layotto
-go build -o layotto cmd/layotto/main.go
+go build -o layotto ./cmd/layotto
 ```
 
 ```shell @background
