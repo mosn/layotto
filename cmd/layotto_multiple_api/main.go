@@ -18,10 +18,13 @@ package main
 
 import (
 	"encoding/json"
-	"mosn.io/layotto/pkg/grpc/dapr"
 	"os"
 	"strconv"
 	"time"
+
+	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
+	"mosn.io/layotto/components/custom"
+	"mosn.io/layotto/pkg/grpc/dapr"
 
 	"mosn.io/mosn/pkg/istio"
 
@@ -457,7 +460,12 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			secretstores_loader.NewFactory("local.env", func() secretstores.SecretStore {
 				return secretstore_env.NewEnvSecretStore(loggerForDaprComp)
 			}),
-		))
+		), // Custom components
+		runtime.WithCustomComponentFactory("helloworld",
+			custom.NewComponentFactory("in-memory", component.NewInMemoryHelloWorld),
+			custom.NewComponentFactory("goodbye", component.NewSayGoodbyeHelloWorld),
+		),
+	)
 	return server, err
 }
 
