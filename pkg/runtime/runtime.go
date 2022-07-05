@@ -26,7 +26,6 @@ import (
 	"github.com/dapr/components-contrib/secretstores"
 
 	"mosn.io/layotto/components/custom"
-	"mosn.io/layotto/components/secret"
 	msecretstores "mosn.io/layotto/pkg/runtime/secretstores"
 
 	"github.com/dapr/components-contrib/bindings"
@@ -70,7 +69,6 @@ type MosnRuntime struct {
 	fileRegistry            file.Registry
 	bindingsRegistry        mbindings.Registry
 	secretStoresRegistry    msecretstores.Registry
-	secretWrapperRegistry   secret.Registry
 	customComponentRegistry custom.Registry
 	// component pool
 	hellos map[string]hello.HelloService
@@ -115,7 +113,6 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		lockRegistry:            runtime_lock.NewRegistry(info),
 		sequencerRegistry:       runtime_sequencer.NewRegistry(info),
 		secretStoresRegistry:    msecretstores.NewRegistry(info),
-		secretWrapperRegistry:   secret.NewRegistry(info),
 		customComponentRegistry: custom.NewRegistry(info),
 		hellos:                  make(map[string]hello.HelloService),
 		configStores:            make(map[string]configstores.Store),
@@ -265,9 +262,6 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 		return err
 	}
 	if err := m.initInputBinding(o.services.inputBinding...); err != nil {
-		return err
-	}
-	if err := m.initSecretWrapper(o.services.secretWrapper...); err != nil {
 		return err
 	}
 	return m.initSecretStores(o.services.secretStores...)
@@ -520,36 +514,6 @@ func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFact
 
 // TODO: implement initInputBinding
 func (m *MosnRuntime) initInputBinding(factorys ...*mbindings.InputBindingFactory) error {
-	return nil
-}
-
-func (m *MosnRuntime) initSecretWrapper(factorys ...*secret.WrapperFactory) error {
-	if factorys == nil {
-		return nil
-	}
-	log.DefaultLogger.Infof("[runtime] start initializing SecretWrapper components")
-	// 1. register all factory methods.
-	m.secretWrapperRegistry.Register(factorys...)
-	// 2. create the component
-	comp, err := m.secretWrapperRegistry.Create("local.file")
-	if err != nil {
-		m.errInt(err, "create LocalFileWrapper component failed")
-		return err
-	}
-	// 3. init
-	if err := comp.Init(); err != nil {
-		m.errInt(err, "init LocalFileWrapper component failed")
-		return err
-	}
-	// 4. loop wrap
-	for _, config := range m.runtimeConfig.SecretStoresManagement {
-		if config.Type == "local.file" {
-			if err := comp.Wrap(config.Metadata); err != nil {
-				m.errInt(err, "wrap failed")
-				return err
-			}
-		}
-	}
 	return nil
 }
 

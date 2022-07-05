@@ -25,7 +25,6 @@ import (
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/rpc"
-	"mosn.io/layotto/components/secret"
 	rgrpc "mosn.io/layotto/pkg/grpc"
 	mbindings "mosn.io/layotto/pkg/runtime/bindings"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
@@ -48,7 +47,6 @@ type services struct {
 	outputBinding []*mbindings.OutputBindingFactory
 	inputBinding  []*mbindings.InputBindingFactory
 	secretStores  []*msecretstores.SecretStoresFactory
-	secretWrapper []*secret.WrapperFactory
 	// Custom components.
 	// The key is component kind
 	custom map[string][]*custom.ComponentFactory
@@ -178,11 +176,5 @@ func WithSequencerFactory(factorys ...*runtime_sequencer.Factory) Option {
 func WithSecretStoresFactory(factorys ...*msecretstores.SecretStoresFactory) Option {
 	return func(o *runtimeOptions) {
 		o.services.secretStores = append(o.services.secretStores, factorys...)
-	}
-}
-
-func WithSecretWrapperFactory(factorys ...*secret.WrapperFactory) Option {
-	return func(o *runtimeOptions) {
-		o.services.secretWrapper = append(o.services.secretWrapper, factorys...)
 	}
 }

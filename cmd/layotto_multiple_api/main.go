@@ -18,10 +18,11 @@ package main
 
 import (
 	"encoding/json"
-	secretstores_local "mosn.io/layotto/pkg/runtime/secretstores/local"
 	"os"
 	"strconv"
 	"time"
+
+	secretstores_local "mosn.io/layotto/pkg/runtime/secretstores/local"
 
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"

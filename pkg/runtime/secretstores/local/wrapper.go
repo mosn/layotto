@@ -17,9 +17,10 @@
 package secret
 
 import (
-	"github.com/dapr/components-contrib/secretstores"
 	"os"
 	"strings"
+
+	"github.com/dapr/components-contrib/secretstores"
 )
 
 type wrapper struct {
