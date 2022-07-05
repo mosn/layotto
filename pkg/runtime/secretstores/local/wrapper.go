@@ -53,7 +53,7 @@ func Wrap(component secretstores.SecretStore) secretstores.SecretStore {
 func getPrefixConfigFilePath() string {
 	prefix := ""
 	for i, str := range os.Args {
-		if str == "-c" || str == "--config" {
+		if str == "-c" || str == "-config" {
 			strs := strings.Split(os.Args[i+1], string(os.PathSeparator))
 			for _, s := range strs[:len(strs)-1] {
 				prefix = prefix + s + string(os.PathSeparator)
