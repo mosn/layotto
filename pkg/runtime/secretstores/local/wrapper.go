@@ -53,14 +53,10 @@ func Wrap(component secretstores.SecretStore) secretstores.SecretStore {
 func getPrefixConfigFilePath() string {
 	prefix := ""
 	for i, str := range os.Args {
-		// FIXME: we should get the configuration path in main.go and then store it in memory.
-		// Matching "-c" here is not enough, since the startup parameter might be "--config"
-		if str == "-c" {
-			strs := strings.Split(os.Args[i+1], "/")
+		if str == "-c" || str == "--config" {
+			strs := strings.Split(os.Args[i+1], string(os.PathSeparator))
 			for _, s := range strs[:len(strs)-1] {
-				// FIXME: we should use `os.PathSeparator` instead of `/`.
-				// See https://stackoverflow.com/questions/9371031/how-do-i-create-crossplatform-file-paths-in-go
-				prefix = prefix + s + "/"
+				prefix = prefix + s + string(os.PathSeparator)
 			}
 			break
 		}
