@@ -27,6 +27,7 @@ type DefaultInjector struct {
 }
 
 //InjectSecretRef  inject secret to metaData
+// TODO: permission control
 func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string]string) error {
 
 	if len(items) == 0 {
