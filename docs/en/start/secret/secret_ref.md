@@ -3,6 +3,7 @@
 we can inject secrets to other components using secret store.
 
 using `secret_ref` config:
+
 ```json
 {
   "sequencer": {

@@ -3,6 +3,7 @@
 我们可以用secret store将secrets注入到其他组件。
 
 用 `secret_ref` 来配置:
+
 ```json
 {
   "sequencer": {
