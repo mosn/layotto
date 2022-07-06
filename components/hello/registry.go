@@ -29,13 +29,13 @@ type Registry interface {
 
 type HelloFactory struct {
 	CompType      string
-	FatcoryMethod func() HelloService
+	FactoryMethod func() HelloService
 }
 
 func NewHelloFactory(compType string, f func() HelloService) *HelloFactory {
 	return &HelloFactory{
 		CompType:      compType,
-		FatcoryMethod: f,
+		FactoryMethod: f,
 	}
 }
 
@@ -54,7 +54,7 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 
 func (r *helloRegistry) Register(fs ...*HelloFactory) {
 	for _, f := range fs {
-		r.stores[f.CompType] = f.FatcoryMethod
+		r.stores[f.CompType] = f.FactoryMethod
 		r.info.RegisterComponent(ServiceName, f.CompType) // 注册组件信息
 	}
 }
