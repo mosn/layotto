@@ -274,10 +274,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initSequencers(o.services.sequencers...); err != nil {
 		return err
 	}
-	if err := m.initInputBinding(o.services.inputBinding...); err != nil {
-		return err
-	}
-	return nil
+	return m.initInputBinding(o.services.inputBinding...)
 }
 
 func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
