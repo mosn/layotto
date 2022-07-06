@@ -23,46 +23,34 @@
                     "grpc_config": {
                       "hellos": {
                         "helloworld": {
+                          "type": "helloworld",
                           "hello": "greeting"
                         }
                       },
                       "secret_store": {
                         "local.file": {
+                          "type":"local.file",
                           "metadata": {
                             "secretsFile": "../../configs/secret/config_secret_local_file.json"
                           }
                         },
                         "local.env": {
+                          "type":"local.env",
                           "metadata": {
                           }
                         }
                       },
                       "sequencer": {
                         "redis": {
+                          "type":"redis",
                           "metadata": {
                             "redisHost": "127.0.0.1:6380",
                             "redisPassword": ""
                           },
-                          "componentRef": [
-                            {
-                              "type": "config_store",
-                              "name": "apollo"
-                            },
-                            {
-                              "type": "secret_store",
-                              "name": "local.file"
-                            }
-                          ],
-                          "secretRef": [
+                          "secret_ref": [
                             {
                               "name": "local.file",
-                              "key": "db-user-pass:password"
-                            }
-                          ],
-                          "configurationRef": [
-                            {
-                              "name": "apollo",
-                              "key": "xxxxx"
+                              "key": "redisPassword"
                             }
                           ]
                         }

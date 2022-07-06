@@ -72,7 +72,7 @@ type MosnRuntime struct {
 	bindingsRegistry        mbindings.Registry
 	secretStoresRegistry    msecretstores.Registry
 	customComponentRegistry custom.Registry
-	Injector                ref.DefaultInjector
+	Injector                *ref.DefaultInjector
 	// component pool
 	hellos map[string]hello.HelloService
 	// config management system component
@@ -241,7 +241,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initConfigStores(o.services.configStores...); err != nil {
 		return err
 	}
-	m.Injector = ref.DefaultInjector{
+	m.Injector = &ref.DefaultInjector{
 		Container: ref.RefContainer{
 			SecretRef: m.secretStores,
 			ConfigRef: m.configStores,
@@ -277,7 +277,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initInputBinding(o.services.inputBinding...); err != nil {
 		return err
 	}
-	return m.initSecretStores(o.services.secretStores...)
+	return nil
 }
 
 func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
@@ -637,6 +637,10 @@ func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Co
 			comp, err := m.customComponentRegistry.Create(kind, config.Type)
 			if err != nil {
 				m.errInt(err, "create custom component %s failed", name)
+				return err
+			}
+			//inject secret to component
+			if err := m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 				return err
 			}
 			// init
