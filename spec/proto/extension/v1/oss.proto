@@ -106,6 +106,8 @@ message GetObjectInput {
     string accept_encoding = 23;
     // Specify the signed url of object, user can get object with signed url without ak、sk
     string signed_url = 24;
+    // Specify the client used for request
+    string uid = 25;
 }
 message GetObjectOutput {
     // Object data.
@@ -197,6 +199,8 @@ message PutObjectInput{
     string signed_url = 12;
     // A map of metadata to store with the object in S3.
     map<string, string> meta = 13;
+    // Specify the client used for request
+    string uid = 14;
 }
 message PutObjectOutput{
 	// Indicates whether the uploaded object uses an S3 Bucket Key for server-side
@@ -229,6 +233,8 @@ message DeleteObjectInput{
     string request_payer = 4;
     // VersionId used to reference a specific version of the object.
     string version_id = 5;
+    // Specify the client used for request
+    string uid = 6;
 }
 message DeleteObjectOutput{
 	// Specifies whether the versioned object that was permanently deleted was (true)
@@ -254,6 +260,8 @@ message PutObjectTaggingInput{
     map<string, string> tags = 4;
     // The versionId of the object that the tag-set will be added to.
     string version_id = 5;
+    // Specify the client used for request
+    string uid = 6;
 }
 message PutObjectTaggingOutput{
 	// The versionId of the object the tag-set was added to.
@@ -275,6 +283,8 @@ message DeleteObjectTaggingInput{
     // different account, the request fails with the HTTP status code 403 Forbidden
     // (access denied).
     string expected_bucket_owner = 5;
+    // Specify the client used for request
+    string uid = 6;
 }
 message DeleteObjectTaggingOutput{
 	// The versionId of the object the tag-set was removed from.
@@ -299,6 +309,8 @@ message GetObjectTaggingInput{
     string expected_bucket_owner = 5;
     // Confirms that the requester knows that they will be charged for the request.
     string request_payer = 6;
+    // Specify the client used for request
+    string uid = 7;
 }
 message GetObjectTaggingOutput{
 	// Contains the tag set.
@@ -337,6 +349,8 @@ message CopyObjectInput{
     string metadata_directive = 7;
     // A map of metadata to store with the object in S3.
     map<string,string> metadata = 8;
+    // Specify the client used for request
+    string uid = 9;
 }
 message CopyObjectResult{
 	// Returns the ETag of the new object. The ETag reflects only changes to the
@@ -373,6 +387,8 @@ message DeleteObjectsInput{
     string bucket = 2;
     Delete delete = 3;
     string request_payer = 4;
+    // Specify the client used for request
+    string uid = 5;
 }
 message DeletedObject{
 	// Specifies whether the versioned object that was permanently deleted was (true)
@@ -421,6 +437,8 @@ message ListObjectsInput{
 	// objects request. Bucket owners need not specify this parameter in their
 	// requests.
     string request_payer = 9;
+    // Specify the client used for request
+    string uid = 10;
 }
 message ListObjectsOutput{
     repeated string common_prefixes = 1;
@@ -476,6 +494,8 @@ message GetObjectCannedAclInput{
     string key = 3;
     // VersionId used to reference a specific version of the object
     string version_id = 4;
+    // Specify the client used for request
+    string uid = 5;
 }
 message GetObjectCannedAclOutput{
     string canned_acl = 1;
@@ -493,6 +513,8 @@ message PutObjectCannedAclInput{
     string acl = 4;
     // VersionId used to reference a specific version of the object.
     string version_id = 5;
+    // Specify the client used for request
+    string uid = 6;
 }
 message PutObjectCannedAclOutput{
     string request_charged = 1;
@@ -504,6 +526,8 @@ message RestoreObjectInput{
     string key = 3;
     // VersionId used to reference a specific version of the object.
     string version_id = 5;
+    // Specify the client used for request
+    string uid = 6;
 }
 message RestoreObjectOutput{
 	// If present, indicates that the requester was successfully charged for the
@@ -551,6 +575,8 @@ message CreateMultipartUploadInput{
     // The tag-set for the object. The tag-set must be encoded as URL Query parameters.
     string tagging = 29;
     string website_redirect_location = 30;
+    // Specify the client used for request
+    string uid = 31;
 }
 message CreateMultipartUploadOutput{
     string bucket = 1;
@@ -590,6 +616,8 @@ message UploadPartInput{
     // Upload ID identifying the multipart upload whose part is being uploaded.
     // This member is required.
     string upload_id = 13;
+    // Specify the client used for request
+    string uid = 14;
 }
 message UploadPartOutput{
     bool bucket_key_enabled = 1;
@@ -617,6 +645,8 @@ message UploadPartCopyInput{
     // The range of bytes to copy from the source object.bytes=start_position-part_size
     int64 start_position = 7;
     int64 part_size = 8;
+    // Specify the client used for request
+    string uid = 9;
 }
 
 message CopyPartResult{
@@ -654,6 +684,8 @@ message CompleteMultipartUploadInput{
     string expected_bucket_owner = 6;
     // The container for the multipart upload request information.
     CompletedMultipartUpload multipart_upload = 7;
+    // Specify the client used for request
+    string uid = 8;
 }
 message CompleteMultipartUploadOutput{
     string bucket = 1;
@@ -684,6 +716,8 @@ message AbortMultipartUploadInput{
     // Upload ID that identifies the multipart upload.
     // This member is required.
     string upload_id = 6;
+    // Specify the client used for request
+    string uid = 7;
 }
 message AbortMultipartUploadOutput{
 	// If present, indicates that the requester was successfully charged for the
@@ -725,6 +759,8 @@ message ListMultipartUploadsInput{
     // might be included in the list only if they have an upload ID lexicographically
     // greater than the specified upload-id-marker.
     string upload_id_marker = 9;
+    // Specify the client used for request
+    string uid = 10;
 }
 message Initiator{
     string display_name = 1;
@@ -796,6 +832,8 @@ message ListObjectVersionsInput{
     string prefix = 8;
     // Specifies the object version you want to start listing from.
     string version_id_marker = 9;
+    // Specify the client used for request
+    string uid = 10;
 }
 message DeleteMarkerEntry{
 	// Specifies whether the object is (true) or is not (false) the latest version of
@@ -859,6 +897,8 @@ message HeadObjectInput{
     string version_id = 15;
     // Return object details meta
     bool   with_details = 16;
+    // Specify the client used for request
+    string uid = 17;
 }
 message HeadObjectOutput{
 	// Metadata pertaining to the operation's result.
@@ -870,6 +910,8 @@ message IsObjectExistInput{
     string bucket = 2;
     string key = 3;
     string version_id = 4;
+    // Specify the client used for request
+    string uid = 5;
 }
 message IsObjectExistOutput{
     bool file_exist = 1;
@@ -883,6 +925,8 @@ message SignURLInput{
     string method = 4;
     // expire time of the sign url
     int64 expired_in_sec = 5;
+    // Specify the client used for request
+    string uid = 6;
 }
 message SignURLOutput{
     string signed_url = 1;
@@ -894,6 +938,8 @@ message UpdateBandwidthRateLimitInput{
     int64 average_rate_limit_in_bits_per_sec = 2;
     //Resource name of gateway
     string gateway_resource_name = 3;
+    // Specify the client used for request
+    string uid = 4;
 }
 
 message AppendObjectInput{
@@ -912,6 +958,8 @@ message AppendObjectInput{
     string server_side_encryption = 13;
     string meta = 14;
     map<string, string> tags = 15;
+    // Specify the client used for request
+    string uid = 16;
 
 }
 message AppendObjectOutput{
@@ -927,6 +975,8 @@ message ListPartsInput{
     int64  part_number_marker = 6;
     string request_payer = 7;
     string upload_id = 8;
+    // Specify the client used for request
+    string uid = 9;
 }
 message Part{
     string etag = 1;

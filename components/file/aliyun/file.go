@@ -215,7 +215,8 @@ func (s *AliyunOSS) getBucket(fileName string, metaData map[string]string) (*oss
 	if err != nil {
 		return nil, err
 	}
-	ossClient, err = s.selectClient(bucketName)
+	//for file interface, not support specify uid now
+	ossClient, err = s.selectClient("", bucketName)
 	if err != nil {
 		return nil, err
 	}
@@ -226,11 +227,18 @@ func (s *AliyunOSS) getBucket(fileName string, metaData map[string]string) (*oss
 	return bucket, nil
 }
 
-func (s *AliyunOSS) selectClient(bucket string) (*oss.Client, error) {
+func (s *AliyunOSS) selectClient(uid, bucket string) (*oss.Client, error) {
+	// 1. if user specify client uid, use specify client first
+	if uid != "" {
+		if client, ok := s.client[uid]; ok {
+			return client, nil
+		}
+	}
+	// 2. if user not specify client uid, use bucket to select client
 	if client, ok := s.client[bucket]; ok {
 		return client, nil
 	}
-	// if not specify endpoint, select default one
+	// 3. if not specify uid and bucket, select default one
 	if len(s.client) == 1 {
 		for _, client := range s.client {
 			return client, nil

@@ -102,10 +102,20 @@ func TestInitAliyunOss(t *testing.T) {
 
 func TestAliyunOss(t *testing.T) {
 	instance := NewAliyunOss()
-	err := instance.InitConfig(context.TODO(), &file.FileConfig{Method: "", Metadata: []byte(confWithoutUidAndBucket)})
+	err := instance.InitConfig(context.TODO(), &file.FileConfig{Method: "", Metadata: []byte(confWithUidAndBucket)})
 	assert.Nil(t, err)
 	err = instance.InitClient(context.TODO(), &file.InitRequest{})
 	assert.Nil(t, err)
+
+	aliyun := instance.(*AliyunOSS)
+	clientUid, _ := aliyun.selectClient("123", "")
+	assert.Equal(t, clientUid, aliyun.client["123"])
+
+	clientBucket1, _ := aliyun.selectClient("123", "bucket1")
+	assert.Equal(t, clientBucket1, aliyun.client["bucket1"])
+
+	clientBucket2, _ := aliyun.selectClient("123", "bucket2")
+	assert.Equal(t, clientBucket2, aliyun.client["bucket2"])
 
 	appendObjectResp, err := instance.AppendObject(context.TODO(), &file.AppendObjectInput{})
 	assert.NotNil(t, err)

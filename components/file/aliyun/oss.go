@@ -86,7 +86,7 @@ func (a *AliyunOSS) InitClient(ctx context.Context, req *file.InitRequest) error
 }
 
 func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (*file.GetObjectOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (*f
 }
 
 func (a *AliyunOSS) PutObject(ctx context.Context, req *file.PutObjectInput) (*file.PutObjectOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +146,7 @@ func (a *AliyunOSS) PutObject(ctx context.Context, req *file.PutObjectInput) (*f
 }
 
 func (a *AliyunOSS) DeleteObject(ctx context.Context, req *file.DeleteObjectInput) (*file.DeleteObjectOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +158,7 @@ func (a *AliyunOSS) DeleteObject(ctx context.Context, req *file.DeleteObjectInpu
 	return &file.DeleteObjectOutput{}, err
 }
 func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *file.DeleteObjectsInput) (*file.DeleteObjectsOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +184,7 @@ func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *file.DeleteObjectsIn
 }
 
 func (a *AliyunOSS) PutObjectTagging(ctx context.Context, req *file.PutObjectTaggingInput) (*file.PutObjectTaggingOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func (a *AliyunOSS) PutObjectTagging(ctx context.Context, req *file.PutObjectTag
 }
 
 func (a *AliyunOSS) DeleteObjectTagging(ctx context.Context, req *file.DeleteObjectTaggingInput) (*file.DeleteObjectTaggingOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -215,7 +215,7 @@ func (a *AliyunOSS) DeleteObjectTagging(ctx context.Context, req *file.DeleteObj
 }
 
 func (a *AliyunOSS) GetObjectTagging(ctx context.Context, req *file.GetObjectTaggingInput) (*file.GetObjectTaggingOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -235,7 +235,7 @@ func (a *AliyunOSS) GetObjectTagging(ctx context.Context, req *file.GetObjectTag
 }
 
 func (a *AliyunOSS) GetObjectCannedAcl(ctx context.Context, req *file.GetObjectCannedAclInput) (*file.GetObjectCannedAclOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -251,7 +251,7 @@ func (a *AliyunOSS) GetObjectCannedAcl(ctx context.Context, req *file.GetObjectC
 	return output, err
 }
 func (a *AliyunOSS) PutObjectCannedAcl(ctx context.Context, req *file.PutObjectCannedAclInput) (*file.PutObjectCannedAclOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -264,7 +264,7 @@ func (a *AliyunOSS) PutObjectCannedAcl(ctx context.Context, req *file.PutObjectC
 	return output, err
 }
 func (a *AliyunOSS) ListObjects(ctx context.Context, req *file.ListObjectsInput) (*file.ListObjectsOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -299,7 +299,7 @@ func (a *AliyunOSS) ListObjects(ctx context.Context, req *file.ListObjectsInput)
 	return out, nil
 }
 func (a *AliyunOSS) CopyObject(ctx context.Context, req *file.CopyObjectInput) (*file.CopyObjectOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -323,7 +323,7 @@ func (a *AliyunOSS) CopyObject(ctx context.Context, req *file.CopyObjectInput) (
 }
 
 func (a *AliyunOSS) CreateMultipartUpload(ctx context.Context, req *file.CreateMultipartUploadInput) (*file.CreateMultipartUploadOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -336,7 +336,7 @@ func (a *AliyunOSS) CreateMultipartUpload(ctx context.Context, req *file.CreateM
 	return output, err
 }
 func (a *AliyunOSS) UploadPart(ctx context.Context, req *file.UploadPartInput) (*file.UploadPartOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +353,7 @@ func (a *AliyunOSS) UploadPart(ctx context.Context, req *file.UploadPartInput) (
 	return output, err
 }
 func (a *AliyunOSS) UploadPartCopy(ctx context.Context, req *file.UploadPartCopyInput) (*file.UploadPartCopyOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -374,7 +374,7 @@ func (a *AliyunOSS) UploadPartCopy(ctx context.Context, req *file.UploadPartCopy
 	return output, err
 }
 func (a *AliyunOSS) CompleteMultipartUpload(ctx context.Context, req *file.CompleteMultipartUploadInput) (*file.CompleteMultipartUploadOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -398,7 +398,7 @@ func (a *AliyunOSS) CompleteMultipartUpload(ctx context.Context, req *file.Compl
 	return output, err
 }
 func (a *AliyunOSS) AbortMultipartUpload(ctx context.Context, req *file.AbortMultipartUploadInput) (*file.AbortMultipartUploadOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -414,7 +414,7 @@ func (a *AliyunOSS) AbortMultipartUpload(ctx context.Context, req *file.AbortMul
 	return output, err
 }
 func (a *AliyunOSS) ListMultipartUploads(ctx context.Context, req *file.ListMultipartUploadsInput) (*file.ListMultipartUploadsOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -443,7 +443,7 @@ func (a *AliyunOSS) ListMultipartUploads(ctx context.Context, req *file.ListMult
 }
 
 func (a *AliyunOSS) RestoreObject(ctx context.Context, req *file.RestoreObjectInput) (*file.RestoreObjectOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -457,7 +457,7 @@ func (a *AliyunOSS) RestoreObject(ctx context.Context, req *file.RestoreObjectIn
 }
 
 func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *file.ListObjectVersionsInput) (*file.ListObjectVersionsOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -513,7 +513,7 @@ func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *file.ListObject
 }
 
 func (a *AliyunOSS) HeadObject(ctx context.Context, req *file.HeadObjectInput) (*file.HeadObjectOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -545,7 +545,7 @@ func (a *AliyunOSS) HeadObject(ctx context.Context, req *file.HeadObjectInput) (
 }
 
 func (a *AliyunOSS) IsObjectExist(ctx context.Context, req *file.IsObjectExistInput) (*file.IsObjectExistOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -558,7 +558,7 @@ func (a *AliyunOSS) IsObjectExist(ctx context.Context, req *file.IsObjectExistIn
 }
 
 func (a *AliyunOSS) SignURL(ctx context.Context, req *file.SignURLInput) (*file.SignURLOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -589,7 +589,7 @@ func (a *AliyunOSS) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *fil
 }
 
 func (a *AliyunOSS) AppendObject(ctx context.Context, req *file.AppendObjectInput) (*file.AppendObjectOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -612,7 +612,7 @@ func (a *AliyunOSS) AppendObject(ctx context.Context, req *file.AppendObjectInpu
 }
 
 func (a *AliyunOSS) ListParts(ctx context.Context, req *file.ListPartsInput) (*file.ListPartsOutput, error) {
-	cli, err := a.selectClient(req.Bucket)
+	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}

@@ -110,7 +110,7 @@ func (a *AwsOss) InitClient(ctx context.Context, req *file.InitRequest) error {
 
 func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (*file.GetObjectOutput, error) {
 	input := &s3.GetObjectInput{}
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +132,7 @@ func (a *AwsOss) GetObject(ctx context.Context, req *file.GetObjectInput) (*file
 }
 
 func (a *AwsOss) PutObject(ctx context.Context, req *file.PutObjectInput) (*file.PutObjectOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +160,7 @@ func (a *AwsOss) DeleteObject(ctx context.Context, req *file.DeleteObjectInput) 
 		Bucket: &req.Bucket,
 		Key:    &req.Key,
 	}
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +172,7 @@ func (a *AwsOss) DeleteObject(ctx context.Context, req *file.DeleteObjectInput) 
 }
 
 func (a *AwsOss) PutObjectTagging(ctx context.Context, req *file.PutObjectTaggingInput) (*file.PutObjectTaggingOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +189,7 @@ func (a *AwsOss) PutObjectTagging(ctx context.Context, req *file.PutObjectTaggin
 	return &file.PutObjectTaggingOutput{}, err
 }
 func (a *AwsOss) DeleteObjectTagging(ctx context.Context, req *file.DeleteObjectTaggingInput) (*file.DeleteObjectTaggingOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +206,7 @@ func (a *AwsOss) DeleteObjectTagging(ctx context.Context, req *file.DeleteObject
 }
 
 func (a *AwsOss) GetObjectTagging(ctx context.Context, req *file.GetObjectTaggingInput) (*file.GetObjectTaggingOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -228,7 +228,7 @@ func (a *AwsOss) GetObjectTagging(ctx context.Context, req *file.GetObjectTaggin
 }
 
 func (a *AwsOss) CopyObject(ctx context.Context, req *file.CopyObjectInput) (*file.CopyObjectOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -255,7 +255,7 @@ func (a *AwsOss) CopyObject(ctx context.Context, req *file.CopyObjectInput) (*fi
 	return &file.CopyObjectOutput{CopyObjectResult: &file.CopyObjectResult{ETag: *resp.CopyObjectResult.ETag, LastModified: resp.CopyObjectResult.LastModified.Unix()}}, err
 }
 func (a *AwsOss) DeleteObjects(ctx context.Context, req *file.DeleteObjectsInput) (*file.DeleteObjectsOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -282,7 +282,7 @@ func (a *AwsOss) DeleteObjects(ctx context.Context, req *file.DeleteObjectsInput
 	return output, err
 }
 func (a *AwsOss) ListObjects(ctx context.Context, req *file.ListObjectsInput) (*file.ListObjectsOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -332,7 +332,7 @@ func (a *AwsOss) GetObjectCannedAcl(ctx context.Context, req *file.GetObjectCann
 	return nil, errors.New("GetObjectCannedAcl method not supported on AWS")
 }
 func (a *AwsOss) PutObjectCannedAcl(ctx context.Context, req *file.PutObjectCannedAclInput) (*file.PutObjectCannedAclOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -348,7 +348,7 @@ func (a *AwsOss) PutObjectCannedAcl(ctx context.Context, req *file.PutObjectCann
 	return &file.PutObjectCannedAclOutput{RequestCharged: string(resp.RequestCharged)}, err
 }
 func (a *AwsOss) RestoreObject(ctx context.Context, req *file.RestoreObjectInput) (*file.RestoreObjectOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -363,7 +363,7 @@ func (a *AwsOss) RestoreObject(ctx context.Context, req *file.RestoreObjectInput
 	return &file.RestoreObjectOutput{RequestCharged: string(resp.RequestCharged), RestoreOutputPath: *resp.RestoreOutputPath}, err
 }
 func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *file.CreateMultipartUploadInput) (*file.CreateMultipartUploadOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -398,7 +398,7 @@ func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *file.CreateMult
 	return output, err
 }
 func (a *AwsOss) UploadPart(ctx context.Context, req *file.UploadPartInput) (*file.UploadPartOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -426,7 +426,7 @@ func (a *AwsOss) UploadPart(ctx context.Context, req *file.UploadPartInput) (*fi
 	return output, err
 }
 func (a *AwsOss) UploadPartCopy(ctx context.Context, req *file.UploadPartCopyInput) (*file.UploadPartCopyOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -451,7 +451,7 @@ func (a *AwsOss) UploadPartCopy(ctx context.Context, req *file.UploadPartCopyInp
 	return output, err
 }
 func (a *AwsOss) CompleteMultipartUpload(ctx context.Context, req *file.CompleteMultipartUploadInput) (*file.CompleteMultipartUploadOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -477,7 +477,7 @@ func (a *AwsOss) CompleteMultipartUpload(ctx context.Context, req *file.Complete
 	return output, err
 }
 func (a *AwsOss) AbortMultipartUpload(ctx context.Context, req *file.AbortMultipartUploadInput) (*file.AbortMultipartUploadOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -496,7 +496,7 @@ func (a *AwsOss) AbortMultipartUpload(ctx context.Context, req *file.AbortMultip
 	return output, err
 }
 func (a *AwsOss) ListMultipartUploads(ctx context.Context, req *file.ListMultipartUploadsInput) (*file.ListMultipartUploadsOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -533,7 +533,7 @@ func (a *AwsOss) ListMultipartUploads(ctx context.Context, req *file.ListMultipa
 	return output, err
 }
 func (a *AwsOss) ListObjectVersions(ctx context.Context, req *file.ListObjectVersionsInput) (*file.ListObjectVersionsOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -581,7 +581,7 @@ func (a *AwsOss) ListObjectVersions(ctx context.Context, req *file.ListObjectVer
 }
 
 func (a *AwsOss) HeadObject(ctx context.Context, req *file.HeadObjectInput) (*file.HeadObjectOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -598,7 +598,7 @@ func (a *AwsOss) HeadObject(ctx context.Context, req *file.HeadObjectInput) (*fi
 }
 
 func (a *AwsOss) IsObjectExist(ctx context.Context, req *file.IsObjectExistInput) (*file.IsObjectExistOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -615,7 +615,7 @@ func (a *AwsOss) IsObjectExist(ctx context.Context, req *file.IsObjectExistInput
 }
 
 func (a *AwsOss) SignURL(ctx context.Context, req *file.SignURLInput) (*file.SignURLOutput, error) {
-	client, err := a.selectClient(req.Bucket)
+	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
 	}

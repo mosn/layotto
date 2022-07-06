@@ -68,6 +68,7 @@ func (a *AwsOss) Init(ctx context.Context, config *file.FileConfig) error {
 		if err != nil {
 			continue
 		}
+		a.client[data.Uid] = client
 		//use bucket as key, client as value
 		for _, bucketName := range data.Buckets {
 			if _, ok := a.client[bucketName]; ok {
@@ -131,7 +132,7 @@ func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
 	if err != nil {
 		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	client, err := a.selectClient(bucket)
+	client, err := a.selectClient("", bucket)
 	if err != nil {
 		return err
 	}
@@ -149,11 +150,18 @@ func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
 }
 
 // selectClient choose aws client from exist client-map, key is endpoint, value is client instance.
-func (a *AwsOss) selectClient(bucket string) (*s3.Client, error) {
+func (a *AwsOss) selectClient(uid, bucket string) (*s3.Client, error) {
+	// 1. if user specify client uid, use specify client first
+	if uid != "" {
+		if client, ok := a.client[uid]; ok {
+			return client, nil
+		}
+	}
+	// 2. if user not specify client uid, use bucket to select client
 	if client, ok := a.client[bucket]; ok {
 		return client, nil
 	}
-	// if not specify endpoint, select default one
+	// 3.if not specify uid and bucket, select default one
 	if len(a.client) == 1 {
 		for _, client := range a.client {
 			return client, nil
@@ -176,7 +184,7 @@ func (a *AwsOss) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, e
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(bucket)
+	client, err := a.selectClient("", bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +208,7 @@ func (a *AwsOss) List(ctx context.Context, st *file.ListRequest) (*file.ListResp
 		Marker:  &st.Marker,
 		Prefix:  &prefix,
 	}
-	client, err := a.selectClient(bucket)
+	client, err := a.selectClient("", bucket)
 	if err != nil {
 		return nil, fmt.Errorf("list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
 	}
@@ -237,7 +245,7 @@ func (a *AwsOss) Del(ctx context.Context, st *file.DelRequest) error {
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(bucket)
+	client, err := a.selectClient("", bucket)
 	if err != nil {
 		return err
 	}
@@ -260,7 +268,7 @@ func (a *AwsOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.File
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(bucket)
+	client, err := a.selectClient("", bucket)
 	if err != nil {
 		return nil, err
 	}
