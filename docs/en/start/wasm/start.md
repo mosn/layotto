@@ -61,7 +61,7 @@ The result is:
 Build:
 
 ```shell @if.not.exist layotto_wasmer
-go build -tags wasmer -o ./layotto_wasmer ./cmd/layotto/main.go
+go build -tags wasmer -o ./layotto_wasmer ./cmd/layotto
 ```
 
 Run it:

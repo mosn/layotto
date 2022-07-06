@@ -13,6 +13,7 @@ require (
 	github.com/dapr/components-contrib v1.5.1-rc.1
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/dimchansky/utfbom v1.1.1 // indirect
+	github.com/envoyproxy/go-control-plane v0.10.0
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gammazero/workerpool v1.1.2
 	github.com/golang/mock v1.6.0
