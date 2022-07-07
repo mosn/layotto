@@ -57,8 +57,9 @@
                       },
                       "secret_store": {
                         "secret_demo": {
-                          "type": "local.env",
+                          "type": "local.file",
                           "metadata": {
+                            "secretsFile": "secret_local_file.json"
                           }
                         }
                       },
