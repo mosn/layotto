@@ -126,6 +126,7 @@ type PutObjectInput struct {
 	ServerSideEncryption string            `json:"server_side_encryption,omitempty"`
 	SignedUrl            string            `json:"signed_url,omitempty"`
 	Meta                 map[string]string `json:"meta,omitempty"`
+	Tagging              map[string]string `json:"tagging,omitempty"`
 }
 
 type PutObjectOutput struct {
@@ -188,12 +189,12 @@ type CopySource struct {
 }
 
 type CopyObjectInput struct {
-	Uid        string      `json:"uid,omitempty"`
-	Bucket     string      `json:"bucket,omitempty"`
-	Key        string      `json:"key,omitempty"`
-	CopySource *CopySource `json:"copy_source,omitempty"`
-	Tagging    string      `json:"tagging,omitempty"`
-	Expires    int64       `json:"expires,omitempty"`
+	Uid        string            `json:"uid,omitempty"`
+	Bucket     string            `json:"bucket,omitempty"`
+	Key        string            `json:"key,omitempty"`
+	CopySource *CopySource       `json:"copy_source,omitempty"`
+	Tagging    map[string]string `json:"tagging,omitempty"`
+	Expires    int64             `json:"expires,omitempty"`
 	// Specifies whether the metadata is copied from the source object or replaced with metadata provided in the request.
 	MetadataDirective string `json:"metadata_directive,omitempty"`
 	// A map of metadata to store with the object in S3.
@@ -331,7 +332,7 @@ type CreateMultipartUploadInput struct {
 	SSEKMSKeyId               string            `json:"sse_kms_key_id,omitempty"`
 	ServerSideEncryption      string            `json:"server_side_encryption,omitempty"`
 	StorageClass              string            `json:"storage_class,omitempty"`
-	Tagging                   string            `json:"tagging,omitempty"`
+	Tagging                   map[string]string `json:"tagging,omitempty"`
 	WebsiteRedirectLocation   string            `json:"website_redirect_location,omitempty"`
 }
 type CreateMultipartUploadOutput struct {

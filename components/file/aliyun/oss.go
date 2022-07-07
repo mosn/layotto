@@ -127,6 +127,7 @@ func (a *AliyunOSS) PutObject(ctx context.Context, req *file.PutObjectInput) (*f
 		Expires(req.Expires),
 		ServerSideEncryption(req.ServerSideEncryption),
 		ObjectACL(req.ACL),
+		SetTagging(req.Tagging),
 	}
 	for k, v := range req.Meta {
 		o := oss.Meta(k, v)

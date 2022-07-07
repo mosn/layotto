@@ -127,6 +127,19 @@ func ContentDisposition(value string) oss.Option {
 	return oss.ContentDisposition(value)
 }
 
+// SetTagging is an option to set object tagging
+func SetTagging(value map[string]string) oss.Option {
+	if value == nil {
+		return nil
+	}
+	tagging := oss.Tagging{}
+	for k, v := range value {
+		tag := oss.Tag{Key: k, Value: v}
+		tagging.Tags = append(tagging.Tags, tag)
+	}
+	return oss.SetTagging(tagging)
+}
+
 // ContentLanguage is an option to set Content-Language header
 func ContentLanguage(value string) oss.Option {
 	if value == "" {

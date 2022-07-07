@@ -201,6 +201,8 @@ message PutObjectInput{
     map<string, string> meta = 13;
     // Specify the client used for request
     string uid = 14;
+	// The tag-set for the object. The tag-set must be encoded as URL Query parameters.
+    map<string, string> tagging = 15;
 }
 message PutObjectOutput{
 	// Indicates whether the uploaded object uses an S3 Bucket Key for server-side
@@ -342,7 +344,7 @@ message CopyObjectInput{
     // The tag-set for the object destination object this value must be used in
     // conjunction with the TaggingDirective. The tag-set must be encoded as URL Query
     // parameters.
-    string tagging = 5;
+    map<string,string> tagging = 5;
     // The date and time at which the object is no longer cacheable.
     int64  expires = 6;
 	// Specifies whether the metadata is copied from the source object or replaced with metadata provided in the request.
@@ -573,7 +575,7 @@ message CreateMultipartUploadInput{
     string server_side_encryption = 27;
     string storage_class = 28;
     // The tag-set for the object. The tag-set must be encoded as URL Query parameters.
-    string tagging = 29;
+    map<string, string> tagging = 29;
     string website_redirect_location = 30;
     // Specify the client used for request
     string uid = 31;

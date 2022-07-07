@@ -79,6 +79,7 @@ func TestOptionNil(t *testing.T) {
 	assert.Nil(t, Process(""))
 	assert.Nil(t, TrafficLimitParam(0))
 	assert.Nil(t, RequestPayer(""))
+	assert.Nil(t, SetTagging(nil))
 }
 
 func TestOptionNotNil(t *testing.T) {
@@ -141,4 +142,5 @@ func TestOptionNotNil(t *testing.T) {
 	assert.NotNil(t, SetHeader(" ", " "))
 	assert.NotNil(t, AddParam(" ", " "))
 	assert.NotNil(t, RequestPayer(" "))
+	assert.NotNil(t, SetTagging(map[string]string{"k": "v"}))
 }
