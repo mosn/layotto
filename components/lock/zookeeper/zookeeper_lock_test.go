@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package zookeeper
 
 import (
@@ -60,6 +61,7 @@ func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
 	lockConn.EXPECT().Create(path, []byte(lockOwerA), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
 	unlockConn.EXPECT().Get(path).Return([]byte(lockOwerA), &zk.Stat{Version: 123}, nil).Times(1)
 	unlockConn.EXPECT().Delete(path, int32(123)).Return(nil).Times(1)
+	lockConn.EXPECT().Close().AnyTimes()
 
 	comp.unlockConn = unlockConn
 	comp.factory = factory
@@ -78,6 +80,8 @@ func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, unlock.Status, lock.SUCCESS)
 
+	//wait for connection close
+	time.Sleep(time.Second * expireTime)
 }
 
 // A lock ,B unlock
@@ -95,6 +99,7 @@ func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
 	factory.EXPECT().NewConnection(time.Duration(expireTime)*time.Second, comp.metadata).Return(lockConn, nil).Times(1)
 	lockConn.EXPECT().Create(path, []byte(lockOwerA), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
 	unlockConn.EXPECT().Get(path).Return([]byte(lockOwerA), &zk.Stat{Version: 123}, nil).Times(1)
+	lockConn.EXPECT().Close().AnyTimes()
 
 	comp.unlockConn = unlockConn
 	comp.factory = factory
@@ -113,6 +118,8 @@ func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, unlock.Status, lock.LOCK_BELONG_TO_OTHERS)
 
+	//wait for connection close
+	time.Sleep(time.Second * expireTime)
 }
 
 // A lock , B lock ,A unlock ,B lock,B unlock
@@ -134,6 +141,7 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 	lockConn.EXPECT().Create(path, []byte(lockOwerB), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", zk.ErrNodeExists).Times(1)
 	lockConn.EXPECT().Create(path, []byte(lockOwerB), int32(zk.FlagEphemeral), zk.WorldACL(zk.PermAll)).Return("", nil).Times(1)
 	lockConn.EXPECT().Close().Return().Times(1)
+	lockConn.EXPECT().Close().AnyTimes()
 
 	unlockConn.EXPECT().Get(path).Return([]byte(lockOwerA), &zk.Stat{Version: 123}, nil).Times(1)
 	unlockConn.EXPECT().Get(path).Return([]byte(lockOwerB), &zk.Stat{Version: 124}, nil).Times(1)
@@ -183,4 +191,7 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, lock.SUCCESS, unlock.Status)
+
+	//wait for connection close
+	time.Sleep(time.Second * expireTime)
 }

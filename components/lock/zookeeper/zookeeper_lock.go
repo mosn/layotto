@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package zookeeper
 
 import (
@@ -24,7 +25,7 @@ import (
 	"mosn.io/layotto/components/pkg/utils"
 )
 
-// Zookeeper lock store
+// ZookeeperLock lock store
 type ZookeeperLock struct {
 	//trylock reestablish connection  every time
 	factory utils.ConnectionFactory
@@ -34,7 +35,7 @@ type ZookeeperLock struct {
 	logger     log.ErrorLogger
 }
 
-// Create ZookeeperLock
+//NewZookeeperLock Create ZookeeperLock
 func NewZookeeperLock(logger log.ErrorLogger) *ZookeeperLock {
 	lock := &ZookeeperLock{
 		logger: logger,
@@ -67,7 +68,7 @@ func (p *ZookeeperLock) Features() []lock.Feature {
 	return nil
 }
 
-// Node tries to acquire a zookeeper lock
+//TryLock Node tries to acquire a zookeeper lock
 func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 
 	conn, err := p.factory.NewConnection(time.Duration(req.Expire)*time.Second, p.metadata)
@@ -106,7 +107,7 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 
 }
 
-// Node tries to release a zookeeper lock
+//Unlock Node tries to release a zookeeper lock
 func (p *ZookeeperLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 
 	conn := p.unlockConn
