@@ -39,6 +39,7 @@ quickstarts_in_default="docs/en/start/configuration/start.md
   docs/zh/start/wasm/start.md
   docs/en/start/secret/start.md
   docs/zh/start/secret/start.md
+  docs/zh/operation/README.md
 "
 
 # In advance mod, we test these docs with golang 1.17
