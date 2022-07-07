@@ -17,7 +17,15 @@ Layotto 提供了官方 Docker 镜像，包括：
 镜像内不包含 `config.json` 配置文件，您可以将自己的配置文件挂载进镜像的`/runtime/configs/config.json`目录, 然后启动镜像。例如：
 
 ```shell
-docker run -v "$(pwd)/configs/config.json:/runtime/configs/config.json" -d  -p 34904:34904 --name layotto layotto/layotto start
+docker run -v "$(pwd)/configs/:/runtime/configs/" -d  -p 34904:34904 --name layotto layotto/layotto start
+```
+
+可以运行 demo 测试效果:
+
+```shell
+ cd demo/sequencer/common/
+ go build -o client
+ ./client -s "sequencer_demo"
 ```
 
 您也可以通过 docker-compose 同时启动 Layotto 和 其他系统（比如 Redis)，参考[快速开始](zh/start/state/start?id=step-1-%e5%90%af%e5%8a%a8-redis-%e5%92%8c-layotto)

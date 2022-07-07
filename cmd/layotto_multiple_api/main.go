@@ -22,6 +22,8 @@ import (
 	"strconv"
 	"time"
 
+	secretstores_local "mosn.io/layotto/pkg/runtime/secretstores/local"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
 	"github.com/dapr/components-contrib/secretstores/aws/secretmanager"
@@ -429,7 +431,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return gcp_secretmanager.NewSecreteManager(loggerForDaprComp)
 			}),
 			secretstores_loader.NewFactory("local.file", func() secretstores.SecretStore {
-				return secretstore_file.NewLocalSecretStore(loggerForDaprComp)
+				return secretstores_local.Wrap(secretstore_file.NewLocalSecretStore(loggerForDaprComp))
 			}),
 			secretstores_loader.NewFactory("local.env", func() secretstores.SecretStore {
 				return secretstore_env.NewEnvSecretStore(loggerForDaprComp)

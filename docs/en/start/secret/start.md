@@ -1,4 +1,4 @@
-# use Secret API to obtain secret
+# use Secret API to query secrets
 ## What is Secret API
 The secret API is used to obtain secret from file, env, k8s, etc
 

@@ -34,6 +34,7 @@ import (
 
 	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
+	secretstores_local "mosn.io/layotto/pkg/runtime/secretstores/local"
 
 	"mosn.io/layotto/components/file/local"
 	"mosn.io/layotto/components/file/s3/alicloud"
@@ -440,12 +441,13 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return gcp_secretmanager.NewSecreteManager(loggerForDaprComp)
 			}),
 			secretstores_loader.NewFactory("local.file", func() secretstores.SecretStore {
-				return secretstore_file.NewLocalSecretStore(loggerForDaprComp)
+				return secretstores_local.Wrap(secretstore_file.NewLocalSecretStore(loggerForDaprComp))
 			}),
 			secretstores_loader.NewFactory("local.env", func() secretstores.SecretStore {
 				return secretstore_env.NewEnvSecretStore(loggerForDaprComp)
 			}),
-		))
+		),
+	)
 	return server, err
 }
 

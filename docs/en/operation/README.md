@@ -22,7 +22,7 @@ You can run Layotto using the official Docker images.Currently include:
 It does not contain a `config.json` configuration file in the image, you can mount your own configuration file into the `/runtime/configs/` directory of the image. For example.
 
 ```shell
-docker run -v "$(pwd)/configs/config.json:/runtime/configs/config.json" -d  -p 34904:34904 --name layotto layotto/layotto start
+docker run -v "$(pwd)/configs/:/runtime/configs/" -d  -p 34904:34904 --name layotto layotto/layotto start
 ```
 
 Of course, you can also run Layotto and other systems (such as Redis) at the same time via docker-compose. Refer to the [Quick start](en/start/state/start?id=step-1-deploy-redis-and-layotto)
