@@ -8,7 +8,7 @@
 ### step 2. Compile and start layotto
 
 ```shell @if.not.exist layotto
-go build -o layotto cmd/layotto/main.go
+go build -o layotto ./cmd/layotto
 ```
 
 ```shell @background
@@ -19,7 +19,7 @@ go build -o layotto cmd/layotto/main.go
 
 use `dubbo-go-samples` repo's example server.
 
-```shell @catch
+```shell @if.not.exist dubbo-go-samples
 git clone https://github.com/apache/dubbo-go-samples.git
 ```
 

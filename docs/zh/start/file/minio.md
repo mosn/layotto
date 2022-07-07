@@ -70,7 +70,7 @@ go build -o layotto
 启动 Layotto: 
 
 ```shell @background
-./layotto start -c ../../configs/config_file.json
+./layotto start --config ../../configs/config_file.json
 ```
 <!-- tabs:end -->
 
