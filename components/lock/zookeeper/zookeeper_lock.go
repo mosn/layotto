@@ -25,6 +25,14 @@ import (
 	"mosn.io/layotto/components/pkg/utils"
 )
 
+var closeConn = func(conn utils.ZKConnection, expireInSecond int32) {
+	//can also
+	//time.Sleep(time.Second * time.Duration(expireInSecond))
+	<-time.After(time.Second * time.Duration(expireInSecond))
+	// make sure close connecion
+	conn.Close()
+}
+
 // ZookeeperLock lock store
 type ZookeeperLock struct {
 	//trylock reestablish connection  every time
@@ -93,12 +101,7 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 
 	//2.2 create node success, asyn  to make sure zkclient alive for need time
 	util.GoWithRecover(func() {
-		//can also
-		//time.Sleep(time.Second * time.Duration(req.Expire))
-		timeAfterTrigger := time.After(time.Second * time.Duration(req.Expire))
-		<-timeAfterTrigger
-		// make sure close connecion
-		conn.Close()
+		closeConn(conn, req.Expire)
 	}, nil)
 
 	return &lock.TryLockResponse{
