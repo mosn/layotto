@@ -15,10 +15,11 @@
 package zookeeper
 
 import (
-	"mosn.io/layotto/components/pkg/utils"
 	"os"
 	"testing"
 	"time"
+
+	"mosn.io/layotto/components/pkg/utils"
 
 	"github.com/go-zookeeper/zk"
 	"github.com/golang/mock/gomock"
