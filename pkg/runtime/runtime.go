@@ -356,7 +356,7 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 			config.Metadata["consumerID"] = m.runtimeConfig.AppManagement.AppId
 		}
 		//inject secret to component
-		if err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 			return err
 		}
 		// init this component with the config
@@ -383,7 +383,7 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 			return err
 		}
 		//inject secret to component
-		if err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 			return err
 		}
 		if err := comp.Init(state.Metadata{Properties: config.Metadata}); err != nil {
@@ -434,7 +434,7 @@ func (m *MosnRuntime) initLocks(factorys ...*runtime_lock.Factory) error {
 			return err
 		}
 		//inject secret to component
-		if err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 			return err
 		}
 		// 2.2. init
@@ -466,7 +466,7 @@ func (m *MosnRuntime) initSequencers(factorys ...*runtime_sequencer.Factory) err
 			return err
 		}
 		//inject secret to component
-		if err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 			return err
 		}
 		// 2.2. init
@@ -528,7 +528,7 @@ func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFact
 			return err
 		}
 		//inject secret to component
-		if err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 			return err
 		}
 		// 2.2. init
@@ -637,7 +637,7 @@ func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Co
 				return err
 			}
 			//inject secret to component
-			if err := m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
+			if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 				return err
 			}
 			// init

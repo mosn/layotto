@@ -28,10 +28,12 @@ type DefaultInjector struct {
 
 //InjectSecretRef  inject secret to metaData
 // TODO: permission control
-func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string]string) error {
-
+func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string]string) (map[string]string, error) {
+	if metaData == nil {
+		metaData = make(map[string]string)
+	}
 	if len(items) == 0 {
-		return nil
+		return metaData, nil
 	}
 
 	meta := make(map[string]string)
@@ -41,7 +43,7 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 			Name: item.Key,
 		})
 		if err != nil {
-			return err
+			return metaData, err
 		}
 		for k, v := range secret.Data {
 			meta[k] = v
@@ -51,5 +53,5 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 	for k, v := range meta {
 		metaData[k] = v
 	}
-	return nil
+	return metaData, nil
 }
