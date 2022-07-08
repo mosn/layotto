@@ -11,12 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package zookeeper
 
 import (
 	"os"
 	"testing"
 	"time"
+
+	"mosn.io/layotto/components/pkg/utils"
 
 	"github.com/go-zookeeper/zk"
 	"github.com/golang/mock/gomock"
@@ -36,8 +39,11 @@ var cfg = lock.Metadata{
 	Properties: make(map[string]string),
 }
 
-func TestMain(m *testing.M) {
+var mockCloseConn = func(conn utils.ZKConnection, expireInSecond int32) {
+}
 
+func TestMain(m *testing.M) {
+	closeConn = mockCloseConn
 	cfg.Properties["zookeeperHosts"] = "127.0.0.1;127.0.0.1"
 	cfg.Properties["zookeeperPassword"] = ""
 	os.Exit(m.Run())
@@ -77,7 +83,6 @@ func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, unlock.Status, lock.SUCCESS)
-
 }
 
 // A lock ,B unlock
@@ -112,7 +117,6 @@ func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, unlock.Status, lock.LOCK_BELONG_TO_OTHERS)
-
 }
 
 // A lock , B lock ,A unlock ,B lock,B unlock
