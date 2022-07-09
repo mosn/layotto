@@ -2,7 +2,7 @@
 
 we can inject secrets to other components using secret store.
 
-using `secret_ref` config:
+Use `secret_ref` in your config:
 
 ```json
 {
@@ -11,7 +11,6 @@ using `secret_ref` config:
       "type": "redis",
       "metadata": {
         "redisHost": "127.0.0.1:6380",
-        "redisPassword": ""
       },
       "secret_ref": [
         {
@@ -23,6 +22,8 @@ using `secret_ref` config:
   }
 }
 ```
+
+An example is [config_ref_example.json](https://github.com/mosn/layotto/blob/main/configs/config_ref_example.json)
 
 ## Quick start
 
