@@ -45,7 +45,6 @@
                           "type":"redis",
                           "metadata": {
                             "redisHost": "127.0.0.1:6380",
-                            "redisPassword": ""
                           },
                           "secret_ref": [
                             {
