@@ -1,4 +1,4 @@
-# use Secret Ref to obtain secret
+# Reference secrets in component configuration
 
 we can inject secrets to other components using secret store.
 
