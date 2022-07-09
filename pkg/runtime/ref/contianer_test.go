@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package state
+package ref
 
-import "mosn.io/layotto/components/ref"
+import (
+	"testing"
 
-// Config wraps configuration for a state implementation
-type Config struct {
-	ref.Config
-	Type     string            `json:"type"`
-	Metadata map[string]string `json:"metadata"`
+	"github.com/stretchr/testify/assert"
+
+	"mosn.io/layotto/pkg/mock"
+	"mosn.io/layotto/pkg/mock/components/secret"
+)
+
+func TestRefContainer(t *testing.T) {
+
+	container := NewRefContainer()
+
+	ss := &secret.FakeSecretStore{}
+	container.SecretRef["fake"] = ss
+	cf := &mock.MockStore{}
+	container.ConfigRef["mock"] = cf
+	assert.Equal(t, ss, container.GetSecretStore("fake"))
+	assert.Equal(t, cf, container.GetConfigStore("mock"))
+
 }

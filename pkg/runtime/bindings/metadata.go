@@ -16,7 +16,10 @@
 
 package bindings
 
+import "mosn.io/layotto/components/ref"
+
 type Metadata struct {
+	ref.Config
 	Type     string `json:"type"`
 	Version  string
 	Metadata map[string]string `json:"metadata"`

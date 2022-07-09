@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package state
+package ref
 
-import "mosn.io/layotto/components/ref"
-
-// Config wraps configuration for a state implementation
+//Config is ref json config
 type Config struct {
-	ref.Config
-	Type     string            `json:"type"`
-	Metadata map[string]string `json:"metadata"`
+	SecretRef []*Item `json:"secret_ref"`
+}
+
+type Item struct {
+	Name string `json:"name"`
+	Key  string `json:"key"`
 }
