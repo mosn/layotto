@@ -25,7 +25,7 @@ go build -o layotto
 完成后目录下会生成layotto文件，运行它：
 
 ```shell @background
-./layotto start -c ../../configs/config_standalone.json
+./layotto start --config ../../configs/config_standalone.json
 ```
 
 ### 第二步：运行客户端程序，调用 Layotto 获取 secret
