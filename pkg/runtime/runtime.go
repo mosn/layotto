@@ -23,6 +23,8 @@ import (
 	"strings"
 	"time"
 
+	"mosn.io/layotto/pkg/runtime/ref"
+
 	"github.com/dapr/components-contrib/secretstores"
 
 	"mosn.io/layotto/components/custom"
@@ -71,6 +73,7 @@ type MosnRuntime struct {
 	bindingsRegistry        mbindings.Registry
 	secretStoresRegistry    msecretstores.Registry
 	customComponentRegistry custom.Registry
+	Injector                *ref.DefaultInjector
 	// component pool
 	hellos map[string]hello.HelloService
 	// config management system component
@@ -236,13 +239,23 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 		return err
 	}
 	// init all kinds of components with config
+	//init secret & config first
+	if err := m.initSecretStores(o.services.secretStores...); err != nil {
+		return err
+	}
+	if err := m.initConfigStores(o.services.configStores...); err != nil {
+		return err
+	}
+	m.Injector = &ref.DefaultInjector{
+		Container: ref.RefContainer{
+			SecretRef: m.secretStores,
+			ConfigRef: m.configStores,
+		},
+	}
 	if err := m.initCustomComponents(o.services.custom); err != nil {
 		return err
 	}
 	if err := m.initHellos(o.services.hellos...); err != nil {
-		return err
-	}
-	if err := m.initConfigStores(o.services.configStores...); err != nil {
 		return err
 	}
 	if err := m.initStates(o.services.states...); err != nil {
@@ -269,10 +282,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initSequencers(o.services.sequencers...); err != nil {
 		return err
 	}
-	if err := m.initInputBinding(o.services.inputBinding...); err != nil {
-		return err
-	}
-	return m.initSecretStores(o.services.secretStores...)
+	return m.initInputBinding(o.services.inputBinding...)
 }
 
 func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
@@ -353,6 +363,10 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 			}
 			config.Metadata["consumerID"] = m.runtimeConfig.AppManagement.AppId
 		}
+		//inject secret to component
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
+			return err
+		}
 		// init this component with the config
 		if err := comp.Init(pubsub.Metadata{Properties: config.Metadata}); err != nil {
 			m.errInt(err, "init pubsub component %s failed", name)
@@ -374,6 +388,10 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 		comp, err := m.stateRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create state component %s failed", name)
+			return err
+		}
+		//inject secret to component
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 			return err
 		}
 		if err := comp.Init(state.Metadata{Properties: config.Metadata}); err != nil {
@@ -444,6 +462,10 @@ func (m *MosnRuntime) initLocks(factorys ...*runtime_lock.Factory) error {
 			m.errInt(err, "create lock component %s failed", name)
 			return err
 		}
+		//inject secret to component
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
+			return err
+		}
 		// 2.2. init
 		if err := comp.Init(lock.Metadata{Properties: config.Metadata}); err != nil {
 			m.errInt(err, "init lock component %s failed", name)
@@ -470,6 +492,10 @@ func (m *MosnRuntime) initSequencers(factorys ...*runtime_sequencer.Factory) err
 		comp, err := m.sequencerRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create sequencer component %s failed", name)
+			return err
+		}
+		//inject secret to component
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 			return err
 		}
 		// 2.2. init
@@ -528,6 +554,10 @@ func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFact
 		comp, err := m.bindingsRegistry.CreateOutputBinding(config.Type)
 		if err != nil {
 			m.errInt(err, "create outbinding component %s failed", name)
+			return err
+		}
+		//inject secret to component
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 			return err
 		}
 		// 2.2. init
@@ -633,6 +663,10 @@ func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Co
 			comp, err := m.customComponentRegistry.Create(kind, config.Type)
 			if err != nil {
 				m.errInt(err, "create custom component %s failed", name)
+				return err
+			}
+			//inject secret to component
+			if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
 				return err
 			}
 			// init
