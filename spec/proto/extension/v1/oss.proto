@@ -12,61 +12,82 @@ option go_package = "mosn.io/layotto/spec/proto/extension/v1;s3";
 service ObjectStorageService{
     //Init oss client
     rpc InitClient(InitInput) returns (google.protobuf.Empty){}
-    //Adds an object to a bucket.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
+    //Adds an object to a bucket.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
     rpc PutObject(stream PutObjectInput) returns(PutObjectOutput){}
-    //Retrieves objects.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html
+    //Retrieves objects.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html
     rpc GetObject(GetObjectInput) returns (stream GetObjectOutput){}
-    //Delete objects.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html
+    //Delete objects.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html
     rpc DeleteObject(DeleteObjectInput) returns (DeleteObjectOutput){}
-    //Sets the supplied tag-set to an object that already exists in a bucket.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
+    //Sets the supplied tag-set to an object that already exists in a bucket.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
     rpc PutObjectTagging(PutObjectTaggingInput) returns (PutObjectTaggingOutput){}
-    //Removes the entire tag set from the specified object.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html
+    //Removes the entire tag set from the specified object.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html
     rpc DeleteObjectTagging(DeleteObjectTaggingInput) returns(DeleteObjectTaggingOutput){}
-    //Returns the tag-set of an object.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObjectTagging.html
+    //Returns the tag-set of an object.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObjectTagging.html
     rpc GetObjectTagging(GetObjectTaggingInput) returns(GetObjectTaggingOutput){}
-    //Creates a copy of an object that is already stored in oss server.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CopyObject.html
+    //Creates a copy of an object that is already stored in oss server.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CopyObject.html
     rpc CopyObject(CopyObjectInput) returns(CopyObjectOutput){}
-    //Delete multiple objects from a bucket.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_DeleteObjects.html
+    //Delete multiple objects from a bucket.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_DeleteObjects.html
     rpc DeleteObjects(DeleteObjectsInput) returns(DeleteObjectsOutput){}
-    //Returns some or all (up to 1,000) of the objects in a bucket.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_ListObjects.html
+    //Returns some or all (up to 1,000) of the objects in a bucket.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_ListObjects.html
     rpc ListObjects(ListObjectsInput) returns(ListObjectsOutput){}
-    //Returns object canned acl.refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
+    //Returns object canned acl.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
     rpc GetObjectCannedAcl(GetObjectCannedAclInput) returns(GetObjectCannedAclOutput){}
-    //Set object canned acl.refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
+    //Set object canned acl.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
     rpc PutObjectCannedAcl(PutObjectCannedAclInput) returns(PutObjectCannedAclOutput){}
-    //Restores an archived copy of an object back.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_RestoreObject.html
+    //Restores an archived copy of an object back.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_RestoreObject.html
     rpc RestoreObject(RestoreObjectInput) returns(RestoreObjectOutput){}
-    //Initiates a multipart upload and returns an upload ID.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CreateMultipartUpload.html
+    //Initiates a multipart upload and returns an upload ID.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CreateMultipartUpload.html
     rpc CreateMultipartUpload(CreateMultipartUploadInput) returns(CreateMultipartUploadOutput){}
-    //Uploads a part in a multipart upload.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html
+    //Uploads a part in a multipart upload.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html
     rpc UploadPart(stream UploadPartInput) returns(UploadPartOutput){}
-    //Uploads a part by copying data from an existing object as data source.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPartCopy.html
+    //Uploads a part by copying data from an existing object as data source.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPartCopy.html
     rpc UploadPartCopy(UploadPartCopyInput) returns(UploadPartCopyOutput){}
-    //Completes a multipart upload by assembling previously uploaded parts.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html
+    //Completes a multipart upload by assembling previously uploaded parts.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html
     rpc CompleteMultipartUpload(CompleteMultipartUploadInput) returns(CompleteMultipartUploadOutput){}
-    //This action aborts a multipart upload.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html
+    //This action aborts a multipart upload.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html
     rpc AbortMultipartUpload(AbortMultipartUploadInput) returns(AbortMultipartUploadOutput){}
-    //This action lists in-progress multipart uploads.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html
+    //This action lists in-progress multipart uploads.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html
     rpc ListMultipartUploads(ListMultipartUploadsInput) returns(ListMultipartUploadsOutput){}
-    //Returns metadata about all versions of the objects in a bucket.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectVersions.html
+    //Returns metadata about all versions of the objects in a bucket.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectVersions.html
     rpc ListObjectVersions(ListObjectVersionsInput) returns(ListObjectVersionsOutput){}
-    //The HEAD action retrieves metadata from an object without returning the object itself. refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html
+    //The HEAD action retrieves metadata from an object without returning the object itself.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html
     rpc HeadObject(HeadObjectInput) returns(HeadObjectOutput){}
     //This action used to check if the file exists.
     rpc IsObjectExist(IsObjectExistInput) returns(IsObjectExistOutput){}
     //A presigned URL gives you access to the object identified in the URL, provided that the creator of the presigned URL has permissions to access that object.
-    //refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html
     rpc SignURL(SignURLInput) returns(SignURLOutput){}
     //This action used to set download bandwidth limit speed.
-    //refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2106
+    //Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2106
     rpc UpdateDownLoadBandwidthRateLimit(UpdateBandwidthRateLimitInput) returns(google.protobuf.Empty){}
     //This action used to set upload bandwidth limit speed.
-    //refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2096
+    //Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2096
     rpc UpdateUpLoadBandwidthRateLimit(UpdateBandwidthRateLimitInput) returns(google.protobuf.Empty){}
     //This action used to append object.
-    //refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
+    //Refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
     rpc AppendObject(stream AppendObjectInput) returns(AppendObjectOutput){}
-    //Lists the parts that have been uploaded for a specific multipart upload.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html
+    //Lists the parts that have been uploaded for a specific multipart upload.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html
     rpc ListParts(ListPartsInput) returns(ListPartsOutput){}
 }
 
