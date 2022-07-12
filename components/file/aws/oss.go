@@ -87,7 +87,7 @@ func NewAwsOss() file.Oss {
 		meta:   make(map[string]*file.OssMetadata),
 	}
 }
-func (a *AwsOss) InitConfig(ctx context.Context, config *file.FileConfig) error {
+func (a *AwsOss) InitConfig(ctx context.Context, config *file.OssConfig) error {
 	a.method = config.Method
 	a.rawData = config.Metadata
 	return nil

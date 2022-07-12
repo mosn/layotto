@@ -27,7 +27,7 @@ var (
 )
 
 type Oss interface {
-	InitConfig(context.Context, *FileConfig) error
+	InitConfig(context.Context, *OssConfig) error
 	InitClient(context.Context, *InitRequest) error
 	GetObject(context.Context, *GetObjectInput) (*GetObjectOutput, error)
 	PutObject(context.Context, *PutObjectInput) (*PutObjectOutput, error)

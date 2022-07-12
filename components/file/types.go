@@ -38,6 +38,13 @@ type FileConfig struct {
 	Type     string          `json:"type"`
 }
 
+// FileConfig wraps configuration for a file implementation
+type OssConfig struct {
+	Method   string          `json:"method"`
+	Metadata json.RawMessage `json:"metadata"`
+	Type     string          `json:"type"`
+}
+
 type PutFileStu struct {
 	DataStream io.Reader
 	FileName   string

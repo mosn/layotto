@@ -64,7 +64,7 @@ func AliyunDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string
 	return clients, nil
 }
 
-func (a *AliyunOSS) InitConfig(ctx context.Context, config *file.FileConfig) error {
+func (a *AliyunOSS) InitConfig(ctx context.Context, config *file.OssConfig) error {
 	a.method = config.Method
 	a.rawData = config.Metadata
 	return nil

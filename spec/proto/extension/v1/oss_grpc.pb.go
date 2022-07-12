@@ -4,7 +4,6 @@ package s3
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,32 +19,63 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ObjectStorageServiceClient interface {
+	//Init oss client
 	InitClient(ctx context.Context, in *InitInput, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//Adds an object to a bucket.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
 	PutObject(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_PutObjectClient, error)
+	//Retrieves objects.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html
 	GetObject(ctx context.Context, in *GetObjectInput, opts ...grpc.CallOption) (ObjectStorageService_GetObjectClient, error)
+	//Delete objects.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html
 	DeleteObject(ctx context.Context, in *DeleteObjectInput, opts ...grpc.CallOption) (*DeleteObjectOutput, error)
+	//Sets the supplied tag-set to an object that already exists in a bucket.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
 	PutObjectTagging(ctx context.Context, in *PutObjectTaggingInput, opts ...grpc.CallOption) (*PutObjectTaggingOutput, error)
+	//Removes the entire tag set from the specified object.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html
 	DeleteObjectTagging(ctx context.Context, in *DeleteObjectTaggingInput, opts ...grpc.CallOption) (*DeleteObjectTaggingOutput, error)
+	//Returns the tag-set of an object.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObjectTagging.html
 	GetObjectTagging(ctx context.Context, in *GetObjectTaggingInput, opts ...grpc.CallOption) (*GetObjectTaggingOutput, error)
+	//Creates a copy of an object that is already stored in oss server.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CopyObject.html
 	CopyObject(ctx context.Context, in *CopyObjectInput, opts ...grpc.CallOption) (*CopyObjectOutput, error)
+	//Delete multiple objects from a bucket.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_DeleteObjects.html
 	DeleteObjects(ctx context.Context, in *DeleteObjectsInput, opts ...grpc.CallOption) (*DeleteObjectsOutput, error)
+	//Returns some or all (up to 1,000) of the objects in a bucket.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_ListObjects.html
 	ListObjects(ctx context.Context, in *ListObjectsInput, opts ...grpc.CallOption) (*ListObjectsOutput, error)
+	//Returns object canned acl.refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 	GetObjectCannedAcl(ctx context.Context, in *GetObjectCannedAclInput, opts ...grpc.CallOption) (*GetObjectCannedAclOutput, error)
+	//Set object canned acl.refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 	PutObjectCannedAcl(ctx context.Context, in *PutObjectCannedAclInput, opts ...grpc.CallOption) (*PutObjectCannedAclOutput, error)
+	//Restores an archived copy of an object back.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_RestoreObject.html
 	RestoreObject(ctx context.Context, in *RestoreObjectInput, opts ...grpc.CallOption) (*RestoreObjectOutput, error)
+	//Initiates a multipart upload and returns an upload ID.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CreateMultipartUpload.html
 	CreateMultipartUpload(ctx context.Context, in *CreateMultipartUploadInput, opts ...grpc.CallOption) (*CreateMultipartUploadOutput, error)
+	//Uploads a part in a multipart upload.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html
 	UploadPart(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_UploadPartClient, error)
+	//Uploads a part by copying data from an existing object as data source.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPartCopy.html
 	UploadPartCopy(ctx context.Context, in *UploadPartCopyInput, opts ...grpc.CallOption) (*UploadPartCopyOutput, error)
+	//Completes a multipart upload by assembling previously uploaded parts.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html
 	CompleteMultipartUpload(ctx context.Context, in *CompleteMultipartUploadInput, opts ...grpc.CallOption) (*CompleteMultipartUploadOutput, error)
+	//This action aborts a multipart upload.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html
 	AbortMultipartUpload(ctx context.Context, in *AbortMultipartUploadInput, opts ...grpc.CallOption) (*AbortMultipartUploadOutput, error)
+	//This action lists in-progress multipart uploads.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html
 	ListMultipartUploads(ctx context.Context, in *ListMultipartUploadsInput, opts ...grpc.CallOption) (*ListMultipartUploadsOutput, error)
+	//Returns metadata about all versions of the objects in a bucket.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectVersions.html
 	ListObjectVersions(ctx context.Context, in *ListObjectVersionsInput, opts ...grpc.CallOption) (*ListObjectVersionsOutput, error)
+	//The HEAD action retrieves metadata from an object without returning the object itself. refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html
 	HeadObject(ctx context.Context, in *HeadObjectInput, opts ...grpc.CallOption) (*HeadObjectOutput, error)
+	//This action used to check if the file exists.
 	IsObjectExist(ctx context.Context, in *IsObjectExistInput, opts ...grpc.CallOption) (*IsObjectExistOutput, error)
+	//A presigned URL gives you access to the object identified in the URL, provided that the creator of the presigned URL has permissions to access that object.
+	//refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html
 	SignURL(ctx context.Context, in *SignURLInput, opts ...grpc.CallOption) (*SignURLOutput, error)
+	//This action used to set download bandwidth limit speed.
+	//refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2106
 	UpdateDownLoadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//This action used to set upload bandwidth limit speed.
+	//refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2096
 	UpdateUpLoadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//This action used to append object.
+	//refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
 	AppendObject(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_AppendObjectClient, error)
+	//Lists the parts that have been uploaded for a specific multipart upload.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html
 	ListParts(ctx context.Context, in *ListPartsInput, opts ...grpc.CallOption) (*ListPartsOutput, error)
 }
 
@@ -402,32 +432,63 @@ func (c *objectStorageServiceClient) ListParts(ctx context.Context, in *ListPart
 // All implementations should embed UnimplementedObjectStorageServiceServer
 // for forward compatibility
 type ObjectStorageServiceServer interface {
+	//Init oss client
 	InitClient(context.Context, *InitInput) (*emptypb.Empty, error)
+	//Adds an object to a bucket.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
 	PutObject(ObjectStorageService_PutObjectServer) error
+	//Retrieves objects.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html
 	GetObject(*GetObjectInput, ObjectStorageService_GetObjectServer) error
+	//Delete objects.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html
 	DeleteObject(context.Context, *DeleteObjectInput) (*DeleteObjectOutput, error)
+	//Sets the supplied tag-set to an object that already exists in a bucket.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
 	PutObjectTagging(context.Context, *PutObjectTaggingInput) (*PutObjectTaggingOutput, error)
+	//Removes the entire tag set from the specified object.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html
 	DeleteObjectTagging(context.Context, *DeleteObjectTaggingInput) (*DeleteObjectTaggingOutput, error)
+	//Returns the tag-set of an object.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObjectTagging.html
 	GetObjectTagging(context.Context, *GetObjectTaggingInput) (*GetObjectTaggingOutput, error)
+	//Creates a copy of an object that is already stored in oss server.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CopyObject.html
 	CopyObject(context.Context, *CopyObjectInput) (*CopyObjectOutput, error)
+	//Delete multiple objects from a bucket.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_DeleteObjects.html
 	DeleteObjects(context.Context, *DeleteObjectsInput) (*DeleteObjectsOutput, error)
+	//Returns some or all (up to 1,000) of the objects in a bucket.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_ListObjects.html
 	ListObjects(context.Context, *ListObjectsInput) (*ListObjectsOutput, error)
+	//Returns object canned acl.refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 	GetObjectCannedAcl(context.Context, *GetObjectCannedAclInput) (*GetObjectCannedAclOutput, error)
+	//Set object canned acl.refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 	PutObjectCannedAcl(context.Context, *PutObjectCannedAclInput) (*PutObjectCannedAclOutput, error)
+	//Restores an archived copy of an object back.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_RestoreObject.html
 	RestoreObject(context.Context, *RestoreObjectInput) (*RestoreObjectOutput, error)
+	//Initiates a multipart upload and returns an upload ID.refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CreateMultipartUpload.html
 	CreateMultipartUpload(context.Context, *CreateMultipartUploadInput) (*CreateMultipartUploadOutput, error)
+	//Uploads a part in a multipart upload.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html
 	UploadPart(ObjectStorageService_UploadPartServer) error
+	//Uploads a part by copying data from an existing object as data source.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPartCopy.html
 	UploadPartCopy(context.Context, *UploadPartCopyInput) (*UploadPartCopyOutput, error)
+	//Completes a multipart upload by assembling previously uploaded parts.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html
 	CompleteMultipartUpload(context.Context, *CompleteMultipartUploadInput) (*CompleteMultipartUploadOutput, error)
+	//This action aborts a multipart upload.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html
 	AbortMultipartUpload(context.Context, *AbortMultipartUploadInput) (*AbortMultipartUploadOutput, error)
+	//This action lists in-progress multipart uploads.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html
 	ListMultipartUploads(context.Context, *ListMultipartUploadsInput) (*ListMultipartUploadsOutput, error)
+	//Returns metadata about all versions of the objects in a bucket.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectVersions.html
 	ListObjectVersions(context.Context, *ListObjectVersionsInput) (*ListObjectVersionsOutput, error)
+	//The HEAD action retrieves metadata from an object without returning the object itself. refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html
 	HeadObject(context.Context, *HeadObjectInput) (*HeadObjectOutput, error)
+	//This action used to check if the file exists.
 	IsObjectExist(context.Context, *IsObjectExistInput) (*IsObjectExistOutput, error)
+	//A presigned URL gives you access to the object identified in the URL, provided that the creator of the presigned URL has permissions to access that object.
+	//refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html
 	SignURL(context.Context, *SignURLInput) (*SignURLOutput, error)
+	//This action used to set download bandwidth limit speed.
+	//refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2106
 	UpdateDownLoadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) (*emptypb.Empty, error)
+	//This action used to set upload bandwidth limit speed.
+	//refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2096
 	UpdateUpLoadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) (*emptypb.Empty, error)
+	//This action used to append object.
+	//refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
 	AppendObject(ObjectStorageService_AppendObjectServer) error
+	//Lists the parts that have been uploaded for a specific multipart upload.refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html
 	ListParts(context.Context, *ListPartsInput) (*ListPartsOutput, error)
 }
 

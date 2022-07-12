@@ -231,7 +231,7 @@ func (mr *MockOssMockRecorder) InitClient(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // InitConfig mocks base method.
-func (m *MockOss) InitConfig(arg0 context.Context, arg1 *file.FileConfig) error {
+func (m *MockOss) InitConfig(arg0 context.Context, arg1 *file.OssConfig) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InitConfig", arg0, arg1)
 	ret0, _ := ret[0].(error)
