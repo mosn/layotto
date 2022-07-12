@@ -22,12 +22,6 @@ import (
 	"strconv"
 	"time"
 
-	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
-	"mosn.io/layotto/components/custom"
-	"mosn.io/layotto/pkg/grpc/dapr"
-
-	"mosn.io/mosn/pkg/istio"
-
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
 	"github.com/dapr/components-contrib/secretstores/aws/secretmanager"
@@ -159,13 +153,6 @@ import (
 	"mosn.io/layotto/pkg/runtime"
 	_ "mosn.io/layotto/pkg/wasm"
 
-	_ "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/router/v3"
-	_ "mosn.io/mosn/istio/istio1106"
-	_ "mosn.io/mosn/istio/istio1106/filter/stream/jwtauthn"
-	_ "mosn.io/mosn/istio/istio1106/filter/stream/mixer"
-	_ "mosn.io/mosn/istio/istio1106/filter/stream/stats"
-	_ "mosn.io/mosn/istio/istio1106/sds"
-	_ "mosn.io/mosn/istio/istio1106/xds"
 	_ "mosn.io/mosn/pkg/filter/listener/originaldst"
 	_ "mosn.io/mosn/pkg/filter/network/connectionmanager"
 	_ "mosn.io/mosn/pkg/filter/network/streamproxy"
@@ -198,7 +185,6 @@ import (
 	_ "mosn.io/mosn/pkg/upstream/healthcheck"
 	_ "mosn.io/mosn/pkg/upstream/servicediscovery/dubbod"
 
-	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
 )
 
@@ -207,7 +193,6 @@ var loggerForDaprComp = logger.NewLogger("reuse.dapr.component")
 
 // GitVersion mosn version is specified by latest tag
 var GitVersion = ""
-var IstioVersion = "1.10.6"
 
 func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
@@ -250,14 +235,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		}),
 		// register your gRPC API here
 		runtime.WithGrpcAPI(
-			// default GrpcAPI
 			default_api.NewGrpcAPI,
-			// a demo to show how to register your own gRPC API
-			helloworld_api.NewHelloWorldAPI,
-			// support Dapr API
-			// Currently it only support Dapr's InvokeService,secret API,state API and InvokeBinding API.
-			// Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.
-			dapr.NewDaprAPI_Alpha,
 		),
 		// Hello
 		runtime.WithHelloFactory(
@@ -460,12 +438,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			secretstores_loader.NewFactory("local.env", func() secretstores.SecretStore {
 				return secretstore_env.NewEnvSecretStore(loggerForDaprComp)
 			}),
-		), // Custom components
-		runtime.WithCustomComponentFactory("helloworld",
-			custom.NewComponentFactory("in-memory", component.NewInMemoryHelloWorld),
-			custom.NewComponentFactory("goodbye", component.NewSayGoodbyeHelloWorld),
-		),
-	)
+		))
 	return server, err
 }
 
@@ -481,8 +454,6 @@ func registerAppInfo(app *cli.App) {
 	appInfo.Version = app.Version
 	appInfo.Compiled = app.Compiled
 	actuator.SetAppInfoSingleton(appInfo)
-	// set istio version
-	istio.IstioVersion = IstioVersion
 }
 
 func newRuntimeApp(startCmd *cli.Command) *cli.App {
