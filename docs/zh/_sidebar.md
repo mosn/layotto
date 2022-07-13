@@ -80,6 +80,7 @@
             - [Secret Store](zh/component_specs/secret/common.md)
             - [自定义组件](zh/component_specs/custom/common.md)
     - [如何部署、升级 Layotto](zh/operation/)
+    - [如何本地开发、本地调试](zh/operation/local.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
@@ -106,6 +107,8 @@
         - [如何基于proto文件生成代码、接口文档](zh/api_reference/how_to_generate_api_doc.md)
     - [Layotto 四大 Github Workflows 说明](zh/development/github-workflows.md)
     - [Layotto 命令行工具指南](zh/development/commands.md)
+    - 如何给 issue 打 label
+        - [新手任务 (good first issue) 的 label 规范](zh/development/label-spec.md)
     - [发布手册](zh/development/release-guide.md)
     - [待解决的问题](zh/development/problems-to-solve.md)
 - 社区
