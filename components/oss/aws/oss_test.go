@@ -181,9 +181,9 @@ func TestAwsOss(t *testing.T) {
 	_, err = instance.UploadPart(context.TODO(), &oss.UploadPartInput{})
 	assert.NotNil(t, err)
 
-	err = instance.UpdateDownLoadBandwidthRateLimit(context.TODO(), &oss.UpdateBandwidthRateLimitInput{})
+	err = instance.UpdateDownloadBandwidthRateLimit(context.TODO(), &oss.UpdateBandwidthRateLimitInput{})
 	assert.NotNil(t, err)
 
-	err = instance.UpdateUpLoadBandwidthRateLimit(context.TODO(), &oss.UpdateBandwidthRateLimitInput{})
+	err = instance.UpdateUploadBandwidthRateLimit(context.TODO(), &oss.UpdateBandwidthRateLimitInput{})
 	assert.NotNil(t, err)
 }

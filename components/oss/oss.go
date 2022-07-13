@@ -50,8 +50,8 @@ type Oss interface {
 	HeadObject(context.Context, *HeadObjectInput) (*HeadObjectOutput, error)
 	IsObjectExist(context.Context, *IsObjectExistInput) (*IsObjectExistOutput, error)
 	SignURL(context.Context, *SignURLInput) (*SignURLOutput, error)
-	UpdateDownLoadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) error
-	UpdateUpLoadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) error
+	UpdateDownloadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) error
+	UpdateUploadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) error
 	AppendObject(context.Context, *AppendObjectInput) (*AppendObjectOutput, error)
 	ListParts(context.Context, *ListPartsInput) (*ListPartsOutput, error)
 }

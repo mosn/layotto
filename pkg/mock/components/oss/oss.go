@@ -394,32 +394,32 @@ func (mr *MockOssMockRecorder) SignURL(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignURL", reflect.TypeOf((*MockOss)(nil).SignURL), arg0, arg1)
 }
 
-// UpdateDownLoadBandwidthRateLimit mocks base method.
-func (m *MockOss) UpdateDownLoadBandwidthRateLimit(arg0 context.Context, arg1 *oss.UpdateBandwidthRateLimitInput) error {
+// UpdateDownloadBandwidthRateLimit mocks base method.
+func (m *MockOss) UpdateDownloadBandwidthRateLimit(arg0 context.Context, arg1 *oss.UpdateBandwidthRateLimitInput) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateDownLoadBandwidthRateLimit", arg0, arg1)
+	ret := m.ctrl.Call(m, "UpdateDownloadBandwidthRateLimit", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdateDownLoadBandwidthRateLimit indicates an expected call of UpdateDownLoadBandwidthRateLimit.
-func (mr *MockOssMockRecorder) UpdateDownLoadBandwidthRateLimit(arg0, arg1 interface{}) *gomock.Call {
+// UpdateDownloadBandwidthRateLimit indicates an expected call of UpdateDownloadBandwidthRateLimit.
+func (mr *MockOssMockRecorder) UpdateDownloadBandwidthRateLimit(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDownLoadBandwidthRateLimit", reflect.TypeOf((*MockOss)(nil).UpdateDownLoadBandwidthRateLimit), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDownloadBandwidthRateLimit", reflect.TypeOf((*MockOss)(nil).UpdateDownloadBandwidthRateLimit), arg0, arg1)
 }
 
-// UpdateUpLoadBandwidthRateLimit mocks base method.
-func (m *MockOss) UpdateUpLoadBandwidthRateLimit(arg0 context.Context, arg1 *oss.UpdateBandwidthRateLimitInput) error {
+// UpdateUploadBandwidthRateLimit mocks base method.
+func (m *MockOss) UpdateUploadBandwidthRateLimit(arg0 context.Context, arg1 *oss.UpdateBandwidthRateLimitInput) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateUpLoadBandwidthRateLimit", arg0, arg1)
+	ret := m.ctrl.Call(m, "UpdateUploadBandwidthRateLimit", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdateUpLoadBandwidthRateLimit indicates an expected call of UpdateUpLoadBandwidthRateLimit.
-func (mr *MockOssMockRecorder) UpdateUpLoadBandwidthRateLimit(arg0, arg1 interface{}) *gomock.Call {
+// UpdateUploadBandwidthRateLimit indicates an expected call of UpdateUploadBandwidthRateLimit.
+func (mr *MockOssMockRecorder) UpdateUploadBandwidthRateLimit(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUpLoadBandwidthRateLimit", reflect.TypeOf((*MockOss)(nil).UpdateUpLoadBandwidthRateLimit), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUploadBandwidthRateLimit", reflect.TypeOf((*MockOss)(nil).UpdateUploadBandwidthRateLimit), arg0, arg1)
 }
 
 // UploadPart mocks base method.

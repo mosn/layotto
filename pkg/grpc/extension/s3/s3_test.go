@@ -814,15 +814,15 @@ func TestUpdateDownLoadBandwidthRateLimit(t *testing.T) {
 		StoreName:                    "NoStore",
 		AverageRateLimitInBitsPerSec: 1,
 	}
-	_, err := s3Server.UpdateDownLoadBandwidthRateLimit(ctx, req)
+	_, err := s3Server.UpdateDownloadBandwidthRateLimit(ctx, req)
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
-	mockossServer.EXPECT().UpdateDownLoadBandwidthRateLimit(ctx,
+	mockossServer.EXPECT().UpdateDownloadBandwidthRateLimit(ctx,
 		&l8s3.UpdateBandwidthRateLimitInput{
 			AverageRateLimitInBitsPerSec: 1,
 		},
 	).Return(nil)
 	req.StoreName = MOCKSERVER
-	_, err = s3Server.UpdateDownLoadBandwidthRateLimit(ctx, req)
+	_, err = s3Server.UpdateDownloadBandwidthRateLimit(ctx, req)
 	assert.Nil(t, err)
 }
 
@@ -841,15 +841,15 @@ func TestUpdateUpLoadBandwidthRateLimit(t *testing.T) {
 		StoreName:                    "NoStore",
 		AverageRateLimitInBitsPerSec: 1,
 	}
-	_, err := s3Server.UpdateUpLoadBandwidthRateLimit(ctx, req)
+	_, err := s3Server.UpdateUploadBandwidthRateLimit(ctx, req)
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
-	mockossServer.EXPECT().UpdateUpLoadBandwidthRateLimit(ctx,
+	mockossServer.EXPECT().UpdateUploadBandwidthRateLimit(ctx,
 		&l8s3.UpdateBandwidthRateLimitInput{
 			AverageRateLimitInBitsPerSec: 1,
 		},
 	).Return(nil)
 	req.StoreName = MOCKSERVER
-	_, err = s3Server.UpdateUpLoadBandwidthRateLimit(ctx, req)
+	_, err = s3Server.UpdateUploadBandwidthRateLimit(ctx, req)
 	assert.Nil(t, err)
 }
 

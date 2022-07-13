@@ -651,12 +651,12 @@ func (a *AwsOss) SignURL(ctx context.Context, req *oss.SignURLInput) (*oss.SignU
 	}
 }
 
-func (a *AwsOss) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *oss.UpdateBandwidthRateLimitInput) error {
-	return errors.New("UpdateDownLoadBandwidthRateLimit method not supported now")
+func (a *AwsOss) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *oss.UpdateBandwidthRateLimitInput) error {
+	return errors.New("UpdateDownloadBandwidthRateLimit method not supported now")
 }
 
-func (a *AwsOss) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *oss.UpdateBandwidthRateLimitInput) error {
-	return errors.New("UpdateUpLoadBandwidthRateLimit method not supported now")
+func (a *AwsOss) UpdateUploadBandwidthRateLimit(ctx context.Context, req *oss.UpdateBandwidthRateLimitInput) error {
+	return errors.New("UpdateUploadBandwidthRateLimit method not supported now")
 }
 func (a *AwsOss) AppendObject(ctx context.Context, req *oss.AppendObjectInput) (*oss.AppendObjectOutput, error) {
 	return nil, errors.New("AppendObject method not supported on AWS")

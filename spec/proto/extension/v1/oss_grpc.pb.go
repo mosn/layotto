@@ -89,10 +89,10 @@ type ObjectStorageServiceClient interface {
 	SignURL(ctx context.Context, in *SignURLInput, opts ...grpc.CallOption) (*SignURLOutput, error)
 	//This action used to set download bandwidth limit speed.
 	//Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2106
-	UpdateDownLoadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdateDownloadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	//This action used to set upload bandwidth limit speed.
 	//Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2096
-	UpdateUpLoadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdateUploadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	//This action used to append object.
 	//Refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
 	AppendObject(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_AppendObjectClient, error)
@@ -389,18 +389,18 @@ func (c *objectStorageServiceClient) SignURL(ctx context.Context, in *SignURLInp
 	return out, nil
 }
 
-func (c *objectStorageServiceClient) UpdateDownLoadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *objectStorageServiceClient) UpdateDownloadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/UpdateDownLoadBandwidthRateLimit", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/UpdateDownloadBandwidthRateLimit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *objectStorageServiceClient) UpdateUpLoadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *objectStorageServiceClient) UpdateUploadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/UpdateUpLoadBandwidthRateLimit", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/UpdateUploadBandwidthRateLimit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -523,10 +523,10 @@ type ObjectStorageServiceServer interface {
 	SignURL(context.Context, *SignURLInput) (*SignURLOutput, error)
 	//This action used to set download bandwidth limit speed.
 	//Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2106
-	UpdateDownLoadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) (*emptypb.Empty, error)
+	UpdateDownloadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) (*emptypb.Empty, error)
 	//This action used to set upload bandwidth limit speed.
 	//Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2096
-	UpdateUpLoadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) (*emptypb.Empty, error)
+	UpdateUploadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) (*emptypb.Empty, error)
 	//This action used to append object.
 	//Refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
 	AppendObject(ObjectStorageService_AppendObjectServer) error
@@ -608,11 +608,11 @@ func (UnimplementedObjectStorageServiceServer) IsObjectExist(context.Context, *I
 func (UnimplementedObjectStorageServiceServer) SignURL(context.Context, *SignURLInput) (*SignURLOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignURL not implemented")
 }
-func (UnimplementedObjectStorageServiceServer) UpdateDownLoadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateDownLoadBandwidthRateLimit not implemented")
+func (UnimplementedObjectStorageServiceServer) UpdateDownloadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDownloadBandwidthRateLimit not implemented")
 }
-func (UnimplementedObjectStorageServiceServer) UpdateUpLoadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUpLoadBandwidthRateLimit not implemented")
+func (UnimplementedObjectStorageServiceServer) UpdateUploadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUploadBandwidthRateLimit not implemented")
 }
 func (UnimplementedObjectStorageServiceServer) AppendObject(ObjectStorageService_AppendObjectServer) error {
 	return status.Errorf(codes.Unimplemented, "method AppendObject not implemented")
@@ -1065,38 +1065,38 @@ func _ObjectStorageService_SignURL_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ObjectStorageService_UpdateDownLoadBandwidthRateLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ObjectStorageService_UpdateDownloadBandwidthRateLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateBandwidthRateLimitInput)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).UpdateDownLoadBandwidthRateLimit(ctx, in)
+		return srv.(ObjectStorageServiceServer).UpdateDownloadBandwidthRateLimit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/UpdateDownLoadBandwidthRateLimit",
+		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/UpdateDownloadBandwidthRateLimit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).UpdateDownLoadBandwidthRateLimit(ctx, req.(*UpdateBandwidthRateLimitInput))
+		return srv.(ObjectStorageServiceServer).UpdateDownloadBandwidthRateLimit(ctx, req.(*UpdateBandwidthRateLimitInput))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ObjectStorageService_UpdateUpLoadBandwidthRateLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ObjectStorageService_UpdateUploadBandwidthRateLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateBandwidthRateLimitInput)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).UpdateUpLoadBandwidthRateLimit(ctx, in)
+		return srv.(ObjectStorageServiceServer).UpdateUploadBandwidthRateLimit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/UpdateUpLoadBandwidthRateLimit",
+		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/UpdateUploadBandwidthRateLimit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).UpdateUpLoadBandwidthRateLimit(ctx, req.(*UpdateBandwidthRateLimitInput))
+		return srv.(ObjectStorageServiceServer).UpdateUploadBandwidthRateLimit(ctx, req.(*UpdateBandwidthRateLimitInput))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1233,12 +1233,12 @@ var ObjectStorageService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ObjectStorageService_SignURL_Handler,
 		},
 		{
-			MethodName: "UpdateDownLoadBandwidthRateLimit",
-			Handler:    _ObjectStorageService_UpdateDownLoadBandwidthRateLimit_Handler,
+			MethodName: "UpdateDownloadBandwidthRateLimit",
+			Handler:    _ObjectStorageService_UpdateDownloadBandwidthRateLimit_Handler,
 		},
 		{
-			MethodName: "UpdateUpLoadBandwidthRateLimit",
-			Handler:    _ObjectStorageService_UpdateUpLoadBandwidthRateLimit_Handler,
+			MethodName: "UpdateUploadBandwidthRateLimit",
+			Handler:    _ObjectStorageService_UpdateUploadBandwidthRateLimit_Handler,
 		},
 		{
 			MethodName: "ListParts",

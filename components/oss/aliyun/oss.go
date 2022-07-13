@@ -581,8 +581,8 @@ func (a *AliyunOSS) SignURL(ctx context.Context, req *l8oss.SignURLInput) (*l8os
 	return &l8oss.SignURLOutput{SignedUrl: resp}, err
 }
 
-//UpdateDownLoadBandwidthRateLimit update all client rate
-func (a *AliyunOSS) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *l8oss.UpdateBandwidthRateLimitInput) error {
+//UpdateDownloadBandwidthRateLimit update all client rate
+func (a *AliyunOSS) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *l8oss.UpdateBandwidthRateLimitInput) error {
 	for _, cli := range a.client {
 		err := cli.LimitDownloadSpeed(int(req.AverageRateLimitInBitsPerSec))
 		return err
@@ -590,8 +590,8 @@ func (a *AliyunOSS) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *l
 	return nil
 }
 
-//UpdateUpLoadBandwidthRateLimit update all client rate
-func (a *AliyunOSS) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *l8oss.UpdateBandwidthRateLimitInput) error {
+//UpdateUploadBandwidthRateLimit update all client rate
+func (a *AliyunOSS) UpdateUploadBandwidthRateLimit(ctx context.Context, req *l8oss.UpdateBandwidthRateLimitInput) error {
 	for _, cli := range a.client {
 		err := cli.LimitUploadSpeed(int(req.AverageRateLimitInBitsPerSec))
 		return err

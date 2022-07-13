@@ -79,10 +79,10 @@ service ObjectStorageService{
     rpc SignURL(SignURLInput) returns(SignURLOutput){}
     //This action used to set download bandwidth limit speed.
     //Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2106
-    rpc UpdateDownLoadBandwidthRateLimit(UpdateBandwidthRateLimitInput) returns(google.protobuf.Empty){}
+    rpc UpdateDownloadBandwidthRateLimit(UpdateBandwidthRateLimitInput) returns(google.protobuf.Empty){}
     //This action used to set upload bandwidth limit speed.
     //Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2096
-    rpc UpdateUpLoadBandwidthRateLimit(UpdateBandwidthRateLimitInput) returns(google.protobuf.Empty){}
+    rpc UpdateUploadBandwidthRateLimit(UpdateBandwidthRateLimitInput) returns(google.protobuf.Empty){}
     //This action used to append object.
     //Refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
     rpc AppendObject(stream AppendObjectInput) returns(AppendObjectOutput){}

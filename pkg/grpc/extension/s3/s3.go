@@ -658,31 +658,31 @@ func (s *S3Server) SignURL(ctx context.Context, req *s3.SignURLInput) (*s3.SignU
 	return output, nil
 }
 
-func (s *S3Server) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+func (s *S3Server) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.UpdateBandwidthRateLimitInput{}
 	err := transferData(req, st)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for UpdateDownLoadBandwidthRateLimit,err: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for UpdateDownloadBandwidthRateLimit,err: %+v", err)
 	}
-	if err := s.ossInstance[req.StoreName].UpdateDownLoadBandwidthRateLimit(ctx, st); err != nil {
+	if err := s.ossInstance[req.StoreName].UpdateDownloadBandwidthRateLimit(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	return &emptypb.Empty{}, nil
 }
 
-func (s *S3Server) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+func (s *S3Server) UpdateUploadBandwidthRateLimit(ctx context.Context, req *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
 	st := &l8s3.UpdateBandwidthRateLimitInput{}
 	err := transferData(req, st)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for UpdateUpLoadBandwidthRateLimit,err: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for UpdateUploadBandwidthRateLimit,err: %+v", err)
 	}
-	if err := s.ossInstance[req.StoreName].UpdateUpLoadBandwidthRateLimit(ctx, st); err != nil {
+	if err := s.ossInstance[req.StoreName].UpdateUploadBandwidthRateLimit(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	return &emptypb.Empty{}, nil

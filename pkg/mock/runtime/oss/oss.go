@@ -499,44 +499,44 @@ func (mr *MockObjectStorageServiceClientMockRecorder) SignURL(ctx, in interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignURL", reflect.TypeOf((*MockObjectStorageServiceClient)(nil).SignURL), varargs...)
 }
 
-// UpdateDownLoadBandwidthRateLimit mocks base method.
-func (m *MockObjectStorageServiceClient) UpdateDownLoadBandwidthRateLimit(ctx context.Context, in *v1.UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+// UpdateDownloadBandwidthRateLimit mocks base method.
+func (m *MockObjectStorageServiceClient) UpdateDownloadBandwidthRateLimit(ctx context.Context, in *v1.UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
-	ret := m.ctrl.Call(m, "UpdateDownLoadBandwidthRateLimit", varargs...)
+	ret := m.ctrl.Call(m, "UpdateDownloadBandwidthRateLimit", varargs...)
 	ret0, _ := ret[0].(*emptypb.Empty)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// UpdateDownLoadBandwidthRateLimit indicates an expected call of UpdateDownLoadBandwidthRateLimit.
-func (mr *MockObjectStorageServiceClientMockRecorder) UpdateDownLoadBandwidthRateLimit(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+// UpdateDownloadBandwidthRateLimit indicates an expected call of UpdateDownloadBandwidthRateLimit.
+func (mr *MockObjectStorageServiceClientMockRecorder) UpdateDownloadBandwidthRateLimit(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDownLoadBandwidthRateLimit", reflect.TypeOf((*MockObjectStorageServiceClient)(nil).UpdateDownLoadBandwidthRateLimit), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDownloadBandwidthRateLimit", reflect.TypeOf((*MockObjectStorageServiceClient)(nil).UpdateDownloadBandwidthRateLimit), varargs...)
 }
 
-// UpdateUpLoadBandwidthRateLimit mocks base method.
-func (m *MockObjectStorageServiceClient) UpdateUpLoadBandwidthRateLimit(ctx context.Context, in *v1.UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+// UpdateUploadBandwidthRateLimit mocks base method.
+func (m *MockObjectStorageServiceClient) UpdateUploadBandwidthRateLimit(ctx context.Context, in *v1.UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
-	ret := m.ctrl.Call(m, "UpdateUpLoadBandwidthRateLimit", varargs...)
+	ret := m.ctrl.Call(m, "UpdateUploadBandwidthRateLimit", varargs...)
 	ret0, _ := ret[0].(*emptypb.Empty)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// UpdateUpLoadBandwidthRateLimit indicates an expected call of UpdateUpLoadBandwidthRateLimit.
-func (mr *MockObjectStorageServiceClientMockRecorder) UpdateUpLoadBandwidthRateLimit(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+// UpdateUploadBandwidthRateLimit indicates an expected call of UpdateUploadBandwidthRateLimit.
+func (mr *MockObjectStorageServiceClientMockRecorder) UpdateUploadBandwidthRateLimit(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUpLoadBandwidthRateLimit", reflect.TypeOf((*MockObjectStorageServiceClient)(nil).UpdateUpLoadBandwidthRateLimit), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUploadBandwidthRateLimit", reflect.TypeOf((*MockObjectStorageServiceClient)(nil).UpdateUploadBandwidthRateLimit), varargs...)
 }
 
 // UploadPart mocks base method.
@@ -1478,34 +1478,34 @@ func (mr *MockObjectStorageServiceServerMockRecorder) SignURL(arg0, arg1 interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignURL", reflect.TypeOf((*MockObjectStorageServiceServer)(nil).SignURL), arg0, arg1)
 }
 
-// UpdateDownLoadBandwidthRateLimit mocks base method.
-func (m *MockObjectStorageServiceServer) UpdateDownLoadBandwidthRateLimit(arg0 context.Context, arg1 *v1.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+// UpdateDownloadBandwidthRateLimit mocks base method.
+func (m *MockObjectStorageServiceServer) UpdateDownloadBandwidthRateLimit(arg0 context.Context, arg1 *v1.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateDownLoadBandwidthRateLimit", arg0, arg1)
+	ret := m.ctrl.Call(m, "UpdateDownloadBandwidthRateLimit", arg0, arg1)
 	ret0, _ := ret[0].(*emptypb.Empty)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// UpdateDownLoadBandwidthRateLimit indicates an expected call of UpdateDownLoadBandwidthRateLimit.
-func (mr *MockObjectStorageServiceServerMockRecorder) UpdateDownLoadBandwidthRateLimit(arg0, arg1 interface{}) *gomock.Call {
+// UpdateDownloadBandwidthRateLimit indicates an expected call of UpdateDownloadBandwidthRateLimit.
+func (mr *MockObjectStorageServiceServerMockRecorder) UpdateDownloadBandwidthRateLimit(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDownLoadBandwidthRateLimit", reflect.TypeOf((*MockObjectStorageServiceServer)(nil).UpdateDownLoadBandwidthRateLimit), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDownloadBandwidthRateLimit", reflect.TypeOf((*MockObjectStorageServiceServer)(nil).UpdateDownloadBandwidthRateLimit), arg0, arg1)
 }
 
-// UpdateUpLoadBandwidthRateLimit mocks base method.
-func (m *MockObjectStorageServiceServer) UpdateUpLoadBandwidthRateLimit(arg0 context.Context, arg1 *v1.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+// UpdateUploadBandwidthRateLimit mocks base method.
+func (m *MockObjectStorageServiceServer) UpdateUploadBandwidthRateLimit(arg0 context.Context, arg1 *v1.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateUpLoadBandwidthRateLimit", arg0, arg1)
+	ret := m.ctrl.Call(m, "UpdateUploadBandwidthRateLimit", arg0, arg1)
 	ret0, _ := ret[0].(*emptypb.Empty)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// UpdateUpLoadBandwidthRateLimit indicates an expected call of UpdateUpLoadBandwidthRateLimit.
-func (mr *MockObjectStorageServiceServerMockRecorder) UpdateUpLoadBandwidthRateLimit(arg0, arg1 interface{}) *gomock.Call {
+// UpdateUploadBandwidthRateLimit indicates an expected call of UpdateUploadBandwidthRateLimit.
+func (mr *MockObjectStorageServiceServerMockRecorder) UpdateUploadBandwidthRateLimit(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUpLoadBandwidthRateLimit", reflect.TypeOf((*MockObjectStorageServiceServer)(nil).UpdateUpLoadBandwidthRateLimit), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUploadBandwidthRateLimit", reflect.TypeOf((*MockObjectStorageServiceServer)(nil).UpdateUploadBandwidthRateLimit), arg0, arg1)
 }
 
 // UploadPart mocks base method.
