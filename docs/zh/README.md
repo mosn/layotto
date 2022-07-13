@@ -21,10 +21,9 @@ Layotto 以开源的 [MOSN](https://github.com/mosn/mosn) 为底座，在提供�
 Layotto 希望可以把 [Multi-Runtime](https://www.infoq.com/articles/multi-runtime-microservice-architecture/) 跟 Service
 Mesh 两者的能力结合起来，无论你是使用 MOSN 还是 Envoy 或者其他产品作为 Service Mesh 的数据面，都可以在不增加新的 sidecar 的前提下，使用 Layotto 为这些数据面追加 Runtime 的能力。
 
-例如，通过为 MOSN 添加 Runtime 能力，一个 Layotto 进程可以[既作为 istio 的数据面](zh/start/istio/start.md) 又提供各种 Runtime API（例如 Configuration API,Pub/Sub API 等）
+例如，通过为 MOSN 添加 Runtime 能力，一个 Layotto 进程可以[既作为 istio 的数据面](zh/start/istio/) 又提供各种 Runtime API（例如 Configuration API,Pub/Sub API 等）
 
-此外，随着探索实践，我们发现 sidecar 能做的事情远不止于此。 通过引入[WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) ,我们正在尝试将 Layotto 做成 FaaS (Function as a service)
-和 [reloadable sdk](https://github.com/mosn/layotto/issues/166) 的运行时容器 。
+此外，随着探索实践，我们发现 sidecar 能做的事情远不止于此。 通过引入[WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) ,我们正在尝试将 Layotto 做成 FaaS (Function as a service) 的运行时容器 。
 
 如果您对诞生背景感兴趣，可以看下[这篇演讲](https://mosn.io/layotto/#/zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index)
 。
@@ -33,7 +32,7 @@ Mesh 两者的能力结合起来，无论你是使用 MOSN 还是 Envoy 或者�
 
 - 服务通信
 - 服务治理，例如流量的劫持和观测，服务限流等
-- [作为 istio 的数据面](zh/start/istio/start.md)
+- [作为 istio 的数据面](zh/start/istio/)
 - 配置管理
 - 状态管理
 - 事件发布订阅
@@ -55,9 +54,7 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 ### Get started with Layotto
 
-您可以尝试 demo [通过 Layotto 调用 apollo 配置中心](zh/start/configuration/start-apollo.md) 来体验 Layotto
-
-其他功能的 demo 见下.
+您可以尝试以下 Quickstart demo，体验 Layotto 的功能；或者体验[线上实验室](zh/start/lab.md)
 
 ### API
 
@@ -76,7 +73,7 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 | feature | status |                      quick start                       | desc                          |
 | ------- | :----: | :----------------------------------------------------: | ----------------------------- |
-| Istio   |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/istio/1_10_6) | 跟 Istio 集成，作为 Istio 的数据面 |
+| Istio   |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/istio/) | 跟 Istio 集成，作为 Istio 的数据面 |
 
 ### 可扩展性
 

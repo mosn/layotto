@@ -17,7 +17,7 @@
         - [基于Minio](zh/start/file/minio.md)
     - [API插件：注册您自己的API](zh/start/api_plugin/helloworld.md)
     - 作为 Istio 的数据面
-        - [集成 Istio 1.10.6 演示](zh/start/istio/1_10_6.md)
+        - [集成 Istio 1.10.6 演示](zh/start/istio/)
         - [集成 Istio 1.5.x 演示](zh/start/istio/start.md)
     - 在四层网络进行流量干预
         - [Dump TCP 流量](zh/start/network_filter/tcpcopy.md)
