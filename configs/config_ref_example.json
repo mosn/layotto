@@ -29,23 +29,22 @@
                       },
                       "secret_store": {
                         "local.file": {
-                          "type":"local.file",
+                          "type": "local.file",
                           "metadata": {
                             "secretsFile": "../../configs/secret/config_secret_local_file.json"
                           }
                         },
                         "local.env": {
-                          "type":"local.env",
+                          "type": "local.env",
                           "metadata": {
                           }
                         }
                       },
                       "sequencer": {
                         "redis": {
-                          "type":"redis",
+                          "type": "redis",
                           "metadata": {
-                            "redisHost": "127.0.0.1:6380",
-                            "redisPassword": ""
+                            "redisHost": "127.0.0.1:6380"
                           },
                           "secret_ref": [
                             {
