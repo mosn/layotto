@@ -7,7 +7,7 @@ Layotto提供了访问OSS的示例 [demo](https://github.com/mosn/layotto/blob/m
 
 ### step 1.  启动layotto
 
-layotto提供了minio的配置文件[oss配置](../../../../configs/oss.json) ，如下所示:
+layotto提供了aws的配置文件`configs/oss.json`，配置文件内容如下所示:
 
 ```json
                     "grpc_config": {
@@ -48,7 +48,6 @@ go build -o layotto
 ```shell @background
 ./layotto start -c ../../configs/oss.json
 ```
-<!-- tabs:end -->
 
 ### step 2. 启动测试demo
 
@@ -71,8 +70,6 @@ go build client.go
 ./client list antsys-wenxuwan
 
 ```
-
-<!-- tabs:end -->
 
 #### 细节以后再说，继续体验其他API
 通过左侧的导航栏，继续体验别的API吧！
