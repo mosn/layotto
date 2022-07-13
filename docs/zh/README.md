@@ -72,6 +72,12 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 | File           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/file/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/file/common)      | 提供访问文件的能力               |
 | Binding        |   ✅    |                                 TODO                                  |                                   TODO                                    | 提供透传数据的能力               |
 
+### Service Mesh
+
+| feature | status |                      quick start                       | desc                          |
+| ------- | :----: | :----------------------------------------------------: | ----------------------------- |
+| Istio   |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/istio/1_10_6) | 跟 Istio 集成，作为 Istio 的数据面 |
+
 ### 可扩展性
 
 | feature  | status |                           quick start                            | desc                        |
@@ -115,12 +121,6 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 | Go (TinyGo)    |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。         |
 | Rust           | 待开发 |                        待开发                         | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。           |
 | AssemblyScript | 待开发 |                        待开发                         | 把用 AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。 |
-
-### Service Mesh
-
-| feature | status |                      quick start                       | desc                          |
-| ------- | :----: | :----------------------------------------------------: | ----------------------------- |
-| istio   |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/istio/start) | 跟 istio 集成，作为它的数据面 |
 
 ## Landscapes
 

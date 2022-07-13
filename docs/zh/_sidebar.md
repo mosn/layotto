@@ -16,8 +16,9 @@
     - 使用File API
         - [基于Minio](zh/start/file/minio.md)
     - [API插件：注册您自己的API](zh/start/api_plugin/helloworld.md)
-    - 集成 Istio
-        - [作为 Istio 的数据面](zh/start/istio/start.md)
+    - 作为 Istio 的数据面
+        - [集成 Istio 1.10.6 演示](zh/start/istio/1_10_6.md)
+        - [集成 Istio 1.5.x 演示](zh/start/istio/start.md)
     - 在四层网络进行流量干预
         - [Dump TCP 流量](zh/start/network_filter/tcpcopy.md)
     - 在七层网络进行流量干预
@@ -31,6 +32,7 @@
         - [Metrics 接入 Prometheus](zh/start/trace/prometheus.md)
     - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
+- [线上实验室](zh/start/lab.md)
 - [用户手册](zh/building_blocks/)
     - 功能介绍
         - [File API](zh/building_blocks/file/file.md)
