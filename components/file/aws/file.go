@@ -42,10 +42,8 @@ const (
 
 // AwsOss is a binding for aws oss storage.
 type AwsOss struct {
-	client  map[string]*s3.Client
-	meta    map[string]*utils.OssMetadata
-	method  string
-	rawData json.RawMessage
+	client map[string]*s3.Client
+	meta   map[string]*utils.OssMetadata
 }
 
 func NewAwsFile() file.File {

@@ -654,20 +654,20 @@ func (a *AliyunOSS) ListParts(ctx context.Context, req *l8oss.ListPartsInput) (*
 	return out, err
 }
 
-func (s *AliyunOSS) selectClient(uid, bucket string) (*oss.Client, error) {
+func (a *AliyunOSS) selectClient(uid, bucket string) (*oss.Client, error) {
 	// 1. if user specify client uid, use specify client first
 	if uid != "" {
-		if client, ok := s.client[uid]; ok {
+		if client, ok := a.client[uid]; ok {
 			return client, nil
 		}
 	}
 	// 2. if user not specify client uid, use bucket to select client
-	if client, ok := s.client[bucket]; ok {
+	if client, ok := a.client[bucket]; ok {
 		return client, nil
 	}
 	// 3. if not specify uid and bucket, select default one
-	if len(s.client) == 1 {
-		for _, client := range s.client {
+	if len(a.client) == 1 {
+		for _, client := range a.client {
 			return client, nil
 		}
 	}

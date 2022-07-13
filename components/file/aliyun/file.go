@@ -37,9 +37,7 @@ const (
 
 // AliyunFile is a binding for an AliCloud OSS storage bucketKey
 type AliyunFile struct {
-	client  map[string]*oss.Client
-	method  string
-	rawData json.RawMessage
+	client map[string]*oss.Client
 }
 
 func NewAliyunFile() file.File {
