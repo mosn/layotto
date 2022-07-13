@@ -31,6 +31,7 @@ docker run -v "$(pwd)/configs/config.json:/runtime/configs/config.json" -d  -p 3
 - 可以参考 [MOSN 的教程](https://mosn.io/docs/user-guide/start/istio/). 把教程中的 MOSN 镜像换成 Layotto 镜像即可。
 
 - 为了让构建过程更方便些，Layotto 开发了 make 脚本。按需修改好 main 包(在 `cmd/layotto` 目录下)后，敲以下命令即可打包成 proxyv2镜像:
+
 ```shell
 make image.proxyv2.build VERSION=latest
 ```
