@@ -58,16 +58,16 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 ### API
 
-| API            | status |                              quick start                              |                                components                                 | desc                             |
-| -------------- | :----: | :-------------------------------------------------------------------: | :-----------------------------------------------------------------------: | -------------------------------- |
-| State          |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/state/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/state/common)     | 提供读写 KV 模型存储的数据的能力 |
-| Pub/Sub        |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/pubsub/start)        |     [list](https://mosn.io/layotto/#/zh/component_specs/pubsub/redis)     | 提供消息的发布/订阅能力          |
-| Service Invoke |   ✅    |       [demo](https://mosn.io/layotto/#/zh/start/rpc/helloworld)       |         [list](https://mosn.io/layotto/#/zh/start/rpc/helloworld)         | 通过 MOSN 进行服务调用           |
-| Config         |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/configuration/start-apollo) | [list](https://mosn.io/layotto/#/zh/component_specs/configuration/apollo) | 提供配置增删改查及订阅的能力     |
-| Lock           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/lock/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/lock/common)      | 提供 lock/unlock 分布式锁的实现  |
-| Sequencer      |   ✅    |      [demo](https://mosn.io/layotto/#/zh/start/sequencer/start)       |   [list](https://mosn.io/layotto/#/zh/component_specs/sequencer/common)   | 提供获取分布式自增 ID 的能力     |
-| File           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/file/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/file/common)      | 提供访问文件的能力               |
-| Binding        |   ✅    |                                 TODO                                  |                                   TODO                                    | 提供透传数据的能力               |
+| API            | status |                              quick start                              |                               desc                             |
+| -------------- | :----: | :-------------------------------------------------------------------: | -------------------------------- |
+| State          |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/state/start)         |     提供读写 KV 模型存储的数据的能力 |
+| Pub/Sub        |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/pubsub/start)        |     提供消息的发布/订阅能力          |
+| Service Invoke |   ✅    |       [demo](https://mosn.io/layotto/#/zh/start/rpc/helloworld)       |      通过 MOSN 进行服务调用           |
+| Config         |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/configuration/start-apollo) |   提供配置增删改查及订阅的能力     |
+| Lock           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/lock/start)         |    提供 lock/unlock 分布式锁的实现  |
+| Sequencer      |   ✅    |      [demo](https://mosn.io/layotto/#/zh/start/sequencer/start)       |  提供获取分布式自增 ID 的能力     |
+| File           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/file/start)         |   提供访问文件的能力               |
+| Binding        |   ✅    |                                 TODO                                  |  提供透传数据的能力               |
 
 ### Service Mesh
 
