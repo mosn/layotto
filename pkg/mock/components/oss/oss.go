@@ -11,8 +11,6 @@ import (
 	"mosn.io/layotto/components/oss"
 
 	gomock "github.com/golang/mock/gomock"
-
-	file "mosn.io/layotto/components/file"
 )
 
 // MockOss is a mock of Oss interface.
@@ -233,7 +231,7 @@ func (mr *MockOssMockRecorder) InitClient(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // InitConfig mocks base method.
-func (m *MockOss) InitConfig(arg0 context.Context, arg1 *file.OssConfig) error {
+func (m *MockOss) InitConfig(arg0 context.Context, arg1 *oss.OssConfig) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InitConfig", arg0, arg1)
 	ret0, _ := ret[0].(error)
