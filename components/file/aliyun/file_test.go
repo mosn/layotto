@@ -41,7 +41,7 @@ const (
 
 func TestInit(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudFile()
+	oss := NewAliyunFile()
 	err := oss.Init(context.TODO(), &fc)
 	assert.Equal(t, err.Error(), "invalid argument")
 	fc.Metadata = []byte(data)
@@ -70,7 +70,7 @@ func TestSelectClient(t *testing.T) {
 
 func TestGetBucket(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudFile()
+	oss := NewAliyunFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
@@ -93,7 +93,7 @@ func TestGetBucket(t *testing.T) {
 
 func TestGetClient(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudFile()
+	oss := NewAliyunFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
@@ -114,7 +114,7 @@ func TestGetClient(t *testing.T) {
 
 func TestCheckMetadata(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudFile()
+	oss := NewAliyunFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
@@ -137,7 +137,7 @@ func TestCheckMetadata(t *testing.T) {
 
 func TestPut(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudFile()
+	oss := NewAliyunFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
@@ -155,7 +155,7 @@ func TestPut(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudFile()
+	oss := NewAliyunFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
@@ -176,7 +176,7 @@ func TestGet(t *testing.T) {
 
 func TestStat(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudFile()
+	oss := NewAliyunFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
@@ -197,7 +197,7 @@ func TestStat(t *testing.T) {
 
 func TestList(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudFile()
+	oss := NewAliyunFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
@@ -219,7 +219,7 @@ func TestList(t *testing.T) {
 
 func TestDel(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliCloudFile()
+	oss := NewAliyunFile()
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)

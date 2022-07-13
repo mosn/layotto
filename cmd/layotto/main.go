@@ -22,6 +22,8 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/mosn/pkg/istio"
+
 	"mosn.io/layotto/components/file/aliyun"
 
 	"github.com/dapr/components-contrib/secretstores"
@@ -201,6 +203,7 @@ var loggerForDaprComp = logger.NewLogger("reuse.dapr.component")
 
 // GitVersion mosn version is specified by latest tag
 var GitVersion = ""
+var IstioVersion = "1.10.6"
 
 func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
@@ -263,7 +266,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliyunOSS", aliyun.NewAliCloudFile),
+			file.NewFileFactory("aliyunOSS", aliyun.NewAliyunFile),
 			file.NewFileFactory("minioOSS", minio.NewMinioOss),
 			file.NewFileFactory("awsOSS", aws.NewAwsFile),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
@@ -466,6 +469,8 @@ func registerAppInfo(app *cli.App) {
 	appInfo.Version = app.Version
 	appInfo.Compiled = app.Compiled
 	actuator.SetAppInfoSingleton(appInfo)
+	// set istio version
+	istio.IstioVersion = IstioVersion
 }
 
 func newRuntimeApp(startCmd *cli.Command) *cli.App {

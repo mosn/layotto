@@ -23,9 +23,10 @@ import (
 	"time"
 
 	"mosn.io/layotto/components/file/aliyun"
-	"mosn.io/layotto/components/file/local"
-
-	"mosn.io/mosn/pkg/istio"
+	"mosn.io/layotto/components/file/aws"
+	"mosn.io/layotto/components/file/minio"
+	"mosn.io/layotto/components/file/qiniu"
+	"mosn.io/layotto/components/file/tencentcloud"
 
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
@@ -37,20 +38,10 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 
+	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
 
-	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
-
-	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
-	"mosn.io/layotto/components/custom"
-	"mosn.io/layotto/components/file/aws"
-	"mosn.io/layotto/components/file/minio"
-	"mosn.io/layotto/components/file/qiniu"
-	"mosn.io/layotto/components/file/tencentcloud"
-	"mosn.io/layotto/pkg/grpc/dapr"
-	"mosn.io/layotto/pkg/grpc/default_api"
-	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
-	_ "mosn.io/layotto/pkg/wasm"
+	"mosn.io/layotto/components/file/local"
 
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
 
@@ -148,6 +139,7 @@ import (
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	_ "mosn.io/mosn/pkg/filter/network/proxy"
 	_ "mosn.io/mosn/pkg/filter/stream/flowcontrol"
+	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
 	_ "mosn.io/mosn/pkg/metrics/sink"
 	_ "mosn.io/mosn/pkg/metrics/sink/prometheus"
 	_ "mosn.io/mosn/pkg/network"
@@ -155,13 +147,11 @@ import (
 	_ "mosn.io/mosn/pkg/wasm/runtime/wasmer"
 	_ "mosn.io/pkg/buffer"
 
-	_ "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/router/v3"
-	_ "mosn.io/mosn/istio/istio1106"
-	_ "mosn.io/mosn/istio/istio1106/filter/stream/jwtauthn"
-	_ "mosn.io/mosn/istio/istio1106/filter/stream/mixer"
-	_ "mosn.io/mosn/istio/istio1106/filter/stream/stats"
-	_ "mosn.io/mosn/istio/istio1106/sds"
-	_ "mosn.io/mosn/istio/istio1106/xds"
+	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
+	l8_grpc "mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/runtime"
+	_ "mosn.io/layotto/pkg/wasm"
+
 	_ "mosn.io/mosn/pkg/filter/listener/originaldst"
 	_ "mosn.io/mosn/pkg/filter/network/connectionmanager"
 	_ "mosn.io/mosn/pkg/filter/network/streamproxy"
@@ -194,11 +184,6 @@ import (
 	_ "mosn.io/mosn/pkg/upstream/healthcheck"
 	_ "mosn.io/mosn/pkg/upstream/servicediscovery/dubbod"
 
-	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
-	l8_grpc "mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/pkg/runtime"
-
-	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
 )
 
@@ -207,7 +192,6 @@ var loggerForDaprComp = logger.NewLogger("reuse.dapr.component")
 
 // GitVersion mosn version is specified by latest tag
 var GitVersion = ""
-var IstioVersion = "1.10.6"
 
 func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
@@ -250,15 +234,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		}),
 		// register your gRPC API here
 		runtime.WithGrpcAPI(
-			// default GrpcAPI
 			default_api.NewGrpcAPI,
-			// a demo to show how to register your own gRPC API
-			helloworld_api.NewHelloWorldAPI,
-			// support Dapr API
-			// Currently it only support Dapr's InvokeService,secret API,state API and InvokeBinding API.
-			// Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.
-			dapr.NewDaprAPI_Alpha,
-			s3ext.NewS3Server,
 		),
 		// Hello
 		runtime.WithHelloFactory(
@@ -277,7 +253,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliyunOSS", aliyun.NewAliyunFile),
+			file.NewFileFactory("aliOSS", aliyun.NewAliyunFile),
 			file.NewFileFactory("minioOSS", minio.NewMinioOss),
 			file.NewFileFactory("awsOSS", aws.NewAwsFile),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
@@ -461,12 +437,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			secretstores_loader.NewFactory("local.env", func() secretstores.SecretStore {
 				return secretstore_env.NewEnvSecretStore(loggerForDaprComp)
 			}),
-		), // Custom components
-		runtime.WithCustomComponentFactory("helloworld",
-			custom.NewComponentFactory("in-memory", component.NewInMemoryHelloWorld),
-			custom.NewComponentFactory("goodbye", component.NewSayGoodbyeHelloWorld),
-		),
-	)
+		))
 	return server, err
 }
 
@@ -482,8 +453,6 @@ func registerAppInfo(app *cli.App) {
 	appInfo.Version = app.Version
 	appInfo.Compiled = app.Compiled
 	actuator.SetAppInfoSingleton(appInfo)
-	// set istio version
-	istio.IstioVersion = IstioVersion
 }
 
 func newRuntimeApp(startCmd *cli.Command) *cli.App {

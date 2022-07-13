@@ -42,7 +42,7 @@ type AliyunOSS struct {
 	rawData json.RawMessage
 }
 
-func NewAliCloudFile() file.File {
+func NewAliyunFile() file.File {
 	oss := &AliyunOSS{client: make(map[string]*oss.Client)}
 	return oss
 }

@@ -24,6 +24,8 @@
 }
 ```
 
+一个示例是 [config_ref_example.json](https://github.com/mosn/layotto/blob/main/configs/config_ref_example.json)
+
 ## 快速开始
 
 该示例展示了如何注入redis password到sequencer组件
