@@ -80,6 +80,7 @@
             - [Secret Store](zh/component_specs/secret/common.md)
             - [自定义组件](zh/component_specs/custom/common.md)
     - [如何部署、升级 Layotto](zh/operation/)
+    - [如何本地开发、本地调试](zh/operation/local.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
