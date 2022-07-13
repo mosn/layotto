@@ -24,32 +24,32 @@ import (
 	"io"
 	"strconv"
 
-	"mosn.io/layotto/components/file/util"
-
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 
 	"mosn.io/layotto/components/file"
+	"mosn.io/layotto/components/file/util"
+	"mosn.io/layotto/components/pkg/utils"
 )
 
 const (
 	storageTypeKey = "storageType"
 )
 
-// AliyunOSS is a binding for an AliCloud OSS storage bucketKey
-type AliyunOSS struct {
+// AliyunFile is a binding for an AliCloud OSS storage bucketKey
+type AliyunFile struct {
 	client  map[string]*oss.Client
 	method  string
 	rawData json.RawMessage
 }
 
 func NewAliyunFile() file.File {
-	oss := &AliyunOSS{client: make(map[string]*oss.Client)}
+	oss := &AliyunFile{client: make(map[string]*oss.Client)}
 	return oss
 }
 
 // Init does metadata parsing and connection creation
-func (s *AliyunOSS) Init(ctx context.Context, metadata *file.FileConfig) error {
-	m := make([]*file.OssMetadata, 0)
+func (s *AliyunFile) Init(ctx context.Context, metadata *file.FileConfig) error {
+	m := make([]*utils.OssMetadata, 0)
 	err := json.Unmarshal(metadata.Metadata, &m)
 	if err != nil {
 		return file.ErrInvalid
@@ -75,7 +75,7 @@ func (s *AliyunOSS) Init(ctx context.Context, metadata *file.FileConfig) error {
 	return nil
 }
 
-func (s *AliyunOSS) Put(ctx context.Context, st *file.PutFileStu) error {
+func (s *AliyunFile) Put(ctx context.Context, st *file.PutFileStu) error {
 	storageType := st.Metadata[storageTypeKey]
 	if storageType == "" {
 		storageType = "Standard"
@@ -96,7 +96,7 @@ func (s *AliyunOSS) Put(ctx context.Context, st *file.PutFileStu) error {
 	return nil
 }
 
-func (s *AliyunOSS) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, error) {
+func (s *AliyunFile) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, error) {
 	bucket, err := s.getBucket(st.FileName, st.Metadata)
 	if err != nil {
 		return nil, fmt.Errorf("get file[%s] fail, err: %s", st.FileName, err.Error())
@@ -109,7 +109,7 @@ func (s *AliyunOSS) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser
 	return bucket.GetObject(fileNameWithoutBucket)
 }
 
-func (s *AliyunOSS) List(ctx context.Context, request *file.ListRequest) (*file.ListResp, error) {
+func (s *AliyunFile) List(ctx context.Context, request *file.ListRequest) (*file.ListResp, error) {
 	bucket, err := s.getBucket(request.DirectoryName, request.Metadata)
 	if err != nil {
 		return nil, fmt.Errorf("list directory[%s] fail, err: %s", request.DirectoryName, err.Error())
@@ -136,7 +136,7 @@ func (s *AliyunOSS) List(ctx context.Context, request *file.ListRequest) (*file.
 	return resp, nil
 }
 
-func (s *AliyunOSS) Del(ctx context.Context, request *file.DelRequest) error {
+func (s *AliyunFile) Del(ctx context.Context, request *file.DelRequest) error {
 	bucket, err := s.getBucket(request.FileName, request.Metadata)
 	if err != nil {
 		return fmt.Errorf("del file[%s] fail, err: %s", request.FileName, err.Error())
@@ -152,7 +152,7 @@ func (s *AliyunOSS) Del(ctx context.Context, request *file.DelRequest) error {
 	return nil
 }
 
-func (s *AliyunOSS) Stat(ctx context.Context, request *file.FileMetaRequest) (*file.FileMetaResp, error) {
+func (s *AliyunFile) Stat(ctx context.Context, request *file.FileMetaRequest) (*file.FileMetaResp, error) {
 	resp := &file.FileMetaResp{}
 	resp.Metadata = make(map[string][]string)
 	bucket, err := s.getBucket(request.FileName, request.Metadata)
@@ -192,14 +192,14 @@ func (s *AliyunOSS) Stat(ctx context.Context, request *file.FileMetaRequest) (*f
 	return resp, nil
 }
 
-func (s *AliyunOSS) checkMetadata(m *file.OssMetadata) bool {
+func (s *AliyunFile) checkMetadata(m *utils.OssMetadata) bool {
 	if m.AccessKeySecret == "" || m.Endpoint == "" || m.AccessKeyID == "" {
 		return false
 	}
 	return true
 }
 
-func (s *AliyunOSS) getClient(metadata *file.OssMetadata) (*oss.Client, error) {
+func (s *AliyunFile) getClient(metadata *utils.OssMetadata) (*oss.Client, error) {
 	client, err := oss.New(metadata.Endpoint, metadata.AccessKeyID, metadata.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func (s *AliyunOSS) getClient(metadata *file.OssMetadata) (*oss.Client, error) {
 	return client, nil
 }
 
-func (s *AliyunOSS) getBucket(fileName string, metaData map[string]string) (*oss.Bucket, error) {
+func (s *AliyunFile) getBucket(fileName string, metaData map[string]string) (*oss.Bucket, error) {
 	var ossClient *oss.Client
 	var err error
 	// get oss bucket
@@ -227,7 +227,7 @@ func (s *AliyunOSS) getBucket(fileName string, metaData map[string]string) (*oss
 	return bucket, nil
 }
 
-func (s *AliyunOSS) selectClient(uid, bucket string) (*oss.Client, error) {
+func (s *AliyunFile) selectClient(uid, bucket string) (*oss.Client, error) {
 	// 1. if user specify client uid, use specify client first
 	if uid != "" {
 		if client, ok := s.client[uid]; ok {
@@ -244,5 +244,5 @@ func (s *AliyunOSS) selectClient(uid, bucket string) (*oss.Client, error) {
 			return client, nil
 		}
 	}
-	return nil, file.ErrNotSpecifyEndpoint
+	return nil, utils.ErrNotSpecifyEndpoint
 }

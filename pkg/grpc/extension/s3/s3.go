@@ -22,13 +22,14 @@ import (
 	"io"
 	"sync"
 
+	l8s3 "mosn.io/layotto/components/oss"
+
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"mosn.io/pkg/log"
 
-	l8s3 "mosn.io/layotto/components/file"
 	"mosn.io/layotto/pkg/grpc"
 	s3 "mosn.io/layotto/spec/proto/extension/v1"
 )

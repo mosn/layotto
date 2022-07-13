@@ -23,6 +23,8 @@ import (
 	"strings"
 	"time"
 
+	"mosn.io/layotto/components/oss"
+
 	"mosn.io/layotto/pkg/runtime/ref"
 
 	"github.com/dapr/components-contrib/secretstores"
@@ -69,7 +71,7 @@ type MosnRuntime struct {
 	lockRegistry            runtime_lock.Registry
 	sequencerRegistry       runtime_sequencer.Registry
 	fileRegistry            file.Registry
-	ossRegistry             file.OssRegistry
+	ossRegistry             oss.OssRegistry
 	bindingsRegistry        mbindings.Registry
 	secretStoresRegistry    msecretstores.Registry
 	customComponentRegistry custom.Registry
@@ -83,7 +85,7 @@ type MosnRuntime struct {
 	// state implementations store here are already initialized
 	states          map[string]state.Store
 	files           map[string]file.File
-	oss             map[string]file.Oss
+	oss             map[string]oss.Oss
 	locks           map[string]lock.LockStore
 	sequencers      map[string]sequencer.Store
 	outputBindings  map[string]bindings.OutputBinding
@@ -115,7 +117,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		stateRegistry:           runtime_state.NewRegistry(info),
 		bindingsRegistry:        mbindings.NewRegistry(info),
 		fileRegistry:            file.NewRegistry(info),
-		ossRegistry:             file.NewOssRegistry(info),
+		ossRegistry:             oss.NewOssRegistry(info),
 		lockRegistry:            runtime_lock.NewRegistry(info),
 		sequencerRegistry:       runtime_sequencer.NewRegistry(info),
 		secretStoresRegistry:    msecretstores.NewRegistry(info),
@@ -126,7 +128,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		pubSubs:                 make(map[string]pubsub.PubSub),
 		states:                  make(map[string]state.Store),
 		files:                   make(map[string]file.File),
-		oss:                     make(map[string]file.Oss),
+		oss:                     make(map[string]oss.Oss),
 		locks:                   make(map[string]lock.LockStore),
 		sequencers:              make(map[string]sequencer.Store),
 		outputBindings:          make(map[string]bindings.OutputBinding),
@@ -409,7 +411,7 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 	return nil
 }
 
-func (m *MosnRuntime) initOss(oss ...*file.OssFactory) error {
+func (m *MosnRuntime) initOss(oss ...*oss.OssFactory) error {
 	log.DefaultLogger.Infof("[runtime] init file service")
 
 	// register all oss store services implementation

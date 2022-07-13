@@ -21,25 +21,8 @@ import (
 	"io"
 )
 
-// OssMetadata wraps the configuration of oss implementation
-type OssMetadata struct {
-	Buckets         []string `json:"buckets"` // contained buckets in this oss client
-	Uid             string   `json:"uid"`     // specify the uid of oss client
-	Endpoint        string   `json:"endpoint"`
-	AccessKeyID     string   `json:"accessKeyID"`
-	AccessKeySecret string   `json:"accessKeySecret"`
-	Region          string   `json:"region"`
-}
-
 // FileConfig wraps configuration for a file implementation
 type FileConfig struct {
-	Method   string          `json:"method"`
-	Metadata json.RawMessage `json:"metadata"`
-	Type     string          `json:"type"`
-}
-
-// FileConfig wraps configuration for a file implementation
-type OssConfig struct {
 	Method   string          `json:"method"`
 	Metadata json.RawMessage `json:"metadata"`
 	Type     string          `json:"type"`

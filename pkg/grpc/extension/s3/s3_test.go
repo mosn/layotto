@@ -21,6 +21,8 @@ import (
 	"io"
 	"testing"
 
+	l8s3 "mosn.io/layotto/components/oss"
+
 	mockoss "mosn.io/layotto/pkg/mock/components/oss"
 
 	lgrpc "google.golang.org/grpc"
@@ -33,9 +35,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	s3 "mosn.io/layotto/spec/proto/extension/v1"
-
-	"mosn.io/layotto/components/file"
-	l8s3 "mosn.io/layotto/components/file"
 
 	"github.com/golang/mock/gomock"
 
@@ -59,7 +58,7 @@ func (m *MockDataStream) Close() error {
 //TestInitClient
 func TestInitClient(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -89,7 +88,7 @@ func TestInitClient(t *testing.T) {
 // TestGetObject
 func TestGetObject(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -104,7 +103,7 @@ func TestGetObject(t *testing.T) {
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
 	iobuf := buffer.NewIoBufferBytes([]byte("hello"))
 	dataStream := &MockDataStream{iobuf}
-	output := &file.GetObjectOutput{Etag: "tag"}
+	output := &l8s3.GetObjectOutput{Etag: "tag"}
 	output.DataStream = dataStream
 	mockServer.EXPECT().Context().Return(ctx)
 	mockossServer.EXPECT().GetObject(ctx, &l8s3.GetObjectInput{Bucket: "layotto", Key: "object"}).Return(output, nil)
@@ -117,7 +116,7 @@ func TestGetObject(t *testing.T) {
 // TestPutObject
 func TestPutObject(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -133,7 +132,7 @@ func TestPutObject(t *testing.T) {
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
 
 	putObjectReq.StoreName = MOCKSERVER
-	output := &file.PutObjectOutput{ETag: "tag"}
+	output := &l8s3.PutObjectOutput{ETag: "tag"}
 	mockStream.EXPECT().Context().Return(ctx)
 	mockStream.EXPECT().Recv().Return(putObjectReq, nil)
 	mockStream.EXPECT().SendAndClose(&s3.PutObjectOutput{Etag: "tag"}).Times(1)
@@ -152,7 +151,7 @@ func TestPutObject(t *testing.T) {
 // TestUploadPart
 func TestUploadPart(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -168,7 +167,7 @@ func TestUploadPart(t *testing.T) {
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
 
 	UploadPartReq.StoreName = MOCKSERVER
-	output := &file.UploadPartOutput{ETag: "tag"}
+	output := &l8s3.UploadPartOutput{ETag: "tag"}
 	mockStream.EXPECT().Context().Return(ctx)
 	mockStream.EXPECT().Recv().Return(UploadPartReq, nil)
 	mockStream.EXPECT().SendAndClose(&s3.UploadPartOutput{Etag: "tag"}).Times(1)
@@ -187,7 +186,7 @@ func TestUploadPart(t *testing.T) {
 // TestAppendObject
 func TestAppendObject(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -203,7 +202,7 @@ func TestAppendObject(t *testing.T) {
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
 
 	req.StoreName = MOCKSERVER
-	output := &file.AppendObjectOutput{AppendPosition: 123}
+	output := &l8s3.AppendObjectOutput{AppendPosition: 123}
 	mockStream.EXPECT().Context().Return(ctx)
 	mockStream.EXPECT().Recv().Return(req, nil)
 	mockStream.EXPECT().SendAndClose(&s3.AppendObjectOutput{AppendPosition: 123}).Times(1)
@@ -222,7 +221,7 @@ func TestAppendObject(t *testing.T) {
 // TestDeleteObject
 func TestDeleteObject(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -245,7 +244,7 @@ func TestDeleteObject(t *testing.T) {
 //TestPutObjectTagging
 func TestPutObjectTagging(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -266,7 +265,7 @@ func TestPutObjectTagging(t *testing.T) {
 //TestDeleteObjectTagging
 func TestDeleteObjectTagging(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -287,7 +286,7 @@ func TestDeleteObjectTagging(t *testing.T) {
 //TestGetObjectTagging
 func TestGetObjectTagging(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -310,7 +309,7 @@ func TestGetObjectTagging(t *testing.T) {
 //TestCopyObject
 func TestCopyObject(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -332,7 +331,7 @@ func TestCopyObject(t *testing.T) {
 //TestDeleteObjects
 func TestDeleteObjects(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -355,7 +354,7 @@ func TestDeleteObjects(t *testing.T) {
 //TestListObjects
 func TestListObjects(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -399,7 +398,7 @@ func TestListObjects(t *testing.T) {
 //TestGetObjectCannedAcl
 func TestGetObjectCannedAcl(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -433,7 +432,7 @@ func TestGetObjectCannedAcl(t *testing.T) {
 //TestPutObjectCannedAcl
 func TestPutObjectCannedAcl(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -466,7 +465,7 @@ func TestPutObjectCannedAcl(t *testing.T) {
 //TestRestoreObject
 func TestRestoreObject(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -500,7 +499,7 @@ func TestRestoreObject(t *testing.T) {
 //TestCreateMultipartUpload
 func TestCreateMultipartUpload(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -533,7 +532,7 @@ func TestCreateMultipartUpload(t *testing.T) {
 //TestUploadPartCopy
 func TestUploadPartCopy(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -566,7 +565,7 @@ func TestUploadPartCopy(t *testing.T) {
 //TestCompleteMultipartUpload
 func TestCompleteMultipartUpload(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -605,7 +604,7 @@ func TestCompleteMultipartUpload(t *testing.T) {
 //TestAbortMultipartUpload
 func TestAbortMultipartUpload(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -640,7 +639,7 @@ func TestAbortMultipartUpload(t *testing.T) {
 //TestListMultipartUploads
 func TestListMultipartUploads(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -671,7 +670,7 @@ func TestListMultipartUploads(t *testing.T) {
 //TestListObjectVersions
 func TestListObjectVersions(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -704,7 +703,7 @@ func TestListObjectVersions(t *testing.T) {
 //TestHeadObject
 func TestHeadObject(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -737,7 +736,7 @@ func TestHeadObject(t *testing.T) {
 //TestIsObjectExist
 func TestIsObjectExist(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -770,7 +769,7 @@ func TestIsObjectExist(t *testing.T) {
 //TestSignURL
 func TestSignURL(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -803,7 +802,7 @@ func TestSignURL(t *testing.T) {
 //TestUpdateDownLoadBandwidthRateLimit
 func TestUpdateDownLoadBandwidthRateLimit(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -830,7 +829,7 @@ func TestUpdateDownLoadBandwidthRateLimit(t *testing.T) {
 //TestUpdateUpLoadBandwidthRateLimit
 func TestUpdateUpLoadBandwidthRateLimit(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer
@@ -857,7 +856,7 @@ func TestUpdateUpLoadBandwidthRateLimit(t *testing.T) {
 //TestListParts
 func TestListParts(t *testing.T) {
 	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]file.Oss{}}
+	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
 	ctrl := gomock.NewController(t)
 	mockossServer := mockoss.NewMockOss(ctrl)
 	ac.Oss[MOCKSERVER] = mockossServer

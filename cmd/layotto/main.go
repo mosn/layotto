@@ -22,6 +22,12 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/oss"
+
+	aws2 "mosn.io/layotto/components/oss/aws"
+
+	aliyun2 "mosn.io/layotto/components/oss/aliyun"
+
 	"mosn.io/mosn/pkg/istio"
 
 	"mosn.io/layotto/components/file/aliyun"
@@ -274,8 +280,8 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
 		),
 		runtime.WithOssFactory(
-			file.NewOssFactory("awsOSS", aws.NewAwsOss),
-			file.NewOssFactory("aliyunOSS", aliyun.NewAliyunOss),
+			oss.NewOssFactory("awsOSS", aws2.NewAwsOss),
+			oss.NewOssFactory("aliyunOSS", aliyun2.NewAliyunOss),
 		),
 		// PubSub
 		runtime.WithPubSubFactory(

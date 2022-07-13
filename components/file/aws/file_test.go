@@ -22,6 +22,10 @@ import (
 	"reflect"
 	"testing"
 
+	"mosn.io/layotto/components/pkg/utils"
+
+	"mosn.io/layotto/components/oss"
+
 	"github.com/jinzhu/copier"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -62,7 +66,7 @@ func TestAwsOss_Init(t *testing.T) {
 func TestAwsOss_SelectClient(t *testing.T) {
 	oss := &AwsOss{
 		client: make(map[string]*s3.Client),
-		meta:   make(map[string]*file.OssMetadata),
+		meta:   make(map[string]*utils.OssMetadata),
 	}
 	err := oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
 	assert.Equal(t, nil, err)
@@ -94,7 +98,7 @@ func TestAwsOss_SelectClient(t *testing.T) {
 }
 
 func TestAwsOss_IsAwsMetaValid(t *testing.T) {
-	mt := &file.OssMetadata{}
+	mt := &utils.OssMetadata{}
 	a := AwsOss{}
 	assert.False(t, a.isAwsMetaValid(mt))
 	mt.AccessKeyID = "a"
@@ -149,7 +153,7 @@ type fun = func() (string, error)
 
 func TestCopier(t *testing.T) {
 	hello := "hello"
-	target := &file.ListObjectsOutput{}
+	target := &oss.ListObjectsOutput{}
 	source := &s3.ListObjectsOutput{Delimiter: &hello, EncodingType: "encoding type"}
 	re := reflect.TypeOf(source)
 	h, _ := re.Elem().FieldByName("EncodingType")

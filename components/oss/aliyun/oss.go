@@ -21,17 +21,27 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"mosn.io/layotto/components/oss/factory"
 
-	"mosn.io/layotto/components/file"
-	"mosn.io/layotto/components/file/factory"
+	"mosn.io/layotto/components/pkg/utils"
+
+	l8oss "mosn.io/layotto/components/oss"
+
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
 const (
 	DefaultClientInitFunc = "aliyun"
 )
 
-func NewAliyunOss() file.Oss {
+// AliyunOSS is a binding for an aliyun OSS storage bucketKey
+type AliyunOSS struct {
+	client  map[string]*oss.Client
+	method  string
+	rawData json.RawMessage
+}
+
+func NewAliyunOss() l8oss.Oss {
 	return &AliyunOSS{
 		client: make(map[string]*oss.Client),
 	}
@@ -42,11 +52,11 @@ func init() {
 }
 
 func AliyunDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (map[string]interface{}, error) {
-	m := make([]*file.OssMetadata, 0)
+	m := make([]*utils.OssMetadata, 0)
 	clients := make(map[string]interface{})
 	err := json.Unmarshal(staticConf, &m)
 	if err != nil {
-		return nil, file.ErrInvalid
+		return nil, l8oss.ErrInvalid
 	}
 	for _, v := range m {
 		client, err := oss.New(v.Endpoint, v.AccessKeyID, v.AccessKeySecret)
@@ -64,13 +74,13 @@ func AliyunDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string
 	return clients, nil
 }
 
-func (a *AliyunOSS) InitConfig(ctx context.Context, config *file.OssConfig) error {
+func (a *AliyunOSS) InitConfig(ctx context.Context, config *l8oss.OssConfig) error {
 	a.method = config.Method
 	a.rawData = config.Metadata
 	return nil
 }
 
-func (a *AliyunOSS) InitClient(ctx context.Context, req *file.InitRequest) error {
+func (a *AliyunOSS) InitClient(ctx context.Context, req *l8oss.InitRequest) error {
 	if a.method == "" {
 		a.method = DefaultClientInitFunc
 	}
@@ -85,7 +95,7 @@ func (a *AliyunOSS) InitClient(ctx context.Context, req *file.InitRequest) error
 	return nil
 }
 
-func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (*file.GetObjectOutput, error) {
+func (a *AliyunOSS) GetObject(ctx context.Context, req *l8oss.GetObjectInput) (*l8oss.GetObjectOutput, error) {
 	client, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -97,7 +107,7 @@ func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (*f
 	//user can use SignedUrl to get file without ak、sk
 	if req.SignedUrl != "" {
 		body, err := bucket.GetObjectWithURL(req.SignedUrl)
-		return &file.GetObjectOutput{DataStream: body}, err
+		return &l8oss.GetObjectOutput{DataStream: body}, err
 	}
 	body, err := bucket.GetObject(req.Key,
 		IfUnmodifiedSince(req.IfUnmodifiedSince),
@@ -108,10 +118,10 @@ func (a *AliyunOSS) GetObject(ctx context.Context, req *file.GetObjectInput) (*f
 		AcceptEncoding(req.AcceptEncoding),
 	)
 
-	return &file.GetObjectOutput{DataStream: body}, err
+	return &l8oss.GetObjectOutput{DataStream: body}, err
 }
 
-func (a *AliyunOSS) PutObject(ctx context.Context, req *file.PutObjectInput) (*file.PutObjectOutput, error) {
+func (a *AliyunOSS) PutObject(ctx context.Context, req *l8oss.PutObjectInput) (*l8oss.PutObjectOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -143,10 +153,10 @@ func (a *AliyunOSS) PutObject(ctx context.Context, req *file.PutObjectInput) (*f
 			metaOption...,
 		)
 	}
-	return &file.PutObjectOutput{}, err
+	return &l8oss.PutObjectOutput{}, err
 }
 
-func (a *AliyunOSS) DeleteObject(ctx context.Context, req *file.DeleteObjectInput) (*file.DeleteObjectOutput, error) {
+func (a *AliyunOSS) DeleteObject(ctx context.Context, req *l8oss.DeleteObjectInput) (*l8oss.DeleteObjectOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -156,9 +166,9 @@ func (a *AliyunOSS) DeleteObject(ctx context.Context, req *file.DeleteObjectInpu
 		return nil, err
 	}
 	err = bucket.DeleteObject(req.Key, RequestPayer(req.RequestPayer), VersionId(req.VersionId))
-	return &file.DeleteObjectOutput{}, err
+	return &l8oss.DeleteObjectOutput{}, err
 }
-func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *file.DeleteObjectsInput) (*file.DeleteObjectsOutput, error) {
+func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *l8oss.DeleteObjectsInput) (*l8oss.DeleteObjectsOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -176,15 +186,15 @@ func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *file.DeleteObjectsIn
 	if err != nil {
 		return nil, err
 	}
-	out := &file.DeleteObjectsOutput{}
+	out := &l8oss.DeleteObjectsOutput{}
 	for _, v := range resp.DeletedObjectsDetail {
-		object := &file.DeletedObject{Key: v.Key, VersionId: v.VersionId, DeleteMarker: v.DeleteMarker, DeleteMarkerVersionId: v.DeleteMarkerVersionId}
+		object := &l8oss.DeletedObject{Key: v.Key, VersionId: v.VersionId, DeleteMarker: v.DeleteMarker, DeleteMarkerVersionId: v.DeleteMarkerVersionId}
 		out.Deleted = append(out.Deleted, object)
 	}
 	return out, err
 }
 
-func (a *AliyunOSS) PutObjectTagging(ctx context.Context, req *file.PutObjectTaggingInput) (*file.PutObjectTaggingOutput, error) {
+func (a *AliyunOSS) PutObjectTagging(ctx context.Context, req *l8oss.PutObjectTaggingInput) (*l8oss.PutObjectTaggingOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -202,7 +212,7 @@ func (a *AliyunOSS) PutObjectTagging(ctx context.Context, req *file.PutObjectTag
 	return nil, err
 }
 
-func (a *AliyunOSS) DeleteObjectTagging(ctx context.Context, req *file.DeleteObjectTaggingInput) (*file.DeleteObjectTaggingOutput, error) {
+func (a *AliyunOSS) DeleteObjectTagging(ctx context.Context, req *l8oss.DeleteObjectTaggingInput) (*l8oss.DeleteObjectTaggingOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -215,7 +225,7 @@ func (a *AliyunOSS) DeleteObjectTagging(ctx context.Context, req *file.DeleteObj
 	return nil, err
 }
 
-func (a *AliyunOSS) GetObjectTagging(ctx context.Context, req *file.GetObjectTaggingInput) (*file.GetObjectTaggingOutput, error) {
+func (a *AliyunOSS) GetObjectTagging(ctx context.Context, req *l8oss.GetObjectTaggingInput) (*l8oss.GetObjectTaggingOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -228,14 +238,14 @@ func (a *AliyunOSS) GetObjectTagging(ctx context.Context, req *file.GetObjectTag
 	if err != nil {
 		return nil, err
 	}
-	out := &file.GetObjectTaggingOutput{Tags: map[string]string{}}
+	out := &l8oss.GetObjectTaggingOutput{Tags: map[string]string{}}
 	for _, v := range resp.Tags {
 		out.Tags[v.Key] = v.Value
 	}
 	return out, err
 }
 
-func (a *AliyunOSS) GetObjectCannedAcl(ctx context.Context, req *file.GetObjectCannedAclInput) (*file.GetObjectCannedAclOutput, error) {
+func (a *AliyunOSS) GetObjectCannedAcl(ctx context.Context, req *l8oss.GetObjectCannedAclInput) (*l8oss.GetObjectCannedAclOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -248,10 +258,10 @@ func (a *AliyunOSS) GetObjectCannedAcl(ctx context.Context, req *file.GetObjectC
 	if err != nil {
 		return nil, err
 	}
-	output := &file.GetObjectCannedAclOutput{CannedAcl: resp.ACL, Owner: &file.Owner{DisplayName: resp.Owner.DisplayName, ID: resp.Owner.ID}}
+	output := &l8oss.GetObjectCannedAclOutput{CannedAcl: resp.ACL, Owner: &l8oss.Owner{DisplayName: resp.Owner.DisplayName, ID: resp.Owner.ID}}
 	return output, err
 }
-func (a *AliyunOSS) PutObjectCannedAcl(ctx context.Context, req *file.PutObjectCannedAclInput) (*file.PutObjectCannedAclOutput, error) {
+func (a *AliyunOSS) PutObjectCannedAcl(ctx context.Context, req *l8oss.PutObjectCannedAclInput) (*l8oss.PutObjectCannedAclOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -261,10 +271,10 @@ func (a *AliyunOSS) PutObjectCannedAcl(ctx context.Context, req *file.PutObjectC
 		return nil, err
 	}
 	err = bucket.SetObjectACL(req.Key, oss.ACLType(req.Acl))
-	output := &file.PutObjectCannedAclOutput{}
+	output := &l8oss.PutObjectCannedAclOutput{}
 	return output, err
 }
-func (a *AliyunOSS) ListObjects(ctx context.Context, req *file.ListObjectsInput) (*file.ListObjectsOutput, error) {
+func (a *AliyunOSS) ListObjects(ctx context.Context, req *l8oss.ListObjectsInput) (*l8oss.ListObjectsOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -277,7 +287,7 @@ func (a *AliyunOSS) ListObjects(ctx context.Context, req *file.ListObjectsInput)
 	if err != nil {
 		return nil, err
 	}
-	out := &file.ListObjectsOutput{
+	out := &l8oss.ListObjectsOutput{
 		CommonPrefixes: resp.CommonPrefixes,
 		Delimiter:      resp.Delimiter,
 		IsTruncated:    resp.IsTruncated,
@@ -287,11 +297,11 @@ func (a *AliyunOSS) ListObjects(ctx context.Context, req *file.ListObjectsInput)
 		Prefix:         resp.Prefix,
 	}
 	for _, v := range resp.Objects {
-		object := &file.Object{
+		object := &l8oss.Object{
 			ETag:         v.ETag,
 			Key:          v.Key,
 			LastModified: v.LastModified.Unix(),
-			Owner:        &file.Owner{ID: v.Owner.ID, DisplayName: v.Owner.DisplayName},
+			Owner:        &l8oss.Owner{ID: v.Owner.ID, DisplayName: v.Owner.DisplayName},
 			Size:         v.Size,
 			StorageClass: v.StorageClass,
 		}
@@ -299,7 +309,7 @@ func (a *AliyunOSS) ListObjects(ctx context.Context, req *file.ListObjectsInput)
 	}
 	return out, nil
 }
-func (a *AliyunOSS) CopyObject(ctx context.Context, req *file.CopyObjectInput) (*file.CopyObjectOutput, error) {
+func (a *AliyunOSS) CopyObject(ctx context.Context, req *l8oss.CopyObjectInput) (*l8oss.CopyObjectOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -319,11 +329,11 @@ func (a *AliyunOSS) CopyObject(ctx context.Context, req *file.CopyObjectInput) (
 	if err != nil {
 		return nil, err
 	}
-	out := &file.CopyObjectOutput{CopyObjectResult: &file.CopyObjectResult{ETag: resp.ETag, LastModified: resp.LastModified.Unix()}}
+	out := &l8oss.CopyObjectOutput{CopyObjectResult: &l8oss.CopyObjectResult{ETag: resp.ETag, LastModified: resp.LastModified.Unix()}}
 	return out, err
 }
 
-func (a *AliyunOSS) CreateMultipartUpload(ctx context.Context, req *file.CreateMultipartUploadInput) (*file.CreateMultipartUploadOutput, error) {
+func (a *AliyunOSS) CreateMultipartUpload(ctx context.Context, req *l8oss.CreateMultipartUploadInput) (*l8oss.CreateMultipartUploadOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -333,10 +343,10 @@ func (a *AliyunOSS) CreateMultipartUpload(ctx context.Context, req *file.CreateM
 		return nil, err
 	}
 	resp, err := bucket.InitiateMultipartUpload(req.Key)
-	output := &file.CreateMultipartUploadOutput{Bucket: resp.Bucket, Key: resp.Key, UploadId: resp.UploadID}
+	output := &l8oss.CreateMultipartUploadOutput{Bucket: resp.Bucket, Key: resp.Key, UploadId: resp.UploadID}
 	return output, err
 }
-func (a *AliyunOSS) UploadPart(ctx context.Context, req *file.UploadPartInput) (*file.UploadPartOutput, error) {
+func (a *AliyunOSS) UploadPart(ctx context.Context, req *l8oss.UploadPartInput) (*l8oss.UploadPartOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -350,10 +360,10 @@ func (a *AliyunOSS) UploadPart(ctx context.Context, req *file.UploadPartInput) (
 		req.DataStream,
 		req.ContentLength,
 		int(req.PartNumber))
-	output := &file.UploadPartOutput{ETag: resp.ETag}
+	output := &l8oss.UploadPartOutput{ETag: resp.ETag}
 	return output, err
 }
-func (a *AliyunOSS) UploadPartCopy(ctx context.Context, req *file.UploadPartCopyInput) (*file.UploadPartCopyOutput, error) {
+func (a *AliyunOSS) UploadPartCopy(ctx context.Context, req *l8oss.UploadPartCopyInput) (*l8oss.UploadPartCopyOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -371,10 +381,10 @@ func (a *AliyunOSS) UploadPartCopy(ctx context.Context, req *file.UploadPartCopy
 		int(req.PartNumber),
 		VersionId(req.CopySource.CopySourceVersionId),
 	)
-	output := &file.UploadPartCopyOutput{CopyPartResult: &file.CopyPartResult{ETag: resp.ETag}}
+	output := &l8oss.UploadPartCopyOutput{CopyPartResult: &l8oss.CopyPartResult{ETag: resp.ETag}}
 	return output, err
 }
-func (a *AliyunOSS) CompleteMultipartUpload(ctx context.Context, req *file.CompleteMultipartUploadInput) (*file.CompleteMultipartUploadOutput, error) {
+func (a *AliyunOSS) CompleteMultipartUpload(ctx context.Context, req *l8oss.CompleteMultipartUploadInput) (*l8oss.CompleteMultipartUploadOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -395,10 +405,10 @@ func (a *AliyunOSS) CompleteMultipartUpload(ctx context.Context, req *file.Compl
 		oss.InitiateMultipartUploadResult{Bucket: req.Bucket, Key: req.Key, UploadID: req.UploadId},
 		parts,
 	)
-	output := &file.CompleteMultipartUploadOutput{Location: resp.Location, Bucket: resp.Bucket, Key: resp.Key, ETag: resp.ETag}
+	output := &l8oss.CompleteMultipartUploadOutput{Location: resp.Location, Bucket: resp.Bucket, Key: resp.Key, ETag: resp.ETag}
 	return output, err
 }
-func (a *AliyunOSS) AbortMultipartUpload(ctx context.Context, req *file.AbortMultipartUploadInput) (*file.AbortMultipartUploadOutput, error) {
+func (a *AliyunOSS) AbortMultipartUpload(ctx context.Context, req *l8oss.AbortMultipartUploadInput) (*l8oss.AbortMultipartUploadOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -411,10 +421,10 @@ func (a *AliyunOSS) AbortMultipartUpload(ctx context.Context, req *file.AbortMul
 	err = bucket.AbortMultipartUpload(
 		oss.InitiateMultipartUploadResult{Bucket: req.Bucket, Key: req.Key, UploadID: req.UploadId},
 	)
-	output := &file.AbortMultipartUploadOutput{}
+	output := &l8oss.AbortMultipartUploadOutput{}
 	return output, err
 }
-func (a *AliyunOSS) ListMultipartUploads(ctx context.Context, req *file.ListMultipartUploadsInput) (*file.ListMultipartUploadsOutput, error) {
+func (a *AliyunOSS) ListMultipartUploads(ctx context.Context, req *l8oss.ListMultipartUploadsInput) (*l8oss.ListMultipartUploadsOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -424,7 +434,7 @@ func (a *AliyunOSS) ListMultipartUploads(ctx context.Context, req *file.ListMult
 		return nil, err
 	}
 	resp, err := bucket.ListMultipartUploads(Prefix(req.Prefix), KeyMarker(req.KeyMarker), MaxUploads(int(req.MaxUploads)), Delimiter(req.Delimiter), UploadIDMarker(req.UploadIdMarker))
-	output := &file.ListMultipartUploadsOutput{
+	output := &l8oss.ListMultipartUploadsOutput{
 		Bucket:             resp.Bucket,
 		Delimiter:          resp.Delimiter,
 		Prefix:             resp.Prefix,
@@ -437,13 +447,13 @@ func (a *AliyunOSS) ListMultipartUploads(ctx context.Context, req *file.ListMult
 		CommonPrefixes:     resp.CommonPrefixes,
 	}
 	for _, v := range resp.Uploads {
-		upload := &file.MultipartUpload{Initiated: v.Initiated.Unix(), UploadId: v.UploadID, Key: v.Key}
+		upload := &l8oss.MultipartUpload{Initiated: v.Initiated.Unix(), UploadId: v.UploadID, Key: v.Key}
 		output.Uploads = append(output.Uploads, upload)
 	}
 	return output, err
 }
 
-func (a *AliyunOSS) RestoreObject(ctx context.Context, req *file.RestoreObjectInput) (*file.RestoreObjectOutput, error) {
+func (a *AliyunOSS) RestoreObject(ctx context.Context, req *l8oss.RestoreObjectInput) (*l8oss.RestoreObjectOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -453,11 +463,11 @@ func (a *AliyunOSS) RestoreObject(ctx context.Context, req *file.RestoreObjectIn
 		return nil, err
 	}
 	err = bucket.RestoreObject(req.Key)
-	output := &file.RestoreObjectOutput{}
+	output := &l8oss.RestoreObjectOutput{}
 	return output, err
 }
 
-func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *file.ListObjectVersionsInput) (*file.ListObjectVersionsOutput, error) {
+func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *l8oss.ListObjectVersionsInput) (*l8oss.ListObjectVersionsOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -467,7 +477,7 @@ func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *file.ListObject
 		return nil, err
 	}
 	resp, err := bucket.ListObjectVersions()
-	output := &file.ListObjectVersionsOutput{
+	output := &l8oss.ListObjectVersionsOutput{
 		Name:                resp.Name,
 		Prefix:              resp.Prefix,
 		KeyMarker:           resp.KeyMarker,
@@ -480,11 +490,11 @@ func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *file.ListObject
 		CommonPrefixes:      resp.CommonPrefixes,
 	}
 	for _, v := range resp.ObjectDeleteMarkers {
-		marker := &file.DeleteMarkerEntry{
+		marker := &l8oss.DeleteMarkerEntry{
 			IsLatest:     v.IsLatest,
 			Key:          v.Key,
 			LastModified: v.LastModified.Unix(),
-			Owner: &file.Owner{
+			Owner: &l8oss.Owner{
 				ID:          v.Owner.ID,
 				DisplayName: v.Owner.DisplayName,
 			},
@@ -494,12 +504,12 @@ func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *file.ListObject
 	}
 
 	for _, v := range resp.ObjectVersions {
-		version := &file.ObjectVersion{
+		version := &l8oss.ObjectVersion{
 			ETag:         v.ETag,
 			IsLatest:     v.IsLatest,
 			Key:          v.Key,
 			LastModified: v.LastModified.Unix(),
-			Owner: &file.Owner{
+			Owner: &l8oss.Owner{
 				ID:          v.Owner.ID,
 				DisplayName: v.Owner.DisplayName,
 			},
@@ -513,7 +523,7 @@ func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *file.ListObject
 	return output, err
 }
 
-func (a *AliyunOSS) HeadObject(ctx context.Context, req *file.HeadObjectInput) (*file.HeadObjectOutput, error) {
+func (a *AliyunOSS) HeadObject(ctx context.Context, req *l8oss.HeadObjectInput) (*l8oss.HeadObjectOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -522,7 +532,7 @@ func (a *AliyunOSS) HeadObject(ctx context.Context, req *file.HeadObjectInput) (
 	if err != nil {
 		return nil, err
 	}
-	output := &file.HeadObjectOutput{ResultMetadata: map[string]string{}}
+	output := &l8oss.HeadObjectOutput{ResultMetadata: map[string]string{}}
 	var resp http.Header
 	if req.WithDetails {
 		resp, err = bucket.GetObjectDetailedMeta(req.Key)
@@ -545,7 +555,7 @@ func (a *AliyunOSS) HeadObject(ctx context.Context, req *file.HeadObjectInput) (
 	return output, err
 }
 
-func (a *AliyunOSS) IsObjectExist(ctx context.Context, req *file.IsObjectExistInput) (*file.IsObjectExistOutput, error) {
+func (a *AliyunOSS) IsObjectExist(ctx context.Context, req *l8oss.IsObjectExistInput) (*l8oss.IsObjectExistOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -555,10 +565,10 @@ func (a *AliyunOSS) IsObjectExist(ctx context.Context, req *file.IsObjectExistIn
 		return nil, err
 	}
 	resp, err := bucket.IsObjectExist(req.Key)
-	return &file.IsObjectExistOutput{FileExist: resp}, err
+	return &l8oss.IsObjectExistOutput{FileExist: resp}, err
 }
 
-func (a *AliyunOSS) SignURL(ctx context.Context, req *file.SignURLInput) (*file.SignURLOutput, error) {
+func (a *AliyunOSS) SignURL(ctx context.Context, req *l8oss.SignURLInput) (*l8oss.SignURLOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -568,11 +578,11 @@ func (a *AliyunOSS) SignURL(ctx context.Context, req *file.SignURLInput) (*file.
 		return nil, err
 	}
 	resp, err := bucket.SignURL(req.Key, oss.HTTPMethod(req.Method), req.ExpiredInSec)
-	return &file.SignURLOutput{SignedUrl: resp}, err
+	return &l8oss.SignURLOutput{SignedUrl: resp}, err
 }
 
 //UpdateDownLoadBandwidthRateLimit update all client rate
-func (a *AliyunOSS) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *file.UpdateBandwidthRateLimitInput) error {
+func (a *AliyunOSS) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *l8oss.UpdateBandwidthRateLimitInput) error {
 	for _, cli := range a.client {
 		err := cli.LimitDownloadSpeed(int(req.AverageRateLimitInBitsPerSec))
 		return err
@@ -581,7 +591,7 @@ func (a *AliyunOSS) UpdateDownLoadBandwidthRateLimit(ctx context.Context, req *f
 }
 
 //UpdateUpLoadBandwidthRateLimit update all client rate
-func (a *AliyunOSS) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *file.UpdateBandwidthRateLimitInput) error {
+func (a *AliyunOSS) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *l8oss.UpdateBandwidthRateLimitInput) error {
 	for _, cli := range a.client {
 		err := cli.LimitUploadSpeed(int(req.AverageRateLimitInBitsPerSec))
 		return err
@@ -589,7 +599,7 @@ func (a *AliyunOSS) UpdateUpLoadBandwidthRateLimit(ctx context.Context, req *fil
 	return nil
 }
 
-func (a *AliyunOSS) AppendObject(ctx context.Context, req *file.AppendObjectInput) (*file.AppendObjectOutput, error) {
+func (a *AliyunOSS) AppendObject(ctx context.Context, req *l8oss.AppendObjectInput) (*l8oss.AppendObjectOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -609,10 +619,10 @@ func (a *AliyunOSS) AppendObject(ctx context.Context, req *file.AppendObjectInpu
 	if err != nil {
 		return nil, err
 	}
-	return &file.AppendObjectOutput{AppendPosition: resp}, err
+	return &l8oss.AppendObjectOutput{AppendPosition: resp}, err
 }
 
-func (a *AliyunOSS) ListParts(ctx context.Context, req *file.ListPartsInput) (*file.ListPartsOutput, error) {
+func (a *AliyunOSS) ListParts(ctx context.Context, req *l8oss.ListPartsInput) (*l8oss.ListPartsOutput, error) {
 	cli, err := a.selectClient(req.Uid, req.Bucket)
 	if err != nil {
 		return nil, err
@@ -629,7 +639,7 @@ func (a *AliyunOSS) ListParts(ctx context.Context, req *file.ListPartsInput) (*f
 	if err != nil {
 		return nil, err
 	}
-	out := &file.ListPartsOutput{
+	out := &l8oss.ListPartsOutput{
 		Bucket:               resp.Bucket,
 		Key:                  resp.Key,
 		UploadId:             resp.UploadID,
@@ -638,8 +648,28 @@ func (a *AliyunOSS) ListParts(ctx context.Context, req *file.ListPartsInput) (*f
 		IsTruncated:          resp.IsTruncated,
 	}
 	for _, v := range resp.UploadedParts {
-		part := &file.Part{Etag: v.ETag, LastModified: v.LastModified.Unix(), PartNumber: int64(v.PartNumber), Size: int64(v.Size)}
+		part := &l8oss.Part{Etag: v.ETag, LastModified: v.LastModified.Unix(), PartNumber: int64(v.PartNumber), Size: int64(v.Size)}
 		out.Parts = append(out.Parts, part)
 	}
 	return out, err
+}
+
+func (s *AliyunOSS) selectClient(uid, bucket string) (*oss.Client, error) {
+	// 1. if user specify client uid, use specify client first
+	if uid != "" {
+		if client, ok := s.client[uid]; ok {
+			return client, nil
+		}
+	}
+	// 2. if user not specify client uid, use bucket to select client
+	if client, ok := s.client[bucket]; ok {
+		return client, nil
+	}
+	// 3. if not specify uid and bucket, select default one
+	if len(s.client) == 1 {
+		for _, client := range s.client {
+			return client, nil
+		}
+	}
+	return nil, utils.ErrNotSpecifyEndpoint
 }

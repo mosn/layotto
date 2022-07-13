@@ -8,6 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
+	"mosn.io/layotto/components/oss"
+
 	gomock "github.com/golang/mock/gomock"
 
 	file "mosn.io/layotto/components/file"
@@ -37,10 +39,10 @@ func (m *MockOss) EXPECT() *MockOssMockRecorder {
 }
 
 // AbortMultipartUpload mocks base method.
-func (m *MockOss) AbortMultipartUpload(arg0 context.Context, arg1 *file.AbortMultipartUploadInput) (*file.AbortMultipartUploadOutput, error) {
+func (m *MockOss) AbortMultipartUpload(arg0 context.Context, arg1 *oss.AbortMultipartUploadInput) (*oss.AbortMultipartUploadOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AbortMultipartUpload", arg0, arg1)
-	ret0, _ := ret[0].(*file.AbortMultipartUploadOutput)
+	ret0, _ := ret[0].(*oss.AbortMultipartUploadOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -52,10 +54,10 @@ func (mr *MockOssMockRecorder) AbortMultipartUpload(arg0, arg1 interface{}) *gom
 }
 
 // AppendObject mocks base method.
-func (m *MockOss) AppendObject(arg0 context.Context, arg1 *file.AppendObjectInput) (*file.AppendObjectOutput, error) {
+func (m *MockOss) AppendObject(arg0 context.Context, arg1 *oss.AppendObjectInput) (*oss.AppendObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AppendObject", arg0, arg1)
-	ret0, _ := ret[0].(*file.AppendObjectOutput)
+	ret0, _ := ret[0].(*oss.AppendObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -67,10 +69,10 @@ func (mr *MockOssMockRecorder) AppendObject(arg0, arg1 interface{}) *gomock.Call
 }
 
 // CompleteMultipartUpload mocks base method.
-func (m *MockOss) CompleteMultipartUpload(arg0 context.Context, arg1 *file.CompleteMultipartUploadInput) (*file.CompleteMultipartUploadOutput, error) {
+func (m *MockOss) CompleteMultipartUpload(arg0 context.Context, arg1 *oss.CompleteMultipartUploadInput) (*oss.CompleteMultipartUploadOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CompleteMultipartUpload", arg0, arg1)
-	ret0, _ := ret[0].(*file.CompleteMultipartUploadOutput)
+	ret0, _ := ret[0].(*oss.CompleteMultipartUploadOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -82,10 +84,10 @@ func (mr *MockOssMockRecorder) CompleteMultipartUpload(arg0, arg1 interface{}) *
 }
 
 // CopyObject mocks base method.
-func (m *MockOss) CopyObject(arg0 context.Context, arg1 *file.CopyObjectInput) (*file.CopyObjectOutput, error) {
+func (m *MockOss) CopyObject(arg0 context.Context, arg1 *oss.CopyObjectInput) (*oss.CopyObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CopyObject", arg0, arg1)
-	ret0, _ := ret[0].(*file.CopyObjectOutput)
+	ret0, _ := ret[0].(*oss.CopyObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -97,10 +99,10 @@ func (mr *MockOssMockRecorder) CopyObject(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // CreateMultipartUpload mocks base method.
-func (m *MockOss) CreateMultipartUpload(arg0 context.Context, arg1 *file.CreateMultipartUploadInput) (*file.CreateMultipartUploadOutput, error) {
+func (m *MockOss) CreateMultipartUpload(arg0 context.Context, arg1 *oss.CreateMultipartUploadInput) (*oss.CreateMultipartUploadOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateMultipartUpload", arg0, arg1)
-	ret0, _ := ret[0].(*file.CreateMultipartUploadOutput)
+	ret0, _ := ret[0].(*oss.CreateMultipartUploadOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -112,10 +114,10 @@ func (mr *MockOssMockRecorder) CreateMultipartUpload(arg0, arg1 interface{}) *go
 }
 
 // DeleteObject mocks base method.
-func (m *MockOss) DeleteObject(arg0 context.Context, arg1 *file.DeleteObjectInput) (*file.DeleteObjectOutput, error) {
+func (m *MockOss) DeleteObject(arg0 context.Context, arg1 *oss.DeleteObjectInput) (*oss.DeleteObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteObject", arg0, arg1)
-	ret0, _ := ret[0].(*file.DeleteObjectOutput)
+	ret0, _ := ret[0].(*oss.DeleteObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -127,10 +129,10 @@ func (mr *MockOssMockRecorder) DeleteObject(arg0, arg1 interface{}) *gomock.Call
 }
 
 // DeleteObjectTagging mocks base method.
-func (m *MockOss) DeleteObjectTagging(arg0 context.Context, arg1 *file.DeleteObjectTaggingInput) (*file.DeleteObjectTaggingOutput, error) {
+func (m *MockOss) DeleteObjectTagging(arg0 context.Context, arg1 *oss.DeleteObjectTaggingInput) (*oss.DeleteObjectTaggingOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteObjectTagging", arg0, arg1)
-	ret0, _ := ret[0].(*file.DeleteObjectTaggingOutput)
+	ret0, _ := ret[0].(*oss.DeleteObjectTaggingOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -142,10 +144,10 @@ func (mr *MockOssMockRecorder) DeleteObjectTagging(arg0, arg1 interface{}) *gomo
 }
 
 // DeleteObjects mocks base method.
-func (m *MockOss) DeleteObjects(arg0 context.Context, arg1 *file.DeleteObjectsInput) (*file.DeleteObjectsOutput, error) {
+func (m *MockOss) DeleteObjects(arg0 context.Context, arg1 *oss.DeleteObjectsInput) (*oss.DeleteObjectsOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteObjects", arg0, arg1)
-	ret0, _ := ret[0].(*file.DeleteObjectsOutput)
+	ret0, _ := ret[0].(*oss.DeleteObjectsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -157,10 +159,10 @@ func (mr *MockOssMockRecorder) DeleteObjects(arg0, arg1 interface{}) *gomock.Cal
 }
 
 // GetObject mocks base method.
-func (m *MockOss) GetObject(arg0 context.Context, arg1 *file.GetObjectInput) (*file.GetObjectOutput, error) {
+func (m *MockOss) GetObject(arg0 context.Context, arg1 *oss.GetObjectInput) (*oss.GetObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetObject", arg0, arg1)
-	ret0, _ := ret[0].(*file.GetObjectOutput)
+	ret0, _ := ret[0].(*oss.GetObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -172,10 +174,10 @@ func (mr *MockOssMockRecorder) GetObject(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // GetObjectCannedAcl mocks base method.
-func (m *MockOss) GetObjectCannedAcl(arg0 context.Context, arg1 *file.GetObjectCannedAclInput) (*file.GetObjectCannedAclOutput, error) {
+func (m *MockOss) GetObjectCannedAcl(arg0 context.Context, arg1 *oss.GetObjectCannedAclInput) (*oss.GetObjectCannedAclOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetObjectCannedAcl", arg0, arg1)
-	ret0, _ := ret[0].(*file.GetObjectCannedAclOutput)
+	ret0, _ := ret[0].(*oss.GetObjectCannedAclOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -187,10 +189,10 @@ func (mr *MockOssMockRecorder) GetObjectCannedAcl(arg0, arg1 interface{}) *gomoc
 }
 
 // GetObjectTagging mocks base method.
-func (m *MockOss) GetObjectTagging(arg0 context.Context, arg1 *file.GetObjectTaggingInput) (*file.GetObjectTaggingOutput, error) {
+func (m *MockOss) GetObjectTagging(arg0 context.Context, arg1 *oss.GetObjectTaggingInput) (*oss.GetObjectTaggingOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetObjectTagging", arg0, arg1)
-	ret0, _ := ret[0].(*file.GetObjectTaggingOutput)
+	ret0, _ := ret[0].(*oss.GetObjectTaggingOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -202,10 +204,10 @@ func (mr *MockOssMockRecorder) GetObjectTagging(arg0, arg1 interface{}) *gomock.
 }
 
 // HeadObject mocks base method.
-func (m *MockOss) HeadObject(arg0 context.Context, arg1 *file.HeadObjectInput) (*file.HeadObjectOutput, error) {
+func (m *MockOss) HeadObject(arg0 context.Context, arg1 *oss.HeadObjectInput) (*oss.HeadObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HeadObject", arg0, arg1)
-	ret0, _ := ret[0].(*file.HeadObjectOutput)
+	ret0, _ := ret[0].(*oss.HeadObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -217,7 +219,7 @@ func (mr *MockOssMockRecorder) HeadObject(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // InitClient mocks base method.
-func (m *MockOss) InitClient(arg0 context.Context, arg1 *file.InitRequest) error {
+func (m *MockOss) InitClient(arg0 context.Context, arg1 *oss.InitRequest) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InitClient", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -245,10 +247,10 @@ func (mr *MockOssMockRecorder) InitConfig(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // IsObjectExist mocks base method.
-func (m *MockOss) IsObjectExist(arg0 context.Context, arg1 *file.IsObjectExistInput) (*file.IsObjectExistOutput, error) {
+func (m *MockOss) IsObjectExist(arg0 context.Context, arg1 *oss.IsObjectExistInput) (*oss.IsObjectExistOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsObjectExist", arg0, arg1)
-	ret0, _ := ret[0].(*file.IsObjectExistOutput)
+	ret0, _ := ret[0].(*oss.IsObjectExistOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -260,10 +262,10 @@ func (mr *MockOssMockRecorder) IsObjectExist(arg0, arg1 interface{}) *gomock.Cal
 }
 
 // ListMultipartUploads mocks base method.
-func (m *MockOss) ListMultipartUploads(arg0 context.Context, arg1 *file.ListMultipartUploadsInput) (*file.ListMultipartUploadsOutput, error) {
+func (m *MockOss) ListMultipartUploads(arg0 context.Context, arg1 *oss.ListMultipartUploadsInput) (*oss.ListMultipartUploadsOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListMultipartUploads", arg0, arg1)
-	ret0, _ := ret[0].(*file.ListMultipartUploadsOutput)
+	ret0, _ := ret[0].(*oss.ListMultipartUploadsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -275,10 +277,10 @@ func (mr *MockOssMockRecorder) ListMultipartUploads(arg0, arg1 interface{}) *gom
 }
 
 // ListObjectVersions mocks base method.
-func (m *MockOss) ListObjectVersions(arg0 context.Context, arg1 *file.ListObjectVersionsInput) (*file.ListObjectVersionsOutput, error) {
+func (m *MockOss) ListObjectVersions(arg0 context.Context, arg1 *oss.ListObjectVersionsInput) (*oss.ListObjectVersionsOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListObjectVersions", arg0, arg1)
-	ret0, _ := ret[0].(*file.ListObjectVersionsOutput)
+	ret0, _ := ret[0].(*oss.ListObjectVersionsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -290,10 +292,10 @@ func (mr *MockOssMockRecorder) ListObjectVersions(arg0, arg1 interface{}) *gomoc
 }
 
 // ListObjects mocks base method.
-func (m *MockOss) ListObjects(arg0 context.Context, arg1 *file.ListObjectsInput) (*file.ListObjectsOutput, error) {
+func (m *MockOss) ListObjects(arg0 context.Context, arg1 *oss.ListObjectsInput) (*oss.ListObjectsOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListObjects", arg0, arg1)
-	ret0, _ := ret[0].(*file.ListObjectsOutput)
+	ret0, _ := ret[0].(*oss.ListObjectsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -305,10 +307,10 @@ func (mr *MockOssMockRecorder) ListObjects(arg0, arg1 interface{}) *gomock.Call 
 }
 
 // ListParts mocks base method.
-func (m *MockOss) ListParts(arg0 context.Context, arg1 *file.ListPartsInput) (*file.ListPartsOutput, error) {
+func (m *MockOss) ListParts(arg0 context.Context, arg1 *oss.ListPartsInput) (*oss.ListPartsOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListParts", arg0, arg1)
-	ret0, _ := ret[0].(*file.ListPartsOutput)
+	ret0, _ := ret[0].(*oss.ListPartsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -320,10 +322,10 @@ func (mr *MockOssMockRecorder) ListParts(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // PutObject mocks base method.
-func (m *MockOss) PutObject(arg0 context.Context, arg1 *file.PutObjectInput) (*file.PutObjectOutput, error) {
+func (m *MockOss) PutObject(arg0 context.Context, arg1 *oss.PutObjectInput) (*oss.PutObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PutObject", arg0, arg1)
-	ret0, _ := ret[0].(*file.PutObjectOutput)
+	ret0, _ := ret[0].(*oss.PutObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -335,10 +337,10 @@ func (mr *MockOssMockRecorder) PutObject(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // PutObjectCannedAcl mocks base method.
-func (m *MockOss) PutObjectCannedAcl(arg0 context.Context, arg1 *file.PutObjectCannedAclInput) (*file.PutObjectCannedAclOutput, error) {
+func (m *MockOss) PutObjectCannedAcl(arg0 context.Context, arg1 *oss.PutObjectCannedAclInput) (*oss.PutObjectCannedAclOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PutObjectCannedAcl", arg0, arg1)
-	ret0, _ := ret[0].(*file.PutObjectCannedAclOutput)
+	ret0, _ := ret[0].(*oss.PutObjectCannedAclOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -350,10 +352,10 @@ func (mr *MockOssMockRecorder) PutObjectCannedAcl(arg0, arg1 interface{}) *gomoc
 }
 
 // PutObjectTagging mocks base method.
-func (m *MockOss) PutObjectTagging(arg0 context.Context, arg1 *file.PutObjectTaggingInput) (*file.PutObjectTaggingOutput, error) {
+func (m *MockOss) PutObjectTagging(arg0 context.Context, arg1 *oss.PutObjectTaggingInput) (*oss.PutObjectTaggingOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PutObjectTagging", arg0, arg1)
-	ret0, _ := ret[0].(*file.PutObjectTaggingOutput)
+	ret0, _ := ret[0].(*oss.PutObjectTaggingOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -365,10 +367,10 @@ func (mr *MockOssMockRecorder) PutObjectTagging(arg0, arg1 interface{}) *gomock.
 }
 
 // RestoreObject mocks base method.
-func (m *MockOss) RestoreObject(arg0 context.Context, arg1 *file.RestoreObjectInput) (*file.RestoreObjectOutput, error) {
+func (m *MockOss) RestoreObject(arg0 context.Context, arg1 *oss.RestoreObjectInput) (*oss.RestoreObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RestoreObject", arg0, arg1)
-	ret0, _ := ret[0].(*file.RestoreObjectOutput)
+	ret0, _ := ret[0].(*oss.RestoreObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -380,10 +382,10 @@ func (mr *MockOssMockRecorder) RestoreObject(arg0, arg1 interface{}) *gomock.Cal
 }
 
 // SignURL mocks base method.
-func (m *MockOss) SignURL(arg0 context.Context, arg1 *file.SignURLInput) (*file.SignURLOutput, error) {
+func (m *MockOss) SignURL(arg0 context.Context, arg1 *oss.SignURLInput) (*oss.SignURLOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignURL", arg0, arg1)
-	ret0, _ := ret[0].(*file.SignURLOutput)
+	ret0, _ := ret[0].(*oss.SignURLOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -395,7 +397,7 @@ func (mr *MockOssMockRecorder) SignURL(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // UpdateDownLoadBandwidthRateLimit mocks base method.
-func (m *MockOss) UpdateDownLoadBandwidthRateLimit(arg0 context.Context, arg1 *file.UpdateBandwidthRateLimitInput) error {
+func (m *MockOss) UpdateDownLoadBandwidthRateLimit(arg0 context.Context, arg1 *oss.UpdateBandwidthRateLimitInput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateDownLoadBandwidthRateLimit", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -409,7 +411,7 @@ func (mr *MockOssMockRecorder) UpdateDownLoadBandwidthRateLimit(arg0, arg1 inter
 }
 
 // UpdateUpLoadBandwidthRateLimit mocks base method.
-func (m *MockOss) UpdateUpLoadBandwidthRateLimit(arg0 context.Context, arg1 *file.UpdateBandwidthRateLimitInput) error {
+func (m *MockOss) UpdateUpLoadBandwidthRateLimit(arg0 context.Context, arg1 *oss.UpdateBandwidthRateLimitInput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateUpLoadBandwidthRateLimit", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -423,10 +425,10 @@ func (mr *MockOssMockRecorder) UpdateUpLoadBandwidthRateLimit(arg0, arg1 interfa
 }
 
 // UploadPart mocks base method.
-func (m *MockOss) UploadPart(arg0 context.Context, arg1 *file.UploadPartInput) (*file.UploadPartOutput, error) {
+func (m *MockOss) UploadPart(arg0 context.Context, arg1 *oss.UploadPartInput) (*oss.UploadPartOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UploadPart", arg0, arg1)
-	ret0, _ := ret[0].(*file.UploadPartOutput)
+	ret0, _ := ret[0].(*oss.UploadPartOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -438,10 +440,10 @@ func (mr *MockOssMockRecorder) UploadPart(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // UploadPartCopy mocks base method.
-func (m *MockOss) UploadPartCopy(arg0 context.Context, arg1 *file.UploadPartCopyInput) (*file.UploadPartCopyOutput, error) {
+func (m *MockOss) UploadPartCopy(arg0 context.Context, arg1 *oss.UploadPartCopyInput) (*oss.UploadPartCopyOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UploadPartCopy", arg0, arg1)
-	ret0, _ := ret[0].(*file.UploadPartCopyOutput)
+	ret0, _ := ret[0].(*oss.UploadPartCopyOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

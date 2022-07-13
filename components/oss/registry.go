@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package file
+package oss
 
 import (
 	"fmt"
@@ -22,44 +22,44 @@ import (
 	"mosn.io/layotto/components/pkg/info"
 )
 
-type Registry interface {
-	Register(fs ...*FileFactory)
-	Create(compType string) (File, error)
+type OssRegistry interface {
+	Register(fs ...*OssFactory)
+	Create(name string) (Oss, error)
 }
 
-type FileFactory struct {
-	CompType      string
-	FactoryMethod func() File
+type OssFactory struct {
+	Name          string
+	FactoryMethod func() Oss
 }
 
-func NewFileFactory(CompType string, f func() File) *FileFactory {
-	return &FileFactory{
-		CompType:      CompType,
+func NewOssFactory(name string, f func() Oss) *OssFactory {
+	return &OssFactory{
+		Name:          name,
 		FactoryMethod: f,
 	}
 }
 
-type FileStoreRegistry struct {
-	files map[string]func() File
+type OssStoreRegistry struct {
+	files map[string]func() Oss
 	info  *info.RuntimeInfo
 }
 
-func NewRegistry(info *info.RuntimeInfo) Registry {
+func NewOssRegistry(info *info.RuntimeInfo) OssRegistry {
 	info.AddService(ServiceName)
-	return &FileStoreRegistry{
-		files: make(map[string]func() File),
+	return &OssStoreRegistry{
+		files: make(map[string]func() Oss),
 		info:  info,
 	}
 }
 
-func (r *FileStoreRegistry) Register(fs ...*FileFactory) {
+func (r *OssStoreRegistry) Register(fs ...*OssFactory) {
 	for _, f := range fs {
-		r.files[f.CompType] = f.FactoryMethod
-		r.info.RegisterComponent(ServiceName, f.CompType)
+		r.files[f.Name] = f.FactoryMethod
+		r.info.RegisterComponent(ServiceName, f.Name)
 	}
 }
 
-func (r *FileStoreRegistry) Create(compType string) (File, error) {
+func (r *OssStoreRegistry) Create(compType string) (Oss, error) {
 	if f, ok := r.files[compType]; ok {
 		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil

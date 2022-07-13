@@ -21,6 +21,8 @@ import (
 	"io"
 	"testing"
 
+	"mosn.io/layotto/components/pkg/utils"
+
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 
 	"github.com/stretchr/testify/assert"
@@ -50,7 +52,7 @@ func TestInit(t *testing.T) {
 }
 
 func TestSelectClient(t *testing.T) {
-	ossObject := &AliyunOSS{client: make(map[string]*oss.Client)}
+	ossObject := &AliyunFile{client: make(map[string]*oss.Client)}
 	client, err := ossObject.selectClient("", "")
 	assert.Equal(t, err.Error(), "should specific endpoint in metadata")
 	assert.Nil(t, client)
@@ -75,7 +77,7 @@ func TestGetBucket(t *testing.T) {
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
 
-	ac := oss.(*AliyunOSS)
+	ac := oss.(*AliyunFile)
 	mt := make(map[string]string)
 
 	bucket, err := ac.getBucket("/", mt)
@@ -98,8 +100,8 @@ func TestGetClient(t *testing.T) {
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
 
-	ac := oss.(*AliyunOSS)
-	mt := &file.OssMetadata{
+	ac := oss.(*AliyunFile)
+	mt := &utils.OssMetadata{
 		Endpoint:        "endpoint",
 		AccessKeyID:     "ak",
 		AccessKeySecret: "ak",
@@ -119,8 +121,8 @@ func TestCheckMetadata(t *testing.T) {
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
 
-	ac := oss.(*AliyunOSS)
-	mt := &file.OssMetadata{
+	ac := oss.(*AliyunFile)
+	mt := &utils.OssMetadata{
 		Endpoint:        "",
 		AccessKeyID:     "",
 		AccessKeySecret: "",

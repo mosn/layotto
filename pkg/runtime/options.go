@@ -20,6 +20,8 @@ import (
 	"google.golang.org/grpc"
 	"mosn.io/pkg/log"
 
+	"mosn.io/layotto/components/oss"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/file"
@@ -40,7 +42,7 @@ type services struct {
 	configStores  []*configstores.StoreFactory
 	rpcs          []*rpc.Factory
 	files         []*file.FileFactory
-	oss           []*file.OssFactory
+	oss           []*oss.OssFactory
 	pubSubs       []*pubsub.Factory
 	states        []*state.Factory
 	locks         []*runtime_lock.Factory
@@ -130,7 +132,7 @@ func WithRpcFactory(rpcs ...*rpc.Factory) Option {
 	}
 }
 
-func WithOssFactory(oss ...*file.OssFactory) Option {
+func WithOssFactory(oss ...*oss.OssFactory) Option {
 	return func(o *runtimeOptions) {
 		o.services.oss = append(o.services.oss, oss...)
 	}

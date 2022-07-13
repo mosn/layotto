@@ -24,6 +24,8 @@ import (
 	"io"
 	"strings"
 
+	"mosn.io/layotto/components/pkg/utils"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	aws_config "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -41,7 +43,7 @@ const (
 // AwsOss is a binding for aws oss storage.
 type AwsOss struct {
 	client  map[string]*s3.Client
-	meta    map[string]*file.OssMetadata
+	meta    map[string]*utils.OssMetadata
 	method  string
 	rawData json.RawMessage
 }
@@ -49,13 +51,13 @@ type AwsOss struct {
 func NewAwsFile() file.File {
 	return &AwsOss{
 		client: make(map[string]*s3.Client),
-		meta:   make(map[string]*file.OssMetadata),
+		meta:   make(map[string]*utils.OssMetadata),
 	}
 }
 
 // Init instance by config.
 func (a *AwsOss) Init(ctx context.Context, config *file.FileConfig) error {
-	m := make([]*file.OssMetadata, 0)
+	m := make([]*utils.OssMetadata, 0)
 	err := json.Unmarshal(config.Metadata, &m)
 	if err != nil {
 		return errors.New("invalid config for aws oss")
@@ -81,7 +83,7 @@ func (a *AwsOss) Init(ctx context.Context, config *file.FileConfig) error {
 }
 
 // isAwsMetaValid check if the metadata valid.
-func (a *AwsOss) isAwsMetaValid(v *file.OssMetadata) bool {
+func (a *AwsOss) isAwsMetaValid(v *utils.OssMetadata) bool {
 	if v.AccessKeySecret == "" || v.Endpoint == "" || v.AccessKeyID == "" {
 		return false
 	}
@@ -89,7 +91,7 @@ func (a *AwsOss) isAwsMetaValid(v *file.OssMetadata) bool {
 }
 
 // createOssClient by input meta info.
-func (a *AwsOss) createOssClient(meta *file.OssMetadata) (*s3.Client, error) {
+func (a *AwsOss) createOssClient(meta *utils.OssMetadata) (*s3.Client, error) {
 	customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 		if region == meta.Region {
 			return aws.Endpoint{
@@ -167,7 +169,7 @@ func (a *AwsOss) selectClient(uid, bucket string) (*s3.Client, error) {
 			return client, nil
 		}
 	}
-	return nil, file.ErrNotSpecifyEndpoint
+	return nil, utils.ErrNotSpecifyEndpoint
 }
 
 // Get object from aws oss.

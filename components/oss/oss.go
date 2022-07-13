@@ -14,16 +14,15 @@
 * limitations under the License.
  */
 
-package file
+package oss
 
 import (
 	"context"
-	"errors"
 	"io"
 )
 
-var (
-	ErrNotSpecifyEndpoint = errors.New("should specific endpoint in metadata")
+const (
+	ServiceName = "oss"
 )
 
 type Oss interface {
