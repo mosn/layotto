@@ -393,6 +393,12 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 		),
 
+		//OSS
+		runtime.WithOssFactory(
+			file.NewOssFactory("awsOSS", aws.NewAwsOss),
+			file.NewOssFactory("aliyunOSS", aliyun.NewAliyunOss),
+		),
+
 		// Sequencer
 		runtime.WithSequencerFactory(
 			runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
