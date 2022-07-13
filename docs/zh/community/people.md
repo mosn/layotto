@@ -3,6 +3,11 @@
 ## PMC Member
 @seeflood @zhenjunMa @wenxuwan @MoonShining
 
+## Committer
+https://github.com/mosn/layotto/discussions/categories/announcements
+
+@stulzq @ZLBer @Xunzhuo
+
 ## Reviewer
 邀请中，欢迎感兴趣的Contributor联系@seeflood 加入社区、成为Reviewer
 
@@ -16,14 +21,13 @@
 | RPC相关  | @MoonShining |
 
 
-## Member
-邀请中，欢迎感兴趣的同学联系@seeflood 加入社区
-![img.png](../../img/community/img.png)
-
 ## Contributor
-https://github.com/mosn/layotto/graphs/contributors
 
-这样不够酷，我后面搞个自动化工具把大家头像同步到这个页面来，再给每个人的电子证书单搞个页面
+感谢所有的贡献者！
+
+<a href="https://github.com/mosn/layotto/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mosn/layotto" />
+</a>
 
 ## 晋升规则
 见[Layotto社区晋升规则](zh/community/promote.md)
