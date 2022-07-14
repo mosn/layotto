@@ -20,15 +20,15 @@ Layotto is built on the open source data plane [MOSN](https://github.com/mosn/mo
 
 Layotto aims to combine [Multi-Runtime](https://www.infoq.com/articles/multi-runtime-microservice-architecture/) with Service Mesh into one sidecar. No matter which product you are using as the Service Mesh data plane (e.g. MOSN,Envoy or any other product), you can always attach Layotto to it and add Multi-Runtime capabilities without adding new sidecars.
 
-For example, by adding Runtime capabilities to MOSN, a Layotto process can both [serve as the data plane of istio](https://mosn.io/layotto/#/en/start/istio/start.md) and provide various Runtime APIs (such as Configuration API, Pub/Sub API, etc.)
+For example, by adding Runtime capabilities to MOSN, a Layotto process can both [serve as the data plane of istio](en/start/istio/) and provide various Runtime APIs (such as Configuration API, Pub/Sub API, etc.)
 
-In addition, we were surprised to find that a sidecar can do much more than that. We are trying to make Layotto even the runtime container of FaaS (Function as a service) and [reloadable sdk](https://github.com/mosn/layotto/issues/166) with the magic power of [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) .
+In addition, we were surprised to find that a sidecar can do much more than that. We are trying to make Layotto even the runtime container of FaaS (Function as a service) with the magic power of [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) .
 
 ## Features
 
 - Service Communication
 - Service Governance.Such as traffic hijacking and observation, service rate limiting, etc
-- [As the data plane of istio](en/start/istio/start)
+- [As the data plane of istio](en/start/istio/)
 - Configuration management
 - State management
 - Event publish and subscribe
@@ -47,22 +47,27 @@ Layotto provides sdk in various languages. The sdk interacts with Layotto throug
 
 ### Get started with Layotto
 
-You can try the [configuration demo with apollo](en/start/configuration/start-apollo.md) to get started with Layotto.
-
-For other features,see the demos below:
+You can try the quickstart demos below to get started with Layotto. In addition, you can experience the [online laboratory](en/start/lab)
 
 ### API
 
-| API            | status |                              quick start                              |                                components                                 | desc                                                           |
-| -------------- | :----: | :-------------------------------------------------------------------: | :-----------------------------------------------------------------------: | -------------------------------------------------------------- |
-| State          |   ✅   |        [demo](https://mosn.io/layotto/#/en/start/state/start)         |     [list](https://mosn.io/layotto/#/en/component_specs/state/common)     | Write/Query the data of the Key/Value model                    |
-| Pub/Sub        |   ✅   |        [demo](https://mosn.io/layotto/#/en/start/pubsub/start)        |     [list](https://mosn.io/layotto/#/en/component_specs/pubsub/redis)     | Publish/Subscribe message through various Message Queue        |
-| Service Invoke |   ✅   |       [demo](https://mosn.io/layotto/#/en/start/rpc/helloworld)       |         [list](https://mosn.io/layotto/#/en/start/rpc/helloworld)         | Call Service through MOSN (another istio data plane)           |
-| Config         |   ✅   | [demo](https://mosn.io/layotto/#/en/start/configuration/start-apollo) | [list](https://mosn.io/layotto/#/en/component_specs/configuration/apollo) | Write/Query/Subscribe the config through various Config Center |
-| Lock           |   ✅   |         [demo](https://mosn.io/layotto/#/en/start/lock/start)         |     [list](https://mosn.io/layotto/#/en/component_specs/lock/common)      | Distribute lock implementation                                 |
-| Sequencer      |   ✅   |      [demo](https://mosn.io/layotto/#/en/start/sequencer/start)       |   [list](https://mosn.io/layotto/#/en/component_specs/sequencer/common)   | Distribube auto increment ID generator                         |
-| File           |   ✅   |                                 TODO                                  |       [list](https://mosn.io/layotto/#/en/component_specs/file/oss)       | File API implementation                                        |
-| Binding        |   ✅   |                                 TODO                                  |                                   TODO                                    | Transparent data transmission API                              |
+| API            | status |                              quick start                              |                          desc                                                           |
+| -------------- | :----: | :-------------------------------------------------------------------: | -------------------------------------------------------------- |
+| State          |   ✅   |        [demo](https://mosn.io/layotto/#/en/start/state/start)         |     Write/Query the data of the Key/Value model                    |
+| Pub/Sub        |   ✅   |        [demo](https://mosn.io/layotto/#/en/start/pubsub/start)        |     Publish/Subscribe message through various Message Queue        |
+| Service Invoke |   ✅   |       [demo](https://mosn.io/layotto/#/en/start/rpc/helloworld)       |         Call Service through MOSN (another istio data plane)           |
+| Config         |   ✅   | [demo](https://mosn.io/layotto/#/en/start/configuration/start-apollo) | Write/Query/Subscribe the config through various Config Center |
+| Lock           |   ✅   |         [demo](https://mosn.io/layotto/#/en/start/lock/start)         |     Distributed lock API                                 |
+| Sequencer      |   ✅   |      [demo](https://mosn.io/layotto/#/en/start/sequencer/start)       |   Generate distributed unique and incremental ID               |
+| File           |   ✅   |                                 TODO                                  |      File API implementation                                        |
+| Binding        |   ✅   |                                 TODO                                  |      Transparent data transmission API                              |
+
+
+### Service Mesh
+
+| feature | status |                      quick start                       | desc                       |
+| ------- | :----: | :----------------------------------------------------: | -------------------------- |
+| istio   |   ✅   | [demo](en/start/istio/) | As the data plane of istio |
 
 ### Extendability
 
@@ -99,12 +104,6 @@ For other features,see the demos below:
 | Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/en/start/faas/start) | Compile Code written by TinyGo to \*.wasm and run in Layotto And Scheduled by k8s.         |
 | Rust           |  TODO  |                         TODO                          | Compile Code written by Rust to \*.wasm and run in Layotto And Scheduled by k8s.           |
 | AssemblyScript |  TODO  |                         TODO                          | Compile Code written by AssemblyScript to \*.wasm and run in Layotto And Scheduled by k8s. |
-
-### Service Mesh
-
-| feature | status |                      quick start                       | desc                       |
-| ------- | :----: | :----------------------------------------------------: | -------------------------- |
-| istio   |   ✅   | [demo](https://mosn.io/layotto/#/en/start/istio/start) | As the data plane of istio |
 
 ## Presentations
 
