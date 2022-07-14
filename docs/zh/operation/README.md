@@ -7,7 +7,7 @@
 - 通过 Kubernetes 部署
 
 ### 直接部署
-您可以直接运行 Layotto 二进制文件、启动 Layotto。参考[快速开始](zh/start)
+您可以直接运行 Layotto 二进制文件、启动 Layotto。参考[快速开始](zh/start/)
 
 ### 使用 Docker 部署
 Layotto 提供了官方 Docker 镜像，包括：
