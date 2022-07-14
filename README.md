@@ -35,7 +35,7 @@ In addition, we were surprised to find that a sidecar can do much more than that
 - State management
 - Event publish and subscribe
 - Health check, query runtime metadata
-- [FaaS model based on WASM and Runtime](docs/en/start/faas/start.md)
+- [FaaS model based on WASM and Runtime](https://mosn.io/layotto/#/en/start/faas/start.md)
 
 ## Project Architecture
 
@@ -49,7 +49,7 @@ Layotto provides SDKs in various languages. The sdk interacts with Layotto throu
 
 ### Get started with Layotto
 
-You can try the quickstart demos below to get started with Layotto. In addition, you can experience the online laboratory
+You can try the quickstart demos below to get started with Layotto. In addition, you can experience the [online laboratory](https://mosn.io/layotto/#/en/start/lab)
 
 ### API
 
