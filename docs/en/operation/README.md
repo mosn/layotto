@@ -29,9 +29,9 @@ Of course, you can also run Layotto and other systems (such as Redis) at the sam
 
 ### Deploy on Kubernetes
 
-#### Option 1. Deploy via Istio
+#### Option 1. Deploy using Istio
 
-If you are using Istio now, you can deploy the Sidecar via Istio.
+If you are using Istio, you can deploy the Layotto sidecar using Istio.
 
 In order to integrate with Istio, you need to build the Layotto sidecar as a proxyv2 image. There are several ways to build:
 
