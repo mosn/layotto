@@ -1,4 +1,4 @@
-# Layotto集成Istio演示
+# Layotto集成 Istio 1.5.x 演示
 
 ## 一、背景介绍
 
@@ -19,7 +19,7 @@ MOSN作为Istio官方认可的数据面实现，这里就对Layotto如何跟Isti
 
 3. [Istio-1.5.x](https://github.com/istio/istio/releases/tag/1.5.2)
 
-    当前mosn只支持`istio 1.5.x`（对`istio 1.10.x`的支持已经在CR了），因此需要下载对应版本的`istio`，解压后进行如下配置方便后续操作。
+    需要下载`1.5.x`版本的`istio`，解压后进行如下配置方便后续操作。
 
     ```
     export PATH=$PATH:${你的istio目录}/bin
@@ -113,7 +113,7 @@ MOSN作为Istio官方认可的数据面实现，这里就对Layotto如何跟Isti
 
 ## 五、注意事项
 
-1. 由于示例中使用的是`istio 1.5.2`，属于一个比较老的版本，因此该演示不会合并到主干，而是以一个独立的分支`istio-1.5.x`存在，等后面`mosn`集成了`istio 1.10.x`后再合并。
+1. 由于示例中使用的是`istio 1.5.2`，属于一个比较老的版本，因此该演示不会合并到主干，而是以一个独立的分支`istio-1.5.x`存在。目前 main 分支代码已经集成了 `istio 1.10.x`。
 2. 示例中使用的client、server源码可以参考[这里](https://github.com/mosn/layotto/tree/istio-1.5.x/demo/istio) 。
 3. 为了上手简单，上述使用到的`layotto-injected.yaml`文件是已经通过istio完成注入的，整个注入过程如下：
    1. 执行如下命令指定`istio`使用`Layotto`作为数据面

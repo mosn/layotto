@@ -22,6 +22,8 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/mosn/pkg/istio"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
 	"github.com/dapr/components-contrib/secretstores/aws/secretmanager"
@@ -200,6 +202,7 @@ var loggerForDaprComp = logger.NewLogger("reuse.dapr.component")
 
 // GitVersion mosn version is specified by latest tag
 var GitVersion = ""
+var IstioVersion = "1.10.6"
 
 func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
@@ -461,6 +464,8 @@ func registerAppInfo(app *cli.App) {
 	appInfo.Version = app.Version
 	appInfo.Compiled = app.Compiled
 	actuator.SetAppInfoSingleton(appInfo)
+	// set istio version
+	istio.IstioVersion = IstioVersion
 }
 
 func newRuntimeApp(startCmd *cli.Command) *cli.App {
