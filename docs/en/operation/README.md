@@ -33,11 +33,23 @@ Of course, you can also run Layotto and other systems (such as Redis) at the sam
 
 If you are using Istio now, you can deploy the Sidecar via Istio.
 
-You can refer to [MOSN guide](https://mosn.io/docs/user-guide/start/istio/). Just replace the MOSN image in the tutorial with a Layotto image.
+In order to integrate with Istio, you need to build the Layotto sidecar as a proxyv2 image. There are several ways to build:
+
+- You can refer to [MOSN guide](https://mosn.io/docs/user-guide/start/istio/). Just replace the MOSN image in the tutorial with a Layotto image.
+
+- To make the build process easier, Layotto developed the make script. After modifying the main package as needed (in the `cmd/layotto` directory), run the following command to package it into a proxyv2 image:
+
+```shell
+make image.proxyv2.build VERSION=latest
+```
+
+The principle of this script is to replace the binary file in the MOSN proxyv2 image with the binary file of Layotto.
+
+- The community has built the [layotto/proxyv2](https://hub.docker.com/r/layotto/proxyv2) image for the [Online Lab](https://killercoda.com/mosn-tutorial/course /layotto) to demonstrate Istio+Layotto. This image packs all Layotto components into it, resulting in a very large size. We recommend that you modify the main package according to your own needs and build the image yourself, so that the built image will be much smaller.
 
 #### Option 2. Other ways
 
-You can prepare your own image and k8s configuration file, then deploy Layotto via Kubernetes.
+You can prepare your own image and K8s configuration file, then deploy Layotto via Kubernetes.
 
 We are working on the official Layotto image and the solution for deploying to Kubernetes using Helm, so feel free to join us to build it. More details in <https://github.com/mosn/layotto/issues/392>
 
@@ -63,7 +75,7 @@ The previously released Layotto v0.3.0 corresponds to MOSN version v0.24.1
 
 There are two options to upgrade.
 
-- Upgrade sidecar container using k8s native solution
+- Upgrade sidecar container using K8s native solution
   
 - [Hot upgrade: upgrade the sidecar without affecting the business](https://mosn.io/en/docs/concept/smooth-upgrade/)
 
