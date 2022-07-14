@@ -14,8 +14,9 @@
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
   - [API plugin: register your own API](en/start/api_plugin/helloworld.md)
-  - Integrate with istio
-    - [As a data plane in istio](en/start/istio/start.md)
+  - As the data plane of istio
+    - [Integrate with istio 1.10.6](en/start/istio/)
+    - [Integrate with istio 1.5.x](en/start/istio/start.md)
   - Traffic intervention on the 4th layer network
     - [Dump TCP Traffic](en/start/network_filter/tcpcopy.md)
   - Flow Control on the 7th layer network
@@ -27,6 +28,7 @@
   - [Health check and metadata query](en/start/actuator/start.md)
   - [Run business logic in Layotto using WASM](en/start/wasm/start.md)
   - [FaaS model based on WASM and Runtime](en/start/faas/start.md)
+- [Online lab](en/start/lab.md)  
 - Developer guide
   - Building blocks
     - [File API](en/building_blocks/file/file.md)
