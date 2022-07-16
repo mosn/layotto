@@ -38,14 +38,14 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 
-	"mosn.io/layotto/pkg/grpc/default_api"
 	_ "mosn.io/layotto/pkg/filter/stream/wasm/http"
+	"mosn.io/layotto/pkg/grpc/default_api"
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
+	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
 	_ "mosn.io/layotto/pkg/wasm"
 	_ "mosn.io/layotto/pkg/wasm/install"
 	_ "mosn.io/layotto/pkg/wasm/uninstall"
 	_ "mosn.io/layotto/pkg/wasm/update"
-	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
 
 	"mosn.io/layotto/components/file/local"
 	"mosn.io/layotto/components/file/s3/alicloud"
