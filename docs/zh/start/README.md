@@ -8,4 +8,4 @@
 
 如果您准备好了，可以点击左侧导航栏里的各种 Demo，开始我们的旅行！
 
-注：如果您没装 Docker，可以体验 [使用Apollo配置中心](zh/start/configuration/start-apollo.md) 这个 Demo, 这个不需要 Docker
+注：如果您没装 Docker，可以体验 [使用Apollo配置中心](zh/start/configuration/start-apollo.md) 这个 Demo, 这个不需要 Docker; 或者体验 [线上实验室](zh/start/lab.md)

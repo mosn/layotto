@@ -21,10 +21,9 @@ Layotto 以开源的 [MOSN](https://github.com/mosn/mosn) 为底座，在提供�
 Layotto 希望可以把 [Multi-Runtime](https://www.infoq.com/articles/multi-runtime-microservice-architecture/) 跟 Service
 Mesh 两者的能力结合起来，无论你是使用 MOSN 还是 Envoy 或者其他产品作为 Service Mesh 的数据面，都可以在不增加新的 sidecar 的前提下，使用 Layotto 为这些数据面追加 Runtime 的能力。
 
-例如，通过为 MOSN 添加 Runtime 能力，一个 Layotto 进程可以[既作为 istio 的数据面](zh/start/istio/start.md) 又提供各种 Runtime API（例如 Configuration API,Pub/Sub API 等）
+例如，通过为 MOSN 添加 Runtime 能力，一个 Layotto 进程可以[既作为 istio 的数据面](zh/start/istio/) 又提供各种 Runtime API（例如 Configuration API,Pub/Sub API 等）
 
-此外，随着探索实践，我们发现 sidecar 能做的事情远不止于此。 通过引入[WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) ,我们正在尝试将 Layotto 做成 FaaS (Function as a service)
-和 [reloadable sdk](https://github.com/mosn/layotto/issues/166) 的运行时容器 。
+此外，随着探索实践，我们发现 sidecar 能做的事情远不止于此。 通过引入[WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) ,我们正在尝试将 Layotto 做成 FaaS (Function as a service) 的运行时容器 。
 
 如果您对诞生背景感兴趣，可以看下[这篇演讲](https://mosn.io/layotto/#/zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index)
 。
@@ -33,7 +32,7 @@ Mesh 两者的能力结合起来，无论你是使用 MOSN 还是 Envoy 或者�
 
 - 服务通信
 - 服务治理，例如流量的劫持和观测，服务限流等
-- [作为 istio 的数据面](zh/start/istio/start.md)
+- [作为 istio 的数据面](zh/start/istio/)
 - 配置管理
 - 状态管理
 - 事件发布订阅
@@ -55,22 +54,26 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 ### Get started with Layotto
 
-您可以尝试 demo [通过 Layotto 调用 apollo 配置中心](zh/start/configuration/start-apollo.md) 来体验 Layotto
-
-其他功能的 demo 见下.
+您可以尝试以下 Quickstart demo，体验 Layotto 的功能；或者体验[线上实验室](zh/start/lab.md)
 
 ### API
 
-| API            | status |                              quick start                              |                                components                                 | desc                             |
-| -------------- | :----: | :-------------------------------------------------------------------: | :-----------------------------------------------------------------------: | -------------------------------- |
-| State          |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/state/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/state/common)     | 提供读写 KV 模型存储的数据的能力 |
-| Pub/Sub        |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/pubsub/start)        |     [list](https://mosn.io/layotto/#/zh/component_specs/pubsub/redis)     | 提供消息的发布/订阅能力          |
-| Service Invoke |   ✅    |       [demo](https://mosn.io/layotto/#/zh/start/rpc/helloworld)       |         [list](https://mosn.io/layotto/#/zh/start/rpc/helloworld)         | 通过 MOSN 进行服务调用           |
-| Config         |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/configuration/start-apollo) | [list](https://mosn.io/layotto/#/zh/component_specs/configuration/apollo) | 提供配置增删改查及订阅的能力     |
-| Lock           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/lock/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/lock/common)      | 提供 lock/unlock 分布式锁的实现  |
-| Sequencer      |   ✅    |      [demo](https://mosn.io/layotto/#/zh/start/sequencer/start)       |   [list](https://mosn.io/layotto/#/zh/component_specs/sequencer/common)   | 提供获取分布式自增 ID 的能力     |
-| File           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/file/start)         |     [list](https://mosn.io/layotto/#/zh/component_specs/file/common)      | 提供访问文件的能力               |
-| Binding        |   ✅    |                                 TODO                                  |                                   TODO                                    | 提供透传数据的能力               |
+| API            | status |                              quick start                              |                               desc                             |
+| -------------- | :----: | :-------------------------------------------------------------------: | -------------------------------- |
+| State          |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/state/start)         |     提供读写 KV 模型存储的数据的能力 |
+| Pub/Sub        |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/pubsub/start)        |     提供消息的发布/订阅能力          |
+| Service Invoke |   ✅    |       [demo](https://mosn.io/layotto/#/zh/start/rpc/helloworld)       |      通过 MOSN 进行服务调用           |
+| Config         |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/configuration/start-apollo) |   提供配置增删改查及订阅的能力     |
+| Lock           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/lock/start)         |    提供 lock/unlock 分布式锁的实现  |
+| Sequencer      |   ✅    |      [demo](https://mosn.io/layotto/#/zh/start/sequencer/start)       |  提供获取分布式自增 ID 的能力     |
+| File           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/file/start)         |   提供访问文件的能力               |
+| Binding        |   ✅    |                                 TODO                                  |  提供透传数据的能力               |
+
+### Service Mesh
+
+| feature | status |                      quick start                       | desc                          |
+| ------- | :----: | :----------------------------------------------------: | ----------------------------- |
+| Istio   |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/istio/) | 跟 Istio 集成，作为 Istio 的数据面 |
 
 ### 可扩展性
 
@@ -115,12 +118,6 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 | Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。         |
 | Rust           |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。           |
 | AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。 |
-
-### Service Mesh
-
-| feature | status |                      quick start                       | desc                          |
-| ------- | :----: | :----------------------------------------------------: | ----------------------------- |
-| istio   |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/istio/start) | 跟 istio 集成，作为它的数据面 |
 
 ## Landscapes
 

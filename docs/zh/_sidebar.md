@@ -7,21 +7,24 @@
     - [使用Pub/Sub API](zh/start/pubsub/start.md)
     - [使用分布式锁 API](zh/start/lock/start.md)
     - [使用Sequencer API生成分布式自增id](zh/start/sequencer/start.md)
-    - [使用 Secret API](zh/start/secret/start.md)
+    - 使用 Secret API
+        - [查询 secrets](zh/start/secret/start.md)
+        - [在组件配置中引用 secret](zh/start/secret/secret_ref.md)
     - 进行RPC调用
         - [Hello World](zh/start/rpc/helloworld.md)
         - [Dubbo JSON RPC](zh/start/rpc/dubbo_json_rpc.md)
     - 使用File API
         - [基于Minio](zh/start/file/minio.md)
     - [API插件：注册您自己的API](zh/start/api_plugin/helloworld.md)
-    - 集成 Istio
-        - [作为 Istio 的数据面](zh/start/istio/start.md)
+    - 作为 Istio 的数据面
+        - [集成 Istio 1.10.6 演示](zh/start/istio/)
+        - [集成 Istio 1.5.x 演示](zh/start/istio/start.md)
     - 在四层网络进行流量干预
         - [Dump TCP 流量](zh/start/network_filter/tcpcopy.md)
     - 在七层网络进行流量干预
         - [方法级别限流](zh/start/stream_filter/flow_control.md)
     - [健康检查、查询运行时元数据](zh/start/actuator/start.md)
-    - 可观测性  
+    - 可观测性
         - [Trace, Metrics](zh/start/trace/trace.md)
         - [Trace 接入 Skywalking](zh/start/trace/skywalking.md)
         - [Trace 接入 Zipkin](zh/start/trace/zipkin.md)
@@ -29,6 +32,7 @@
         - [Metrics 接入 Prometheus](zh/start/trace/prometheus.md)
     - [将业务逻辑通过 WASM 下沉进sidecar](zh/start/wasm/start.md)
     - [基于 WASM 跟 Runtime 实现的 Faas 模型](zh/start/faas/start.md)
+- [线上实验室](zh/start/lab.md)
 - [用户手册](zh/building_blocks/)
     - 功能介绍
         - [File API](zh/building_blocks/file/file.md)
@@ -44,12 +48,12 @@
     - [gRPC API 接口文档](zh/api_reference/README.md)
         - [spec/proto/runtime/v1/runtime.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/runtime_v1.md)
         - [spec/proto/runtime/v1/appcallback.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
-    - SDK文档    
+    - SDK文档
         - [java sdk](https://github.com/layotto/java-sdk)
         - [.net sdk](https://github.com/layotto/dotnet-sdk)
         - [js sdk](https://github.com/layotto/js-sdk)
         - [go sdk](zh/sdk_reference/go/start.md)
-- 运维手册  
+- 运维手册
     - [如何配置 Layotto](zh/configuration/)
         - [Layotto 配置文件介绍](zh/configuration/overview.md)
         - [组件配置说明](zh/component_specs/overview.md)
@@ -75,16 +79,17 @@
                 - [Redis](zh/component_specs/sequencer/redis.md)
                 - [Zookeeper](zh/component_specs/sequencer/zookeeper.md)
                 - [MongoDB](zh/component_specs/sequencer/mongo.md)
-            - [Secret Store](zh/component_specs/secret/common.md)  
+            - [Secret Store](zh/component_specs/secret/common.md)
             - [自定义组件](zh/component_specs/custom/common.md)
     - [如何部署、升级 Layotto](zh/operation/)
+    - [如何本地开发、本地调试](zh/operation/local.md)
 - 设计文档
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
     - [Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)
     - [Pub/Sub API以及与dapr component的兼容性](zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
     - [RPC设计文档](zh/design/rpc/rpc设计文档.md)
-    - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)    
+    - [分布式锁API设计文档](zh/design/lock/lock-api-design.md)
     - [Sequencer API设计文档](zh/design/sequencer/design.md)
     - [File API设计文档](zh/design/file/file-design.md)
     - [FaaS 设计文档](zh/design/faas/faas-poc-design.md)
@@ -93,16 +98,18 @@
 - 贡献指南
     - [Layotto 贡献指南](zh/development/CONTRIBUTING.md)
     - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
-    - 想要贡献文档?  
+    - 想要贡献文档?
         - [文档贡献指南](zh/development/contributing-doc.md)
         - [使用工具自动测试 Quickstart 文档](zh/development/test-quickstart.md)
     - [想要开发新的组件?](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
         - [新增API时的开发规范](zh/development/developing-api.md)
         - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
-        - [如何基于proto文件生成代码、接口文档](zh/api_reference/how_to_generate_api_doc.md)  
+        - [如何基于proto文件生成代码、接口文档](zh/api_reference/how_to_generate_api_doc.md)
     - [Layotto 四大 Github Workflows 说明](zh/development/github-workflows.md)
     - [Layotto 命令行工具指南](zh/development/commands.md)
+    - 如何给 issue 打 label
+        - [新手任务 (good first issue) 的 label 规范](zh/development/label-spec.md)
     - [发布手册](zh/development/release-guide.md)
     - [待解决的问题](zh/development/problems-to-solve.md)
 - 社区
