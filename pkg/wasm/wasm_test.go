@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package actuator
+package wasm
 
 import (
 	"context"
@@ -32,29 +32,29 @@ func (m *MockEndpoint) Handle(ctx context.Context, params http.ParamsScanner) (m
 	return nil, nil
 }
 
-// TestActuator test AddEndpoint and GetEndpoint.
-func TestActuator(t *testing.T) {
-	// get singleton Actuator
-	act := GetDefault()
+// TestWasm test AddEndpoint and GetEndpoint.
+func TestWasm(t *testing.T) {
+	// get singleton Wasm
+	wasm := GetDefault()
 	// reset before test
-	act.AddEndpoint("health", nil)
+	wasm.AddEndpoint("install", nil)
 
-	endpoint, ok := act.GetEndpoint("health")
+	endpoint, ok := wasm.GetEndpoint("install")
 	assert.True(t, ok)
 	assert.Nil(t, endpoint)
 
-	act.AddEndpoint("", nil)
-	endpoint, ok = act.GetEndpoint("")
+	wasm.AddEndpoint("", nil)
+	endpoint, ok = wasm.GetEndpoint("")
 	assert.True(t, ok)
 	assert.Nil(t, endpoint)
 
 	ep := &MockEndpoint{}
-	act.AddEndpoint("health", ep)
+	wasm.AddEndpoint("install", ep)
 	// reset
 	defer func() {
-		act.AddEndpoint("health", nil)
+		wasm.AddEndpoint("install", nil)
 	}()
-	endpoint, ok = act.GetEndpoint("health")
+	endpoint, ok = wasm.GetEndpoint("install")
 	assert.True(t, ok)
 	assert.Equal(t, endpoint, ep)
 }

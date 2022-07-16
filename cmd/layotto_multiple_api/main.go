@@ -38,15 +38,19 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 
+	_ "mosn.io/layotto/pkg/filter/stream/wasm/http"
 	"mosn.io/layotto/pkg/grpc/default_api"
+	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
+	_ "mosn.io/layotto/pkg/wasm"
+	_ "mosn.io/layotto/pkg/wasm/install"
+	_ "mosn.io/layotto/pkg/wasm/uninstall"
+	_ "mosn.io/layotto/pkg/wasm/update"
 
 	"mosn.io/layotto/components/file/local"
 	"mosn.io/layotto/components/file/s3/alicloud"
 	"mosn.io/layotto/components/file/s3/aws"
 	"mosn.io/layotto/components/file/s3/minio"
-
-	mock_state "mosn.io/layotto/pkg/mock/components/state"
 
 	dbindings "github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/bindings/http"
@@ -154,11 +158,6 @@ import (
 	_ "mosn.io/mosn/pkg/wasm/runtime/wasmer"
 	_ "mosn.io/pkg/buffer"
 
-	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
-	l8_grpc "mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/pkg/runtime"
-	_ "mosn.io/layotto/pkg/wasm"
-
 	_ "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/router/v3"
 	_ "mosn.io/mosn/istio/istio1106"
 	_ "mosn.io/mosn/istio/istio1106/filter/stream/jwtauthn"
@@ -197,6 +196,10 @@ import (
 	_ "mosn.io/mosn/pkg/trace/sofa/xprotocol/bolt"
 	_ "mosn.io/mosn/pkg/upstream/healthcheck"
 	_ "mosn.io/mosn/pkg/upstream/servicediscovery/dubbod"
+
+	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
+	l8_grpc "mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/runtime"
 
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
 	_ "mosn.io/layotto/diagnostics/exporter_iml"

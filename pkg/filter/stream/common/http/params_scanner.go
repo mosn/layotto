@@ -16,12 +16,8 @@
 
 package http
 
-import (
-	"mosn.io/layotto/pkg/actuator"
-	"mosn.io/layotto/pkg/filter/stream/common/http"
-)
-
-func init() {
-	handler := actuator.GetDefault()
-	http.RegisterFilter("actuator", handler)
+type ParamsScanner interface {
+	//Next get the next param.
+	Next() string
+	HasNext() bool
 }

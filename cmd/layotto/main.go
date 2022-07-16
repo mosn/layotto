@@ -151,9 +151,13 @@ import (
 	_ "mosn.io/pkg/buffer"
 
 	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
+	_ "mosn.io/layotto/pkg/filter/stream/wasm/http"
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/runtime"
 	_ "mosn.io/layotto/pkg/wasm"
+	_ "mosn.io/layotto/pkg/wasm/install"
+	_ "mosn.io/layotto/pkg/wasm/uninstall"
+	_ "mosn.io/layotto/pkg/wasm/update"
 
 	_ "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/router/v3"
 	_ "mosn.io/mosn/istio/istio1106"
