@@ -31,7 +31,7 @@
                         "local.file": {
                           "type": "local.file",
                           "metadata": {
-                            "secretsFile": "../../configs/secret/config_secret_local_file.json"
+                            "secretsFile": "/Users/zlb/GolandProjects/layotto/configs/secret/config_secret_local_file.json"
                           }
                         },
                         "local.env": {
@@ -48,8 +48,9 @@
                           },
                           "secret_ref": [
                             {
-                              "name": "local.file",
-                              "key": "redisPassword"
+                              "component_type": "local.file",
+                              "key": "db-user-pass:password",
+                              "ref_key": "redisPassword"
                             }
                           ]
                         }

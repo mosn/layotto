@@ -38,15 +38,15 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 
 	meta := make(map[string]string)
 	for _, item := range items {
-		store := i.Container.GetSecretStore(item.Name)
+		store := i.Container.GetSecretStore(item.ComponentType)
 		secret, err := store.GetSecret(secretstores.GetSecretRequest{
 			Name: item.Key,
 		})
 		if err != nil {
 			return metaData, err
 		}
-		for k, v := range secret.Data {
-			meta[k] = v
+		for _, v := range secret.Data {
+			meta[item.RefKey] = v
 		}
 	}
 	//avoid part of assign because of err
