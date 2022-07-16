@@ -15,8 +15,9 @@
       },
       "secret_ref": [
         {
-          "name": "local.file",
-          "key": "redisPassword"
+          "component_type": "local.file",
+          "key": "db-user-pass:password",
+          "ref_key": "redisPassword"
         }
       ]
     }
@@ -29,7 +30,6 @@
 ## 快速开始
 
 该示例展示了如何注入redis password到sequencer组件
-
 
 ### Step 0:  运行redis并初试密码
 

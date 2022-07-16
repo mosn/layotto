@@ -14,10 +14,11 @@ Use `secret_ref` in your config:
       },
       "secret_ref": [
         {
-          "name": "local.file",
-          "key": "redisPassword"
+          "component_type": "local.file",
+          "key": "db-user-pass:password",
+          "ref_key": "redisPassword"
         }
-      ]
+        ]
     }
   }
 }

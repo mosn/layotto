@@ -45,8 +45,12 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 		if err != nil {
 			return metaData, err
 		}
-		for _, v := range secret.Data {
-			meta[item.RefKey] = v
+		for k, v := range secret.Data {
+			if item.RefKey == "" {
+				meta[k] = v
+			} else {
+				meta[item.RefKey] = v
+			}
 		}
 	}
 	//avoid part of assign because of err
