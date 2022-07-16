@@ -45,4 +45,12 @@ func TestInject(t *testing.T) {
 	injector.InjectSecretRef(items, meta)
 	assert.Equal(t, meta["good-key"], "life is good")
 
+	items = append(items, &ref.Item{
+		ComponentType: "fake_secret_store",
+		Key:           "good-key",
+		RefKey:        "ref-key",
+	})
+	injector.InjectSecretRef(items, meta)
+	assert.Equal(t, meta["ref-key"], "life is good")
+
 }
