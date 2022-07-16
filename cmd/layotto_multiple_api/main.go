@@ -159,9 +159,6 @@ import (
 	_ "mosn.io/pkg/buffer"
 
 	_ "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/router/v3"
-	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
-	l8_grpc "mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/pkg/runtime"
 	_ "mosn.io/mosn/istio/istio1106"
 	_ "mosn.io/mosn/istio/istio1106/filter/stream/jwtauthn"
 	_ "mosn.io/mosn/istio/istio1106/filter/stream/mixer"
@@ -199,6 +196,10 @@ import (
 	_ "mosn.io/mosn/pkg/trace/sofa/xprotocol/bolt"
 	_ "mosn.io/mosn/pkg/upstream/healthcheck"
 	_ "mosn.io/mosn/pkg/upstream/servicediscovery/dubbod"
+
+	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
+	l8_grpc "mosn.io/layotto/pkg/grpc"
+	"mosn.io/layotto/pkg/runtime"
 
 	helloworld_api "mosn.io/layotto/cmd/layotto_multiple_api/helloworld"
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
