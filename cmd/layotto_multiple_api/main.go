@@ -52,8 +52,6 @@ import (
 	"mosn.io/layotto/components/file/s3/aws"
 	"mosn.io/layotto/components/file/s3/minio"
 
-	mock_state "mosn.io/layotto/pkg/mock/components/state"
-
 	dbindings "github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/bindings/http"
 	"mosn.io/pkg/log"
@@ -160,12 +158,10 @@ import (
 	_ "mosn.io/mosn/pkg/wasm/runtime/wasmer"
 	_ "mosn.io/pkg/buffer"
 
+	_ "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/router/v3"
 	_ "mosn.io/layotto/pkg/filter/network/tcpcopy"
 	l8_grpc "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/runtime"
-	_ "mosn.io/layotto/pkg/wasm"
-
-	_ "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/router/v3"
 	_ "mosn.io/mosn/istio/istio1106"
 	_ "mosn.io/mosn/istio/istio1106/filter/stream/jwtauthn"
 	_ "mosn.io/mosn/istio/istio1106/filter/stream/mixer"
