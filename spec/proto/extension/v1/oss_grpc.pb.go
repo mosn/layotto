@@ -8,7 +8,6 @@ package s3
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -26,6 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ObjectStorageServiceClient interface {
 	//Init oss client
 	InitClient(ctx context.Context, in *InitInput, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//Object CRUD API
 	//Adds an object to a bucket.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
 	PutObject(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_PutObjectClient, error)
@@ -35,15 +35,6 @@ type ObjectStorageServiceClient interface {
 	//Delete objects.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html
 	DeleteObject(ctx context.Context, in *DeleteObjectInput, opts ...grpc.CallOption) (*DeleteObjectOutput, error)
-	//Sets the supplied tag-set to an object that already exists in a bucket.
-	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
-	PutObjectTagging(ctx context.Context, in *PutObjectTaggingInput, opts ...grpc.CallOption) (*PutObjectTaggingOutput, error)
-	//Removes the entire tag set from the specified object.
-	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html
-	DeleteObjectTagging(ctx context.Context, in *DeleteObjectTaggingInput, opts ...grpc.CallOption) (*DeleteObjectTaggingOutput, error)
-	//Returns the tag-set of an object.
-	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObjectTagging.html
-	GetObjectTagging(ctx context.Context, in *GetObjectTaggingInput, opts ...grpc.CallOption) (*GetObjectTaggingOutput, error)
 	//Creates a copy of an object that is already stored in oss server.
 	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CopyObject.html
 	CopyObject(ctx context.Context, in *CopyObjectInput, opts ...grpc.CallOption) (*CopyObjectOutput, error)
@@ -53,15 +44,29 @@ type ObjectStorageServiceClient interface {
 	//Returns some or all (up to 1,000) of the objects in a bucket.
 	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_ListObjects.html
 	ListObjects(ctx context.Context, in *ListObjectsInput, opts ...grpc.CallOption) (*ListObjectsOutput, error)
+	//The HEAD action retrieves metadata from an object without returning the object itself.
+	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html
+	HeadObject(ctx context.Context, in *HeadObjectInput, opts ...grpc.CallOption) (*HeadObjectOutput, error)
+	//This action used to check if the file exists.
+	IsObjectExist(ctx context.Context, in *IsObjectExistInput, opts ...grpc.CallOption) (*IsObjectExistOutput, error)
+	//Object Label Operation API
+	//Sets the supplied tag-set to an object that already exists in a bucket.
+	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
+	PutObjectTagging(ctx context.Context, in *PutObjectTaggingInput, opts ...grpc.CallOption) (*PutObjectTaggingOutput, error)
+	//Removes the entire tag set from the specified object.
+	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html
+	DeleteObjectTagging(ctx context.Context, in *DeleteObjectTaggingInput, opts ...grpc.CallOption) (*DeleteObjectTaggingOutput, error)
+	//Returns the tag-set of an object.
+	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObjectTagging.html
+	GetObjectTagging(ctx context.Context, in *GetObjectTaggingInput, opts ...grpc.CallOption) (*GetObjectTaggingOutput, error)
+	//Object ACL Operation API
 	//Returns object canned acl.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 	GetObjectCannedAcl(ctx context.Context, in *GetObjectCannedAclInput, opts ...grpc.CallOption) (*GetObjectCannedAclOutput, error)
 	//Set object canned acl.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 	PutObjectCannedAcl(ctx context.Context, in *PutObjectCannedAclInput, opts ...grpc.CallOption) (*PutObjectCannedAclOutput, error)
-	//Restores an archived copy of an object back.
-	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_RestoreObject.html
-	RestoreObject(ctx context.Context, in *RestoreObjectInput, opts ...grpc.CallOption) (*RestoreObjectOutput, error)
+	//Object Multipart Operation API
 	//Initiates a multipart upload and returns an upload ID.
 	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CreateMultipartUpload.html
 	CreateMultipartUpload(ctx context.Context, in *CreateMultipartUploadInput, opts ...grpc.CallOption) (*CreateMultipartUploadOutput, error)
@@ -80,14 +85,12 @@ type ObjectStorageServiceClient interface {
 	//This action lists in-progress multipart uploads.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html
 	ListMultipartUploads(ctx context.Context, in *ListMultipartUploadsInput, opts ...grpc.CallOption) (*ListMultipartUploadsOutput, error)
+	//Lists the parts that have been uploaded for a specific multipart upload.
+	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html
+	ListParts(ctx context.Context, in *ListPartsInput, opts ...grpc.CallOption) (*ListPartsOutput, error)
 	//Returns metadata about all versions of the objects in a bucket.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectVersions.html
 	ListObjectVersions(ctx context.Context, in *ListObjectVersionsInput, opts ...grpc.CallOption) (*ListObjectVersionsOutput, error)
-	//The HEAD action retrieves metadata from an object without returning the object itself.
-	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html
-	HeadObject(ctx context.Context, in *HeadObjectInput, opts ...grpc.CallOption) (*HeadObjectOutput, error)
-	//This action used to check if the file exists.
-	IsObjectExist(ctx context.Context, in *IsObjectExistInput, opts ...grpc.CallOption) (*IsObjectExistOutput, error)
 	//A presigned URL gives you access to the object identified in the URL, provided that the creator of the presigned URL has permissions to access that object.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html
 	SignURL(ctx context.Context, in *SignURLInput, opts ...grpc.CallOption) (*SignURLOutput, error)
@@ -100,9 +103,9 @@ type ObjectStorageServiceClient interface {
 	//This action used to append object.
 	//Refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
 	AppendObject(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_AppendObjectClient, error)
-	//Lists the parts that have been uploaded for a specific multipart upload.
-	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html
-	ListParts(ctx context.Context, in *ListPartsInput, opts ...grpc.CallOption) (*ListPartsOutput, error)
+	//Restores an archived copy of an object back.
+	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_RestoreObject.html
+	RestoreObject(ctx context.Context, in *RestoreObjectInput, opts ...grpc.CallOption) (*RestoreObjectOutput, error)
 }
 
 type objectStorageServiceClient struct {
@@ -197,33 +200,6 @@ func (c *objectStorageServiceClient) DeleteObject(ctx context.Context, in *Delet
 	return out, nil
 }
 
-func (c *objectStorageServiceClient) PutObjectTagging(ctx context.Context, in *PutObjectTaggingInput, opts ...grpc.CallOption) (*PutObjectTaggingOutput, error) {
-	out := new(PutObjectTaggingOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/PutObjectTagging", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *objectStorageServiceClient) DeleteObjectTagging(ctx context.Context, in *DeleteObjectTaggingInput, opts ...grpc.CallOption) (*DeleteObjectTaggingOutput, error) {
-	out := new(DeleteObjectTaggingOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/DeleteObjectTagging", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *objectStorageServiceClient) GetObjectTagging(ctx context.Context, in *GetObjectTaggingInput, opts ...grpc.CallOption) (*GetObjectTaggingOutput, error) {
-	out := new(GetObjectTaggingOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/GetObjectTagging", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *objectStorageServiceClient) CopyObject(ctx context.Context, in *CopyObjectInput, opts ...grpc.CallOption) (*CopyObjectOutput, error) {
 	out := new(CopyObjectOutput)
 	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/CopyObject", in, out, opts...)
@@ -251,6 +227,51 @@ func (c *objectStorageServiceClient) ListObjects(ctx context.Context, in *ListOb
 	return out, nil
 }
 
+func (c *objectStorageServiceClient) HeadObject(ctx context.Context, in *HeadObjectInput, opts ...grpc.CallOption) (*HeadObjectOutput, error) {
+	out := new(HeadObjectOutput)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/HeadObject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *objectStorageServiceClient) IsObjectExist(ctx context.Context, in *IsObjectExistInput, opts ...grpc.CallOption) (*IsObjectExistOutput, error) {
+	out := new(IsObjectExistOutput)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/IsObjectExist", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *objectStorageServiceClient) PutObjectTagging(ctx context.Context, in *PutObjectTaggingInput, opts ...grpc.CallOption) (*PutObjectTaggingOutput, error) {
+	out := new(PutObjectTaggingOutput)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/PutObjectTagging", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *objectStorageServiceClient) DeleteObjectTagging(ctx context.Context, in *DeleteObjectTaggingInput, opts ...grpc.CallOption) (*DeleteObjectTaggingOutput, error) {
+	out := new(DeleteObjectTaggingOutput)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/DeleteObjectTagging", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *objectStorageServiceClient) GetObjectTagging(ctx context.Context, in *GetObjectTaggingInput, opts ...grpc.CallOption) (*GetObjectTaggingOutput, error) {
+	out := new(GetObjectTaggingOutput)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/GetObjectTagging", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *objectStorageServiceClient) GetObjectCannedAcl(ctx context.Context, in *GetObjectCannedAclInput, opts ...grpc.CallOption) (*GetObjectCannedAclOutput, error) {
 	out := new(GetObjectCannedAclOutput)
 	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/GetObjectCannedAcl", in, out, opts...)
@@ -263,15 +284,6 @@ func (c *objectStorageServiceClient) GetObjectCannedAcl(ctx context.Context, in 
 func (c *objectStorageServiceClient) PutObjectCannedAcl(ctx context.Context, in *PutObjectCannedAclInput, opts ...grpc.CallOption) (*PutObjectCannedAclOutput, error) {
 	out := new(PutObjectCannedAclOutput)
 	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/PutObjectCannedAcl", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *objectStorageServiceClient) RestoreObject(ctx context.Context, in *RestoreObjectInput, opts ...grpc.CallOption) (*RestoreObjectOutput, error) {
-	out := new(RestoreObjectOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/RestoreObject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -357,27 +369,18 @@ func (c *objectStorageServiceClient) ListMultipartUploads(ctx context.Context, i
 	return out, nil
 }
 
+func (c *objectStorageServiceClient) ListParts(ctx context.Context, in *ListPartsInput, opts ...grpc.CallOption) (*ListPartsOutput, error) {
+	out := new(ListPartsOutput)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/ListParts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *objectStorageServiceClient) ListObjectVersions(ctx context.Context, in *ListObjectVersionsInput, opts ...grpc.CallOption) (*ListObjectVersionsOutput, error) {
 	out := new(ListObjectVersionsOutput)
 	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/ListObjectVersions", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *objectStorageServiceClient) HeadObject(ctx context.Context, in *HeadObjectInput, opts ...grpc.CallOption) (*HeadObjectOutput, error) {
-	out := new(HeadObjectOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/HeadObject", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *objectStorageServiceClient) IsObjectExist(ctx context.Context, in *IsObjectExistInput, opts ...grpc.CallOption) (*IsObjectExistOutput, error) {
-	out := new(IsObjectExistOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/IsObjectExist", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -445,9 +448,9 @@ func (x *objectStorageServiceAppendObjectClient) CloseAndRecv() (*AppendObjectOu
 	return m, nil
 }
 
-func (c *objectStorageServiceClient) ListParts(ctx context.Context, in *ListPartsInput, opts ...grpc.CallOption) (*ListPartsOutput, error) {
-	out := new(ListPartsOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/ListParts", in, out, opts...)
+func (c *objectStorageServiceClient) RestoreObject(ctx context.Context, in *RestoreObjectInput, opts ...grpc.CallOption) (*RestoreObjectOutput, error) {
+	out := new(RestoreObjectOutput)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/RestoreObject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -460,6 +463,7 @@ func (c *objectStorageServiceClient) ListParts(ctx context.Context, in *ListPart
 type ObjectStorageServiceServer interface {
 	//Init oss client
 	InitClient(context.Context, *InitInput) (*emptypb.Empty, error)
+	//Object CRUD API
 	//Adds an object to a bucket.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
 	PutObject(ObjectStorageService_PutObjectServer) error
@@ -469,15 +473,6 @@ type ObjectStorageServiceServer interface {
 	//Delete objects.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html
 	DeleteObject(context.Context, *DeleteObjectInput) (*DeleteObjectOutput, error)
-	//Sets the supplied tag-set to an object that already exists in a bucket.
-	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
-	PutObjectTagging(context.Context, *PutObjectTaggingInput) (*PutObjectTaggingOutput, error)
-	//Removes the entire tag set from the specified object.
-	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html
-	DeleteObjectTagging(context.Context, *DeleteObjectTaggingInput) (*DeleteObjectTaggingOutput, error)
-	//Returns the tag-set of an object.
-	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObjectTagging.html
-	GetObjectTagging(context.Context, *GetObjectTaggingInput) (*GetObjectTaggingOutput, error)
 	//Creates a copy of an object that is already stored in oss server.
 	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CopyObject.html
 	CopyObject(context.Context, *CopyObjectInput) (*CopyObjectOutput, error)
@@ -487,15 +482,29 @@ type ObjectStorageServiceServer interface {
 	//Returns some or all (up to 1,000) of the objects in a bucket.
 	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_ListObjects.html
 	ListObjects(context.Context, *ListObjectsInput) (*ListObjectsOutput, error)
+	//The HEAD action retrieves metadata from an object without returning the object itself.
+	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html
+	HeadObject(context.Context, *HeadObjectInput) (*HeadObjectOutput, error)
+	//This action used to check if the file exists.
+	IsObjectExist(context.Context, *IsObjectExistInput) (*IsObjectExistOutput, error)
+	//Object Label Operation API
+	//Sets the supplied tag-set to an object that already exists in a bucket.
+	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
+	PutObjectTagging(context.Context, *PutObjectTaggingInput) (*PutObjectTaggingOutput, error)
+	//Removes the entire tag set from the specified object.
+	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html
+	DeleteObjectTagging(context.Context, *DeleteObjectTaggingInput) (*DeleteObjectTaggingOutput, error)
+	//Returns the tag-set of an object.
+	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObjectTagging.html
+	GetObjectTagging(context.Context, *GetObjectTaggingInput) (*GetObjectTaggingOutput, error)
+	//Object ACL Operation API
 	//Returns object canned acl.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 	GetObjectCannedAcl(context.Context, *GetObjectCannedAclInput) (*GetObjectCannedAclOutput, error)
 	//Set object canned acl.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 	PutObjectCannedAcl(context.Context, *PutObjectCannedAclInput) (*PutObjectCannedAclOutput, error)
-	//Restores an archived copy of an object back.
-	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_RestoreObject.html
-	RestoreObject(context.Context, *RestoreObjectInput) (*RestoreObjectOutput, error)
+	//Object Multipart Operation API
 	//Initiates a multipart upload and returns an upload ID.
 	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CreateMultipartUpload.html
 	CreateMultipartUpload(context.Context, *CreateMultipartUploadInput) (*CreateMultipartUploadOutput, error)
@@ -514,14 +523,12 @@ type ObjectStorageServiceServer interface {
 	//This action lists in-progress multipart uploads.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html
 	ListMultipartUploads(context.Context, *ListMultipartUploadsInput) (*ListMultipartUploadsOutput, error)
+	//Lists the parts that have been uploaded for a specific multipart upload.
+	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html
+	ListParts(context.Context, *ListPartsInput) (*ListPartsOutput, error)
 	//Returns metadata about all versions of the objects in a bucket.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectVersions.html
 	ListObjectVersions(context.Context, *ListObjectVersionsInput) (*ListObjectVersionsOutput, error)
-	//The HEAD action retrieves metadata from an object without returning the object itself.
-	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html
-	HeadObject(context.Context, *HeadObjectInput) (*HeadObjectOutput, error)
-	//This action used to check if the file exists.
-	IsObjectExist(context.Context, *IsObjectExistInput) (*IsObjectExistOutput, error)
 	//A presigned URL gives you access to the object identified in the URL, provided that the creator of the presigned URL has permissions to access that object.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html
 	SignURL(context.Context, *SignURLInput) (*SignURLOutput, error)
@@ -534,9 +541,9 @@ type ObjectStorageServiceServer interface {
 	//This action used to append object.
 	//Refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
 	AppendObject(ObjectStorageService_AppendObjectServer) error
-	//Lists the parts that have been uploaded for a specific multipart upload.
-	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html
-	ListParts(context.Context, *ListPartsInput) (*ListPartsOutput, error)
+	//Restores an archived copy of an object back.
+	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_RestoreObject.html
+	RestoreObject(context.Context, *RestoreObjectInput) (*RestoreObjectOutput, error)
 }
 
 // UnimplementedObjectStorageServiceServer should be embedded to have forward compatible implementations.
@@ -555,15 +562,6 @@ func (UnimplementedObjectStorageServiceServer) GetObject(*GetObjectInput, Object
 func (UnimplementedObjectStorageServiceServer) DeleteObject(context.Context, *DeleteObjectInput) (*DeleteObjectOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteObject not implemented")
 }
-func (UnimplementedObjectStorageServiceServer) PutObjectTagging(context.Context, *PutObjectTaggingInput) (*PutObjectTaggingOutput, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PutObjectTagging not implemented")
-}
-func (UnimplementedObjectStorageServiceServer) DeleteObjectTagging(context.Context, *DeleteObjectTaggingInput) (*DeleteObjectTaggingOutput, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteObjectTagging not implemented")
-}
-func (UnimplementedObjectStorageServiceServer) GetObjectTagging(context.Context, *GetObjectTaggingInput) (*GetObjectTaggingOutput, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetObjectTagging not implemented")
-}
 func (UnimplementedObjectStorageServiceServer) CopyObject(context.Context, *CopyObjectInput) (*CopyObjectOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CopyObject not implemented")
 }
@@ -573,14 +571,26 @@ func (UnimplementedObjectStorageServiceServer) DeleteObjects(context.Context, *D
 func (UnimplementedObjectStorageServiceServer) ListObjects(context.Context, *ListObjectsInput) (*ListObjectsOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListObjects not implemented")
 }
+func (UnimplementedObjectStorageServiceServer) HeadObject(context.Context, *HeadObjectInput) (*HeadObjectOutput, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HeadObject not implemented")
+}
+func (UnimplementedObjectStorageServiceServer) IsObjectExist(context.Context, *IsObjectExistInput) (*IsObjectExistOutput, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsObjectExist not implemented")
+}
+func (UnimplementedObjectStorageServiceServer) PutObjectTagging(context.Context, *PutObjectTaggingInput) (*PutObjectTaggingOutput, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PutObjectTagging not implemented")
+}
+func (UnimplementedObjectStorageServiceServer) DeleteObjectTagging(context.Context, *DeleteObjectTaggingInput) (*DeleteObjectTaggingOutput, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteObjectTagging not implemented")
+}
+func (UnimplementedObjectStorageServiceServer) GetObjectTagging(context.Context, *GetObjectTaggingInput) (*GetObjectTaggingOutput, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetObjectTagging not implemented")
+}
 func (UnimplementedObjectStorageServiceServer) GetObjectCannedAcl(context.Context, *GetObjectCannedAclInput) (*GetObjectCannedAclOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObjectCannedAcl not implemented")
 }
 func (UnimplementedObjectStorageServiceServer) PutObjectCannedAcl(context.Context, *PutObjectCannedAclInput) (*PutObjectCannedAclOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PutObjectCannedAcl not implemented")
-}
-func (UnimplementedObjectStorageServiceServer) RestoreObject(context.Context, *RestoreObjectInput) (*RestoreObjectOutput, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RestoreObject not implemented")
 }
 func (UnimplementedObjectStorageServiceServer) CreateMultipartUpload(context.Context, *CreateMultipartUploadInput) (*CreateMultipartUploadOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMultipartUpload not implemented")
@@ -600,14 +610,11 @@ func (UnimplementedObjectStorageServiceServer) AbortMultipartUpload(context.Cont
 func (UnimplementedObjectStorageServiceServer) ListMultipartUploads(context.Context, *ListMultipartUploadsInput) (*ListMultipartUploadsOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListMultipartUploads not implemented")
 }
+func (UnimplementedObjectStorageServiceServer) ListParts(context.Context, *ListPartsInput) (*ListPartsOutput, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListParts not implemented")
+}
 func (UnimplementedObjectStorageServiceServer) ListObjectVersions(context.Context, *ListObjectVersionsInput) (*ListObjectVersionsOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListObjectVersions not implemented")
-}
-func (UnimplementedObjectStorageServiceServer) HeadObject(context.Context, *HeadObjectInput) (*HeadObjectOutput, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HeadObject not implemented")
-}
-func (UnimplementedObjectStorageServiceServer) IsObjectExist(context.Context, *IsObjectExistInput) (*IsObjectExistOutput, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IsObjectExist not implemented")
 }
 func (UnimplementedObjectStorageServiceServer) SignURL(context.Context, *SignURLInput) (*SignURLOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignURL not implemented")
@@ -621,8 +628,8 @@ func (UnimplementedObjectStorageServiceServer) UpdateUploadBandwidthRateLimit(co
 func (UnimplementedObjectStorageServiceServer) AppendObject(ObjectStorageService_AppendObjectServer) error {
 	return status.Errorf(codes.Unimplemented, "method AppendObject not implemented")
 }
-func (UnimplementedObjectStorageServiceServer) ListParts(context.Context, *ListPartsInput) (*ListPartsOutput, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListParts not implemented")
+func (UnimplementedObjectStorageServiceServer) RestoreObject(context.Context, *RestoreObjectInput) (*RestoreObjectOutput, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RestoreObject not implemented")
 }
 
 // UnsafeObjectStorageServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -719,60 +726,6 @@ func _ObjectStorageService_DeleteObject_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ObjectStorageService_PutObjectTagging_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PutObjectTaggingInput)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).PutObjectTagging(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/PutObjectTagging",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).PutObjectTagging(ctx, req.(*PutObjectTaggingInput))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ObjectStorageService_DeleteObjectTagging_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteObjectTaggingInput)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).DeleteObjectTagging(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/DeleteObjectTagging",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).DeleteObjectTagging(ctx, req.(*DeleteObjectTaggingInput))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ObjectStorageService_GetObjectTagging_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetObjectTaggingInput)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).GetObjectTagging(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/GetObjectTagging",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).GetObjectTagging(ctx, req.(*GetObjectTaggingInput))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ObjectStorageService_CopyObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CopyObjectInput)
 	if err := dec(in); err != nil {
@@ -827,6 +780,96 @@ func _ObjectStorageService_ListObjects_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ObjectStorageService_HeadObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HeadObjectInput)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ObjectStorageServiceServer).HeadObject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/HeadObject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ObjectStorageServiceServer).HeadObject(ctx, req.(*HeadObjectInput))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ObjectStorageService_IsObjectExist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsObjectExistInput)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ObjectStorageServiceServer).IsObjectExist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/IsObjectExist",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ObjectStorageServiceServer).IsObjectExist(ctx, req.(*IsObjectExistInput))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ObjectStorageService_PutObjectTagging_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PutObjectTaggingInput)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ObjectStorageServiceServer).PutObjectTagging(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/PutObjectTagging",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ObjectStorageServiceServer).PutObjectTagging(ctx, req.(*PutObjectTaggingInput))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ObjectStorageService_DeleteObjectTagging_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteObjectTaggingInput)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ObjectStorageServiceServer).DeleteObjectTagging(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/DeleteObjectTagging",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ObjectStorageServiceServer).DeleteObjectTagging(ctx, req.(*DeleteObjectTaggingInput))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ObjectStorageService_GetObjectTagging_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetObjectTaggingInput)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ObjectStorageServiceServer).GetObjectTagging(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/GetObjectTagging",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ObjectStorageServiceServer).GetObjectTagging(ctx, req.(*GetObjectTaggingInput))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ObjectStorageService_GetObjectCannedAcl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetObjectCannedAclInput)
 	if err := dec(in); err != nil {
@@ -859,24 +902,6 @@ func _ObjectStorageService_PutObjectCannedAcl_Handler(srv interface{}, ctx conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).PutObjectCannedAcl(ctx, req.(*PutObjectCannedAclInput))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ObjectStorageService_RestoreObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RestoreObjectInput)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).RestoreObject(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/RestoreObject",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).RestoreObject(ctx, req.(*RestoreObjectInput))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -997,6 +1022,24 @@ func _ObjectStorageService_ListMultipartUploads_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ObjectStorageService_ListParts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPartsInput)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ObjectStorageServiceServer).ListParts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/ListParts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ObjectStorageServiceServer).ListParts(ctx, req.(*ListPartsInput))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ObjectStorageService_ListObjectVersions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListObjectVersionsInput)
 	if err := dec(in); err != nil {
@@ -1011,42 +1054,6 @@ func _ObjectStorageService_ListObjectVersions_Handler(srv interface{}, ctx conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).ListObjectVersions(ctx, req.(*ListObjectVersionsInput))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ObjectStorageService_HeadObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HeadObjectInput)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).HeadObject(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/HeadObject",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).HeadObject(ctx, req.(*HeadObjectInput))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ObjectStorageService_IsObjectExist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IsObjectExistInput)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).IsObjectExist(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/IsObjectExist",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).IsObjectExist(ctx, req.(*IsObjectExistInput))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1131,20 +1138,20 @@ func (x *objectStorageServiceAppendObjectServer) Recv() (*AppendObjectInput, err
 	return m, nil
 }
 
-func _ObjectStorageService_ListParts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListPartsInput)
+func _ObjectStorageService_RestoreObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RestoreObjectInput)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).ListParts(ctx, in)
+		return srv.(ObjectStorageServiceServer).RestoreObject(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/ListParts",
+		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/RestoreObject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).ListParts(ctx, req.(*ListPartsInput))
+		return srv.(ObjectStorageServiceServer).RestoreObject(ctx, req.(*RestoreObjectInput))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1165,18 +1172,6 @@ var ObjectStorageService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ObjectStorageService_DeleteObject_Handler,
 		},
 		{
-			MethodName: "PutObjectTagging",
-			Handler:    _ObjectStorageService_PutObjectTagging_Handler,
-		},
-		{
-			MethodName: "DeleteObjectTagging",
-			Handler:    _ObjectStorageService_DeleteObjectTagging_Handler,
-		},
-		{
-			MethodName: "GetObjectTagging",
-			Handler:    _ObjectStorageService_GetObjectTagging_Handler,
-		},
-		{
 			MethodName: "CopyObject",
 			Handler:    _ObjectStorageService_CopyObject_Handler,
 		},
@@ -1189,16 +1184,32 @@ var ObjectStorageService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ObjectStorageService_ListObjects_Handler,
 		},
 		{
+			MethodName: "HeadObject",
+			Handler:    _ObjectStorageService_HeadObject_Handler,
+		},
+		{
+			MethodName: "IsObjectExist",
+			Handler:    _ObjectStorageService_IsObjectExist_Handler,
+		},
+		{
+			MethodName: "PutObjectTagging",
+			Handler:    _ObjectStorageService_PutObjectTagging_Handler,
+		},
+		{
+			MethodName: "DeleteObjectTagging",
+			Handler:    _ObjectStorageService_DeleteObjectTagging_Handler,
+		},
+		{
+			MethodName: "GetObjectTagging",
+			Handler:    _ObjectStorageService_GetObjectTagging_Handler,
+		},
+		{
 			MethodName: "GetObjectCannedAcl",
 			Handler:    _ObjectStorageService_GetObjectCannedAcl_Handler,
 		},
 		{
 			MethodName: "PutObjectCannedAcl",
 			Handler:    _ObjectStorageService_PutObjectCannedAcl_Handler,
-		},
-		{
-			MethodName: "RestoreObject",
-			Handler:    _ObjectStorageService_RestoreObject_Handler,
 		},
 		{
 			MethodName: "CreateMultipartUpload",
@@ -1221,16 +1232,12 @@ var ObjectStorageService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ObjectStorageService_ListMultipartUploads_Handler,
 		},
 		{
+			MethodName: "ListParts",
+			Handler:    _ObjectStorageService_ListParts_Handler,
+		},
+		{
 			MethodName: "ListObjectVersions",
 			Handler:    _ObjectStorageService_ListObjectVersions_Handler,
-		},
-		{
-			MethodName: "HeadObject",
-			Handler:    _ObjectStorageService_HeadObject_Handler,
-		},
-		{
-			MethodName: "IsObjectExist",
-			Handler:    _ObjectStorageService_IsObjectExist_Handler,
 		},
 		{
 			MethodName: "SignURL",
@@ -1245,8 +1252,8 @@ var ObjectStorageService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ObjectStorageService_UpdateUploadBandwidthRateLimit_Handler,
 		},
 		{
-			MethodName: "ListParts",
-			Handler:    _ObjectStorageService_ListParts_Handler,
+			MethodName: "RestoreObject",
+			Handler:    _ObjectStorageService_RestoreObject_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
