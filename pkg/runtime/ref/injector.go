@@ -46,6 +46,9 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 			return metaData, err
 		}
 		for k, v := range secret.Data {
+			if k != item.SubKey {
+				continue
+			}
 			if item.RefKey == "" {
 				meta[k] = v
 			} else {

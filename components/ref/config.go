@@ -26,6 +26,8 @@ type Item struct {
 	ComponentType string `json:"component_type"`
 	// key in the secret component
 	Key string `json:"key"`
+	//sub key in the secret component
+	SubKey string `json:"sub_key"`
 	// key need to inject into metadata
 	RefKey string `json:"ref_key"`
 }

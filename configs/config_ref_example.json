@@ -50,6 +50,7 @@
                             {
                               "component_type": "local.file",
                               "key": "db-user-pass:password",
+                              "sub_key": "db-user-pass:password",
                               "ref_key": "redisPassword"
                             }
                           ]
