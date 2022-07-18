@@ -26,7 +26,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 ### 三、环境搭建
 
 #### A、安装&运行 Redis
-   
+
 这里只是需要一个可以正常使用 Redis 即可，至于 Redis 安装在哪里没有特别限制，可以是虚拟机里，也可以是本机或者服务器，这里以安装在 mac 为例进行介绍。
 
 ```
@@ -58,6 +58,8 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 **注1：需要把`./demo/faas/config.json`中的 redis 地址修改为实际地址（安装redis的宿主机ip），默认地址为：localhost:6379。**
 
 **注2：需要把`./demo/faas/config.json`中的 wasm 文件的路径修改为`/home/docker/function_1.wasm`跟`/home/docker/function_2.wasm`， 两个wasm文件在后面会被自动注入。**
+
+**注3：也可动态加载 WASM 文件，详情参见：[WASM 动态注册](https://mosn.io/layotto/#/zh/start/wasm/start?id=动态注册)**
 
 #### D、安装 containerd-shim-layotto-v2
 
@@ -101,7 +103,7 @@ sudo systemctl restart containerd
 #### A、启动 Layotto
 
 ```
-> minikube ssh 
+> minikube ssh
 > layotto start -c /home/docker/config.json
 ```
 
@@ -159,7 +161,7 @@ There are 100 inventories for book1.
 2.启动Layotto时，redis连接失败,打印 "occurs an error: redis store: error connecting to redis at"：
 
    检查redis的配置，看是否redis配置错误造成的。
-   
+
 
 
 ### 说明
@@ -167,7 +169,7 @@ There are 100 inventories for book1.
 目前整套 FaaS 模型处于 POC 阶段，功能还不够完善，后续会在以下几个方向上进一步探索完善：
 1. 对函数运行时可使用的最大资源进行限制，如cpu，heap，stack等。
 2. 由不同 Layotto 加载运行的函数之间可以互相调用。
-3. 充分融入k8s生态，比如上报使用资源给k8s，让k8s进行更好的调度。 
+3. 充分融入k8s生态，比如上报使用资源给k8s，让k8s进行更好的调度。
 4. 增加更多的 Runtime ABI。
 
 如果你对 FaaS 感兴趣或者有任何疑问或者想法，欢迎在 issue 区留言，我们一起建设 FaaS ！

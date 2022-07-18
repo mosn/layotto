@@ -14,10 +14,26 @@
  * limitations under the License.
  */
 
-package http
+package ref
 
-const (
-	HttpSuccessCode     = 200
-	HttpNotFoundCode    = 404
-	HttpUnavailableCode = 503
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"mosn.io/layotto/pkg/mock"
+	"mosn.io/layotto/pkg/mock/components/secret"
 )
+
+func TestRefContainer(t *testing.T) {
+
+	container := NewRefContainer()
+
+	ss := &secret.FakeSecretStore{}
+	container.SecretRef["fake"] = ss
+	cf := &mock.MockStore{}
+	container.ConfigRef["mock"] = cf
+	assert.Equal(t, ss, container.GetSecretStore("fake"))
+	assert.Equal(t, cf, container.GetConfigStore("mock"))
+
+}

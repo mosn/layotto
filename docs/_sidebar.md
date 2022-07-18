@@ -7,13 +7,16 @@
   - [Use Pub/Sub API](en/start/pubsub/start.md)
   - [Use Distributed Lock API](en/start/lock/start.md)
   - [Use Sequencer API](en/start/sequencer/start.md)
-  - [Use Secret API](en/start/secret/start.md)
+  - Use Secret API
+    - [Query secrets](en/start/secret/start.md)
+    - [Refer to secrets in component configuration](en/start/secret/secret_ref.md)
   - Service Invocation
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
   - [API plugin: register your own API](en/start/api_plugin/helloworld.md)
-  - Integrate with istio
-    - [As a data plane in istio](en/start/istio/start.md)
+  - As the data plane of istio
+    - [Integrate with istio 1.10.6](en/start/istio/)
+    - [Integrate with istio 1.5.x](en/start/istio/start.md)
   - Traffic intervention on the 4th layer network
     - [Dump TCP Traffic](en/start/network_filter/tcpcopy.md)
   - Flow Control on the 7th layer network
@@ -25,6 +28,7 @@
   - [Health check and metadata query](en/start/actuator/start.md)
   - [Run business logic in Layotto using WASM](en/start/wasm/start.md)
   - [FaaS model based on WASM and Runtime](en/start/faas/start.md)
+- [Online lab](en/start/lab.md)  
 - Developer guide
   - Building blocks
     - [File API](en/building_blocks/file/file.md)

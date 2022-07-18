@@ -1,3 +1,6 @@
+//go:build wasmer
+// +build wasmer
+
 /*
  * Copyright 2021 Layotto Authors
  *
@@ -14,19 +17,12 @@
  * limitations under the License.
  */
 
-package actuator
+package install
 
 import (
-	"context"
+	"mosn.io/layotto/pkg/wasm"
 )
 
-// Endpoint is used to storage data.
-type Endpoint interface {
-	Handle(ctx context.Context, params ParamsScanner) (jsonObject map[string]interface{}, err error)
-}
-
-type ParamsScanner interface {
-	//Next get the next param.
-	Next() string
-	HasNext() bool
+func init() {
+	wasm.GetDefault().AddEndpoint("install", NewEndpoint())
 }
