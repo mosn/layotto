@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package http
+package wasm
 
 import (
-	"mosn.io/layotto/pkg/actuator"
-	"mosn.io/layotto/pkg/filter/stream/common/http"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func init() {
-	handler := actuator.GetDefault()
-	http.RegisterFilter("actuator", handler)
+func Test_filter(t *testing.T) {
+	values := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	assert.Equal(t, []int{2, 4, 6, 8, 10}, filter(values, func(item int) bool { return item%2 == 0 }))
+
 }

@@ -1,3 +1,6 @@
+//go:build wasmer
+// +build wasmer
+
 /*
  * Copyright 2021 Layotto Authors
  *
@@ -14,10 +17,12 @@
  * limitations under the License.
  */
 
-package http
+package install
 
-const (
-	HttpSuccessCode     = 200
-	HttpNotFoundCode    = 404
-	HttpUnavailableCode = 503
+import (
+	"mosn.io/layotto/pkg/wasm"
 )
+
+func init() {
+	wasm.GetDefault().AddEndpoint("install", NewEndpoint())
+}

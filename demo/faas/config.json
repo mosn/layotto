@@ -81,9 +81,36 @@
               }
             }
           ]
+        },
+        {
+          "name": "wasm_filter",
+          "address": "0.0.0.0:34998",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "proxy",
+                  "config": {
+                    "downstream_protocol": "Http1",
+                    "upstream_protocol": "Http1",
+                    "router_config_name": "wasm_router"
+                  }
+                }
+              ]
+            }
+          ],
+          "stream_filters": [
+            {
+              "type": "wasm_filter"
+            }
+          ]
         }
       ],
       "routers": [
+        {
+          "router_config_name": "wasm_router"
+        },
         {
           "router_config_name":"function_router",
           "virtual_hosts":[{
