@@ -73,6 +73,7 @@
         - [Redis](en/component_specs/sequencer/redis.md)
         - [Zookeeper](en/component_specs/sequencer/zookeeper.md)
         - [MongoDB](en/component_specs/sequencer/mongo.md)
+        - [Mysql](en/component_specs/sequencer/mysql.md)
       - [Secret Store](en/component_specs/secret/common.md)
   - [How to deploy and upgrade Layotto](en/operation/)
 - Design documents

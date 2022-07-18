@@ -3,6 +3,7 @@ module mosn.io/layotto/components
 go 1.14
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/alicebob/miniredis/v2 v2.16.0
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.8+incompatible
 	github.com/apache/dubbo-go-hessian2 v1.10.2
