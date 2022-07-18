@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package actuator
+package http
 
 import (
 	"context"
 )
 
-// Endpoint is used to storage data.
 type Endpoint interface {
 	Handle(ctx context.Context, params ParamsScanner) (jsonObject map[string]interface{}, err error)
-}
-
-type ParamsScanner interface {
-	//Next get the next param.
-	Next() string
-	HasNext() bool
 }

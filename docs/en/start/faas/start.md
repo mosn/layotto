@@ -59,6 +59,8 @@ The example only needs a Redis server that can be used normally. As for where it
 
 **Note2: Need to modify the path of the wasm file in `./demo/faas/config.json` to `/home/docker/function_1.wasm` and `/home/docker/function_2.wasm`**
 
+**Note3: We can also load WASM file dynamically. For details, see [WASM Dynamic Load](https://mosn.io/layotto/#/en/start/wasm/start?id=dynamic-load)**
+
 #### D、Compile & install containerd-shim-layotto-v2
 
 ```
@@ -101,7 +103,7 @@ sudo systemctl restart containerd
 #### A、Start Layotto
 
 ```
-> minikube ssh 
+> minikube ssh
 > layotto start -c /home/docker/config.json
 ```
 
@@ -165,7 +167,7 @@ There are 100 inventories for book1.
 The FaaS model is currently in the POC stage, and the features are not complete. It will be improved in the following aspects in the future:
 1. Limit the maximum resources that can be used when the function is running, such as cpu, heap, stack, etc.
 2. The functions loaded and run by different Layotto can call each other.
-3. Fully integrate into the k8s ecology, such as reporting the use of resources to k8s, so that k8s can perform better scheduling. 
+3. Fully integrate into the k8s ecology, such as reporting the use of resources to k8s, so that k8s can perform better scheduling.
 4. Add more Runtime ABI.
 
 If you are interested in FaaS or have any questions or ideas, please leave a message in the issue area, we can build FaaS together!

@@ -43,9 +43,20 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 
+	_ "mosn.io/layotto/pkg/filter/stream/wasm/http"
+	"mosn.io/layotto/pkg/grpc/default_api"
+	mock_state "mosn.io/layotto/pkg/mock/components/state"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
+	_ "mosn.io/layotto/pkg/wasm"
+	_ "mosn.io/layotto/pkg/wasm/install"
+	_ "mosn.io/layotto/pkg/wasm/uninstall"
+	_ "mosn.io/layotto/pkg/wasm/update"
 
 	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
+
+	dbindings "github.com/dapr/components-contrib/bindings"
+	"github.com/dapr/components-contrib/bindings/http"
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
 	"mosn.io/layotto/components/custom"
@@ -54,15 +65,7 @@ import (
 	"mosn.io/layotto/components/file/qiniu"
 	"mosn.io/layotto/components/file/tencentcloud"
 	"mosn.io/layotto/pkg/grpc/dapr"
-	"mosn.io/layotto/pkg/grpc/default_api"
 	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
-	_ "mosn.io/layotto/pkg/wasm"
-
-	mock_state "mosn.io/layotto/pkg/mock/components/state"
-
-	dbindings "github.com/dapr/components-contrib/bindings"
-	"github.com/dapr/components-contrib/bindings/http"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/layotto/components/file"
@@ -138,6 +141,7 @@ import (
 	sequencer_etcd "mosn.io/layotto/components/sequencer/etcd"
 	sequencer_inmemory "mosn.io/layotto/components/sequencer/in-memory"
 	sequencer_mongo "mosn.io/layotto/components/sequencer/mongo"
+	sequencer_mysql "mosn.io/layotto/components/sequencer/mysql"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 
@@ -445,6 +449,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
 				return sequencer_inmemory.NewInMemorySequencer()
+			}),
+			runtime_sequencer.NewFactory("mysql", func() sequencer.Store {
+				return sequencer_mysql.NewMySQLSequencer(log.DefaultLogger)
 			}),
 		),
 		// secretstores
