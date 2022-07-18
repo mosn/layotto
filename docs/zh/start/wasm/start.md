@@ -28,7 +28,7 @@ Layotto支持加载编译好的WASM文件，并通过`proxy_abi_version_0_2_0`�
 docker run -d --name redis-test -p 6379:6379 redis
 ```
 
-调用 Redis 容器中的 redis-cli,执行`set book1 100` 
+调用 Redis 容器中的 redis-cli,执行`set book1 100`
 
 ```shell
 docker exec -i redis-test redis-cli set book1 100
@@ -88,6 +88,51 @@ There are 100 inventories for book1.
 
 ```shell
 docker rm -f redis-test
+```
+
+### 动态注册
+
+除了在 `./demo/faas/config.json` 中指定要加载的 WASM 文件外（比如以下配置）：
+
+```json
+"config": {
+  "function1": {
+    "name": "function1",
+    "instance_num": 1,
+    "vm_config": {
+      "engine": "wasmer",
+      "path": "demo/faas/code/golang/client/function_1.wasm"
+    }
+  },
+  "function2": {
+    "name": "function2",
+    "instance_num": 1,
+    "vm_config": {
+      "engine": "wasmer",
+      "path": "demo/faas/code/golang/server/function_2.wasm"
+    }
+  }
+}
+```
+
+我们也可通过以下接口来动态的加载、更新、卸载 WASM 文件。
+
+#### 加载
+
+```shell
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
+```
+
+#### 更新实例数
+
+```shell
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2}' http://127.0.0.1:34998/wasm/update
+```
+
+#### 卸载
+
+```shell
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1"}' http://127.0.0.1:34998/wasm/uninstall
 ```
 
 ### 说明
