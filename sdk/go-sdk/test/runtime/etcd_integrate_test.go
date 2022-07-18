@@ -164,7 +164,7 @@ func TestEtcdSequencerApi(t *testing.T) {
 	defer cli.Close()
 
 	ctx := context.Background()
-	sequencerKey := "MyKey"
+	sequencerKey := "MyEtcdSqKey"
 
 	for i := 1; i < 10; i++ {
 		resp, err := cli.GetNextId(ctx, &runtimev1pb.GetNextIdRequest{

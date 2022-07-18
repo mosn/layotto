@@ -124,7 +124,7 @@ func TestZKSequencerApi(t *testing.T) {
 	defer cli.Close()
 
 	ctx := context.Background()
-	sequencerKey := "MyKey"
+	sequencerKey := "MyZKSqKey"
 
 	for i := 1; i < 10; i++ {
 		resp, err := cli.GetNextId(ctx, &runtimev1pb.GetNextIdRequest{

@@ -20,19 +20,18 @@ nohup ./layotto start -c ./configs/config_redis.json &
 cd sdk/go-sdk/test/runtime
 go test -p 1 -v -run TestRedis ./...
 
-cd ../../../../
+cd ../../../../../
+etcd &
 kill -9 $(netstat -tlnp|grep 34904|awk '{print $7}'|awk -F '/' '{print $1}')
-nohup etcd  &
+cd layotto
 nohup ./layotto start -c ./configs/runtime_config.json &
 cd sdk/go-sdk/test/runtime
 go test -p 1 -v -run TestEtcd ./...
 
-# cd ../../../../
-# go build ./cmd/layotto
-# nohup bash /usr/share/zookeeper/bin/zkServer.sh start&
-# bash /usr/share/zookeeper/bin/zkCli.sh
-# create -s /sequencer|||app||MyKey "MyValue"
-# quit
-# nohup ./layotto start -c ./configs/config_zookeeper.json &
-# cd sdk/go-sdk/test/runtime
-# go test -p 1 -v -run TestZK ./...
+kill -9 $(netstat -tlnp|grep 34904|awk '{print $7}'|awk -F '/' '{print $1}')
+nohup bash /usr/share/zookeeper/bin/zkServer.sh start
+bash /usr/share/zookeeper/bin/zkCli.sh < zkCreateZNode.sh
+cd ../../../../
+nohup ./layotto start -c ./configs/config_zookeeper.json &
+cd sdk/go-sdk/test/runtime
+go test -p 1 -v -run TestZK ./...
