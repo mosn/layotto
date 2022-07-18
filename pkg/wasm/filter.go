@@ -24,15 +24,15 @@ import (
 	"sync/atomic"
 
 	"mosn.io/mosn/pkg/variable"
+	"mosn.io/mosn/pkg/wasm/abi"
+	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/types"
-	"mosn.io/mosn/pkg/wasm/abi"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 	"mosn.io/pkg/buffer"
 	"mosn.io/proxy-wasm-go-host/proxywasm/common"
-	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 )
 
 type Filter struct {
@@ -141,28 +141,39 @@ func NewFilter(ctx context.Context, factory *FilterConfigFactory) *Filter {
 	return filter
 }
 
+func (f *Filter) releaseUsedInstance() error {
+	if f.pluginUsed == nil || f.instance == nil {
+		return nil
+	}
+	plugin := f.pluginUsed
+	f.instance.Lock(f.abi)
+
+	_, err := f.exports.ProxyOnDone(f.contextID)
+	if err != nil {
+		log.DefaultLogger.Errorf("[proxywasm][filter] releaseUsedInstance fail to call ProxyOnDone, err: %v", err)
+		return err
+	}
+
+	err = f.exports.ProxyOnDelete(f.contextID)
+	if err != nil {
+		log.DefaultLogger.Errorf("[proxywasm][filter] releaseUsedInstance fail to call ProxyOnDelete, err: %v", err)
+		return err
+	}
+
+	f.instance.Unlock()
+	plugin.plugin.ReleaseInstance(f.instance)
+
+	f.instance = nil
+	f.pluginUsed = nil
+	f.exports = nil
+
+	return nil
+}
+
 // Destruction of filters
 func (f *Filter) OnDestroy() {
 	f.destroyOnce.Do(func() {
-		if f.pluginUsed == nil || f.instance == nil {
-			return
-		}
-
-		plugin := f.pluginUsed
-		f.instance.Lock(f.abi)
-
-		_, err := f.exports.ProxyOnDone(f.contextID)
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] OnDestroy fail to call ProxyOnDone, err: %v", err)
-		}
-
-		err = f.exports.ProxyOnDelete(f.contextID)
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][filter] OnDestroy fail to call ProxyOnDelete, err: %v", err)
-		}
-
-		f.instance.Unlock()
-		plugin.plugin.ReleaseInstance(f.instance)
+		_ = f.releaseUsedInstance()
 	})
 }
 

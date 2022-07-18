@@ -19,6 +19,7 @@ package http
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 
 	"github.com/valyala/fasthttp"
 	"mosn.io/api"
@@ -27,12 +28,12 @@ import (
 	"mosn.io/mosn/pkg/variable"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
-
-	"mosn.io/layotto/pkg/actuator"
 )
 
 type DispatchFilter struct {
-	handler api.StreamReceiverFilterHandler
+	filterType     string
+	requestHandler RequestHandler
+	handler        api.StreamReceiverFilterHandler
 }
 
 func (dis *DispatchFilter) SetReceiveFilterHandler(handler api.StreamReceiverFilterHandler) {
@@ -43,54 +44,52 @@ func (dis *DispatchFilter) OnDestroy() {}
 
 func (dis *DispatchFilter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
 	// 1. log
-	log.DefaultLogger.Debugf("[actuator] receive actuator pkt")
+	log.DefaultLogger.Debugf("[%v] receive %v pkt", dis.filterType, dis.filterType)
 	path, err := variable.GetString(ctx, types.VarHttpRequestPath)
 	if err != nil {
 		dis.write404()
 		return api.StreamFilterStop
 	}
-	log.DefaultLogger.Debugf("[actuator] path: %v", path)
+	log.DefaultLogger.Debugf("[%v] path: %v", dis.filterType, path)
 	// 2. validate path
 	resolver := NewPathResolver(path)
-	// http path must be /actuator/{endpoint_name}/{params}
-	// So we can return 404 directly if it does not start with "actuator"
-	if resolver.Next() != "actuator" {
+	// http path must be /{dis.filterType}/{endpoint_name}/{params}
+	// So we can return 404 directly if it does not start with {dis.filterType}
+	if resolver.Next() != dis.filterType {
 		// illegal
 		dis.write404()
 		return api.StreamFilterStop
 	}
-	act := actuator.GetDefault()
-	if act == nil {
-		dis.write404()
-		return api.StreamFilterStop
+	// 3. process request
+	requestData := dis.handler.GetRequestData()
+	if requestData != nil {
+		ctx = context.WithValue(ctx, ContextKeyRequestData{}, requestData.Bytes())
 	}
-	// 3. dispatch endpoint
 	epName := resolver.Next()
-	endpoint, ok := act.GetEndpoint(epName)
+	endpoint, ok := dis.requestHandler.GetEndpoint(epName)
 	if !ok {
 		// illegal
 		dis.write404()
 		return api.StreamFilterStop
 	}
 	json, err := endpoint.Handle(ctx, resolver)
-	// 4. write result
 	var code int
 	if err != nil {
-		code = HttpUnavailableCode
+		code = http.StatusInternalServerError
 	} else {
-		code = HttpSuccessCode
+		code = http.StatusOK
 	}
 	dis.writeJsonResult(json, code)
 	return api.StreamFilterStop
 }
 
 func (dis *DispatchFilter) write404() {
-	dis.writeJsonResult(nil, HttpNotFoundCode)
+	dis.writeJsonResult(nil, http.StatusNotFound)
 }
 
 func (dis *DispatchFilter) writeJsonResult(jsonObject map[string]interface{}, code int) {
 	if code == 0 {
-		code = HttpSuccessCode
+		code = http.StatusOK
 	}
 	// 0. marshal
 	var byteSlice []byte
@@ -98,8 +97,8 @@ func (dis *DispatchFilter) writeJsonResult(jsonObject map[string]interface{}, co
 		var err error
 		byteSlice, err = json.Marshal(jsonObject)
 		if err != nil {
-			log.DefaultLogger.Errorf("[actuator][dispatch_filter]error when marshal result:%v", err)
-			code = HttpUnavailableCode
+			log.DefaultLogger.Errorf("[%v][dispatch_filter]error when marshal result:%v", dis.filterType, err)
+			code = http.StatusInternalServerError
 		}
 	}
 	// 1. header

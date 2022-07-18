@@ -17,11 +17,11 @@
 package http
 
 import (
-	"mosn.io/layotto/pkg/actuator"
 	"mosn.io/layotto/pkg/filter/stream/common/http"
+	"mosn.io/layotto/pkg/wasm"
 )
 
 func init() {
-	handler := actuator.GetDefault()
-	http.RegisterFilter("actuator", handler)
+	handler := wasm.GetDefault()
+	http.RegisterFilter("wasm", handler)
 }

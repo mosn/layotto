@@ -1,3 +1,6 @@
+//go:build wasmer
+// +build wasmer
+
 /*
  * Copyright 2021 Layotto Authors
  *
@@ -14,14 +17,12 @@
  * limitations under the License.
  */
 
-package http
+package update
 
 import (
-	"mosn.io/layotto/pkg/actuator"
-	"mosn.io/layotto/pkg/filter/stream/common/http"
+	"mosn.io/layotto/pkg/wasm"
 )
 
 func init() {
-	handler := actuator.GetDefault()
-	http.RegisterFilter("actuator", handler)
+	wasm.GetDefault().AddEndpoint("update", NewEndpoint())
 }
