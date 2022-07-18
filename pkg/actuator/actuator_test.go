@@ -21,12 +21,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"mosn.io/layotto/pkg/filter/stream/common/http"
 )
 
 type MockEndpoint struct {
 }
 
-func (m *MockEndpoint) Handle(ctx context.Context, params ParamsScanner) (map[string]interface{}, error) {
+func (m *MockEndpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[string]interface{}, error) {
 	return nil, nil
 }
 
@@ -55,5 +57,4 @@ func TestActuator(t *testing.T) {
 	endpoint, ok = act.GetEndpoint("health")
 	assert.True(t, ok)
 	assert.Equal(t, endpoint, ep)
-
 }

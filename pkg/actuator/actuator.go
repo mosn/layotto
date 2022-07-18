@@ -16,27 +16,31 @@
 
 package actuator
 
-import "mosn.io/pkg/log"
+import (
+	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/pkg/filter/stream/common/http"
+)
 
 type Actuator struct {
-	endpointRegistry map[string]Endpoint
+	endpointRegistry map[string]http.Endpoint
 }
 
 // New init an Actuator.
 func New() *Actuator {
 	return &Actuator{
-		endpointRegistry: make(map[string]Endpoint),
+		endpointRegistry: make(map[string]http.Endpoint),
 	}
 }
 
 // GetEndpoint get an Endpoint from Actuator with name.
-func (act *Actuator) GetEndpoint(name string) (endpoint Endpoint, ok bool) {
+func (act *Actuator) GetEndpoint(name string) (endpoint http.Endpoint, ok bool) {
 	e, ok := act.endpointRegistry[name]
 	return e, ok
 }
 
 // AddEndpoint add an Endpoint to Actuator。
-func (act *Actuator) AddEndpoint(name string, ep Endpoint) {
+func (act *Actuator) AddEndpoint(name string, ep http.Endpoint) {
 	_, ok := act.endpointRegistry[name]
 	if ok {
 		log.DefaultLogger.Warnf("Duplicate Endpoint name:  %v !", name)
