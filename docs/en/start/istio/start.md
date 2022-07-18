@@ -1,4 +1,4 @@
-# Layotto integrate with Istio
+# Demo of Istio 1.5.x integration
 
 ## 1. Background
 
@@ -19,7 +19,7 @@ before starting the demo，you must install some components as follows：
 
 3. [Istio-1.5.x](https://github.com/istio/istio/releases/tag/1.5.2)
 
-   Currently, mosn only supports `istio 1.5.X` (the support for `istio 1.10.X` is already in CR), so you need to download the corresponding version of `istio`. After decompressing, configure it as follows to facilitate subsequent operations.
+   You need to download the `1.5.x` version of `istio`. After decompressing, configure it as follows to facilitate subsequent operations.
 
    ```
    export PATH=$PATH:${your istio directory}/bin
@@ -113,7 +113,8 @@ before starting the demo，you must install some components as follows：
 
 ## 5. Note
 
-1. Since `istio 1.5.2` is used in this demo, which belongs to an older version, the demo will not be merged into the `main` branch. Instead, it exists as an independent branch `istio-1.5.X`. After 'mosn' integrates with `istio 1.10.X`, it will be merged.
+1. Since the example uses `istio 1.5.2`, which is an older version, the demo will not be merged into the main branch, but exists as a separate branch `istio-1.5.x`. Currently the main branch code has been integrated with `istio 1.10.x`.
+   
 2. For the source code of client and server used in the example, please refer to [here](https://github.com/mosn/layotto/tree/istio-1.5.x/demo/istio).
 3. In order to get started simple, the `layotto-injected.yaml` file used above has been injected through istio already. This injection process is as follows:
    1. Run the following command to specify `istio` to use `Layotto` as the data plane

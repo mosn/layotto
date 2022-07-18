@@ -5,7 +5,6 @@ Layotto是MOSN社区的一个子项目，本文介绍SOFAStack & MOSN社区角�
 
 该提案会先在Layotto和SOFA-Registry项目试行
 
-旧版组织架构见https://www.sofastack.tech/community/
 ## 0. 设计目标
 - 吸引更多的人加入成为社区的**维护者、管理者**，而不仅仅是由核心开发者维护社区、单点瓶颈
 - 提升社区活跃度

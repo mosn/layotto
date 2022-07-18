@@ -16,8 +16,11 @@
 
 package pubsub
 
+import "mosn.io/layotto/components/ref"
+
 // Config wraps configuration for a pubsub implementation
 type Config struct {
+	ref.Config
 	Type     string            `json:"type"`
 	Metadata map[string]string `json:"metadata"`
 }

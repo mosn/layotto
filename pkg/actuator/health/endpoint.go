@@ -21,6 +21,7 @@ import (
 	"errors"
 
 	"mosn.io/layotto/pkg/actuator"
+	"mosn.io/layotto/pkg/filter/stream/common/http"
 )
 
 const (
@@ -62,7 +63,7 @@ func NewEndpoint() *Endpoint {
 //    }
 //  }
 // }
-func (e *Endpoint) Handle(ctx context.Context, params actuator.ParamsScanner) (map[string]interface{}, error) {
+func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[string]interface{}, error) {
 	result := make(map[string]interface{})
 	// 1. validate params
 	if params == nil || !params.HasNext() {

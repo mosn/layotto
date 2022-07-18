@@ -16,7 +16,7 @@ Tips: 如果觉得某篇文档写的不够详细想要补充，或者文档写�
 。不过看视频比较花时间，懒得看的话可以多跑几个demo体验下，quickstart demo蛮多的
 
 ## Step 2. 挑选适合你的任务
-当你大概知道这个项目是做什么的了，可以从 [社区任务列表](https://github.com/mosn/layotto/issues/108#issuecomment-872779356) 中挑选感兴趣的任务，没打勾的任务都可以认领。完成任务即可成为Layotto Contributor。
+当你大概知道这个项目是做什么的了，可以从 [good first issue 列表](https://github.com/mosn/layotto/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3A%22good+first+issue%22) 中挑选感兴趣的任务，没打勾的任务都可以认领。完成任务即可成为Layotto Contributor。
 选择任务时，推荐：
    
 - 对于想要学习go语言的同学 
