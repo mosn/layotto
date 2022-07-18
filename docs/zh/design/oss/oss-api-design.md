@@ -72,10 +72,10 @@ client选择流程图如下所示：
 1. 通用接口，即类似于PutObject、GetObject等所有的oss服务都支持的接口。 
 2. 非通用接口，即只有部分oss服务支持的接口。比如ListParts接口，aws就无法支持。
 
-该接口的设计主要参考aliyun和aws以及Minio的接口定义。
-> https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObject.html 
-> https://help.aliyun.com/document_detail/31980.html  
-> https://docs.min.io/docs/golang-client-api-reference.html
+该接口的设计主要参考aliyun和aws以及minio的接口定义。
+> https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObject.html     
+> https://help.aliyun.com/document_detail/31980.html    
+> https://docs.min.io/docs/golang-client-api-reference.html    
 
 ### InitClient
 
@@ -133,14 +133,14 @@ factory.RegisterInitFunc("aws", AwsDefaultInitFunc)
 
 对象上传接口，用作上传文件，是oss最基本能力。
 
-> [https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_PutObject.html](https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_PutObject.html)
+> [https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_PutObject.html](https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_PutObject.html)    
 > [https://help.aliyun.com/document_detail/31978.html](https://help.aliyun.com/document_detail/31978.html)
 
 ### GetObject
 
 对象下载接口，用作文件下载，是oss最基本能力。
 
-> [https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObject.html](https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObject.html)
+> [https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObject.html](https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObject.html)    
 > [https://help.aliyun.com/document_detail/31980.html](https://help.aliyun.com/document_detail/31980.html)
 
 
@@ -288,7 +288,7 @@ factory.RegisterInitFunc("aws", AwsDefaultInitFunc)
 
 该接口在s3中没有明确的定义，用户可以通过HeadObject返回的http标准错误码是不是404来判断object是不是存在，这里单独抽象出来是为了让接口更加具有语义信息。
 
-> [http://biercoff.com/how-to-check-with-aws-cli-if-file-exists-in-s3/](http://biercoff.com/how-to-check-with-aws-cli-if-file-exists-in-s3/)  
+> [http://biercoff.com/how-to-check-with-aws-cli-if-file-exists-in-s3/](http://biercoff.com/how-to-check-with-aws-cli-if-file-exists-in-s3/)      
 > [https://stackoverflow.com/questions/41871948/aws-s3-how-to-check-if-a-file-exists-in-a-bucket-using-bash](https://stackoverflow.com/questions/41871948/aws-s3-how-to-check-if-a-file-exists-in-a-bucket-using-bash)
 
 ### SignURL
