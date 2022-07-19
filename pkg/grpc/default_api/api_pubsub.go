@@ -45,13 +45,7 @@ func (a *api) PublishEvent(ctx context.Context, in *runtimev1pb.PublishEventRequ
 		Metadata:        in.GetMetadata(),
 	}
 
-	result, err := a.daprAPI.PublishEvent(ctx, p)
-
-	if err != nil {
-		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
-	}
-
-	return result, err
+	return a.daprAPI.PublishEvent(ctx, p)
 }
 
 func (a *api) startSubscribing() error {
