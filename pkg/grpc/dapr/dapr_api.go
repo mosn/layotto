@@ -66,7 +66,8 @@ type daprGrpcAPI struct {
 	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 	secretStores             map[string]secretstores.SecretStore
 	// app callback
-	AppCallbackConn *grpc.ClientConn
+	AppCallbackConn   *grpc.ClientConn
+	topicPerComponent map[string]TopicSubscriptions
 	// json
 	json jsoniter.API
 }
@@ -75,11 +76,6 @@ func (d *daprGrpcAPI) Init(conn *grpc.ClientConn) error {
 	// 1. set connection
 	d.AppCallbackConn = conn
 	return d.startSubscribing()
-}
-
-func (d *daprGrpcAPI) startSubscribing() error {
-	// TODO
-	return nil
 }
 
 func (d *daprGrpcAPI) Register(rawGrpcServer *grpc.Server) error {
