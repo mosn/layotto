@@ -49,10 +49,10 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 			if k != item.SubKey {
 				continue
 			}
-			if item.InjectedAs == "" {
+			if item.InjectAs == "" {
 				meta[k] = v
 			} else {
-				meta[item.InjectedAs] = v
+				meta[item.InjectAs] = v
 			}
 		}
 	}

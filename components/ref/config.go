@@ -29,5 +29,5 @@ type Item struct {
 	//sub key in the secret component
 	SubKey string `json:"sub_key"`
 	// key need to inject into metadata
-	InjectedAs string `json:"injected_as"`
+	InjectAs string `json:"inject_as"`
 }
