@@ -116,7 +116,7 @@ func (d *daprGrpcAPI) doPublishEvent(ctx context.Context, pubsubName string, top
 	return &emptypb.Empty{}, nil
 }
 
-func (d *daprGrpcAPI) StartSubscribing() error {
+func (d *daprGrpcAPI) startSubscribing() error {
 	// 1. check if there is no need to do it
 	if len(d.pubSubs) == 0 {
 		return nil
@@ -153,6 +153,7 @@ func (d *daprGrpcAPI) getInterestedTopics() (map[string]TopicSubscriptions, erro
 	// 2. handle app subscriptions
 	client := dapr_v1pb.NewAppCallbackClient(d.AppCallbackConn)
 	subscriptions = listTopicSubscriptions(client, log.DefaultLogger)
+	// TODO handle declarative subscriptions
 
 	// 3. prepare result
 	for _, s := range subscriptions {
@@ -280,6 +281,8 @@ func retryStrategy(err error, res *dapr_v1pb.TopicEventResponse, cloudEvent map[
 
 	switch res.GetStatus() {
 	case dapr_v1pb.TopicEventResponse_SUCCESS:
+		// on uninitialized status, this is the case it defaults to as an uninitialized status defaults to 0 which is
+		// success from protobuf definition
 		return nil
 	case dapr_v1pb.TopicEventResponse_RETRY:
 		return fmt.Errorf("RETRY status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
