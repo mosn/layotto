@@ -38,7 +38,7 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 
 	meta := make(map[string]string)
 	for _, item := range items {
-		store := i.Container.GetSecretStore(item.ComponentType)
+		store := i.Container.GetSecretStore(item.StoreName)
 		secret, err := store.GetSecret(secretstores.GetSecretRequest{
 			Name: item.Key,
 		})
@@ -49,10 +49,10 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 			if k != item.SubKey {
 				continue
 			}
-			if item.RefKey == "" {
+			if item.InjectedAs == "" {
 				meta[k] = v
 			} else {
-				meta[item.RefKey] = v
+				meta[item.InjectedAs] = v
 			}
 		}
 	}

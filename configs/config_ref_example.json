@@ -48,10 +48,10 @@
                           },
                           "secret_ref": [
                             {
-                              "component_type": "local.file",
+                              "store_name": "local.file",
                               "key": "db-user-pass:password",
                               "sub_key": "db-user-pass:password",
-                              "ref_key": "redisPassword"
+                              "inject_as": "redisPassword"
                             }
                           ]
                         }

@@ -23,11 +23,11 @@ type Config struct {
 
 type Item struct {
 	//secret component name, such as : local.file
-	ComponentType string `json:"component_type"`
+	StoreName string `json:"store_name"`
 	// key in the secret component
 	Key string `json:"key"`
 	//sub key in the secret component
 	SubKey string `json:"sub_key"`
 	// key need to inject into metadata
-	RefKey string `json:"ref_key"`
+	InjectedAs string `json:"injected_as"`
 }
