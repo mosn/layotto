@@ -24,10 +24,6 @@ import (
 	"mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 )
 
-func (d *daprGrpcAPI) PublishEvent(ctx context.Context, request *runtime.PublishEventRequest) (*emptypb.Empty, error) {
-	panic("implement me")
-}
-
 func (d *daprGrpcAPI) RegisterActorTimer(ctx context.Context, request *runtime.RegisterActorTimerRequest) (*emptypb.Empty, error) {
 	panic("implement me")
 }
