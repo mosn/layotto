@@ -22,9 +22,7 @@ import (
 	"fmt"
 
 	"github.com/dapr/components-contrib/contenttype"
-	contrib_contenttype "github.com/dapr/components-contrib/contenttype"
 	"github.com/dapr/components-contrib/pubsub"
-	contrib_pubsub "github.com/dapr/components-contrib/pubsub"
 	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc/codes"
@@ -51,61 +49,68 @@ type TopicSubscriptions struct {
 
 func (d *daprGrpcAPI) PublishEvent(ctx context.Context, in *dapr_v1pb.PublishEventRequest) (*emptypb.Empty, error) {
 	// 1. validate
-	if in.PubsubName == "" {
+	result, err := d.doPublishEvent(ctx, in.PubsubName, in.Topic, in.Data, in.DataContentType, in.Metadata)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
+	}
+	return result, err
+}
+
+// doPublishEvent is a protocal irrelevant function to do event publishing.
+// It's easy to add APIs for other protocals(e.g. for http api). Just move this func to a separate layer if you need.
+func (d *daprGrpcAPI) doPublishEvent(ctx context.Context, pubsubName string, topic string, data []byte, contentType string, metadata map[string]string) (*emptypb.Empty, error) {
+	// 1. validate
+	if pubsubName == "" {
 		err := status.Error(codes.InvalidArgument, messages.ErrPubsubEmpty)
 		return &emptypb.Empty{}, err
 	}
-	if in.Topic == "" {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrTopicEmpty, in.PubsubName)
+	if topic == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrTopicEmpty, pubsubName)
 		return &emptypb.Empty{}, err
 	}
-
-	component, ok := d.pubSubs[in.PubsubName]
-
+	// 2. get component
+	component, ok := d.pubSubs[pubsubName]
 	if !ok {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrPubsubNotFound, in.PubsubName)
+		err := status.Errorf(codes.InvalidArgument, messages.ErrPubsubNotFound, pubsubName)
 		return &emptypb.Empty{}, err
 	}
 
-	// 2. new cloudevent request
-	if in.Data == nil {
-		in.Data = []byte{}
+	// 3. new cloudevent request
+	if data == nil {
+		data = []byte{}
 	}
 	var envelope map[string]interface{}
-	var err error = nil
-	if contrib_contenttype.IsCloudEventContentType(in.DataContentType) {
-		envelope, err = contrib_pubsub.FromCloudEvent(in.Data, in.Topic, in.PubsubName, "")
+	var err error
+	if contenttype.IsCloudEventContentType(contentType) {
+		envelope, err = pubsub.FromCloudEvent(data, topic, pubsubName, "")
 		if err != nil {
 			err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
 			return &emptypb.Empty{}, err
 		}
 	} else {
-		envelope = contrib_pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", in.Topic, in.PubsubName,
-			in.DataContentType, in.Data, "")
+		envelope = pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", topic, pubsubName,
+			contentType, data, "")
 	}
 	features := component.Features()
-	pubsub.ApplyMetadata(envelope, features, in.Metadata)
+	pubsub.ApplyMetadata(envelope, features, metadata)
 
 	b, err := jsoniter.ConfigFastest.Marshal(envelope)
 	if err != nil {
-		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventsSer, in.Topic, in.PubsubName, err.Error())
+		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventsSer, topic, pubsubName, err.Error())
 		return &emptypb.Empty{}, err
 	}
-
-	// 3. convert requests
-	req := &pubsub.PublishRequest{
+	// 4. publish
+	req := pubsub.PublishRequest{
+		PubsubName: pubsubName,
+		Topic:      topic,
 		Data:       b,
-		Topic:      in.Topic,
-		PubsubName: in.PubsubName,
-		Metadata:   in.Metadata,
+		Metadata:   metadata,
 	}
 
-	// 4. send request
-	err = component.Publish(req)
-
-	// 5. check request
+	// TODO limit topic scope
+	err = component.Publish(&req)
 	if err != nil {
-		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, in.Topic, in.PubsubName, err.Error())
+		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, topic, pubsubName, err.Error())
 		return &emptypb.Empty{}, nerr
 	}
 	return &emptypb.Empty{}, nil
