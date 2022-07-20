@@ -48,7 +48,7 @@ type ObjectStorageServiceClient interface {
 	HeadObject(ctx context.Context, in *HeadObjectInput, opts ...grpc.CallOption) (*HeadObjectOutput, error)
 	//This action used to check if the file exists.
 	IsObjectExist(ctx context.Context, in *IsObjectExistInput, opts ...grpc.CallOption) (*IsObjectExistOutput, error)
-	//Object Label Operation API
+	//Object Tagging API
 	//Sets the supplied tag-set to an object that already exists in a bucket.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
 	PutObjectTagging(ctx context.Context, in *PutObjectTaggingInput, opts ...grpc.CallOption) (*PutObjectTaggingOutput, error)
@@ -99,7 +99,7 @@ type ObjectStorageServiceClient interface {
 	//This action used to set upload bandwidth limit speed.
 	//Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2096
 	UpdateUploadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	//This action used to append object.
+	//This action is used to append object.
 	//Refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
 	AppendObject(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_AppendObjectClient, error)
 	//Restores an archived copy of an object back.
@@ -475,7 +475,7 @@ type ObjectStorageServiceServer interface {
 	HeadObject(context.Context, *HeadObjectInput) (*HeadObjectOutput, error)
 	//This action used to check if the file exists.
 	IsObjectExist(context.Context, *IsObjectExistInput) (*IsObjectExistOutput, error)
-	//Object Label Operation API
+	//Object Tagging API
 	//Sets the supplied tag-set to an object that already exists in a bucket.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
 	PutObjectTagging(context.Context, *PutObjectTaggingInput) (*PutObjectTaggingOutput, error)
@@ -526,7 +526,7 @@ type ObjectStorageServiceServer interface {
 	//This action used to set upload bandwidth limit speed.
 	//Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2096
 	UpdateUploadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) (*emptypb.Empty, error)
-	//This action used to append object.
+	//This action is used to append object.
 	//Refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
 	AppendObject(ObjectStorageService_AppendObjectServer) error
 	//Restores an archived copy of an object back.

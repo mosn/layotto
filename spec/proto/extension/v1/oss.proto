@@ -35,7 +35,7 @@ service ObjectStorageService{
     //This action used to check if the file exists.
     rpc IsObjectExist(IsObjectExistInput) returns(IsObjectExistOutput){}
 
-    //Object Label Operation API
+    //Object Tagging API
     //Sets the supplied tag-set to an object that already exists in a bucket.
     //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
     rpc PutObjectTagging(PutObjectTaggingInput) returns (PutObjectTaggingOutput){}
@@ -92,7 +92,7 @@ service ObjectStorageService{
     //Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2096
     rpc UpdateUploadBandwidthRateLimit(UpdateBandwidthRateLimitInput) returns(google.protobuf.Empty){}
 
-    //This action used to append object.
+    //This action is used to append object.
     //Refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
     rpc AppendObject(stream AppendObjectInput) returns(AppendObjectOutput){}
 
