@@ -22,6 +22,10 @@ import (
 	"strings"
 )
 
+const (
+	TargetAddress = "rpc_target_address"
+)
+
 // RPCHeader is storage header info
 type RPCHeader map[string][]string
 
