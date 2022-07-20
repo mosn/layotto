@@ -44,57 +44,12 @@ const cfg = `[
 				}
 			]`
 
-const cfgwithuid = `[
-				{	
-					"uid": "1",
-					"buckets":["bucket3"],
-					"endpoint": "protocol://service-code.region-code.amazonaws.com",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret",
-					"region": "us-west-2"
-				}
-			]`
-
 func TestAwsOss_Init(t *testing.T) {
 	oss := NewAwsFile()
 	err := oss.Init(context.TODO(), &file.FileConfig{})
 	assert.Equal(t, err.Error(), "invalid config for aws oss")
 	err = oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
 	assert.Equal(t, nil, err)
-}
-
-func TestAwsOss_SelectClient(t *testing.T) {
-	oss := &AwsOss{
-		client: make(map[string]*s3.Client),
-		meta:   make(map[string]*utils.OssMetadata),
-	}
-	err := oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
-	assert.Equal(t, nil, err)
-
-	// not specify endpoint, select default client
-	_, err = oss.selectClient("", "bucket1")
-	assert.Nil(t, err)
-
-	// specify endpoint equal config
-	client, _ := oss.selectClient("", "bucket1")
-	assert.NotNil(t, client)
-
-	// specicy not exist endpoint, select default one
-	client, err = oss.selectClient("", "bucket1")
-	assert.Nil(t, err)
-	assert.NotNil(t, client)
-	// new client with endpoint
-	oss.client["bucket2"] = &s3.Client{}
-	client, _ = oss.selectClient("", "bucket2")
-	assert.NotNil(t, client)
-
-	err = oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfgwithuid)})
-	assert.Equal(t, nil, err)
-
-	// specify uid
-	client, _ = oss.selectClient("1", "bucket1")
-	assert.Equal(t, client, oss.client["1"])
-	assert.NotNil(t, client)
 }
 
 func TestAwsOss_IsAwsMetaValid(t *testing.T) {

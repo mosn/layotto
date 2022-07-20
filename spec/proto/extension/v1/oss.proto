@@ -10,9 +10,6 @@ import "google/protobuf/empty.proto";
 option go_package = "mosn.io/layotto/spec/proto/extension/v1;s3";
 
 service ObjectStorageService{
-    //Init oss client
-    rpc InitClient(InitInput) returns (google.protobuf.Empty){}
-
     //Object CRUD API
     //Adds an object to a bucket.
     //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html

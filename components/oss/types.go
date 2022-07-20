@@ -27,7 +27,6 @@ var (
 
 // OssConfig wraps configuration for a oss implementation
 type OssConfig struct {
-	Method   string          `json:"method"`
 	Metadata json.RawMessage `json:"metadata"`
 	Type     string          `json:"type"`
 }

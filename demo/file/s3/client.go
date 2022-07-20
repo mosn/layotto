@@ -482,18 +482,6 @@ func TestHeadObject(bucket, fileName string) {
 }
 
 func main() {
-	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
-	if err != nil {
-		fmt.Printf("conn build failed,err:%+v", err)
-		return
-	}
-	c := s3.NewObjectStorageServiceClient(conn)
-	req := &s3.InitInput{StoreName: storeName}
-	_, err = c.InitClient(context.Background(), req)
-	if err != nil {
-		fmt.Printf("Init client fail,err:%+v", err)
-		return
-	}
 
 	if os.Args[1] == "put" {
 		TestPutObject(os.Args[2], os.Args[3], os.Args[4])

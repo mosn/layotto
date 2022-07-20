@@ -8,9 +8,9 @@ import (
 	context "context"
 	reflect "reflect"
 
-	"mosn.io/layotto/components/oss"
-
 	gomock "github.com/golang/mock/gomock"
+
+	oss "mosn.io/layotto/components/oss"
 )
 
 // MockOss is a mock of Oss interface.
@@ -216,32 +216,18 @@ func (mr *MockOssMockRecorder) HeadObject(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeadObject", reflect.TypeOf((*MockOss)(nil).HeadObject), arg0, arg1)
 }
 
-// InitClient mocks base method.
-func (m *MockOss) InitClient(arg0 context.Context, arg1 *oss.InitRequest) error {
+// Init mocks base method.
+func (m *MockOss) Init(arg0 context.Context, arg1 *oss.OssConfig) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InitClient", arg0, arg1)
+	ret := m.ctrl.Call(m, "Init", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// InitClient indicates an expected call of InitClient.
-func (mr *MockOssMockRecorder) InitClient(arg0, arg1 interface{}) *gomock.Call {
+// Init indicates an expected call of Init.
+func (mr *MockOssMockRecorder) Init(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InitClient", reflect.TypeOf((*MockOss)(nil).InitClient), arg0, arg1)
-}
-
-// InitConfig mocks base method.
-func (m *MockOss) InitConfig(arg0 context.Context, arg1 *oss.OssConfig) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InitConfig", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// InitConfig indicates an expected call of InitConfig.
-func (mr *MockOssMockRecorder) InitConfig(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InitConfig", reflect.TypeOf((*MockOss)(nil).InitConfig), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Init", reflect.TypeOf((*MockOss)(nil).Init), arg0, arg1)
 }
 
 // IsObjectExist mocks base method.

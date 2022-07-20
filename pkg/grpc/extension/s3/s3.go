@@ -68,17 +68,6 @@ func (s *S3Server) Register(rawGrpcServer *rawGRPC.Server) error {
 	return nil
 }
 
-func (s *S3Server) InitClient(ctx context.Context, req *s3.InitInput) (*emptypb.Empty, error) {
-	if s.ossInstance[req.StoreName] == nil {
-		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
-	}
-	err := s.ossInstance[req.StoreName].InitClient(ctx, &l8s3.InitRequest{Metadata: req.Metadata})
-	if err != nil {
-		log.DefaultLogger.Errorf("InitClient fail, err: %+v", err)
-	}
-	return &emptypb.Empty{}, err
-}
-
 func transferData(source interface{}, target interface{}) error {
 	data, err := json.Marshal(source)
 	if err != nil {

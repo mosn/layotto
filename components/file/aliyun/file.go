@@ -19,7 +19,6 @@ package aliyun
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -37,11 +36,11 @@ const (
 
 // AliyunFile is a binding for an AliCloud OSS storage bucketKey
 type AliyunFile struct {
-	client map[string]*oss.Client
+	client *oss.Client
 }
 
 func NewAliyunFile() file.File {
-	oss := &AliyunFile{client: make(map[string]*oss.Client)}
+	oss := &AliyunFile{}
 	return oss
 }
 
@@ -57,18 +56,11 @@ func (s *AliyunFile) Init(ctx context.Context, metadata *file.FileConfig) error 
 		if !s.checkMetadata(v) {
 			return file.ErrInvalid
 		}
-		client, err := s.getClient(v)
+		client, err := oss.New(v.Endpoint, v.AccessKeyID, v.AccessKeySecret)
 		if err != nil {
 			return err
 		}
-		s.client[v.Uid] = client
-		//use bucket as key, client as value
-		for _, bucketName := range v.Buckets {
-			if _, ok := s.client[bucketName]; ok {
-				return errors.New("incorrect configuration, bucketName must be unique")
-			}
-			s.client[bucketName] = client
-		}
+		s.client = client
 	}
 	return nil
 }
@@ -197,14 +189,6 @@ func (s *AliyunFile) checkMetadata(m *utils.OssMetadata) bool {
 	return true
 }
 
-func (s *AliyunFile) getClient(metadata *utils.OssMetadata) (*oss.Client, error) {
-	client, err := oss.New(metadata.Endpoint, metadata.AccessKeyID, metadata.AccessKeySecret)
-	if err != nil {
-		return nil, err
-	}
-	return client, nil
-}
-
 func (s *AliyunFile) getBucket(fileName string, metaData map[string]string) (*oss.Bucket, error) {
 	var ossClient *oss.Client
 	var err error
@@ -213,8 +197,7 @@ func (s *AliyunFile) getBucket(fileName string, metaData map[string]string) (*os
 	if err != nil {
 		return nil, err
 	}
-	//for file interface, not support specify uid now
-	ossClient, err = s.selectClient("", bucketName)
+	ossClient, err = s.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -225,22 +208,9 @@ func (s *AliyunFile) getBucket(fileName string, metaData map[string]string) (*os
 	return bucket, nil
 }
 
-func (s *AliyunFile) selectClient(uid, bucket string) (*oss.Client, error) {
-	// 1. if user specify client uid, use specify client first
-	if uid != "" {
-		if client, ok := s.client[uid]; ok {
-			return client, nil
-		}
+func (s *AliyunFile) getClient() (*oss.Client, error) {
+	if s.client == nil {
+		return nil, utils.ErrNotInitClient
 	}
-	// 2. if user not specify client uid, use bucket to select client
-	if client, ok := s.client[bucket]; ok {
-		return client, nil
-	}
-	// 3. if not specify uid and bucket, select default one
-	if len(s.client) == 1 {
-		for _, client := range s.client {
-			return client, nil
-		}
-	}
-	return nil, utils.ErrNotSpecifyEndpoint
+	return s.client, nil
 }

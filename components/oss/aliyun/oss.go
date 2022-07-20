@@ -21,8 +21,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"mosn.io/layotto/components/oss/factory"
-
 	"mosn.io/layotto/components/pkg/utils"
 
 	l8oss "mosn.io/layotto/components/oss"
@@ -30,73 +28,35 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
-const (
-	DefaultClientInitFunc = "aliyun"
-)
-
 // AliyunOSS is a binding for an aliyun OSS storage bucketKey
 type AliyunOSS struct {
-	client  map[string]*oss.Client
-	method  string
+	client  *oss.Client
 	rawData json.RawMessage
 }
 
 func NewAliyunOss() l8oss.Oss {
-	return &AliyunOSS{
-		client: make(map[string]*oss.Client),
-	}
+	return &AliyunOSS{}
 }
 
-func init() {
-	factory.RegisterInitFunc(DefaultClientInitFunc, AliyunDefaultInitFunc)
-}
-
-func AliyunDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (map[string]interface{}, error) {
+func (a *AliyunOSS) Init(ctx context.Context, config *l8oss.OssConfig) error {
+	a.rawData = config.Metadata
 	m := make([]*utils.OssMetadata, 0)
-	clients := make(map[string]interface{})
-	err := json.Unmarshal(staticConf, &m)
+	err := json.Unmarshal(config.Metadata, &m)
 	if err != nil {
-		return nil, l8oss.ErrInvalid
+		return l8oss.ErrInvalid
 	}
 	for _, v := range m {
 		client, err := oss.New(v.Endpoint, v.AccessKeyID, v.AccessKeySecret)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		clients[v.Uid] = client
-		for _, bucketName := range v.Buckets {
-			if _, ok := clients[bucketName]; ok {
-				continue
-			}
-			clients[bucketName] = client
-		}
-	}
-	return clients, nil
-}
-
-func (a *AliyunOSS) InitConfig(ctx context.Context, config *l8oss.OssConfig) error {
-	a.method = config.Method
-	a.rawData = config.Metadata
-	return nil
-}
-
-func (a *AliyunOSS) InitClient(ctx context.Context, req *l8oss.InitRequest) error {
-	if a.method == "" {
-		a.method = DefaultClientInitFunc
-	}
-	initFunc := factory.GetInitFunc(a.method)
-	clients, err := initFunc(a.rawData, req.Metadata)
-	if err != nil {
-		return err
-	}
-	for k, v := range clients {
-		a.client[k] = v.(*oss.Client)
+		a.client = client
 	}
 	return nil
 }
 
 func (a *AliyunOSS) GetObject(ctx context.Context, req *l8oss.GetObjectInput) (*l8oss.GetObjectOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +82,7 @@ func (a *AliyunOSS) GetObject(ctx context.Context, req *l8oss.GetObjectInput) (*
 }
 
 func (a *AliyunOSS) PutObject(ctx context.Context, req *l8oss.PutObjectInput) (*l8oss.PutObjectOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +117,7 @@ func (a *AliyunOSS) PutObject(ctx context.Context, req *l8oss.PutObjectInput) (*
 }
 
 func (a *AliyunOSS) DeleteObject(ctx context.Context, req *l8oss.DeleteObjectInput) (*l8oss.DeleteObjectOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +129,7 @@ func (a *AliyunOSS) DeleteObject(ctx context.Context, req *l8oss.DeleteObjectInp
 	return &l8oss.DeleteObjectOutput{}, err
 }
 func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *l8oss.DeleteObjectsInput) (*l8oss.DeleteObjectsOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +155,7 @@ func (a *AliyunOSS) DeleteObjects(ctx context.Context, req *l8oss.DeleteObjectsI
 }
 
 func (a *AliyunOSS) PutObjectTagging(ctx context.Context, req *l8oss.PutObjectTaggingInput) (*l8oss.PutObjectTaggingOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +173,7 @@ func (a *AliyunOSS) PutObjectTagging(ctx context.Context, req *l8oss.PutObjectTa
 }
 
 func (a *AliyunOSS) DeleteObjectTagging(ctx context.Context, req *l8oss.DeleteObjectTaggingInput) (*l8oss.DeleteObjectTaggingOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +186,7 @@ func (a *AliyunOSS) DeleteObjectTagging(ctx context.Context, req *l8oss.DeleteOb
 }
 
 func (a *AliyunOSS) GetObjectTagging(ctx context.Context, req *l8oss.GetObjectTaggingInput) (*l8oss.GetObjectTaggingOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +206,7 @@ func (a *AliyunOSS) GetObjectTagging(ctx context.Context, req *l8oss.GetObjectTa
 }
 
 func (a *AliyunOSS) GetObjectCannedAcl(ctx context.Context, req *l8oss.GetObjectCannedAclInput) (*l8oss.GetObjectCannedAclOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +222,7 @@ func (a *AliyunOSS) GetObjectCannedAcl(ctx context.Context, req *l8oss.GetObject
 	return output, err
 }
 func (a *AliyunOSS) PutObjectCannedAcl(ctx context.Context, req *l8oss.PutObjectCannedAclInput) (*l8oss.PutObjectCannedAclOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -275,7 +235,7 @@ func (a *AliyunOSS) PutObjectCannedAcl(ctx context.Context, req *l8oss.PutObject
 	return output, err
 }
 func (a *AliyunOSS) ListObjects(ctx context.Context, req *l8oss.ListObjectsInput) (*l8oss.ListObjectsOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +270,7 @@ func (a *AliyunOSS) ListObjects(ctx context.Context, req *l8oss.ListObjectsInput
 	return out, nil
 }
 func (a *AliyunOSS) CopyObject(ctx context.Context, req *l8oss.CopyObjectInput) (*l8oss.CopyObjectOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -334,7 +294,7 @@ func (a *AliyunOSS) CopyObject(ctx context.Context, req *l8oss.CopyObjectInput) 
 }
 
 func (a *AliyunOSS) CreateMultipartUpload(ctx context.Context, req *l8oss.CreateMultipartUploadInput) (*l8oss.CreateMultipartUploadOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -347,7 +307,7 @@ func (a *AliyunOSS) CreateMultipartUpload(ctx context.Context, req *l8oss.Create
 	return output, err
 }
 func (a *AliyunOSS) UploadPart(ctx context.Context, req *l8oss.UploadPartInput) (*l8oss.UploadPartOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -364,7 +324,7 @@ func (a *AliyunOSS) UploadPart(ctx context.Context, req *l8oss.UploadPartInput) 
 	return output, err
 }
 func (a *AliyunOSS) UploadPartCopy(ctx context.Context, req *l8oss.UploadPartCopyInput) (*l8oss.UploadPartCopyOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -385,7 +345,7 @@ func (a *AliyunOSS) UploadPartCopy(ctx context.Context, req *l8oss.UploadPartCop
 	return output, err
 }
 func (a *AliyunOSS) CompleteMultipartUpload(ctx context.Context, req *l8oss.CompleteMultipartUploadInput) (*l8oss.CompleteMultipartUploadOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -409,7 +369,7 @@ func (a *AliyunOSS) CompleteMultipartUpload(ctx context.Context, req *l8oss.Comp
 	return output, err
 }
 func (a *AliyunOSS) AbortMultipartUpload(ctx context.Context, req *l8oss.AbortMultipartUploadInput) (*l8oss.AbortMultipartUploadOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -425,7 +385,7 @@ func (a *AliyunOSS) AbortMultipartUpload(ctx context.Context, req *l8oss.AbortMu
 	return output, err
 }
 func (a *AliyunOSS) ListMultipartUploads(ctx context.Context, req *l8oss.ListMultipartUploadsInput) (*l8oss.ListMultipartUploadsOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -454,7 +414,7 @@ func (a *AliyunOSS) ListMultipartUploads(ctx context.Context, req *l8oss.ListMul
 }
 
 func (a *AliyunOSS) RestoreObject(ctx context.Context, req *l8oss.RestoreObjectInput) (*l8oss.RestoreObjectOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -468,7 +428,7 @@ func (a *AliyunOSS) RestoreObject(ctx context.Context, req *l8oss.RestoreObjectI
 }
 
 func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *l8oss.ListObjectVersionsInput) (*l8oss.ListObjectVersionsOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -524,7 +484,7 @@ func (a *AliyunOSS) ListObjectVersions(ctx context.Context, req *l8oss.ListObjec
 }
 
 func (a *AliyunOSS) HeadObject(ctx context.Context, req *l8oss.HeadObjectInput) (*l8oss.HeadObjectOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -556,7 +516,7 @@ func (a *AliyunOSS) HeadObject(ctx context.Context, req *l8oss.HeadObjectInput) 
 }
 
 func (a *AliyunOSS) IsObjectExist(ctx context.Context, req *l8oss.IsObjectExistInput) (*l8oss.IsObjectExistOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -569,7 +529,7 @@ func (a *AliyunOSS) IsObjectExist(ctx context.Context, req *l8oss.IsObjectExistI
 }
 
 func (a *AliyunOSS) SignURL(ctx context.Context, req *l8oss.SignURLInput) (*l8oss.SignURLOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -583,24 +543,26 @@ func (a *AliyunOSS) SignURL(ctx context.Context, req *l8oss.SignURLInput) (*l8os
 
 //UpdateDownloadBandwidthRateLimit update all client rate
 func (a *AliyunOSS) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *l8oss.UpdateBandwidthRateLimitInput) error {
-	for _, cli := range a.client {
-		err := cli.LimitDownloadSpeed(int(req.AverageRateLimitInBitsPerSec))
+	cli, err := a.getClient()
+	if err != nil {
 		return err
 	}
-	return nil
+	err = cli.LimitDownloadSpeed(int(req.AverageRateLimitInBitsPerSec))
+	return err
 }
 
 //UpdateUploadBandwidthRateLimit update all client rate
 func (a *AliyunOSS) UpdateUploadBandwidthRateLimit(ctx context.Context, req *l8oss.UpdateBandwidthRateLimitInput) error {
-	for _, cli := range a.client {
-		err := cli.LimitUploadSpeed(int(req.AverageRateLimitInBitsPerSec))
+	cli, err := a.getClient()
+	if err != nil {
 		return err
 	}
-	return nil
+	err = cli.LimitUploadSpeed(int(req.AverageRateLimitInBitsPerSec))
+	return err
 }
 
 func (a *AliyunOSS) AppendObject(ctx context.Context, req *l8oss.AppendObjectInput) (*l8oss.AppendObjectOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -623,7 +585,7 @@ func (a *AliyunOSS) AppendObject(ctx context.Context, req *l8oss.AppendObjectInp
 }
 
 func (a *AliyunOSS) ListParts(ctx context.Context, req *l8oss.ListPartsInput) (*l8oss.ListPartsOutput, error) {
-	cli, err := a.selectClient(req.Uid, req.Bucket)
+	cli, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -654,22 +616,9 @@ func (a *AliyunOSS) ListParts(ctx context.Context, req *l8oss.ListPartsInput) (*
 	return out, err
 }
 
-func (a *AliyunOSS) selectClient(uid, bucket string) (*oss.Client, error) {
-	// 1. if user specify client uid, use specify client first
-	if uid != "" {
-		if client, ok := a.client[uid]; ok {
-			return client, nil
-		}
+func (a *AliyunOSS) getClient() (*oss.Client, error) {
+	if a.client == nil {
+		return nil, utils.ErrNotInitClient
 	}
-	// 2. if user not specify client uid, use bucket to select client
-	if client, ok := a.client[bucket]; ok {
-		return client, nil
-	}
-	// 3. if not specify uid and bucket, select default one
-	if len(a.client) == 1 {
-		for _, client := range a.client {
-			return client, nil
-		}
-	}
-	return nil, utils.ErrNotSpecifyEndpoint
+	return a.client, nil
 }

@@ -23,8 +23,6 @@ import (
 
 	"mosn.io/layotto/components/pkg/utils"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-
 	"github.com/stretchr/testify/assert"
 
 	"mosn.io/layotto/components/file"
@@ -49,25 +47,6 @@ func TestInit(t *testing.T) {
 	fc.Metadata = []byte(data)
 	err = oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
-}
-
-func TestSelectClient(t *testing.T) {
-	ossObject := &AliyunFile{client: make(map[string]*oss.Client)}
-	client, err := ossObject.selectClient("", "")
-	assert.Equal(t, err.Error(), "should specific endpoint in metadata")
-	assert.Nil(t, client)
-
-	client1 := &oss.Client{}
-	ossObject.client["127.0.0.1"] = client1
-	client, err = ossObject.selectClient("", "")
-	assert.Equal(t, client, client1)
-	assert.Nil(t, err)
-
-	client2 := &oss.Client{}
-	ossObject.client["0.0.0.0"] = client2
-	client, err = ossObject.selectClient("", "")
-	assert.Equal(t, err.Error(), "should specific endpoint in metadata")
-	assert.Nil(t, client)
 }
 
 func TestGetBucket(t *testing.T) {
@@ -95,23 +74,12 @@ func TestGetBucket(t *testing.T) {
 
 func TestGetClient(t *testing.T) {
 	fc := file.FileConfig{}
-	oss := NewAliyunFile()
+	oss := &AliyunFile{}
 	fc.Metadata = []byte(data)
 	err := oss.Init(context.TODO(), &fc)
 	assert.Nil(t, err)
 
-	ac := oss.(*AliyunFile)
-	mt := &utils.OssMetadata{
-		Endpoint:        "endpoint",
-		AccessKeyID:     "ak",
-		AccessKeySecret: "ak",
-	}
-
-	//TODO test empty endpoint/ak/sk , now will get panic
-
-	client, err := ac.getClient(mt)
-	assert.Nil(t, err)
-	assert.NotNil(t, client)
+	assert.NotNil(t, oss.client)
 }
 
 func TestCheckMetadata(t *testing.T) {

@@ -24,8 +24,6 @@ oss原始配置模块的字段抽象如下所示：
 ```go
 // OssMetadata wraps the configuration of oss implementation
 type OssMetadata struct {
-	Buckets         []string `json:"buckets"` // contained buckets in this oss client
-	Uid             string   `json:"uid"`     // specify the uid of oss client
 	Endpoint        string   `json:"endpoint"`
 	AccessKeyID     string   `json:"accessKeyID"`
 	AccessKeySecret string   `json:"accessKeySecret"`
@@ -33,37 +31,8 @@ type OssMetadata struct {
 }
 ```
 
-Endpoint、AccessKeyID、AccessKeySecret、Region是现有的oss都有的概念，本文主要解释buckets和uid字段的作用。
+Endpoint、AccessKeyID、AccessKeySecret、Region是现有的oss都有的概念，本文不做过多解释。
 
-场景假设：
-
-如果用户有多个oss实例，即需要layotto支持多个endpoint和region，需要怎么做？
-
-如果使用传统的sdk编程，用户编程时使用方式如下：
-
-```go
-client1, err := oss.New(metadata.Endpoint1, metadata.AccessKeyID1, metadata.AccessKeySecret1)
-
-client2, err := oss.New(metadata.Endpoint2, metadata.AccessKeyID2, metadata.AccessKeySecret2)
-
-//将object1上传到endpoint1
-client1.PutObject("object1")
-//将object2上传到endpoint2
-client2.PutObject("object2")
-
-```
-
-从上面的编程方式可以看出，使用sdk编程时，用户可以拿到client的句柄，然后通过client句柄控制将文件上传到某个目标endpoint。 
-但在Layotto中，用户往往是用同一个grpc client来进行服务调用。那么每次PutObject，GetObject等对象操作就需要用户指定文件操作的目标,
-即文件操作的endpoint。 
-
-配置文件中的buckets和uid字段就是用来指定client。如下图所示：
-
-![img.png](../../../img/oss/configure.png)
-
-client选择流程图如下所示：
-
-![img.png](../../../img/oss/flow.png)
 
 ## 接口设计
 
@@ -76,58 +45,6 @@ client选择流程图如下所示：
 > https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObject.html     
 > https://help.aliyun.com/document_detail/31980.html    
 > https://docs.min.io/docs/golang-client-api-reference.html    
-
-### InitClient
-
-该接口主要用于初始化操作，当前layotto组件的定义都有一个Init操作，该Init接口在Layotto启动的过程中就会执行，入参为配置文件的内容。如下所示：
-
-```go
-type LockStore interface {
-   // Init lock
-   Init(metadata Metadata) error
-   // Get lock's features
-   Features() []Feature
-   // Node tries to acquire a lock
-   TryLock(req *TryLockRequest) (*TryLockResponse, error)
-   // Node tries to release a lock
-   Unlock(req *UnlockRequest) (*UnlockResponse, error)
-}
-
-```
-
-但在实际生产中，组件的初始化是很有可能依赖应用的启动，比如oss中的ak、sk的获取，一般不会在配置文件中进行明文的配置，
-有可能是从应用测获取，也有可能是用户自定义方式获取。 因此InitClient用来触发client的初始化操作。于此同时，Oss组件的完整配置如下所示：
-
-```json
-"oss": {
-  "oss_demo": {
-    "type": "awsOSS",
-    "method": "",
-    "metadata": [
-      {
-        "region": "xxxxx",
-        "endpoint": "xxxxx",
-        "accessKeyID": "xxxx",
-        "accessKeySecret": "xxxxx"
-      }
-    ]
-  }
-}
-
-```
-
-method字段用来指定初始化函数，用户可以实现自定义初始化函数，即ak、sk的获取方式可以在自定义初始化函数中实现，该函数的定义如下：
-
-```go
-type S3ClientInit func(staticConf json.RawMessage, dynConf map[string]string) (map[string]interface{}, error)
-```
-
-第一个参数为json中的静态配置，第二个为动态配置，可以来自于InitClient请求传递过来的数据，也可以是用户自己实现的数据源。
-用户则可以通过以下方式将自定义Init方法注册到layotto。
-
-```go
-factory.RegisterInitFunc("aws", AwsDefaultInitFunc)
-```
 
 ### PutObject
 

@@ -20,7 +20,7 @@ import (
 	"context"
 	"testing"
 
-	"mosn.io/layotto/components/oss/factory"
+	"mosn.io/layotto/components/pkg/utils"
 
 	"mosn.io/layotto/components/oss"
 
@@ -39,86 +39,24 @@ const (
 					"accessKeySecret": "secret"
 				}
 			]`
-	confWithUid = `[
-				{	
-					"uid": "123",
-					"endpoint": "endpoint_address",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret"
-				}
-			]`
-	confWithUidAndBucket = `[
-				{	
-					"uid": "123",
-					"buckets": ["bucket1","bucket2"],
-					"endpoint": "endpoint_address",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret"
-				}
-			]`
 )
 
 func TestInitAliyunOss(t *testing.T) {
-	NewAliyunOss()
-	f := factory.GetInitFunc(DefaultClientInitFunc)
-	clients, err := f([]byte("hello"), map[string]string{})
+	a := &AliyunOSS{}
+	client, err := a.getClient()
+	assert.Equal(t, err, utils.ErrNotInitClient)
+	assert.Nil(t, client)
+	err = a.Init(context.TODO(), &l8oss.OssConfig{Metadata: []byte("hello")})
 	assert.Equal(t, err, l8oss.ErrInvalid)
-	assert.Nil(t, clients)
-	clients, err = f([]byte(confWithoutUidAndBucket), map[string]string{})
+	err = a.Init(context.TODO(), &l8oss.OssConfig{Metadata: []byte(confWithoutUidAndBucket)})
 	assert.NotEqual(t, l8oss.ErrInvalid, err)
-	assert.NotNil(t, clients)
-	client, ok := clients[""]
-	assert.Equal(t, true, ok)
-	assert.NotNil(t, client)
-
-	clients, err = f([]byte(confWithUid), map[string]string{})
-	assert.NotEqual(t, l8oss.ErrInvalid, err)
-	assert.NotNil(t, clients)
-	client, ok = clients[""]
-	assert.Equal(t, false, ok)
-	assert.Nil(t, client)
-	client, ok = clients["123"]
-	assert.Equal(t, true, ok)
-	assert.NotNil(t, client)
-
-	clients, err = f([]byte(confWithUidAndBucket), map[string]string{})
-	assert.NotEqual(t, l8oss.ErrInvalid, err)
-	assert.NotNil(t, clients)
-	client, ok = clients[""]
-	assert.Equal(t, false, ok)
-	assert.Nil(t, client)
-
-	client, ok = clients["123"]
-	assert.Equal(t, true, ok)
-	assert.NotNil(t, client)
-
-	client, ok = clients["bucket1"]
-	assert.Equal(t, true, ok)
-	assert.NotNil(t, client)
-
-	client, ok = clients["bucket2"]
-	assert.Equal(t, true, ok)
-	assert.NotNil(t, client)
+	assert.NotNil(t, a.client)
 
 }
 
 func TestAliyunOss(t *testing.T) {
 	instance := NewAliyunOss()
-	err := instance.InitConfig(context.TODO(), &l8oss.OssConfig{Method: "", Metadata: []byte(confWithUidAndBucket)})
-	assert.Nil(t, err)
-	err = instance.InitClient(context.TODO(), &oss.InitRequest{})
-	assert.Nil(t, err)
-
-	aliyun := instance.(*AliyunOSS)
-	clientUid, _ := aliyun.selectClient("123", "")
-	assert.Equal(t, clientUid, aliyun.client["123"])
-
-	clientBucket1, _ := aliyun.selectClient("123", "bucket1")
-	assert.Equal(t, clientBucket1, aliyun.client["bucket1"])
-
-	clientBucket2, _ := aliyun.selectClient("123", "bucket2")
-	assert.Equal(t, clientBucket2, aliyun.client["bucket2"])
-
+	instance.Init(context.TODO(), &l8oss.OssConfig{Metadata: []byte(confWithoutUidAndBucket)})
 	appendObjectResp, err := instance.AppendObject(context.TODO(), &oss.AppendObjectInput{})
 	assert.NotNil(t, err)
 	assert.Nil(t, appendObjectResp)

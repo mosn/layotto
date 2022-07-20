@@ -21,8 +21,6 @@ import (
 	"errors"
 	"testing"
 
-	"mosn.io/layotto/components/oss/factory"
-
 	"mosn.io/layotto/components/oss"
 
 	"mosn.io/pkg/buffer"
@@ -38,73 +36,19 @@ const (
 					"accessKeySecret": "secret"
 				}
 			]`
-	confWithUid = `[
-				{	
-					"uid": "123",
-					"endpoint": "endpoint_address",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret"
-				}
-			]`
-	confWithUidAndBucket = `[
-				{	
-					"uid": "123",
-					"buckets": ["bucket1","bucket2"],
-					"endpoint": "endpoint_address",
-					"accessKeyID": "accessKey",
-					"accessKeySecret": "secret"
-				}
-			]`
 )
 
 func TestAwsDefaultInitFunc(t *testing.T) {
-	NewAwsOss()
-	f := factory.GetInitFunc(DefaultClientInitFunc)
-	clients, err := f([]byte("hello"), map[string]string{})
+	a := &AwsOss{}
+	err := a.Init(context.TODO(), &oss.OssConfig{Metadata: []byte("hello")})
 	assert.Equal(t, err, oss.ErrInvalid)
-	assert.Nil(t, clients)
-	clients, err = f([]byte(confWithoutUidAndBucket), map[string]string{})
-	assert.NotEqual(t, oss.ErrInvalid, err)
-	assert.NotNil(t, clients)
-	client, ok := clients[""]
-	assert.Equal(t, true, ok)
-	assert.NotNil(t, client)
+	assert.Nil(t, a.client)
 
-	clients, err = f([]byte(confWithUid), map[string]string{})
-	assert.NotEqual(t, oss.ErrInvalid, err)
-	assert.NotNil(t, clients)
-	client, ok = clients[""]
-	assert.Equal(t, false, ok)
-	assert.Nil(t, client)
-	client, ok = clients["123"]
-	assert.Equal(t, true, ok)
-	assert.NotNil(t, client)
-
-	clients, err = f([]byte(confWithUidAndBucket), map[string]string{})
-	assert.NotEqual(t, oss.ErrInvalid, err)
-	assert.NotNil(t, clients)
-	client, ok = clients[""]
-	assert.Equal(t, false, ok)
-	assert.Nil(t, client)
-
-	client, ok = clients["123"]
-	assert.Equal(t, true, ok)
-	assert.NotNil(t, client)
-
-	client, ok = clients["bucket1"]
-	assert.Equal(t, true, ok)
-	assert.NotNil(t, client)
-
-	client, ok = clients["bucket2"]
-	assert.Equal(t, true, ok)
-	assert.NotNil(t, client)
 }
 
 func TestAwsOss(t *testing.T) {
-	instance := NewAwsOss()
-	err := instance.InitConfig(context.TODO(), &oss.OssConfig{Method: "", Metadata: []byte(confWithoutUidAndBucket)})
-	assert.Nil(t, err)
-	err = instance.InitClient(context.TODO(), &oss.InitRequest{})
+	instance := &AwsOss{}
+	err := instance.Init(context.TODO(), &oss.OssConfig{Metadata: []byte(confWithoutUidAndBucket)})
 	assert.Nil(t, err)
 
 	appendObjectResp, err := instance.AppendObject(context.TODO(), &oss.AppendObjectInput{})

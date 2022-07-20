@@ -18,15 +18,13 @@ import (
 )
 
 var (
-	ErrNotSpecifyEndpoint = errors.New("should specific endpoint in metadata")
+	ErrNotInitClient = errors.New("oss client not init")
 )
 
 // OssMetadata wraps the configuration of oss implementation
 type OssMetadata struct {
-	Buckets         []string `json:"buckets"` // contained buckets in this oss client
-	Uid             string   `json:"uid"`     // specify the uid of oss client
-	Endpoint        string   `json:"endpoint"`
-	AccessKeyID     string   `json:"accessKeyID"`
-	AccessKeySecret string   `json:"accessKeySecret"`
-	Region          string   `json:"region"`
+	Endpoint        string `json:"endpoint"`
+	AccessKeyID     string `json:"accessKeyID"`
+	AccessKeySecret string `json:"accessKeySecret"`
+	Region          string `json:"region"`
 }

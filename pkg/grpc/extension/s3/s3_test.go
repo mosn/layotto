@@ -17,7 +17,6 @@ package s3
 
 import (
 	"context"
-	"errors"
 	"io"
 	"testing"
 
@@ -25,7 +24,6 @@ import (
 
 	mockoss "mosn.io/layotto/pkg/mock/components/oss"
 
-	lgrpc "google.golang.org/grpc"
 	"mosn.io/pkg/buffer"
 
 	mocks3 "mosn.io/layotto/pkg/mock/runtime/oss"
@@ -53,36 +51,6 @@ type MockDataStream struct {
 func (m *MockDataStream) Close() error {
 	m.CloseWithError(nil)
 	return nil
-}
-
-//TestInitClient
-func TestInitClient(t *testing.T) {
-	// prepare oss server
-	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
-	ctrl := gomock.NewController(t)
-	mockossServer := mockoss.NewMockOss(ctrl)
-	ac.Oss[MOCKSERVER] = mockossServer
-	NewS3Server(ac)
-	s3Server := &S3Server{appId: ac.AppId, ossInstance: ac.Oss}
-	err := s3Server.Init(nil)
-	assert.Nil(t, err)
-	server := lgrpc.NewServer()
-	err = s3Server.Register(server)
-	assert.Nil(t, err)
-
-	// Test InitClient function
-	initReq := &s3.InitInput{StoreName: "NoStore", Metadata: map[string]string{"k": "v"}}
-	ctx := context.TODO()
-	_, err = s3Server.InitClient(ctx, initReq)
-	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
-	mockossServer.EXPECT().InitClient(ctx, &l8s3.InitRequest{Metadata: initReq.Metadata}).Return(nil)
-	initReq.StoreName = MOCKSERVER
-	_, err = s3Server.InitClient(ctx, initReq)
-	assert.Nil(t, err)
-	mockossServer.EXPECT().InitClient(ctx, &l8s3.InitRequest{Metadata: initReq.Metadata}).Return(errors.New("init fail"))
-	_, err = s3Server.InitClient(ctx, initReq)
-	assert.Equal(t, err.Error(), "init fail")
-
 }
 
 // TestGetObject

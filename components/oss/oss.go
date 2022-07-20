@@ -26,8 +26,7 @@ const (
 )
 
 type Oss interface {
-	InitConfig(context.Context, *OssConfig) error
-	InitClient(context.Context, *InitRequest) error
+	Init(context.Context, *OssConfig) error
 	GetObject(context.Context, *GetObjectInput) (*GetObjectOutput, error)
 	PutObject(context.Context, *PutObjectInput) (*PutObjectOutput, error)
 	DeleteObject(context.Context, *DeleteObjectInput) (*DeleteObjectOutput, error)

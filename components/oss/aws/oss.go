@@ -25,16 +25,15 @@ import (
 	"strings"
 	"time"
 
-	"mosn.io/layotto/components/pkg/utils"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	aws_config "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 
-	"mosn.io/layotto/components/oss/factory"
+	"mosn.io/layotto/components/pkg/utils"
 
 	"mosn.io/layotto/components/oss"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
-	aws_config "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
@@ -42,28 +41,22 @@ import (
 	"mosn.io/pkg/log"
 )
 
-const (
-	DefaultClientInitFunc = "aws"
-)
-
-func init() {
-	factory.RegisterInitFunc(DefaultClientInitFunc, AwsDefaultInitFunc)
-}
-
 // AwsOss is a binding for aws oss storage.
 type AwsOss struct {
-	client  map[string]*s3.Client
-	meta    map[string]*utils.OssMetadata
-	method  string
+	client  *s3.Client
 	rawData json.RawMessage
 }
 
-func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (map[string]interface{}, error) {
+func NewAwsOss() oss.Oss {
+	return &AwsOss{}
+}
+
+func (a *AwsOss) Init(ctx context.Context, config *oss.OssConfig) error {
+	a.rawData = config.Metadata
 	m := make([]*utils.OssMetadata, 0)
-	err := json.Unmarshal(staticConf, &m)
-	clients := make(map[string]interface{})
+	err := json.Unmarshal(config.Metadata, &m)
 	if err != nil {
-		return nil, oss.ErrInvalid
+		return oss.ErrInvalid
 	}
 	for _, data := range m {
 		optFunc := []func(options *aws_config.LoadOptions) error{
@@ -75,53 +68,19 @@ func AwsDefaultInitFunc(staticConf json.RawMessage, DynConf map[string]string) (
 				},
 			}),
 		}
-
 		cfg, err := aws_config.LoadDefaultConfig(context.TODO(), optFunc...)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		client := s3.NewFromConfig(cfg)
-		clients[data.Uid] = client
-		for _, bucketName := range data.Buckets {
-			if _, ok := clients[bucketName]; ok {
-				continue
-			}
-			clients[bucketName] = client
-		}
-	}
-	return clients, nil
-}
-
-func NewAwsOss() oss.Oss {
-	return &AwsOss{
-		client: make(map[string]*s3.Client),
-		meta:   make(map[string]*utils.OssMetadata),
-	}
-}
-func (a *AwsOss) InitConfig(ctx context.Context, config *oss.OssConfig) error {
-	a.method = config.Method
-	a.rawData = config.Metadata
-	return nil
-}
-
-func (a *AwsOss) InitClient(ctx context.Context, req *oss.InitRequest) error {
-	if a.method == "" {
-		a.method = DefaultClientInitFunc
-	}
-	initFunc := factory.GetInitFunc(a.method)
-	clients, err := initFunc(a.rawData, req.Metadata)
-	if err != nil {
-		return err
-	}
-	for k, v := range clients {
-		a.client[k] = v.(*s3.Client)
+		a.client = client
 	}
 	return nil
 }
 
 func (a *AwsOss) GetObject(ctx context.Context, req *oss.GetObjectInput) (*oss.GetObjectOutput, error) {
 	input := &s3.GetObjectInput{}
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +102,7 @@ func (a *AwsOss) GetObject(ctx context.Context, req *oss.GetObjectInput) (*oss.G
 }
 
 func (a *AwsOss) PutObject(ctx context.Context, req *oss.PutObjectInput) (*oss.PutObjectOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +130,7 @@ func (a *AwsOss) DeleteObject(ctx context.Context, req *oss.DeleteObjectInput) (
 		Bucket: &req.Bucket,
 		Key:    &req.Key,
 	}
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -183,7 +142,7 @@ func (a *AwsOss) DeleteObject(ctx context.Context, req *oss.DeleteObjectInput) (
 }
 
 func (a *AwsOss) PutObjectTagging(ctx context.Context, req *oss.PutObjectTaggingInput) (*oss.PutObjectTaggingOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +159,7 @@ func (a *AwsOss) PutObjectTagging(ctx context.Context, req *oss.PutObjectTagging
 	return &oss.PutObjectTaggingOutput{}, err
 }
 func (a *AwsOss) DeleteObjectTagging(ctx context.Context, req *oss.DeleteObjectTaggingInput) (*oss.DeleteObjectTaggingOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +176,7 @@ func (a *AwsOss) DeleteObjectTagging(ctx context.Context, req *oss.DeleteObjectT
 }
 
 func (a *AwsOss) GetObjectTagging(ctx context.Context, req *oss.GetObjectTaggingInput) (*oss.GetObjectTaggingOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -239,7 +198,7 @@ func (a *AwsOss) GetObjectTagging(ctx context.Context, req *oss.GetObjectTagging
 }
 
 func (a *AwsOss) CopyObject(ctx context.Context, req *oss.CopyObjectInput) (*oss.CopyObjectOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -266,7 +225,7 @@ func (a *AwsOss) CopyObject(ctx context.Context, req *oss.CopyObjectInput) (*oss
 	return &oss.CopyObjectOutput{CopyObjectResult: &oss.CopyObjectResult{ETag: *resp.CopyObjectResult.ETag, LastModified: resp.CopyObjectResult.LastModified.Unix()}}, err
 }
 func (a *AwsOss) DeleteObjects(ctx context.Context, req *oss.DeleteObjectsInput) (*oss.DeleteObjectsOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -293,7 +252,7 @@ func (a *AwsOss) DeleteObjects(ctx context.Context, req *oss.DeleteObjectsInput)
 	return output, err
 }
 func (a *AwsOss) ListObjects(ctx context.Context, req *oss.ListObjectsInput) (*oss.ListObjectsOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -343,7 +302,7 @@ func (a *AwsOss) GetObjectCannedAcl(ctx context.Context, req *oss.GetObjectCanne
 	return nil, errors.New("GetObjectCannedAcl method not supported on AWS")
 }
 func (a *AwsOss) PutObjectCannedAcl(ctx context.Context, req *oss.PutObjectCannedAclInput) (*oss.PutObjectCannedAclOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -359,7 +318,7 @@ func (a *AwsOss) PutObjectCannedAcl(ctx context.Context, req *oss.PutObjectCanne
 	return &oss.PutObjectCannedAclOutput{RequestCharged: string(resp.RequestCharged)}, err
 }
 func (a *AwsOss) RestoreObject(ctx context.Context, req *oss.RestoreObjectInput) (*oss.RestoreObjectOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -374,7 +333,7 @@ func (a *AwsOss) RestoreObject(ctx context.Context, req *oss.RestoreObjectInput)
 	return &oss.RestoreObjectOutput{RequestCharged: string(resp.RequestCharged), RestoreOutputPath: *resp.RestoreOutputPath}, err
 }
 func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMultipartUploadInput) (*oss.CreateMultipartUploadOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -409,7 +368,7 @@ func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMulti
 	return output, err
 }
 func (a *AwsOss) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*oss.UploadPartOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -437,7 +396,7 @@ func (a *AwsOss) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*oss
 	return output, err
 }
 func (a *AwsOss) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInput) (*oss.UploadPartCopyOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -462,7 +421,7 @@ func (a *AwsOss) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInpu
 	return output, err
 }
 func (a *AwsOss) CompleteMultipartUpload(ctx context.Context, req *oss.CompleteMultipartUploadInput) (*oss.CompleteMultipartUploadOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -488,7 +447,7 @@ func (a *AwsOss) CompleteMultipartUpload(ctx context.Context, req *oss.CompleteM
 	return output, err
 }
 func (a *AwsOss) AbortMultipartUpload(ctx context.Context, req *oss.AbortMultipartUploadInput) (*oss.AbortMultipartUploadOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -507,7 +466,7 @@ func (a *AwsOss) AbortMultipartUpload(ctx context.Context, req *oss.AbortMultipa
 	return output, err
 }
 func (a *AwsOss) ListMultipartUploads(ctx context.Context, req *oss.ListMultipartUploadsInput) (*oss.ListMultipartUploadsOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -544,7 +503,7 @@ func (a *AwsOss) ListMultipartUploads(ctx context.Context, req *oss.ListMultipar
 	return output, err
 }
 func (a *AwsOss) ListObjectVersions(ctx context.Context, req *oss.ListObjectVersionsInput) (*oss.ListObjectVersionsOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -592,7 +551,7 @@ func (a *AwsOss) ListObjectVersions(ctx context.Context, req *oss.ListObjectVers
 }
 
 func (a *AwsOss) HeadObject(ctx context.Context, req *oss.HeadObjectInput) (*oss.HeadObjectOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -609,7 +568,7 @@ func (a *AwsOss) HeadObject(ctx context.Context, req *oss.HeadObjectInput) (*oss
 }
 
 func (a *AwsOss) IsObjectExist(ctx context.Context, req *oss.IsObjectExistInput) (*oss.IsObjectExistOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -626,7 +585,7 @@ func (a *AwsOss) IsObjectExist(ctx context.Context, req *oss.IsObjectExistInput)
 }
 
 func (a *AwsOss) SignURL(ctx context.Context, req *oss.SignURLInput) (*oss.SignURLOutput, error) {
-	client, err := a.selectClient(req.Uid, req.Bucket)
+	client, err := a.getClient()
 	if err != nil {
 		return nil, err
 	}
@@ -666,23 +625,9 @@ func (a *AwsOss) ListParts(ctx context.Context, req *oss.ListPartsInput) (*oss.L
 	return nil, errors.New("ListParts method not supported on AWS")
 }
 
-// selectClient choose aws client from exist client-map, key is endpoint, value is client instance.
-func (a *AwsOss) selectClient(uid, bucket string) (*s3.Client, error) {
-	// 1. if user specify client uid, use specify client first
-	if uid != "" {
-		if client, ok := a.client[uid]; ok {
-			return client, nil
-		}
+func (a *AwsOss) getClient() (*s3.Client, error) {
+	if a.client == nil {
+		return nil, utils.ErrNotInitClient
 	}
-	// 2. if user not specify client uid, use bucket to select client
-	if client, ok := a.client[bucket]; ok {
-		return client, nil
-	}
-	// 3.if not specify uid and bucket, select default one
-	if len(a.client) == 1 {
-		for _, client := range a.client {
-			return client, nil
-		}
-	}
-	return nil, utils.ErrNotSpecifyEndpoint
+	return a.client, nil
 }

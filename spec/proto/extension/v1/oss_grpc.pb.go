@@ -24,8 +24,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ObjectStorageServiceClient interface {
-	//Init oss client
-	InitClient(ctx context.Context, in *InitInput, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	//Object CRUD API
 	//Adds an object to a bucket.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
@@ -115,15 +113,6 @@ type objectStorageServiceClient struct {
 
 func NewObjectStorageServiceClient(cc grpc.ClientConnInterface) ObjectStorageServiceClient {
 	return &objectStorageServiceClient{cc}
-}
-
-func (c *objectStorageServiceClient) InitClient(ctx context.Context, in *InitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/InitClient", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *objectStorageServiceClient) PutObject(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_PutObjectClient, error) {
@@ -462,8 +451,6 @@ func (c *objectStorageServiceClient) RestoreObject(ctx context.Context, in *Rest
 // All implementations should embed UnimplementedObjectStorageServiceServer
 // for forward compatibility
 type ObjectStorageServiceServer interface {
-	//Init oss client
-	InitClient(context.Context, *InitInput) (*emptypb.Empty, error)
 	//Object CRUD API
 	//Adds an object to a bucket.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
@@ -551,9 +538,6 @@ type ObjectStorageServiceServer interface {
 type UnimplementedObjectStorageServiceServer struct {
 }
 
-func (UnimplementedObjectStorageServiceServer) InitClient(context.Context, *InitInput) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InitClient not implemented")
-}
 func (UnimplementedObjectStorageServiceServer) PutObject(ObjectStorageService_PutObjectServer) error {
 	return status.Errorf(codes.Unimplemented, "method PutObject not implemented")
 }
@@ -642,24 +626,6 @@ type UnsafeObjectStorageServiceServer interface {
 
 func RegisterObjectStorageServiceServer(s grpc.ServiceRegistrar, srv ObjectStorageServiceServer) {
 	s.RegisterService(&ObjectStorageService_ServiceDesc, srv)
-}
-
-func _ObjectStorageService_InitClient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InitInput)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ObjectStorageServiceServer).InitClient(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/InitClient",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ObjectStorageServiceServer).InitClient(ctx, req.(*InitInput))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _ObjectStorageService_PutObject_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -1164,10 +1130,6 @@ var ObjectStorageService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "spec.proto.extension.v1.ObjectStorageService",
 	HandlerType: (*ObjectStorageServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "InitClient",
-			Handler:    _ObjectStorageService_InitClient_Handler,
-		},
 		{
 			MethodName: "DeleteObject",
 			Handler:    _ObjectStorageService_DeleteObject_Handler,
