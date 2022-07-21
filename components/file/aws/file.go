@@ -79,19 +79,6 @@ func (a *AwsOss) isAwsMetaValid(v *utils.OssMetadata) bool {
 
 // createOssClient by input meta info.
 func (a *AwsOss) createOssClient(meta *utils.OssMetadata) (*s3.Client, error) {
-	customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-		if region == meta.Region {
-			return aws.Endpoint{
-				PartitionID:       "awsoss",
-				URL:               "https://" + meta.Endpoint,
-				SigningRegion:     meta.Region,
-				HostnameImmutable: true,
-			}, nil
-		}
-		// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
-		return aws.Endpoint{}, &aws.EndpointNotFoundError{}
-	})
-
 	optFunc := []func(options *aws_config.LoadOptions) error{
 		aws_config.WithRegion(meta.Region),
 		aws_config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
@@ -100,9 +87,7 @@ func (a *AwsOss) createOssClient(meta *utils.OssMetadata) (*s3.Client, error) {
 				Source: defaultCredentialsSource,
 			},
 		}),
-		aws_config.WithEndpointResolverWithOptions(customResolver),
 	}
-
 	cfg, err := aws_config.LoadDefaultConfig(context.TODO(), optFunc...)
 	if err != nil {
 		return nil, err
@@ -126,11 +111,7 @@ func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
 		return err
 	}
 	uploader := manager.NewUploader(client)
-	_, err = uploader.Upload(context.TODO(), &s3.PutObjectInput{
-		Bucket: &bucket,
-		Key:    &key,
-		Body:   st.DataStream,
-	})
+	_, err = uploader.Upload(context.TODO(), &s3.PutObjectInput{Bucket: &bucket, Key: &key, Body: st.DataStream})
 
 	if err != nil {
 		return err
@@ -177,12 +158,7 @@ func (a *AwsOss) List(ctx context.Context, st *file.ListRequest) (*file.ListResp
 		return nil, fmt.Errorf("list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
 	}
 	prefix := util.GetFilePrefixName(st.DirectoryName)
-	input := &s3.ListObjectsInput{
-		Bucket:  &bucket,
-		MaxKeys: st.PageSize,
-		Marker:  &st.Marker,
-		Prefix:  &prefix,
-	}
+	input := &s3.ListObjectsInput{Bucket: &bucket, MaxKeys: st.PageSize, Marker: &st.Marker, Prefix: &prefix}
 	client, err := a.selectClient()
 	if err != nil {
 		return nil, fmt.Errorf("list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
