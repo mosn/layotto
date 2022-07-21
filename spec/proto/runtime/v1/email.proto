@@ -9,8 +9,11 @@ option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 
 service EmailService {
 
-  // Send the message to Email.
+  // Send an email.
   rpc SendEmail(SendEmailRequest) returns (SendEmailResponse) {}
+
+  // Send an email with template
+  rpc SendEmailWithTemplate(SendEmailWithTemplateRequest) returns (SendEmailWithTemplateResponse) {}
 
 }
 
@@ -41,7 +44,38 @@ message SendEmailRequest {
   map<string, string> metadata = 8;
 }
 
-message SendEmailResponse {
+// SendEmailRequest is the message send to email.
+message SendEmailWithTemplateRequest {
+  // Required.
+  EmailTemplate template = 1;
+
+  // The saas service name, like 'aliyun.email'/'aws.ses'/'...'
+  string service_name = 2;
+
+  // The Email sender address.
+  string from_address = 3;
+
+  // The Email destination addresses.
+  repeated string to_addresses = 4;
+
+  // Optional. To whom the mail is cc
+  repeated string cc = 5;
+
+  // The Email subject.
+  string subject = 7;
+
+  // The metadata which will be sent to Email components.
+  map<string, string> metadata = 8;
+}
+
+message EmailTemplate{
+  // Required
+  string template_id = 1;
+  // Required
+  map<string, string>  template_params = 2;
+}
+
+message SendEmailWithTemplateResponse {
   // The saas requestId.
   string request_id = 1;
 
