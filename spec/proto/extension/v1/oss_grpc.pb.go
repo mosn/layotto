@@ -59,6 +59,10 @@ type ObjectStorageServiceClient interface {
 	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObjectTagging.html
 	GetObjectTagging(ctx context.Context, in *GetObjectTaggingInput, opts ...grpc.CallOption) (*GetObjectTaggingOutput, error)
 	//Object ACL Operation API
+	//Because different manufacturers have different definitions for ACL types, at the same time,
+	//the actual permissions corresponding to ACLs with the same name may be different between different manufacturers.
+	//Therefore, applications using this interface will greatly increase the complexity of transplantation.
+	//In general, this interface is not recommended, especially if your application has portability requirements.
 	//Returns object canned acl.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 	GetObjectCannedAcl(ctx context.Context, in *GetObjectCannedAclInput, opts ...grpc.CallOption) (*GetObjectCannedAclOutput, error)
@@ -486,6 +490,10 @@ type ObjectStorageServiceServer interface {
 	//Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObjectTagging.html
 	GetObjectTagging(context.Context, *GetObjectTaggingInput) (*GetObjectTaggingOutput, error)
 	//Object ACL Operation API
+	//Because different manufacturers have different definitions for ACL types, at the same time,
+	//the actual permissions corresponding to ACLs with the same name may be different between different manufacturers.
+	//Therefore, applications using this interface will greatly increase the complexity of transplantation.
+	//In general, this interface is not recommended, especially if your application has portability requirements.
 	//Returns object canned acl.
 	//Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 	GetObjectCannedAcl(context.Context, *GetObjectCannedAclInput) (*GetObjectCannedAclOutput, error)

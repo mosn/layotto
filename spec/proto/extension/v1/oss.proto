@@ -47,6 +47,10 @@ service ObjectStorageService{
     rpc GetObjectTagging(GetObjectTaggingInput) returns(GetObjectTaggingOutput){}
 
     //Object ACL Operation API
+    //Because different manufacturers have different definitions for ACL types, at the same time,
+    //the actual permissions corresponding to ACLs with the same name may be different between different manufacturers.
+    //Therefore, applications using this interface will greatly increase the complexity of transplantation.
+    //In general, this interface is not recommended, especially if your application has portability requirements.
     //Returns object canned acl.
     //Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
     rpc GetObjectCannedAcl(GetObjectCannedAclInput) returns(GetObjectCannedAclOutput){}
