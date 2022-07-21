@@ -26,30 +26,43 @@ We need to consider the following factors:
 
 service IvrService {
 
-  //Send voice using the specific template
+  // Send voice using the specific template
   rpc SendVoiceWithTemplate(SendVoiceWithTemplateRequest) returns (SendVoiceWithTemplateResponse) {}
 
 }
 
 message SendVoiceWithTemplateRequest{
+
+  // If your system uses multiple IVR services at the same time,
+  // you can specify which service to use with this field.
+  string service_name = 1;
+
   // Required
-  Template template = 1;
+  VoiceTemplate template = 2;
+
   // Required
-  string to_mobile = 2;
+  repeated string to_mobile = 3;
+
   // This field is required by some cloud providers.
-  string from_mobile = 3;
+  string from_mobile = 4;
+
 }
 
-message Template{
+message VoiceTemplate{
+
   // Required
   string template_id = 1;
+
   // Required
   map<string, string>  template_params = 2;
+
 }
 
 message SendVoiceWithTemplateResponse{
-  string message_id = 1;
-}
 
+  // Id of this request.
+  string request_id = 1;
+
+}
 
 ```

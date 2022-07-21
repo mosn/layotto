@@ -9,34 +9,36 @@ option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 
 service IvrService {
 
-  //Send voice using the specific template
+  // Send voice using the specific template
   rpc SendVoiceWithTemplate(SendVoiceWithTemplateRequest) returns (SendVoiceWithTemplateResponse) {}
 
 }
 
 message SendVoiceWithTemplateRequest{
+
   // If your system uses multiple IVR services at the same time,
   // you can specify which service to use with this field.
   string service_name = 1;
 
   // Required
-  Template template = 2;
+  VoiceTemplate template = 2;
 
   // Required
-  string to_mobile = 3;
+  repeated string to_mobile = 3;
 
   // This field is required by some cloud providers.
   string from_mobile = 4;
 
 }
 
-message Template{
+message VoiceTemplate{
 
   // Required
   string template_id = 1;
 
   // Required
   map<string, string>  template_params = 2;
+
 }
 
 message SendVoiceWithTemplateResponse{
