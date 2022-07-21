@@ -94,6 +94,7 @@ message SendEmailRequest {
 
 message Content{
 
+  // Required.
   string text = 1;
 
 }
