@@ -3,7 +3,7 @@
 ## 快速开始
 
 Layotto提供了访问OSS的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/file/client.go) ,该示例基于S3协议实现了对象的一系列操作，当前
-已支持25个接口。可以做到在不同的OSS实例之间进行无感迁移。
+已支持部分接口。可以做到在不同的OSS实例之间进行无感迁移。
 
 ### step 1.  启动layotto
 
@@ -27,8 +27,8 @@ layotto提供了aws的配置文件`configs/oss.json`，配置文件内容如下�
                     }
 ```
 
-配置主要包含四个字段，需要替换成自己的OSS账号的配置。type当前支持aliyun.oss和aws.oss两种类型，分别对应阿里云的OSS服务和亚马逊云的OSS服务。用户可以根据自己的实际场景
-进行配置。
+配置中对应的字段，需要替换成自己的OSS账号的配置。type当前支持aliyun.oss和aws.oss两种类型，分别对应阿里云的OSS服务和亚马逊云的OSS服务。
+用户可以根据自己的实际场景进行配置。
 
 配置好后，切换目录:
 

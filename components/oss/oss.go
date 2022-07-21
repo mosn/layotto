@@ -63,7 +63,6 @@ type InitRequest struct {
 }
 
 type GetObjectInput struct {
-	Uid                        string `json:"uid,omitempty"`
 	Bucket                     string `json:"bucket,omitempty"`
 	ExpectedBucketOwner        string `json:"expected_bucket_owner,omitempty"`
 	IfMatch                    string `json:"if_match,omitempty"`
@@ -112,7 +111,6 @@ type GetObjectOutput struct {
 
 type PutObjectInput struct {
 	DataStream           io.Reader
-	Uid                  string            `json:"uid,omitempty"`
 	ACL                  string            `json:"acl,omitempty"`
 	Bucket               string            `json:"bucket,omitempty"`
 	Key                  string            `json:"key,omitempty"`
@@ -133,7 +131,6 @@ type PutObjectOutput struct {
 }
 
 type DeleteObjectInput struct {
-	Uid          string `json:"uid,omitempty"`
 	Bucket       string `json:"bucket,omitempty"`
 	Key          string `json:"key,omitempty"`
 	RequestPayer string `json:"request_payer,omitempty"`
@@ -146,7 +143,6 @@ type DeleteObjectOutput struct {
 }
 
 type PutObjectTaggingInput struct {
-	Uid       string            `json:"uid,omitempty"`
 	Bucket    string            `json:"bucket,omitempty"`
 	Key       string            `json:"key,omitempty"`
 	Tags      map[string]string `json:"tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
@@ -156,7 +152,6 @@ type PutObjectTaggingOutput struct {
 }
 
 type DeleteObjectTaggingInput struct {
-	Uid                 string `json:"uid,omitempty"`
 	Bucket              string `json:"bucket,omitempty"`
 	Key                 string `json:"key,omitempty"`
 	VersionId           string `json:"version_id,omitempty"`
@@ -167,7 +162,6 @@ type DeleteObjectTaggingOutput struct {
 }
 
 type GetObjectTaggingInput struct {
-	Uid                 string `json:"uid,omitempty"`
 	Bucket              string `json:"bucket,omitempty"`
 	Key                 string `json:"key,omitempty"`
 	VersionId           string ` json:"version_id,omitempty"`
@@ -187,7 +181,6 @@ type CopySource struct {
 }
 
 type CopyObjectInput struct {
-	Uid        string            `json:"uid,omitempty"`
 	Bucket     string            `json:"bucket,omitempty"`
 	Key        string            `json:"key,omitempty"`
 	CopySource *CopySource       `json:"copy_source,omitempty"`
@@ -207,7 +200,6 @@ type CopyObjectResult struct {
 }
 
 type DeleteObjectsInput struct {
-	Uid    string  `json:"uid,omitempty"`
 	Bucket string  `json:"bucket,omitempty"`
 	Delete *Delete `json:"delete,omitempty"`
 }
@@ -232,7 +224,6 @@ type DeletedObject struct {
 }
 
 type ListObjectsInput struct {
-	Uid                 string `json:"uid,omitempty"`
 	Bucket              string `json:"bucket,omitempty"`
 	Delimiter           string `json:"delimiter,omitempty"`
 	EncodingType        string `json:"encoding_type,omitempty"`
@@ -268,7 +259,6 @@ type Owner struct {
 }
 
 type GetObjectCannedAclInput struct {
-	Uid       string `json:"uid,omitempty"`
 	Bucket    string `json:"bucket,omitempty"`
 	Key       string `json:"key,omitempty"`
 	VersionId string `json:"version_id,omitempty"`
@@ -280,7 +270,6 @@ type GetObjectCannedAclOutput struct {
 }
 
 type PutObjectCannedAclInput struct {
-	Uid       string `json:"uid,omitempty"`
 	Bucket    string `json:"bucket,omitempty"`
 	Key       string `json:"key,omitempty"`
 	Acl       string `json:"acl,omitempty"`
@@ -291,7 +280,6 @@ type PutObjectCannedAclOutput struct {
 }
 
 type RestoreObjectInput struct {
-	Uid       string `json:"uid,omitempty"`
 	Bucket    string `json:"bucket,omitempty"`
 	Key       string `json:"key,omitempty"`
 	VersionId string `json:"version_id,omitempty"`
@@ -302,7 +290,6 @@ type RestoreObjectOutput struct {
 }
 
 type CreateMultipartUploadInput struct {
-	Uid                       string            `json:"uid,omitempty"`
 	Bucket                    string            `json:"bucket,omitempty"`
 	Key                       string            `json:"key,omitempty"`
 	ACL                       string            `json:"acl,omitempty"`
@@ -350,7 +337,6 @@ type CreateMultipartUploadOutput struct {
 
 type UploadPartInput struct {
 	DataStream io.Reader
-	Uid        string `json:"uid,omitempty"`
 	Bucket     string `json:"bucket,omitempty"`
 	Key        string `json:"key,omitempty"`
 	//Body                 []byte `json:"body,omitempty"`
@@ -375,7 +361,6 @@ type UploadPartOutput struct {
 }
 
 type UploadPartCopyInput struct {
-	Uid           string      `json:"uid,omitempty"`
 	Bucket        string      `json:"bucket,omitempty"`
 	Key           string      `json:"key,omitempty"`
 	CopySource    *CopySource `json:"copy_source,omitempty"`
@@ -400,7 +385,6 @@ type CopyPartResult struct {
 }
 
 type CompleteMultipartUploadInput struct {
-	Uid                 string                    `json:"uid,omitempty"`
 	Bucket              string                    `json:"bucket,omitempty"`
 	Key                 string                    `json:"key,omitempty"`
 	UploadId            string                    `json:"upload_id,omitempty"`
@@ -429,7 +413,6 @@ type CompleteMultipartUploadOutput struct {
 }
 
 type AbortMultipartUploadInput struct {
-	Uid                 string `json:"uid,omitempty"`
 	Bucket              string `json:"bucket,omitempty"`
 	Key                 string `json:"key,omitempty"`
 	ExpectedBucketOwner string `json:"expected_bucket_owner,omitempty"`
@@ -441,7 +424,6 @@ type AbortMultipartUploadOutput struct {
 }
 
 type ListMultipartUploadsInput struct {
-	Uid                 string `json:"uid,omitempty"`
 	Bucket              string `json:"bucket,omitempty"`
 	Delimiter           string `json:"delimiter,omitempty"`
 	EncodingType        string `json:"encoding_type,omitempty"`
@@ -479,7 +461,6 @@ type Initiator struct {
 }
 
 type ListObjectVersionsInput struct {
-	Uid                 string `json:"uid,omitempty"`
 	Bucket              string `json:"bucket,omitempty"`
 	Delimiter           string `json:"delimiter,omitempty"`
 	EncodingType        string `json:"encoding_type,omitempty"`
@@ -523,7 +504,6 @@ type ObjectVersion struct {
 }
 
 type HeadObjectInput struct {
-	Uid                  string `json:"uid,omitempty"`
 	Bucket               string `json:"bucket,omitempty"`
 	Key                  string `json:"key,omitempty"`
 	ChecksumMode         string `json:"checksum_mode,omitempty"`
@@ -546,7 +526,6 @@ type HeadObjectOutput struct {
 }
 
 type IsObjectExistInput struct {
-	Uid    string `json:"uid,omitempty"`
 	Bucket string `json:"bucket,omitempty"`
 	Key    string `json:"key,omitempty"`
 }
@@ -555,7 +534,6 @@ type IsObjectExistOutput struct {
 }
 
 type SignURLInput struct {
-	Uid          string `json:"uid,omitempty"`
 	Bucket       string `json:"bucket,omitempty"`
 	Key          string `json:"key,omitempty"`
 	Method       string `json:"method,omitempty"`
@@ -566,7 +544,6 @@ type SignURLOutput struct {
 }
 
 type UpdateBandwidthRateLimitInput struct {
-	Uid string `json:"uid,omitempty"`
 	// The average upload/download bandwidth rate limit in bits per second.
 	AverageRateLimitInBitsPerSec int64 `json:"average_rate_limit_in_bits_per_sec,omitempty"`
 	//Resource name of gateway
@@ -574,7 +551,6 @@ type UpdateBandwidthRateLimitInput struct {
 }
 
 type AppendObjectInput struct {
-	Uid                  string `json:"uid,omitempty"`
 	DataStream           io.Reader
 	Bucket               string            `json:"bucket,omitempty"`
 	Key                  string            `json:"key,omitempty"`
@@ -595,7 +571,6 @@ type AppendObjectOutput struct {
 }
 
 type ListPartsInput struct {
-	Uid                 string `json:"uid,omitempty"`
 	Bucket              string `json:"bucket,omitempty"`
 	Key                 string `json:"key,omitempty"`
 	ExpectedBucketOwner string `json:"expected_bucket_owner,omitempty"`

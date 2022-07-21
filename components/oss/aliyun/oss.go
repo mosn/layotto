@@ -28,7 +28,6 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
-// AliyunOSS is a binding for an aliyun OSS storage bucketKey
 type AliyunOSS struct {
 	client  *oss.Client
 	rawData json.RawMessage

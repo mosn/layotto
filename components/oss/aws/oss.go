@@ -41,7 +41,6 @@ import (
 	"mosn.io/pkg/log"
 )
 
-// AwsOss is a binding for aws oss storage.
 type AwsOss struct {
 	client  *s3.Client
 	rawData json.RawMessage
