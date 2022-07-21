@@ -13,7 +13,7 @@ layotto提供了aws的配置文件`configs/oss.json`，配置文件内容如下�
                     "grpc_config": {
                       "oss": {
                         "oss_demo": {
-                          "type": "awsOSS",
+                          "type": "aws.oss",
                           "metadata": [
                             {
                               "region": "your-oss-resource-region",
@@ -27,7 +27,7 @@ layotto提供了aws的配置文件`configs/oss.json`，配置文件内容如下�
                     }
 ```
 
-配置主要包含四个字段，需要替换成自己的OSS账号的配置。type当前支持aliyunOSS和awsOSS两种类型，分别对应阿里云的OSS服务和亚马逊云的OSS服务。用户可以根据自己的实际场景
+配置主要包含四个字段，需要替换成自己的OSS账号的配置。type当前支持aliyun.oss和aws.oss两种类型，分别对应阿里云的OSS服务和亚马逊云的OSS服务。用户可以根据自己的实际场景
 进行配置。
 
 配置好后，切换目录:

@@ -18,7 +18,7 @@
                     "grpc_config": {
                       "oss": {
                         "oss_demo": {
-                          "type": "awsOSS",
+                          "type": "aws.oss",
                           "metadata": [
                             {
                               "region": "your-oss-resource-region",

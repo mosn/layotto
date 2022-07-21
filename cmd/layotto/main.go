@@ -285,8 +285,8 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
 		),
 		runtime.WithOssFactory(
-			oss.NewOssFactory("awsOSS", aws2.NewAwsOss),
-			oss.NewOssFactory("aliyunOSS", aliyun2.NewAliyunOss),
+			oss.NewOssFactory("aws.oss", aws2.NewAwsOss),
+			oss.NewOssFactory("aliyun.oss", aliyun2.NewAliyunOss),
 		),
 		// PubSub
 		runtime.WithPubSubFactory(
