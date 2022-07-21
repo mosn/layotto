@@ -46,12 +46,12 @@ go build -o layotto
 启动 Layotto:
 
 ```shell @background
-./layotto start -c ../../configs/oss.json
+./layotto start -c ../../configs/config_oss.json
 ```
 
 ### step 2. 启动测试demo
 
-Layotto提供了访问文件的示例 [demo](../../../../demo/file/s3/client.go)
+Layotto提供了访问文件的示例 [demo](../../../../demo/oss/client.go)
 
 ```shell
 cd ${project_path}/demo/file/s3/
