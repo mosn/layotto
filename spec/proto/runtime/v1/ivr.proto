@@ -41,6 +41,7 @@ message Template{
 
 message SendVoiceWithTemplateResponse{
 
-  string message_id = 1;
+  // Id of this request.
+  string request_id = 1;
 
 }
