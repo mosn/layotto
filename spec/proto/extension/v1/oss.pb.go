@@ -3292,8 +3292,7 @@ type UploadPartInput struct {
 	ContentLength       int64  `protobuf:"varint,5,opt,name=content_length,json=contentLength,proto3" json:"content_length,omitempty"`
 	ContentMd5          string `protobuf:"bytes,6,opt,name=content_md5,json=contentMd5,proto3" json:"content_md5,omitempty"`
 	ExpectedBucketOwner string `protobuf:"bytes,7,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
-	// Part number of part being uploaded. This is a positive integer between 1 and
-	// 10,000.
+	// Part number of part being uploaded. This is a positive integer between 1 and 10,000.
 	// This member is required.
 	PartNumber           int32  `protobuf:"varint,8,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
 	RequestPayer         string `protobuf:"bytes,9,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
@@ -3533,8 +3532,7 @@ type UploadPartCopyInput struct {
 	Bucket     string      `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	Key        string      `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	CopySource *CopySource `protobuf:"bytes,4,opt,name=copy_source,json=copySource,proto3" json:"copy_source,omitempty"`
-	// Part number of part being copied. This is a positive integer between 1 and
-	// 10,000.
+	// Part number of part being copied. This is a positive integer between 1 and 10,000.
 	// This member is required.
 	PartNumber int32 `protobuf:"varint,5,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
 	// Upload ID identifying the multipart upload whose part is being copied.
@@ -4213,8 +4211,7 @@ type AbortMultipartUploadOutput struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// If present, indicates that the requester was successfully charged for the
-	// request.
+	// If present, indicates that the requester was successfully charged for the request.
 	RequestCharged string `protobuf:"bytes,1,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
 }
 
