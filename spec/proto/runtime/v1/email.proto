@@ -46,23 +46,27 @@ message SendEmailRequest {
 
 // SendEmailRequest is the message send to email.
 message SendEmailWithTemplateRequest {
-  // Required.
-  EmailTemplate template = 1;
 
   // The saas service name, like 'aliyun.email'/'aws.ses'/'...'
-  string service_name = 2;
+  //  If your system uses multiple IVR services at the same time,
+  //  you can specify which service to use with this field.
+  string service_name = 1;
 
-  // The Email sender address.
-  string from_address = 3;
+  // Required.
+  EmailTemplate template = 2;
 
-  // The Email destination addresses.
-  repeated string to_addresses = 4;
+
+  // Required. The Email subject.
+  string subject = 3;
+
+  // Required. The Email sender address.
+  string from_address = 4;
+
+  // Required. The Email destination addresses.
+  repeated string to_addresses = 5;
 
   // Optional. To whom the mail is cc
-  repeated string cc = 5;
-
-  // The Email subject.
-  string subject = 7;
+  repeated string cc = 6;
 
   // The metadata which will be sent to Email components.
   map<string, string> metadata = 8;
