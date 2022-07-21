@@ -412,7 +412,7 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 }
 
 func (m *MosnRuntime) initOss(oss ...*oss.OssFactory) error {
-	log.DefaultLogger.Infof("[runtime] init file service")
+	log.DefaultLogger.Infof("[runtime] init oss service")
 
 	// register all oss store services implementation
 	m.ossRegistry.Register(oss...)

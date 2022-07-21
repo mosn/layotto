@@ -212,11 +212,7 @@ func (a *AwsOss) CopyObject(ctx context.Context, req *oss.CopyObjectInput) (*oss
 		copySource += "?versionId=" + req.CopySource.CopySourceVersionId
 	}
 	copySourceUrlEncode := url.QueryEscape(copySource)
-	input := &s3.CopyObjectInput{
-		Bucket:     &req.Bucket,
-		Key:        &req.Key,
-		CopySource: &copySourceUrlEncode,
-	}
+	input := &s3.CopyObjectInput{Bucket: &req.Bucket, Key: &req.Key, CopySource: &copySourceUrlEncode}
 	resp, err := client.CopyObject(ctx, input)
 	if err != nil {
 		return nil, err
@@ -257,15 +253,7 @@ func (a *AwsOss) ListObjects(ctx context.Context, req *oss.ListObjectsInput) (*o
 	}
 
 	input := &s3.ListObjectsInput{}
-	err = copier.CopyWithOption(
-		input,
-		req,
-		copier.Option{
-			IgnoreEmpty: true,
-			DeepCopy:    true,
-			Converters:  []copier.TypeConverter{},
-		},
-	)
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -274,22 +262,7 @@ func (a *AwsOss) ListObjects(ctx context.Context, req *oss.ListObjectsInput) (*o
 		return nil, err
 	}
 	output := &oss.ListObjectsOutput{}
-	err = copier.CopyWithOption(output, resp, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
-		Converters: []copier.TypeConverter{
-			{
-				SrcType: &time.Time{},
-				DstType: int64(0),
-				Fn: func(src interface{}) (interface{}, error) {
-					s, ok := src.(*time.Time)
-					if !ok {
-						return nil, errors.New("src type not matching")
-					}
-					return s.Unix(), nil
-				},
-			},
-		}})
+	err = copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
 	// if not return NextMarker, use the value of the last Key in the response as the marker
 	if output.IsTruncated && output.NextMarker == "" {
 		index := len(output.Contents) - 1
@@ -305,11 +278,7 @@ func (a *AwsOss) PutObjectCannedAcl(ctx context.Context, req *oss.PutObjectCanne
 	if err != nil {
 		return nil, err
 	}
-	input := &s3.PutObjectAclInput{
-		Bucket: &req.Bucket,
-		Key:    &req.Key,
-		ACL:    types.ObjectCannedACL(req.Acl),
-	}
+	input := &s3.PutObjectAclInput{Bucket: &req.Bucket, Key: &req.Key, ACL: types.ObjectCannedACL(req.Acl)}
 	resp, err := client.PutObjectAcl(ctx, input)
 	if err != nil {
 		return nil, err
@@ -337,15 +306,7 @@ func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMulti
 		return nil, err
 	}
 	input := &s3.CreateMultipartUploadInput{}
-	err = copier.CopyWithOption(
-		input,
-		req,
-		copier.Option{
-			IgnoreEmpty: true,
-			DeepCopy:    true,
-			Converters:  []copier.TypeConverter{int642time},
-		},
-	)
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{int642time}})
 	if err != nil {
 		log.DefaultLogger.Errorf("copy CreateMultipartUploadInput fail, err: %+v", err)
 		return nil, err
@@ -355,15 +316,7 @@ func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMulti
 		return nil, err
 	}
 	output := &oss.CreateMultipartUploadOutput{}
-	copier.CopyWithOption(
-		output,
-		resp,
-		copier.Option{
-			IgnoreEmpty: true,
-			DeepCopy:    true,
-			Converters:  []copier.TypeConverter{time2int64},
-		},
-	)
+	copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
 	return output, err
 }
 func (a *AwsOss) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*oss.UploadPartOutput, error) {
@@ -377,13 +330,7 @@ func (a *AwsOss) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*oss
 		return nil, err
 	}
 	input.Body = req.DataStream
-	resp, err := client.UploadPart(
-		ctx,
-		input,
-		s3.WithAPIOptions(
-			v4.SwapComputePayloadSHA256ForUnsignedPayloadMiddleware,
-		),
-	)
+	resp, err := client.UploadPart(ctx, input, s3.WithAPIOptions(v4.SwapComputePayloadSHA256ForUnsignedPayloadMiddleware))
 	if err != nil {
 		return nil, err
 	}
@@ -425,15 +372,7 @@ func (a *AwsOss) CompleteMultipartUpload(ctx context.Context, req *oss.CompleteM
 		return nil, err
 	}
 	input := &s3.CompleteMultipartUploadInput{MultipartUpload: &types.CompletedMultipartUpload{}}
-	err = copier.CopyWithOption(
-		input,
-		req,
-		copier.Option{
-			IgnoreEmpty: true,
-			DeepCopy:    true,
-			Converters:  []copier.TypeConverter{},
-		},
-	)
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, err
 	}
@@ -489,14 +428,8 @@ func (a *AwsOss) ListMultipartUploads(ctx context.Context, req *oss.ListMultipar
 		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
 	}
 	for _, v := range resp.Uploads {
-		upload := &oss.MultipartUpload{
-			//Initiated:    timestamppb.New(*v.Initiated),
-			Initiator:    &oss.Initiator{DisplayName: *v.Initiator.DisplayName, ID: *v.Initiator.ID},
-			Key:          *v.Key,
-			Owner:        &oss.Owner{ID: *v.Owner.ID, DisplayName: *v.Owner.DisplayName},
-			StorageClass: string(v.StorageClass),
-			UploadId:     *v.UploadId,
-		}
+		upload := &oss.MultipartUpload{}
+		copier.CopyWithOption(upload, v, copier.Option{IgnoreEmpty: true, DeepCopy: true})
 		output.Uploads = append(output.Uploads, upload)
 	}
 	return output, err
@@ -524,26 +457,12 @@ func (a *AwsOss) ListObjectVersions(ctx context.Context, req *oss.ListObjectVers
 		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
 	}
 	for _, v := range resp.DeleteMarkers {
-		entry := &oss.DeleteMarkerEntry{
-			IsLatest: v.IsLatest,
-			Key:      *v.Key,
-			//LastModified: timestamppb.New(*v.LastModified),
-			Owner:     &oss.Owner{DisplayName: *v.Owner.DisplayName, ID: *v.Owner.ID},
-			VersionId: *v.VersionId,
-		}
+		entry := &oss.DeleteMarkerEntry{IsLatest: v.IsLatest, Key: *v.Key, Owner: &oss.Owner{DisplayName: *v.Owner.DisplayName, ID: *v.Owner.ID}, VersionId: *v.VersionId}
 		output.DeleteMarkers = append(output.DeleteMarkers, entry)
 	}
 	for _, v := range resp.Versions {
-		version := &oss.ObjectVersion{
-			ETag:         *v.ETag,
-			IsLatest:     v.IsLatest,
-			Key:          *v.Key,
-			LastModified: v.LastModified.Unix(),
-			Owner:        &oss.Owner{DisplayName: *v.Owner.DisplayName, ID: *v.Owner.ID},
-			Size:         v.Size,
-			StorageClass: string(v.StorageClass),
-			VersionId:    *v.VersionId,
-		}
+		version := &oss.ObjectVersion{}
+		copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
 		output.Versions = append(output.Versions, version)
 	}
 	return output, err

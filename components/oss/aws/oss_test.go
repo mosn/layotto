@@ -20,6 +20,11 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
+
+	"github.com/jinzhu/copier"
+
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 
 	"mosn.io/layotto/components/oss"
 
@@ -130,4 +135,23 @@ func TestAwsOss(t *testing.T) {
 
 	err = instance.UpdateUploadBandwidthRateLimit(context.TODO(), &oss.UpdateBandwidthRateLimitInput{})
 	assert.NotNil(t, err)
+}
+
+func TestDeepCopy(t *testing.T) {
+	value := "hello"
+	t1 := time.Now()
+	fromValue := &types.ObjectVersion{
+		ETag:         &value,
+		IsLatest:     true,
+		Key:          &value,
+		LastModified: &t1,
+		Owner:        &types.Owner{DisplayName: &value, ID: &value},
+		Size:         10,
+		StorageClass: "hello",
+		VersionId:    &value,
+	}
+	tovalue := &oss.ObjectVersion{}
+	err := copier.CopyWithOption(tovalue, fromValue, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
+	assert.Nil(t, err)
+	assert.Equal(t, tovalue.Owner.DisplayName, value)
 }
