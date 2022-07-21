@@ -1,5 +1,4 @@
 # IVR API design
-<!-- Please only use this template for submitting enhancement requests -->
 
 ## What would you like to be added
 IVR API, or PhoneCall API
@@ -10,11 +9,17 @@ Developers can invoke this API to send voice messages to specific people.
 In the monitoring scenarios, monitor systems need to send alarm messages to people on-call.
 The messages might be in different forms, including IM,SMS, Email and phone calls, depending on the level of urgency.
 
+## Product research
+| IVR product |Docs|
+|---|---|
+|Aliyun VMS| https://www.aliyun.com/product/vms |
+|AWS Pinpoint | https://aws.amazon.com/cn/pinpoint/ |
+
+
 ## Detailed Design
 
 We need to consider the following factors:
 - Portability
-  
   For example, a monitor system might be deployed on alibaba cloud(using [VMS](https://www.aliyun.com/product/vms) to send voice message) or AWS (using [AWS Pinpoint](https://aws.amazon.com/cn/pinpoint/)  to send voice message). So portability is important here.
 
 ```proto
