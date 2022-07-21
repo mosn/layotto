@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package spec.proto.runtime.v1;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
+
+service IvrService {
+
+  //Send voice using the specific template
+  rpc SendVoiceWithTemplate(SendVoiceWithTemplateRequest) returns (SendVoiceWithTemplateResponse) {}
+
+}
+
+message SendVoiceWithTemplateRequest{
+  // Required
+  Template template = 1;
+  // Required
+  string to_mobile = 2;
+  // This field is required by some cloud providers.
+  string from_mobile = 3;
+}
+
+message Template{
+  // Required
+  string template_id = 1;
+  // Required
+  map<string, string>  template_params = 2;
+}
+
+message SendVoiceWithTemplateResponse{
+  string message_id = 1;
+}
