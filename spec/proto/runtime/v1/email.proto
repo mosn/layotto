@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package spec.proto.runtime.v1;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
+
+service EmailService {
+
+  // Send the message to Email.
+  rpc SendEmail(SendEmailRequest) returns (SendEmailResponse) {}
+
+}
+
+// SendEmailRequest is the message send to email.
+message SendEmailRequest {
+  // The invoke Id.
+  string id = 1;
+
+  // The saas service name, like 'aliyun.email'/'aws.ses'/'...'
+  string saas_name = 2;
+
+  // The unique identifier for the Email application.
+  string application_id = 3;
+
+  // The Email sender address.
+  string email_from_address = 4;
+
+  // The Email destination addresses.
+  repeated string email_to_addresses = 5;
+
+  // The Email subject.
+  string subject = 6;
+
+  // The Email content body.
+  bytes data = 7;
+
+  // The metadata which will be sent to Email components.
+  map<string, string> metadata = 8;
+}
+
+message SendEmailResponse {
+  // The saas requestId.
+  string request_id = 1;
+
+  // The data response from Email service.
+  bytes data = 2;
+
+  // The metadata returned from Email service.
+  map<string, string> metadata = 3;
+}
