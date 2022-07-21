@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: layotto-runtime-deployment
+  labels:
+    app: layotto-runtime-deployment
+spec:
+  selector:
+    matchLabels:
+      app: layotto-runtime
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: layotto-runtime
+    spec:
+      containers:
+        - name: layotto-runtime
+          image: layotto/layotto:latest
+          command: [ "/runtime/layotto", "start" ]
+          args: [ "-c", "/runtime/configs/config.json" ]
+          ports:
+            - containerPort: 34904
+          volumeMounts:
+            - name: runtime-config
+              mountPath: /runtime/configs
+              readOnly: false
+      volumes:
+        - name: runtime-config
+          configMap:
+            name: layotto-runtime-config
+            items:
+              - key: config.json
+                path: config.json
