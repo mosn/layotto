@@ -32,7 +32,7 @@ type Factory struct {
 	FactoryMethod func() Oss
 }
 
-func NewOssFactory(compType string, f func() Oss) *Factory {
+func NewFactory(compType string, f func() Oss) *Factory {
 	return &Factory{
 		CompType:      compType,
 		FactoryMethod: f,

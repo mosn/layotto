@@ -854,7 +854,7 @@ func TestMosnRuntimeWithOssConfig(t *testing.T) {
 				s3ext.NewS3Server,
 			),
 			WithOssFactory(
-				oss.NewOssFactory("aws.oss", aws2.NewAwsOss),
+				oss.NewFactory("aws.oss", aws2.NewAwsOss),
 			),
 		)
 		// 4. assert
