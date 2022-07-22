@@ -71,7 +71,7 @@ type MosnRuntime struct {
 	lockRegistry            runtime_lock.Registry
 	sequencerRegistry       runtime_sequencer.Registry
 	fileRegistry            file.Registry
-	ossRegistry             oss.OssRegistry
+	ossRegistry             oss.Registry
 	bindingsRegistry        mbindings.Registry
 	secretStoresRegistry    msecretstores.Registry
 	customComponentRegistry custom.Registry
@@ -117,7 +117,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		stateRegistry:           runtime_state.NewRegistry(info),
 		bindingsRegistry:        mbindings.NewRegistry(info),
 		fileRegistry:            file.NewRegistry(info),
-		ossRegistry:             oss.NewOssRegistry(info),
+		ossRegistry:             oss.NewRegistry(info),
 		lockRegistry:            runtime_lock.NewRegistry(info),
 		sequencerRegistry:       runtime_sequencer.NewRegistry(info),
 		secretStoresRegistry:    msecretstores.NewRegistry(info),
@@ -411,7 +411,7 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 	return nil
 }
 
-func (m *MosnRuntime) initOss(oss ...*oss.OssFactory) error {
+func (m *MosnRuntime) initOss(oss ...*oss.Factory) error {
 	log.DefaultLogger.Infof("[runtime] init oss service")
 
 	// register all oss store services implementation

@@ -21,12 +21,16 @@ import (
 	"errors"
 )
 
+const (
+	BasicConfiguration = "basic_config"
+)
+
 var (
 	ErrInvalid = errors.New("invalid argument")
 )
 
-// OssConfig wraps configuration for a oss implementation
-type OssConfig struct {
-	Metadata json.RawMessage `json:"metadata"`
-	Type     string          `json:"type"`
+// Config wraps configuration for a oss implementation
+type Config struct {
+	Metadata map[string]json.RawMessage `json:"metadata"`
+	Type     string                     `json:"type"`
 }

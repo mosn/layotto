@@ -19,14 +19,15 @@
                       "oss": {
                         "oss_demo": {
                           "type": "aws.oss",
-                          "metadata": [
+                          "metadata":
                             {
-                              "region": "your-oss-resource-region",
-                              "endpoint": "your-oss-resource-endpoint",
-                              "accessKeyID": "your-oss-resource-accessKeyID",
-                              "accessKeySecret": "your-oss-resource-accessKeySecret"
+                              "basic_config":{
+                                "region": "your-oss-resource-region",
+                                "endpoint": "your-oss-resource-endpoint",
+                                "accessKeyID": "your-oss-resource-accessKeyID",
+                                "accessKeySecret": "your-oss-resource-accessKeySecret"
+                              }
                             }
-                          ]
                         }
                       }
                     }

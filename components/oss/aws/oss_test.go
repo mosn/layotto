@@ -18,6 +18,7 @@ package aws
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"testing"
 	"time"
@@ -34,18 +35,18 @@ import (
 )
 
 const (
-	confWithoutUidAndBucket = `[
+	confWithoutUidAndBucket = `
 				{
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret"
 				}
-			]`
+			`
 )
 
 func TestAwsDefaultInitFunc(t *testing.T) {
 	a := &AwsOss{}
-	err := a.Init(context.TODO(), &oss.OssConfig{Metadata: []byte("hello")})
+	err := a.Init(context.TODO(), &oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte("hello")}})
 	assert.Equal(t, err, oss.ErrInvalid)
 	assert.Nil(t, a.client)
 
@@ -53,7 +54,7 @@ func TestAwsDefaultInitFunc(t *testing.T) {
 
 func TestAwsOss(t *testing.T) {
 	instance := &AwsOss{}
-	err := instance.Init(context.TODO(), &oss.OssConfig{Metadata: []byte(confWithoutUidAndBucket)})
+	err := instance.Init(context.TODO(), &oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte(confWithoutUidAndBucket)}})
 	assert.Nil(t, err)
 
 	appendObjectResp, err := instance.AppendObject(context.TODO(), &oss.AppendObjectInput{})

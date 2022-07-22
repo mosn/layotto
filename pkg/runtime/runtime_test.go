@@ -840,7 +840,7 @@ func TestMosnRuntimeWithOssConfig(t *testing.T) {
 	t.Run("normal", func(t *testing.T) {
 		// 1. construct config
 		cfg := &MosnRuntimeConfig{
-			Oss: map[string]oss.OssConfig{
+			Oss: map[string]oss.Config{
 				"awsdemo": {Type: "aws.oss"},
 			},
 		}

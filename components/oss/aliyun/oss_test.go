@@ -18,6 +18,7 @@ package aliyun
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	"mosn.io/layotto/components/pkg/utils"
@@ -32,13 +33,13 @@ import (
 )
 
 const (
-	confWithoutUidAndBucket = `[
+	confWithoutUidAndBucket = `
 				{
 					"endpoint": "endpoint_address",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret"
 				}
-			]`
+			`
 )
 
 func TestInitAliyunOss(t *testing.T) {
@@ -46,9 +47,9 @@ func TestInitAliyunOss(t *testing.T) {
 	client, err := a.getClient()
 	assert.Equal(t, err, utils.ErrNotInitClient)
 	assert.Nil(t, client)
-	err = a.Init(context.TODO(), &l8oss.OssConfig{Metadata: []byte("hello")})
+	err = a.Init(context.TODO(), &l8oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte("hello")}})
 	assert.Equal(t, err, l8oss.ErrInvalid)
-	err = a.Init(context.TODO(), &l8oss.OssConfig{Metadata: []byte(confWithoutUidAndBucket)})
+	err = a.Init(context.TODO(), &l8oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte(confWithoutUidAndBucket)}})
 	assert.NotEqual(t, l8oss.ErrInvalid, err)
 	assert.NotNil(t, a.client)
 
@@ -56,7 +57,7 @@ func TestInitAliyunOss(t *testing.T) {
 
 func TestAliyunOss(t *testing.T) {
 	instance := NewAliyunOss()
-	instance.Init(context.TODO(), &l8oss.OssConfig{Metadata: []byte(confWithoutUidAndBucket)})
+	instance.Init(context.TODO(), &l8oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte(confWithoutUidAndBucket)}})
 	appendObjectResp, err := instance.AppendObject(context.TODO(), &oss.AppendObjectInput{})
 	assert.NotNil(t, err)
 	assert.Nil(t, appendObjectResp)

@@ -42,38 +42,36 @@ import (
 )
 
 type AwsOss struct {
-	client  *s3.Client
-	rawData json.RawMessage
+	client    *s3.Client
+	basicConf json.RawMessage
 }
 
 func NewAwsOss() oss.Oss {
 	return &AwsOss{}
 }
 
-func (a *AwsOss) Init(ctx context.Context, config *oss.OssConfig) error {
-	a.rawData = config.Metadata
-	m := make([]*utils.OssMetadata, 0)
-	err := json.Unmarshal(config.Metadata, &m)
+func (a *AwsOss) Init(ctx context.Context, config *oss.Config) error {
+	a.basicConf = config.Metadata[oss.BasicConfiguration]
+	m := &utils.OssMetadata{}
+	err := json.Unmarshal(a.basicConf, &m)
 	if err != nil {
 		return oss.ErrInvalid
 	}
-	for _, data := range m {
-		optFunc := []func(options *aws_config.LoadOptions) error{
-			aws_config.WithRegion(data.Region),
-			aws_config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
-				Value: aws.Credentials{
-					AccessKeyID: data.AccessKeyID, SecretAccessKey: data.AccessKeySecret,
-					Source: "provider",
-				},
-			}),
-		}
-		cfg, err := aws_config.LoadDefaultConfig(context.TODO(), optFunc...)
-		if err != nil {
-			return err
-		}
-		client := s3.NewFromConfig(cfg)
-		a.client = client
+	optFunc := []func(options *aws_config.LoadOptions) error{
+		aws_config.WithRegion(m.Region),
+		aws_config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
+			Value: aws.Credentials{
+				AccessKeyID: m.AccessKeyID, SecretAccessKey: m.AccessKeySecret,
+				Source: "provider",
+			},
+		}),
 	}
+	cfg, err := aws_config.LoadDefaultConfig(context.TODO(), optFunc...)
+	if err != nil {
+		return err
+	}
+	client := s3.NewFromConfig(cfg)
+	a.client = client
 	return nil
 }
 

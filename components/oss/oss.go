@@ -26,7 +26,7 @@ const (
 )
 
 type Oss interface {
-	Init(context.Context, *OssConfig) error
+	Init(context.Context, *Config) error
 	GetObject(context.Context, *GetObjectInput) (*GetObjectOutput, error)
 	PutObject(context.Context, *PutObjectInput) (*PutObjectOutput, error)
 	DeleteObject(context.Context, *DeleteObjectInput) (*DeleteObjectOutput, error)
@@ -53,13 +53,6 @@ type Oss interface {
 	UpdateUploadBandwidthRateLimit(context.Context, *UpdateBandwidthRateLimitInput) error
 	AppendObject(context.Context, *AppendObjectInput) (*AppendObjectOutput, error)
 	ListParts(context.Context, *ListPartsInput) (*ListPartsOutput, error)
-}
-
-type BaseConfig struct {
-}
-type InitRequest struct {
-	App      string
-	Metadata map[string]string
 }
 
 type GetObjectInput struct {

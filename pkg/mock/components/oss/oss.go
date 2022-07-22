@@ -217,7 +217,7 @@ func (mr *MockOssMockRecorder) HeadObject(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // Init mocks base method.
-func (m *MockOss) Init(arg0 context.Context, arg1 *oss.OssConfig) error {
+func (m *MockOss) Init(arg0 context.Context, arg1 *oss.Config) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Init", arg0, arg1)
 	ret0, _ := ret[0].(error)

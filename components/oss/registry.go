@@ -22,45 +22,45 @@ import (
 	"mosn.io/layotto/components/pkg/info"
 )
 
-type OssRegistry interface {
-	Register(fs ...*OssFactory)
+type Registry interface {
+	Register(fs ...*Factory)
 	Create(name string) (Oss, error)
 }
 
-type OssFactory struct {
-	Name          string
+type Factory struct {
+	CompType      string
 	FactoryMethod func() Oss
 }
 
-func NewOssFactory(name string, f func() Oss) *OssFactory {
-	return &OssFactory{
-		Name:          name,
+func NewOssFactory(compType string, f func() Oss) *Factory {
+	return &Factory{
+		CompType:      compType,
 		FactoryMethod: f,
 	}
 }
 
-type OssStoreRegistry struct {
-	files map[string]func() Oss
-	info  *info.RuntimeInfo
+type registry struct {
+	oss  map[string]func() Oss
+	info *info.RuntimeInfo
 }
 
-func NewOssRegistry(info *info.RuntimeInfo) OssRegistry {
+func NewRegistry(info *info.RuntimeInfo) Registry {
 	info.AddService(ServiceName)
-	return &OssStoreRegistry{
-		files: make(map[string]func() Oss),
-		info:  info,
+	return &registry{
+		oss:  make(map[string]func() Oss),
+		info: info,
 	}
 }
 
-func (r *OssStoreRegistry) Register(fs ...*OssFactory) {
+func (r *registry) Register(fs ...*Factory) {
 	for _, f := range fs {
-		r.files[f.Name] = f.FactoryMethod
-		r.info.RegisterComponent(ServiceName, f.Name)
+		r.oss[f.CompType] = f.FactoryMethod
+		r.info.RegisterComponent(ServiceName, f.CompType)
 	}
 }
 
-func (r *OssStoreRegistry) Create(compType string) (Oss, error) {
-	if f, ok := r.files[compType]; ok {
+func (r *registry) Create(compType string) (Oss, error) {
+	if f, ok := r.oss[compType]; ok {
 		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil
 	}

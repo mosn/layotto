@@ -110,11 +110,6 @@ service ObjectStorageService{
     rpc RestoreObject(RestoreObjectInput) returns(RestoreObjectOutput){}
 }
 
-message InitInput {
-    string store_name = 1;
-    map<string, string> metadata = 2;
-}
-
 message GetObjectInput {
     string store_name = 1;
     // The bucket name containing the object

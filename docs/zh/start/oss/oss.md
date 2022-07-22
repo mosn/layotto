@@ -10,21 +10,21 @@ Layotto提供了访问OSS的示例 [demo](https://github.com/mosn/layotto/blob/m
 layotto提供了aws的配置文件`configs/oss.json`，配置文件内容如下所示:
 
 ```json
-                    "grpc_config": {
-                      "oss": {
-                        "oss_demo": {
-                          "type": "aws.oss",
-                          "metadata": [
-                            {
-                              "region": "your-oss-resource-region",
-                              "endpoint": "your-oss-resource-endpoint",
-                              "accessKeyID": "your-oss-resource-accessKeyID",
-                              "accessKeySecret": "your-oss-resource-accessKeySecret"
-                            }
-                          ]
-                        }
-                      }
-                    }
+"grpc_config": {
+  "oss": {
+    "oss_demo": {
+      "type": "aws.oss",
+      "metadata": {
+        "basic_config":{
+          "region": "your-oss-resource-region",
+          "endpoint": "your-oss-resource-endpoint",
+          "accessKeyID": "your-oss-resource-accessKeyID",
+          "accessKeySecret": "your-oss-resource-accessKeySecret"
+        }
+      }
+    }
+  }
+}
 ```
 
 配置中对应的字段，需要替换成自己的OSS账号的配置。type 支持多种类型，例如 `aliyun.oss`对应阿里云的OSS服务, `aws.oss` 对应亚马逊云的 S3 服务。

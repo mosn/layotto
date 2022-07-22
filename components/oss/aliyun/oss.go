@@ -29,28 +29,26 @@ import (
 )
 
 type AliyunOSS struct {
-	client  *oss.Client
-	rawData json.RawMessage
+	client    *oss.Client
+	basicConf json.RawMessage
 }
 
 func NewAliyunOss() l8oss.Oss {
 	return &AliyunOSS{}
 }
 
-func (a *AliyunOSS) Init(ctx context.Context, config *l8oss.OssConfig) error {
-	a.rawData = config.Metadata
-	m := make([]*utils.OssMetadata, 0)
-	err := json.Unmarshal(config.Metadata, &m)
+func (a *AliyunOSS) Init(ctx context.Context, config *l8oss.Config) error {
+	a.basicConf = config.Metadata[l8oss.BasicConfiguration]
+	m := &utils.OssMetadata{}
+	err := json.Unmarshal(a.basicConf, &m)
 	if err != nil {
 		return l8oss.ErrInvalid
 	}
-	for _, v := range m {
-		client, err := oss.New(v.Endpoint, v.AccessKeyID, v.AccessKeySecret)
-		if err != nil {
-			return err
-		}
-		a.client = client
+	client, err := oss.New(m.Endpoint, m.AccessKeyID, m.AccessKeySecret)
+	if err != nil {
+		return err
 	}
+	a.client = client
 	return nil
 }
 
