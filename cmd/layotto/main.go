@@ -24,13 +24,13 @@ import (
 
 	"mosn.io/layotto/components/oss"
 
-	aws2 "mosn.io/layotto/components/oss/aws"
+	aws_oss "mosn.io/layotto/components/oss/aws"
 
-	aliyun2 "mosn.io/layotto/components/oss/aliyun"
+	aliyun_oss "mosn.io/layotto/components/oss/aliyun"
 
 	"mosn.io/mosn/pkg/istio"
 
-	"mosn.io/layotto/components/file/aliyun"
+	aliyun_file "mosn.io/layotto/components/file/aliyun"
 
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
@@ -277,7 +277,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliyunOSS", aliyun.NewAliyunFile),
+			file.NewFileFactory("aliOSS", aliyun_file.NewAliyunFile),
 			file.NewFileFactory("minioOSS", minio.NewMinioOss),
 			file.NewFileFactory("awsOSS", aws.NewAwsFile),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
@@ -285,8 +285,8 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
 		),
 		runtime.WithOssFactory(
-			oss.NewOssFactory("aws.oss", aws2.NewAwsOss),
-			oss.NewOssFactory("aliyun.oss", aliyun2.NewAliyunOss),
+			oss.NewOssFactory("aws.oss", aws_oss.NewAwsOss),
+			oss.NewOssFactory("aliyun.oss", aliyun_oss.NewAliyunOss),
 		),
 		// PubSub
 		runtime.WithPubSubFactory(
