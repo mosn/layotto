@@ -32,19 +32,24 @@ message SendEmailWithTemplateRequest {
   // Required.
   EmailTemplate template = 2;
 
-
   // Required. The Email subject.
   string subject = 3;
 
+  // Required.
+  EmailAddress address = 4;
+
+}
+
+message EmailAddress{
+
   // Required. The Email sender address.
-  string from_address = 4;
+  string from = 1;
 
   // Required. The Email destination addresses.
-  repeated string to_addresses = 5;
+  repeated string to = 2;
 
   // Optional. To whom the mail is cc
-  repeated string cc = 6;
-
+  repeated string cc = 3;
 }
 
 message EmailTemplate{
@@ -81,14 +86,8 @@ message SendEmailRequest {
   //  Required.
   Content content = 4;
 
-  // Required. The Email sender address.
-  string from_address = 5;
-
-  // Required. The Email destination addresses.
-  repeated string to_addresses = 6;
-
-  // Optional. To whom the mail is cc
-  repeated string cc = 7;
+  // Required.
+  EmailAddress address = 5;
 
 }
 
