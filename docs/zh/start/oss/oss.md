@@ -2,7 +2,7 @@
 
 ## 快速开始
 
-Layotto提供了访问OSS的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/file/client.go) ,该示例基于S3协议实现了对象的一系列操作，当前
+Layotto提供了访问OSS的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/oss/client.go) ,该示例基于S3协议实现了对象的一系列操作，当前
 已支持部分接口。可以做到在不同的OSS实例之间进行无感迁移。
 
 ### step 1.  启动layotto
