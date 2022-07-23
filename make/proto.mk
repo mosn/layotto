@@ -24,8 +24,8 @@ proto.gen.doc:
 
 .PHONY: proto.gen.init
 proto.gen.init:
-	 go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
-	 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 
 .PHONY: proto.gen.code
 proto.gen.code:
@@ -33,3 +33,10 @@ proto.gen.code:
 	$(DOCKER) run --rm \
 		-v  $(ROOT_DIR)/spec/proto/runtime/v1:/api/proto \
 		layotto/protoc
+
+.PHONY: proto.comments
+proto.comments:
+	sudo true
+	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | sudo -u $$USER bash
+	brew install bufbuild/buf/buf
+	buf lint $(ROOT_DIR)
