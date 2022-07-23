@@ -1,0 +1,16 @@
+name: Layotto Env Pipeline 🌊
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          version: '1.6.0'
+      - uses: bufbuild/buf-lint-action@v1
