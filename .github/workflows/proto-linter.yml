@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: buf-setup
-      - uses: actions/checkout@v2
-      - uses: bufbuild/buf-setup-action@v1
+        uses: actions/checkout@v2
+        uses: bufbuild/buf-setup-action@v1
         with:
           version: '1.6.0'
       - name: buf-lint
-      - uses: bufbuild/buf-lint-action@v1
+        uses: bufbuild/buf-lint-action@v1
       - name: check it
-      - run: buf lint
+        run: buf lint
