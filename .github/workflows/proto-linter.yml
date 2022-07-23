@@ -7,7 +7,7 @@ on:
 
 jobs:
   check:
-    name: "🍀 Proto Lint"
+    name: "🍀 Proto Validation"
     runs-on: ubuntu-latest
     steps:
       - name: buf-setup
