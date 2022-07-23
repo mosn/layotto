@@ -6,7 +6,8 @@ on:
       - main
 
 jobs:
-  build:
+  check:
+    name: "🍀 Proto Lint"
     runs-on: ubuntu-latest
     steps:
       - name: buf-setup
