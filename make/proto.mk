@@ -36,7 +36,12 @@ proto.gen.code:
 
 .PHONY: proto.comments
 proto.comments:
-	curl -fsSL \
+ifeq (,$(shell which buf))
+	@echo "===========> Installing buf linter"
+	@curl -fsSL \
 		"https://github.com/bufbuild/buf/releases/download/v1.6.0/buf-$$(uname -s)-$$(uname -m)" \
 		-o "$(OUTPUT_DIR)/buf"
+	@sudo install -m 0755 $(OUTPUT_DIR)/buf /usr/local/bin/buf
+endif
+	@echo "===========> Running buf linter"
 	buf lint $(ROOT_DIR)
