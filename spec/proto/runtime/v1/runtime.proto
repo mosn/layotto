@@ -9,6 +9,7 @@ option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 option java_outer_classname = "RuntimeProto";
 option java_package = "spec.proto.runtime.v1";
 
+// Runtime encapsulates variours Runtime APIs(such as Configuration API, Pub/Sub API, etc)
 service Runtime {
   //SayHello used for test
   rpc SayHello(SayHelloRequest) returns (SayHelloResponse) {}
@@ -89,11 +90,13 @@ service Runtime {
   rpc GetBulkSecret(GetBulkSecretRequest) returns (GetBulkSecretResponse) {}
 }
 
+// Get fileMeta request message
 message GetFileMetaRequest{
     // File meta request
     FileRequest request = 1;
 }
 
+// Get fileMeta response message
 message GetFileMetaResponse{
     // The size of file
     int64 size = 1;
@@ -103,16 +106,19 @@ message GetFileMetaResponse{
     FileMeta response = 3;
 }
 
+// FileMeta value
 message FileMetaValue{
     // File meta value
     repeated string value = 1;
 }
 
+// A map that store FileMetaValue 
 message FileMeta{
     // A data structure to store metadata 
     map<string,FileMetaValue> metadata = 1;
 }
 
+// Get file request message
 message GetFileRequest {
   // The name of store
   string store_name = 1;
@@ -122,11 +128,13 @@ message GetFileRequest {
   map<string, string> metadata = 3;
 }
 
+// Get file response message
 message GetFileResponse {
   // The data of file
   bytes data = 1;
 }
 
+// Put file request message
 message PutFileRequest {
   // The name of store
   string store_name = 1;
@@ -138,6 +146,7 @@ message PutFileRequest {
   map<string, string> metadata = 4;
 }
 
+// File request message
 message FileRequest {
   // The name of store
   string store_name = 1;
@@ -147,6 +156,7 @@ message FileRequest {
   map<string, string> metadata = 3;
 }
 
+// List file request message
 message ListFileRequest {
   // File request
   FileRequest request = 1;
@@ -156,6 +166,7 @@ message ListFileRequest {
   string marker = 3;
 }
 
+// File info message
 message FileInfo {
   // The name of file
   string file_name = 1;
@@ -166,6 +177,8 @@ message FileInfo {
   // The metadata for user extension.
   map<string,string> metadata = 4;
 }
+
+// List file response message
 message ListFileResp {
   // File info
   repeated FileInfo files = 1;
@@ -175,11 +188,13 @@ message ListFileResp {
   bool is_truncated = 3;
 }
 
+// Delete file request message
 message DelFileRequest {
   // File request
   FileRequest request = 1;
 }
 
+// Get next id request message
 message GetNextIdRequest {
   // Required. Name of sequencer storage
   string store_name = 1;
@@ -220,12 +235,14 @@ message SequencerOptions {
   //  Uniqueness uniqueness=2;
 }
 
+// Get next id response message
 message GetNextIdResponse{
   // The next unique id
   // Fixed int64 overflow problems on JavaScript https://github.com/improbable-eng/ts-protoc-gen#gotchas
   int64 next_id = 1 [jstype = JS_STRING];
 }
 
+// Lock request message is distributed lock API which is not blocking method tring to get a lock with ttl
 message TryLockRequest {
   // Required. The lock store name,e.g. `redis`.
   string store_name = 1;
@@ -252,11 +269,13 @@ message TryLockRequest {
   int32 expire = 4;
 }
 
+// Lock response message returns is the lock obtained. 
 message TryLockResponse {
   // Is lock success
   bool success = 1;
 }
 
+// UnLock request message
 message UnlockRequest {
   // The name of store
   string store_name = 1;
@@ -266,6 +285,7 @@ message UnlockRequest {
   string lock_owner = 3;
 }
 
+// UnLock response message
 message UnlockResponse {
   // The enum of unlock status
   enum Status {
@@ -283,6 +303,7 @@ message UnlockResponse {
   Status status = 1;
 }
 
+// Hello request message
 message SayHelloRequest {
   // The name of service
   string service_name = 1;
@@ -292,6 +313,7 @@ message SayHelloRequest {
   google.protobuf.Any data = 3;
 }
 
+// Hello response message
 message SayHelloResponse {
   // Hello
   string hello = 1;
@@ -299,6 +321,7 @@ message SayHelloResponse {
   google.protobuf.Any data = 2;
 }
 
+// Invoke service request message
 message InvokeServiceRequest {
   // The identify of InvokeServiceRequest
   string id = 1;
@@ -306,6 +329,7 @@ message InvokeServiceRequest {
   CommonInvokeRequest message = 3;
 }
 
+// Common invoke request message which includes invoke method and data
 message CommonInvokeRequest {
   // The method of requset
   string method = 1;
@@ -317,6 +341,7 @@ message CommonInvokeRequest {
   HTTPExtension http_extension = 4;
 }
 
+// Http extension message is about invoke http information
 message HTTPExtension {
   // The enum of http reuest method
   enum Verb {
@@ -349,6 +374,7 @@ message HTTPExtension {
   string querystring = 2;
 }
 
+// Invoke service response message is result of invoke service queset
 message InvokeResponse {
   // The response data
   google.protobuf.Any data = 1;
