@@ -279,26 +279,6 @@ func (mr *MockObjectStorageServiceClientMockRecorder) HeadObject(ctx, in interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeadObject", reflect.TypeOf((*MockObjectStorageServiceClient)(nil).HeadObject), varargs...)
 }
 
-// InitClient mocks base method.
-func (m *MockObjectStorageServiceClient) InitClient(ctx context.Context, in *v1.InitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, in}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "InitClient", varargs...)
-	ret0, _ := ret[0].(*emptypb.Empty)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// InitClient indicates an expected call of InitClient.
-func (mr *MockObjectStorageServiceClientMockRecorder) InitClient(ctx, in interface{}, opts ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InitClient", reflect.TypeOf((*MockObjectStorageServiceClient)(nil).InitClient), varargs...)
-}
-
 // IsObjectExist mocks base method.
 func (m *MockObjectStorageServiceClient) IsObjectExist(ctx context.Context, in *v1.IsObjectExistInput, opts ...grpc.CallOption) (*v1.IsObjectExistOutput, error) {
 	m.ctrl.T.Helper()
@@ -1312,21 +1292,6 @@ func (m *MockObjectStorageServiceServer) HeadObject(arg0 context.Context, arg1 *
 func (mr *MockObjectStorageServiceServerMockRecorder) HeadObject(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeadObject", reflect.TypeOf((*MockObjectStorageServiceServer)(nil).HeadObject), arg0, arg1)
-}
-
-// InitClient mocks base method.
-func (m *MockObjectStorageServiceServer) InitClient(arg0 context.Context, arg1 *v1.InitInput) (*emptypb.Empty, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InitClient", arg0, arg1)
-	ret0, _ := ret[0].(*emptypb.Empty)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// InitClient indicates an expected call of InitClient.
-func (mr *MockObjectStorageServiceServerMockRecorder) InitClient(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InitClient", reflect.TypeOf((*MockObjectStorageServiceServer)(nil).InitClient), arg0, arg1)
 }
 
 // IsObjectExist mocks base method.
