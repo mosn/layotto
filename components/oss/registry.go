@@ -24,7 +24,7 @@ import (
 
 type Registry interface {
 	Register(fs ...*Factory)
-	Create(name string) (Oss, error)
+	Create(compType string) (Oss, error)
 }
 
 type Factory struct {
