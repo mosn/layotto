@@ -9,6 +9,7 @@ option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 option java_outer_classname = "RuntimeProto";
 option java_package = "spec.proto.runtime.v1";
 
+// Runtime encapsulates variours Runtime APIs(such as Configuration API, Pub/Sub API, etc)
 service Runtime {
   //SayHello used for test
   rpc SayHello(SayHelloRequest) returns (SayHelloResponse) {}
@@ -32,6 +33,7 @@ service Runtime {
   // A non-blocking method trying to get a lock with ttl.
   rpc TryLock(TryLockRequest)returns (TryLockResponse) {}
 
+  // A method trying to unlock.
   rpc Unlock(UnlockRequest)returns (UnlockResponse) {}
 
   // Sequencer API
@@ -88,28 +90,37 @@ service Runtime {
   rpc GetBulkSecret(GetBulkSecretRequest) returns (GetBulkSecretResponse) {}
 }
 
+// Get fileMeta request message
 message GetFileMetaRequest{
+    // File meta request
     FileRequest request = 1;
 }
 
+// Get fileMeta response message
 message GetFileMetaResponse{
     // The size of file
     int64 size = 1;
     // The modified time of file
     string last_modified = 2;
+    // File meta response
     FileMeta response = 3;
 }
 
+// FileMeta value
 message FileMetaValue{
+    // File meta value
     repeated string value = 1;
 }
 
+// A map that store FileMetaValue 
 message FileMeta{
+    // A data structure to store metadata 
     map<string,FileMetaValue> metadata = 1;
 }
 
+// Get file request message
 message GetFileRequest {
-  //
+  // The name of store
   string store_name = 1;
   // The name of the file or object want to get.
   string name = 2;
@@ -117,11 +128,15 @@ message GetFileRequest {
   map<string, string> metadata = 3;
 }
 
+// Get file response message
 message GetFileResponse {
+  // The data of file
   bytes data = 1;
 }
 
+// Put file request message
 message PutFileRequest {
+  // The name of store
   string store_name = 1;
   // The name of the file or object want to put.
   string name = 2;
@@ -131,7 +146,9 @@ message PutFileRequest {
   map<string, string> metadata = 4;
 }
 
+// File request message
 message FileRequest {
+  // The name of store
   string store_name = 1;
   // The name of the directory
   string name = 2;
@@ -139,12 +156,17 @@ message FileRequest {
   map<string, string> metadata = 3;
 }
 
+// List file request message
 message ListFileRequest {
+  // File request
   FileRequest request = 1;
+  // Page size
   int32 page_size = 2;
+  // Marker
   string marker = 3;
 }
 
+// File info message
 message FileInfo {
   // The name of file
   string file_name = 1;
@@ -155,16 +177,24 @@ message FileInfo {
   // The metadata for user extension.
   map<string,string> metadata = 4;
 }
+
+// List file response message
 message ListFileResp {
+  // File info
   repeated FileInfo files = 1;
+  // Marker
   string marker = 2;
+  // Is truncated
   bool is_truncated = 3;
 }
 
+// Delete file request message
 message DelFileRequest {
+  // File request
   FileRequest request = 1;
 }
 
+// Get next id request message
 message GetNextIdRequest {
   // Required. Name of sequencer storage
   string store_name = 1;
@@ -188,6 +218,7 @@ message SequencerOptions {
     STRONG = 1;
   }
 
+  // Default STRONG auto-increment
   AutoIncrement increment = 1;
 
   //  We removed Uniqueness enum to make it simple.
@@ -204,12 +235,14 @@ message SequencerOptions {
   //  Uniqueness uniqueness=2;
 }
 
+// Get next id response message
 message GetNextIdResponse{
   // The next unique id
   // Fixed int64 overflow problems on JavaScript https://github.com/improbable-eng/ts-protoc-gen#gotchas
   int64 next_id = 1 [jstype = JS_STRING];
 }
 
+// Lock request message is distributed lock API which is not blocking method tring to get a lock with ttl
 message TryLockRequest {
   // Required. The lock store name,e.g. `redis`.
   string store_name = 1;
@@ -236,74 +269,116 @@ message TryLockRequest {
   int32 expire = 4;
 }
 
+// Lock response message returns is the lock obtained. 
 message TryLockResponse {
+  // Is lock success
   bool success = 1;
 }
 
+// UnLock request message
 message UnlockRequest {
+  // The name of store
   string store_name = 1;
   // resource_id is the lock key.
   string resource_id = 2;
-
+  // The owner of the lock
   string lock_owner = 3;
 }
 
+// UnLock response message
 message UnlockResponse {
+  // The enum of unlock status
   enum Status {
+    // Unlock is success
     SUCCESS = 0;
+    // The lock is not exist
     LOCK_UNEXIST = 1;
+    // The lock is belong to others
     LOCK_BELONG_TO_OTHERS = 2;
+    // Internal error
     INTERNAL_ERROR = 3;
   }
 
+  // The status of unlock
   Status status = 1;
 }
 
+// Hello request message
 message SayHelloRequest {
+  // The name of service
   string service_name = 1;
+  // Reuqest name
   string name = 2;
   // Optional. This field is used to control the packet size during load tests.
   google.protobuf.Any data = 3;
 }
 
+// Hello response message
 message SayHelloResponse {
+  // Hello
   string hello = 1;
+  // Hello message of data
   google.protobuf.Any data = 2;
 }
 
+// Invoke service request message
 message InvokeServiceRequest {
+  // The identify of InvokeServiceRequest
   string id = 1;
+  // InvokeServiceRequest message
   CommonInvokeRequest message = 3;
 }
 
+// Common invoke request message which includes invoke method and data
 message CommonInvokeRequest {
+  // The method of requset
   string method = 1;
+  // The request data
   google.protobuf.Any data = 2;
+  // The content type of request data
   string content_type = 3;
+  // The extra information of http
   HTTPExtension http_extension = 4;
 }
 
+// Http extension message is about invoke http information
 message HTTPExtension {
+  // The enum of http reuest method
   enum Verb {
+    // NONE
     NONE = 0;
+    // GET method
     GET = 1;
+    // HEAD method
     HEAD = 2;
+    // POST method
     POST = 3;
+    // PUT method
     PUT = 4;
+    // DELETE method
     DELETE = 5;
+    // CONNECT method
     CONNECT = 6;
+    // CONNECT method
     OPTIONS = 7;
+    // CONNECT method
     TRACE = 8;
+    // PATCH method
     PATCH = 9;
   }
 
+  // The method of http reuest
   Verb verb = 1;
 
+  // The query information of http
   string querystring = 2;
 }
 
+// Invoke service response message is result of invoke service queset
 message InvokeResponse {
+  // The response data
   google.protobuf.Any data = 1;
+  // The content type of response data
   string content_type = 2;
 }
 
@@ -575,6 +650,7 @@ message StateOptions {
   // When an ETag is associated with an save or delete request, the store shall allow the update only if the attached ETag matches with the latest ETag in the database.
   // But when ETag is missing in the write requests, the state store shall handle the requests in the specified strategy(e.g. a last-write-wins fashion).
   enum StateConcurrency {
+    // Concurrency state is unspecified
     CONCURRENCY_UNSPECIFIED = 0;
     // First write wins
     CONCURRENCY_FIRST_WRITE = 1;
@@ -584,6 +660,7 @@ message StateOptions {
 
   // Enum describing the supported consistency for state.
   enum StateConsistency {
+    // Consistency state is unspecified
     CONSISTENCY_UNSPECIFIED = 0;
     //  The API server assumes data stores are eventually consistent by default.A state store should:
     // - For read requests, the state store can return data from any of the replicas
@@ -596,7 +673,9 @@ message StateOptions {
     CONSISTENCY_STRONG = 2;
   }
 
+  // The state operation of concurrency
   StateConcurrency concurrency = 1;
+  // The state operation of consistency
   StateConsistency consistency = 2;
 }
 
@@ -714,5 +793,6 @@ message GetBulkSecretResponse {
 
 // SecretResponse is a map of decrypted string/string values
 message SecretResponse {
+  // The data struct of secrets
   map<string, string> secrets = 1;
 }
