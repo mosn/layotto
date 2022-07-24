@@ -36,7 +36,7 @@ proto.gen.code:
 
 .PHONY: proto.comments
 proto.comments:
-	sudo true
-	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | sudo -u $$USER bash
-	brew install bufbuild/buf/buf
+	curl -fsSL \
+		"https://github.com/bufbuild/buf/releases/download/v1.6.0/buf-$$(uname -s)-$$(uname -m)" \
+		-o "$(OUTPUT_DIR)/buf"
 	buf lint $(ROOT_DIR)
