@@ -949,6 +949,7 @@ message CompleteMultipartUploadOutput{
     // Indicates whether the multipart upload uses an S3 Bucket Key for server-side
     // encryption with Amazon Web Services KMS (SSE-KMS).
     bool bucket_key_enabled = 3;
+    // Entity tag that identifies the newly created object's data
     string etag = 4;
     // If the object expiration is configured, this will contain the expiration date
     // (expiry-date) and rule ID (rule-id). The value of rule-id is URL-encoded.
@@ -958,6 +959,9 @@ message CompleteMultipartUploadOutput{
     // If present, indicates that the requester was successfully charged for the
     // request.
     string request_charged = 7;
+    // If present, specifies the ID of the Amazon Web Services Key Management Service
+    // (Amazon Web Services KMS) symmetric customer managed key that was used for the
+    // object.
     string sse_kms_keyId = 8;
     // The server-side encryption algorithm used when storing this object in Amazon S3
     // (for example, AES256, aws:kms).
@@ -977,6 +981,7 @@ message AbortMultipartUploadInput{
     // Name of the object key.
     // This member is required.
     string key = 3;
+    // The account ID of the expected bucket owner
     string expected_bucket_owner = 4;
     // Confirms that the requester knows that they will be charged for the request.
     string request_payer = 5;
@@ -1005,7 +1010,10 @@ message ListMultipartUploadsInput{
     // key. The keys that are grouped under CommonPrefixes result element are not
     // returned elsewhere in the response.
     string delimiter = 3;
+    // Requests Amazon S3 to encode the object keys in the response and specifies the
+    // encoding method to use. An object key may contain any Unicode character;
     string encoding_type = 4;
+    // The account ID of the expected bucket owner
     string expected_bucket_owner = 5;
     // Together with upload-id-marker, this parameter specifies the multipart upload
     // after which listing should begin. If upload-id-marker is not specified, only the
@@ -1342,6 +1350,7 @@ message AppendObjectInput{
     string server_side_encryption = 13;
     // Object metadata
     string meta = 14;
+    // Object tags
     map<string, string> tags = 15;
 
 }

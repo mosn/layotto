@@ -26,11 +26,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// GetObjectInput
 type GetObjectInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// The bucket name containing the object
 	// This member is required
@@ -58,10 +60,6 @@ type GetObjectInput struct {
 	// end is used to specify the location where the file end
 	End int64 `protobuf:"varint,11,opt,name=end,proto3" json:"end,omitempty"`
 	// Confirms that the requester knows that they will be charged for the request.
-	// Bucket owners need not specify this parameter in their requests. For information
-	// about downloading objects from Requester Pays buckets, see Downloading Objects
-	// in Requester Pays Buckets
-	// (https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
 	RequestPayer string `protobuf:"bytes,12,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
 	// Sets the Cache-Control header of the response.
 	ResponseCacheControl string `protobuf:"bytes,13,opt,name=response_cache_control,json=responseCacheControl,proto3" json:"response_cache_control,omitempty"`
@@ -294,6 +292,7 @@ func (x *GetObjectInput) GetSignedUrl() string {
 	return ""
 }
 
+// GetObjectOutput
 type GetObjectOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -505,11 +504,13 @@ func (x *GetObjectOutput) GetMetadata() map[string]string {
 	return nil
 }
 
+// PutObjectInput
 type PutObjectInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// Object data.
 	Body []byte `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
@@ -521,11 +522,8 @@ type PutObjectInput struct {
 	Key string `protobuf:"bytes,4,opt,name=key,proto3" json:"key,omitempty"`
 	// The canned ACL to apply to the object,different oss provider have different acl type
 	Acl string `protobuf:"bytes,5,opt,name=acl,proto3" json:"acl,omitempty"`
-	// Specifies whether Amazon S3 should use an S3 Bucket Key for object encryption
-	// with server-side encryption using AWS KMS (SSE-KMS). Setting this header to true
-	// causes Amazon S3 to use an S3 Bucket Key for object encryption with SSE-KMS.
-	// Specifying this header with a PUT action doesn’t affect bucket-level settings
-	// for S3 Bucket Key.
+	// Indicates whether the multipart upload uses an S3 Bucket Key for server-side
+	// encryption with Amazon Web Services KMS (SSE-KMS).
 	BucketKeyEnabled bool `protobuf:"varint,6,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
 	// Can be used to specify caching behavior along the request/reply chain.
 	CacheControl string `protobuf:"bytes,7,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
@@ -684,6 +682,7 @@ func (x *PutObjectInput) GetTagging() map[string]string {
 	return nil
 }
 
+// PutObjectOutput
 type PutObjectOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -769,11 +768,13 @@ func (x *PutObjectOutput) GetVersionId() string {
 	return ""
 }
 
+// DeleteObjectInput
 type DeleteObjectInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// The bucket name to which the DEL action was initiated
 	// This member is required.
@@ -782,11 +783,6 @@ type DeleteObjectInput struct {
 	// This member is required.
 	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	// Confirms that the requester knows that they will be charged for the request.
-	// Bucket owners need not specify this parameter in their requests. For information
-	// about downloading objects from Requester Pays buckets, see Downloading Objects
-	// in Requester Pays Buckets
-	// (https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
-	// in the Amazon S3 User Guide.
 	RequestPayer string `protobuf:"bytes,4,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
 	// VersionId used to reference a specific version of the object.
 	VersionId string `protobuf:"bytes,5,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
@@ -859,6 +855,7 @@ func (x *DeleteObjectInput) GetVersionId() string {
 	return ""
 }
 
+// DeleteObjectOutput
 type DeleteObjectOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -928,11 +925,13 @@ func (x *DeleteObjectOutput) GetVersionId() string {
 	return ""
 }
 
+// PutObjectTaggingInput
 type PutObjectTaggingInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// The bucket name containing the object
 	// This member is required.
@@ -1013,6 +1012,7 @@ func (x *PutObjectTaggingInput) GetVersionId() string {
 	return ""
 }
 
+// PutObjectTaggingOutput
 type PutObjectTaggingOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1070,11 +1070,13 @@ func (x *PutObjectTaggingOutput) GetResultMetadata() map[string]string {
 	return nil
 }
 
+// DeleteObjectTaggingInput
 type DeleteObjectTaggingInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// The bucket name containing the objects from which to remove the tags.
 	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
@@ -1156,6 +1158,7 @@ func (x *DeleteObjectTaggingInput) GetExpectedBucketOwner() string {
 	return ""
 }
 
+// DeleteObjectTaggingOutput
 type DeleteObjectTaggingOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1213,11 +1216,13 @@ func (x *DeleteObjectTaggingOutput) GetResultMetadata() map[string]string {
 	return nil
 }
 
+// GetObjectTaggingInput
 type GetObjectTaggingInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// The bucket name containing the object for which to get the tagging information.
 	// This member is required.
@@ -1309,6 +1314,7 @@ func (x *GetObjectTaggingInput) GetRequestPayer() string {
 	return ""
 }
 
+// GetObjectTaggingOutput
 type GetObjectTaggingOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1376,6 +1382,7 @@ func (x *GetObjectTaggingOutput) GetResultMetadata() map[string]string {
 	return nil
 }
 
+// CopySource
 type CopySource struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1442,18 +1449,21 @@ func (x *CopySource) GetCopySourceVersionId() string {
 	return ""
 }
 
+// CopyObjectInput
 type CopyObjectInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// The name of the destination bucket. When using this action with an access point
 	// This member is required.
 	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	// The key of the destination object.
 	// This member is required.
-	Key        string      `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// CopySource
 	CopySource *CopySource `protobuf:"bytes,4,opt,name=copy_source,json=copySource,proto3" json:"copy_source,omitempty"`
 	// The tag-set for the object destination object this value must be used in
 	// conjunction with the TaggingDirective. The tag-set must be encoded as URL Query
@@ -1555,6 +1565,7 @@ func (x *CopyObjectInput) GetMetadata() map[string]string {
 	return nil
 }
 
+// CopyObjectResult
 type CopyObjectResult struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1613,6 +1624,7 @@ func (x *CopyObjectResult) GetLastModified() int64 {
 	return 0
 }
 
+// CopyObjectOutput
 type CopyObjectOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1679,11 +1691,13 @@ func (x *CopyObjectOutput) GetExpiration() string {
 	return ""
 }
 
+// Delete
 type Delete struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// ObjectIdentifier
 	Objects []*ObjectIdentifier `protobuf:"bytes,1,rep,name=objects,proto3" json:"objects,omitempty"`
 	// Element to enable quiet mode for the request. When you add this element, you
 	// must set its value to true.
@@ -1736,6 +1750,7 @@ func (x *Delete) GetQuiet() bool {
 	return false
 }
 
+// ObjectIdentifier
 type ObjectIdentifier struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1794,15 +1809,21 @@ func (x *ObjectIdentifier) GetVersionId() string {
 	return ""
 }
 
+// DeleteObjectsInput
 type DeleteObjectsInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	StoreName    string  `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket       string  `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Delete       *Delete `protobuf:"bytes,3,opt,name=delete,proto3" json:"delete,omitempty"`
-	RequestPayer string  `protobuf:"bytes,4,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	// Required. The name of oss store.
+	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Delete objects
+	Delete *Delete `protobuf:"bytes,3,opt,name=delete,proto3" json:"delete,omitempty"`
+	// Confirms that the requester knows that they will be charged for the request.
+	RequestPayer string `protobuf:"bytes,4,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
 }
 
 func (x *DeleteObjectsInput) Reset() {
@@ -1865,6 +1886,7 @@ func (x *DeleteObjectsInput) GetRequestPayer() string {
 	return ""
 }
 
+// DeletedObject
 type DeletedObject struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1944,11 +1966,13 @@ func (x *DeletedObject) GetVersionId() string {
 	return ""
 }
 
+// DeleteObjectsOutput
 type DeleteObjectsOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// DeletedObject
 	Deleted []*DeletedObject `protobuf:"bytes,1,rep,name=deleted,proto3" json:"deleted,omitempty"`
 }
 
@@ -1991,13 +2015,17 @@ func (x *DeleteObjectsOutput) GetDeleted() []*DeletedObject {
 	return nil
 }
 
+// ListObjectsInput
 type ListObjectsInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket    string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	// A delimiter is a character you use to group keys.
 	Delimiter string `protobuf:"bytes,3,opt,name=delimiter,proto3" json:"delimiter,omitempty"`
 	// Requests Amazon S3 to encode the object keys in the response and specifies the
@@ -2020,9 +2048,7 @@ type ListObjectsInput struct {
 	MaxKeys int32 `protobuf:"varint,7,opt,name=maxKeys,proto3" json:"maxKeys,omitempty"`
 	// Limits the response to keys that begin with the specified prefix.
 	Prefix string `protobuf:"bytes,8,opt,name=prefix,proto3" json:"prefix,omitempty"`
-	// Confirms that the requester knows that she or he will be charged for the list
-	// objects request. Bucket owners need not specify this parameter in their
-	// requests.
+	// Confirms that the requester knows that they will be charged for the request.
 	RequestPayer string `protobuf:"bytes,9,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
 }
 
@@ -2121,13 +2147,16 @@ func (x *ListObjectsInput) GetRequestPayer() string {
 	return ""
 }
 
+// ListObjectsOutput
 type ListObjectsOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CommonPrefixes []string  `protobuf:"bytes,1,rep,name=common_prefixes,json=commonPrefixes,proto3" json:"common_prefixes,omitempty"`
-	Contents       []*Object `protobuf:"bytes,2,rep,name=contents,proto3" json:"contents,omitempty"`
+	// CommonPrefixes
+	CommonPrefixes []string `protobuf:"bytes,1,rep,name=common_prefixes,json=commonPrefixes,proto3" json:"common_prefixes,omitempty"`
+	// Objects contents
+	Contents []*Object `protobuf:"bytes,2,rep,name=contents,proto3" json:"contents,omitempty"`
 	// Causes keys that contain the same string between the prefix and the first
 	// occurrence of the delimiter to be rolled up into a single result element in the
 	// CommonPrefixes collection. These rolled-up keys are not returned elsewhere in
@@ -2256,13 +2285,16 @@ func (x *ListObjectsOutput) GetPrefix() string {
 	return ""
 }
 
+// Owner
 type Owner struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Owner display name
 	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	// Owner id
+	Id string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (x *Owner) Reset() {
@@ -2311,6 +2343,7 @@ func (x *Owner) GetId() string {
 	return ""
 }
 
+// Object
 type Object struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2405,14 +2438,20 @@ func (x *Object) GetStorageClass() string {
 	return ""
 }
 
+// GetObjectCannedAclInput
 type GetObjectCannedAclInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket    string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key       string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	// VersionId used to reference a specific version of the object
 	VersionId string `protobuf:"bytes,4,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
@@ -2477,13 +2516,16 @@ func (x *GetObjectCannedAclInput) GetVersionId() string {
 	return ""
 }
 
+// GetObjectCannedAclOutput
 type GetObjectCannedAclOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Object CannedACL
 	CannedAcl string `protobuf:"bytes,1,opt,name=canned_acl,json=cannedAcl,proto3" json:"canned_acl,omitempty"`
-	Owner     *Owner `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
+	// Owner
+	Owner *Owner `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
 	// If present, indicates that the requester was successfully charged for the
 	// request.
 	RequestCharged string `protobuf:"bytes,3,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
@@ -2542,14 +2584,20 @@ func (x *GetObjectCannedAclOutput) GetRequestCharged() string {
 	return ""
 }
 
+// PutObjectCannedAclInput
 type PutObjectCannedAclInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket    string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key       string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	// The canned ACL to apply to the object
 	Acl string `protobuf:"bytes,4,opt,name=acl,proto3" json:"acl,omitempty"`
 	// VersionId used to reference a specific version of the object.
@@ -2623,11 +2671,13 @@ func (x *PutObjectCannedAclInput) GetVersionId() string {
 	return ""
 }
 
+// PutObjectCannedAclOutput
 type PutObjectCannedAclOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Request charged
 	RequestCharged string `protobuf:"bytes,1,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
 }
 
@@ -2670,14 +2720,20 @@ func (x *PutObjectCannedAclOutput) GetRequestCharged() string {
 	return ""
 }
 
+// RestoreObjectInput
 type RestoreObjectInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket    string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key       string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	// VersionId used to reference a specific version of the object.
 	VersionId string `protobuf:"bytes,5,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
@@ -2742,6 +2798,7 @@ func (x *RestoreObjectInput) GetVersionId() string {
 	return ""
 }
 
+// RestoreObjectOutput
 type RestoreObjectOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2801,47 +2858,89 @@ func (x *RestoreObjectOutput) GetRestoreOutputPath() string {
 	return ""
 }
 
+// CreateMultipartUploadInput
 type CreateMultipartUploadInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket    string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key       string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	// The canned ACL to apply to the object. This action is not supported by Amazon S3
 	// on Outposts.
-	Acl                string `protobuf:"bytes,4,opt,name=acl,proto3" json:"acl,omitempty"`
-	BucketKeyEnabled   bool   `protobuf:"varint,5,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
-	CacheControl       string `protobuf:"bytes,6,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
+	Acl string `protobuf:"bytes,4,opt,name=acl,proto3" json:"acl,omitempty"`
+	// Specifies whether Amazon S3 should use an S3 Bucket Key for object encryption
+	// with server-side encryption using AWS KMS (SSE-KMS). Setting this header to true
+	// causes Amazon S3 to use an S3 Bucket Key for object encryption with SSE-KMS.
+	// Specifying this header with a PUT action doesn’t affect bucket-level settings
+	// for S3 Bucket Key.
+	BucketKeyEnabled bool `protobuf:"varint,5,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
+	// Specifies caching behavior along the request/reply chain
+	CacheControl string `protobuf:"bytes,6,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
+	// Specifies presentational information for the object
 	ContentDisposition string `protobuf:"bytes,7,opt,name=content_disposition,json=contentDisposition,proto3" json:"content_disposition,omitempty"`
-	ContentEncoding    string `protobuf:"bytes,8,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempty"`
-	ContentLanguage    string `protobuf:"bytes,9,opt,name=content_language,json=contentLanguage,proto3" json:"content_language,omitempty"`
-	ContentType        string `protobuf:"bytes,10,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	// Specifies what content encodings have been applied to the object and thus what
+	// decoding mechanisms must be applied to obtain the media-type referenced by the
+	// Content-Type header field.
+	ContentEncoding string `protobuf:"bytes,8,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempty"`
+	// The language the content is in.
+	ContentLanguage string `protobuf:"bytes,9,opt,name=content_language,json=contentLanguage,proto3" json:"content_language,omitempty"`
+	// A standard MIME type describing the format of the object data.
+	ContentType string `protobuf:"bytes,10,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
 	// The account ID of the expected bucket owner. If the bucket is owned by a
 	// different account, the request fails with the HTTP status code 403 Forbidden
 	// (access denied).
-	ExpectedBucketOwner       string            `protobuf:"bytes,11,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
-	Expires                   int64             `protobuf:"varint,12,opt,name=expires,proto3" json:"expires,omitempty"`
-	GrantFullControl          string            `protobuf:"bytes,13,opt,name=grant_full_control,json=grantFullControl,proto3" json:"grant_full_control,omitempty"`
-	GrantRead                 string            `protobuf:"bytes,14,opt,name=grant_read,json=grantRead,proto3" json:"grant_read,omitempty"`
-	GrantReadAcp              string            `protobuf:"bytes,15,opt,name=grant_read_acp,json=grantReadAcp,proto3" json:"grant_read_acp,omitempty"`
-	GrantWriteAcp             string            `protobuf:"bytes,16,opt,name=grant_write_acp,json=grantWriteAcp,proto3" json:"grant_write_acp,omitempty"`
-	MetaData                  map[string]string `protobuf:"bytes,17,rep,name=meta_data,json=metaData,proto3" json:"meta_data,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	ObjectLockLegalHoldStatus string            `protobuf:"bytes,18,opt,name=object_lock_legal_hold_status,json=objectLockLegalHoldStatus,proto3" json:"object_lock_legal_hold_status,omitempty"`
-	ObjectLockMode            string            `protobuf:"bytes,19,opt,name=object_lock_mode,json=objectLockMode,proto3" json:"object_lock_mode,omitempty"`
-	ObjectLockRetainUntilDate int64             `protobuf:"varint,20,opt,name=object_lock_retain_until_date,json=objectLockRetainUntilDate,proto3" json:"object_lock_retain_until_date,omitempty"`
-	RequestPayer              string            `protobuf:"bytes,21,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
-	SseCustomerAlgorithm      string            `protobuf:"bytes,22,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKey            string            `protobuf:"bytes,23,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
-	SseCustomerKeyMd5         string            `protobuf:"bytes,24,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
-	SseKmsEncryptionContext   string            `protobuf:"bytes,25,opt,name=sse_kms_encryption_context,json=sseKmsEncryptionContext,proto3" json:"sse_kms_encryption_context,omitempty"`
-	SseKmsKeyId               string            `protobuf:"bytes,26,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
-	ServerSideEncryption      string            `protobuf:"bytes,27,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
-	StorageClass              string            `protobuf:"bytes,28,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
+	ExpectedBucketOwner string `protobuf:"bytes,11,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
+	// The date and time at which the object is no longer cacheable.
+	Expires int64 `protobuf:"varint,12,opt,name=expires,proto3" json:"expires,omitempty"`
+	// Gives the grantee READ, READ_ACP, and WRITE_ACP permissions on the object. This
+	// action is not supported by Amazon S3 on Outposts.
+	GrantFullControl string `protobuf:"bytes,13,opt,name=grant_full_control,json=grantFullControl,proto3" json:"grant_full_control,omitempty"`
+	// Allows grantee to read the object data and its metadata. This action is not
+	// supported by Amazon S3 on Outposts.
+	GrantRead string `protobuf:"bytes,14,opt,name=grant_read,json=grantRead,proto3" json:"grant_read,omitempty"`
+	// Allows grantee to read the object ACL. This action is not supported by Amazon S3
+	// on Outposts.
+	GrantReadAcp string `protobuf:"bytes,15,opt,name=grant_read_acp,json=grantReadAcp,proto3" json:"grant_read_acp,omitempty"`
+	// Allows grantee to write the ACL for the applicable object. This action is not
+	// supported by Amazon S3 on Outposts.
+	GrantWriteAcp string `protobuf:"bytes,16,opt,name=grant_write_acp,json=grantWriteAcp,proto3" json:"grant_write_acp,omitempty"`
+	// A map of metadata to store with the object
+	MetaData map[string]string `protobuf:"bytes,17,rep,name=meta_data,json=metaData,proto3" json:"meta_data,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Specifies whether you want to apply a legal hold to the uploaded object
+	ObjectLockLegalHoldStatus string `protobuf:"bytes,18,opt,name=object_lock_legal_hold_status,json=objectLockLegalHoldStatus,proto3" json:"object_lock_legal_hold_status,omitempty"`
+	// Specifies the Object Lock mode that you want to apply to the uploaded object
+	ObjectLockMode string `protobuf:"bytes,19,opt,name=object_lock_mode,json=objectLockMode,proto3" json:"object_lock_mode,omitempty"`
+	// Specifies the date and time when you want the Object Lock to expire
+	ObjectLockRetainUntilDate int64 `protobuf:"varint,20,opt,name=object_lock_retain_until_date,json=objectLockRetainUntilDate,proto3" json:"object_lock_retain_until_date,omitempty"`
+	// Confirms that the requester knows that they will be charged for the request
+	RequestPayer string `protobuf:"bytes,21,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	// Specifies the algorithm to use to when encrypting the object (for example,
+	// AES256).
+	SseCustomerAlgorithm string `protobuf:"bytes,22,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
+	// Specifies the customer-provided encryption key to use in encrypting data
+	SseCustomerKey string `protobuf:"bytes,23,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
+	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321
+	SseCustomerKeyMd5 string `protobuf:"bytes,24,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	// Specifies the Amazon Web Services KMS Encryption Context to use for object encryption
+	SseKmsEncryptionContext string `protobuf:"bytes,25,opt,name=sse_kms_encryption_context,json=sseKmsEncryptionContext,proto3" json:"sse_kms_encryption_context,omitempty"`
+	// Specifies the ID of the symmetric customer managed key to use for object encryption
+	SseKmsKeyId string `protobuf:"bytes,26,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
+	// The server-side encryption algorithm used when storing this object
+	ServerSideEncryption string `protobuf:"bytes,27,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
+	// By default, oss store uses the STANDARD Storage Class to store newly created objects
+	StorageClass string `protobuf:"bytes,28,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
 	// The tag-set for the object. The tag-set must be encoded as URL Query parameters.
-	Tagging                 map[string]string `protobuf:"bytes,29,rep,name=tagging,proto3" json:"tagging,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	WebsiteRedirectLocation string            `protobuf:"bytes,30,opt,name=website_redirect_location,json=websiteRedirectLocation,proto3" json:"website_redirect_location,omitempty"`
+	Tagging map[string]string `protobuf:"bytes,29,rep,name=tagging,proto3" json:"tagging,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// If the bucket is configured as a website, redirects requests for this object to
+	// another object in the same bucket or to an external URL.
+	WebsiteRedirectLocation string `protobuf:"bytes,30,opt,name=website_redirect_location,json=websiteRedirectLocation,proto3" json:"website_redirect_location,omitempty"`
 }
 
 func (x *CreateMultipartUploadInput) Reset() {
@@ -3086,22 +3185,49 @@ func (x *CreateMultipartUploadInput) GetWebsiteRedirectLocation() string {
 	return ""
 }
 
+// CreateMultipartUploadOutput
 type CreateMultipartUploadOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Bucket                  string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key                     string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	AbortDate               int64  `protobuf:"varint,3,opt,name=abort_date,json=abortDate,proto3" json:"abort_date,omitempty"`
-	AbortRuleId             string `protobuf:"bytes,4,opt,name=abort_rule_id,json=abortRuleId,proto3" json:"abort_rule_id,omitempty"`
-	BucketKeyEnabled        bool   `protobuf:"varint,5,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
-	RequestCharged          string `protobuf:"bytes,6,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
-	SseCustomerAlgorithm    string `protobuf:"bytes,7,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKeyMd5       string `protobuf:"bytes,8,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	// If the bucket has a lifecycle rule configured with an action to abort incomplete
+	// multipart uploads and the prefix in the lifecycle rule matches the object name
+	// in the request, the response includes this header
+	AbortDate int64 `protobuf:"varint,3,opt,name=abort_date,json=abortDate,proto3" json:"abort_date,omitempty"`
+	// It identifies the applicable lifecycle configuration rule that defines the action to abort
+	// incomplete multipart uploads.
+	AbortRuleId string `protobuf:"bytes,4,opt,name=abort_rule_id,json=abortRuleId,proto3" json:"abort_rule_id,omitempty"`
+	// Indicates whether the multipart upload uses an S3 Bucket Key for server-side
+	// encryption with Amazon Web Services KMS (SSE-KMS).
+	BucketKeyEnabled bool `protobuf:"varint,5,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
+	// If present, indicates that the requester was successfully charged for the
+	// request.
+	RequestCharged string `protobuf:"bytes,6,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
+	// If server-side encryption with a customer-provided encryption key was requested,
+	// the response will include this header confirming the encryption algorithm used.
+	SseCustomerAlgorithm string `protobuf:"bytes,7,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
+	// If server-side encryption with a customer-provided encryption key was requested,
+	// the response will include this header to provide round-trip message integrity
+	// verification of the customer-provided encryption key.
+	SseCustomerKeyMd5 string `protobuf:"bytes,8,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	// If present, specifies the Amazon Web Services KMS Encryption Context to use for
+	// object encryption. The value of this header is a base64-encoded UTF-8 string
+	// holding JSON with the encryption context key-value pairs.
 	SseKmsEncryptionContext string `protobuf:"bytes,9,opt,name=sse_kms_encryption_context,json=sseKmsEncryptionContext,proto3" json:"sse_kms_encryption_context,omitempty"`
-	SseKmsKeyId             string `protobuf:"bytes,10,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
-	ServerSideEncryption    string `protobuf:"bytes,11,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
+	// If present, specifies the ID of the Amazon Web Services Key Management Service
+	// (Amazon Web Services KMS) symmetric customer managed key that was used for the
+	// object.
+	SseKmsKeyId string `protobuf:"bytes,10,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
+	// The server-side encryption algorithm used when storing this object in Amazon S3
+	// (for example, AES256, aws:kms).
+	ServerSideEncryption string `protobuf:"bytes,11,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
 	// ID for the initiated multipart upload.
 	UploadId string `protobuf:"bytes,12,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
 }
@@ -3222,28 +3348,42 @@ func (x *CreateMultipartUploadOutput) GetUploadId() string {
 	return ""
 }
 
+// UploadPartInput
 type UploadPartInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket    string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key       string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	// Object data.
 	Body []byte `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
 	// Size of the body in bytes. This parameter is useful when the size of the body
 	// cannot be determined automatically.
-	ContentLength       int64  `protobuf:"varint,5,opt,name=content_length,json=contentLength,proto3" json:"content_length,omitempty"`
-	ContentMd5          string `protobuf:"bytes,6,opt,name=content_md5,json=contentMd5,proto3" json:"content_md5,omitempty"`
+	ContentLength int64 `protobuf:"varint,5,opt,name=content_length,json=contentLength,proto3" json:"content_length,omitempty"`
+	// The base64-encoded 128-bit MD5 digest of the part data.
+	ContentMd5 string `protobuf:"bytes,6,opt,name=content_md5,json=contentMd5,proto3" json:"content_md5,omitempty"`
+	// The account ID of the expected bucket owner
 	ExpectedBucketOwner string `protobuf:"bytes,7,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
 	// Part number of part being uploaded. This is a positive integer between 1 and 10,000.
 	// This member is required.
-	PartNumber           int32  `protobuf:"varint,8,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
-	RequestPayer         string `protobuf:"bytes,9,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	PartNumber int32 `protobuf:"varint,8,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
+	// Confirms that the requester knows that they will be charged for the request.
+	RequestPayer string `protobuf:"bytes,9,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	// Specifies the algorithm to use to when encrypting the object (for example,
+	// AES256).
 	SseCustomerAlgorithm string `protobuf:"bytes,10,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKey       string `protobuf:"bytes,11,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
-	SseCustomerKeyMd5    string `protobuf:"bytes,12,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	// Specifies the customer-provided encryption key for Amazon S3 to use in
+	// encrypting data
+	SseCustomerKey string `protobuf:"bytes,11,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
+	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
+	SseCustomerKeyMd5 string `protobuf:"bytes,12,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
 	// Upload ID identifying the multipart upload whose part is being uploaded.
 	// This member is required.
 	UploadId string `protobuf:"bytes,13,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
@@ -3372,18 +3512,29 @@ func (x *UploadPartInput) GetUploadId() string {
 	return ""
 }
 
+// UploadPartOutput
 type UploadPartOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Indicates whether the multipart upload uses an S3 Bucket Key for server-side
+	// encryption with Amazon Web Services KMS (SSE-KMS).
 	BucketKeyEnabled bool `protobuf:"varint,1,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
 	// Entity tag for the uploaded object.
-	Etag                 string `protobuf:"bytes,2,opt,name=etag,proto3" json:"etag,omitempty"`
-	RequestCharged       string `protobuf:"bytes,3,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
+	Etag string `protobuf:"bytes,2,opt,name=etag,proto3" json:"etag,omitempty"`
+	// If present, indicates that the requester was successfully charged for the
+	// request.
+	RequestCharged string `protobuf:"bytes,3,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
+	// Specifies the algorithm to use to when encrypting the object (for example,
+	// AES256).
 	SseCustomerAlgorithm string `protobuf:"bytes,4,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKeyMd5    string `protobuf:"bytes,5,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
-	SseKmsKeyId          string `protobuf:"bytes,6,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
+	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
+	SseCustomerKeyMd5 string `protobuf:"bytes,5,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	// Specifies the ID of the symmetric customer managed key to use for object encryption
+	SseKmsKeyId string `protobuf:"bytes,6,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
+	// The server-side encryption algorithm used when storing this object in Amazon S3
+	// (for example, AES256, aws:kms).
 	ServerSideEncryption string `protobuf:"bytes,7,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
 }
 
@@ -3468,14 +3619,21 @@ func (x *UploadPartOutput) GetServerSideEncryption() string {
 	return ""
 }
 
+// UploadPartCopyInput
 type UploadPartCopyInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	StoreName  string      `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket     string      `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key        string      `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// Required. The name of oss store.
+	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// CopySource
 	CopySource *CopySource `protobuf:"bytes,4,opt,name=copy_source,json=copySource,proto3" json:"copy_source,omitempty"`
 	// Part number of part being copied. This is a positive integer between 1 and 10,000.
 	// This member is required.
@@ -3485,7 +3643,8 @@ type UploadPartCopyInput struct {
 	UploadId string `protobuf:"bytes,6,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
 	// The range of bytes to copy from the source object.bytes=start_position-part_size
 	StartPosition int64 `protobuf:"varint,7,opt,name=start_position,json=startPosition,proto3" json:"start_position,omitempty"`
-	PartSize      int64 `protobuf:"varint,8,opt,name=part_size,json=partSize,proto3" json:"part_size,omitempty"`
+	// Part size
+	PartSize int64 `protobuf:"varint,8,opt,name=part_size,json=partSize,proto3" json:"part_size,omitempty"`
 }
 
 func (x *UploadPartCopyInput) Reset() {
@@ -3576,14 +3735,16 @@ func (x *UploadPartCopyInput) GetPartSize() int64 {
 	return 0
 }
 
+// CopyPartResult
 type CopyPartResult struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	// Entity tag of the object.
-	Etag         string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
-	LastModified int64  `protobuf:"varint,2,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
+	Etag string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
+	// Last modified time
+	LastModified int64 `protobuf:"varint,2,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
 }
 
 func (x *CopyPartResult) Reset() {
@@ -3632,19 +3793,37 @@ func (x *CopyPartResult) GetLastModified() int64 {
 	return 0
 }
 
+// UploadPartCopyOutput
 type UploadPartCopyOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	BucketKeyEnabled     bool            `protobuf:"varint,1,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
-	CopyPartResult       *CopyPartResult `protobuf:"bytes,2,opt,name=copy_part_result,json=copyPartResult,proto3" json:"copy_part_result,omitempty"`
-	CopySourceVersionId  string          `protobuf:"bytes,3,opt,name=copy_source_version_id,json=copySourceVersionId,proto3" json:"copy_source_version_id,omitempty"`
-	RequestCharged       string          `protobuf:"bytes,4,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
-	SseCustomerAlgorithm string          `protobuf:"bytes,5,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKeyMd5    string          `protobuf:"bytes,6,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
-	SseKmsKeyId          string          `protobuf:"bytes,7,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
-	ServerSideEncryption string          `protobuf:"bytes,8,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
+	// Indicates whether the multipart upload uses an S3 Bucket Key for server-side
+	// encryption with Amazon Web Services KMS (SSE-KMS).
+	BucketKeyEnabled bool `protobuf:"varint,1,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
+	// Container for all response elements.
+	CopyPartResult *CopyPartResult `protobuf:"bytes,2,opt,name=copy_part_result,json=copyPartResult,proto3" json:"copy_part_result,omitempty"`
+	// The version of the source object that was copied, if you have enabled versioning
+	// on the source bucket.
+	CopySourceVersionId string `protobuf:"bytes,3,opt,name=copy_source_version_id,json=copySourceVersionId,proto3" json:"copy_source_version_id,omitempty"`
+	// If present, indicates that the requester was successfully charged for the
+	// request.
+	RequestCharged string `protobuf:"bytes,4,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
+	// If server-side encryption with a customer-provided encryption key was requested,
+	// the response will include this header confirming the encryption algorithm used.
+	SseCustomerAlgorithm string `protobuf:"bytes,5,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
+	// If server-side encryption with a customer-provided encryption key was requested,
+	// the response will include this header to provide round-trip message integrity
+	// verification of the customer-provided encryption key.
+	SseCustomerKeyMd5 string `protobuf:"bytes,6,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	// If present, specifies the ID of the Amazon Web Services Key Management Service
+	// (Amazon Web Services KMS) symmetric customer managed key that was used for the
+	// object.
+	SseKmsKeyId string `protobuf:"bytes,7,opt,name=sse_kms_key_id,json=sseKmsKeyId,proto3" json:"sse_kms_key_id,omitempty"`
+	// The server-side encryption algorithm used when storing this object in Amazon S3
+	// (for example, AES256, aws:kms).
+	ServerSideEncryption string `protobuf:"bytes,8,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
 }
 
 func (x *UploadPartCopyOutput) Reset() {
@@ -3735,13 +3914,17 @@ func (x *UploadPartCopyOutput) GetServerSideEncryption() string {
 	return ""
 }
 
+// CompletedPart
 type CompletedPart struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Etag       string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
-	PartNumber int32  `protobuf:"varint,2,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
+	// Entity tag returned when the part was uploaded.
+	Etag string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
+	// Part number that identifies the part. This is a positive integer between 1 and
+	// 10,000.
+	PartNumber int32 `protobuf:"varint,2,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
 }
 
 func (x *CompletedPart) Reset() {
@@ -3790,6 +3973,7 @@ func (x *CompletedPart) GetPartNumber() int32 {
 	return 0
 }
 
+// CompletedMultipartUpload
 type CompletedMultipartUpload struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -3838,18 +4022,26 @@ func (x *CompletedMultipartUpload) GetParts() []*CompletedPart {
 	return nil
 }
 
+// CompleteMultipartUploadInput
 type CompleteMultipartUploadInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket    string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key       string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	// ID for the initiated multipart upload.
 	// This member is required.
-	UploadId            string `protobuf:"bytes,4,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
-	RequestPayer        string `protobuf:"bytes,5,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	UploadId string `protobuf:"bytes,4,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
+	// Confirms that the requester knows that they will be charged for the request.
+	RequestPayer string `protobuf:"bytes,5,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	// Expected bucket owner
 	ExpectedBucketOwner string `protobuf:"bytes,6,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
 	// The container for the multipart upload request information.
 	MultipartUpload *CompletedMultipartUpload `protobuf:"bytes,7,opt,name=multipart_upload,json=multipartUpload,proto3" json:"multipart_upload,omitempty"`
@@ -3936,15 +4128,23 @@ func (x *CompleteMultipartUploadInput) GetMultipartUpload() *CompletedMultipartU
 	return nil
 }
 
+// CompleteMultipartUploadOutput
 type CompleteMultipartUploadOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Bucket           string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key              string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	BucketKeyEnabled bool   `protobuf:"varint,3,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
-	Etag             string `protobuf:"bytes,4,opt,name=etag,proto3" json:"etag,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	// Indicates whether the multipart upload uses an S3 Bucket Key for server-side
+	// encryption with Amazon Web Services KMS (SSE-KMS).
+	BucketKeyEnabled bool `protobuf:"varint,3,opt,name=bucket_key_enabled,json=bucketKeyEnabled,proto3" json:"bucket_key_enabled,omitempty"`
+	// Entity tag that identifies the newly created object's data
+	Etag string `protobuf:"bytes,4,opt,name=etag,proto3" json:"etag,omitempty"`
 	// If the object expiration is configured, this will contain the expiration date
 	// (expiry-date) and rule ID (rule-id). The value of rule-id is URL-encoded.
 	Expiration string `protobuf:"bytes,5,opt,name=expiration,proto3" json:"expiration,omitempty"`
@@ -3952,8 +4152,13 @@ type CompleteMultipartUploadOutput struct {
 	Location string `protobuf:"bytes,6,opt,name=location,proto3" json:"location,omitempty"`
 	// If present, indicates that the requester was successfully charged for the
 	// request.
-	RequestCharged       string `protobuf:"bytes,7,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
-	SseKmsKeyId          string `protobuf:"bytes,8,opt,name=sse_kms_keyId,json=sseKmsKeyId,proto3" json:"sse_kms_keyId,omitempty"`
+	RequestCharged string `protobuf:"bytes,7,opt,name=request_charged,json=requestCharged,proto3" json:"request_charged,omitempty"`
+	// If present, specifies the ID of the Amazon Web Services Key Management Service
+	// (Amazon Web Services KMS) symmetric customer managed key that was used for the
+	// object.
+	SseKmsKeyId string `protobuf:"bytes,8,opt,name=sse_kms_keyId,json=sseKmsKeyId,proto3" json:"sse_kms_keyId,omitempty"`
+	// The server-side encryption algorithm used when storing this object in Amazon S3
+	// (for example, AES256, aws:kms).
 	ServerSideEncryption string `protobuf:"bytes,9,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
 	// Version ID of the newly created object, in case the bucket has versioning turned
 	// on.
@@ -4062,16 +4267,24 @@ func (x *CompleteMultipartUploadOutput) GetVersionId() string {
 	return ""
 }
 
+// AbortMultipartUploadInput
 type AbortMultipartUploadInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	StoreName           string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket              string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key                 string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// Required. The name of oss store.
+	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// The account ID of the expected bucket owner
 	ExpectedBucketOwner string `protobuf:"bytes,4,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
-	RequestPayer        string `protobuf:"bytes,5,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	// Confirms that the requester knows that they will be charged for the request.
+	RequestPayer string `protobuf:"bytes,5,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
 	// Upload ID that identifies the multipart upload.
 	// This member is required.
 	UploadId string `protobuf:"bytes,6,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
@@ -4151,6 +4364,7 @@ func (x *AbortMultipartUploadInput) GetUploadId() string {
 	return ""
 }
 
+// AbortMultipartUploadOutput
 type AbortMultipartUploadOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -4199,21 +4413,28 @@ func (x *AbortMultipartUploadOutput) GetRequestCharged() string {
 	return ""
 }
 
+// ListMultipartUploadsInput
 type ListMultipartUploadsInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket    string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	// Character you use to group keys. All keys that contain the same string between
 	// the prefix, if specified, and the first occurrence of the delimiter after the
 	// prefix are grouped under a single result element, CommonPrefixes. If you don't
 	// specify the prefix parameter, then the substring starts at the beginning of the
 	// key. The keys that are grouped under CommonPrefixes result element are not
 	// returned elsewhere in the response.
-	Delimiter           string `protobuf:"bytes,3,opt,name=delimiter,proto3" json:"delimiter,omitempty"`
-	EncodingType        string `protobuf:"bytes,4,opt,name=encoding_type,json=encodingType,proto3" json:"encoding_type,omitempty"`
+	Delimiter string `protobuf:"bytes,3,opt,name=delimiter,proto3" json:"delimiter,omitempty"`
+	// Requests Amazon S3 to encode the object keys in the response and specifies the
+	// encoding method to use. An object key may contain any Unicode character;
+	EncodingType string `protobuf:"bytes,4,opt,name=encoding_type,json=encodingType,proto3" json:"encoding_type,omitempty"`
+	// The account ID of the expected bucket owner
 	ExpectedBucketOwner string `protobuf:"bytes,5,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
 	// Together with upload-id-marker, this parameter specifies the multipart upload
 	// after which listing should begin. If upload-id-marker is not specified, only the
@@ -4334,13 +4555,16 @@ func (x *ListMultipartUploadsInput) GetUploadIdMarker() string {
 	return ""
 }
 
+// Initiator
 type Initiator struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Initiator name
 	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	// Initiator id
+	Id string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (x *Initiator) Reset() {
@@ -4389,17 +4613,25 @@ func (x *Initiator) GetId() string {
 	return ""
 }
 
+// MultipartUpload
 type MultipartUpload struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Initiated    int64      `protobuf:"varint,1,opt,name=initiated,proto3" json:"initiated,omitempty"`
-	Initiator    *Initiator `protobuf:"bytes,2,opt,name=initiator,proto3" json:"initiator,omitempty"`
-	Key          string     `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
-	Owner        *Owner     `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
-	StorageClass string     `protobuf:"bytes,5,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
-	UploadId     string     `protobuf:"bytes,6,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
+	// Date and time at which the multipart upload was initiated.
+	Initiated int64 `protobuf:"varint,1,opt,name=initiated,proto3" json:"initiated,omitempty"`
+	// Identifies who initiated the multipart upload.
+	Initiator *Initiator `protobuf:"bytes,2,opt,name=initiator,proto3" json:"initiator,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// Specifies the owner of the object that is part of the multipart upload.
+	Owner *Owner `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
+	// The class of storage used to store the object.
+	StorageClass string `protobuf:"bytes,5,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
+	// // Upload ID that identifies the multipart upload.
+	UploadId string `protobuf:"bytes,6,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
 }
 
 func (x *MultipartUpload) Reset() {
@@ -4476,15 +4708,23 @@ func (x *MultipartUpload) GetUploadId() string {
 	return ""
 }
 
+// ListMultipartUploadsOutput
 type ListMultipartUploadsOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Bucket         string   `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// If you specify a delimiter in the request, then the result returns each distinct
+	// key prefix containing the delimiter in a CommonPrefixes element.
 	CommonPrefixes []string `protobuf:"bytes,2,rep,name=common_prefixes,json=commonPrefixes,proto3" json:"common_prefixes,omitempty"`
-	Delimiter      string   `protobuf:"bytes,3,opt,name=delimiter,proto3" json:"delimiter,omitempty"`
-	EncodingType   string   `protobuf:"bytes,4,opt,name=encoding_type,json=encodingType,proto3" json:"encoding_type,omitempty"`
+	// Contains the delimiter you specified in the request. If you don't specify a
+	// delimiter in your request, this element is absent from the response.
+	Delimiter string `protobuf:"bytes,3,opt,name=delimiter,proto3" json:"delimiter,omitempty"`
+	// Encoding type used by Amazon S3 to encode object keys in the response.
+	EncodingType string `protobuf:"bytes,4,opt,name=encoding_type,json=encodingType,proto3" json:"encoding_type,omitempty"`
 	// Indicates whether the returned list of multipart uploads is truncated. A value
 	// of true indicates that the list was truncated. The list can be truncated if the
 	// number of multipart uploads exceeds the limit allowed or specified by max
@@ -4627,20 +4867,27 @@ func (x *ListMultipartUploadsOutput) GetUploads() []*MultipartUpload {
 	return nil
 }
 
+// ListObjectVersionsInput
 type ListObjectVersionsInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket    string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
 	// A delimiter is a character that you specify to group keys. All keys that contain
 	// the same string between the prefix and the first occurrence of the delimiter are
 	// grouped under a single result element in CommonPrefixes. These groups are
 	// counted as one result against the max-keys limitation. These keys are not
 	// returned elsewhere in the response.
-	Delimiter           string `protobuf:"bytes,3,opt,name=delimiter,proto3" json:"delimiter,omitempty"`
-	EncodingType        string `protobuf:"bytes,4,opt,name=encoding_type,json=encodingType,proto3" json:"encoding_type,omitempty"`
+	Delimiter string `protobuf:"bytes,3,opt,name=delimiter,proto3" json:"delimiter,omitempty"`
+	// Requests Amazon S3 to encode the object keys in the response and specifies the
+	// encoding method to use. An object key may contain any Unicode character;
+	EncodingType string `protobuf:"bytes,4,opt,name=encoding_type,json=encodingType,proto3" json:"encoding_type,omitempty"`
+	// The account ID of the expected bucket owner
 	ExpectedBucketOwner string `protobuf:"bytes,5,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
 	// Specifies the key to start with when listing objects in a bucket.
 	KeyMarker string `protobuf:"bytes,6,opt,name=key_marker,json=keyMarker,proto3" json:"key_marker,omitempty"`
@@ -4755,6 +5002,7 @@ func (x *ListObjectVersionsInput) GetVersionIdMarker() string {
 	return ""
 }
 
+// DeleteMarkerEntry
 type DeleteMarkerEntry struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -4762,11 +5010,14 @@ type DeleteMarkerEntry struct {
 
 	// Specifies whether the object is (true) or is not (false) the latest version of
 	// an object.
-	IsLatest bool   `protobuf:"varint,1,opt,name=is_latest,json=isLatest,proto3" json:"is_latest,omitempty"`
-	Key      string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	IsLatest bool `protobuf:"varint,1,opt,name=is_latest,json=isLatest,proto3" json:"is_latest,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
 	// Date and time the object was last modified.
-	LastModified int64  `protobuf:"varint,3,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
-	Owner        *Owner `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
+	LastModified int64 `protobuf:"varint,3,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
+	// Owner
+	Owner *Owner `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
 	// Version ID of an object.
 	VersionId string `protobuf:"bytes,5,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
@@ -4838,21 +5089,30 @@ func (x *DeleteMarkerEntry) GetVersionId() string {
 	return ""
 }
 
+// ObjectVersion
 type ObjectVersion struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The entity tag is an MD5 hash of that version of the object.
 	Etag string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
 	// Specifies whether the object is (true) or is not (false) the latest version of
 	// an object.
-	IsLatest     bool   `protobuf:"varint,2,opt,name=is_latest,json=isLatest,proto3" json:"is_latest,omitempty"`
-	Key          string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
-	LastModified int64  `protobuf:"varint,4,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
-	Owner        *Owner `protobuf:"bytes,5,opt,name=owner,proto3" json:"owner,omitempty"`
-	Size         int64  `protobuf:"varint,6,opt,name=size,proto3" json:"size,omitempty"`
+	IsLatest bool `protobuf:"varint,2,opt,name=is_latest,json=isLatest,proto3" json:"is_latest,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// Date and time the object was last modified.
+	LastModified int64 `protobuf:"varint,4,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
+	// Specifies the owner of the object.
+	Owner *Owner `protobuf:"bytes,5,opt,name=owner,proto3" json:"owner,omitempty"`
+	// Size in bytes of the object.
+	Size int64 `protobuf:"varint,6,opt,name=size,proto3" json:"size,omitempty"`
+	// The class of storage used to store the object.
 	StorageClass string `protobuf:"bytes,7,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
-	VersionId    string `protobuf:"bytes,8,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	// Version ID of an object.
+	VersionId string `protobuf:"bytes,8,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
 
 func (x *ObjectVersion) Reset() {
@@ -4943,23 +5203,41 @@ func (x *ObjectVersion) GetVersionId() string {
 	return ""
 }
 
+// ListObjectVersionsOutput
 type ListObjectVersionsOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CommonPrefixes      []string             `protobuf:"bytes,1,rep,name=common_prefixes,json=commonPrefixes,proto3" json:"common_prefixes,omitempty"`
-	DeleteMarkers       []*DeleteMarkerEntry `protobuf:"bytes,2,rep,name=delete_markers,json=deleteMarkers,proto3" json:"delete_markers,omitempty"`
-	Delimiter           string               `protobuf:"bytes,3,opt,name=delimiter,proto3" json:"delimiter,omitempty"`
-	EncodingType        string               `protobuf:"bytes,4,opt,name=encoding_type,json=encodingType,proto3" json:"encoding_type,omitempty"`
-	IsTruncated         bool                 `protobuf:"varint,5,opt,name=is_truncated,json=isTruncated,proto3" json:"is_truncated,omitempty"`
-	KeyMarker           string               `protobuf:"bytes,6,opt,name=key_marker,json=keyMarker,proto3" json:"key_marker,omitempty"`
-	MaxKeys             int64                `protobuf:"varint,7,opt,name=max_keys,json=maxKeys,proto3" json:"max_keys,omitempty"`
-	Name                string               `protobuf:"bytes,8,opt,name=name,proto3" json:"name,omitempty"`
-	NextKeyMarker       string               `protobuf:"bytes,9,opt,name=next_key_marker,json=nextKeyMarker,proto3" json:"next_key_marker,omitempty"`
-	NextVersionIdMarker string               `protobuf:"bytes,10,opt,name=next_version_id_marker,json=nextVersionIdMarker,proto3" json:"next_version_id_marker,omitempty"`
-	Prefix              string               `protobuf:"bytes,11,opt,name=prefix,proto3" json:"prefix,omitempty"`
-	VersionIdMarker     string               `protobuf:"bytes,12,opt,name=version_id_marker,json=versionIdMarker,proto3" json:"version_id_marker,omitempty"`
+	// All of the keys rolled up into a common prefix count as a single return when
+	// calculating the number of returns.
+	CommonPrefixes []string `protobuf:"bytes,1,rep,name=common_prefixes,json=commonPrefixes,proto3" json:"common_prefixes,omitempty"`
+	// Container for an object that is a delete marker.
+	DeleteMarkers []*DeleteMarkerEntry `protobuf:"bytes,2,rep,name=delete_markers,json=deleteMarkers,proto3" json:"delete_markers,omitempty"`
+	// The delimiter grouping the included keys.
+	Delimiter string `protobuf:"bytes,3,opt,name=delimiter,proto3" json:"delimiter,omitempty"`
+	// Encoding type used by Amazon S3 to encode object key names in the XML response.
+	EncodingType string `protobuf:"bytes,4,opt,name=encoding_type,json=encodingType,proto3" json:"encoding_type,omitempty"`
+	// A flag that indicates whether Amazon S3 returned all of the results that
+	// satisfied the search criteria
+	IsTruncated bool `protobuf:"varint,5,opt,name=is_truncated,json=isTruncated,proto3" json:"is_truncated,omitempty"`
+	// Marks the last key returned in a truncated response.
+	KeyMarker string `protobuf:"bytes,6,opt,name=key_marker,json=keyMarker,proto3" json:"key_marker,omitempty"`
+	// Specifies the maximum number of objects to return
+	MaxKeys int64 `protobuf:"varint,7,opt,name=max_keys,json=maxKeys,proto3" json:"max_keys,omitempty"`
+	// The bucket name.
+	Name string `protobuf:"bytes,8,opt,name=name,proto3" json:"name,omitempty"`
+	// When the number of responses exceeds the value of MaxKeys, NextKeyMarker
+	// specifies the first key not returned that satisfies the search criteria
+	NextKeyMarker string `protobuf:"bytes,9,opt,name=next_key_marker,json=nextKeyMarker,proto3" json:"next_key_marker,omitempty"`
+	// When the number of responses exceeds the value of MaxKeys, NextVersionIdMarker
+	// specifies the first object version not returned that satisfies the search
+	// criteria.
+	NextVersionIdMarker string `protobuf:"bytes,10,opt,name=next_version_id_marker,json=nextVersionIdMarker,proto3" json:"next_version_id_marker,omitempty"`
+	// Selects objects that start with the value supplied by this parameter.
+	Prefix string `protobuf:"bytes,11,opt,name=prefix,proto3" json:"prefix,omitempty"`
+	// Marks the last version of the key returned in a truncated response.
+	VersionIdMarker string `protobuf:"bytes,12,opt,name=version_id_marker,json=versionIdMarker,proto3" json:"version_id_marker,omitempty"`
 	// Container for version information.
 	Versions []*ObjectVersion `protobuf:"bytes,13,rep,name=versions,proto3" json:"versions,omitempty"`
 }
@@ -5087,30 +5365,52 @@ func (x *ListObjectVersionsOutput) GetVersions() []*ObjectVersion {
 	return nil
 }
 
+// HeadObjectInput
 type HeadObjectInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	StoreName           string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket              string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key                 string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
-	ChecksumMode        string `protobuf:"bytes,4,opt,name=checksum_mode,json=checksumMode,proto3" json:"checksum_mode,omitempty"`
+	// Required. The name of oss store.
+	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// To retrieve the checksum, this parameter must be enabled
+	ChecksumMode string `protobuf:"bytes,4,opt,name=checksum_mode,json=checksumMode,proto3" json:"checksum_mode,omitempty"`
+	// The account ID of the expected bucket owner
 	ExpectedBucketOwner string `protobuf:"bytes,5,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
-	IfMatch             string `protobuf:"bytes,6,opt,name=if_match,json=ifMatch,proto3" json:"if_match,omitempty"`
-	IfModifiedSince     int64  `protobuf:"varint,7,opt,name=if_modified_since,json=ifModifiedSince,proto3" json:"if_modified_since,omitempty"`
-	IfNoneMatch         string `protobuf:"bytes,8,opt,name=if_none_match,json=ifNoneMatch,proto3" json:"if_none_match,omitempty"`
-	IfUnmodifiedSince   int64  `protobuf:"varint,9,opt,name=if_unmodified_since,json=ifUnmodifiedSince,proto3" json:"if_unmodified_since,omitempty"`
+	// Return the object only if its entity tag (ETag) is the same as the one
+	// specified; otherwise, return a 412 (precondition failed) error.
+	IfMatch string `protobuf:"bytes,6,opt,name=if_match,json=ifMatch,proto3" json:"if_match,omitempty"`
+	// Return the object only if it has been modified since the specified time;
+	// otherwise, return a 304 (not modified) error.
+	IfModifiedSince int64 `protobuf:"varint,7,opt,name=if_modified_since,json=ifModifiedSince,proto3" json:"if_modified_since,omitempty"`
+	// Return the object only if its entity tag (ETag) is different from the one
+	// specified
+	IfNoneMatch string `protobuf:"bytes,8,opt,name=if_none_match,json=ifNoneMatch,proto3" json:"if_none_match,omitempty"`
+	// Return the object only if it has not been modified since the specified time;
+	IfUnmodifiedSince int64 `protobuf:"varint,9,opt,name=if_unmodified_since,json=ifUnmodifiedSince,proto3" json:"if_unmodified_since,omitempty"`
 	// Part number of the object being read. This is a positive integer between 1 and
 	// 10,000. Effectively performs a 'ranged' HEAD request for the part specified.
 	// Useful querying about the size of the part and the number of parts in this
 	// object.
-	PartNumber           int32  `protobuf:"varint,10,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
-	RequestPayer         string `protobuf:"bytes,11,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	PartNumber int32 `protobuf:"varint,10,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
+	// Confirms that the requester knows that they will be charged for the request.
+	RequestPayer string `protobuf:"bytes,11,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	// Specifies the algorithm to use to when encrypting the object (for example,
+	// AES256).
 	SseCustomerAlgorithm string `protobuf:"bytes,12,opt,name=sse_customer_algorithm,json=sseCustomerAlgorithm,proto3" json:"sse_customer_algorithm,omitempty"`
-	SseCustomerKey       string `protobuf:"bytes,13,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
-	SseCustomerKeyMd5    string `protobuf:"bytes,14,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
-	VersionId            string `protobuf:"bytes,15,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	// Specifies the customer-provided encryption key for Amazon S3 to use in
+	// encrypting data
+	SseCustomerKey string `protobuf:"bytes,13,opt,name=sse_customer_key,json=sseCustomerKey,proto3" json:"sse_customer_key,omitempty"`
+	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
+	SseCustomerKeyMd5 string `protobuf:"bytes,14,opt,name=sse_customer_key_md5,json=sseCustomerKeyMd5,proto3" json:"sse_customer_key_md5,omitempty"`
+	// VersionId used to reference a specific version of the object.
+	VersionId string `protobuf:"bytes,15,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 	// Return object details meta
 	WithDetails bool `protobuf:"varint,16,opt,name=with_details,json=withDetails,proto3" json:"with_details,omitempty"`
 }
@@ -5259,6 +5559,7 @@ func (x *HeadObjectInput) GetWithDetails() bool {
 	return false
 }
 
+// HeadObjectOutput
 type HeadObjectOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -5307,14 +5608,21 @@ func (x *HeadObjectOutput) GetResultMetadata() map[string]string {
 	return nil
 }
 
+// IsObjectExistInput
 type IsObjectExistInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket    string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key       string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// Object version id
 	VersionId string `protobuf:"bytes,4,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 }
 
@@ -5378,11 +5686,13 @@ func (x *IsObjectExistInput) GetVersionId() string {
 	return ""
 }
 
+// IsObjectExistOutput
 type IsObjectExistOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Object exist or not
 	FileExist bool `protobuf:"varint,1,opt,name=file_exist,json=fileExist,proto3" json:"file_exist,omitempty"`
 }
 
@@ -5425,14 +5735,20 @@ func (x *IsObjectExistOutput) GetFileExist() bool {
 	return false
 }
 
+// SignURLInput
 type SignURLInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket    string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key       string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	// the method for sign url, eg. GET、POST
 	Method string `protobuf:"bytes,4,opt,name=method,proto3" json:"method,omitempty"`
 	// expire time of the sign url
@@ -5506,11 +5822,13 @@ func (x *SignURLInput) GetExpiredInSec() int64 {
 	return 0
 }
 
+// SignURLOutput
 type SignURLOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Object signed url
 	SignedUrl string `protobuf:"bytes,1,opt,name=signed_url,json=signedUrl,proto3" json:"signed_url,omitempty"`
 }
 
@@ -5553,11 +5871,13 @@ func (x *SignURLOutput) GetSignedUrl() string {
 	return ""
 }
 
+// UpdateBandwidthRateLimitInput
 type UpdateBandwidthRateLimitInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Required. The name of oss store.
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// The average upload/download bandwidth rate limit in bits per second.
 	AverageRateLimitInBitsPerSec int64 `protobuf:"varint,2,opt,name=average_rate_limit_in_bits_per_sec,json=averageRateLimitInBitsPerSec,proto3" json:"average_rate_limit_in_bits_per_sec,omitempty"`
@@ -5618,26 +5938,46 @@ func (x *UpdateBandwidthRateLimitInput) GetGatewayResourceName() string {
 	return ""
 }
 
+// AppendObjectInput
 type AppendObjectInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	StoreName            string            `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket               string            `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key                  string            `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
-	Body                 []byte            `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
-	Position             int64             `protobuf:"varint,5,opt,name=position,proto3" json:"position,omitempty"`
-	Acl                  string            `protobuf:"bytes,6,opt,name=acl,proto3" json:"acl,omitempty"`
-	CacheControl         string            `protobuf:"bytes,7,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
-	ContentDisposition   string            `protobuf:"bytes,8,opt,name=content_disposition,json=contentDisposition,proto3" json:"content_disposition,omitempty"`
-	ContentEncoding      string            `protobuf:"bytes,9,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempty"`
-	ContentMd5           string            `protobuf:"bytes,10,opt,name=content_md5,json=contentMd5,proto3" json:"content_md5,omitempty"`
-	Expires              int64             `protobuf:"varint,11,opt,name=expires,proto3" json:"expires,omitempty"`
-	StorageClass         string            `protobuf:"bytes,12,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
-	ServerSideEncryption string            `protobuf:"bytes,13,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
-	Meta                 string            `protobuf:"bytes,14,opt,name=meta,proto3" json:"meta,omitempty"`
-	Tags                 map[string]string `protobuf:"bytes,15,rep,name=tags,proto3" json:"tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Required. The name of oss store.
+	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// Object content
+	Body []byte `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
+	// Append start position
+	Position int64 `protobuf:"varint,5,opt,name=position,proto3" json:"position,omitempty"`
+	// Object ACL
+	Acl string `protobuf:"bytes,6,opt,name=acl,proto3" json:"acl,omitempty"`
+	// Sets the Cache-Control header of the response.
+	CacheControl string `protobuf:"bytes,7,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
+	// Sets the Content-Disposition header of the response
+	ContentDisposition string `protobuf:"bytes,8,opt,name=content_disposition,json=contentDisposition,proto3" json:"content_disposition,omitempty"`
+	// Sets the Content-Encoding header of the response
+	ContentEncoding string `protobuf:"bytes,9,opt,name=content_encoding,json=contentEncoding,proto3" json:"content_encoding,omitempty"`
+	// The base64-encoded 128-bit MD5 digest of the part data.
+	ContentMd5 string `protobuf:"bytes,10,opt,name=content_md5,json=contentMd5,proto3" json:"content_md5,omitempty"`
+	// Sets the Expires header of the response
+	Expires int64 `protobuf:"varint,11,opt,name=expires,proto3" json:"expires,omitempty"`
+	// Provides storage class information of the object. Amazon S3 returns this header
+	// for all objects except for S3 Standard storage class objects.
+	StorageClass string `protobuf:"bytes,12,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
+	// The server-side encryption algorithm used when storing this object in Amazon S3
+	// (for example, AES256, aws:kms).
+	ServerSideEncryption string `protobuf:"bytes,13,opt,name=server_side_encryption,json=serverSideEncryption,proto3" json:"server_side_encryption,omitempty"`
+	// Object metadata
+	Meta string `protobuf:"bytes,14,opt,name=meta,proto3" json:"meta,omitempty"`
+	// Object tags
+	Tags map[string]string `protobuf:"bytes,15,rep,name=tags,proto3" json:"tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (x *AppendObjectInput) Reset() {
@@ -5777,11 +6117,13 @@ func (x *AppendObjectInput) GetTags() map[string]string {
 	return nil
 }
 
+// AppendObjectOutput
 type AppendObjectOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Next append position
 	AppendPosition int64 `protobuf:"varint,1,opt,name=append_position,json=appendPosition,proto3" json:"append_position,omitempty"`
 }
 
@@ -5824,19 +6166,31 @@ func (x *AppendObjectOutput) GetAppendPosition() int64 {
 	return 0
 }
 
+// ListPartsInput
 type ListPartsInput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	StoreName           string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
-	Bucket              string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key                 string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// Required. The name of oss store.
+	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
+	// The bucket name containing the object
+	// This member is required
+	Bucket string `protobuf:"bytes,2,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	// The account ID of the expected bucket owner
 	ExpectedBucketOwner string `protobuf:"bytes,4,opt,name=expected_bucket_owner,json=expectedBucketOwner,proto3" json:"expected_bucket_owner,omitempty"`
-	MaxParts            int64  `protobuf:"varint,5,opt,name=max_parts,json=maxParts,proto3" json:"max_parts,omitempty"`
-	PartNumberMarker    int64  `protobuf:"varint,6,opt,name=part_number_marker,json=partNumberMarker,proto3" json:"part_number_marker,omitempty"`
-	RequestPayer        string `protobuf:"bytes,7,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
-	UploadId            string `protobuf:"bytes,8,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
+	// Sets the maximum number of parts to return
+	MaxParts int64 `protobuf:"varint,5,opt,name=max_parts,json=maxParts,proto3" json:"max_parts,omitempty"`
+	// Specifies the part after which listing should begin. Only parts with higher part
+	// numbers will be listed.
+	PartNumberMarker int64 `protobuf:"varint,6,opt,name=part_number_marker,json=partNumberMarker,proto3" json:"part_number_marker,omitempty"`
+	// Confirms that the requester knows that they will be charged for the request.
+	RequestPayer string `protobuf:"bytes,7,opt,name=request_payer,json=requestPayer,proto3" json:"request_payer,omitempty"`
+	// Upload ID identifying the multipart upload whose parts are being listed.
+	UploadId string `protobuf:"bytes,8,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
 }
 
 func (x *ListPartsInput) Reset() {
@@ -5927,15 +6281,20 @@ func (x *ListPartsInput) GetUploadId() string {
 	return ""
 }
 
+// Part
 type Part struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Etag         string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
-	LastModified int64  `protobuf:"varint,2,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
-	PartNumber   int64  `protobuf:"varint,3,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
-	Size         int64  `protobuf:"varint,4,opt,name=size,proto3" json:"size,omitempty"`
+	// Part Etag
+	Etag string `protobuf:"bytes,1,opt,name=etag,proto3" json:"etag,omitempty"`
+	// Last modified time
+	LastModified int64 `protobuf:"varint,2,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
+	// Part number
+	PartNumber int64 `protobuf:"varint,3,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
+	// Part size
+	Size int64 `protobuf:"varint,4,opt,name=size,proto3" json:"size,omitempty"`
 }
 
 func (x *Part) Reset() {
@@ -5998,13 +6357,18 @@ func (x *Part) GetSize() int64 {
 	return 0
 }
 
+// ListPartsOutput
 type ListPartsOutput struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The bucket name containing the object
+	// This member is required
 	Bucket string `protobuf:"bytes,1,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	Key    string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	// Name of the object key.
+	// This member is required.
+	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
 	// Upload ID identifying the multipart upload whose parts are being listed.
 	UploadId string `protobuf:"bytes,3,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
 	// When a list is truncated, this element specifies the last part in the list, as
