@@ -11,15 +11,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package runtime
 
 import (
 	"encoding/json"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"mosn.io/layotto/components/pkg/utils"
 
-	"mosn.io/layotto/components/file/s3/alicloud"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestConfig(t *testing.T) {
@@ -43,7 +44,7 @@ func TestConfig(t *testing.T) {
 	mscf, err := ParseRuntimeConfig([]byte(data))
 	assert.Nil(t, err)
 	v := mscf.Files["aliOSS"]
-	m := make([]*alicloud.OssMetadata, 0)
+	m := make([]*utils.OssMetadata, 0)
 	err = json.Unmarshal(v.Metadata, &m)
 	assert.Nil(t, err)
 	for _, x := range m {

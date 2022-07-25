@@ -24,76 +24,61 @@ import (
 	"io"
 	"strings"
 
+	"mosn.io/layotto/components/pkg/utils"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	aws_config "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
 	"mosn.io/layotto/components/file"
-	loss "mosn.io/layotto/components/file/s3"
+	"mosn.io/layotto/components/file/util"
 )
 
 const (
-	endpointKey              = "endpoint"
 	defaultCredentialsSource = "provider"
-)
-
-var (
-	ErrNotSpecifyEndpoint error = errors.New("should specific endpoint in metadata")
 )
 
 // AwsOss is a binding for aws oss storage.
 type AwsOss struct {
-	client map[string]*s3.Client
-	meta   map[string]*AwsOssMetaData
+	client *s3.Client
 }
 
-// AwsOssMetaData describe a aws-oss instance.
-type AwsOssMetaData struct {
-	Region          string `json:"region"`   // eg. us-west-2
-	EndPoint        string `json:"endpoint"` // eg. protocol://service-code.region-code.amazonaws.com
-	AccessKeyID     string `json:"accessKeyID"`
-	AccessKeySecret string `json:"accessKeySecret"`
-}
-
-func NewAwsOss() file.File {
-	return &AwsOss{
-		client: make(map[string]*s3.Client),
-		meta:   make(map[string]*AwsOssMetaData),
-	}
+func NewAwsFile() file.File {
+	return &AwsOss{}
 }
 
 // Init instance by config.
 func (a *AwsOss) Init(ctx context.Context, config *file.FileConfig) error {
-	m := make([]*AwsOssMetaData, 0)
+	m := make([]*utils.OssMetadata, 0)
 	err := json.Unmarshal(config.Metadata, &m)
 	if err != nil {
 		return errors.New("invalid config for aws oss")
 	}
 	for _, data := range m {
-		if !data.isAwsMetaValid() {
+		if !a.isAwsMetaValid(data) {
 			return errors.New("invalid config for aws oss")
 		}
 		client, err := a.createOssClient(data)
 		if err != nil {
 			continue
 		}
-		a.client[data.EndPoint] = client
-		a.meta[data.EndPoint] = data
+		a.client = client
 	}
 	return nil
 }
 
 // isAwsMetaValid check if the metadata valid.
-func (am *AwsOssMetaData) isAwsMetaValid() bool {
-	if am.AccessKeySecret == "" || am.EndPoint == "" || am.AccessKeyID == "" {
+func (a *AwsOss) isAwsMetaValid(v *utils.OssMetadata) bool {
+	if v.AccessKeySecret == "" || v.Endpoint == "" || v.AccessKeyID == "" {
 		return false
 	}
 	return true
 }
 
 // createOssClient by input meta info.
-func (a *AwsOss) createOssClient(meta *AwsOssMetaData) (*s3.Client, error) {
+func (a *AwsOss) createOssClient(meta *utils.OssMetadata) (*s3.Client, error) {
 	optFunc := []func(options *aws_config.LoadOptions) error{
 		aws_config.WithRegion(meta.Region),
 		aws_config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
@@ -112,54 +97,42 @@ func (a *AwsOss) createOssClient(meta *AwsOssMetaData) (*s3.Client, error) {
 
 // Put file to aws oss.
 func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
-	bucket, err := loss.GetBucketName(st.FileName)
+	//var bodySize int64
+	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
 		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	key, err := loss.GetFileName(st.FileName)
+	key, err := util.GetFileName(st.FileName)
 	if err != nil {
 		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	input := &s3.PutObjectInput{
-		Bucket: &bucket,
-		Key:    &key,
-		Body:   st.DataStream,
-	}
-	client, err := a.selectClient(st.Metadata)
+	client, err := a.selectClient()
 	if err != nil {
 		return err
 	}
-	_, err = client.PutObject(context.TODO(), input)
+	uploader := manager.NewUploader(client)
+	_, err = uploader.Upload(context.TODO(), &s3.PutObjectInput{Bucket: &bucket, Key: &key, Body: st.DataStream})
+
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// selectClient choose aws client from exist client-map, key is endpoint, value is client instance.
-func (a *AwsOss) selectClient(meta map[string]string) (*s3.Client, error) {
-	// exist specific client with key endpoint
-	if ep, ok := meta[endpointKey]; ok {
-		if client, ok := a.client[ep]; ok {
-			return client, nil
-		}
+func (a *AwsOss) selectClient() (*s3.Client, error) {
+	if a.client == nil {
+		return nil, utils.ErrNotInitClient
 	}
-	// if not specify endpoint, select default one
-	if len(a.client) == 1 {
-		for _, client := range a.client {
-			return client, nil
-		}
-	}
-	return nil, ErrNotSpecifyEndpoint
+	return a.client, nil
 }
 
 // Get object from aws oss.
 func (a *AwsOss) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, error) {
-	bucket, err := loss.GetBucketName(st.FileName)
+	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
 		return nil, fmt.Errorf("awsoss get file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	key, err := loss.GetFileName(st.FileName)
+	key, err := util.GetFileName(st.FileName)
 	if err != nil {
 		return nil, fmt.Errorf("awsoss get file[%s] fail,err: %s", st.FileName, err.Error())
 	}
@@ -167,7 +140,7 @@ func (a *AwsOss) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, e
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(st.Metadata)
+	client, err := a.selectClient()
 	if err != nil {
 		return nil, err
 	}
@@ -180,18 +153,13 @@ func (a *AwsOss) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, e
 
 // List objects from aws oss.
 func (a *AwsOss) List(ctx context.Context, st *file.ListRequest) (*file.ListResp, error) {
-	bucket, err := loss.GetBucketName(st.DirectoryName)
+	bucket, err := util.GetBucketName(st.DirectoryName)
 	if err != nil {
 		return nil, fmt.Errorf("list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
 	}
-	prefix := loss.GetFilePrefixName(st.DirectoryName)
-	input := &s3.ListObjectsInput{
-		Bucket:  &bucket,
-		MaxKeys: st.PageSize,
-		Marker:  &st.Marker,
-		Prefix:  &prefix,
-	}
-	client, err := a.selectClient(st.Metadata)
+	prefix := util.GetFilePrefixName(st.DirectoryName)
+	input := &s3.ListObjectsInput{Bucket: &bucket, MaxKeys: st.PageSize, Marker: &st.Marker, Prefix: &prefix}
+	client, err := a.selectClient()
 	if err != nil {
 		return nil, fmt.Errorf("list bucket[%s] fail, err: %s", st.DirectoryName, err.Error())
 	}
@@ -216,11 +184,11 @@ func (a *AwsOss) List(ctx context.Context, st *file.ListRequest) (*file.ListResp
 
 // Del object in aws oss.
 func (a *AwsOss) Del(ctx context.Context, st *file.DelRequest) error {
-	bucket, err := loss.GetBucketName(st.FileName)
+	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
 		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	key, err := loss.GetFileName(st.FileName)
+	key, err := util.GetFileName(st.FileName)
 	if err != nil {
 		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
@@ -228,7 +196,7 @@ func (a *AwsOss) Del(ctx context.Context, st *file.DelRequest) error {
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(st.Metadata)
+	client, err := a.selectClient()
 	if err != nil {
 		return err
 	}
@@ -239,11 +207,11 @@ func (a *AwsOss) Del(ctx context.Context, st *file.DelRequest) error {
 	return nil
 }
 func (a *AwsOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.FileMetaResp, error) {
-	bucket, err := loss.GetBucketName(st.FileName)
+	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
 		return nil, fmt.Errorf("awsoss stat file[%s] fail,err: %s", st.FileName, err.Error())
 	}
-	key, err := loss.GetFileName(st.FileName)
+	key, err := util.GetFileName(st.FileName)
 	if err != nil {
 		return nil, fmt.Errorf("awsoss stat file[%s] fail,err: %s", st.FileName, err.Error())
 	}
@@ -251,7 +219,7 @@ func (a *AwsOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.File
 		Bucket: &bucket,
 		Key:    &key,
 	}
-	client, err := a.selectClient(st.Metadata)
+	client, err := a.selectClient()
 	if err != nil {
 		return nil, err
 	}
@@ -266,7 +234,7 @@ func (a *AwsOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.File
 	resp.Size = out.ContentLength
 	resp.LastModified = out.LastModified.String()
 	resp.Metadata = make(map[string][]string)
-	resp.Metadata[loss.ETag] = append(resp.Metadata[loss.ETag], *out.ETag)
+	resp.Metadata[util.ETag] = append(resp.Metadata[util.ETag], *out.ETag)
 	for k, v := range out.Metadata {
 		resp.Metadata[k] = append(resp.Metadata[k], v)
 	}
