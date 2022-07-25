@@ -4630,7 +4630,7 @@ type MultipartUpload struct {
 	Owner *Owner `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
 	// The class of storage used to store the object.
 	StorageClass string `protobuf:"bytes,5,opt,name=storage_class,json=storageClass,proto3" json:"storage_class,omitempty"`
-	// // Upload ID that identifies the multipart upload.
+	// Upload ID that identifies the multipart upload.
 	UploadId string `protobuf:"bytes,6,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
 }
 
@@ -5881,7 +5881,7 @@ type UpdateBandwidthRateLimitInput struct {
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// The average upload/download bandwidth rate limit in bits per second.
 	AverageRateLimitInBitsPerSec int64 `protobuf:"varint,2,opt,name=average_rate_limit_in_bits_per_sec,json=averageRateLimitInBitsPerSec,proto3" json:"average_rate_limit_in_bits_per_sec,omitempty"`
-	//Resource name of gateway
+	// Resource name of gateway
 	GatewayResourceName string `protobuf:"bytes,3,opt,name=gateway_resource_name,json=gatewayResourceName,proto3" json:"gateway_resource_name,omitempty"`
 }
 
