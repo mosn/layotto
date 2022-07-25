@@ -1,0 +1,1422 @@
+//The file defined base on s3 protocol, to get an in-depth walkthrough of this file, see:
+//https://docs.aws.amazon.com/s3/index.html
+//https://github.com/aws/aws-sdk-go-v2
+syntax = "proto3";
+
+package spec.proto.extension.v1;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "mosn.io/layotto/spec/proto/extension/v1;s3";
+
+// ObjectStorageService
+service ObjectStorageService{
+    //Object CRUD API
+    //Adds an object to a bucket.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
+    rpc PutObject(stream PutObjectInput) returns(PutObjectOutput){}
+    //Retrieves objects.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html
+    rpc GetObject(GetObjectInput) returns (stream GetObjectOutput){}
+    //Delete objects.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html
+    rpc DeleteObject(DeleteObjectInput) returns (DeleteObjectOutput){}
+    //Creates a copy of an object that is already stored in oss server.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CopyObject.html
+    rpc CopyObject(CopyObjectInput) returns(CopyObjectOutput){}
+    //Delete multiple objects from a bucket.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_DeleteObjects.html
+    rpc DeleteObjects(DeleteObjectsInput) returns(DeleteObjectsOutput){}
+    //Returns some or all (up to 1,000) of the objects in a bucket.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_ListObjects.html
+    rpc ListObjects(ListObjectsInput) returns(ListObjectsOutput){}
+    //The HEAD action retrieves metadata from an object without returning the object itself.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html
+    rpc HeadObject(HeadObjectInput) returns(HeadObjectOutput){}
+    //This action used to check if the file exists.
+    rpc IsObjectExist(IsObjectExistInput) returns(IsObjectExistOutput){}
+
+    //Object Tagging API
+    //Sets the supplied tag-set to an object that already exists in a bucket.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
+    rpc PutObjectTagging(PutObjectTaggingInput) returns (PutObjectTaggingOutput){}
+    //Removes the entire tag set from the specified object.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html
+    rpc DeleteObjectTagging(DeleteObjectTaggingInput) returns(DeleteObjectTaggingOutput){}
+    //Returns the tag-set of an object.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_GetObjectTagging.html
+    rpc GetObjectTagging(GetObjectTaggingInput) returns(GetObjectTaggingOutput){}
+
+    //Object ACL Operation API
+    //Because different manufacturers have different definitions for ACL types, at the same time,
+    //the actual permissions corresponding to ACLs with the same name may be different between different manufacturers.
+    //Therefore, applications using this interface will greatly increase the complexity of transplantation.
+    //In general, this interface is not recommended, especially if your application has portability requirements.
+    //For the types and permission definitions supported by ACL, please refer to the specific manufacturer's definition,eg:
+    //AWS: https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
+    //tenantcloud: https://intl.cloud.tencent.com/document/product/436/30583
+    //aliyun: https://www.alibabacloud.com/help/en/object-storage-service/latest/access-and-control-acl
+
+    //Returns object canned acl.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
+    rpc GetObjectCannedAcl(GetObjectCannedAclInput) returns(GetObjectCannedAclOutput){}
+    //Set object canned acl.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
+    rpc PutObjectCannedAcl(PutObjectCannedAclInput) returns(PutObjectCannedAclOutput){}
+
+    //Object Multipart Operation API
+    //Initiates a multipart upload and returns an upload ID.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_CreateMultipartUpload.html
+    rpc CreateMultipartUpload(CreateMultipartUploadInput) returns(CreateMultipartUploadOutput){}
+    //Uploads a part in a multipart upload.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html
+    rpc UploadPart(stream UploadPartInput) returns(UploadPartOutput){}
+    //Uploads a part by copying data from an existing object as data source.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPartCopy.html
+    rpc UploadPartCopy(UploadPartCopyInput) returns(UploadPartCopyOutput){}
+    //Completes a multipart upload by assembling previously uploaded parts.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html
+    rpc CompleteMultipartUpload(CompleteMultipartUploadInput) returns(CompleteMultipartUploadOutput){}
+    //This action aborts a multipart upload.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html
+    rpc AbortMultipartUpload(AbortMultipartUploadInput) returns(AbortMultipartUploadOutput){}
+    //This action lists in-progress multipart uploads.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html
+    rpc ListMultipartUploads(ListMultipartUploadsInput) returns(ListMultipartUploadsOutput){}
+    //Lists the parts that have been uploaded for a specific multipart upload.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html
+    rpc ListParts(ListPartsInput) returns(ListPartsOutput){}
+
+    //Returns metadata about all versions of the objects in a bucket.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectVersions.html
+    rpc ListObjectVersions(ListObjectVersionsInput) returns(ListObjectVersionsOutput){}
+
+    //A presigned URL gives you access to the object identified in the URL, provided that the creator of the presigned URL has permissions to access that object.
+    //Refer https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html
+    rpc SignURL(SignURLInput) returns(SignURLOutput){}
+
+    //This action used to set download bandwidth limit speed.
+    //Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2106
+    rpc UpdateDownloadBandwidthRateLimit(UpdateBandwidthRateLimitInput) returns(google.protobuf.Empty){}
+    //This action used to set upload bandwidth limit speed.
+    //Refer https://github.com/aliyun/aliyun-oss-go-sdk/blob/master/oss/client.go#L2096
+    rpc UpdateUploadBandwidthRateLimit(UpdateBandwidthRateLimitInput) returns(google.protobuf.Empty){}
+
+    //This action is used to append object.
+    //Refer https://help.aliyun.com/document_detail/31981.html or https://github.com/minio/minio-java/issues/980
+    rpc AppendObject(stream AppendObjectInput) returns(AppendObjectOutput){}
+
+    //Restores an archived copy of an object back.
+    //Refer https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_RestoreObject.html
+    rpc RestoreObject(RestoreObjectInput) returns(RestoreObjectOutput){}
+}
+
+// GetObjectInput
+message GetObjectInput {
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Key of the object to get
+    // This member is required
+    string key = 3;
+    // The account ID of the expected bucket owner
+    string expected_bucket_owner = 4;
+    // Return the object only if its entity tag (ETag) is the same as the one specified
+    string if_match = 5;
+    // Return the object only if it has been modified since the specified time
+    int64 if_modified_since = 6;
+    // Return the object only if its entity tag (ETag) is different from the one specified
+    string if_none_match = 7;
+    // Return the object only if it has not been modified since the specified time
+    int64 if_unmodified_since = 8;
+    // Part number of the object being read. This is a positive integer between 1 and
+    // 10,000. Effectively performs a 'ranged' GET request for the part specified.
+    // Useful for downloading just a part of an object.
+    int64  part_number = 9;
+    // Downloads the specified range bytes of an object
+    // start is used to specify the location where the file starts
+    int64  start = 10;
+    // end is used to specify the location where the file end
+    int64  end = 11;
+    // Confirms that the requester knows that they will be charged for the request.
+    string request_payer = 12;
+    // Sets the Cache-Control header of the response.
+    string response_cache_control = 13;
+    // Sets the Content-Disposition header of the response
+    string response_content_disposition = 14;
+    // Sets the Content-Encoding header of the response
+    string response_content_encoding = 15;
+    // Sets the Content-Language header of the response
+    string response_content_language = 16;
+    // Sets the Content-Type header of the response
+    string response_content_type = 17;
+    // Sets the Expires header of the response
+    string response_expires = 18;
+    // Specifies the algorithm to use to when decrypting the object (for example,AES256)
+    string sse_customer_algorithm = 19;
+    // Specifies the customer-provided encryption key for Amazon S3 used to encrypt the
+    // data. This value is used to decrypt the object when recovering it and must match
+    // the one used when storing the data. The key must be appropriate for use with the
+    // algorithm specified in the x-amz-server-side-encryption-customer-algorithm header
+    string sse_customer_key = 20;
+    // Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321
+    // Amazon S3 uses this header for a message integrity check to ensure that the
+    // encryption key was transmitted without error.
+    string sse_customer_key_md5 = 21;
+    // VersionId used to reference a specific version of the object
+    string version_id = 22;
+    // Specify Accept-Encoding, aws not supported now
+    string accept_encoding = 23;
+    // Specify the signed url of object, user can get object with signed url without ak、sk
+    string signed_url = 24;
+}
+
+// GetObjectOutput
+message GetObjectOutput {
+    // Object data.
+    bytes body = 1;
+    // Specifies caching behavior along the request/reply chain.
+    string cache_control = 2;
+    // Specifies presentational information for the object.
+    string content_disposition = 3;
+    // Specifies what content encodings have been applied to the object and thus what
+    // decoding mechanisms must be applied to obtain the media-type referenced by the
+    // Content-Type header field.
+    string content_encoding = 4;
+    // The language the content is in.
+    string content_language = 5;
+    // Size of the body in bytes.
+    int64 content_length = 6;
+    // The portion of the object returned in the response.
+    string content_range = 7;
+    // A standard MIME type describing the format of the object data.
+    string content_type = 8;
+    // Specifies whether the object retrieved was (true) or was not (false) a Delete
+    // Marker. If false, this response header does not appear in the response.
+    bool delete_marker = 9;
+    // An entity tag (ETag) is an opaque identifier assigned by a web server to a
+    // specific version of a resource found at a URL.
+    string etag = 10;
+    // If the object expiration is configured (see PUT Bucket lifecycle), the response
+    // includes this header. It includes the expiry-date and rule-id key-value pairs
+    // providing object expiration information. The value of the rule-id is
+    // URL-encoded.
+    string expiration = 11;
+    // The date and time at which the object is no longer cacheable.
+    string expires = 12;
+    // Creation date of the object.
+    int64 last_modified = 13;
+    // Version of the object.
+    string version_id = 14;
+    // The number of tags, if any, on the object.
+    int64 tag_count = 15;
+    // Provides storage class information of the object. Amazon S3 returns this header
+    // for all objects except for S3 Standard storage class objects.
+    string storage_class = 16;
+    // The count of parts this object has. This value is only returned if you specify
+    // partNumber in your request and the object was uploaded as a multipart upload.
+    int64 parts_count = 17;
+    // A map of metadata to store with the object in S3.
+    // Map keys will be normalized to lower-case.
+    map<string, string> metadata = 18;
+}
+
+// PutObjectInput
+message PutObjectInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // Object data.
+    bytes body = 2;
+    // The bucket name to which the PUT action was initiated
+    // This member is required.
+    string bucket = 3;
+    // Object key for which the PUT action was initiated.
+    // This member is required.
+    string key = 4;
+    // The canned ACL to apply to the object,different oss provider have different acl type
+    string acl = 5;
+    // Indicates whether the multipart upload uses an S3 Bucket Key for server-side
+    // encryption with Amazon Web Services KMS (SSE-KMS).
+    bool bucket_key_enabled = 6;
+    // Can be used to specify caching behavior along the request/reply chain.
+    string cache_control = 7;
+    // Specifies presentational information for the object. For more information, see
+    // http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1
+    // (http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1).
+    string content_disposition = 8;
+    // Specifies what content encodings have been applied to the object and thus what
+    // decoding mechanisms must be applied to obtain the media-type referenced by the
+    // Content-Type header field. For more information, see
+    // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11
+    // (http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11).
+    string content_encoding = 9;
+    // The date and time at which the object is no longer cacheable. For more
+    // information, see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
+    // (http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21).
+    int64 expires = 10;
+    // The server-side encryption algorithm used when storing this object in Amazon S3
+    // (for example, AES256, aws:kms).
+    string server_side_encryption = 11;
+    // Specify the signed url of object, user can put object with signed url without ak、sk
+    string signed_url = 12;
+    // A map of metadata to store with the object in S3.
+    map<string, string> meta = 13;
+    // The tag-set for the object. The tag-set must be encoded as URL Query parameters.
+    map<string, string> tagging = 14;
+}
+
+// PutObjectOutput
+message PutObjectOutput{
+    // Indicates whether the uploaded object uses an S3 Bucket Key for server-side
+    // encryption with Amazon Web Services KMS (SSE-KMS).
+    bool bucket_key_enabled = 1;
+    // Entity tag for the uploaded object.
+    string etag = 2;
+    // If the expiration is configured for the object
+    string expiration = 3;
+    // If present, indicates that the requester was successfully charged for the request.
+    string request_charged = 4;
+    // Version of the object.
+    string version_id = 5;
+}
+
+// DeleteObjectInput
+message DeleteObjectInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name to which the DEL action was initiated
+    // This member is required.
+    string bucket = 2;
+    // Object key for which the DEL action was initiated.
+    // This member is required.
+    string key = 3;
+    // Confirms that the requester knows that they will be charged for the request.
+    string request_payer = 4;
+    // VersionId used to reference a specific version of the object.
+    string version_id = 5;
+}
+
+// DeleteObjectOutput
+message DeleteObjectOutput{
+    // Specifies whether the versioned object that was permanently deleted was (true)
+    // or was not (false) a delete marker.
+    bool delete_marker = 1;
+    // If present, indicates that the requester was successfully charged for the
+    // request.
+    string request_charged = 2;
+    // Returns the version ID of the delete marker created as a result of the DELETE
+    // operation.
+    string version_id = 3;
+}
+
+// PutObjectTaggingInput
+message PutObjectTaggingInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required.
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // Container for the TagSet and Tag elements
+    map<string, string> tags = 4;
+    // The versionId of the object that the tag-set will be added to.
+    string version_id = 5;
+}
+
+// PutObjectTaggingOutput
+message PutObjectTaggingOutput{
+    // The versionId of the object the tag-set was added to.
+    string version_id = 1;
+    // Metadata pertaining to the operation's result.
+    map<string, string> result_metadata = 2;
+}
+
+// DeleteObjectTaggingInput
+message DeleteObjectTaggingInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the objects from which to remove the tags.
+    string bucket = 2;
+    // The key that identifies the object in the bucket from which to remove all tags.
+    // This member is required.
+    string key = 3;
+    // The versionId of the object that the tag-set will be removed from.
+    string version_id = 4;
+    // The account ID of the expected bucket owner. If the bucket is owned by a
+    // different account, the request fails with the HTTP status code 403 Forbidden
+    // (access denied).
+    string expected_bucket_owner = 5;
+}
+
+// DeleteObjectTaggingOutput
+message DeleteObjectTaggingOutput{
+    // The versionId of the object the tag-set was removed from.
+    string version_id = 1;
+    // Metadata pertaining to the operation's result.
+    map<string, string> result_metadata = 2;
+}
+
+// GetObjectTaggingInput
+message GetObjectTaggingInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object for which to get the tagging information.
+    // This member is required.
+    string bucket = 2;
+    // Object key for which to get the tagging information.
+    // This member is required.
+    string key = 3;
+    // The versionId of the object for which to get the tagging information.
+    string version_id = 4;
+    // The account ID of the expected bucket owner. If the bucket is owned by a
+    // different account, the request fails with the HTTP status code 403 Forbidden
+    // (access denied).
+    string expected_bucket_owner = 5;
+    // Confirms that the requester knows that they will be charged for the request.
+    string request_payer = 6;
+}
+
+// GetObjectTaggingOutput
+message GetObjectTaggingOutput{
+    // Contains the tag set.
+    // This member is required.
+    map<string, string> tags = 1;
+    // The versionId of the object for which you got the tagging information.
+    string version_id = 2;
+    // Metadata pertaining to the operation's result.
+    map<string, string> result_metadata = 3;
+}
+
+// CopySource
+message CopySource{
+    // source object bucket name
+    string copy_source_bucket = 1;
+    // source object name
+    string copy_source_key = 2;
+    // source object version
+    string copy_source_version_id = 3;
+}
+
+// CopyObjectInput
+message CopyObjectInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The name of the destination bucket. When using this action with an access point
+    // This member is required.
+    string bucket = 2;
+    // The key of the destination object.
+    // This member is required.
+    string key = 3;
+    // CopySource
+    CopySource copy_source = 4;
+    // The tag-set for the object destination object this value must be used in
+    // conjunction with the TaggingDirective. The tag-set must be encoded as URL Query
+    // parameters.
+    map<string,string> tagging = 5;
+    // The date and time at which the object is no longer cacheable.
+    int64  expires = 6;
+    // Specifies whether the metadata is copied from the source object or replaced with metadata provided in the request.
+    string metadata_directive = 7;
+    // A map of metadata to store with the object in S3.
+    map<string,string> metadata = 8;
+}
+
+// CopyObjectResult
+message CopyObjectResult{
+    // Returns the ETag of the new object. The ETag reflects only changes to the
+    // contents of an object, not its metadata.
+    string etag = 1;
+    // Creation date of the object.
+    int64 last_modified = 2;
+}
+
+// CopyObjectOutput
+message CopyObjectOutput{
+    // Container for all response elements.
+    CopyObjectResult copy_object_result = 1;
+    // Version ID of the newly created copy.
+    string version_id = 2;
+    // If the object expiration is configured, the response includes this header.
+    string expiration = 3;
+}
+
+// Delete
+message Delete{
+    // ObjectIdentifier
+    repeated ObjectIdentifier objects = 1;
+    // Element to enable quiet mode for the request. When you add this element, you
+    // must set its value to true.
+    bool quiet = 2;
+}
+
+// ObjectIdentifier
+message ObjectIdentifier{
+    // Key name of the object.
+    // This member is required.
+    string key = 1;
+    // VersionId for the specific version of the object to delete.
+    string version_id = 2;
+}
+
+// DeleteObjectsInput
+message DeleteObjectsInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Delete objects
+    Delete delete = 3;
+    // Confirms that the requester knows that they will be charged for the request.
+    string request_payer = 4;
+}
+
+// DeletedObject
+message DeletedObject{
+    // Specifies whether the versioned object that was permanently deleted was (true)
+    // or was not (false) a delete marker. In a simple DELETE, this header indicates
+    // whether (true) or not (false) a delete marker was created.
+    bool delete_marker = 1;
+    // The version ID of the delete marker created as a result of the DELETE operation.
+    // If you delete a specific object version, the value returned by this header is
+    // the version ID of the object version deleted.
+    string delete_marker_version_id = 2;
+    // The name of the deleted object.
+    string key = 3;
+    // The version ID of the deleted object.
+    string version_id = 4;
+}
+
+// DeleteObjectsOutput
+message DeleteObjectsOutput{
+    // DeletedObject
+    repeated DeletedObject deleted = 1;
+}
+
+// ListObjectsInput
+message ListObjectsInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // A delimiter is a character you use to group keys.
+    string delimiter = 3;
+    // Requests Amazon S3 to encode the object keys in the response and specifies the
+    // encoding method to use. An object key may contain any Unicode character;
+    // however, XML 1.0 parser cannot parse some characters, such as characters with an
+    // ASCII value from 0 to 10. For characters that are not supported in XML 1.0, you
+    // can add this parameter to request that Amazon S3 encode the keys in the
+    // response.
+    string encoding_type = 4;
+    // The account ID of the expected bucket owner. If the bucket is owned by a
+    // different account, the request fails with the HTTP status code 403 Forbidden
+    // (access denied).
+    string expected_bucket_owner = 5;
+    // Marker is where you want Amazon S3 to start listing from. Amazon S3 starts
+    // listing after this specified key. Marker can be any key in the bucket.
+    string marker = 6;
+    // Sets the maximum number of keys returned in the response. By default the action
+    // returns up to 1,000 key names. The response might contain fewer keys but will
+    // never contain more.
+    int32  maxKeys = 7;
+    // Limits the response to keys that begin with the specified prefix.
+    string prefix = 8;
+    // Confirms that the requester knows that they will be charged for the request.
+    string request_payer = 9;
+}
+
+// ListObjectsOutput
+message ListObjectsOutput{
+    // CommonPrefixes
+    repeated string common_prefixes = 1;
+    // Objects contents
+    repeated Object contents = 2;
+    // Causes keys that contain the same string between the prefix and the first
+    // occurrence of the delimiter to be rolled up into a single result element in the
+    // CommonPrefixes collection. These rolled-up keys are not returned elsewhere in
+    // the response. Each rolled-up result counts as only one return against the
+    // MaxKeys value.
+    string delimiter = 3;
+    // Encoding type used by Amazon S3 to encode object keys in the response.
+    string encoding_type = 4;
+    // A flag that indicates whether Amazon S3 returned all of the results that
+    // satisfied the search criteria.
+    bool is_truncated = 5;
+    // Indicates where in the bucket listing begins. Marker is included in the response
+    // if it was sent with the request.
+    string marker = 6;
+    // The maximum number of keys returned in the response body.
+    int32 max_keys = 7;
+    // The bucket name.
+    string name = 8;
+    // When response is truncated (the IsTruncated element value in the response is
+    // true), you can use the key name in this field as marker in the subsequent
+    // request to get next set of objects.
+    string next_marker = 9;
+    // Keys that begin with the indicated prefix.
+    string prefix = 10;
+}
+
+// Owner
+message Owner{
+    // Owner display name
+    string display_name = 1;
+    // Owner id
+    string id = 2;
+}
+
+// Object
+message Object{
+    // The entity tag is a hash of the object
+    string etag = 1;
+    // The name that you assign to an object. You use the object key to retrieve the
+    // object.
+    string key = 2;
+    // Creation date of the object.
+    int64 last_modified = 3;
+    // The owner of the object
+    Owner owner = 4;
+    // Size in bytes of the object
+    int64 size = 5;
+    // The class of storage used to store the object.
+    string storage_class = 6;
+}
+
+// GetObjectCannedAclInput
+message GetObjectCannedAclInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // VersionId used to reference a specific version of the object
+    string version_id = 4;
+}
+
+// GetObjectCannedAclOutput
+message GetObjectCannedAclOutput{
+    // Object CannedACL
+    string canned_acl = 1;
+    // Owner
+    Owner owner = 2;
+    // If present, indicates that the requester was successfully charged for the
+    // request.
+    string request_charged = 3;
+}
+
+// PutObjectCannedAclInput
+message PutObjectCannedAclInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // The canned ACL to apply to the object
+    string acl = 4;
+    // VersionId used to reference a specific version of the object.
+    string version_id = 5;
+}
+
+// PutObjectCannedAclOutput
+message PutObjectCannedAclOutput{
+    // Request charged
+    string request_charged = 1;
+}
+
+// RestoreObjectInput
+message RestoreObjectInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // VersionId used to reference a specific version of the object.
+    string version_id = 5;
+}
+
+// RestoreObjectOutput
+message RestoreObjectOutput{
+    // If present, indicates that the requester was successfully charged for the
+    // request.
+    string request_charged = 1;
+    // Indicates the path in the provided S3 output location where Select results will
+    // be restored to.
+    string restore_output_path = 2;
+}
+
+// CreateMultipartUploadInput
+message CreateMultipartUploadInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // The canned ACL to apply to the object. This action is not supported by Amazon S3
+    // on Outposts.
+    string acl = 4;
+    // Specifies whether Amazon S3 should use an S3 Bucket Key for object encryption
+    // with server-side encryption using AWS KMS (SSE-KMS). Setting this header to true
+    // causes Amazon S3 to use an S3 Bucket Key for object encryption with SSE-KMS.
+    // Specifying this header with a PUT action doesn’t affect bucket-level settings
+    // for S3 Bucket Key.
+    bool bucket_key_enabled = 5;
+    // Specifies caching behavior along the request/reply chain
+    string cache_control = 6;
+    // Specifies presentational information for the object
+    string content_disposition = 7;
+    // Specifies what content encodings have been applied to the object and thus what
+    // decoding mechanisms must be applied to obtain the media-type referenced by the
+    // Content-Type header field.
+    string content_encoding = 8;
+    // The language the content is in.
+    string content_language = 9;
+    // A standard MIME type describing the format of the object data.
+    string content_type = 10;
+    // The account ID of the expected bucket owner. If the bucket is owned by a
+    // different account, the request fails with the HTTP status code 403 Forbidden
+    // (access denied).
+    string expected_bucket_owner = 11;
+    // The date and time at which the object is no longer cacheable.
+    int64 expires = 12;
+    // Gives the grantee READ, READ_ACP, and WRITE_ACP permissions on the object. This
+    // action is not supported by Amazon S3 on Outposts.
+    string grant_full_control = 13;
+    // Allows grantee to read the object data and its metadata. This action is not
+    // supported by Amazon S3 on Outposts.
+    string grant_read = 14;
+    // Allows grantee to read the object ACL. This action is not supported by Amazon S3
+    // on Outposts.
+    string grant_read_acp = 15;
+    // Allows grantee to write the ACL for the applicable object. This action is not
+    // supported by Amazon S3 on Outposts.
+    string grant_write_acp = 16;
+    // A map of metadata to store with the object
+    map<string, string> meta_data = 17;
+    // Specifies whether you want to apply a legal hold to the uploaded object
+    string object_lock_legal_hold_status = 18;
+    // Specifies the Object Lock mode that you want to apply to the uploaded object
+    string object_lock_mode = 19;
+    // Specifies the date and time when you want the Object Lock to expire
+    int64 object_lock_retain_until_date = 20;
+    // Confirms that the requester knows that they will be charged for the request
+    string request_payer = 21;
+    // Specifies the algorithm to use to when encrypting the object (for example,
+    // AES256).
+    string sse_customer_algorithm = 22;
+    // Specifies the customer-provided encryption key to use in encrypting data
+    string sse_customer_key = 23;
+    // Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321
+    string sse_customer_key_md5 = 24;
+    // Specifies the Amazon Web Services KMS Encryption Context to use for object encryption
+    string sse_kms_encryption_context = 25;
+    // Specifies the ID of the symmetric customer managed key to use for object encryption
+    string sse_kms_key_id = 26;
+    // The server-side encryption algorithm used when storing this object
+    string server_side_encryption = 27;
+    // By default, oss store uses the STANDARD Storage Class to store newly created objects
+    string storage_class = 28;
+    // The tag-set for the object. The tag-set must be encoded as URL Query parameters.
+    map<string, string> tagging = 29;
+    // If the bucket is configured as a website, redirects requests for this object to
+    // another object in the same bucket or to an external URL.
+    string website_redirect_location = 30;
+}
+
+// CreateMultipartUploadOutput
+message CreateMultipartUploadOutput{
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 1;
+    // Name of the object key.
+    // This member is required.
+    string key = 2;
+    // If the bucket has a lifecycle rule configured with an action to abort incomplete
+    // multipart uploads and the prefix in the lifecycle rule matches the object name
+    // in the request, the response includes this header
+    int64 abort_date = 3;
+    // It identifies the applicable lifecycle configuration rule that defines the action to abort
+    // incomplete multipart uploads.
+    string abort_rule_id = 4;
+    // Indicates whether the multipart upload uses an S3 Bucket Key for server-side
+    // encryption with Amazon Web Services KMS (SSE-KMS).
+    bool bucket_key_enabled = 5;
+    // If present, indicates that the requester was successfully charged for the
+    // request.
+    string request_charged = 6;
+    // If server-side encryption with a customer-provided encryption key was requested,
+    // the response will include this header confirming the encryption algorithm used.
+    string sse_customer_algorithm = 7;
+    // If server-side encryption with a customer-provided encryption key was requested,
+    // the response will include this header to provide round-trip message integrity
+    // verification of the customer-provided encryption key.
+    string sse_customer_key_md5 = 8;
+    // If present, specifies the Amazon Web Services KMS Encryption Context to use for
+    // object encryption. The value of this header is a base64-encoded UTF-8 string
+    // holding JSON with the encryption context key-value pairs.
+    string sse_kms_encryption_context = 9;
+    // If present, specifies the ID of the Amazon Web Services Key Management Service
+    // (Amazon Web Services KMS) symmetric customer managed key that was used for the
+    // object.
+    string sse_kms_key_id = 10;
+    // The server-side encryption algorithm used when storing this object in Amazon S3
+    // (for example, AES256, aws:kms).
+    string server_side_encryption = 11;
+    // ID for the initiated multipart upload.
+    string upload_id = 12;
+}
+
+// UploadPartInput
+message UploadPartInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // Object data.
+    bytes  body = 4;
+    // Size of the body in bytes. This parameter is useful when the size of the body
+    // cannot be determined automatically.
+    int64  content_length = 5;
+    // The base64-encoded 128-bit MD5 digest of the part data.
+    string content_md5 = 6;
+    // The account ID of the expected bucket owner
+    string expected_bucket_owner = 7;
+    // Part number of part being uploaded. This is a positive integer between 1 and 10,000.
+    // This member is required.
+    int32  part_number = 8;
+    // Confirms that the requester knows that they will be charged for the request.
+    string request_payer = 9;
+    // Specifies the algorithm to use to when encrypting the object (for example,
+    // AES256).
+    string sse_customer_algorithm = 10;
+    // Specifies the customer-provided encryption key for Amazon S3 to use in
+    // encrypting data
+    string sse_customer_key = 11;
+    // Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
+    string sse_customer_key_md5 = 12;
+    // Upload ID identifying the multipart upload whose part is being uploaded.
+    // This member is required.
+    string upload_id = 13;
+}
+
+// UploadPartOutput
+message UploadPartOutput{
+    // Indicates whether the multipart upload uses an S3 Bucket Key for server-side
+    // encryption with Amazon Web Services KMS (SSE-KMS).
+    bool bucket_key_enabled = 1;
+    // Entity tag for the uploaded object.
+    string etag = 2;
+    // If present, indicates that the requester was successfully charged for the
+    // request.
+    string request_charged = 3;
+    // Specifies the algorithm to use to when encrypting the object (for example,
+    // AES256).
+    string sse_customer_algorithm = 4;
+    // Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
+    string sse_customer_key_md5 = 5;
+    // Specifies the ID of the symmetric customer managed key to use for object encryption
+    string sse_kms_key_id = 6;
+    // The server-side encryption algorithm used when storing this object in Amazon S3
+    // (for example, AES256, aws:kms).
+    string server_side_encryption = 7;
+}
+
+// UploadPartCopyInput
+message UploadPartCopyInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // CopySource
+    CopySource copy_source = 4;
+    // Part number of part being copied. This is a positive integer between 1 and 10,000.
+    // This member is required.
+    int32  part_number = 5;
+    // Upload ID identifying the multipart upload whose part is being copied.
+    // This member is required.
+    string upload_id = 6;
+    // The range of bytes to copy from the source object.bytes=start_position-part_size
+    int64 start_position = 7;
+    // Part size
+    int64 part_size = 8;
+}
+
+// CopyPartResult
+message CopyPartResult{
+    // Entity tag of the object.
+    string etag = 1;
+    // Last modified time
+    int64 last_modified = 2;
+}
+
+// UploadPartCopyOutput
+message UploadPartCopyOutput{
+    // Indicates whether the multipart upload uses an S3 Bucket Key for server-side
+    // encryption with Amazon Web Services KMS (SSE-KMS).
+    bool bucket_key_enabled = 1;
+    // Container for all response elements.
+    CopyPartResult copy_part_result = 2;
+    // The version of the source object that was copied, if you have enabled versioning
+    // on the source bucket.
+    string copy_source_version_id = 3;
+    // If present, indicates that the requester was successfully charged for the
+    // request.
+    string request_charged = 4;
+    // If server-side encryption with a customer-provided encryption key was requested,
+    // the response will include this header confirming the encryption algorithm used.
+    string sse_customer_algorithm = 5;
+    // If server-side encryption with a customer-provided encryption key was requested,
+    // the response will include this header to provide round-trip message integrity
+    // verification of the customer-provided encryption key.
+    string sse_customer_key_md5 = 6;
+    // If present, specifies the ID of the Amazon Web Services Key Management Service
+    // (Amazon Web Services KMS) symmetric customer managed key that was used for the
+    // object.
+    string sse_kms_key_id = 7;
+    // The server-side encryption algorithm used when storing this object in Amazon S3
+    // (for example, AES256, aws:kms).
+    string server_side_encryption = 8;
+}
+
+// CompletedPart
+message CompletedPart{
+    // Entity tag returned when the part was uploaded.
+    string etag = 1;
+    // Part number that identifies the part. This is a positive integer between 1 and
+    // 10,000.
+    int32 part_number = 2;
+}
+
+// CompletedMultipartUpload
+message CompletedMultipartUpload{
+    // Array of CompletedPart data types.
+    repeated CompletedPart parts = 1;
+}
+
+// CompleteMultipartUploadInput
+message CompleteMultipartUploadInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // ID for the initiated multipart upload.
+    // This member is required.
+    string upload_id = 4;
+    // Confirms that the requester knows that they will be charged for the request.
+    string request_payer = 5;
+    // Expected bucket owner
+    string expected_bucket_owner = 6;
+    // The container for the multipart upload request information.
+    CompletedMultipartUpload multipart_upload = 7;
+}
+
+// CompleteMultipartUploadOutput
+message CompleteMultipartUploadOutput{
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 1;
+    // Name of the object key.
+    // This member is required.
+    string key = 2;
+    // Indicates whether the multipart upload uses an S3 Bucket Key for server-side
+    // encryption with Amazon Web Services KMS (SSE-KMS).
+    bool bucket_key_enabled = 3;
+    // Entity tag that identifies the newly created object's data
+    string etag = 4;
+    // If the object expiration is configured, this will contain the expiration date
+    // (expiry-date) and rule ID (rule-id). The value of rule-id is URL-encoded.
+    string expiration = 5;
+    // The URI that identifies the newly created object.
+    string location = 6;
+    // If present, indicates that the requester was successfully charged for the
+    // request.
+    string request_charged = 7;
+    // If present, specifies the ID of the Amazon Web Services Key Management Service
+    // (Amazon Web Services KMS) symmetric customer managed key that was used for the
+    // object.
+    string sse_kms_keyId = 8;
+    // The server-side encryption algorithm used when storing this object in Amazon S3
+    // (for example, AES256, aws:kms).
+    string server_side_encryption = 9;
+    // Version ID of the newly created object, in case the bucket has versioning turned
+    // on.
+    string version_id = 10;
+}
+
+// AbortMultipartUploadInput
+message AbortMultipartUploadInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // The account ID of the expected bucket owner
+    string expected_bucket_owner = 4;
+    // Confirms that the requester knows that they will be charged for the request.
+    string request_payer = 5;
+    // Upload ID that identifies the multipart upload.
+    // This member is required.
+    string upload_id = 6;
+}
+
+// AbortMultipartUploadOutput
+message AbortMultipartUploadOutput{
+    // If present, indicates that the requester was successfully charged for the request.
+    string request_charged = 1;
+}
+
+// ListMultipartUploadsInput
+message ListMultipartUploadsInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Character you use to group keys. All keys that contain the same string between
+    // the prefix, if specified, and the first occurrence of the delimiter after the
+    // prefix are grouped under a single result element, CommonPrefixes. If you don't
+    // specify the prefix parameter, then the substring starts at the beginning of the
+    // key. The keys that are grouped under CommonPrefixes result element are not
+    // returned elsewhere in the response.
+    string delimiter = 3;
+    // Requests Amazon S3 to encode the object keys in the response and specifies the
+    // encoding method to use. An object key may contain any Unicode character;
+    string encoding_type = 4;
+    // The account ID of the expected bucket owner
+    string expected_bucket_owner = 5;
+    // Together with upload-id-marker, this parameter specifies the multipart upload
+    // after which listing should begin. If upload-id-marker is not specified, only the
+    // keys lexicographically greater than the specified key-marker will be included in
+    // the list. If upload-id-marker is specified, any multipart uploads for a key
+    // equal to the key-marker might also be included, provided those multipart uploads
+    // have upload IDs lexicographically greater than the specified upload-id-marker.
+    string key_marker = 6;
+    // Sets the maximum number of multipart uploads, from 1 to 1,000, to return in the
+    // response body. 1,000 is the maximum number of uploads that can be returned in a
+    // response.
+    int64  max_uploads = 7;
+    // Lists in-progress uploads only for those keys that begin with the specified
+    // prefix. You can use prefixes to separate a bucket into different grouping of
+    // keys. (You can think of using prefix to make groups in the same way you'd use a
+    // folder in a file system.)
+    string prefix = 8;
+    // Together with key-marker, specifies the multipart upload after which listing
+    // should begin. If key-marker is not specified, the upload-id-marker parameter is
+    // ignored. Otherwise, any multipart uploads for a key equal to the key-marker
+    // might be included in the list only if they have an upload ID lexicographically
+    // greater than the specified upload-id-marker.
+    string upload_id_marker = 9;
+}
+
+// Initiator
+message Initiator{
+    // Initiator name
+    string display_name = 1;
+    // Initiator id
+    string id = 2;
+}
+
+// MultipartUpload
+message MultipartUpload{
+    // Date and time at which the multipart upload was initiated.
+    int64 initiated = 1;
+    // Identifies who initiated the multipart upload.
+    Initiator initiator = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // Specifies the owner of the object that is part of the multipart upload.
+    Owner owner = 4;
+    // The class of storage used to store the object.
+    string storage_class = 5;
+    // Upload ID that identifies the multipart upload.
+    string upload_id = 6;
+}
+
+// ListMultipartUploadsOutput
+message ListMultipartUploadsOutput{
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 1;
+    // If you specify a delimiter in the request, then the result returns each distinct
+    // key prefix containing the delimiter in a CommonPrefixes element.
+    repeated string common_prefixes = 2;
+    // Contains the delimiter you specified in the request. If you don't specify a
+    // delimiter in your request, this element is absent from the response.
+    string delimiter = 3;
+    // Encoding type used by Amazon S3 to encode object keys in the response.
+    string encoding_type = 4;
+    // Indicates whether the returned list of multipart uploads is truncated. A value
+    // of true indicates that the list was truncated. The list can be truncated if the
+    // number of multipart uploads exceeds the limit allowed or specified by max
+    // uploads.
+    bool is_truncated = 5;
+    // The key at or after which the listing began.
+    string key_marker = 6;
+    // Maximum number of multipart uploads that could have been included in the
+    // response.
+    int32 max_uploads = 7;
+    // When a list is truncated, this element specifies the value that should be used
+    // for the key-marker request parameter in a subsequent request.
+    string  next_key_marker = 8;
+    // When a list is truncated, this element specifies the value that should be used
+    // for the upload-id-marker request parameter in a subsequent request.
+    string next_upload_id_marker = 9;
+    // When a prefix is provided in the request, this field contains the specified
+    // prefix. The result contains only keys starting with the specified prefix.
+    string prefix = 10;
+    // Upload ID after which listing began.
+    string upload_id_marker = 11;
+    // Container for elements related to a particular multipart upload. A response can
+    // contain zero or more Upload elements.
+    repeated MultipartUpload uploads = 12;
+}
+
+// ListObjectVersionsInput
+message ListObjectVersionsInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // A delimiter is a character that you specify to group keys. All keys that contain
+    // the same string between the prefix and the first occurrence of the delimiter are
+    // grouped under a single result element in CommonPrefixes. These groups are
+    // counted as one result against the max-keys limitation. These keys are not
+    // returned elsewhere in the response.
+    string delimiter = 3;
+    // Requests Amazon S3 to encode the object keys in the response and specifies the
+    // encoding method to use. An object key may contain any Unicode character;
+    string encoding_type = 4;
+    // The account ID of the expected bucket owner
+    string expected_bucket_owner = 5;
+    // Specifies the key to start with when listing objects in a bucket.
+    string key_marker = 6;
+    // Sets the maximum number of keys returned in the response. By default the action
+    // returns up to 1,000 key names. The response might contain fewer keys but will
+    // never contain more. If additional keys satisfy the search criteria, but were not
+    // returned because max-keys was exceeded, the response contains true. To return
+    // the additional keys, see key-marker and version-id-marker.
+    int64  max_keys = 7;
+    // Use this parameter to select only those keys that begin with the specified
+    // prefix. You can use prefixes to separate a bucket into different groupings of
+    // keys. (You can think of using prefix to make groups in the same way you'd use a
+    // folder in a file system.) You can use prefix with delimiter to roll up numerous
+    // objects into a single result under CommonPrefixes.
+    string prefix = 8;
+    // Specifies the object version you want to start listing from.
+    string version_id_marker = 9;
+}
+
+// DeleteMarkerEntry
+message DeleteMarkerEntry{
+    // Specifies whether the object is (true) or is not (false) the latest version of
+    // an object.
+    bool is_latest = 1;
+    // Name of the object key.
+    // This member is required.
+    string key = 2;
+    // Date and time the object was last modified.
+    int64 last_modified = 3;
+    // Owner
+    Owner owner = 4;
+    // Version ID of an object.
+    string version_id = 5;
+}
+
+// ObjectVersion
+message ObjectVersion{
+    // The entity tag is an MD5 hash of that version of the object.
+    string etag = 1;
+    // Specifies whether the object is (true) or is not (false) the latest version of
+    // an object.
+    bool is_latest = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // Date and time the object was last modified.
+    int64 last_modified = 4;
+    // Specifies the owner of the object.
+    Owner owner = 5;
+    // Size in bytes of the object.
+    int64 size = 6;
+    // The class of storage used to store the object.
+    string storage_class = 7;
+    // Version ID of an object.
+    string version_id = 8;
+}
+
+// ListObjectVersionsOutput
+message ListObjectVersionsOutput{
+    // All of the keys rolled up into a common prefix count as a single return when
+    // calculating the number of returns.
+    repeated string common_prefixes = 1;
+    // Container for an object that is a delete marker.
+    repeated DeleteMarkerEntry delete_markers = 2;
+    // The delimiter grouping the included keys.
+    string delimiter = 3;
+    // Encoding type used by Amazon S3 to encode object key names in the XML response.
+    string encoding_type = 4;
+    // A flag that indicates whether Amazon S3 returned all of the results that
+    // satisfied the search criteria
+    bool is_truncated = 5;
+    // Marks the last key returned in a truncated response.
+    string key_marker = 6;
+    // Specifies the maximum number of objects to return
+    int64  max_keys = 7;
+    // The bucket name.
+    string name = 8;
+    // When the number of responses exceeds the value of MaxKeys, NextKeyMarker
+    // specifies the first key not returned that satisfies the search criteria
+    string next_key_marker = 9;
+    // When the number of responses exceeds the value of MaxKeys, NextVersionIdMarker
+    // specifies the first object version not returned that satisfies the search
+    // criteria.
+    string next_version_id_marker = 10;
+    // Selects objects that start with the value supplied by this parameter.
+    string prefix = 11;
+    // Marks the last version of the key returned in a truncated response.
+    string version_id_marker = 12;
+    // Container for version information.
+    repeated ObjectVersion versions = 13;
+}
+
+// HeadObjectInput
+message HeadObjectInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // To retrieve the checksum, this parameter must be enabled
+    string checksum_mode = 4;
+    // The account ID of the expected bucket owner
+    string expected_bucket_owner = 5;
+    // Return the object only if its entity tag (ETag) is the same as the one
+    // specified; otherwise, return a 412 (precondition failed) error.
+    string if_match = 6;
+    // Return the object only if it has been modified since the specified time;
+    // otherwise, return a 304 (not modified) error.
+    int64  if_modified_since = 7;
+    // Return the object only if its entity tag (ETag) is different from the one
+    // specified
+    string if_none_match = 8;
+    // Return the object only if it has not been modified since the specified time;
+    int64  if_unmodified_since = 9;
+    // Part number of the object being read. This is a positive integer between 1 and
+    // 10,000. Effectively performs a 'ranged' HEAD request for the part specified.
+    // Useful querying about the size of the part and the number of parts in this
+    // object.
+    int32  part_number = 10;
+    // Confirms that the requester knows that they will be charged for the request.
+    string request_payer = 11;
+    // Specifies the algorithm to use to when encrypting the object (for example,
+    // AES256).
+    string sse_customer_algorithm = 12;
+    // Specifies the customer-provided encryption key for Amazon S3 to use in
+    // encrypting data
+    string sse_customer_key = 13;
+    // Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
+    string sse_customer_key_md5 = 14;
+    // VersionId used to reference a specific version of the object.
+    string version_id = 15;
+    // Return object details meta
+    bool   with_details = 16;
+}
+
+// HeadObjectOutput
+message HeadObjectOutput{
+    // Metadata pertaining to the operation's result.
+    map<string, string> result_metadata = 1;
+}
+
+// IsObjectExistInput
+message IsObjectExistInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // Object version id
+    string version_id = 4;
+}
+
+// IsObjectExistOutput
+message IsObjectExistOutput{
+    // Object exist or not
+    bool file_exist = 1;
+}
+
+// SignURLInput
+message SignURLInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // the method for sign url, eg. GET、POST
+    string method = 4;
+    // expire time of the sign url
+    int64 expired_in_sec = 5;
+}
+
+// SignURLOutput
+message SignURLOutput{
+    // Object signed url
+    string signed_url = 1;
+}
+
+// UpdateBandwidthRateLimitInput
+message UpdateBandwidthRateLimitInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The average upload/download bandwidth rate limit in bits per second.
+    int64 average_rate_limit_in_bits_per_sec = 2;
+    // Resource name of gateway
+    string gateway_resource_name = 3;
+}
+
+// AppendObjectInput
+message AppendObjectInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // Object content
+    bytes body = 4;
+    // Append start position
+    int64 position = 5;
+    // Object ACL
+    string acl = 6;
+    // Sets the Cache-Control header of the response.
+    string cache_control = 7;
+    // Sets the Content-Disposition header of the response
+    string content_disposition = 8;
+    // Sets the Content-Encoding header of the response
+    string content_encoding = 9;
+    // The base64-encoded 128-bit MD5 digest of the part data.
+    string content_md5 = 10;
+    // Sets the Expires header of the response
+    int64  expires = 11;
+    // Provides storage class information of the object. Amazon S3 returns this header
+    // for all objects except for S3 Standard storage class objects.
+    string storage_class = 12;
+    // The server-side encryption algorithm used when storing this object in Amazon S3
+    // (for example, AES256, aws:kms).
+    string server_side_encryption = 13;
+    // Object metadata
+    string meta = 14;
+    // Object tags
+    map<string, string> tags = 15;
+
+}
+
+// AppendObjectOutput
+message AppendObjectOutput{
+    // Next append position
+    int64 append_position = 1;
+}
+
+// ListPartsInput
+message ListPartsInput{
+    // Required. The name of oss store.
+    string store_name = 1;
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 2;
+    // Name of the object key.
+    // This member is required.
+    string key = 3;
+    // The account ID of the expected bucket owner
+    string expected_bucket_owner = 4;
+    // Sets the maximum number of parts to return
+    int64  max_parts = 5;
+    // Specifies the part after which listing should begin. Only parts with higher part
+    // numbers will be listed.
+    int64  part_number_marker = 6;
+    // Confirms that the requester knows that they will be charged for the request.
+    string request_payer = 7;
+    // Upload ID identifying the multipart upload whose parts are being listed.
+    string upload_id = 8;
+}
+
+// Part
+message Part{
+    // Part Etag
+    string etag = 1;
+    // Last modified time
+    int64 last_modified = 2;
+    // Part number
+    int64 part_number = 3;
+    // Part size
+    int64 size = 4;
+}
+
+// ListPartsOutput
+message ListPartsOutput{
+    // The bucket name containing the object
+    // This member is required
+    string bucket = 1;
+    // Name of the object key.
+    // This member is required.
+    string key = 2;
+    // Upload ID identifying the multipart upload whose parts are being listed.
+    string upload_id = 3;
+    // When a list is truncated, this element specifies the last part in the list, as
+    // well as the value to use for the part-number-marker request parameter in a
+    // subsequent request.
+    string next_part_number_marker = 4;
+    // Maximum number of parts that were allowed in the response.
+    int64 max_parts = 5;
+    // Indicates whether the returned list of parts is truncated. A true value
+    // indicates that the list was truncated. A list can be truncated if the number of
+    // parts exceeds the limit returned in the MaxParts element.
+    bool is_truncated = 6;
+    // Container for elements related to a particular part. A response can contain zero
+    // or more Part elements.
+    repeated Part parts = 7;
+}

@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package file
+package oss
 
 import (
+	"encoding/json"
 	"errors"
 )
 
-var (
-	ErrInvalid    = errors.New("invalid argument")
-	ErrPermission = errors.New("permission denied")
-	ErrExist      = errors.New("file already exists")
-	ErrNotExist   = errors.New("file does not exist")
-	ErrExpired    = errors.New("file expired")
+const (
+	BasicConfiguration = "basic_config"
 )
+
+var (
+	ErrInvalid = errors.New("invalid argument")
+)
+
+// Config wraps configuration for a oss implementation
+type Config struct {
+	Metadata map[string]json.RawMessage `json:"metadata"`
+	Type     string                     `json:"type"`
+}
