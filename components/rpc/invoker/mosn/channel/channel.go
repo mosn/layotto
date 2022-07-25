@@ -52,7 +52,7 @@ type ChannelConfig struct {
 	Ext      map[string]interface{} `json:"ext"`
 }
 
-// GetChannel is get rpc.Channel by config.Protocol
+// GetChannel creates a rpc.Channel according to config.Protocol
 func GetChannel(config ChannelConfig) (rpc.Channel, error) {
 	c, ok := registry[config.Protocol]
 	if !ok {
@@ -66,7 +66,7 @@ func RegistChannel(proto string, f func(config ChannelConfig) (rpc.Channel, erro
 	registry[proto] = f
 }
 
-// simulate tcp connect
+// fakeTcpConn simulates tcp connection. It implements net.Conn
 type fakeTcpConn struct {
 	c net.Conn
 }
