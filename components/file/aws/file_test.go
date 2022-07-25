@@ -18,7 +18,15 @@ package aws
 
 import (
 	"context"
+	"fmt"
+	"reflect"
 	"testing"
+
+	"mosn.io/layotto/components/pkg/utils"
+
+	"mosn.io/layotto/components/oss"
+
+	"github.com/jinzhu/copier"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/stretchr/testify/assert"
@@ -28,6 +36,7 @@ import (
 
 const cfg = `[
 				{
+					"buckets":["bucket1"],
 					"endpoint": "protocol://service-code.region-code.amazonaws.com",
 					"accessKeyID": "accessKey",
 					"accessKeySecret": "secret",
@@ -36,56 +45,28 @@ const cfg = `[
 			]`
 
 func TestAwsOss_Init(t *testing.T) {
-	oss := NewAwsOss()
+	oss := NewAwsFile()
 	err := oss.Init(context.TODO(), &file.FileConfig{})
 	assert.Equal(t, err.Error(), "invalid config for aws oss")
 	err = oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
 	assert.Equal(t, nil, err)
 }
 
-func TestAwsOss_SelectClient(t *testing.T) {
-	oss := &AwsOss{
-		client: make(map[string]*s3.Client),
-		meta:   make(map[string]*AwsOssMetaData),
-	}
-	err := oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
-	assert.Equal(t, nil, err)
-
-	// not specify endpoint, select default client
-	meta := map[string]string{}
-	_, err = oss.selectClient(meta)
-	assert.Nil(t, err)
-
-	// specify endpoint equal config
-	meta["endpoint"] = "protocol://service-code.region-code.amazonaws.com"
-	client, _ := oss.selectClient(meta)
-	assert.NotNil(t, client)
-
-	// specicy not exist endpoint, select default one
-	meta["endpoint"] = "protocol://cn-northwest-1.region-code.amazonaws.com"
-	client, err = oss.selectClient(meta)
-	assert.Nil(t, err)
-	assert.NotNil(t, client)
-	// new client with endpoint
-	oss.client["protocol://cn-northwest-1.region-code.amazonaws.com"] = &s3.Client{}
-	client, _ = oss.selectClient(meta)
-	assert.NotNil(t, client)
-}
-
 func TestAwsOss_IsAwsMetaValid(t *testing.T) {
-	mt := &AwsOssMetaData{}
-	assert.False(t, mt.isAwsMetaValid())
+	mt := &utils.OssMetadata{}
+	a := AwsOss{}
+	assert.False(t, a.isAwsMetaValid(mt))
 	mt.AccessKeyID = "a"
-	assert.False(t, mt.isAwsMetaValid())
-	mt.EndPoint = "a"
-	assert.False(t, mt.isAwsMetaValid())
+	assert.False(t, a.isAwsMetaValid(mt))
+	mt.Endpoint = "a"
+	assert.False(t, a.isAwsMetaValid(mt))
 	mt.AccessKeySecret = "a"
-	assert.True(t, mt.isAwsMetaValid())
+	assert.True(t, a.isAwsMetaValid(mt))
 
 }
 
 func TestAwsOss_Put(t *testing.T) {
-	oss := NewAwsOss()
+	oss := NewAwsFile()
 	err := oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
 	assert.Equal(t, nil, err)
 
@@ -101,7 +82,7 @@ func TestAwsOss_Put(t *testing.T) {
 }
 
 func TestAwsOss_Get(t *testing.T) {
-	oss := NewAwsOss()
+	oss := NewAwsFile()
 	err := oss.Init(context.TODO(), &file.FileConfig{Metadata: []byte(cfg)})
 	assert.Equal(t, nil, err)
 
@@ -121,4 +102,25 @@ func TestAwsOss_Get(t *testing.T) {
 	req.FileName = "/a.txt"
 	_, err = oss.Get(context.Background(), req)
 	assert.Equal(t, err.Error(), "awsoss get file[/a.txt] fail,err: invalid fileName format")
+}
+
+type fun = func() (string, error)
+
+func TestCopier(t *testing.T) {
+	hello := "hello"
+	target := &oss.ListObjectsOutput{}
+	source := &s3.ListObjectsOutput{Delimiter: &hello, EncodingType: "encoding type"}
+	re := reflect.TypeOf(source)
+	h, _ := re.Elem().FieldByName("EncodingType")
+	fmt.Println(h.Type.Name(), h.Type.Kind())
+	err := copier.Copy(target, source)
+	if err != nil {
+		t.Fail()
+	}
+	var s fun
+	if s == nil {
+		fmt.Printf("s is nil \n")
+	}
+	fmt.Println(target)
+
 }

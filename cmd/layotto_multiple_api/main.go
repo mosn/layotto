@@ -22,9 +22,14 @@ import (
 	"strconv"
 	"time"
 
-	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
-	"mosn.io/layotto/components/custom"
-	"mosn.io/layotto/pkg/grpc/dapr"
+	"mosn.io/layotto/components/oss"
+
+	aws_oss "mosn.io/layotto/components/oss/aws"
+
+	aliyun_oss "mosn.io/layotto/components/oss/aliyun"
+
+	aliyun_file "mosn.io/layotto/components/file/aliyun"
+	"mosn.io/layotto/components/file/local"
 
 	"mosn.io/mosn/pkg/istio"
 
@@ -47,14 +52,20 @@ import (
 	_ "mosn.io/layotto/pkg/wasm/uninstall"
 	_ "mosn.io/layotto/pkg/wasm/update"
 
-	"mosn.io/layotto/components/file/local"
-	"mosn.io/layotto/components/file/s3/alicloud"
-	"mosn.io/layotto/components/file/s3/aws"
-	"mosn.io/layotto/components/file/s3/minio"
+	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
 
 	dbindings "github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/bindings/http"
 	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
+	"mosn.io/layotto/components/custom"
+	aws_file "mosn.io/layotto/components/file/aws"
+	"mosn.io/layotto/components/file/minio"
+	"mosn.io/layotto/components/file/qiniu"
+	"mosn.io/layotto/components/file/tencentcloud"
+	"mosn.io/layotto/pkg/grpc/dapr"
+	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
 
 	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/layotto/components/file"
@@ -134,10 +145,6 @@ import (
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 
-	// File
-	"mosn.io/layotto/components/file/s3/qiniu"
-	"mosn.io/layotto/components/file/s3/tencentcloud"
-
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
 	"mosn.io/layotto/pkg/actuator/health"
@@ -151,7 +158,6 @@ import (
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	_ "mosn.io/mosn/pkg/filter/network/proxy"
 	_ "mosn.io/mosn/pkg/filter/stream/flowcontrol"
-	_ "mosn.io/mosn/pkg/filter/stream/grpcmetric"
 	_ "mosn.io/mosn/pkg/metrics/sink"
 	_ "mosn.io/mosn/pkg/metrics/sink/prometheus"
 	_ "mosn.io/mosn/pkg/network"
@@ -262,6 +268,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			// Currently it only support Dapr's InvokeService,secret API,state API and InvokeBinding API.
 			// Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.
 			dapr.NewDaprAPI_Alpha,
+			s3ext.NewS3Server,
 		),
 		// Hello
 		runtime.WithHelloFactory(
@@ -280,12 +287,18 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliOSS", alicloud.NewAliCloudOSS),
+			file.NewFileFactory("aliOSS", aliyun_file.NewAliyunFile),
 			file.NewFileFactory("minioOSS", minio.NewMinioOss),
-			file.NewFileFactory("awsOSS", aws.NewAwsOss),
+			file.NewFileFactory("awsOSS", aws_file.NewAwsFile),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
 			file.NewFileFactory("local", local.NewLocalStore),
 			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
+		),
+
+		//OSS
+		runtime.WithOssFactory(
+			oss.NewFactory("aws.oss", aws_oss.NewAwsOss),
+			oss.NewFactory("aliyun.oss", aliyun_oss.NewAliyunOss),
 		),
 
 		// PubSub

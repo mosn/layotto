@@ -23,6 +23,8 @@ import (
 	"github.com/dapr/components-contrib/state"
 	"google.golang.org/grpc"
 
+	"mosn.io/layotto/components/oss"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/file"
@@ -55,6 +57,7 @@ type ApplicationContext struct {
 	PubSubs               map[string]pubsub.PubSub
 	StateStores           map[string]state.Store
 	Files                 map[string]file.File
+	Oss                   map[string]oss.Oss
 	LockStores            map[string]lock.LockStore
 	Sequencers            map[string]sequencer.Store
 	SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)

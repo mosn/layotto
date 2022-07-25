@@ -24,6 +24,12 @@ import (
 	"net"
 	"testing"
 
+	aws2 "mosn.io/layotto/components/oss/aws"
+
+	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
+
+	"mosn.io/layotto/components/oss"
+
 	"github.com/dapr/components-contrib/bindings"
 	"google.golang.org/grpc/test/bufconn"
 
@@ -828,4 +834,33 @@ func runtimeWithCallbackConnection(t *testing.T) (*MosnRuntime, *mock_appcallbac
 	rt := NewMosnRuntime(cfg)
 	rt.AppCallbackConn = callbackClient
 	return rt, mockAppCallbackServer
+}
+
+func TestMosnRuntimeWithOssConfig(t *testing.T) {
+	t.Run("normal", func(t *testing.T) {
+		// 1. construct config
+		cfg := &MosnRuntimeConfig{
+			Oss: map[string]oss.Config{
+				"awsdemo": {Type: "aws.oss"},
+			},
+		}
+		// 2. construct runtime
+		rt := NewMosnRuntime(cfg)
+		// 3. Run
+		server, err := rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+				s3ext.NewS3Server,
+			),
+			WithOssFactory(
+				oss.NewFactory("aws.oss", aws2.NewAwsOss),
+			),
+		)
+		// 4. assert
+		assert.Equal(t, "invalid argument", err.Error())
+		assert.Nil(t, server)
+		// 5. stop
+		rt.Stop()
+	})
 }
