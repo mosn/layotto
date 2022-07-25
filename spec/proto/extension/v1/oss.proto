@@ -111,6 +111,7 @@ service ObjectStorageService{
 }
 
 message GetObjectInput {
+    // Required. The name of oss store.
     string store_name = 1;
     // The bucket name containing the object
     // This member is required
@@ -223,6 +224,7 @@ message GetObjectOutput {
 }
 
 message PutObjectInput{
+    // Required. The name of oss store.
     string store_name = 1;
     // Object data.
     bytes body = 2;
@@ -281,6 +283,7 @@ message PutObjectOutput{
 }
 
 message DeleteObjectInput{
+    // Required. The name of oss store.
     string store_name = 1;
     // The bucket name to which the DEL action was initiated
     // This member is required.
@@ -311,6 +314,7 @@ message DeleteObjectOutput{
 }
 
 message PutObjectTaggingInput{
+    // Required. The name of oss store.
     string store_name = 1;
     // The bucket name containing the object
     // This member is required.
@@ -331,6 +335,7 @@ message PutObjectTaggingOutput{
 }
 
 message DeleteObjectTaggingInput{
+    // Required. The name of oss store.
     string store_name = 1;
     // The bucket name containing the objects from which to remove the tags.
     string bucket = 2;
@@ -352,6 +357,7 @@ message DeleteObjectTaggingOutput{
 }
 
 message GetObjectTaggingInput{
+    // Required. The name of oss store.
     string store_name = 1;
     // The bucket name containing the object for which to get the tagging information.
     // This member is required.
@@ -387,6 +393,7 @@ message CopySource{
     string copy_source_version_id = 3;
 }
 message CopyObjectInput{
+    // Required. The name of oss store.
     string store_name = 1;
     // The name of the destination bucket. When using this action with an access point
     // This member is required.
@@ -437,6 +444,7 @@ message ObjectIdentifier{
     string version_id = 2;
 }
 message DeleteObjectsInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     Delete delete = 3;
@@ -461,6 +469,7 @@ message DeleteObjectsOutput{
 }
 
 message ListObjectsInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     // A delimiter is a character you use to group keys.
@@ -539,6 +548,7 @@ message Object{
 }
 
 message GetObjectCannedAclInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -554,6 +564,7 @@ message GetObjectCannedAclOutput{
 }
 
 message PutObjectCannedAclInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -567,6 +578,7 @@ message PutObjectCannedAclOutput{
 }
 
 message RestoreObjectInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -583,6 +595,7 @@ message RestoreObjectOutput{
 }
 
 message CreateMultipartUploadInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -637,6 +650,7 @@ message CreateMultipartUploadOutput{
 }
 
 message UploadPartInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -670,6 +684,7 @@ message UploadPartOutput{
 }
 
 message UploadPartCopyInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -710,6 +725,7 @@ message CompletedMultipartUpload{
     repeated CompletedPart parts = 1;
 }
 message CompleteMultipartUploadInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -742,6 +758,7 @@ message CompleteMultipartUploadOutput{
 }
 
 message AbortMultipartUploadInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -757,6 +774,7 @@ message AbortMultipartUploadOutput{
 }
 
 message ListMultipartUploadsInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     // Character you use to group keys. All keys that contain the same string between
@@ -835,6 +853,7 @@ message ListMultipartUploadsOutput{
 }
 
 message ListObjectVersionsInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     // A delimiter is a character that you specify to group keys. All keys that contain
@@ -903,6 +922,7 @@ message ListObjectVersionsOutput{
 }
 
 message HeadObjectInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -931,6 +951,7 @@ message HeadObjectOutput{
 }
 
 message IsObjectExistInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -941,6 +962,7 @@ message IsObjectExistOutput{
 }
 
 message SignURLInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -954,6 +976,7 @@ message SignURLOutput{
 }
 
 message UpdateBandwidthRateLimitInput{
+    // Required. The name of oss store.
     string store_name = 1;
     // The average upload/download bandwidth rate limit in bits per second.
     int64 average_rate_limit_in_bits_per_sec = 2;
@@ -962,6 +985,7 @@ message UpdateBandwidthRateLimitInput{
 }
 
 message AppendObjectInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;
@@ -984,6 +1008,7 @@ message AppendObjectOutput{
 }
 
 message ListPartsInput{
+    // Required. The name of oss store.
     string store_name = 1;
     string bucket = 2;
     string key = 3;

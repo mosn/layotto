@@ -435,9 +435,9 @@ type ListMultipartUploadsOutput struct {
 	KeyMarker          string             `json:"key_marker,omitempty"`
 	MaxUploads         int32              `json:"max_uploads,omitempty"`
 	NextKeyMarker      string             `json:"next_key_marker,omitempty"`
-	NextUploadIdMarker string             `json:"next_upload_id_marker,omitempty"`
+	NextUploadIDMarker string             `json:"next_upload_id_marker,omitempty"`
 	Prefix             string             `json:"prefix,omitempty"`
-	UploadIdMarker     string             `json:"upload_id_marker,omitempty"`
+	UploadIDMarker     string             `json:"upload_id_marker,omitempty"`
 	Uploads            []*MultipartUpload `json:"uploads,omitempty"`
 }
 type MultipartUpload struct {

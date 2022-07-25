@@ -20,12 +20,18 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"mosn.io/layotto/components/pkg/utils"
 
 	l8oss "mosn.io/layotto/components/oss"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+)
+
+const (
+	connectTimeoutSec   = "connectTimeoutSec"
+	readWriteTimeoutSec = "readWriteTimeout"
 )
 
 type AliyunOSS struct {
@@ -38,13 +44,29 @@ func NewAliyunOss() l8oss.Oss {
 }
 
 func (a *AliyunOSS) Init(ctx context.Context, config *l8oss.Config) error {
+	var connectTimeout, readWriteTimeout int64
 	a.basicConf = config.Metadata[l8oss.BasicConfiguration]
 	m := &utils.OssMetadata{}
 	err := json.Unmarshal(a.basicConf, &m)
 	if err != nil {
 		return l8oss.ErrInvalid
 	}
-	client, err := oss.New(m.Endpoint, m.AccessKeyID, m.AccessKeySecret)
+	connectTimeout = 30
+	readWriteTimeout = 60
+	if t, ok := config.Metadata[connectTimeoutSec]; ok {
+		v, err := strconv.Atoi(string(t))
+		if err == nil {
+			connectTimeout = int64(v)
+		}
+	}
+	if t, ok := config.Metadata[readWriteTimeoutSec]; ok {
+		v, err := strconv.Atoi(string(t))
+		if err == nil {
+			readWriteTimeout = int64(v)
+		}
+	}
+
+	client, err := oss.New(m.Endpoint, m.AccessKeyID, m.AccessKeySecret, oss.Timeout(connectTimeout, readWriteTimeout))
 	if err != nil {
 		return err
 	}
@@ -396,9 +418,9 @@ func (a *AliyunOSS) ListMultipartUploads(ctx context.Context, req *l8oss.ListMul
 		Delimiter:          resp.Delimiter,
 		Prefix:             resp.Prefix,
 		KeyMarker:          resp.KeyMarker,
-		UploadIdMarker:     resp.UploadIDMarker,
+		UploadIDMarker:     resp.UploadIDMarker,
 		NextKeyMarker:      resp.NextKeyMarker,
-		NextUploadIdMarker: resp.NextUploadIDMarker,
+		NextUploadIDMarker: resp.NextUploadIDMarker,
 		MaxUploads:         int32(resp.MaxUploads),
 		IsTruncated:        resp.IsTruncated,
 		CommonPrefixes:     resp.CommonPrefixes,

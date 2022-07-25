@@ -80,7 +80,7 @@ func TestAwsOss(t *testing.T) {
 	_, err = instance.DeleteObject(context.TODO(), &oss.DeleteObjectInput{})
 	assert.NotNil(t, err)
 	_, err = instance.DeleteObjects(context.TODO(), &oss.DeleteObjectsInput{
-		Delete: &oss.Delete{},
+		Delete: &oss.Delete{Objects: []*oss.ObjectIdentifier{{Key: "object", VersionId: "version"}}},
 	})
 	assert.NotNil(t, err)
 	_, err = instance.DeleteObjectTagging(context.TODO(), &oss.DeleteObjectTaggingInput{})

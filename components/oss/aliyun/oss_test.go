@@ -57,61 +57,62 @@ func TestInitAliyunOss(t *testing.T) {
 
 func TestAliyunOss(t *testing.T) {
 	instance := NewAliyunOss()
-	instance.Init(context.TODO(), &l8oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte(confWithoutUidAndBucket)}})
-	appendObjectResp, err := instance.AppendObject(context.TODO(), &oss.AppendObjectInput{})
+	instance.Init(context.TODO(), &l8oss.Config{Metadata: map[string]json.RawMessage{connectTimeoutSec: []byte("1"), readWriteTimeoutSec: []byte("1"), oss.BasicConfiguration: []byte(confWithoutUidAndBucket)}})
+	appendObjectResp, err := instance.AppendObject(context.TODO(), &oss.AppendObjectInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
 	assert.Nil(t, appendObjectResp)
 
-	_, err = instance.AbortMultipartUpload(context.TODO(), &oss.AbortMultipartUploadInput{})
+	_, err = instance.AbortMultipartUpload(context.TODO(), &oss.AbortMultipartUploadInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
 
-	_, err = instance.CompleteMultipartUpload(context.TODO(), &oss.CompleteMultipartUploadInput{})
+	_, err = instance.CompleteMultipartUpload(context.TODO(), &oss.CompleteMultipartUploadInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
 
-	_, err = instance.CopyObject(context.TODO(), &oss.CopyObjectInput{})
+	_, err = instance.CopyObject(context.TODO(), &oss.CopyObjectInput{Bucket: "bucket", CopySource: &oss.CopySource{}})
 	assert.NotNil(t, err)
 
-	_, err = instance.CreateMultipartUpload(context.TODO(), &oss.CreateMultipartUploadInput{})
+	_, err = instance.CreateMultipartUpload(context.TODO(), &oss.CreateMultipartUploadInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
 
-	_, err = instance.DeleteObject(context.TODO(), &oss.DeleteObjectInput{})
+	_, err = instance.DeleteObject(context.TODO(), &oss.DeleteObjectInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
 	_, err = instance.DeleteObjects(context.TODO(), &oss.DeleteObjectsInput{
+		Bucket: "bucket",
 		Delete: &oss.Delete{},
 	})
 	assert.NotNil(t, err)
-	_, err = instance.DeleteObjectTagging(context.TODO(), &oss.DeleteObjectTaggingInput{})
+	_, err = instance.DeleteObjectTagging(context.TODO(), &oss.DeleteObjectTaggingInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
 
-	_, err = instance.GetObject(context.TODO(), &oss.GetObjectInput{})
+	_, err = instance.GetObject(context.TODO(), &oss.GetObjectInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
-	_, err = instance.GetObjectCannedAcl(context.TODO(), &oss.GetObjectCannedAclInput{})
+	_, err = instance.GetObjectCannedAcl(context.TODO(), &oss.GetObjectCannedAclInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
-	_, err = instance.GetObjectTagging(context.TODO(), &oss.GetObjectTaggingInput{})
-	assert.NotNil(t, err)
-
-	_, err = instance.HeadObject(context.TODO(), &oss.HeadObjectInput{})
+	_, err = instance.GetObjectTagging(context.TODO(), &oss.GetObjectTaggingInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
 
-	_, err = instance.IsObjectExist(context.TODO(), &oss.IsObjectExistInput{})
+	_, err = instance.HeadObject(context.TODO(), &oss.HeadObjectInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
 
-	_, err = instance.ListParts(context.TODO(), &oss.ListPartsInput{})
+	_, err = instance.IsObjectExist(context.TODO(), &oss.IsObjectExistInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
 
-	_, err = instance.ListMultipartUploads(context.TODO(), &oss.ListMultipartUploadsInput{})
+	_, err = instance.ListParts(context.TODO(), &oss.ListPartsInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
-	_, err = instance.ListObjects(context.TODO(), &oss.ListObjectsInput{})
+
+	_, err = instance.ListMultipartUploads(context.TODO(), &oss.ListMultipartUploadsInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
-	_, err = instance.ListObjectVersions(context.TODO(), &oss.ListObjectVersionsInput{})
+	_, err = instance.ListObjects(context.TODO(), &oss.ListObjectsInput{Bucket: "bucket"})
+	assert.NotNil(t, err)
+	_, err = instance.ListObjectVersions(context.TODO(), &oss.ListObjectVersionsInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
 
 	stream := buffer.NewIoBufferString("hello")
-	_, err = instance.PutObject(context.TODO(), &oss.PutObjectInput{DataStream: stream})
+	_, err = instance.PutObject(context.TODO(), &oss.PutObjectInput{DataStream: stream, Bucket: "bucket"})
 	assert.NotNil(t, err)
-	_, err = instance.PutObjectCannedAcl(context.TODO(), &oss.PutObjectCannedAclInput{})
+	_, err = instance.PutObjectCannedAcl(context.TODO(), &oss.PutObjectCannedAclInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
-	_, err = instance.PutObjectTagging(context.TODO(), &oss.PutObjectTaggingInput{})
+	_, err = instance.PutObjectTagging(context.TODO(), &oss.PutObjectTaggingInput{Bucket: "bucket"})
 	assert.NotNil(t, err)
 
 	_, err = instance.RestoreObject(context.TODO(), &oss.RestoreObjectInput{})
