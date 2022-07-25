@@ -22,6 +22,12 @@ type Config struct {
 }
 
 type Item struct {
-	Name string `json:"name"`
-	Key  string `json:"key"`
+	//secret component name, such as : local.file
+	StoreName string `json:"store_name"`
+	// key in the secret component
+	Key string `json:"key"`
+	//sub key in the secret component
+	SubKey string `json:"sub_key"`
+	// key need to inject into metadata
+	InjectAs string `json:"inject_as"`
 }
