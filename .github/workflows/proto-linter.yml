@@ -1,0 +1,22 @@
+name: Layotto Env Pipeline 🌊
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    name: "🍀 Proto Validation"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code 
+        uses: actions/checkout@v2
+      - name: buf-setup
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          version: '1.6.0'
+      - name: buf-lint
+        uses: bufbuild/buf-lint-action@v1
+      - name: check it
+        run: buf lint
