@@ -12,11 +12,14 @@ jobs:
     steps:
       - name: Check out code 
         uses: actions/checkout@v2
+
       - name: buf-setup
         uses: bufbuild/buf-setup-action@v1
         with:
           version: '1.6.0'
-      - name: buf-lint
+
+      - name: Install buf-lint
         uses: bufbuild/buf-lint-action@v1
-      - name: check it
+
+      - name: Check comments in proto files
         run: buf lint
