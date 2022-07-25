@@ -1,98 +1,109 @@
 {
-	"servers":[
-		{
-			"default_log_path": "stdout",
-			"default_log_level": "DEBUG",
-			"routers": [
-				{
-					"router_config_name":"http_router",
-					"virtual_hosts":[{
-						"name":"http_host",
-						"domains": ["*"],
-						"routers": [
-							{
-								"match":{
-									"headers": [
-										{
-											"name":"id",
-											"value":"HelloService:1.0"
-										}
-									]
-								},
-								"route":{"cluster_name":"http_server"}
-							}
-						]
-					}]
-				}],
-			"listeners":[
-				{
-					"name":"grpc",
-					"address": "127.0.0.1:34904",
-					"bind_port": true,
-					"filter_chains": [{
-						"filters": [
-							{
-								"type": "grpc",
-								"config": {
-									"server_name":"runtime",
-									"grpc_config": {
-										"rpcs": {
-											"mosn": {
-												"config": {
-													"channel": [{
-														"size": 16,
-														"protocol": "http",
-														"listener": "egress_runtime_http"
-													}]
-												}
-											}
-										}
-									}
-								}
-							}
-						]
-					}]
-				},
-				{
-					"name": "egress_runtime_http",
-					"type": "egress",
-					"address": "0.0.0.0:12221",
-					"bind_port": true,
-					"network": "tcp",
-					"filter_chains": [
-						{
-							"filters": [
-								{
-									"type": "proxy",
-									"config": {
-										"downstream_protocol": "Http1",
-										"name": "proxy_config",
-										"router_config_name": "http_router",
-										"upstream_protocol": "Http1"
-									}
-								}
-							]
-						}
-					]
-				}
-			]
-		}
-	],
-	"cluster_manager": {
-		"tls_context": {},
-		"clusters": [
-			{
-				"name": "http_server",
-				"type": "SIMPLE",
-				"lb_type": "LB_RANDOM",
-				"hosts": [
-					{
-						"address": "127.0.0.1:8889",
-						"hostname": "downstream_machine1",
-						"weight": 1
-					}
-				]
-			}
-		]
-	}
+  "servers": [
+    {
+      "default_log_path": "stdout",
+      "default_log_level": "DEBUG",
+      "routers": [
+        {
+          "router_config_name": "http_router",
+          "virtual_hosts": [
+            {
+              "name": "http_host",
+              "domains": [
+                "*"
+              ],
+              "routers": [
+                {
+                  "match": {
+                    "headers": [
+                      {
+                        "name": "id",
+                        "value": "HelloService:1.0"
+                      }
+                    ]
+                  },
+                  "route": {
+                    "cluster_name": "http_server"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "listeners": [
+        {
+          "name": "grpc",
+          "address": "127.0.0.1:34904",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "rpcs": {
+                        "mosn": {
+                          "config": {
+                            "channel": [
+                              {
+                                "size": 16,
+                                "protocol": "http",
+                                "listener": "egress_runtime_http"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "egress_runtime_http",
+          "type": "egress",
+          "address": "0.0.0.0:12221",
+          "bind_port": true,
+          "network": "tcp",
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "proxy",
+                  "config": {
+                    "downstream_protocol": "Http1",
+                    "name": "proxy_config",
+                    "router_config_name": "http_router",
+                    "upstream_protocol": "Http1"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "cluster_manager": {
+    "tls_context": {},
+    "clusters": [
+      {
+        "name": "http_server",
+        "type": "SIMPLE",
+        "lb_type": "LB_RANDOM",
+        "hosts": [
+          {
+            "address": "127.0.0.1:8889",
+            "hostname": "downstream_machine1",
+            "weight": 1
+          }
+        ]
+      }
+    ]
+  }
 }
