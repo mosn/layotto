@@ -151,12 +151,15 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 
 			if n > 0 {
 				iframe, decodeErr := m.proto.Decode(context.TODO(), wc.buf)
-				if err != nil {
+				if decodeErr != nil {
 					err = decodeErr
 					log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
 					break
 				}
 				frame, ok := iframe.(api.XRespFrame)
+				if frame == nil {
+					continue
+				}
 				if !ok {
 					err = errors.New("[runtime][rpc]xchannel type not XRespFrame")
 					log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
