@@ -166,6 +166,7 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 					break
 				}
 				callChan <- call{resp: frame}
+				return
 
 			}
 			if err != nil {
