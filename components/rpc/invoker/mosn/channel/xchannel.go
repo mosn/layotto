@@ -139,7 +139,7 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 		wc.buf = buffer.NewIoBuffer(defaultBufSize)
 		for {
 			// read data from connection
-			n, readErr := buf.ReadOnce(conn)
+			n, readErr := wc.buf.ReadOnce(conn)
 			if readErr != nil {
 				err = readErr
 				if readErr == io.EOF {
