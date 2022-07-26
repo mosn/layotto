@@ -110,7 +110,6 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 		return nil, err
 	}
 	wc := &wrapConn{Conn: conn}
-	wc.state = &xstate{calls: map[uint32]chan call{}}
 
 	// 3. encode request
 	frame := m.proto.ToFrame(req)
