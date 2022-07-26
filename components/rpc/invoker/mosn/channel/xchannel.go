@@ -252,9 +252,8 @@ func (m *xChannel) Invoke(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	if _, ok := req.Header[rpc.TargetAddress]; ok && len(req.Header[rpc.TargetAddress]) > 0 {
 		return m.InvokeWithTargetAddress(req)
-	} else {
-		return m.Invoke(req)
 	}
+	return m.Invoke(req)
 }
 
 // removeCall is delete xstate.calls by id
