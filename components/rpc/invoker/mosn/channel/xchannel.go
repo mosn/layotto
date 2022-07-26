@@ -20,10 +20,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"mosn.io/pkg/buffer"
+	"mosn.io/pkg/log"
 
 	"mosn.io/api"
 
@@ -93,8 +97,101 @@ type xChannel struct {
 	pool  *connPool
 }
 
-// Do is handle RPCRequest to RPCResponse
-func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
+// InvokeWithTargetAddress send request to specific provider address
+func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
+	// 1. context.WithTimeout
+	timeout := time.Duration(req.Timeout) * time.Millisecond
+	ctx, cancel := context.WithTimeout(req.Ctx, timeout)
+	defer cancel()
+
+	// 2. get connection with specific address
+	conn, err := net.Dial("tcp", req.Header[rpc.TargetAddress][0])
+	if err != nil {
+		return nil, err
+	}
+	wc := &wrapConn{Conn: conn}
+	wc.state = &xstate{calls: map[uint32]chan call{}}
+
+	// 3. encode request
+	frame := m.proto.ToFrame(req)
+	buf, encErr := m.proto.Encode(req.Ctx, frame)
+	if encErr != nil {
+		return nil, common.Error(common.InternalCode, encErr.Error())
+	}
+
+	callChan := make(chan call, 1)
+	// 4. set timeout
+	deadline, _ := ctx.Deadline()
+	if err := conn.SetWriteDeadline(deadline); err != nil {
+		return nil, common.Error(common.UnavailebleCode, err.Error())
+	}
+
+	// 5. read package
+	go func() {
+		var err error
+		defer func() {
+			if err != nil {
+				callChan <- call{err: err}
+			}
+			wc.Close()
+		}()
+
+		wc.buf = buffer.NewIoBuffer(defaultBufSize)
+		for {
+			// read data from connection
+			n, readErr := buf.ReadOnce(conn)
+			if readErr != nil {
+				err = readErr
+				if readErr == io.EOF {
+					log.DefaultLogger.Debugf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
+				} else {
+					log.DefaultLogger.Errorf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
+				}
+			}
+
+			if n > 0 {
+				iframe, decodeErr := m.proto.Decode(context.TODO(), wc.buf)
+				if err != nil {
+					err = decodeErr
+					log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
+					break
+				}
+				frame, ok := iframe.(api.XRespFrame)
+				if !ok {
+					err = errors.New("[runtime][rpc]xchannel type not XRespFrame")
+					log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
+					break
+				}
+				callChan <- call{resp: frame}
+
+			}
+			if err != nil {
+				break
+			}
+			if wc.buf != nil && wc.buf.Len() == 0 && wc.buf.Cap() > maxBufSize {
+				wc.buf.Free()
+				wc.buf.Alloc(defaultBufSize)
+			}
+		}
+	}()
+
+	// 6. write packet
+	if _, err := conn.Write(buf.Bytes()); err != nil {
+		return nil, common.Error(common.UnavailebleCode, err.Error())
+	}
+
+	select {
+	case res := <-callChan:
+		if res.err != nil {
+			return nil, common.Error(common.UnavailebleCode, res.err.Error())
+		}
+		return m.proto.FromFrame(res.resp)
+	case <-ctx.Done():
+		return nil, common.Error(common.TimeoutCode, ErrTimeout.Error())
+	}
+}
+
+func (m *xChannel) Invoke(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	// 1. context.WithTimeout
 	timeout := time.Duration(req.Timeout) * time.Millisecond
 	ctx, cancel := context.WithTimeout(req.Ctx, timeout)
@@ -148,6 +245,15 @@ func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	case <-ctx.Done():
 		m.removeCall(xstate, id)
 		return nil, common.Error(common.TimeoutCode, ErrTimeout.Error())
+	}
+}
+
+// Do is handle RPCRequest to RPCResponse
+func (m *xChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
+	if _, ok := req.Header[rpc.TargetAddress]; ok && len(req.Header[rpc.TargetAddress]) > 0 {
+		return m.InvokeWithTargetAddress(req)
+	} else {
+		return m.Invoke(req)
 	}
 }
 
