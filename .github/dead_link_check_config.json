@@ -13,6 +13,9 @@
       "pattern": "^https://console.cloud.tencent.com/cos/bucket"
     },
     {
+      "pattern": "^https://docs.buf.build/"
+    },
+    {
       "pattern": "^#"
     }
   ],
