@@ -23,7 +23,12 @@ import (
 )
 
 const (
-	TargetAddress = "rpc_target_address"
+	TargetAddress    = "rpc_target_address"
+	RequestTimeoutMs = "rpc_request_timeout"
+)
+
+const (
+	DefaultRequestTimeoutMs = 3000
 )
 
 // RPCHeader is storage header info
