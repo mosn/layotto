@@ -1,0 +1,188 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: layotto-runtime-config
+data:
+  config.json: |
+    {
+      "servers": [
+        {
+          "default_log_path": "stdout",
+          "default_log_level": "DEBUG",
+          "routers": [
+            {
+              "router_config_name": "actuator_dont_need_router"
+            }
+          ],
+          "listeners": [
+            {
+              "name": "grpc",
+              "address": "0.0.0.0:34904",
+              "bind_port": true,
+              "filter_chains": [
+                {
+                  "filters": [
+                    {
+                      "type": "grpc",
+                      "config": {
+                        "server_name": "runtime",
+                        "grpc_config": {
+                          "hellos": {
+                            "quick_start_demo": {
+                              "type": "helloworld",
+                              "hello": "greeting"
+                            }
+                          },
+                          "state": {
+                            "state_demo": {
+                              "type": "in-memory",
+                              "metadata": {
+                              }
+                            }
+                          },
+                          "lock": {
+                            "lock_demo": {
+                              "type": "in-memory",
+                              "metadata": {
+                              }
+                            }
+                          },
+                          "pub_subs": {
+                            "pub_subs_demo": {
+                              "type": "in-memory",
+                              "metadata": {
+                                "consumerID": "1"
+                              }
+                            }
+                          },
+                          "sequencer": {
+                            "sequencer_demo": {
+                              "type": "in-memory",
+                              "metadata": {}
+                            }
+                          },
+                          "secret_store": {
+                            "secret_demo": {
+                              "type": "local.env",
+                              "metadata": {
+                              }
+                            }
+                          },
+                          "bindings": {
+                            "bindings_demo": {
+                              "type": "http",
+                              "metadata": {
+                                "url": "https://mosn.io/layotto"
+                              }
+                            }
+                          },
+                          "custom_component": {
+                            "helloworld": {
+                              "demo": {
+                                "type": "in-memory",
+                                "metadata": {}
+                              }
+                            }
+                          },
+                          "app": {
+                            "app_id": "app1",
+                            "grpc_callback_port": 9999
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "actuator",
+              "address": "127.0.0.1:34999",
+              "bind_port": true,
+              "filter_chains": [
+                {
+                  "filters": [
+                    {
+                      "type": "proxy",
+                      "config": {
+                        "downstream_protocol": "Http1",
+                        "upstream_protocol": "Http1",
+                        "router_config_name": "actuator_dont_need_router"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "stream_filters": [
+                {
+                  "type": "actuator_filter"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tracing": {
+        "enable": true,
+        "driver": "SOFATracer",
+        "config": {
+          "generator": "mosntracing",
+          "exporter": [
+            "stdout"
+          ]
+        }
+      },
+      "metrics": {
+        "sinks": [
+          {
+            "type": "prometheus",
+            "config": {
+              "port": 34903
+            }
+          }
+        ]
+      }
+    }
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counter-deployment
+  labels:
+    app: counter-deployment
+spec:
+  selector:
+    matchLabels:
+      app: counter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: counter
+    spec:
+      containers:
+        # Your app
+        - name: count
+          image: busybox:1.28
+          args: [ /bin/sh, -c,
+                  'i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done' ]
+        # Layotto
+        - name: layotto-runtime
+          image: layotto/layotto:latest
+          command: [ "/runtime/layotto", "start" ]
+          args: [ "-c", "/runtime/configs/config.json" ]
+          ports:
+            - containerPort: 34904
+          volumeMounts:
+            - name: runtime-config
+              mountPath: /runtime/configs
+              readOnly: false
+      volumes:
+        - name: runtime-config
+          configMap:
+            name: layotto-runtime-config
+            items:
+              - key: config.json
+                path: config.json
