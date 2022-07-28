@@ -78,14 +78,17 @@ func transferData(source interface{}, target interface{}) error {
 }
 
 func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.ObjectStorageService_GetObjectServer) error {
+	// 1. validate
 	if s.ossInstance[req.StoreName] == nil {
 		return status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
+	// 2. convert request
 	st := &l8s3.GetObjectInput{}
 	err := transferData(req, st)
 	if err != nil {
 		return status.Errorf(codes.InvalidArgument, "transfer request data fail for GetObject,err: %+v", err)
 	}
+	// 3. find the component
 	result, err := s.ossInstance[req.StoreName].GetObject(stream.Context(), st)
 	if err != nil {
 		return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
