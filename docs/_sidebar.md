@@ -42,6 +42,7 @@
   - API reference
     - [spec/proto/runtime/v1/runtime.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/runtime_v1.md)
     - [spec/proto/runtime/v1/appcallback.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
+    - [spec/proto/extension/v1/appcallback.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/oss_v1.md)
   - SDK reference
     - [java sdk](https://github.com/layotto/java-sdk)
     - [.net sdk](https://github.com/layotto/dotnet-sdk)
