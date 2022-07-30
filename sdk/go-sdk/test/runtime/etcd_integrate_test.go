@@ -20,6 +20,7 @@ import (
 	"context"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -28,9 +29,16 @@ import (
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
-var componentName = "state_demo"
+const (
+	appid = "testApplication"
+	group = "application"
+)
 
-func TestRedisHelloApi(t *testing.T) {
+var (
+	storeName string
+)
+
+func TestEtcdHelloApi(t *testing.T) {
 	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
@@ -47,7 +55,7 @@ func TestRedisHelloApi(t *testing.T) {
 	assert.Equal(t, "greeting", helloResp.Hello)
 }
 
-func TestRedisStateApi(t *testing.T) {
+func TestEtcdConfigurationApi(t *testing.T) {
 	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
@@ -55,18 +63,29 @@ func TestRedisStateApi(t *testing.T) {
 	defer cli.Close()
 
 	ctx := context.Background()
-
-	stateKey := "MyKey"
-	stateValue := []byte("Hello Layotto!")
-	err = cli.SaveState(ctx, componentName, stateKey, stateValue)
+	item1 := &client.ConfigurationItem{Group: group, Label: "test", Key: "key1", Content: "value1", Tags: map[string]string{
+		"release": "1.0.0",
+		"feature": "test1",
+	}}
+	item2 := &client.ConfigurationItem{Group: group, Label: "test", Key: "key2", Content: "value2", Tags: map[string]string{
+		"release": "2.0.0",
+		"feature": "test2",
+	}}
+	storeName = "config_demo"
+	saveRequest := &client.SaveConfigurationRequest{StoreName: storeName, AppId: appid}
+	saveRequest.Items = append(saveRequest.Items, item1)
+	saveRequest.Items = append(saveRequest.Items, item2)
+	err = cli.SaveConfiguration(ctx, saveRequest)
 	assert.Nil(t, err)
 
-	stateResp, err := cli.GetState(ctx, "state_demo", stateKey)
+	// Since configuration data might be cached and eventual-consistent,we need to sleep a while before querying new data
+	time.Sleep(time.Second * 2)
+	getRequest := &client.ConfigurationRequestItem{StoreName: storeName, AppId: appid, Group: group, Label: "test", Keys: []string{"key1", "key2"}}
+	_, err = cli.GetConfiguration(ctx, getRequest)
 	assert.Nil(t, err)
-	assert.Equal(t, stateValue, stateResp.Value)
 }
 
-func TestRedisLockApi(t *testing.T) {
+func TestEtcdLockApi(t *testing.T) {
 	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
@@ -137,7 +156,7 @@ func TestRedisLockApi(t *testing.T) {
 	wg.Wait()
 }
 
-func TestRedisSequencerApi(t *testing.T) {
+func TestEtcdSequencerApi(t *testing.T) {
 	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
@@ -145,7 +164,7 @@ func TestRedisSequencerApi(t *testing.T) {
 	defer cli.Close()
 
 	ctx := context.Background()
-	sequencerKey := "MyKey"
+	sequencerKey := "MyEtcdSqKey"
 
 	for i := 1; i < 10; i++ {
 		resp, err := cli.GetNextId(ctx, &runtimev1pb.GetNextIdRequest{
