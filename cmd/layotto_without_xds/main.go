@@ -259,7 +259,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliOSS", aliyun.NewAliyunFile),
+			file.NewFileFactory("aliyun.oss", aliyun.NewAliyunFile),
 			file.NewFileFactory("minioOSS", minio.NewMinioOss),
 			file.NewFileFactory("aws.s3", aws_file.NewAwsFile),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
