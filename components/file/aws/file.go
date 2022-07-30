@@ -100,11 +100,11 @@ func (a *AwsOss) Put(ctx context.Context, st *file.PutFileStu) error {
 	//var bodySize int64
 	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
-		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
+		return fmt.Errorf("aws.s3 put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	key, err := util.GetFileName(st.FileName)
 	if err != nil {
-		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
+		return fmt.Errorf("aws.s3 put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	client, err := a.selectClient()
 	if err != nil {
@@ -130,11 +130,11 @@ func (a *AwsOss) selectClient() (*s3.Client, error) {
 func (a *AwsOss) Get(ctx context.Context, st *file.GetFileStu) (io.ReadCloser, error) {
 	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
-		return nil, fmt.Errorf("awsoss get file[%s] fail,err: %s", st.FileName, err.Error())
+		return nil, fmt.Errorf("aws.s3 get file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	key, err := util.GetFileName(st.FileName)
 	if err != nil {
-		return nil, fmt.Errorf("awsoss get file[%s] fail,err: %s", st.FileName, err.Error())
+		return nil, fmt.Errorf("aws.s3 get file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	input := &s3.GetObjectInput{
 		Bucket: &bucket,
@@ -186,11 +186,11 @@ func (a *AwsOss) List(ctx context.Context, st *file.ListRequest) (*file.ListResp
 func (a *AwsOss) Del(ctx context.Context, st *file.DelRequest) error {
 	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
-		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
+		return fmt.Errorf("aws.s3 put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	key, err := util.GetFileName(st.FileName)
 	if err != nil {
-		return fmt.Errorf("awsoss put file[%s] fail,err: %s", st.FileName, err.Error())
+		return fmt.Errorf("aws.s3 put file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	input := &s3.DeleteObjectInput{
 		Bucket: &bucket,
@@ -209,11 +209,11 @@ func (a *AwsOss) Del(ctx context.Context, st *file.DelRequest) error {
 func (a *AwsOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.FileMetaResp, error) {
 	bucket, err := util.GetBucketName(st.FileName)
 	if err != nil {
-		return nil, fmt.Errorf("awsoss stat file[%s] fail,err: %s", st.FileName, err.Error())
+		return nil, fmt.Errorf("aws.s3 stat file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	key, err := util.GetFileName(st.FileName)
 	if err != nil {
-		return nil, fmt.Errorf("awsoss stat file[%s] fail,err: %s", st.FileName, err.Error())
+		return nil, fmt.Errorf("aws.s3 stat file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	input := &s3.HeadObjectInput{
 		Bucket: &bucket,
@@ -228,7 +228,7 @@ func (a *AwsOss) Stat(ctx context.Context, st *file.FileMetaRequest) (*file.File
 		if strings.Contains(err.Error(), "no such key") {
 			return nil, file.ErrNotExist
 		}
-		return nil, fmt.Errorf("awsoss stat file[%s] fail,err: %s", st.FileName, err.Error())
+		return nil, fmt.Errorf("aws.s3 stat file[%s] fail,err: %s", st.FileName, err.Error())
 	}
 	resp := &file.FileMetaResp{}
 	resp.Size = out.ContentLength

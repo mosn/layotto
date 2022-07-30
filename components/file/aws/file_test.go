@@ -74,11 +74,11 @@ func TestAwsOss_Put(t *testing.T) {
 		FileName: "",
 	}
 	err = oss.Put(context.Background(), req)
-	assert.Equal(t, err.Error(), "awsoss put file[] fail,err: invalid fileName format")
+	assert.Equal(t, err.Error(), "aws.s3 put file[] fail,err: invalid fileName format")
 
 	req.FileName = "/a.txt"
 	err = oss.Put(context.Background(), req)
-	assert.Equal(t, err.Error(), "awsoss put file[/a.txt] fail,err: invalid fileName format")
+	assert.Equal(t, err.Error(), "aws.s3 put file[/a.txt] fail,err: invalid fileName format")
 }
 
 func TestAwsOss_Get(t *testing.T) {
@@ -91,17 +91,17 @@ func TestAwsOss_Get(t *testing.T) {
 	}
 	err = oss.Put(context.Background(), putReq)
 
-	assert.Equal(t, err.Error(), "awsoss put file[/a.txt] fail,err: invalid fileName format")
+	assert.Equal(t, err.Error(), "aws.s3 put file[/a.txt] fail,err: invalid fileName format")
 
 	req := &file.GetFileStu{
 		FileName: "",
 	}
 	_, err = oss.Get(context.Background(), req)
-	assert.Equal(t, err.Error(), "awsoss get file[] fail,err: invalid fileName format")
+	assert.Equal(t, err.Error(), "aws.s3 get file[] fail,err: invalid fileName format")
 
 	req.FileName = "/a.txt"
 	_, err = oss.Get(context.Background(), req)
-	assert.Equal(t, err.Error(), "awsoss get file[/a.txt] fail,err: invalid fileName format")
+	assert.Equal(t, err.Error(), "aws.s3 get file[/a.txt] fail,err: invalid fileName format")
 }
 
 type fun = func() (string, error)
