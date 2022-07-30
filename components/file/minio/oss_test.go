@@ -126,7 +126,7 @@ func TestMinioOss_Get(t *testing.T) {
 	}
 
 	_, err = oss.Get(context.TODO(), getReq)
-	assert.Equal(t, "minioOss get file[file] fail,err: invalid fileName format", err.Error())
+	assert.Equal(t, "minio get file[file] fail,err: invalid fileName format", err.Error())
 
 	// client not exist
 	getReq.FileName = "bucketName/file"

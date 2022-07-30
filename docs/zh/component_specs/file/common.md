@@ -7,7 +7,7 @@ json配置文件有如下结构：
 ```json
 "file": {
     "file_demo": {
-        "type": "aliOSS"
+        "type": "aliyun.oss"
         "metadata":[
                 {
                     "endpoint": "endpoint_address",
@@ -34,7 +34,7 @@ json配置文件有如下结构：
     Files   map[string]file.FileConfig          `json:"file"`
 ```
 
-上面的Files是一个map,key为component的名字，比如上述json的aliOSS，component的配置没有具体的格式限制，不同component可以根据需求自己定义，比如:
+上面的Files是一个map,key为component的名字，比如上述json的aliyun.oss，component的配置没有具体的格式限制，不同component可以根据需求自己定义，比如:
 
 ```json
 "file": {

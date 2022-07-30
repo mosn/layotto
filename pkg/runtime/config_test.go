@@ -30,7 +30,7 @@ func TestConfig(t *testing.T) {
 					}
 				},
 				"file": {
-					"aliOSS": {
+					"aliyun.oss": {
                           "metadata":[
                             {
                               "endpoint": "endpoint_address",
@@ -43,7 +43,7 @@ func TestConfig(t *testing.T) {
 			}`
 	mscf, err := ParseRuntimeConfig([]byte(data))
 	assert.Nil(t, err)
-	v := mscf.Files["aliOSS"]
+	v := mscf.Files["aliyun.oss"]
 	m := make([]*utils.OssMetadata, 0)
 	err = json.Unmarshal(v.Metadata, &m)
 	assert.Nil(t, err)

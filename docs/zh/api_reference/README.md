@@ -9,3 +9,7 @@ Layotto 有两个 gRPC proto 文件, 对应的接口文档在：
 - [spec/proto/runtime/v1/appcallback.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
 
 该接口需要由 App 来实现，用来处理 pubsub 订阅消息   
+
+- [spec/proto/extension/v1/oss.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/oss_v1.md)
+
+该接口为 OSS(ObjectStorageService) API, 即对象存储 API   
