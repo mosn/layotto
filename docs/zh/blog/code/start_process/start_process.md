@@ -77,9 +77,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			file.NewFileFactory("aliyun.oss", alicloud.NewAliCloudOSS),
 			file.NewFileFactory("minio", minio.NewMinioOss),
 			file.NewFileFactory("aws.s3", aws.NewAwsOss),
-			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
+			file.NewFileFactory("tencent.oss", tencentcloud.NewTencentCloudOSS),
 			file.NewFileFactory("local", local.NewLocalStore),
-			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
+			file.NewFileFactory("qiniu.oss", qiniu.NewQiniuOSS),
 		),
 	     ...
    return server, err		 
