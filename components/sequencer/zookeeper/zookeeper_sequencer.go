@@ -95,6 +95,13 @@ func (s *ZookeeperSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequen
 	stat, err := s.client.Set("/"+req.Key, []byte(""), -1)
 
 	if err != nil {
+		if err == zk.ErrNoNode {
+			_, err1 := s.client.Create("/"+req.Key, []byte(""), zk.FlagEphemeral, zk.WorldACL(zk.PermAll))
+			if err1 != nil {
+				return nil, err1
+			}
+			return s.GetNextId(req)
+		}
 		return nil, err
 	}
 	// create node version=0, every time we set node  will result in version+1
