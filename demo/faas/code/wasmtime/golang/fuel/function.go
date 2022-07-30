@@ -1,9 +1,9 @@
 package main
 
 import (
-"fmt"
+	"fmt"
 
-"github.com/bytecodealliance/wasmtime-go"
+	"github.com/bytecodealliance/wasmtime-go"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
              i32.add
          )
          (func (export "arithmetic") (param $n i32) ( param $m i32) (result i32)
-		     get_local $n
+             get_local $n
              get_local $m
              call $addition
              i32.const 3
@@ -63,5 +63,3 @@ func main() {
 		}
 	}
 }
-
-
