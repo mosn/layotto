@@ -28,9 +28,7 @@ import (
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
-var componentName = "state_demo"
-
-func TestRedisHelloApi(t *testing.T) {
+func TestZKHelloApi(t *testing.T) {
 	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
@@ -47,26 +45,7 @@ func TestRedisHelloApi(t *testing.T) {
 	assert.Equal(t, "greeting", helloResp.Hello)
 }
 
-func TestRedisStateApi(t *testing.T) {
-	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer cli.Close()
-
-	ctx := context.Background()
-
-	stateKey := "MyKey"
-	stateValue := []byte("Hello Layotto!")
-	err = cli.SaveState(ctx, componentName, stateKey, stateValue)
-	assert.Nil(t, err)
-
-	stateResp, err := cli.GetState(ctx, "state_demo", stateKey)
-	assert.Nil(t, err)
-	assert.Equal(t, stateValue, stateResp.Value)
-}
-
-func TestRedisLockApi(t *testing.T) {
+func TestZKLockApi(t *testing.T) {
 	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
@@ -137,7 +116,7 @@ func TestRedisLockApi(t *testing.T) {
 	wg.Wait()
 }
 
-func TestRedisSequencerApi(t *testing.T) {
+func TestZKSequencerApi(t *testing.T) {
 	cli, err := client.NewClientWithAddress("127.0.0.1:34904")
 	if err != nil {
 		t.Fatal(err)
@@ -145,7 +124,7 @@ func TestRedisSequencerApi(t *testing.T) {
 	defer cli.Close()
 
 	ctx := context.Background()
-	sequencerKey := "MyKey"
+	sequencerKey := "MyZKSqKey"
 
 	for i := 1; i < 10; i++ {
 		resp, err := cli.GetNextId(ctx, &runtimev1pb.GetNextIdRequest{

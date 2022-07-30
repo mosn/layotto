@@ -18,4 +18,20 @@ go build ./cmd/layotto
 nohup redis-server --port 6380 &
 nohup ./layotto start -c ./configs/config_redis.json &
 cd sdk/go-sdk/test/runtime
-go test -p 1 -v ./...
+go test -p 1 -v -run TestRedis ./...
+
+cd ../../../../../
+etcd &
+kill -9 $(netstat -tlnp|grep 34904|awk '{print $7}'|awk -F '/' '{print $1}')
+cd layotto
+nohup ./layotto start -c ./configs/runtime_config.json &
+cd sdk/go-sdk/test/runtime
+go test -p 1 -v -run TestEtcd ./...
+
+kill -9 $(netstat -tlnp|grep 34904|awk '{print $7}'|awk -F '/' '{print $1}')
+nohup bash /usr/share/zookeeper/bin/zkServer.sh start
+bash /usr/share/zookeeper/bin/zkCli.sh < zkCreateZNode.sh
+cd ../../../../
+nohup ./layotto start -c ./configs/config_zookeeper.json &
+cd sdk/go-sdk/test/runtime
+go test -p 1 -v -run TestZK ./...
