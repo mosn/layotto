@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 
 	// bridge to mosn
 	_ "mosn.io/mosn/pkg/filter/network/proxy"
@@ -93,7 +94,13 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 
 	// 1. validate request
 	if req.Timeout == 0 {
-		req.Timeout = 3000
+		req.Timeout = rpc.DefaultRequestTimeoutMs
+		if ts, ok := req.Header[rpc.RequestTimeoutMs]; ok && len(ts) > 0 {
+			t, err := strconv.Atoi(ts[0])
+			if err == nil && t != 0 {
+				req.Timeout = int32(t)
+			}
+		}
 	}
 	req.Ctx = ctx
 	log.DefaultLogger.Debugf("[runtime][rpc]request %+v", req)

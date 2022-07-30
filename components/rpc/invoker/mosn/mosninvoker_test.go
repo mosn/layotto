@@ -90,10 +90,27 @@ func Test_mosnInvoker_Invoke(t *testing.T) {
 			Timeout: 100,
 			Method:  "Hello",
 			Data:    []byte("hello"),
+			Header:  map[string][]string{},
 		}
 		rsp, err := invoker.Invoke(context.Background(), req)
 		assert.Nil(t, err)
 		assert.Equal(t, "hello world!", string(rsp.Data))
+
+		req.Header[rpc.RequestTimeoutMs] = []string{"0"}
+		req.Timeout = 0
+		rsp, err = invoker.Invoke(context.Background(), req)
+		assert.Nil(t, err)
+		assert.Equal(t, "hello world!", string(rsp.Data))
+
+		assert.Equal(t, int32(3000), req.Timeout)
+
+		req.Header[rpc.RequestTimeoutMs] = []string{"100000"}
+		req.Timeout = 0
+		rsp, err = invoker.Invoke(context.Background(), req)
+		assert.Nil(t, err)
+		assert.Equal(t, "hello world!", string(rsp.Data))
+
+		assert.Equal(t, int32(100000), req.Timeout)
 	})
 
 	t.Run("panic", func(t *testing.T) {
