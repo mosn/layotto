@@ -74,8 +74,8 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
         // 4. 添加所有组件的初始化函数
 	 	// 我们只看下File组件的，将NewXXX()添加到组件Factory里
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliOSS", alicloud.NewAliCloudOSS),
-			file.NewFileFactory("minioOSS", minio.NewMinioOss),
+			file.NewFileFactory("aliyun.oss", alicloud.NewAliCloudOSS),
+			file.NewFileFactory("minio", minio.NewMinioOss),
 			file.NewFileFactory("aws.s3", aws.NewAwsOss),
 			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
 			file.NewFileFactory("local", local.NewLocalStore),
