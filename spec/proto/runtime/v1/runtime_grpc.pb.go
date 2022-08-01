@@ -39,6 +39,7 @@ type RuntimeClient interface {
 	// Distributed Lock API
 	// A non-blocking method trying to get a lock with ttl.
 	TryLock(ctx context.Context, in *TryLockRequest, opts ...grpc.CallOption) (*TryLockResponse, error)
+	// A method trying to unlock.
 	Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error)
 	// Sequencer API
 	// Get next unique id with some auto-increment guarantee
@@ -388,6 +389,7 @@ type RuntimeServer interface {
 	// Distributed Lock API
 	// A non-blocking method trying to get a lock with ttl.
 	TryLock(context.Context, *TryLockRequest) (*TryLockResponse, error)
+	// A method trying to unlock.
 	Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error)
 	// Sequencer API
 	// Get next unique id with some auto-increment guarantee

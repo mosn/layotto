@@ -24,7 +24,7 @@
                       },
                       "files": {
                         "file_demo": {
-                          "type": "tencentCloudOSS",
+                          "type": "tencent.oss",
                           "metadata": [
                             {
                               "endpoint": "<get endpoint from https://console.cloud.tencent.com/cos/bucket configuration management>",

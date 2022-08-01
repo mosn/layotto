@@ -74,13 +74,18 @@ func (SequencerOptions_AutoIncrement) EnumDescriptor() ([]byte, []int) {
 	return file_runtime_proto_rawDescGZIP(), []int{13, 0}
 }
 
+// The enum of unlock status
 type UnlockResponse_Status int32
 
 const (
-	UnlockResponse_SUCCESS               UnlockResponse_Status = 0
-	UnlockResponse_LOCK_UNEXIST          UnlockResponse_Status = 1
+	// Unlock is success
+	UnlockResponse_SUCCESS UnlockResponse_Status = 0
+	// The lock is not exist
+	UnlockResponse_LOCK_UNEXIST UnlockResponse_Status = 1
+	// The lock is belong to others
 	UnlockResponse_LOCK_BELONG_TO_OTHERS UnlockResponse_Status = 2
-	UnlockResponse_INTERNAL_ERROR        UnlockResponse_Status = 3
+	// Internal error
+	UnlockResponse_INTERNAL_ERROR UnlockResponse_Status = 3
 )
 
 // Enum value maps for UnlockResponse_Status.
@@ -126,19 +131,30 @@ func (UnlockResponse_Status) EnumDescriptor() ([]byte, []int) {
 	return file_runtime_proto_rawDescGZIP(), []int{18, 0}
 }
 
+// The enum of http reuest method
 type HTTPExtension_Verb int32
 
 const (
-	HTTPExtension_NONE    HTTPExtension_Verb = 0
-	HTTPExtension_GET     HTTPExtension_Verb = 1
-	HTTPExtension_HEAD    HTTPExtension_Verb = 2
-	HTTPExtension_POST    HTTPExtension_Verb = 3
-	HTTPExtension_PUT     HTTPExtension_Verb = 4
-	HTTPExtension_DELETE  HTTPExtension_Verb = 5
+	// NONE
+	HTTPExtension_NONE HTTPExtension_Verb = 0
+	// GET method
+	HTTPExtension_GET HTTPExtension_Verb = 1
+	// HEAD method
+	HTTPExtension_HEAD HTTPExtension_Verb = 2
+	// POST method
+	HTTPExtension_POST HTTPExtension_Verb = 3
+	// PUT method
+	HTTPExtension_PUT HTTPExtension_Verb = 4
+	// DELETE method
+	HTTPExtension_DELETE HTTPExtension_Verb = 5
+	// CONNECT method
 	HTTPExtension_CONNECT HTTPExtension_Verb = 6
+	// CONNECT method
 	HTTPExtension_OPTIONS HTTPExtension_Verb = 7
-	HTTPExtension_TRACE   HTTPExtension_Verb = 8
-	HTTPExtension_PATCH   HTTPExtension_Verb = 9
+	// CONNECT method
+	HTTPExtension_TRACE HTTPExtension_Verb = 8
+	// PATCH method
+	HTTPExtension_PATCH HTTPExtension_Verb = 9
 )
 
 // Enum value maps for HTTPExtension_Verb.
@@ -203,6 +219,7 @@ func (HTTPExtension_Verb) EnumDescriptor() ([]byte, []int) {
 type StateOptions_StateConcurrency int32
 
 const (
+	// Concurrency state is unspecified
 	StateOptions_CONCURRENCY_UNSPECIFIED StateOptions_StateConcurrency = 0
 	// First write wins
 	StateOptions_CONCURRENCY_FIRST_WRITE StateOptions_StateConcurrency = 1
@@ -255,6 +272,7 @@ func (StateOptions_StateConcurrency) EnumDescriptor() ([]byte, []int) {
 type StateOptions_StateConsistency int32
 
 const (
+	// Consistency state is unspecified
 	StateOptions_CONSISTENCY_UNSPECIFIED StateOptions_StateConsistency = 0
 	//  The API server assumes data stores are eventually consistent by default.A state store should:
 	// - For read requests, the state store can return data from any of the replicas
@@ -307,11 +325,13 @@ func (StateOptions_StateConsistency) EnumDescriptor() ([]byte, []int) {
 	return file_runtime_proto_rawDescGZIP(), []int{42, 1}
 }
 
+// Get fileMeta request message
 type GetFileMetaRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// File meta request
 	Request *FileRequest `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 }
 
@@ -354,6 +374,7 @@ func (x *GetFileMetaRequest) GetRequest() *FileRequest {
 	return nil
 }
 
+// Get fileMeta response message
 type GetFileMetaResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -362,8 +383,9 @@ type GetFileMetaResponse struct {
 	// The size of file
 	Size int64 `protobuf:"varint,1,opt,name=size,proto3" json:"size,omitempty"`
 	// The modified time of file
-	LastModified string    `protobuf:"bytes,2,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
-	Response     *FileMeta `protobuf:"bytes,3,opt,name=response,proto3" json:"response,omitempty"`
+	LastModified string `protobuf:"bytes,2,opt,name=last_modified,json=lastModified,proto3" json:"last_modified,omitempty"`
+	// File meta response
+	Response *FileMeta `protobuf:"bytes,3,opt,name=response,proto3" json:"response,omitempty"`
 }
 
 func (x *GetFileMetaResponse) Reset() {
@@ -419,11 +441,13 @@ func (x *GetFileMetaResponse) GetResponse() *FileMeta {
 	return nil
 }
 
+// FileMeta value
 type FileMetaValue struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// File meta value
 	Value []string `protobuf:"bytes,1,rep,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -466,11 +490,13 @@ func (x *FileMetaValue) GetValue() []string {
 	return nil
 }
 
+// A map that store FileMetaValue
 type FileMeta struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// A data structure to store metadata
 	Metadata map[string]*FileMetaValue `protobuf:"bytes,1,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
@@ -513,12 +539,13 @@ func (x *FileMeta) GetMetadata() map[string]*FileMetaValue {
 	return nil
 }
 
+// Get file request message
 type GetFileRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//
+	// The name of store
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// The name of the file or object want to get.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
@@ -579,11 +606,13 @@ func (x *GetFileRequest) GetMetadata() map[string]string {
 	return nil
 }
 
+// Get file response message
 type GetFileResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The data of file
 	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 }
 
@@ -626,11 +655,13 @@ func (x *GetFileResponse) GetData() []byte {
 	return nil
 }
 
+// Put file request message
 type PutFileRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The name of store
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// The name of the file or object want to put.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
@@ -700,11 +731,13 @@ func (x *PutFileRequest) GetMetadata() map[string]string {
 	return nil
 }
 
+// File request message
 type FileRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The name of store
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// The name of the directory
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
@@ -765,14 +798,18 @@ func (x *FileRequest) GetMetadata() map[string]string {
 	return nil
 }
 
+// List file request message
 type ListFileRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Request  *FileRequest `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
-	PageSize int32        `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	Marker   string       `protobuf:"bytes,3,opt,name=marker,proto3" json:"marker,omitempty"`
+	// File request
+	Request *FileRequest `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
+	// Page size
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// Marker
+	Marker string `protobuf:"bytes,3,opt,name=marker,proto3" json:"marker,omitempty"`
 }
 
 func (x *ListFileRequest) Reset() {
@@ -828,6 +865,7 @@ func (x *ListFileRequest) GetMarker() string {
 	return ""
 }
 
+// File info message
 type FileInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -903,14 +941,18 @@ func (x *FileInfo) GetMetadata() map[string]string {
 	return nil
 }
 
+// List file response message
 type ListFileResp struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Files       []*FileInfo `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty"`
-	Marker      string      `protobuf:"bytes,2,opt,name=marker,proto3" json:"marker,omitempty"`
-	IsTruncated bool        `protobuf:"varint,3,opt,name=is_truncated,json=isTruncated,proto3" json:"is_truncated,omitempty"`
+	// File info
+	Files []*FileInfo `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty"`
+	// Marker
+	Marker string `protobuf:"bytes,2,opt,name=marker,proto3" json:"marker,omitempty"`
+	// Is truncated
+	IsTruncated bool `protobuf:"varint,3,opt,name=is_truncated,json=isTruncated,proto3" json:"is_truncated,omitempty"`
 }
 
 func (x *ListFileResp) Reset() {
@@ -966,11 +1008,13 @@ func (x *ListFileResp) GetIsTruncated() bool {
 	return false
 }
 
+// Delete file request message
 type DelFileRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// File request
 	Request *FileRequest `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 }
 
@@ -1013,6 +1057,7 @@ func (x *DelFileRequest) GetRequest() *FileRequest {
 	return nil
 }
 
+// Get next id request message
 type GetNextIdRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1094,6 +1139,7 @@ type SequencerOptions struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Default STRONG auto-increment
 	Increment SequencerOptions_AutoIncrement `protobuf:"varint,1,opt,name=increment,proto3,enum=spec.proto.runtime.v1.SequencerOptions_AutoIncrement" json:"increment,omitempty"`
 }
 
@@ -1136,6 +1182,7 @@ func (x *SequencerOptions) GetIncrement() SequencerOptions_AutoIncrement {
 	return SequencerOptions_WEAK
 }
 
+// Get next id response message
 type GetNextIdResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1185,6 +1232,7 @@ func (x *GetNextIdResponse) GetNextId() int64 {
 	return 0
 }
 
+// Lock request message is distributed lock API which is not blocking method tring to get a lock with ttl
 type TryLockRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1272,11 +1320,13 @@ func (x *TryLockRequest) GetExpire() int32 {
 	return 0
 }
 
+// Lock response message returns is the lock obtained.
 type TryLockResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Is lock success
 	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 }
 
@@ -1319,15 +1369,18 @@ func (x *TryLockResponse) GetSuccess() bool {
 	return false
 }
 
+// UnLock request message
 type UnlockRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The name of store
 	StoreName string `protobuf:"bytes,1,opt,name=store_name,json=storeName,proto3" json:"store_name,omitempty"`
 	// resource_id is the lock key.
 	ResourceId string `protobuf:"bytes,2,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
-	LockOwner  string `protobuf:"bytes,3,opt,name=lock_owner,json=lockOwner,proto3" json:"lock_owner,omitempty"`
+	// The owner of the lock
+	LockOwner string `protobuf:"bytes,3,opt,name=lock_owner,json=lockOwner,proto3" json:"lock_owner,omitempty"`
 }
 
 func (x *UnlockRequest) Reset() {
@@ -1383,11 +1436,13 @@ func (x *UnlockRequest) GetLockOwner() string {
 	return ""
 }
 
+// UnLock response message
 type UnlockResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The status of unlock
 	Status UnlockResponse_Status `protobuf:"varint,1,opt,name=status,proto3,enum=spec.proto.runtime.v1.UnlockResponse_Status" json:"status,omitempty"`
 }
 
@@ -1430,13 +1485,16 @@ func (x *UnlockResponse) GetStatus() UnlockResponse_Status {
 	return UnlockResponse_SUCCESS
 }
 
+// Hello request message
 type SayHelloRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The name of service
 	ServiceName string `protobuf:"bytes,1,opt,name=service_name,json=serviceName,proto3" json:"service_name,omitempty"`
-	Name        string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// Reuqest name
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Optional. This field is used to control the packet size during load tests.
 	Data *anypb.Any `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
 }
@@ -1494,13 +1552,16 @@ func (x *SayHelloRequest) GetData() *anypb.Any {
 	return nil
 }
 
+// Hello response message
 type SayHelloResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Hello string     `protobuf:"bytes,1,opt,name=hello,proto3" json:"hello,omitempty"`
-	Data  *anypb.Any `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	// Hello
+	Hello string `protobuf:"bytes,1,opt,name=hello,proto3" json:"hello,omitempty"`
+	// Hello message of data
+	Data *anypb.Any `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 }
 
 func (x *SayHelloResponse) Reset() {
@@ -1549,12 +1610,15 @@ func (x *SayHelloResponse) GetData() *anypb.Any {
 	return nil
 }
 
+// Invoke service request message
 type InvokeServiceRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id      string               `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The identify of InvokeServiceRequest
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// InvokeServiceRequest message
 	Message *CommonInvokeRequest `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
 }
 
@@ -1604,14 +1668,19 @@ func (x *InvokeServiceRequest) GetMessage() *CommonInvokeRequest {
 	return nil
 }
 
+// Common invoke request message which includes invoke method and data
 type CommonInvokeRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Method        string         `protobuf:"bytes,1,opt,name=method,proto3" json:"method,omitempty"`
-	Data          *anypb.Any     `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	ContentType   string         `protobuf:"bytes,3,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	// The method of requset
+	Method string `protobuf:"bytes,1,opt,name=method,proto3" json:"method,omitempty"`
+	// The request data
+	Data *anypb.Any `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	// The content type of request data
+	ContentType string `protobuf:"bytes,3,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	// The extra information of http
 	HttpExtension *HTTPExtension `protobuf:"bytes,4,opt,name=http_extension,json=httpExtension,proto3" json:"http_extension,omitempty"`
 }
 
@@ -1675,13 +1744,16 @@ func (x *CommonInvokeRequest) GetHttpExtension() *HTTPExtension {
 	return nil
 }
 
+// Http extension message is about invoke http information
 type HTTPExtension struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Verb        HTTPExtension_Verb `protobuf:"varint,1,opt,name=verb,proto3,enum=spec.proto.runtime.v1.HTTPExtension_Verb" json:"verb,omitempty"`
-	Querystring string             `protobuf:"bytes,2,opt,name=querystring,proto3" json:"querystring,omitempty"`
+	// The method of http reuest
+	Verb HTTPExtension_Verb `protobuf:"varint,1,opt,name=verb,proto3,enum=spec.proto.runtime.v1.HTTPExtension_Verb" json:"verb,omitempty"`
+	// The query information of http
+	Querystring string `protobuf:"bytes,2,opt,name=querystring,proto3" json:"querystring,omitempty"`
 }
 
 func (x *HTTPExtension) Reset() {
@@ -1730,13 +1802,16 @@ func (x *HTTPExtension) GetQuerystring() string {
 	return ""
 }
 
+// Invoke service response message is result of invoke service queset
 type InvokeResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Data        *anypb.Any `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	ContentType string     `protobuf:"bytes,2,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	// The response data
+	Data *anypb.Any `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	// The content type of response data
+	ContentType string `protobuf:"bytes,2,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
 }
 
 func (x *InvokeResponse) Reset() {
@@ -3070,7 +3145,9 @@ type StateOptions struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The state operation of concurrency
 	Concurrency StateOptions_StateConcurrency `protobuf:"varint,1,opt,name=concurrency,proto3,enum=spec.proto.runtime.v1.StateOptions_StateConcurrency" json:"concurrency,omitempty"`
+	// The state operation of consistency
 	Consistency StateOptions_StateConsistency `protobuf:"varint,2,opt,name=consistency,proto3,enum=spec.proto.runtime.v1.StateOptions_StateConsistency" json:"consistency,omitempty"`
 }
 
@@ -3707,6 +3784,7 @@ type SecretResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// The data struct of secrets
 	Secrets map[string]string `protobuf:"bytes,1,rep,name=secrets,proto3" json:"secrets,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 

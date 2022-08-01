@@ -21,6 +21,11 @@ proto.gen.doc:
     -v  $(ROOT_DIR)/docs/en/api_reference:/out \
     -v  $(ROOT_DIR)/spec/proto/runtime/v1:/protos \
     pseudomuto/protoc-gen-doc  --doc_opt=/protos/template.tmpl,appcallback_v1.md appcallback.proto
+	$(DOCKER) run --rm \
+    -v  $(ROOT_DIR)/docs/en/api_reference:/out \
+    -v  $(ROOT_DIR)/spec/proto/extension/v1:/protos \
+    -v  $(ROOT_DIR)/spec/proto/runtime/v1:/protos/tpl \
+    pseudomuto/protoc-gen-doc  --doc_opt=/protos/tpl/template.tmpl,oss_v1.md oss.proto
 
 .PHONY: proto.gen.init
 proto.gen.init:
@@ -32,6 +37,9 @@ proto.gen.code:
 	$(DOCKER) build -t layotto/protoc $(ROOT_DIR)/docker/proto && \
 	$(DOCKER) run --rm \
 		-v  $(ROOT_DIR)/spec/proto/runtime/v1:/api/proto \
+		layotto/protoc
+	$(DOCKER) run --rm \
+		-v  $(ROOT_DIR)/spec/proto/extension/v1:/api/proto \
 		layotto/protoc
 
 .PHONY: proto.comments
