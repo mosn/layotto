@@ -25,6 +25,8 @@ const (
 	ServiceName = "oss"
 )
 
+// Oss is the interface for ObjectStorageService components.
+// For more details about the fields explanation, please refer to the `.proto` file.
 type Oss interface {
 	Init(context.Context, *Config) error
 	GetObject(context.Context, *GetObjectInput) (*GetObjectOutput, error)
