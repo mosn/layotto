@@ -96,9 +96,9 @@ func (s *ZookeeperSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequen
 
 	if err != nil {
 		if err == zk.ErrNoNode {
-			_, err1 := s.client.Create("/"+req.Key, []byte(""), zk.FlagEphemeral, zk.WorldACL(zk.PermAll))
-			if err1 != nil {
-				return nil, err1
+			_, errCreate := s.client.Create("/"+req.Key, []byte(""), zk.FlagEphemeral, zk.WorldACL(zk.PermAll))
+			if errCreate != nil {
+				return nil, errCreate
 			}
 			return s.GetNextId(req)
 		}
