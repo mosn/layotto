@@ -3,7 +3,7 @@
 //https://github.com/aws/aws-sdk-go-v2
 syntax = "proto3";
 
-package spec.proto.extension.v1;
+package spec.proto.extension.v1.s3;
 
 import "google/protobuf/empty.proto";
 
