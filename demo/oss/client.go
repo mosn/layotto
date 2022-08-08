@@ -23,7 +23,7 @@ import (
 	"os"
 	"strconv"
 
-	s3 "mosn.io/layotto/spec/proto/extension/v1"
+	"mosn.io/layotto/spec/proto/extension/v1/s3"
 
 	"google.golang.org/grpc"
 )

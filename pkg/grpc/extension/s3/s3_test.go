@@ -20,6 +20,8 @@ import (
 	"io"
 	"testing"
 
+	"mosn.io/layotto/spec/proto/extension/v1/s3"
+
 	l8s3 "mosn.io/layotto/components/oss"
 
 	mockoss "mosn.io/layotto/pkg/mock/components/oss"
@@ -31,8 +33,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	s3 "mosn.io/layotto/spec/proto/extension/v1"
 
 	"github.com/golang/mock/gomock"
 

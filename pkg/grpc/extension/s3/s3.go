@@ -22,6 +22,8 @@ import (
 	"io"
 	"sync"
 
+	"mosn.io/layotto/spec/proto/extension/v1/s3"
+
 	l8s3 "mosn.io/layotto/components/oss"
 
 	rawGRPC "google.golang.org/grpc"
@@ -31,7 +33,6 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/pkg/grpc"
-	s3 "mosn.io/layotto/spec/proto/extension/v1"
 )
 
 var (
