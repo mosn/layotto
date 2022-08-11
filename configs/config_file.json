@@ -24,7 +24,7 @@
                       },
                       "file": {
                         "file_demo": {
-                          "type": "minioOSS",
+                          "type": "minio",
                           "metadata": [
                             {
                               "endpoint": "127.0.0.1:9000",

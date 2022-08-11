@@ -22,6 +22,18 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/oss"
+
+	aws_oss "mosn.io/layotto/components/oss/aws"
+
+	aliyun_oss "mosn.io/layotto/components/oss/aliyun"
+
+	"mosn.io/layotto/components/file/aliyun"
+	aws_file "mosn.io/layotto/components/file/aws"
+	"mosn.io/layotto/components/file/minio"
+	"mosn.io/layotto/components/file/qiniu"
+	"mosn.io/layotto/components/file/tencentcloud"
+
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
 	"github.com/dapr/components-contrib/secretstores/aws/secretmanager"
@@ -36,9 +48,6 @@ import (
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
 
 	"mosn.io/layotto/components/file/local"
-	"mosn.io/layotto/components/file/s3/alicloud"
-	"mosn.io/layotto/components/file/s3/aws"
-	"mosn.io/layotto/components/file/s3/minio"
 
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
 
@@ -122,10 +131,6 @@ import (
 	sequencer_mongo "mosn.io/layotto/components/sequencer/mongo"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
-
-	// File
-	"mosn.io/layotto/components/file/s3/qiniu"
-	"mosn.io/layotto/components/file/s3/tencentcloud"
 
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
@@ -254,12 +259,12 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliOSS", alicloud.NewAliCloudOSS),
-			file.NewFileFactory("minioOSS", minio.NewMinioOss),
-			file.NewFileFactory("awsOSS", aws.NewAwsOss),
-			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
+			file.NewFileFactory("aliyun.oss", aliyun.NewAliyunFile),
+			file.NewFileFactory("minio", minio.NewMinioOss),
+			file.NewFileFactory("aws.s3", aws_file.NewAwsFile),
+			file.NewFileFactory("tencent.oss", tencentcloud.NewTencentCloudOSS),
 			file.NewFileFactory("local", local.NewLocalStore),
-			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
+			file.NewFileFactory("qiniu.oss", qiniu.NewQiniuOSS),
 		),
 
 		// PubSub
@@ -392,6 +397,12 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			bindings.NewOutputBindingFactory("http", func() dbindings.OutputBinding {
 				return http.NewHTTP(loggerForDaprComp)
 			}),
+		),
+
+		//OSS
+		runtime.WithOssFactory(
+			oss.NewFactory("aws.oss", aws_oss.NewAwsOss),
+			oss.NewFactory("aliyun.oss", aliyun_oss.NewAliyunOss),
 		),
 
 		// Sequencer

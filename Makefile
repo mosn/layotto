@@ -75,6 +75,7 @@ include make/golang.mk
 include make/image.mk
 include make/wasm.mk
 include make/ci.mk
+include make/deploy.mk
 include make/proto.mk
 
 # ==============================================================================
@@ -164,6 +165,34 @@ wasm.image:
 .PHONY: wasm.image.push
 wasm.image.push:
 	@$(MAKE) go.wasm.image.push
+
+# ==============================================================================
+## deploy: Deploy Layotto to Kubernetes
+# ==============================================================================
+.PHONY: deploy
+deploy:
+	@$(MAKE) deploy.k8s
+
+# ==============================================================================
+## deploy.standalone: Deploy Layotto to Kubernetes in Standalone Mode
+# ==============================================================================
+.PHONY: deploy.standalone
+deploy.standalone:
+	@$(MAKE) deploy.k8s.standalone
+
+# ==============================================================================
+## undeploy: Remove Layotto in Kubernetes
+# ==============================================================================
+.PHONY: undeploy
+undeploy:
+	@$(MAKE) undeploy.k8s
+
+# ==============================================================================
+## undeploy.standalone: Remove Layotto in Kubernetes in Standalone Mode
+# ==============================================================================
+.PHONY: undeploy.standalone
+undeploy.standalone:
+	@$(MAKE) undeploy.k8s.standalone
 
 # ==============================================================================
 ## check: Run all go checks of code sources.
@@ -291,6 +320,9 @@ ARGS:
                This option is available when using: make build.multiarch/image.multiarch/push.multiarch
                Example: make image.multiarch IMAGES="layotto" PLATFORMS="linux_amd64 linux_arm64"
                Supported Platforms: linux_amd64 linux_arm64 darwin_amd64 darwin_arm64
+  NAMESPACE    The namepace to deploy. Default is `default`.
+               This option is available when using: make deploy/deploy.standalone/undeploy/undeploy.standalone
+               Example: make deploy NAMESPACE="layotto"
 endef
 export USAGE_OPTIONS
 
