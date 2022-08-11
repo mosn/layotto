@@ -241,12 +241,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initConfigStores(o.services.configStores...); err != nil {
 		return err
 	}
-	m.Injector = &ref.DefaultInjector{
-		Container: ref.RefContainer{
-			SecretRef: m.secretStores,
-			ConfigRef: m.configStores,
-		},
-	}
+	m.Injector = ref.NewDefaultInjector(m.secretStores, m.configStores, m.runtimeConfig.ComponentRef)
 	if err := m.initCustomComponents(o.services.custom); err != nil {
 		return err
 	}

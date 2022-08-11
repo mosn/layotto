@@ -17,18 +17,45 @@
 package ref
 
 import (
+	"fmt"
 	"github.com/dapr/components-contrib/secretstores"
+	"mosn.io/layotto/components/configstores"
 
 	"mosn.io/layotto/components/ref"
 )
 
 type DefaultInjector struct {
-	Container RefContainer
+	//limit ref component
+	ComponentLimit map[string]struct{}
+	Container      RefContainer
+}
+
+var defaultInjector *DefaultInjector
+
+// NewDefaultInjector return a single Inject
+func NewDefaultInjector(secretStores map[string]secretstores.SecretStore, configStores map[string]configstores.Store, config ref.ComponentRefConfig) *DefaultInjector {
+	injector := &DefaultInjector{
+		Container: RefContainer{
+			SecretRef: secretStores,
+			ConfigRef: configStores,
+		},
+	}
+	for _, c := range config.ConfigRef {
+		injector.ComponentLimit[c] = struct{}{}
+	}
+	for _, c := range config.SecretRef {
+		injector.ComponentLimit[c] = struct{}{}
+	}
+	defaultInjector = injector
+	return injector
+}
+func GetDefaultInjector() *DefaultInjector {
+	return defaultInjector
 }
 
 //InjectSecretRef  inject secret to metaData
 // TODO: permission control
-func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string]string) (map[string]string, error) {
+func (i *DefaultInjector) InjectSecretRef(items []*ref.SecretItem, metaData map[string]string) (map[string]string, error) {
 	if metaData == nil {
 		metaData = make(map[string]string)
 	}
@@ -38,7 +65,7 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 
 	meta := make(map[string]string)
 	for _, item := range items {
-		store := i.Container.GetSecretStore(item.StoreName)
+		store := i.Container.getSecretStore(item.StoreName)
 		secret, err := store.GetSecret(secretstores.GetSecretRequest{
 			Name: item.Key,
 		})
@@ -61,4 +88,18 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 		metaData[k] = v
 	}
 	return metaData, nil
+}
+
+func (i *DefaultInjector) InjectConfigRef(key string) (configstores.Store, error) {
+	if _, ok := i.ComponentLimit[key]; ok {
+		return i.Container.getConfigStore(key), nil
+	}
+	return nil, fmt.Errorf("do not allow get config store %s", key)
+}
+
+func (i *DefaultInjector) InjectPubSubRef(key string) (secretstores.SecretStore, error) {
+	if _, ok := i.ComponentLimit[key]; ok {
+		return i.Container.getSecretStore(key), nil
+	}
+	return nil, fmt.Errorf("do not allow get secret store %s", key)
 }

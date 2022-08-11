@@ -38,20 +38,20 @@ func TestInject(t *testing.T) {
 	injector := DefaultInjector{Container: *container}
 	meta := make(map[string]string)
 
-	var items []*ref.Item
+	var items []*ref.SecretItem
 	secretRef, err := injector.InjectSecretRef(nil, meta)
 	assert.Nil(t, err)
 	assert.Equal(t, len(secretRef), 0)
 	secretRef, err = injector.InjectSecretRef(items, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, len(secretRef), 0)
-	items = append(items, &ref.Item{
+	items = append(items, &ref.SecretItem{
 		StoreName: "fake_secret_store",
 		Key:       "good-key",
 		SubKey:    "good-key",
 		InjectAs:  "ref-key",
 	})
-	items = append(items, &ref.Item{
+	items = append(items, &ref.SecretItem{
 		StoreName: "fake_secret_store",
 		Key:       "good-key",
 		SubKey:    "good-key",
