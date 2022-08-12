@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package spec.proto.runtime.v1;
+
+option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
+option java_outer_classname = "LifecycleProto";
+option java_package = "spec.proto.runtime.v1";
+
+service Lifecycle {
+
+  rpc ApplyConfiguration(DynamicConfiguration) returns (ApplyConfigurationResponse){}
+
+}
+
+message DynamicConfiguration{
+
+  ComponentConfig component_config = 1;
+
+}
+
+message ApplyConfigurationResponse{
+}
+
+message ComponentConfig{
+
+  // For example, `lock`, `state`
+  string kind = 1;
+
+  // The component name. For example,  `state_demo`
+  string name = 2;
+
+  map<string, string> metadata = 3;
+}

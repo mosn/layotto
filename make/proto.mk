@@ -39,7 +39,7 @@ proto.gen.code:
 		-v  $(ROOT_DIR)/spec/proto/runtime/v1:/api/proto \
 		layotto/protoc
 	$(DOCKER) run --rm \
-		-v  $(ROOT_DIR)/spec/proto/extension/v1:/api/proto \
+		-v  $(ROOT_DIR)/spec/proto/extension/v1/s3:/api/proto \
 		layotto/protoc
 
 .PHONY: proto.comments

@@ -33,6 +33,7 @@
 - cons
     - 实现起来复杂。比如重新初始化期间，怎么保证流量无损？
     - 我不清楚这能不能满足用户生产需求，担心过早设计、过度设计
+
 ## 3. High-level design
 ![image](https://user-images.githubusercontent.com/26001097/168949648-3f440a84-45d3-45c1-89ef-79cb25d49713.png)
 
@@ -56,7 +57,7 @@ agent 不一定要单独进程，在 main 里启动一个独立协程也行。
 Sidecar 被调 UpdateConfiguration API 后，会:
 1. 判断组件有没有实现"增量更新"接口:
 ```go
-updateConfig( configmap map[string]string) (success bool, err error)
+UpdateConfig(ctx context.Context, metadata map[string]string) (err error, needReload bool)
 ```
 2. 如果组件有实现该接口，runtime 尝试让其增量更新
 3. 如果增量更新失败，或者没实现该接口，则 runtime **根据全量配置重新初始化组件**
@@ -65,52 +66,59 @@ updateConfig( configmap map[string]string) (success bool, err error)
 ## 4. 详细设计
 
 ### 4.1. gRPC API 设计
-#### a. 设计一个通用的更新接口
+
 ```protobuf
 service Lifecycle {
 
-  rpc UpdateComponentConfiguration(ComponentConfig) returns (UpdateResponse){}
+  rpc ApplyConfiguration(DynamicConfiguration) returns (ApplyConfigurationResponse){}
 
 }
 
-// Component configuration
-message ComponentConfig{
-  // For example, `lock`, `state`
-  string kind = 1;
-  // The component name. For example,  `state_demo`
-  string name = 2;
+message DynamicConfiguration{
 
-  google.protobuf.Struct common_configuration = 3;
+  ComponentConfig component_config = 1;
 
-  google.protobuf.Struct metadata = 4;
+}
 
+message ApplyConfigurationResponse{
 }
 ```
 
-用  google/protobuf/struct.proto  描述动态json
-https://stackoverflow.com/questions/52966444/is-google-protobuf-struct-proto-the-best-way-to-send-dynamic-json-over-grpc
+#### ComponentConfig 字段设计
+##### a. 设计一个通用的更新接口
+
+```protobuf
+message ComponentConfig{
+
+  // For example, `lock`, `state`
+  string kind = 1;
+
+  // The component name. For example,  `state_demo`
+  string name = 2;
+
+  map<string, string> metadata = 3;
+}
+```
+
+~~用  google/protobuf/struct.proto  描述动态json 见 https://stackoverflow.com/questions/52966444/is-google-protobuf-struct-proto-the-best-way-to-send-dynamic-json-over-grpc~~
+
+用 `map<string, string>` 传配置。
 
 - 优点
   每次新加 API 或改配置结构时, 不用改每个语言的 sdk，让用户透传、sidecar 侧反序列化
+  
 - 缺点
   字段格式没有显示定义，不明确，不够结构化
 
-#### b. 结构化定义每类配置
+##### b. 结构化定义每类配置
 
 ```protobuf
-service Lifecycle {
-
-  rpc UpdateComponentConfiguration(ComponentConfig) returns (UpdateResponse){}
-
-}
-
 // Component configuration
 message ComponentConfig{
   // For example, `lock`, `state`
   string kind = 1;
   // The component name. For example,  `state_demo`
   string name = 2;
-
 
   google.protobuf.Struct metadata = 3;
 
@@ -126,6 +134,8 @@ message ComponentConfig{
 
 优缺点和上面相反
 
+##### 结论
+选择 A，减少 SDK 维护成本
 
 #### Q: 是单独写一个 API 插件，还是放进已有的 API 插件里
 单独写一个 API 插件
@@ -145,13 +155,25 @@ service Lifecycle {
 
 b. 全量
 
-prefer solution b
+结论: b, 更简单。后面有需要的话可以再加一个通过 stream 做增量变更的接口。
 
 ### 4.2. 组件 API 设计
+```go
+type DynamicComponent interface {
+    ApplyConfig(ctx context.Context, metadata map[string]string) (err error, needReload bool)
+}
+```
+
+
+
+## 5. Future work
+### pubsub 订阅关系下发
+
+需要下发一些更结构化的配置数据
+
+### 组件热重载
 // TODO
 
 - 重新初始化过程中，怎么保证流量无损
 - 配置优先级：有一些配置是某个 app 定制的配置，有一些配置是所有 app 公用的通用配置，两者优先级是啥
 - 配置事务读写，避免脏读
-
-
