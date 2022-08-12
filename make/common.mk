@@ -51,6 +51,12 @@ endif
 ifeq ($(origin SUPERVISOR_DIR),undefined)
 SUPERVISOR_DIR := $(ROOT_DIR)/etc/supervisor
 endif
+ifeq ($(origin DEPLOY_DIR),undefined)
+DEPLOY_DIR := $(ROOT_DIR)/deploy
+endif
+ifeq ($(origin K8S_DIR),undefined)
+K8S_DIR := $(DEPLOY_DIR)/k8s
+endif
 
 # set the version number. you should not need to do this
 # for the majority of scenarios.

@@ -5,13 +5,14 @@ go 1.14
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/alicebob/miniredis/v2 v2.16.0
-	github.com/aliyun/aliyun-oss-go-sdk v2.1.8+incompatible
+	github.com/aliyun/aliyun-oss-go-sdk v2.2.0+incompatible
 	github.com/apache/dubbo-go-hessian2 v1.10.2
 	github.com/apolloconfig/agollo/v4 v4.2.0
-	github.com/aws/aws-sdk-go-v2 v1.9.1
-	github.com/aws/aws-sdk-go-v2/config v1.8.2
-	github.com/aws/aws-sdk-go-v2/credentials v1.4.2
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.16.0
+	github.com/aws/aws-sdk-go-v2 v1.16.4
+	github.com/aws/aws-sdk-go-v2/config v1.15.9
+	github.com/aws/aws-sdk-go-v2/credentials v1.12.4
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.14
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.10
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
 	github.com/go-redis/redis/v8 v8.8.0
 	github.com/go-zookeeper/zk v1.0.2
@@ -19,6 +20,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/consul/api v1.3.0
 	github.com/jarcoal/httpmock v1.2.0
+	github.com/jinzhu/copier v0.3.6-0.20220506024824-3e39b055319a
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/minio/minio-go/v7 v7.0.15
 	github.com/mitchellh/mapstructure v1.4.1 // indirect

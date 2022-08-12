@@ -22,7 +22,15 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/oss"
+
+	aws_oss "mosn.io/layotto/components/oss/aws"
+
+	aliyun_oss "mosn.io/layotto/components/oss/aliyun"
+
 	"mosn.io/mosn/pkg/istio"
+
+	aliyun_file "mosn.io/layotto/components/file/aliyun"
 
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
@@ -34,14 +42,15 @@ import (
 	secretstore_env "github.com/dapr/components-contrib/secretstores/local/env"
 	secretstore_file "github.com/dapr/components-contrib/secretstores/local/file"
 
+	"mosn.io/layotto/components/file/aws"
+	"mosn.io/layotto/components/file/minio"
+	"mosn.io/layotto/components/file/qiniu"
+	"mosn.io/layotto/components/file/tencentcloud"
+
 	"mosn.io/layotto/pkg/grpc/default_api"
 	secretstores_loader "mosn.io/layotto/pkg/runtime/secretstores"
 
 	"mosn.io/layotto/components/file/local"
-	"mosn.io/layotto/components/file/s3/alicloud"
-	"mosn.io/layotto/components/file/s3/aws"
-	"mosn.io/layotto/components/file/s3/minio"
-
 	mock_state "mosn.io/layotto/pkg/mock/components/state"
 
 	dbindings "github.com/dapr/components-contrib/bindings"
@@ -126,10 +135,6 @@ import (
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 
-	// File
-	"mosn.io/layotto/components/file/s3/qiniu"
-	"mosn.io/layotto/components/file/s3/tencentcloud"
-
 	// Actuator
 	_ "mosn.io/layotto/pkg/actuator"
 	"mosn.io/layotto/pkg/actuator/health"
@@ -200,6 +205,8 @@ import (
 	_ "mosn.io/mosn/pkg/upstream/servicediscovery/dubbod"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
+
+	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
 )
 
 // loggerForDaprComp is constructed for reusing dapr's components.
@@ -251,6 +258,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// register your gRPC API here
 		runtime.WithGrpcAPI(
 			default_api.NewGrpcAPI,
+			s3ext.NewS3Server,
 		),
 		// Hello
 		runtime.WithHelloFactory(
@@ -269,14 +277,17 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 		// File
 		runtime.WithFileFactory(
-			file.NewFileFactory("aliOSS", alicloud.NewAliCloudOSS),
-			file.NewFileFactory("minioOSS", minio.NewMinioOss),
-			file.NewFileFactory("awsOSS", aws.NewAwsOss),
-			file.NewFileFactory("tencentCloudOSS", tencentcloud.NewTencentCloudOSS),
+			file.NewFileFactory("aliyun.oss", aliyun_file.NewAliyunFile),
+			file.NewFileFactory("minio", minio.NewMinioOss),
+			file.NewFileFactory("aws.s3", aws.NewAwsFile),
+			file.NewFileFactory("tencent.oss", tencentcloud.NewTencentCloudOSS),
 			file.NewFileFactory("local", local.NewLocalStore),
-			file.NewFileFactory("qiniuOSS", qiniu.NewQiniuOSS),
+			file.NewFileFactory("qiniu.oss", qiniu.NewQiniuOSS),
 		),
-
+		runtime.WithOssFactory(
+			oss.NewFactory("aws.oss", aws_oss.NewAwsOss),
+			oss.NewFactory("aliyun.oss", aliyun_oss.NewAliyunOss),
+		),
 		// PubSub
 		runtime.WithPubSubFactory(
 			pubsub.NewFactory("redis", func() dapr_comp_pubsub.PubSub {

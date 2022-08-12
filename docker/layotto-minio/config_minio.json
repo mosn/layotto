@@ -24,7 +24,7 @@
                         },
                         "file": {
                           "file_demo": {
-                            "type": "minioOSS",
+                            "type": "minio",
                             "metadata": [
                               {
                                 "endpoint": "minio:9000",
