@@ -56,9 +56,11 @@ agent 不一定要单独进程，在 main 里启动一个独立协程也行。
 ### 组件热重载
 Sidecar 被调 UpdateConfiguration API 后，会:
 1. 判断组件有没有实现"增量更新"接口:
+
 ```go
 UpdateConfig(ctx context.Context, metadata map[string]string) (err error, needReload bool)
 ```
+
 2. 如果组件有实现该接口，runtime 尝试让其增量更新
 3. 如果增量更新失败，或者没实现该接口，则 runtime **根据全量配置重新初始化组件**
 4. 新组件重新初始化完成后(通过 readiness check)，接管原组件的流量
@@ -145,6 +147,7 @@ message ComponentConfig{
 
 #### Q: API 接受全量配置还是增量配置
 a. 增量，顺序问题由 stream 保证
+
 ```protobuf
 service Lifecycle {
 
@@ -158,13 +161,12 @@ b. 全量
 结论: b, 更简单。后面有需要的话可以再加一个通过 stream 做增量变更的接口。
 
 ### 4.2. 组件 API 设计
+
 ```go
 type DynamicComponent interface {
     ApplyConfig(ctx context.Context, metadata map[string]string) (err error, needReload bool)
 }
 ```
-
-
 
 ## 5. Future work
 ### pubsub 订阅关系下发
