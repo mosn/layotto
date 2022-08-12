@@ -6,28 +6,36 @@ option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 option java_outer_classname = "LifecycleProto";
 option java_package = "spec.proto.runtime.v1";
 
+// An API to manage sidecar lifecycle.
 service Lifecycle {
 
+  // apply the dynamic configuration
   rpc ApplyConfiguration(DynamicConfiguration) returns (ApplyConfigurationResponse){}
 
 }
 
+// The dynamic configuration of the sidecar
 message DynamicConfiguration{
 
+  // Required. The dynamic configuration of a component
   ComponentConfig component_config = 1;
 
 }
 
+// The response of the `ApplyConfiguration` method.
 message ApplyConfigurationResponse{
+
 }
 
+// The dynamic configuration of a component
 message ComponentConfig{
 
-  // For example, `lock`, `state`
+  // Required. Which kind of API you are using, e.g. `lock`, `state`
   string kind = 1;
 
-  // The component name. For example,  `state_demo`
+  // Required. The component name, e.g. `state_demo`
   string name = 2;
 
+  // Required. The dynamic configuration of this component
   map<string, string> metadata = 3;
 }

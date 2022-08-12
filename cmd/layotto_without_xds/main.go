@@ -18,6 +18,8 @@ package main
 
 import (
 	"encoding/json"
+	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
+	"mosn.io/layotto/pkg/grpc/lifecycle"
 	"os"
 	"strconv"
 	"time"
@@ -241,6 +243,8 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// register your gRPC API here
 		runtime.WithGrpcAPI(
 			default_api.NewGrpcAPI,
+			lifecycle.NewLifecycleAPI,
+			s3ext.NewS3Server,
 		),
 		// Hello
 		runtime.WithHelloFactory(
