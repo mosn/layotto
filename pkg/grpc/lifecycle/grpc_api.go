@@ -18,27 +18,87 @@ package lifecycle
 
 import (
 	"context"
-	"github.com/dapr/components-contrib/secretstores"
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/pkg/grpc"
 	grpc_api "mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
-	"mosn.io/layotto/pkg/messages"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 	"mosn.io/pkg/log"
+	"sync"
 )
 
 func NewLifecycleAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
+	components := make(map[componentKey]*dynamicComponentHolder)
+	for k, store := range ac.Hellos {
+		checkDynamicComponent(kindHello, k, store, components)
+	}
+	for k, store := range ac.ConfigStores {
+		checkDynamicComponent(kindConfig, k, store, components)
+	}
+	for k, store := range ac.Rpcs {
+		checkDynamicComponent(kindRPC, k, store, components)
+	}
+	for k, store := range ac.PubSubs {
+		checkDynamicComponent(kindPubsub, k, store, components)
+	}
+	for k, store := range ac.StateStores {
+		checkDynamicComponent(kindState, k, store, components)
+	}
+	for k, store := range ac.Files {
+		checkDynamicComponent(kindFile, k, store, components)
+	}
+	for k, store := range ac.Oss {
+		checkDynamicComponent(kindOss, k, store, components)
+	}
+	for k, store := range ac.LockStores {
+		checkDynamicComponent(kindLock, k, store, components)
+	}
+	for k, store := range ac.Sequencers {
+		checkDynamicComponent(kindSequencer, k, store, components)
+	}
+	for k, store := range ac.SecretStores {
+		checkDynamicComponent(kindSecret, k, store, components)
+	}
+	for k, store := range ac.CustomComponent {
+		checkDynamicComponent(kindCustom, k, store, components)
+	}
 	return &server{
-		ac: ac,
+		components: components,
+		ac:         ac,
+	}
+}
+
+func checkDynamicComponent(kind string, name string, store interface{}, components map[componentKey]*dynamicComponentHolder) {
+	comp, ok := store.(common.DynamicComponent)
+	if !ok {
+		return
+	}
+	// put it in the components map
+	components[componentKey{
+		kind: kind,
+		name: name,
+	}] = &dynamicComponentHolder{
+		DynamicComponent: comp,
+		Mutex:            sync.Mutex{},
 	}
 }
 
 // server implements runtimev1pb.LifecycleServer
 type server struct {
-	ac *grpc_api.ApplicationContext
+	components map[componentKey]*dynamicComponentHolder
+	ac         *grpc_api.ApplicationContext
+}
+
+type componentKey struct {
+	kind string
+	name string
+}
+
+type dynamicComponentHolder struct {
+	common.DynamicComponent
+	sync.Mutex
 }
 
 func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.DynamicConfiguration) (*runtimev1pb.ApplyConfigurationResponse, error) {
@@ -48,7 +108,9 @@ func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.Dynamic
 		log.DefaultLogger.Errorf("ApplyConfiguration fail: %+v", err)
 		return &runtimev1pb.ApplyConfigurationResponse{}, err
 	}
-	if in.ComponentConfig.Name == "" {
+	kind := in.ComponentConfig.Kind
+	name := in.ComponentConfig.Name
+	if name == "" {
 		err := status.Errorf(codes.InvalidArgument, ErrNoField, "name")
 		log.DefaultLogger.Errorf("ApplyConfiguration fail: %+v", err)
 		return &runtimev1pb.ApplyConfigurationResponse{}, err
@@ -59,50 +121,24 @@ func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.Dynamic
 		return &runtimev1pb.ApplyConfigurationResponse{}, err
 	}
 	// 2. find the component
-	var component interface{}
-	switch in.ComponentConfig.Kind {
-	case ""
+	key := componentKey{
+		kind: kind,
+		name: name,
+	}
+	holder, ok := s.components[key]
+	if !ok {
+		err := status.Errorf(codes.InvalidArgument, ErrComponentNotFound, kind, name)
+		log.DefaultLogger.Errorf("ApplyConfiguration fail: %+v", err)
+		return &runtimev1pb.ApplyConfigurationResponse{}, err
 	}
 
-
-	secretStoreName := in.StoreName
-
-	if d.secretStores[secretStoreName] == nil {
-		err := status.Errorf(codes.InvalidArgument, messages.ErrSecretStoreNotFound, secretStoreName)
-		log.DefaultLogger.Errorf("GetBulkSecret fail,not find err:%+v", err)
-		return &runtime.GetBulkSecretResponse{}, err
-	}
 	// 3. lock
-	// 4. delegate to components
-	req := secretstores.BulkGetSecretRequest{
-		Metadata: in.Metadata,
-	}
-	getResponse, err := d.secretStores[secretStoreName].BulkGetSecret(req)
-	// 3. parse result
-	if err != nil {
-		err = status.Errorf(codes.Internal, messages.ErrBulkSecretGet, secretStoreName, err.Error())
-		log.DefaultLogger.Errorf("GetBulkSecret fail,bulk secret err:%+v", err)
-		return &runtime.GetBulkSecretResponse{}, err
-	}
+	holder.Lock()
+	defer holder.Unlock()
 
-	// 4. filter result
-	filteredSecrets := map[string]map[string]string{}
-	for key, v := range getResponse.Data {
-		// TODO: permission control
-		if d.isSecretAllowed(secretStoreName, key) {
-			filteredSecrets[key] = v
-		} else {
-			log.DefaultLogger.Debugf(messages.ErrPermissionDenied, key, in.StoreName)
-		}
-	}
-	response := &runtime.GetBulkSecretResponse{}
-	if getResponse.Data != nil {
-		response.Data = map[string]*runtime.SecretResponse{}
-		for key, v := range filteredSecrets {
-			response.Data[key] = &runtime.SecretResponse{Secrets: v}
-		}
-	}
-	return response, nil
+	// 4. delegate to components
+	err := holder.ApplyConfig(ctx, in.GetComponentConfig().Metadata)
+	return &runtimev1pb.ApplyConfigurationResponse{}, err
 }
 
 func (s *server) Init(conn *rawGRPC.ClientConn) error {
