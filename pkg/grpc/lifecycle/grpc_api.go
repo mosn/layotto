@@ -18,15 +18,17 @@ package lifecycle
 
 import (
 	"context"
+	"sync"
+
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/pkg/grpc"
 	grpc_api "mosn.io/layotto/pkg/grpc"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"mosn.io/pkg/log"
-	"sync"
 )
 
 func NewLifecycleAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {

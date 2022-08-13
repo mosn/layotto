@@ -18,11 +18,12 @@ package main
 
 import (
 	"encoding/json"
-	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
-	"mosn.io/layotto/pkg/grpc/lifecycle"
 	"os"
 	"strconv"
 	"time"
+
+	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
+	"mosn.io/layotto/pkg/grpc/lifecycle"
 
 	"mosn.io/layotto/components/oss"
 

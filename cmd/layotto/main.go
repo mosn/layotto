@@ -18,10 +18,11 @@ package main
 
 import (
 	"encoding/json"
-	"mosn.io/layotto/pkg/grpc/lifecycle"
 	"os"
 	"strconv"
 	"time"
+
+	"mosn.io/layotto/pkg/grpc/lifecycle"
 
 	"mosn.io/layotto/components/oss"
 
