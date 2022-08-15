@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"google.golang.org/grpc"
@@ -38,7 +37,7 @@ func main() {
 		panic(err)
 	}
 	if hello.Hello != "goodbye, eva" {
-		panic(errors.New(fmt.Sprintf("Assertion failed! Result is %v", hello.Hello)))
+		panic(fmt.Errorf("Assertion failed! Result is %v", hello.Hello))
 	}
 	fmt.Println(hello.Hello)
 }
