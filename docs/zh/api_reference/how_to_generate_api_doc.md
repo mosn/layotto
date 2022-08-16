@@ -3,7 +3,10 @@
 make proto
 ```
 
-Then you get `.pb.go` code and API reference docs.
+Then you get:
+- `.pb.go` code 
+- API reference docs
+- updated sidebar in the doc site
 
 That's all :)
 
