@@ -14,7 +14,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.14
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.10
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
+	github.com/deckarep/golang-set v1.8.0
 	github.com/go-redis/redis/v8 v8.8.0
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
