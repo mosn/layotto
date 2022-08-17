@@ -84,6 +84,7 @@
     - [如何部署、升级 Layotto](zh/operation/)
     - [如何本地开发、本地调试](zh/operation/local.md)
 - 设计文档
+    - [动态配置下发、组件热重载](zh/design/dynamic_configuration/update_api.md)
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
     - [Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)

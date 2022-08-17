@@ -1,10 +1,10 @@
-# 动态配置下发、组件热重载 Proposal v0.3
+# 动态配置下发、组件热重载
 ## 1. 解决的问题
 - 现在生产用户有一套定制的启动时初始化配置的方案：有一些配置配在 app 里，app 启动后、调 sidecar，让 sidecar 基于这些配置做初始化。方案不够通用，想做的更通用些
 
 ![image](https://user-images.githubusercontent.com/26001097/168947177-6a26397e-4648-47f0-a8df-e898285cd8f9.png)
 
-- 支持配置动态下发。
+- 支持"动态下发配置"。
     - 一种思路是让配置文件和镜像解耦，通过磁盘挂载进容器。比如 Dapr 的配置项放进 Configuration CRD, CRD 变更后，需要运维人员通过 k8s 滚动重启集群。
     - 另一种思路是[把 config_store 组件注入进别的组件](https://github.com/mosn/layotto/issues/500#issuecomment-1119390497) ，但有一些缺点:
         - 用户如果想用“动态配置下发”功能，没法当伸手党，没有社区现成的组件用，得开发自己的组件。
