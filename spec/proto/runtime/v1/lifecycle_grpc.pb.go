@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LifecycleClient interface {
+	// apply the dynamic configuration
 	ApplyConfiguration(ctx context.Context, in *DynamicConfiguration, opts ...grpc.CallOption) (*ApplyConfigurationResponse, error)
 }
 
@@ -47,6 +48,7 @@ func (c *lifecycleClient) ApplyConfiguration(ctx context.Context, in *DynamicCon
 // All implementations should embed UnimplementedLifecycleServer
 // for forward compatibility
 type LifecycleServer interface {
+	// apply the dynamic configuration
 	ApplyConfiguration(context.Context, *DynamicConfiguration) (*ApplyConfigurationResponse, error)
 }
 
