@@ -32,6 +32,10 @@ for r in $res; do
   echo "$r: [spec/proto/extension/v1/$r](https://mosn.io/layotto/api/v1/$r.html) \n" >> $sidebar_zh
   echo "$r: [spec/proto/extension/v1/$r](https://mosn.io/layotto/api/v1/$r.html) \n" >> $sidebar
 done
+# delete last line
+sed -i "" '$d' $sidebar_zh
+sed -i "" '$d' $sidebar
+
 
 cd $project_path
 # generate index for api references

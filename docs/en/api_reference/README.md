@@ -11,7 +11,4 @@ These protos define Layotto's runtime API, including:
 
 In addition to this, Layotto also provides some extension APIs, including:
 
-
-
 s3: [spec/proto/extension/v1/s3](https://mosn.io/layotto/api/v1/s3.html) 
-
