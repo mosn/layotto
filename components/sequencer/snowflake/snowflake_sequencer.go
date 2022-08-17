@@ -60,8 +60,7 @@ func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 	startTime := rm.StartTime
 	seqBits := rm.SeqBits
 
-	var maxSeq int64
-	maxSeq = ^(-1 << seqBits) + 1
+	var maxSeq int64 = ^(-1 << seqBits) + 1
 	bufferSize := maxSeq << rm.BoostPower
 
 	s.ringBuffer = snowflake.NewRingBuffer(bufferSize)

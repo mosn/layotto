@@ -156,7 +156,8 @@ func NewMysqlClient(meta MysqlMetadata) (int64, error) {
 		meta.Db = db
 	}
 
-	exists, err := tableExists(meta)
+	var err error
+	exists := tableExists(meta)
 	if !exists {
 		createTable := fmt.Sprintf(
 			`CREATE TABLE IF NOT EXISTS %s(
@@ -176,13 +177,13 @@ func NewMysqlClient(meta MysqlMetadata) (int64, error) {
 	return workId, err
 }
 
-func tableExists(meta MysqlMetadata) (bool, error) {
+func tableExists(meta MysqlMetadata) bool {
 	var result string
-	err := meta.Db.QueryRow(fmt.Sprintf(`SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_NAME = ?`), meta.TableName).Scan(&result)
+	err := meta.Db.QueryRow("SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_NAME = ?", meta.TableName).Scan(&result)
 	if err == sql.ErrNoRows {
-		return false, err
+		return false
 	}
-	return true, err
+	return true
 }
 
 func NewWorkId(meta MysqlMetadata) (int64, error) {
