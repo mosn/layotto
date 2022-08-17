@@ -11,5 +11,8 @@ Layotto 有多个 gRPC proto 文件, 对应的接口文档在：
 
 除此之外，Layotto 还提供了一些扩展 API，包括:
 
-[spec/proto/extension/v1/s3](https://mosn.io/layotto/api/v1/s3.html) 
+
+
+
+s3: [spec/proto/extension/v1/s3](https://mosn.io/layotto/api/v1/s3.html) 
 

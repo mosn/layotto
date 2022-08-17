@@ -18,4 +18,22 @@ docker run --rm \
   -v $project_path/spec/proto/runtime/v1:/protos \
   pseudomuto/protoc-gen-doc --doc_opt=/protos/html.tmpl,runtime.html
 
+# update the sidebar
 cd $project_path
+sidebar_zh=docs/zh/api_reference/README.md
+sidebar=docs/en/api_reference/README.md
+echo "===========> Updating the sidebar"
+# delete existing lines
+# -i "" is for compatibility with MacOS. See https://blog.csdn.net/dawn_moon/article/details/8547408
+sed -i "" '/.*: \[.*\]\(.*\)/d' $sidebar_zh
+sed -i "" '/.*: \[.*\]\(.*\)/d' $sidebar
+# reinsert the reference lines
+for r in $res; do
+  echo "$r: [spec/proto/extension/v1/$r](https://mosn.io/layotto/api/v1/$r.html) \n" >> $sidebar_zh
+  echo "$r: [spec/proto/extension/v1/$r](https://mosn.io/layotto/api/v1/$r.html) \n" >> $sidebar
+done
+
+cd $project_path
+# generate index for api references
+#idx=$(cd docs && ls api/v1/*)
+#echo $idx > docs/api/extensions.txt
