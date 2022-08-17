@@ -14,7 +14,6 @@
 package snowflake
 
 import (
-	"context"
 	"database/sql"
 	"time"
 
@@ -31,8 +30,6 @@ type SnowFlakeSequencer struct {
 	db         *sql.DB
 	biggerThan map[string]int64
 	logger     log.ErrorLogger
-	ctx        context.Context
-	cancel     context.CancelFunc
 }
 
 func NewSnowFlakeSequencer(logger log.ErrorLogger) *SnowFlakeSequencer {
@@ -65,8 +62,7 @@ func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 
 	var maxSeq int64
 	maxSeq = ^(-1 << seqBits) + 1
-	var bufferSize int64
-	bufferSize = maxSeq << rm.BoostPower
+	bufferSize := maxSeq << rm.BoostPower
 
 	s.ringBuffer = snowflake.NewRingBuffer(bufferSize)
 

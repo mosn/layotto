@@ -21,24 +21,21 @@ import (
 	"net"
 	"strconv"
 	"time"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 const (
-	mysqlUrl         = "mysql"
-	databaseName     = "databaseName"
-	tableName        = "tableName"
-	userName         = "userName"
-	password         = "password"
-	charset          = "utf8"
-	boostPower       = "boostPower"
-	paddingFactor    = "paddingFactor"
-	scheduleInterval = "scheduleInterval"
-	timeBits         = "timeBits"
-	workerBits       = "workerBits"
-	seqBits          = "seqBits"
-	startTime        = "startTime"
+	mysqlUrl      = "mysql"
+	databaseName  = "databaseName"
+	tableName     = "tableName"
+	userName      = "userName"
+	password      = "password"
+	charset       = "utf8"
+	boostPower    = "boostPower"
+	paddingFactor = "paddingFactor"
+	timeBits      = "timeBits"
+	workerBits    = "workerBits"
+	seqBits       = "seqBits"
+	startTime     = "startTime"
 
 	defalutBoostPower    = 3
 	defalutPaddingFactor = 50
@@ -160,7 +157,6 @@ func NewMysqlClient(meta MysqlMetadata) (int64, error) {
 	}
 
 	exists, err := tableExists(meta)
-
 	if !exists {
 		createTable := fmt.Sprintf(
 			`CREATE TABLE IF NOT EXISTS %s(

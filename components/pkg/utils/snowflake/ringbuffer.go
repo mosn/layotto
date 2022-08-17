@@ -79,14 +79,14 @@ func (r *RingBuffer) Put(uid int64) (bool, error) {
 	}
 	distance := currentTail - currentCursor
 	if distance == r.bufferSize-1 {
-		return false, errors.New("Catched!Rejected putting buffer")
+		return false, errors.New("catched!Rejected putting buffer")
 	}
 
 	//(currentTail + 1) mod r.bufferSize
 	nextTailIndex := (currentTail + 1) & (r.bufferSize - 1)
 
 	if r.flags[nextTailIndex].Value != CAN_PUT_FLAG {
-		return false, errors.New("Tail not in can put status")
+		return false, errors.New("tail not in can put status")
 	}
 
 	r.slots[nextTailIndex] = uid
@@ -115,13 +115,13 @@ func (r *RingBuffer) Take() (int64, error) {
 	}
 
 	if currentCursor == nextCursor {
-		return uid, errors.New("Buffer is empty, rejected take buffer.")
+		return uid, errors.New("buffer is empty, rejected take buffer")
 	}
 
 	//check next slot flag is CAN_TAKE_FLAG
 	nextCursorIndex := (nextCursor) & (r.bufferSize - 1)
 	if r.flags[nextCursorIndex].Value != CAN_TAKE_FLAG {
-		return uid, errors.New("Curosr not in can take status")
+		return uid, errors.New("curosr not in can take status")
 	}
 
 	uid = r.slots[nextCursorIndex]
@@ -167,8 +167,4 @@ func (r *RingBuffer) PaddingRingBuffer() {
 		}
 	}
 	atomic.AddInt32(&r.GoNum, -1)
-}
-
-func (r *RingBuffer) needPadding() bool {
-	return r.tail.Value-r.cursor.Value <= r.bufferSize-r.MaxSeq
 }
