@@ -180,10 +180,7 @@ func NewMysqlClient(meta MysqlMetadata) (int64, error) {
 func tableExists(meta MysqlMetadata) bool {
 	var result string
 	err := meta.Db.QueryRow("SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_NAME = ?", meta.TableName).Scan(&result)
-	if err == sql.ErrNoRows {
-		return false
-	}
-	return true
+	return err != sql.ErrNoRows
 }
 
 func NewWorkId(meta MysqlMetadata) (int64, error) {

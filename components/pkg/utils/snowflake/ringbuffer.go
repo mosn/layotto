@@ -35,23 +35,22 @@ type PaddedInt struct {
 }
 
 type RingBuffer struct {
-	m          sync.Mutex
-	slots      []int64
-	flags      []PaddedInt
-	tail       PaddedInt
-	cursor     PaddedInt
-	bufferSize int64
+	m      sync.Mutex
+	slots  []int64
+	flags  []PaddedInt
+	tail   PaddedInt
+	cursor PaddedInt
 
-	PaddingFactor    int64
-	CurrentTimeStamp int64
-	WorkId           int64
-
+	MaxSeq     int64
+	GoNum      int32
 	TimeBits   int64
 	WorkIdBits int64
 	SeqBits    int64
+	bufferSize int64
+	WorkId     int64
 
-	MaxSeq int64
-	GoNum  int32
+	PaddingFactor    int64
+	CurrentTimeStamp int64
 }
 
 var cores int = runtime.NumCPU()
