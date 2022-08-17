@@ -1,5 +1,16 @@
 # 如何基于proto文件生成代码、接口文档
 
+```shell
+make proto
+```
+
+Then you get:
+- `.pb.go` code 
+- API reference docs
+- updated sidebar in the doc site
+
+That's all :)
+
 ## 如何把 proto 文件编译成`.pb.go`代码
 <!-- tabs:start -->
 ### **Make 命令生成(推荐)**
