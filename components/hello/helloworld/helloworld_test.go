@@ -18,6 +18,7 @@ package helloworld
 
 import (
 	"context"
+	"mosn.io/layotto/components/pkg/common"
 	"testing"
 
 	"mosn.io/layotto/components/hello"
@@ -35,6 +36,13 @@ func TestHelloWorld(t *testing.T) {
 
 	resp, _ := hs.Hello(context.Background(), req)
 	if resp.HelloString != "Hi, Layotto" {
+		t.Fatalf("hello output failed")
+	}
+
+	dc := hs.(common.DynamicComponent)
+	dc.ApplyConfig(context.Background(), map[string]string{"hello": "Bye"})
+	resp, _ = hs.Hello(context.Background(), req)
+	if resp.HelloString != "Bye, Layotto" {
 		t.Fatalf("hello output failed")
 	}
 }
