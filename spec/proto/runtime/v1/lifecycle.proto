@@ -6,7 +6,8 @@ option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 option java_outer_classname = "LifecycleProto";
 option java_package = "spec.proto.runtime.v1";
 
-// An API to manage sidecar lifecycle.
+// Lifecycle API is used to manage the sidecar lifecycle.
+// For example, by invoking the lifecycle API, you can modify the components' configuration during runtime
 service Lifecycle {
 
   // apply the dynamic configuration
