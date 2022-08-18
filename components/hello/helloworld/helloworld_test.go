@@ -39,8 +39,21 @@ func TestHelloWorld(t *testing.T) {
 		t.Fatalf("hello output failed")
 	}
 
+	// ApplyConfig, but nil
 	dc := hs.(common.DynamicComponent)
-	dc.ApplyConfig(context.Background(), map[string]string{"hello": "Bye"})
+	err := dc.ApplyConfig(context.Background(), nil)
+	if err != nil {
+		t.Fatalf("hello ApplyConfig failed")
+	}
+	if resp.HelloString != "Hi, Layotto" {
+		t.Fatalf("hello output failed")
+	}
+
+	// Apply new config
+	err = dc.ApplyConfig(context.Background(), map[string]string{"hello": "Bye"})
+	if err != nil {
+		t.Fatalf("hello ApplyConfig failed")
+	}
 	resp, _ = hs.Hello(context.Background(), req)
 	if resp.HelloString != "Bye, Layotto" {
 		t.Fatalf("hello output failed")
