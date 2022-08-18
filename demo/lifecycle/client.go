@@ -29,10 +29,10 @@ func main() {
 	}
 	fmt.Println(hello.Hello)
 
-	// 2. invoke lifecycle API to modify the component configuration
+	// 2. invoke lifecycle API to modify the `sayHello` component configuration
 	c := runtimev1pb.NewLifecycleClient(conn)
 	metaData := make(map[string]string)
-	// change it from "greeting" to "goodbye"
+	// change the configuration from "greeting" to "goodbye"
 	metaData["hello"] = "goodbye"
 	req := &runtimev1pb.DynamicConfiguration{ComponentConfig: &runtimev1pb.ComponentConfig{
 		Kind:     "hellos",
