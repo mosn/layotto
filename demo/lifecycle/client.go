@@ -14,9 +14,25 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// 1. invoke lifecycle API to modify the component configuration
+	// 1. invoke sayHello API
+	client := runtimev1pb.NewRuntimeClient(conn)
+	hello, err := client.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
+		ServiceName: "quick_start_demo",
+		Name:        "eva",
+	})
+	if err != nil {
+		panic(err)
+	}
+	// validate the response value
+	if hello.Hello != "greeting, eva" {
+		panic(fmt.Errorf("Assertion failed! Result is %v", hello.Hello))
+	}
+	fmt.Println(hello.Hello)
+
+	// 2. invoke lifecycle API to modify the component configuration
 	c := runtimev1pb.NewLifecycleClient(conn)
 	metaData := make(map[string]string)
+	// change it from "greeting" to "goodbye"
 	metaData["hello"] = "goodbye"
 	req := &runtimev1pb.DynamicConfiguration{ComponentConfig: &runtimev1pb.ComponentConfig{
 		Kind:     "hellos",
@@ -27,15 +43,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// 2. invoke sayHello API again
-	client := runtimev1pb.NewRuntimeClient(conn)
-	hello, err := client.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
+	// 3. invoke sayHello API again
+	client = runtimev1pb.NewRuntimeClient(conn)
+	hello, err = client.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
 		ServiceName: "quick_start_demo",
 		Name:        "eva",
 	})
 	if err != nil {
 		panic(err)
 	}
+	// validate the response value. It should be different this time.
 	if hello.Hello != "goodbye, eva" {
 		panic(fmt.Errorf("Assertion failed! Result is %v", hello.Hello))
 	}
