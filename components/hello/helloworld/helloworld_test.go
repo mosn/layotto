@@ -18,8 +18,9 @@ package helloworld
 
 import (
 	"context"
-	"mosn.io/layotto/components/pkg/common"
 	"testing"
+
+	"mosn.io/layotto/components/pkg/common"
 
 	"mosn.io/layotto/components/hello"
 )
