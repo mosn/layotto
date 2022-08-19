@@ -1,15 +1,14 @@
 # gRPC API 接口文档
 
-Layotto 有两个 gRPC proto 文件, 对应的接口文档在：
+Layotto 有多个 gRPC proto 文件, 对应的接口文档在：
 
-- [spec/proto/runtime/v1/runtime.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/runtime_v1.md)
+[https://mosn.io/layotto/api/v1/runtime.html](https://mosn.io/layotto/api/v1/runtime.html)
 
-该 proto 定义的 gRPC API, 就是 Layotto 对 App 提供的 API。
-  
-- [spec/proto/runtime/v1/appcallback.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
+这些 proto 里定义了 Layotto 的运行时 API, 包括：
 
-该接口需要由 App 来实现，用来处理 pubsub 订阅消息   
+  - Layotto 对 App 提供的 API
+  - 需要由 App 来实现的 callback API。 Layotto 会回调 App、获取 pubsub 订阅消息   
 
-- [spec/proto/extension/v1/oss.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/oss_v1.md)
+除此之外，Layotto 还提供了一些扩展 API，包括:
 
-该接口为 OSS(ObjectStorageService) API, 即对象存储 API   
+s3: [spec/proto/extension/v1/s3](https://mosn.io/layotto/api/v1/s3.html) 
