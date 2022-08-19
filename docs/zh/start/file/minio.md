@@ -38,7 +38,7 @@ layotto提供了minio的配置文件[oss配置](https://github.com/mosn/layotto/
 
 ```json
                       "file": {
-                        "minioOSS": {
+                        "minio": {
                           "metadata":[
                             {
                               "endpoint": "play.min.io",

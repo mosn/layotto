@@ -8,6 +8,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.15
 	google.golang.org/grpc v1.37.0
 	google.golang.org/protobuf v1.26.0
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	mosn.io/layotto/sdk/go-sdk v0.0.0-20211020084508-6f5ee3cfeba0
 	mosn.io/layotto/spec v0.0.0-20211020084508-6f5ee3cfeba0
 )

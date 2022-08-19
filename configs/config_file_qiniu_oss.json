@@ -24,7 +24,7 @@
                       },
                       "file": {
                         "file_demo": {
-                          "type": "qiniuOSS",
+                          "type": "qiniu.oss",
                           "metadata": [
                             {
                               "endpoint": "<require>",
