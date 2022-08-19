@@ -7,6 +7,7 @@ import "google/protobuf/any.proto";
 
 option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 
+// PhoneCallService is one of Notify APIs. It's used to send voice messages
 service PhoneCallService {
 
   // Send voice using the specific template
@@ -14,6 +15,7 @@ service PhoneCallService {
 
 }
 
+// The request of SendVoiceWithTemplate method
 message SendVoiceWithTemplateRequest{
 
   // If your system uses multiple IVR services at the same time,
@@ -31,6 +33,7 @@ message SendVoiceWithTemplateRequest{
 
 }
 
+// VoiceTemplate
 message VoiceTemplate{
 
   // Required
@@ -41,6 +44,7 @@ message VoiceTemplate{
 
 }
 
+// The response of `SendVoiceWithTemplate` method
 message SendVoiceWithTemplateResponse{
 
   // Id of this request.
