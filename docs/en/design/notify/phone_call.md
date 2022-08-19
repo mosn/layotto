@@ -1,4 +1,4 @@
-# IVR API design
+# PhoneCall API design
 
 ## What would you like to be added
 IVR API, or PhoneCall API
@@ -23,14 +23,15 @@ We need to consider the following factors:
   For example, a monitor system might be deployed on alibaba cloud(using [VMS](https://www.aliyun.com/product/vms) to send voice message) or AWS (using [AWS Pinpoint](https://aws.amazon.com/cn/pinpoint/)  to send voice message). So portability is important here.
 
 ```proto
-
-service IvrService {
+// PhoneCallService is one of Notify APIs. It's used to send voice messages
+service PhoneCallService {
 
   // Send voice using the specific template
   rpc SendVoiceWithTemplate(SendVoiceWithTemplateRequest) returns (SendVoiceWithTemplateResponse) {}
 
 }
 
+// The request of SendVoiceWithTemplate method
 message SendVoiceWithTemplateRequest{
 
   // If your system uses multiple IVR services at the same time,
@@ -48,6 +49,7 @@ message SendVoiceWithTemplateRequest{
 
 }
 
+// VoiceTemplate
 message VoiceTemplate{
 
   // Required
@@ -58,6 +60,7 @@ message VoiceTemplate{
 
 }
 
+// The response of `SendVoiceWithTemplate` method
 message SendVoiceWithTemplateResponse{
 
   // Id of this request.
