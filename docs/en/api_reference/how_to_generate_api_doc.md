@@ -48,22 +48,8 @@ make proto.doc
 This command uses docker to run protoc-gen-doc and generate docs.
 
 ### **Use docker to run protoc-gen-doc**
-`make proto.doc` essentially run commands below:
+`make proto.doc` invokes the script `etc/script/generate-doc.sh`, which uses docker to run protoc-gen-doc.
 
-```
-docker run --rm \
--v  $(pwd)/docs/en/api_reference:/out \
--v  $(pwd)/spec/proto/runtime/v1:/protos \
-pseudomuto/protoc-gen-doc  --doc_opt=/protos/template.tmpl,runtime_v1.md runtime.proto
-```
-
-and 
-
-```shell
-docker run --rm \
--v  $(pwd)/docs/en/api_reference:/out \
--v  $(pwd)/spec/proto/runtime/v1:/protos \
-pseudomuto/protoc-gen-doc  --doc_opt=/protos/template.tmpl,appcallback_v1.md appcallback.proto
-```
+You can check `etc/script/generate-doc.sh` for more details.
 
 <!-- tabs:end -->
