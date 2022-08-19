@@ -7,7 +7,7 @@ import "google/protobuf/any.proto";
 
 option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 
-service IvrService {
+service PhoneCallService {
 
   // Send voice using the specific template
   rpc SendVoiceWithTemplate(SendVoiceWithTemplateRequest) returns (SendVoiceWithTemplateResponse) {}
