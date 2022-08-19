@@ -124,7 +124,7 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 | Platform                                               | Link                                                                                                                                                                                    |
 | :----------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 💬 [DingTalk](https://www.dingtalk.com/en) (preferred) | Search the group number: 31912621 or scan the QR code below <br> <img src="https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*--KAT7yyxXoAAAAAAAAAAAAAARQnAQ" height="200px"> |
+| 💬 [DingTalk](https://www.dingtalk.com/en) (preferred) | Search the group number: 31912621 or scan the QR code below <br> <img src="https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*HUKsSrFthtUAAAAAAAAAAAAAARQnAQ" height="200px"> |
 
 [comment]: <> (| 💬 [Wechat]&#40;https://www.wechat.com/en/&#41; | Scan the QR code below and she will invite you into the wechat group <br> <img src="img/wechat-group.jpg" height="200px">)
 

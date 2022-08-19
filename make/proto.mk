@@ -13,23 +13,29 @@
 
 .PHONY: proto.gen.doc
 proto.gen.doc:
-	$(DOCKER) run --rm \
-    -v  $(ROOT_DIR)/docs/en/api_reference:/out \
-    -v  $(ROOT_DIR)/spec/proto/runtime/v1:/protos \
-    pseudomuto/protoc-gen-doc  --doc_opt=/protos/template.tmpl,runtime_v1.md runtime.proto
-	$(DOCKER) run --rm \
-    -v  $(ROOT_DIR)/docs/en/api_reference:/out \
-    -v  $(ROOT_DIR)/spec/proto/runtime/v1:/protos \
-    pseudomuto/protoc-gen-doc  --doc_opt=/protos/template.tmpl,appcallback_v1.md appcallback.proto
+	sh ${SCRIPT_DIR}/generate-doc.sh
 
 .PHONY: proto.gen.init
 proto.gen.init:
-	 go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
-	 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 
 .PHONY: proto.gen.code
 proto.gen.code:
-	$(DOCKER) build -t layotto/protoc $(ROOT_DIR)/docker/proto && \
-	$(DOCKER) run --rm \
-		-v  $(ROOT_DIR)/spec/proto/runtime/v1:/api/proto \
-		layotto/protoc
+	$(DOCKER) build -t layotto/protoc $(ROOT_DIR)/docker/proto && sh ${SCRIPT_DIR}/generate-code.sh
+	$(MAKE) format
+
+.PHONY: proto.comments
+proto.comments:
+ifeq (,$(shell which buf))
+	@echo "===========> Installing buf linter"
+	@curl -fsSL \
+		"https://github.com/bufbuild/buf/releases/download/v1.6.0/buf-$$(uname -s)-$$(uname -m)" \
+		-o "$(OUTPUT_DIR)/buf"
+	@sudo install -m 0755 $(OUTPUT_DIR)/buf /usr/local/bin/buf
+endif
+	@echo "===========> Running buf linter"
+	buf lint $(ROOT_DIR)
+
+.PHONY: proto.gen.all
+proto.gen.all: proto.gen.code proto.gen.doc

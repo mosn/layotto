@@ -13,7 +13,7 @@ This document is automaticallly generated from the [`.proto`](https://github.com
 <a name="spec.proto.runtime.v1.Runtime"></a>
 
 ## [gRPC Service] Runtime
-
+Runtime encapsulates variours Runtime APIs(such as Configuration API, Pub/Sub API, etc)
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
@@ -24,7 +24,7 @@ This document is automaticallly generated from the [`.proto`](https://github.com
 | DeleteConfiguration | [DeleteConfigurationRequest](#spec.proto.runtime.v1.DeleteConfigurationRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | DeleteConfiguration deletes configuration from configuration store. |
 | SubscribeConfiguration | [SubscribeConfigurationRequest](#spec.proto.runtime.v1.SubscribeConfigurationRequest) stream | [SubscribeConfigurationResponse](#spec.proto.runtime.v1.SubscribeConfigurationResponse) stream | SubscribeConfiguration gets configuration from configuration store and subscribe the updates. |
 | TryLock | [TryLockRequest](#spec.proto.runtime.v1.TryLockRequest) | [TryLockResponse](#spec.proto.runtime.v1.TryLockResponse) | Distributed Lock API A non-blocking method trying to get a lock with ttl. |
-| Unlock | [UnlockRequest](#spec.proto.runtime.v1.UnlockRequest) | [UnlockResponse](#spec.proto.runtime.v1.UnlockResponse) |  |
+| Unlock | [UnlockRequest](#spec.proto.runtime.v1.UnlockRequest) | [UnlockResponse](#spec.proto.runtime.v1.UnlockResponse) | A method trying to unlock. |
 | GetNextId | [GetNextIdRequest](#spec.proto.runtime.v1.GetNextIdRequest) | [GetNextIdResponse](#spec.proto.runtime.v1.GetNextIdResponse) | Sequencer API Get next unique id with some auto-increment guarantee |
 | GetState | [GetStateRequest](#spec.proto.runtime.v1.GetStateRequest) | [GetStateResponse](#spec.proto.runtime.v1.GetStateResponse) | Gets the state for a specific key. |
 | GetBulkState | [GetBulkStateRequest](#spec.proto.runtime.v1.GetBulkStateRequest) | [GetBulkStateResponse](#spec.proto.runtime.v1.GetBulkStateResponse) | Gets a bulk of state items for a list of keys |
@@ -87,15 +87,15 @@ Return values include the item key, data and etag.
 <p align="right"><a href="#top">Top</a></p>
 
 ## CommonInvokeRequest
-
+Common invoke request message which includes invoke method and data
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| method | [string](#string) |  |  |
-| data | [google.protobuf.Any](#google.protobuf.Any) |  |  |
-| content_type | [string](#string) |  |  |
-| http_extension | [HTTPExtension](#spec.proto.runtime.v1.HTTPExtension) |  |  |
+| method | [string](#string) |  | The method of requset |
+| data | [google.protobuf.Any](#google.protobuf.Any) |  | The request data |
+| content_type | [string](#string) |  | The content type of request data |
+| http_extension | [HTTPExtension](#spec.proto.runtime.v1.HTTPExtension) |  | The extra information of http |
 
 
 
@@ -161,12 +161,12 @@ ConfigurationItem represents a configuration item with key, content and other in
 <p align="right"><a href="#top">Top</a></p>
 
 ## DelFileRequest
-
+Delete file request message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| request | [FileRequest](#spec.proto.runtime.v1.FileRequest) |  |  |
+| request | [FileRequest](#spec.proto.runtime.v1.FileRequest) |  | File request |
 
 
 
@@ -320,7 +320,7 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 <p align="right"><a href="#top">Top</a></p>
 
 ## FileInfo
-
+File info message
 
 
 | Field | Type | Label | Description |
@@ -356,12 +356,12 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 <p align="right"><a href="#top">Top</a></p>
 
 ## FileMeta
-
+A map that store FileMetaValue
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| metadata | [FileMeta.MetadataEntry](#spec.proto.runtime.v1.FileMeta.MetadataEntry) | repeated |  |
+| metadata | [FileMeta.MetadataEntry](#spec.proto.runtime.v1.FileMeta.MetadataEntry) | repeated | A data structure to store metadata |
 
 
 
@@ -389,12 +389,12 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 <p align="right"><a href="#top">Top</a></p>
 
 ## FileMetaValue
-
+FileMeta value
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| value | [string](#string) | repeated |  |
+| value | [string](#string) | repeated | File meta value |
 
 
 
@@ -405,12 +405,12 @@ ExecuteStateTransactionRequest is the message to execute multiple operations on 
 <p align="right"><a href="#top">Top</a></p>
 
 ## FileRequest
-
+File request message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| store_name | [string](#string) |  |  |
+| store_name | [string](#string) |  | The name of store |
 | name | [string](#string) |  | The name of the directory |
 | metadata | [FileRequest.MetadataEntry](#spec.proto.runtime.v1.FileRequest.MetadataEntry) | repeated | The metadata for user extension. |
 
@@ -614,12 +614,12 @@ GetConfigurationResponse is the response conveying the list of configuration val
 <p align="right"><a href="#top">Top</a></p>
 
 ## GetFileMetaRequest
-
+Get fileMeta request message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| request | [FileRequest](#spec.proto.runtime.v1.FileRequest) |  |  |
+| request | [FileRequest](#spec.proto.runtime.v1.FileRequest) |  | File meta request |
 
 
 
@@ -630,14 +630,14 @@ GetConfigurationResponse is the response conveying the list of configuration val
 <p align="right"><a href="#top">Top</a></p>
 
 ## GetFileMetaResponse
-
+Get fileMeta response message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | size | [int64](#int64) |  | The size of file |
 | last_modified | [string](#string) |  | The modified time of file |
-| response | [FileMeta](#spec.proto.runtime.v1.FileMeta) |  |  |
+| response | [FileMeta](#spec.proto.runtime.v1.FileMeta) |  | File meta response |
 
 
 
@@ -648,12 +648,12 @@ GetConfigurationResponse is the response conveying the list of configuration val
 <p align="right"><a href="#top">Top</a></p>
 
 ## GetFileRequest
-
+Get file request message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| store_name | [string](#string) |  |  |
+| store_name | [string](#string) |  | The name of store |
 | name | [string](#string) |  | The name of the file or object want to get. |
 | metadata | [GetFileRequest.MetadataEntry](#spec.proto.runtime.v1.GetFileRequest.MetadataEntry) | repeated | The metadata for user extension. |
 
@@ -683,12 +683,12 @@ GetConfigurationResponse is the response conveying the list of configuration val
 <p align="right"><a href="#top">Top</a></p>
 
 ## GetFileResponse
-
+Get file response message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| data | [bytes](#bytes) |  |  |
+| data | [bytes](#bytes) |  | The data of file |
 
 
 
@@ -699,7 +699,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 <p align="right"><a href="#top">Top</a></p>
 
 ## GetNextIdRequest
-
+Get next id request message
 
 
 | Field | Type | Label | Description |
@@ -735,7 +735,7 @@ GetConfigurationResponse is the response conveying the list of configuration val
 <p align="right"><a href="#top">Top</a></p>
 
 ## GetNextIdResponse
-
+Get next id response message
 
 
 | Field | Type | Label | Description |
@@ -890,13 +890,13 @@ GetStateResponse is the response conveying the state value and etag.
 <p align="right"><a href="#top">Top</a></p>
 
 ## HTTPExtension
-
+Http extension message is about invoke http information
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| verb | [HTTPExtension.Verb](#spec.proto.runtime.v1.HTTPExtension.Verb) |  |  |
-| querystring | [string](#string) |  |  |
+| verb | [HTTPExtension.Verb](#spec.proto.runtime.v1.HTTPExtension.Verb) |  | The method of http reuest |
+| querystring | [string](#string) |  | The query information of http |
 
 
 
@@ -977,13 +977,13 @@ InvokeBindingResponse is the message returned from an output binding invocation
 <p align="right"><a href="#top">Top</a></p>
 
 ## InvokeResponse
-
+Invoke service response message is result of invoke service queset
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| data | [google.protobuf.Any](#google.protobuf.Any) |  |  |
-| content_type | [string](#string) |  |  |
+| data | [google.protobuf.Any](#google.protobuf.Any) |  | The response data |
+| content_type | [string](#string) |  | The content type of response data |
 
 
 
@@ -994,13 +994,13 @@ InvokeBindingResponse is the message returned from an output binding invocation
 <p align="right"><a href="#top">Top</a></p>
 
 ## InvokeServiceRequest
-
+Invoke service request message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  |  |
-| message | [CommonInvokeRequest](#spec.proto.runtime.v1.CommonInvokeRequest) |  |  |
+| id | [string](#string) |  | The identify of InvokeServiceRequest |
+| message | [CommonInvokeRequest](#spec.proto.runtime.v1.CommonInvokeRequest) |  | InvokeServiceRequest message |
 
 
 
@@ -1011,14 +1011,14 @@ InvokeBindingResponse is the message returned from an output binding invocation
 <p align="right"><a href="#top">Top</a></p>
 
 ## ListFileRequest
-
+List file request message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| request | [FileRequest](#spec.proto.runtime.v1.FileRequest) |  |  |
-| page_size | [int32](#int32) |  |  |
-| marker | [string](#string) |  |  |
+| request | [FileRequest](#spec.proto.runtime.v1.FileRequest) |  | File request |
+| page_size | [int32](#int32) |  | Page size |
+| marker | [string](#string) |  | Marker |
 
 
 
@@ -1029,14 +1029,14 @@ InvokeBindingResponse is the message returned from an output binding invocation
 <p align="right"><a href="#top">Top</a></p>
 
 ## ListFileResp
-
+List file response message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| files | [FileInfo](#spec.proto.runtime.v1.FileInfo) | repeated |  |
-| marker | [string](#string) |  |  |
-| is_truncated | [bool](#bool) |  |  |
+| files | [FileInfo](#spec.proto.runtime.v1.FileInfo) | repeated | File info |
+| marker | [string](#string) |  | Marker |
+| is_truncated | [bool](#bool) |  | Is truncated |
 
 
 
@@ -1086,12 +1086,12 @@ metadata property: - key : the key of the message. |
 <p align="right"><a href="#top">Top</a></p>
 
 ## PutFileRequest
-
+Put file request message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| store_name | [string](#string) |  |  |
+| store_name | [string](#string) |  | The name of store |
 | name | [string](#string) |  | The name of the file or object want to put. |
 | data | [bytes](#bytes) |  | The data will be store. |
 | metadata | [PutFileRequest.MetadataEntry](#spec.proto.runtime.v1.PutFileRequest.MetadataEntry) | repeated | The metadata for user extension. |
@@ -1175,13 +1175,13 @@ SaveStateRequest is the message to save multiple states into state store.
 <p align="right"><a href="#top">Top</a></p>
 
 ## SayHelloRequest
-
+Hello request message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| service_name | [string](#string) |  |  |
-| name | [string](#string) |  |  |
+| service_name | [string](#string) |  | The name of service |
+| name | [string](#string) |  | Reuqest name |
 | data | [google.protobuf.Any](#google.protobuf.Any) |  | Optional. This field is used to control the packet size during load tests. |
 
 
@@ -1193,13 +1193,13 @@ SaveStateRequest is the message to save multiple states into state store.
 <p align="right"><a href="#top">Top</a></p>
 
 ## SayHelloResponse
-
+Hello response message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| hello | [string](#string) |  |  |
-| data | [google.protobuf.Any](#google.protobuf.Any) |  |  |
+| hello | [string](#string) |  | Hello |
+| data | [google.protobuf.Any](#google.protobuf.Any) |  | Hello message of data |
 
 
 
@@ -1215,7 +1215,7 @@ SecretResponse is a map of decrypted string/string values
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| secrets | [SecretResponse.SecretsEntry](#spec.proto.runtime.v1.SecretResponse.SecretsEntry) | repeated |  |
+| secrets | [SecretResponse.SecretsEntry](#spec.proto.runtime.v1.SecretResponse.SecretsEntry) | repeated | The data struct of secrets |
 
 
 
@@ -1248,7 +1248,7 @@ SequencerOptions configures requirements for auto-increment guarantee
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| increment | [SequencerOptions.AutoIncrement](#spec.proto.runtime.v1.SequencerOptions.AutoIncrement) |  |  |
+| increment | [SequencerOptions.AutoIncrement](#spec.proto.runtime.v1.SequencerOptions.AutoIncrement) |  | Default STRONG auto-increment |
 
 
 
@@ -1301,8 +1301,8 @@ StateOptions configures concurrency and consistency for state operations
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| concurrency | [StateOptions.StateConcurrency](#spec.proto.runtime.v1.StateOptions.StateConcurrency) |  |  |
-| consistency | [StateOptions.StateConsistency](#spec.proto.runtime.v1.StateOptions.StateConsistency) |  |  |
+| concurrency | [StateOptions.StateConcurrency](#spec.proto.runtime.v1.StateOptions.StateConcurrency) |  | The state operation of concurrency |
+| consistency | [StateOptions.StateConsistency](#spec.proto.runtime.v1.StateOptions.StateConsistency) |  | The state operation of consistency |
 
 
 
@@ -1386,7 +1386,7 @@ TransactionalStateOperation is the message to execute a specified operation with
 <p align="right"><a href="#top">Top</a></p>
 
 ## TryLockRequest
-
+Lock request message is distributed lock API which is not blocking method tring to get a lock with ttl
 
 
 | Field | Type | Label | Description |
@@ -1405,12 +1405,12 @@ TransactionalStateOperation is the message to execute a specified operation with
 <p align="right"><a href="#top">Top</a></p>
 
 ## TryLockResponse
-
+Lock response message returns is the lock obtained.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| success | [bool](#bool) |  |  |
+| success | [bool](#bool) |  | Is lock success |
 
 
 
@@ -1421,14 +1421,14 @@ TransactionalStateOperation is the message to execute a specified operation with
 <p align="right"><a href="#top">Top</a></p>
 
 ## UnlockRequest
-
+UnLock request message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| store_name | [string](#string) |  |  |
+| store_name | [string](#string) |  | The name of store |
 | resource_id | [string](#string) |  | resource_id is the lock key. |
-| lock_owner | [string](#string) |  |  |
+| lock_owner | [string](#string) |  | The owner of the lock |
 
 
 
@@ -1439,12 +1439,12 @@ TransactionalStateOperation is the message to execute a specified operation with
 <p align="right"><a href="#top">Top</a></p>
 
 ## UnlockResponse
-
+UnLock response message
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| status | [UnlockResponse.Status](#spec.proto.runtime.v1.UnlockResponse.Status) |  |  |
+| status | [UnlockResponse.Status](#spec.proto.runtime.v1.UnlockResponse.Status) |  | The status of unlock |
 
 
 
@@ -1456,20 +1456,20 @@ TransactionalStateOperation is the message to execute a specified operation with
 <a name="spec.proto.runtime.v1.HTTPExtension.Verb"></a>
 
 ## HTTPExtension.Verb
-
+The enum of http reuest method
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| NONE | 0 |  |
-| GET | 1 |  |
-| HEAD | 2 |  |
-| POST | 3 |  |
-| PUT | 4 |  |
-| DELETE | 5 |  |
-| CONNECT | 6 |  |
-| OPTIONS | 7 |  |
-| TRACE | 8 |  |
-| PATCH | 9 |  |
+| NONE | 0 | NONE |
+| GET | 1 | GET method |
+| HEAD | 2 | HEAD method |
+| POST | 3 | POST method |
+| PUT | 4 | PUT method |
+| DELETE | 5 | DELETE method |
+| CONNECT | 6 | CONNECT method |
+| OPTIONS | 7 | CONNECT method |
+| TRACE | 8 | CONNECT method |
+| PATCH | 9 | PATCH method |
 
 
 
@@ -1495,7 +1495,7 @@ But when ETag is missing in the write requests, the state store shall handle the
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| CONCURRENCY_UNSPECIFIED | 0 |  |
+| CONCURRENCY_UNSPECIFIED | 0 | Concurrency state is unspecified |
 | CONCURRENCY_FIRST_WRITE | 1 | First write wins |
 | CONCURRENCY_LAST_WRITE | 2 | Last write wins |
 
@@ -1508,7 +1508,7 @@ Enum describing the supported consistency for state.
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| CONSISTENCY_UNSPECIFIED | 0 |  |
+| CONSISTENCY_UNSPECIFIED | 0 | Consistency state is unspecified |
 | CONSISTENCY_EVENTUAL | 1 | The API server assumes data stores are eventually consistent by default.A state store should: - For read requests, the state store can return data from any of the replicas - For write request, the state store should asynchronously replicate updates to configured quorum after acknowledging the update request. |
 | CONSISTENCY_STRONG | 2 | When a strong consistency hint is attached, a state store should: - For read requests, the state store should return the most up-to-date data consistently across replicas. - For write/delete requests, the state store should synchronisely replicate updated data to configured quorum before completing the write request. |
 
@@ -1517,14 +1517,14 @@ Enum describing the supported consistency for state.
 <a name="spec.proto.runtime.v1.UnlockResponse.Status"></a>
 
 ## UnlockResponse.Status
-
+The enum of unlock status
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| SUCCESS | 0 |  |
-| LOCK_UNEXIST | 1 |  |
-| LOCK_BELONG_TO_OTHERS | 2 |  |
-| INTERNAL_ERROR | 3 |  |
+| SUCCESS | 0 | Unlock is success |
+| LOCK_UNEXIST | 1 | The lock is not exist |
+| LOCK_BELONG_TO_OTHERS | 2 | The lock is belong to others |
+| INTERNAL_ERROR | 3 | Internal error |
 
 
  <!-- end enums -->

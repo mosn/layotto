@@ -1,0 +1,20 @@
+name: Layotto Env Pipeline 🌊
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    name: "🍀 Markdown Validation"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Check markdown grammar in the docs directory
+        uses: nosborn/github-action-markdown-cli@v3.1.0
+        with:
+          files: docs/*
+          config_file: ".github/markdown_lint_config.json"
