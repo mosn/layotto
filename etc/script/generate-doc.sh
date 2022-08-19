@@ -1,24 +1,71 @@
 project_path=$(pwd)
+tpl_path="${project_path}/docs/template"
+quickstart_path="${project_path}/docs/en/start"
+quickstart_path_zh="${project_path}/docs/zh/start"
+true=0
+false=1
 
-echo "===========> Generating docs for spec/proto/extension/v1/"
-# generate docs for extension/v1
-res=$(cd spec/proto/extension/v1/ && ls -d *)
-for r in $res; do
+needGenerateQuickstart() {
+  file=$1
+  name=$2
+  if [ $(grep "@exclude quickstart generator" $file | wc -l) -eq 0 ]; then
+    return $true
+  fi
+  return $false
+}
+
+# 1. generate docs for extension/v1
+proto_path="spec/proto/extension/v1"
+echo "===========> Generating docs for ${proto_path}"
+res=$(cd $proto_path && ls -d *)
+for directory in $res; do
+  echo "===========> Generating API reference for ${proto_path}/${directory}"
+  # generate the API reference
   docker run --rm \
-    -v $project_path/docs/api/v1:/out \
-    -v $project_path/spec/proto/extension/v1/$r:/protos \
-    -v $project_path/spec/proto/runtime/v1:/protos/tpl \
-    pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/html.tmpl,$r.html
+    -v ${project_path}/docs/api/v1:/out \
+    -v ${project_path}/${proto_path}/${directory}:/protos \
+    -v ${tpl_path}:/protos/tpl \
+    pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/html.tmpl,${directory}.html
+
+  # generate the quickstart document
+  # find all protos
+  protos=$(cd ${proto_path}/${directory} && ls *.proto)
+  for p in ${protos}; do
+    needGenerateQuickstart "${proto_path}/${directory}/${p}" ${directory}
+    if [ $? -eq $true ]; then
+      # check if the doc already exists
+      if ! test -e "${quickstart_path}/${directory}/start.md"; then
+        # generate the english quickstart document
+        echo "===========> Generating the english quickstart document for ${proto_path}/${directory}/${p}"
+        docker run --rm \
+          -v ${quickstart_path}/${directory}:/out \
+          -v ${project_path}/${proto_path}/${directory}:/protos \
+          -v ${tpl_path}:/protos/tpl \
+          pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/quickstart.tmpl,start.md
+      fi
+      # check if the chinese doc already exists
+      if ! test -e "${quickstart_path_zh}/${directory}/start.md"; then
+        # generate the chinese quickstart document
+        echo "===========> Generating the chinese quickstart document for ${proto_path}/${directory}/${p}"
+        docker run --rm \
+          -v ${quickstart_path_zh}/${directory}:/out \
+          -v ${project_path}/${proto_path}/${directory}:/protos \
+          -v ${tpl_path}:/protos/tpl \
+          pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/quickstart_zh.tmpl,start.md
+      fi
+    fi
+  done
 done
 
-# generate docs for runtime/v1
+# 2. generate docs for runtime/v1
 echo "===========> Generating docs for spec/proto/runtime/v1/"
 docker run --rm \
   -v $project_path/docs/api/v1:/out \
   -v $project_path/spec/proto/runtime/v1:/protos \
-  pseudomuto/protoc-gen-doc --doc_opt=/protos/html.tmpl,runtime.html
+  -v ${tpl_path}:/protos/tpl \
+  pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/html.tmpl,runtime.html
 
-# update the sidebar
+# 3. update the api reference index
 cd $project_path
 sidebar_zh=docs/zh/api_reference/README.md
 sidebar=docs/en/api_reference/README.md
@@ -29,13 +76,16 @@ sed -i "" '/.*: \[.*\]\(.*\)/d' $sidebar_zh
 sed -i "" '/.*: \[.*\]\(.*\)/d' $sidebar
 # reinsert the reference lines
 for r in $res; do
-  echo "$r: [spec/proto/extension/v1/$r](https://mosn.io/layotto/api/v1/$r.html) \n" >> $sidebar_zh
-  echo "$r: [spec/proto/extension/v1/$r](https://mosn.io/layotto/api/v1/$r.html) \n" >> $sidebar
+  echo "$r: [spec/proto/extension/v1/$r](https://mosn.io/layotto/api/v1/$r.html) \n" >>$sidebar_zh
+  echo "$r: [spec/proto/extension/v1/$r](https://mosn.io/layotto/api/v1/$r.html) \n" >>$sidebar
 done
 # delete last line
 sed -i "" '$d' $sidebar_zh
 sed -i "" '$d' $sidebar
 
+# 4. update the sidebar
+cd $project_path
+# TODO
 
 cd $project_path
 # generate index for api references
