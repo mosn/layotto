@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package spec.proto.runtime.v1;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
+
+// EmailTemplateService is used to send emails with templates
+service EmailTemplateService {
+
+  // Send an email with template
+  rpc SendEmailWithTemplate(SendEmailWithTemplateRequest) returns (SendEmailWithTemplateResponse) {}
+
+}
+
+// EmailTemplateService is used to send emails.
+service EmailService {
+
+  // Send an email.
+  rpc SendEmail(SendEmailRequest) returns (SendEmailResponse) {}
+
+}
+
+// SendEmailWithTemplateRequest is the message send to email.
+message SendEmailWithTemplateRequest {
+
+  // The saas service name, like 'aliyun.email'/'aws.ses'/'...'
+  //  If your system uses multiple IVR services at the same time,
+  //  you can specify which service to use with this field.
+  string service_name = 1;
+
+  // Required.
+  EmailTemplate template = 2;
+
+  // Required. The Email subject.
+  string subject = 3;
+
+  // Required.
+  EmailAddress address = 4;
+
+}
+
+// Address information
+message EmailAddress{
+
+  // Required. The Email sender address.
+  string from = 1;
+
+  // Required. The Email destination addresses.
+  repeated string to = 2;
+
+  // Optional. To whom the mail is cc
+  repeated string cc = 3;
+}
+
+// Email template
+message EmailTemplate{
+
+  // Required
+  string template_id = 1;
+
+  // Required
+  map<string, string>  template_params = 2;
+
+}
+
+// Response of `SendEmailWithTemplate` method
+message SendEmailWithTemplateResponse {
+
+  // The saas requestId.
+  string request_id = 1;
+
+}
+
+// SendEmailRequest is the message send to email.
+message SendEmailRequest {
+
+  // The saas service name, like 'aliyun.email'/'aws.ses'/'...'
+  //  If your system uses multiple IVR services at the same time,
+  //  you can specify which service to use with this field.
+  string service_name = 1;
+
+  // Required.
+  string setting_id = 2;
+
+  // Required. The Email subject.
+  string subject = 3;
+
+  //  Required.
+  Content content = 4;
+
+  // Required.
+  EmailAddress address = 5;
+
+}
+
+// Email content
+message Content{
+
+  // Required.
+  string text = 1;
+
+}
+
+// The response of `SendEmail` method
+message SendEmailResponse {
+
+  // The saas requestId.
+  string request_id = 1;
+
+}
