@@ -1,6 +1,17 @@
 # How to generate `.pb.go` code and API reference
 Note: the commands below should be executed under layotto directory
 
+```shell
+make proto
+```
+
+Then you get:
+- `.pb.go` code
+- API reference docs
+- updated sidebar in the doc site
+
+That's all :)
+
 ## How to compile the proto files into `.pb.go` code
 <!-- tabs:start -->
 ### **Make cmmand(recommended)**
