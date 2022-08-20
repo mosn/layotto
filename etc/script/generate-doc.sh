@@ -22,6 +22,7 @@ generateQuickstart() {
   proto_path=$1
   proto_name=$2
   nickname=$3
+  api_reference_url=$4
 
   # 0. check if it needs our help
   needGenerateQuickstart "${proto_path}/${proto_name}"
@@ -41,6 +42,11 @@ generateQuickstart() {
       -v ${project_path}/${proto_path}:/protos \
       -v ${tpl_path}:/tpl \
       pseudomuto/protoc-gen-doc --doc_opt=/tpl/quickstart.tmpl,start.md ${nickname}
+
+    # modify api reference url
+    if ! test -z ${api_reference_url}; then
+      sed -i "" "s#<!--api_reference_url-->#[API Reference](${api_reference_url})#" ${quickstart_path}/${nickname}/start.md
+    fi
 
     # TODO remove design doc if not exist.
   fi
@@ -79,7 +85,7 @@ for directory in $res; do
   # find all protos
   protos=$(cd ${proto_path}/${directory} && ls *.proto)
   for p in ${protos}; do
-    generateQuickstart "${proto_path}/${directory}" "${p}" "${directory}"
+    generateQuickstart "${proto_path}/${directory}" "${p}" "${directory}" "https://mosn.io/layotto/api/v1/${directory}.html"
   done
 done
 
@@ -98,7 +104,7 @@ docker run --rm \
 protos=$(cd ${proto_path} && ls *.proto)
 for p in ${protos}; do
   nickname=$(basename ${p} | cut -d . -f1)
-  generateQuickstart "${proto_path}" "${p}" "${nickname}"
+  generateQuickstart "${proto_path}" "${p}" "${nickname}" "https://mosn.io/layotto/api/v1/runtime.html"
 done
 
 # 3. update the api reference index
