@@ -7,7 +7,7 @@ false=1
 
 needGenerateQuickstart() {
   file=$1
-  name=$2
+
   # check no `@exclude` tag
   if [ $(grep "@exclude quickstart generator" $file | wc -l) -eq 0 ]; then
     # check if there's a gRPC service in it
@@ -18,69 +18,88 @@ needGenerateQuickstart() {
   return $false
 }
 
+generateQuickstart() {
+  proto_path=$1
+  proto_name=$2
+  nickname=$3
+
+  # 0. check if it needs our help
+  needGenerateQuickstart "${proto_path}/${proto_name}"
+  if [ $? -eq $false ]; then
+    return 0
+  fi
+
+  # 1. copy and rename the proto file
+  cp "${proto_path}/${proto_name}" "${proto_path}/${nickname}"
+
+  # 2. generate the english quickstart document
+  # check if the quickstart doc already exists
+  if ! test -e "${quickstart_path}/${nickname}/start.md"; then
+    echo "===========> Generating the english quickstart document for ${proto_path}/${proto_name}"
+    docker run --rm \
+      -v ${quickstart_path}/${nickname}:/out \
+      -v ${project_path}/${proto_path}:/protos \
+      -v ${tpl_path}:/tpl \
+      pseudomuto/protoc-gen-doc --doc_opt=/tpl/quickstart.tmpl,start.md ${nickname}
+
+    # TODO remove design doc if not exist.
+  fi
+
+  # 3. generate the chinese quickstart document
+  # check if the chinese quickstart doc already exists
+  if ! test -e "${quickstart_path_zh}/${nickname}/start.md"; then
+    echo "===========> Generating the chinese quickstart document for ${proto_path}/${proto_name}"
+    docker run --rm \
+      -v ${quickstart_path_zh}/${nickname}:/out \
+      -v ${project_path}/${proto_path}:/protos \
+      -v ${tpl_path}:/tpl \
+      pseudomuto/protoc-gen-doc --doc_opt=/tpl/quickstart_zh.tmpl,start.md ${nickname}
+
+    # TODO remove design doc if not exist.
+  fi
+
+  # 4. clean up
+  rm "${proto_path}/${nickname}"
+}
+
 # 1. generate docs for extension/v1
 proto_path="spec/proto/extension/v1"
 echo "===========> Generating docs for ${proto_path}"
 res=$(cd $proto_path && ls -d *)
 for directory in $res; do
-  echo "===========> Generating API reference for ${proto_path}/${directory}"
+  echo "===========> Generating the API reference for ${proto_path}/${directory}"
   # 1.1. generate the API reference
   docker run --rm \
     -v ${project_path}/docs/api/v1:/out \
     -v ${project_path}/${proto_path}/${directory}:/protos \
-    -v ${tpl_path}:/protos/tpl \
-    pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/api_ref_html.tmpl,${directory}.html
+    -v ${tpl_path}:/tpl \
+    pseudomuto/protoc-gen-doc --doc_opt=/tpl/api_ref_html.tmpl,${directory}.html
 
   # 1.2. generate the quickstart document
   # find all protos
   protos=$(cd ${proto_path}/${directory} && ls *.proto)
   for p in ${protos}; do
-    # check if it needs our help
-    needGenerateQuickstart "${proto_path}/${directory}/${p}" ${directory}
-    if [ $? -eq $true ]; then
-      # 1.2.1. copy and rename the proto file
-      cp "${proto_path}/${directory}/${p}" "${proto_path}/${directory}/${directory}"
-
-      # 1.2.2. generate the english quickstart document
-      # check if the quickstart doc already exists
-      if ! test -e "${quickstart_path}/${directory}/start.md"; then
-        echo "===========> Generating the english quickstart document for ${proto_path}/${directory}/${p}"
-        docker run --rm \
-          -v ${quickstart_path}/${directory}:/out \
-          -v ${project_path}/${proto_path}/${directory}:/protos \
-          -v ${tpl_path}:/protos/tpl \
-          pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/quickstart.tmpl,start.md ${directory}
-
-        # TODO remove design doc if not exist.
-      fi
-
-      # 1.2.3. generate the chinese quickstart document
-      # check if the chinese quickstart doc already exists
-      if ! test -e "${quickstart_path_zh}/${directory}/start.md"; then
-        echo "===========> Generating the chinese quickstart document for ${proto_path}/${directory}/${p}"
-        docker run --rm \
-          -v ${quickstart_path_zh}/${directory}:/out \
-          -v ${project_path}/${proto_path}/${directory}:/protos \
-          -v ${tpl_path}:/protos/tpl \
-          pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/quickstart_zh.tmpl,start.md ${directory}
-
-        # TODO remove design doc if not exist.
-      fi
-      # 1.2.4. clean up
-      rm "${proto_path}/${directory}/${directory}"
-    fi
+    generateQuickstart "${proto_path}/${directory}" "${p}" "${directory}"
   done
 done
 
 # 2. generate docs for runtime/v1
 echo "===========> Generating docs for spec/proto/runtime/v1/"
+proto_path="spec/proto/runtime/v1"
 # 2.1. generate the API reference
 echo "===========> Generating the API reference for spec/proto/runtime/v1/"
 docker run --rm \
-  -v $project_path/docs/api/v1:/out \
-  -v $project_path/spec/proto/runtime/v1:/protos \
-  -v ${tpl_path}:/protos/tpl \
-  pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/api_ref_html.tmpl,runtime.html
+  -v ${project_path}/docs/api/v1:/out \
+  -v ${project_path}/${proto_path}:/protos \
+  -v ${tpl_path}:/tpl \
+  pseudomuto/protoc-gen-doc --doc_opt=/tpl/api_ref_html.tmpl,runtime.html
+# 2.2. generate the quickstart doc
+# find all protos
+protos=$(cd ${proto_path} && ls *.proto)
+for p in ${protos}; do
+  nickname=$(basename ${p} | cut -d . -f1)
+  generateQuickstart "${proto_path}" "${p}" "${nickname}"
+done
 
 # 3. update the api reference index
 cd $project_path
