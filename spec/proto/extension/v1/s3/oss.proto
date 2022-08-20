@@ -9,8 +9,9 @@ import "google/protobuf/empty.proto";
 
 option go_package = "mosn.io/layotto/spec/proto/extension/v1/s3;s3";
 
-// ObjectStorageService
+// ObjectStorageService is an abstraction for blob storage or so called "object storage", such as alibaba cloud OSS, such as AWS S3.
 service ObjectStorageService{
+
     //Object CRUD API
     //Adds an object to a bucket.
     //Refer https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
