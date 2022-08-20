@@ -48,7 +48,11 @@ generateQuickstart() {
       sed -i "" "s#<!--api_reference_url-->#[API Reference](${api_reference_url})#" ${quickstart_path}/${nickname}/start.md
     fi
 
-    # TODO remove design doc if not exist.
+    # modify design doc url
+    if test -e "docs/zh/design/${nickname}/design.md" ; then
+      sed -i "" "s#<!--design_doc_url-->#[Design doc](zh/design/${nickname}/design)#" ${quickstart_path}/${nickname}/start.md
+    fi
+
   fi
 
   # 3. generate the chinese quickstart document
@@ -65,7 +69,11 @@ generateQuickstart() {
     if ! test -z ${api_reference_url}; then
       sed -i "" "s#<!--api_reference_url-->#[API Reference](${api_reference_url})#" ${quickstart_path_zh}/${nickname}/start.md
     fi
-    # TODO remove design doc if not exist.
+
+    # modify design doc url
+    if test -e "docs/zh/design/${nickname}/design.md" ; then
+      sed -i "" "s#<!--design_doc_url-->#[Design doc](zh/design/${nickname}/design)#" ${quickstart_path_zh}/${nickname}/start.md
+    fi
   fi
 
   # 4. clean up
