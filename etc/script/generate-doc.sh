@@ -38,12 +38,12 @@ for directory in $res; do
     # check if it needs our help
     needGenerateQuickstart "${proto_path}/${directory}/${p}" ${directory}
     if [ $? -eq $true ]; then
-      # copy and rename the proto file
+      # 1.2.1. copy and rename the proto file
       cp "${proto_path}/${directory}/${p}" "${proto_path}/${directory}/${directory}"
 
+      # 1.2.2. generate the english quickstart document
       # check if the quickstart doc already exists
       if ! test -e "${quickstart_path}/${directory}/start.md"; then
-        # generate the english quickstart document
         echo "===========> Generating the english quickstart document for ${proto_path}/${directory}/${p}"
         docker run --rm \
           -v ${quickstart_path}/${directory}:/out \
@@ -54,9 +54,9 @@ for directory in $res; do
         # TODO remove design doc if not exist.
       fi
 
+      # 1.2.3. generate the chinese quickstart document
       # check if the chinese quickstart doc already exists
       if ! test -e "${quickstart_path_zh}/${directory}/start.md"; then
-        # generate the chinese quickstart document
         echo "===========> Generating the chinese quickstart document for ${proto_path}/${directory}/${p}"
         docker run --rm \
           -v ${quickstart_path_zh}/${directory}:/out \
@@ -66,7 +66,7 @@ for directory in $res; do
 
         # TODO remove design doc if not exist.
       fi
-      # clean up
+      # 1.2.4. clean up
       rm "${proto_path}/${directory}/${directory}"
     fi
   done
