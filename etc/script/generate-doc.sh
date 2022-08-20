@@ -57,7 +57,7 @@ generateQuickstart() {
   fi
 
   # 3. add the quickstart into the sidebar
-  if [ $(grep "en/start/${nickname}/start.md" ${sidebar_path} | wc -l) -eq 0 ]; then
+  if [ $(grep "en/start/${nickname}/start" ${sidebar_path} | wc -l) -eq 0 ]; then
     sed -i "" '/quickstart_generator/a \
 '"\  "'- [Use '${nickname}' API](en/start/'${nickname}'/start) \
 ' "${sidebar_path}"
@@ -85,7 +85,7 @@ generateQuickstart() {
   fi
 
   # 5. add the chinese quickstart into the sidebar
-  if [ $(grep "zh/start/${nickname}/start.md" ${sidebar_path_zh} | wc -l) -eq 0 ]; then
+  if [ $(grep "zh/start/${nickname}/start" ${sidebar_path_zh} | wc -l) -eq 0 ]; then
     sed -i "" '/quickstart_generator/a \
 '"\    "'- [Use '${nickname}' API](zh/start/'${nickname}'/start) \
 ' "${sidebar_path_zh}"
