@@ -10,6 +10,7 @@ Then you get:
 - API reference docs
 - updated the API reference list
 - quickstart document
+- updated sidebar
 
 That's all :)
 
