@@ -130,8 +130,8 @@ func (r *RingBuffer) Take() (int64, error) {
 
 func (r *RingBuffer) Allocator() int64 {
 	var sequence int64
-	timestampShift := r.WorkIdBits + r.SeqBits
-	workidShift := r.SeqBits
+	timestampShift := r.SeqBits
+	workidShift := r.TimeBits + r.SeqBits
 	workid := r.WorkId
 	r.m.Lock()
 	timestamp := r.CurrentTimeStamp
