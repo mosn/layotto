@@ -61,6 +61,10 @@ generateQuickstart() {
       -v ${tpl_path}:/tpl \
       pseudomuto/protoc-gen-doc --doc_opt=/tpl/quickstart_zh.tmpl,start.md ${nickname}
 
+    # modify api reference url
+    if ! test -z ${api_reference_url}; then
+      sed -i "" "s#<!--api_reference_url-->#[API Reference](${api_reference_url})#" ${quickstart_path_zh}/${nickname}/start.md
+    fi
     # TODO remove design doc if not exist.
   fi
 
