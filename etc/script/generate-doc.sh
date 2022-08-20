@@ -8,8 +8,12 @@ false=1
 needGenerateQuickstart() {
   file=$1
   name=$2
+  # check no `@exclude` tag
   if [ $(grep "@exclude quickstart generator" $file | wc -l) -eq 0 ]; then
-    return $true
+    # check if there's a gRPC service in it
+    if [ $(grep "service " $file | wc -l) -gt 0 ]; then
+      return $true
+    fi
   fi
   return $false
 }
@@ -20,20 +24,24 @@ echo "===========> Generating docs for ${proto_path}"
 res=$(cd $proto_path && ls -d *)
 for directory in $res; do
   echo "===========> Generating API reference for ${proto_path}/${directory}"
-  # generate the API reference
+  # 1.1. generate the API reference
   docker run --rm \
     -v ${project_path}/docs/api/v1:/out \
     -v ${project_path}/${proto_path}/${directory}:/protos \
     -v ${tpl_path}:/protos/tpl \
     pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/api_ref_html.tmpl,${directory}.html
 
-  # generate the quickstart document
+  # 1.2. generate the quickstart document
   # find all protos
   protos=$(cd ${proto_path}/${directory} && ls *.proto)
   for p in ${protos}; do
+    # check if it needs our help
     needGenerateQuickstart "${proto_path}/${directory}/${p}" ${directory}
     if [ $? -eq $true ]; then
-      # check if the doc already exists
+      # copy and rename the proto file
+      cp "${proto_path}/${directory}/${p}" "${proto_path}/${directory}/${directory}"
+
+      # check if the quickstart doc already exists
       if ! test -e "${quickstart_path}/${directory}/start.md"; then
         # generate the english quickstart document
         echo "===========> Generating the english quickstart document for ${proto_path}/${directory}/${p}"
@@ -41,9 +49,12 @@ for directory in $res; do
           -v ${quickstart_path}/${directory}:/out \
           -v ${project_path}/${proto_path}/${directory}:/protos \
           -v ${tpl_path}:/protos/tpl \
-          pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/quickstart.tmpl,start.md
+          pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/quickstart.tmpl,start.md ${directory}
+
+        # TODO remove design doc if not exist.
       fi
-      # check if the chinese doc already exists
+
+      # check if the chinese quickstart doc already exists
       if ! test -e "${quickstart_path_zh}/${directory}/start.md"; then
         # generate the chinese quickstart document
         echo "===========> Generating the chinese quickstart document for ${proto_path}/${directory}/${p}"
@@ -51,8 +62,12 @@ for directory in $res; do
           -v ${quickstart_path_zh}/${directory}:/out \
           -v ${project_path}/${proto_path}/${directory}:/protos \
           -v ${tpl_path}:/protos/tpl \
-          pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/quickstart_zh.tmpl,start.md
+          pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/quickstart_zh.tmpl,start.md ${directory}
+
+        # TODO remove design doc if not exist.
       fi
+      # clean up
+      rm "${proto_path}/${directory}/${directory}"
     fi
   done
 done
