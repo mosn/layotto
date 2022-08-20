@@ -36,7 +36,7 @@ docker run -v "$(pwd)/configs/config_oss.json:/runtime/configs/config.json" -d  
 ```
 
 #### **Compile locally (not for Windows)**
-You can run etcd with Docker, then compile and run Layotto locally.
+You can compile and run Layotto locally.
 
 > [!TIP|label: Not for Windows users]
 > Layotto fails to compile under Windows. Windows users are recommended to deploy using docker-compose
