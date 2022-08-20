@@ -74,6 +74,8 @@ done
 
 # 2. generate docs for runtime/v1
 echo "===========> Generating docs for spec/proto/runtime/v1/"
+# 2.1. generate the API reference
+echo "===========> Generating the API reference for spec/proto/runtime/v1/"
 docker run --rm \
   -v $project_path/docs/api/v1:/out \
   -v $project_path/spec/proto/runtime/v1:/protos \
