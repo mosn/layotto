@@ -8,7 +8,8 @@ make proto
 Then you get:
 - `.pb.go` code
 - API reference docs
-- updated sidebar in the doc site
+- updated the API reference list
+- quickstart document
 
 That's all :)
 
