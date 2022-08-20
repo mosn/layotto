@@ -25,7 +25,7 @@ for directory in $res; do
     -v ${project_path}/docs/api/v1:/out \
     -v ${project_path}/${proto_path}/${directory}:/protos \
     -v ${tpl_path}:/protos/tpl \
-    pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/html.tmpl,${directory}.html
+    pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/api_ref_html.tmpl,${directory}.html
 
   # generate the quickstart document
   # find all protos
@@ -63,7 +63,7 @@ docker run --rm \
   -v $project_path/docs/api/v1:/out \
   -v $project_path/spec/proto/runtime/v1:/protos \
   -v ${tpl_path}:/protos/tpl \
-  pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/html.tmpl,runtime.html
+  pseudomuto/protoc-gen-doc --doc_opt=/protos/tpl/api_ref_html.tmpl,runtime.html
 
 # 3. update the api reference index
 cd $project_path
