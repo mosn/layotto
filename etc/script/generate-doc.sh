@@ -2,6 +2,8 @@ project_path=$(pwd)
 tpl_path="${project_path}/docs/template"
 quickstart_path="${project_path}/docs/en/start"
 quickstart_path_zh="${project_path}/docs/zh/start"
+sidebar_path="${project_path}/docs/_sidebar.md"
+sidebar_path_zh="${project_path}/docs/zh/_sidebar.md"
 true=0
 false=1
 
@@ -49,13 +51,19 @@ generateQuickstart() {
     fi
 
     # modify design doc url
-    if test -e "docs/zh/design/${nickname}/design.md" ; then
+    if test -e "docs/zh/design/${nickname}/design.md"; then
       sed -i "" "s#<!--design_doc_url-->#[Design doc](zh/design/${nickname}/design)#" ${quickstart_path}/${nickname}/start.md
     fi
-
   fi
 
-  # 3. generate the chinese quickstart document
+  # 3. add the quickstart into the sidebar
+  if [ $(grep "en/start/${nickname}/start.md" ${sidebar_path} | wc -l) -eq 0 ]; then
+    sed -i "" '/quickstart_generator/a \
+'"\  "'- [Use '${nickname}' API](en/start/'${nickname}'/start) \
+' "${sidebar_path}"
+  fi
+
+  # 4. generate the chinese quickstart document
   # check if the chinese quickstart doc already exists
   if ! test -e "${quickstart_path_zh}/${nickname}/start.md"; then
     echo "===========> Generating the chinese quickstart document for ${proto_path}/${proto_name}"
@@ -71,12 +79,19 @@ generateQuickstart() {
     fi
 
     # modify design doc url
-    if test -e "docs/zh/design/${nickname}/design.md" ; then
+    if test -e "docs/zh/design/${nickname}/design.md"; then
       sed -i "" "s#<!--design_doc_url-->#[Design doc](zh/design/${nickname}/design)#" ${quickstart_path_zh}/${nickname}/start.md
     fi
   fi
 
-  # 4. clean up
+  # 5. add the chinese quickstart into the sidebar
+  if [ $(grep "zh/start/${nickname}/start.md" ${sidebar_path_zh} | wc -l) -eq 0 ]; then
+    sed -i "" '/quickstart_generator/a \
+'"\    "'- [Use '${nickname}' API](zh/start/'${nickname}'/start) \
+' "${sidebar_path_zh}"
+  fi
+
+  # 6. clean up
   rm "${proto_path}/${nickname}"
 }
 
