@@ -13,6 +13,7 @@
   - Service Invocation
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
+  - [Use OSS API](en/start/oss/start.md)
   - [API plugin: register your own API](en/start/api_plugin/helloworld.md)
   - As the data plane of istio
     - [Integrate with istio 1.10.6](en/start/istio/)

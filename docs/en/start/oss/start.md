@@ -85,6 +85,7 @@ go build client.go
 ```
 
 #### **Java**
+<!-- 
 
 Download java sdk and examples:
 
@@ -114,6 +115,8 @@ If the following information is printed, the demo is successful:
 ```bash
 TODO
 ```
+
+-->
 
 <!-- tabs:end -->
 
