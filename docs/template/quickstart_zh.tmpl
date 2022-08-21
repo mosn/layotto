@@ -15,9 +15,9 @@ docker run -v "$(pwd)/configs/config_standalone.json:/runtime/configs/config.jso
 ```
 
 #### **本地编译（不适合 Windows)**
-您可以使用 Docker 运行 etcd，然后本地编译、运行 Layotto。
+您可以本地编译、运行 Layotto。
 > [!TIP|label: 不适合 Windows 用户]
-> Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker-compose 部署
+> Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker 部署
 
 将项目代码下载到本地后，切换代码目录：
 
@@ -39,7 +39,7 @@ go build
 
 <!-- tabs:end -->
 
-### step 2. Run the client program to invoke Layotto {{.Name}} API
+### step 2. 运行客户端程序，调用 Layotto {{.Name}} API
 <!-- tabs:start -->
 #### **Go**
 
