@@ -31,7 +31,6 @@ const (
 type PaddedInt struct {
 	_     [7]int64
 	Value int64
-	_     [7]int64
 }
 
 type RingBuffer struct {
