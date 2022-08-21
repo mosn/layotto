@@ -10,7 +10,8 @@ Then you get:
 - API reference docs
 - updated the API reference list
 - quickstart document
-- updated sidebar
+- updated sidebar (The tool will add the generated quickstart doc into the sidebar of https://mosn.io/layotto )
+- updated CI (The tool will add the generated quickstart doc into the CI script `etc/script/test-quickstart.sh`)
 
 That's all :)
 
