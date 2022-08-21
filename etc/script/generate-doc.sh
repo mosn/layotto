@@ -4,6 +4,7 @@ quickstart_path="${project_path}/docs/en/start"
 quickstart_path_zh="${project_path}/docs/zh/start"
 sidebar_path="${project_path}/docs/_sidebar.md"
 sidebar_path_zh="${project_path}/docs/zh/_sidebar.md"
+qs_ci_path="${project_path}/etc/script/test-quickstart.sh"
 true=0
 false=1
 
@@ -18,6 +19,16 @@ needGenerateQuickstart() {
     fi
   fi
   return $false
+}
+
+addQuickstartIntoCI() {
+  doc=$1
+
+  if [ $(grep $doc ${qs_ci_path} | wc -l) -eq 0 ]; then
+    sed -i "" '/quickstarts_in_default="/a \
+ '${doc}'\
+ ' ${qs_ci_path}
+  fi
 }
 
 generateQuickstart() {
@@ -91,7 +102,11 @@ generateQuickstart() {
 ' "${sidebar_path_zh}"
   fi
 
-  # 6. clean up
+  # 6. add the quickstart doc into the test-quickstart.sh
+  addQuickstartIntoCI "docs/en/start/${nickname}/start.md"
+  addQuickstartIntoCI "docs/zh/start/${nickname}/start.md"
+
+  # 7. clean up
   rm "${proto_path}/${nickname}"
 }
 
