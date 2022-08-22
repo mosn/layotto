@@ -3,11 +3,11 @@
 //https://github.com/aws/aws-sdk-go-v2
 syntax = "proto3";
 
-package spec.proto.extension.v1;
+package spec.proto.extension.v1.s3;
 
 import "google/protobuf/empty.proto";
 
-option go_package = "mosn.io/layotto/spec/proto/extension/v1;s3";
+option go_package = "mosn.io/layotto/spec/proto/extension/v1/s3;s3";
 
 // ObjectStorageService
 service ObjectStorageService{

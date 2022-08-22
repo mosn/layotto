@@ -115,7 +115,7 @@ func NewObjectStorageServiceClient(cc grpc.ClientConnInterface) ObjectStorageSer
 }
 
 func (c *objectStorageServiceClient) PutObject(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_PutObjectClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ObjectStorageService_ServiceDesc.Streams[0], "/spec.proto.extension.v1.ObjectStorageService/PutObject", opts...)
+	stream, err := c.cc.NewStream(ctx, &ObjectStorageService_ServiceDesc.Streams[0], "/spec.proto.extension.v1.s3.ObjectStorageService/PutObject", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +149,7 @@ func (x *objectStorageServicePutObjectClient) CloseAndRecv() (*PutObjectOutput, 
 }
 
 func (c *objectStorageServiceClient) GetObject(ctx context.Context, in *GetObjectInput, opts ...grpc.CallOption) (ObjectStorageService_GetObjectClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ObjectStorageService_ServiceDesc.Streams[1], "/spec.proto.extension.v1.ObjectStorageService/GetObject", opts...)
+	stream, err := c.cc.NewStream(ctx, &ObjectStorageService_ServiceDesc.Streams[1], "/spec.proto.extension.v1.s3.ObjectStorageService/GetObject", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +182,7 @@ func (x *objectStorageServiceGetObjectClient) Recv() (*GetObjectOutput, error) {
 
 func (c *objectStorageServiceClient) DeleteObject(ctx context.Context, in *DeleteObjectInput, opts ...grpc.CallOption) (*DeleteObjectOutput, error) {
 	out := new(DeleteObjectOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/DeleteObject", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/DeleteObject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +191,7 @@ func (c *objectStorageServiceClient) DeleteObject(ctx context.Context, in *Delet
 
 func (c *objectStorageServiceClient) CopyObject(ctx context.Context, in *CopyObjectInput, opts ...grpc.CallOption) (*CopyObjectOutput, error) {
 	out := new(CopyObjectOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/CopyObject", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/CopyObject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +200,7 @@ func (c *objectStorageServiceClient) CopyObject(ctx context.Context, in *CopyObj
 
 func (c *objectStorageServiceClient) DeleteObjects(ctx context.Context, in *DeleteObjectsInput, opts ...grpc.CallOption) (*DeleteObjectsOutput, error) {
 	out := new(DeleteObjectsOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/DeleteObjects", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/DeleteObjects", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +209,7 @@ func (c *objectStorageServiceClient) DeleteObjects(ctx context.Context, in *Dele
 
 func (c *objectStorageServiceClient) ListObjects(ctx context.Context, in *ListObjectsInput, opts ...grpc.CallOption) (*ListObjectsOutput, error) {
 	out := new(ListObjectsOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/ListObjects", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/ListObjects", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +218,7 @@ func (c *objectStorageServiceClient) ListObjects(ctx context.Context, in *ListOb
 
 func (c *objectStorageServiceClient) HeadObject(ctx context.Context, in *HeadObjectInput, opts ...grpc.CallOption) (*HeadObjectOutput, error) {
 	out := new(HeadObjectOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/HeadObject", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/HeadObject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +227,7 @@ func (c *objectStorageServiceClient) HeadObject(ctx context.Context, in *HeadObj
 
 func (c *objectStorageServiceClient) IsObjectExist(ctx context.Context, in *IsObjectExistInput, opts ...grpc.CallOption) (*IsObjectExistOutput, error) {
 	out := new(IsObjectExistOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/IsObjectExist", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/IsObjectExist", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -236,7 +236,7 @@ func (c *objectStorageServiceClient) IsObjectExist(ctx context.Context, in *IsOb
 
 func (c *objectStorageServiceClient) PutObjectTagging(ctx context.Context, in *PutObjectTaggingInput, opts ...grpc.CallOption) (*PutObjectTaggingOutput, error) {
 	out := new(PutObjectTaggingOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/PutObjectTagging", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/PutObjectTagging", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -245,7 +245,7 @@ func (c *objectStorageServiceClient) PutObjectTagging(ctx context.Context, in *P
 
 func (c *objectStorageServiceClient) DeleteObjectTagging(ctx context.Context, in *DeleteObjectTaggingInput, opts ...grpc.CallOption) (*DeleteObjectTaggingOutput, error) {
 	out := new(DeleteObjectTaggingOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/DeleteObjectTagging", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/DeleteObjectTagging", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -254,7 +254,7 @@ func (c *objectStorageServiceClient) DeleteObjectTagging(ctx context.Context, in
 
 func (c *objectStorageServiceClient) GetObjectTagging(ctx context.Context, in *GetObjectTaggingInput, opts ...grpc.CallOption) (*GetObjectTaggingOutput, error) {
 	out := new(GetObjectTaggingOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/GetObjectTagging", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/GetObjectTagging", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -263,7 +263,7 @@ func (c *objectStorageServiceClient) GetObjectTagging(ctx context.Context, in *G
 
 func (c *objectStorageServiceClient) GetObjectCannedAcl(ctx context.Context, in *GetObjectCannedAclInput, opts ...grpc.CallOption) (*GetObjectCannedAclOutput, error) {
 	out := new(GetObjectCannedAclOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/GetObjectCannedAcl", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/GetObjectCannedAcl", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -272,7 +272,7 @@ func (c *objectStorageServiceClient) GetObjectCannedAcl(ctx context.Context, in 
 
 func (c *objectStorageServiceClient) PutObjectCannedAcl(ctx context.Context, in *PutObjectCannedAclInput, opts ...grpc.CallOption) (*PutObjectCannedAclOutput, error) {
 	out := new(PutObjectCannedAclOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/PutObjectCannedAcl", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/PutObjectCannedAcl", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -281,7 +281,7 @@ func (c *objectStorageServiceClient) PutObjectCannedAcl(ctx context.Context, in 
 
 func (c *objectStorageServiceClient) CreateMultipartUpload(ctx context.Context, in *CreateMultipartUploadInput, opts ...grpc.CallOption) (*CreateMultipartUploadOutput, error) {
 	out := new(CreateMultipartUploadOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/CreateMultipartUpload", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/CreateMultipartUpload", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -289,7 +289,7 @@ func (c *objectStorageServiceClient) CreateMultipartUpload(ctx context.Context, 
 }
 
 func (c *objectStorageServiceClient) UploadPart(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_UploadPartClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ObjectStorageService_ServiceDesc.Streams[2], "/spec.proto.extension.v1.ObjectStorageService/UploadPart", opts...)
+	stream, err := c.cc.NewStream(ctx, &ObjectStorageService_ServiceDesc.Streams[2], "/spec.proto.extension.v1.s3.ObjectStorageService/UploadPart", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -324,7 +324,7 @@ func (x *objectStorageServiceUploadPartClient) CloseAndRecv() (*UploadPartOutput
 
 func (c *objectStorageServiceClient) UploadPartCopy(ctx context.Context, in *UploadPartCopyInput, opts ...grpc.CallOption) (*UploadPartCopyOutput, error) {
 	out := new(UploadPartCopyOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/UploadPartCopy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/UploadPartCopy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -333,7 +333,7 @@ func (c *objectStorageServiceClient) UploadPartCopy(ctx context.Context, in *Upl
 
 func (c *objectStorageServiceClient) CompleteMultipartUpload(ctx context.Context, in *CompleteMultipartUploadInput, opts ...grpc.CallOption) (*CompleteMultipartUploadOutput, error) {
 	out := new(CompleteMultipartUploadOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/CompleteMultipartUpload", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/CompleteMultipartUpload", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -342,7 +342,7 @@ func (c *objectStorageServiceClient) CompleteMultipartUpload(ctx context.Context
 
 func (c *objectStorageServiceClient) AbortMultipartUpload(ctx context.Context, in *AbortMultipartUploadInput, opts ...grpc.CallOption) (*AbortMultipartUploadOutput, error) {
 	out := new(AbortMultipartUploadOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/AbortMultipartUpload", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/AbortMultipartUpload", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -351,7 +351,7 @@ func (c *objectStorageServiceClient) AbortMultipartUpload(ctx context.Context, i
 
 func (c *objectStorageServiceClient) ListMultipartUploads(ctx context.Context, in *ListMultipartUploadsInput, opts ...grpc.CallOption) (*ListMultipartUploadsOutput, error) {
 	out := new(ListMultipartUploadsOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/ListMultipartUploads", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/ListMultipartUploads", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -360,7 +360,7 @@ func (c *objectStorageServiceClient) ListMultipartUploads(ctx context.Context, i
 
 func (c *objectStorageServiceClient) ListParts(ctx context.Context, in *ListPartsInput, opts ...grpc.CallOption) (*ListPartsOutput, error) {
 	out := new(ListPartsOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/ListParts", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/ListParts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -369,7 +369,7 @@ func (c *objectStorageServiceClient) ListParts(ctx context.Context, in *ListPart
 
 func (c *objectStorageServiceClient) ListObjectVersions(ctx context.Context, in *ListObjectVersionsInput, opts ...grpc.CallOption) (*ListObjectVersionsOutput, error) {
 	out := new(ListObjectVersionsOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/ListObjectVersions", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/ListObjectVersions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -378,7 +378,7 @@ func (c *objectStorageServiceClient) ListObjectVersions(ctx context.Context, in 
 
 func (c *objectStorageServiceClient) SignURL(ctx context.Context, in *SignURLInput, opts ...grpc.CallOption) (*SignURLOutput, error) {
 	out := new(SignURLOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/SignURL", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/SignURL", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -387,7 +387,7 @@ func (c *objectStorageServiceClient) SignURL(ctx context.Context, in *SignURLInp
 
 func (c *objectStorageServiceClient) UpdateDownloadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/UpdateDownloadBandwidthRateLimit", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/UpdateDownloadBandwidthRateLimit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -396,7 +396,7 @@ func (c *objectStorageServiceClient) UpdateDownloadBandwidthRateLimit(ctx contex
 
 func (c *objectStorageServiceClient) UpdateUploadBandwidthRateLimit(ctx context.Context, in *UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/UpdateUploadBandwidthRateLimit", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/UpdateUploadBandwidthRateLimit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -404,7 +404,7 @@ func (c *objectStorageServiceClient) UpdateUploadBandwidthRateLimit(ctx context.
 }
 
 func (c *objectStorageServiceClient) AppendObject(ctx context.Context, opts ...grpc.CallOption) (ObjectStorageService_AppendObjectClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ObjectStorageService_ServiceDesc.Streams[3], "/spec.proto.extension.v1.ObjectStorageService/AppendObject", opts...)
+	stream, err := c.cc.NewStream(ctx, &ObjectStorageService_ServiceDesc.Streams[3], "/spec.proto.extension.v1.s3.ObjectStorageService/AppendObject", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -439,7 +439,7 @@ func (x *objectStorageServiceAppendObjectClient) CloseAndRecv() (*AppendObjectOu
 
 func (c *objectStorageServiceClient) RestoreObject(ctx context.Context, in *RestoreObjectInput, opts ...grpc.CallOption) (*RestoreObjectOutput, error) {
 	out := new(RestoreObjectOutput)
-	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.ObjectStorageService/RestoreObject", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spec.proto.extension.v1.s3.ObjectStorageService/RestoreObject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -683,7 +683,7 @@ func _ObjectStorageService_DeleteObject_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/DeleteObject",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/DeleteObject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).DeleteObject(ctx, req.(*DeleteObjectInput))
@@ -701,7 +701,7 @@ func _ObjectStorageService_CopyObject_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/CopyObject",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/CopyObject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).CopyObject(ctx, req.(*CopyObjectInput))
@@ -719,7 +719,7 @@ func _ObjectStorageService_DeleteObjects_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/DeleteObjects",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/DeleteObjects",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).DeleteObjects(ctx, req.(*DeleteObjectsInput))
@@ -737,7 +737,7 @@ func _ObjectStorageService_ListObjects_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/ListObjects",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/ListObjects",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).ListObjects(ctx, req.(*ListObjectsInput))
@@ -755,7 +755,7 @@ func _ObjectStorageService_HeadObject_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/HeadObject",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/HeadObject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).HeadObject(ctx, req.(*HeadObjectInput))
@@ -773,7 +773,7 @@ func _ObjectStorageService_IsObjectExist_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/IsObjectExist",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/IsObjectExist",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).IsObjectExist(ctx, req.(*IsObjectExistInput))
@@ -791,7 +791,7 @@ func _ObjectStorageService_PutObjectTagging_Handler(srv interface{}, ctx context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/PutObjectTagging",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/PutObjectTagging",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).PutObjectTagging(ctx, req.(*PutObjectTaggingInput))
@@ -809,7 +809,7 @@ func _ObjectStorageService_DeleteObjectTagging_Handler(srv interface{}, ctx cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/DeleteObjectTagging",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/DeleteObjectTagging",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).DeleteObjectTagging(ctx, req.(*DeleteObjectTaggingInput))
@@ -827,7 +827,7 @@ func _ObjectStorageService_GetObjectTagging_Handler(srv interface{}, ctx context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/GetObjectTagging",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/GetObjectTagging",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).GetObjectTagging(ctx, req.(*GetObjectTaggingInput))
@@ -845,7 +845,7 @@ func _ObjectStorageService_GetObjectCannedAcl_Handler(srv interface{}, ctx conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/GetObjectCannedAcl",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/GetObjectCannedAcl",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).GetObjectCannedAcl(ctx, req.(*GetObjectCannedAclInput))
@@ -863,7 +863,7 @@ func _ObjectStorageService_PutObjectCannedAcl_Handler(srv interface{}, ctx conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/PutObjectCannedAcl",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/PutObjectCannedAcl",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).PutObjectCannedAcl(ctx, req.(*PutObjectCannedAclInput))
@@ -881,7 +881,7 @@ func _ObjectStorageService_CreateMultipartUpload_Handler(srv interface{}, ctx co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/CreateMultipartUpload",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/CreateMultipartUpload",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).CreateMultipartUpload(ctx, req.(*CreateMultipartUploadInput))
@@ -925,7 +925,7 @@ func _ObjectStorageService_UploadPartCopy_Handler(srv interface{}, ctx context.C
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/UploadPartCopy",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/UploadPartCopy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).UploadPartCopy(ctx, req.(*UploadPartCopyInput))
@@ -943,7 +943,7 @@ func _ObjectStorageService_CompleteMultipartUpload_Handler(srv interface{}, ctx 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/CompleteMultipartUpload",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/CompleteMultipartUpload",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).CompleteMultipartUpload(ctx, req.(*CompleteMultipartUploadInput))
@@ -961,7 +961,7 @@ func _ObjectStorageService_AbortMultipartUpload_Handler(srv interface{}, ctx con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/AbortMultipartUpload",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/AbortMultipartUpload",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).AbortMultipartUpload(ctx, req.(*AbortMultipartUploadInput))
@@ -979,7 +979,7 @@ func _ObjectStorageService_ListMultipartUploads_Handler(srv interface{}, ctx con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/ListMultipartUploads",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/ListMultipartUploads",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).ListMultipartUploads(ctx, req.(*ListMultipartUploadsInput))
@@ -997,7 +997,7 @@ func _ObjectStorageService_ListParts_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/ListParts",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/ListParts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).ListParts(ctx, req.(*ListPartsInput))
@@ -1015,7 +1015,7 @@ func _ObjectStorageService_ListObjectVersions_Handler(srv interface{}, ctx conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/ListObjectVersions",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/ListObjectVersions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).ListObjectVersions(ctx, req.(*ListObjectVersionsInput))
@@ -1033,7 +1033,7 @@ func _ObjectStorageService_SignURL_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/SignURL",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/SignURL",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).SignURL(ctx, req.(*SignURLInput))
@@ -1051,7 +1051,7 @@ func _ObjectStorageService_UpdateDownloadBandwidthRateLimit_Handler(srv interfac
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/UpdateDownloadBandwidthRateLimit",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/UpdateDownloadBandwidthRateLimit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).UpdateDownloadBandwidthRateLimit(ctx, req.(*UpdateBandwidthRateLimitInput))
@@ -1069,7 +1069,7 @@ func _ObjectStorageService_UpdateUploadBandwidthRateLimit_Handler(srv interface{
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/UpdateUploadBandwidthRateLimit",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/UpdateUploadBandwidthRateLimit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).UpdateUploadBandwidthRateLimit(ctx, req.(*UpdateBandwidthRateLimitInput))
@@ -1113,7 +1113,7 @@ func _ObjectStorageService_RestoreObject_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spec.proto.extension.v1.ObjectStorageService/RestoreObject",
+		FullMethod: "/spec.proto.extension.v1.s3.ObjectStorageService/RestoreObject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObjectStorageServiceServer).RestoreObject(ctx, req.(*RestoreObjectInput))
@@ -1125,7 +1125,7 @@ func _ObjectStorageService_RestoreObject_Handler(srv interface{}, ctx context.Co
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ObjectStorageService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "spec.proto.extension.v1.ObjectStorageService",
+	ServiceName: "spec.proto.extension.v1.s3.ObjectStorageService",
 	HandlerType: (*ObjectStorageServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

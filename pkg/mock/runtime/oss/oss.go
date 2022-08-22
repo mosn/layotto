@@ -8,12 +8,12 @@ import (
 	context "context"
 	reflect "reflect"
 
+	"mosn.io/layotto/spec/proto/extension/v1/s3"
+
 	gomock "github.com/golang/mock/gomock"
 	grpc "google.golang.org/grpc"
 	metadata "google.golang.org/grpc/metadata"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
-
-	v1 "mosn.io/layotto/spec/proto/extension/v1"
 )
 
 // MockObjectStorageServiceClient is a mock of ObjectStorageServiceClient interface.
@@ -40,14 +40,14 @@ func (m *MockObjectStorageServiceClient) EXPECT() *MockObjectStorageServiceClien
 }
 
 // AbortMultipartUpload mocks base method.
-func (m *MockObjectStorageServiceClient) AbortMultipartUpload(ctx context.Context, in *v1.AbortMultipartUploadInput, opts ...grpc.CallOption) (*v1.AbortMultipartUploadOutput, error) {
+func (m *MockObjectStorageServiceClient) AbortMultipartUpload(ctx context.Context, in *s3.AbortMultipartUploadInput, opts ...grpc.CallOption) (*s3.AbortMultipartUploadOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "AbortMultipartUpload", varargs...)
-	ret0, _ := ret[0].(*v1.AbortMultipartUploadOutput)
+	ret0, _ := ret[0].(*s3.AbortMultipartUploadOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -60,14 +60,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) AbortMultipartUpload(ctx, 
 }
 
 // AppendObject mocks base method.
-func (m *MockObjectStorageServiceClient) AppendObject(ctx context.Context, opts ...grpc.CallOption) (v1.ObjectStorageService_AppendObjectClient, error) {
+func (m *MockObjectStorageServiceClient) AppendObject(ctx context.Context, opts ...grpc.CallOption) (s3.ObjectStorageService_AppendObjectClient, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "AppendObject", varargs...)
-	ret0, _ := ret[0].(v1.ObjectStorageService_AppendObjectClient)
+	ret0, _ := ret[0].(s3.ObjectStorageService_AppendObjectClient)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -80,14 +80,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) AppendObject(ctx interface
 }
 
 // CompleteMultipartUpload mocks base method.
-func (m *MockObjectStorageServiceClient) CompleteMultipartUpload(ctx context.Context, in *v1.CompleteMultipartUploadInput, opts ...grpc.CallOption) (*v1.CompleteMultipartUploadOutput, error) {
+func (m *MockObjectStorageServiceClient) CompleteMultipartUpload(ctx context.Context, in *s3.CompleteMultipartUploadInput, opts ...grpc.CallOption) (*s3.CompleteMultipartUploadOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "CompleteMultipartUpload", varargs...)
-	ret0, _ := ret[0].(*v1.CompleteMultipartUploadOutput)
+	ret0, _ := ret[0].(*s3.CompleteMultipartUploadOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -100,14 +100,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) CompleteMultipartUpload(ct
 }
 
 // CopyObject mocks base method.
-func (m *MockObjectStorageServiceClient) CopyObject(ctx context.Context, in *v1.CopyObjectInput, opts ...grpc.CallOption) (*v1.CopyObjectOutput, error) {
+func (m *MockObjectStorageServiceClient) CopyObject(ctx context.Context, in *s3.CopyObjectInput, opts ...grpc.CallOption) (*s3.CopyObjectOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "CopyObject", varargs...)
-	ret0, _ := ret[0].(*v1.CopyObjectOutput)
+	ret0, _ := ret[0].(*s3.CopyObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -120,14 +120,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) CopyObject(ctx, in interfa
 }
 
 // CreateMultipartUpload mocks base method.
-func (m *MockObjectStorageServiceClient) CreateMultipartUpload(ctx context.Context, in *v1.CreateMultipartUploadInput, opts ...grpc.CallOption) (*v1.CreateMultipartUploadOutput, error) {
+func (m *MockObjectStorageServiceClient) CreateMultipartUpload(ctx context.Context, in *s3.CreateMultipartUploadInput, opts ...grpc.CallOption) (*s3.CreateMultipartUploadOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "CreateMultipartUpload", varargs...)
-	ret0, _ := ret[0].(*v1.CreateMultipartUploadOutput)
+	ret0, _ := ret[0].(*s3.CreateMultipartUploadOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -140,14 +140,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) CreateMultipartUpload(ctx,
 }
 
 // DeleteObject mocks base method.
-func (m *MockObjectStorageServiceClient) DeleteObject(ctx context.Context, in *v1.DeleteObjectInput, opts ...grpc.CallOption) (*v1.DeleteObjectOutput, error) {
+func (m *MockObjectStorageServiceClient) DeleteObject(ctx context.Context, in *s3.DeleteObjectInput, opts ...grpc.CallOption) (*s3.DeleteObjectOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "DeleteObject", varargs...)
-	ret0, _ := ret[0].(*v1.DeleteObjectOutput)
+	ret0, _ := ret[0].(*s3.DeleteObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -160,14 +160,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) DeleteObject(ctx, in inter
 }
 
 // DeleteObjectTagging mocks base method.
-func (m *MockObjectStorageServiceClient) DeleteObjectTagging(ctx context.Context, in *v1.DeleteObjectTaggingInput, opts ...grpc.CallOption) (*v1.DeleteObjectTaggingOutput, error) {
+func (m *MockObjectStorageServiceClient) DeleteObjectTagging(ctx context.Context, in *s3.DeleteObjectTaggingInput, opts ...grpc.CallOption) (*s3.DeleteObjectTaggingOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "DeleteObjectTagging", varargs...)
-	ret0, _ := ret[0].(*v1.DeleteObjectTaggingOutput)
+	ret0, _ := ret[0].(*s3.DeleteObjectTaggingOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -180,14 +180,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) DeleteObjectTagging(ctx, i
 }
 
 // DeleteObjects mocks base method.
-func (m *MockObjectStorageServiceClient) DeleteObjects(ctx context.Context, in *v1.DeleteObjectsInput, opts ...grpc.CallOption) (*v1.DeleteObjectsOutput, error) {
+func (m *MockObjectStorageServiceClient) DeleteObjects(ctx context.Context, in *s3.DeleteObjectsInput, opts ...grpc.CallOption) (*s3.DeleteObjectsOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "DeleteObjects", varargs...)
-	ret0, _ := ret[0].(*v1.DeleteObjectsOutput)
+	ret0, _ := ret[0].(*s3.DeleteObjectsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -200,14 +200,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) DeleteObjects(ctx, in inte
 }
 
 // GetObject mocks base method.
-func (m *MockObjectStorageServiceClient) GetObject(ctx context.Context, in *v1.GetObjectInput, opts ...grpc.CallOption) (v1.ObjectStorageService_GetObjectClient, error) {
+func (m *MockObjectStorageServiceClient) GetObject(ctx context.Context, in *s3.GetObjectInput, opts ...grpc.CallOption) (s3.ObjectStorageService_GetObjectClient, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetObject", varargs...)
-	ret0, _ := ret[0].(v1.ObjectStorageService_GetObjectClient)
+	ret0, _ := ret[0].(s3.ObjectStorageService_GetObjectClient)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -220,14 +220,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) GetObject(ctx, in interfac
 }
 
 // GetObjectCannedAcl mocks base method.
-func (m *MockObjectStorageServiceClient) GetObjectCannedAcl(ctx context.Context, in *v1.GetObjectCannedAclInput, opts ...grpc.CallOption) (*v1.GetObjectCannedAclOutput, error) {
+func (m *MockObjectStorageServiceClient) GetObjectCannedAcl(ctx context.Context, in *s3.GetObjectCannedAclInput, opts ...grpc.CallOption) (*s3.GetObjectCannedAclOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetObjectCannedAcl", varargs...)
-	ret0, _ := ret[0].(*v1.GetObjectCannedAclOutput)
+	ret0, _ := ret[0].(*s3.GetObjectCannedAclOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -240,14 +240,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) GetObjectCannedAcl(ctx, in
 }
 
 // GetObjectTagging mocks base method.
-func (m *MockObjectStorageServiceClient) GetObjectTagging(ctx context.Context, in *v1.GetObjectTaggingInput, opts ...grpc.CallOption) (*v1.GetObjectTaggingOutput, error) {
+func (m *MockObjectStorageServiceClient) GetObjectTagging(ctx context.Context, in *s3.GetObjectTaggingInput, opts ...grpc.CallOption) (*s3.GetObjectTaggingOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetObjectTagging", varargs...)
-	ret0, _ := ret[0].(*v1.GetObjectTaggingOutput)
+	ret0, _ := ret[0].(*s3.GetObjectTaggingOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -260,14 +260,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) GetObjectTagging(ctx, in i
 }
 
 // HeadObject mocks base method.
-func (m *MockObjectStorageServiceClient) HeadObject(ctx context.Context, in *v1.HeadObjectInput, opts ...grpc.CallOption) (*v1.HeadObjectOutput, error) {
+func (m *MockObjectStorageServiceClient) HeadObject(ctx context.Context, in *s3.HeadObjectInput, opts ...grpc.CallOption) (*s3.HeadObjectOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "HeadObject", varargs...)
-	ret0, _ := ret[0].(*v1.HeadObjectOutput)
+	ret0, _ := ret[0].(*s3.HeadObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -280,14 +280,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) HeadObject(ctx, in interfa
 }
 
 // IsObjectExist mocks base method.
-func (m *MockObjectStorageServiceClient) IsObjectExist(ctx context.Context, in *v1.IsObjectExistInput, opts ...grpc.CallOption) (*v1.IsObjectExistOutput, error) {
+func (m *MockObjectStorageServiceClient) IsObjectExist(ctx context.Context, in *s3.IsObjectExistInput, opts ...grpc.CallOption) (*s3.IsObjectExistOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "IsObjectExist", varargs...)
-	ret0, _ := ret[0].(*v1.IsObjectExistOutput)
+	ret0, _ := ret[0].(*s3.IsObjectExistOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -300,14 +300,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) IsObjectExist(ctx, in inte
 }
 
 // ListMultipartUploads mocks base method.
-func (m *MockObjectStorageServiceClient) ListMultipartUploads(ctx context.Context, in *v1.ListMultipartUploadsInput, opts ...grpc.CallOption) (*v1.ListMultipartUploadsOutput, error) {
+func (m *MockObjectStorageServiceClient) ListMultipartUploads(ctx context.Context, in *s3.ListMultipartUploadsInput, opts ...grpc.CallOption) (*s3.ListMultipartUploadsOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "ListMultipartUploads", varargs...)
-	ret0, _ := ret[0].(*v1.ListMultipartUploadsOutput)
+	ret0, _ := ret[0].(*s3.ListMultipartUploadsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -320,14 +320,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) ListMultipartUploads(ctx, 
 }
 
 // ListObjectVersions mocks base method.
-func (m *MockObjectStorageServiceClient) ListObjectVersions(ctx context.Context, in *v1.ListObjectVersionsInput, opts ...grpc.CallOption) (*v1.ListObjectVersionsOutput, error) {
+func (m *MockObjectStorageServiceClient) ListObjectVersions(ctx context.Context, in *s3.ListObjectVersionsInput, opts ...grpc.CallOption) (*s3.ListObjectVersionsOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "ListObjectVersions", varargs...)
-	ret0, _ := ret[0].(*v1.ListObjectVersionsOutput)
+	ret0, _ := ret[0].(*s3.ListObjectVersionsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -340,14 +340,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) ListObjectVersions(ctx, in
 }
 
 // ListObjects mocks base method.
-func (m *MockObjectStorageServiceClient) ListObjects(ctx context.Context, in *v1.ListObjectsInput, opts ...grpc.CallOption) (*v1.ListObjectsOutput, error) {
+func (m *MockObjectStorageServiceClient) ListObjects(ctx context.Context, in *s3.ListObjectsInput, opts ...grpc.CallOption) (*s3.ListObjectsOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "ListObjects", varargs...)
-	ret0, _ := ret[0].(*v1.ListObjectsOutput)
+	ret0, _ := ret[0].(*s3.ListObjectsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -360,14 +360,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) ListObjects(ctx, in interf
 }
 
 // ListParts mocks base method.
-func (m *MockObjectStorageServiceClient) ListParts(ctx context.Context, in *v1.ListPartsInput, opts ...grpc.CallOption) (*v1.ListPartsOutput, error) {
+func (m *MockObjectStorageServiceClient) ListParts(ctx context.Context, in *s3.ListPartsInput, opts ...grpc.CallOption) (*s3.ListPartsOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "ListParts", varargs...)
-	ret0, _ := ret[0].(*v1.ListPartsOutput)
+	ret0, _ := ret[0].(*s3.ListPartsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -380,14 +380,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) ListParts(ctx, in interfac
 }
 
 // PutObject mocks base method.
-func (m *MockObjectStorageServiceClient) PutObject(ctx context.Context, opts ...grpc.CallOption) (v1.ObjectStorageService_PutObjectClient, error) {
+func (m *MockObjectStorageServiceClient) PutObject(ctx context.Context, opts ...grpc.CallOption) (s3.ObjectStorageService_PutObjectClient, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "PutObject", varargs...)
-	ret0, _ := ret[0].(v1.ObjectStorageService_PutObjectClient)
+	ret0, _ := ret[0].(s3.ObjectStorageService_PutObjectClient)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -400,14 +400,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) PutObject(ctx interface{},
 }
 
 // PutObjectCannedAcl mocks base method.
-func (m *MockObjectStorageServiceClient) PutObjectCannedAcl(ctx context.Context, in *v1.PutObjectCannedAclInput, opts ...grpc.CallOption) (*v1.PutObjectCannedAclOutput, error) {
+func (m *MockObjectStorageServiceClient) PutObjectCannedAcl(ctx context.Context, in *s3.PutObjectCannedAclInput, opts ...grpc.CallOption) (*s3.PutObjectCannedAclOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "PutObjectCannedAcl", varargs...)
-	ret0, _ := ret[0].(*v1.PutObjectCannedAclOutput)
+	ret0, _ := ret[0].(*s3.PutObjectCannedAclOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -420,14 +420,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) PutObjectCannedAcl(ctx, in
 }
 
 // PutObjectTagging mocks base method.
-func (m *MockObjectStorageServiceClient) PutObjectTagging(ctx context.Context, in *v1.PutObjectTaggingInput, opts ...grpc.CallOption) (*v1.PutObjectTaggingOutput, error) {
+func (m *MockObjectStorageServiceClient) PutObjectTagging(ctx context.Context, in *s3.PutObjectTaggingInput, opts ...grpc.CallOption) (*s3.PutObjectTaggingOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "PutObjectTagging", varargs...)
-	ret0, _ := ret[0].(*v1.PutObjectTaggingOutput)
+	ret0, _ := ret[0].(*s3.PutObjectTaggingOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -440,14 +440,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) PutObjectTagging(ctx, in i
 }
 
 // RestoreObject mocks base method.
-func (m *MockObjectStorageServiceClient) RestoreObject(ctx context.Context, in *v1.RestoreObjectInput, opts ...grpc.CallOption) (*v1.RestoreObjectOutput, error) {
+func (m *MockObjectStorageServiceClient) RestoreObject(ctx context.Context, in *s3.RestoreObjectInput, opts ...grpc.CallOption) (*s3.RestoreObjectOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "RestoreObject", varargs...)
-	ret0, _ := ret[0].(*v1.RestoreObjectOutput)
+	ret0, _ := ret[0].(*s3.RestoreObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -460,14 +460,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) RestoreObject(ctx, in inte
 }
 
 // SignURL mocks base method.
-func (m *MockObjectStorageServiceClient) SignURL(ctx context.Context, in *v1.SignURLInput, opts ...grpc.CallOption) (*v1.SignURLOutput, error) {
+func (m *MockObjectStorageServiceClient) SignURL(ctx context.Context, in *s3.SignURLInput, opts ...grpc.CallOption) (*s3.SignURLOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "SignURL", varargs...)
-	ret0, _ := ret[0].(*v1.SignURLOutput)
+	ret0, _ := ret[0].(*s3.SignURLOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -480,7 +480,7 @@ func (mr *MockObjectStorageServiceClientMockRecorder) SignURL(ctx, in interface{
 }
 
 // UpdateDownloadBandwidthRateLimit mocks base method.
-func (m *MockObjectStorageServiceClient) UpdateDownloadBandwidthRateLimit(ctx context.Context, in *v1.UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (m *MockObjectStorageServiceClient) UpdateDownloadBandwidthRateLimit(ctx context.Context, in *s3.UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -500,7 +500,7 @@ func (mr *MockObjectStorageServiceClientMockRecorder) UpdateDownloadBandwidthRat
 }
 
 // UpdateUploadBandwidthRateLimit mocks base method.
-func (m *MockObjectStorageServiceClient) UpdateUploadBandwidthRateLimit(ctx context.Context, in *v1.UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (m *MockObjectStorageServiceClient) UpdateUploadBandwidthRateLimit(ctx context.Context, in *s3.UpdateBandwidthRateLimitInput, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -520,14 +520,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) UpdateUploadBandwidthRateL
 }
 
 // UploadPart mocks base method.
-func (m *MockObjectStorageServiceClient) UploadPart(ctx context.Context, opts ...grpc.CallOption) (v1.ObjectStorageService_UploadPartClient, error) {
+func (m *MockObjectStorageServiceClient) UploadPart(ctx context.Context, opts ...grpc.CallOption) (s3.ObjectStorageService_UploadPartClient, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "UploadPart", varargs...)
-	ret0, _ := ret[0].(v1.ObjectStorageService_UploadPartClient)
+	ret0, _ := ret[0].(s3.ObjectStorageService_UploadPartClient)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -540,14 +540,14 @@ func (mr *MockObjectStorageServiceClientMockRecorder) UploadPart(ctx interface{}
 }
 
 // UploadPartCopy mocks base method.
-func (m *MockObjectStorageServiceClient) UploadPartCopy(ctx context.Context, in *v1.UploadPartCopyInput, opts ...grpc.CallOption) (*v1.UploadPartCopyOutput, error) {
+func (m *MockObjectStorageServiceClient) UploadPartCopy(ctx context.Context, in *s3.UploadPartCopyInput, opts ...grpc.CallOption) (*s3.UploadPartCopyOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "UploadPartCopy", varargs...)
-	ret0, _ := ret[0].(*v1.UploadPartCopyOutput)
+	ret0, _ := ret[0].(*s3.UploadPartCopyOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -583,10 +583,10 @@ func (m *MockObjectStorageService_PutObjectClient) EXPECT() *MockObjectStorageSe
 }
 
 // CloseAndRecv mocks base method.
-func (m *MockObjectStorageService_PutObjectClient) CloseAndRecv() (*v1.PutObjectOutput, error) {
+func (m *MockObjectStorageService_PutObjectClient) CloseAndRecv() (*s3.PutObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CloseAndRecv")
-	ret0, _ := ret[0].(*v1.PutObjectOutput)
+	ret0, _ := ret[0].(*s3.PutObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -655,7 +655,7 @@ func (mr *MockObjectStorageService_PutObjectClientMockRecorder) RecvMsg(m interf
 }
 
 // Send mocks base method.
-func (m *MockObjectStorageService_PutObjectClient) Send(arg0 *v1.PutObjectInput) error {
+func (m *MockObjectStorageService_PutObjectClient) Send(arg0 *s3.PutObjectInput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Send", arg0)
 	ret0, _ := ret[0].(error)
@@ -763,10 +763,10 @@ func (mr *MockObjectStorageService_GetObjectClientMockRecorder) Header() *gomock
 }
 
 // Recv mocks base method.
-func (m *MockObjectStorageService_GetObjectClient) Recv() (*v1.GetObjectOutput, error) {
+func (m *MockObjectStorageService_GetObjectClient) Recv() (*s3.GetObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Recv")
-	ret0, _ := ret[0].(*v1.GetObjectOutput)
+	ret0, _ := ret[0].(*s3.GetObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -843,10 +843,10 @@ func (m *MockObjectStorageService_UploadPartClient) EXPECT() *MockObjectStorageS
 }
 
 // CloseAndRecv mocks base method.
-func (m *MockObjectStorageService_UploadPartClient) CloseAndRecv() (*v1.UploadPartOutput, error) {
+func (m *MockObjectStorageService_UploadPartClient) CloseAndRecv() (*s3.UploadPartOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CloseAndRecv")
-	ret0, _ := ret[0].(*v1.UploadPartOutput)
+	ret0, _ := ret[0].(*s3.UploadPartOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -915,7 +915,7 @@ func (mr *MockObjectStorageService_UploadPartClientMockRecorder) RecvMsg(m inter
 }
 
 // Send mocks base method.
-func (m *MockObjectStorageService_UploadPartClient) Send(arg0 *v1.UploadPartInput) error {
+func (m *MockObjectStorageService_UploadPartClient) Send(arg0 *s3.UploadPartInput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Send", arg0)
 	ret0, _ := ret[0].(error)
@@ -980,10 +980,10 @@ func (m *MockObjectStorageService_AppendObjectClient) EXPECT() *MockObjectStorag
 }
 
 // CloseAndRecv mocks base method.
-func (m *MockObjectStorageService_AppendObjectClient) CloseAndRecv() (*v1.AppendObjectOutput, error) {
+func (m *MockObjectStorageService_AppendObjectClient) CloseAndRecv() (*s3.AppendObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CloseAndRecv")
-	ret0, _ := ret[0].(*v1.AppendObjectOutput)
+	ret0, _ := ret[0].(*s3.AppendObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1052,7 +1052,7 @@ func (mr *MockObjectStorageService_AppendObjectClientMockRecorder) RecvMsg(m int
 }
 
 // Send mocks base method.
-func (m *MockObjectStorageService_AppendObjectClient) Send(arg0 *v1.AppendObjectInput) error {
+func (m *MockObjectStorageService_AppendObjectClient) Send(arg0 *s3.AppendObjectInput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Send", arg0)
 	ret0, _ := ret[0].(error)
@@ -1117,10 +1117,10 @@ func (m *MockObjectStorageServiceServer) EXPECT() *MockObjectStorageServiceServe
 }
 
 // AbortMultipartUpload mocks base method.
-func (m *MockObjectStorageServiceServer) AbortMultipartUpload(arg0 context.Context, arg1 *v1.AbortMultipartUploadInput) (*v1.AbortMultipartUploadOutput, error) {
+func (m *MockObjectStorageServiceServer) AbortMultipartUpload(arg0 context.Context, arg1 *s3.AbortMultipartUploadInput) (*s3.AbortMultipartUploadOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AbortMultipartUpload", arg0, arg1)
-	ret0, _ := ret[0].(*v1.AbortMultipartUploadOutput)
+	ret0, _ := ret[0].(*s3.AbortMultipartUploadOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1132,7 +1132,7 @@ func (mr *MockObjectStorageServiceServerMockRecorder) AbortMultipartUpload(arg0,
 }
 
 // AppendObject mocks base method.
-func (m *MockObjectStorageServiceServer) AppendObject(arg0 v1.ObjectStorageService_AppendObjectServer) error {
+func (m *MockObjectStorageServiceServer) AppendObject(arg0 s3.ObjectStorageService_AppendObjectServer) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AppendObject", arg0)
 	ret0, _ := ret[0].(error)
@@ -1146,10 +1146,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) AppendObject(arg0 interfac
 }
 
 // CompleteMultipartUpload mocks base method.
-func (m *MockObjectStorageServiceServer) CompleteMultipartUpload(arg0 context.Context, arg1 *v1.CompleteMultipartUploadInput) (*v1.CompleteMultipartUploadOutput, error) {
+func (m *MockObjectStorageServiceServer) CompleteMultipartUpload(arg0 context.Context, arg1 *s3.CompleteMultipartUploadInput) (*s3.CompleteMultipartUploadOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CompleteMultipartUpload", arg0, arg1)
-	ret0, _ := ret[0].(*v1.CompleteMultipartUploadOutput)
+	ret0, _ := ret[0].(*s3.CompleteMultipartUploadOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1161,10 +1161,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) CompleteMultipartUpload(ar
 }
 
 // CopyObject mocks base method.
-func (m *MockObjectStorageServiceServer) CopyObject(arg0 context.Context, arg1 *v1.CopyObjectInput) (*v1.CopyObjectOutput, error) {
+func (m *MockObjectStorageServiceServer) CopyObject(arg0 context.Context, arg1 *s3.CopyObjectInput) (*s3.CopyObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CopyObject", arg0, arg1)
-	ret0, _ := ret[0].(*v1.CopyObjectOutput)
+	ret0, _ := ret[0].(*s3.CopyObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1176,10 +1176,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) CopyObject(arg0, arg1 inte
 }
 
 // CreateMultipartUpload mocks base method.
-func (m *MockObjectStorageServiceServer) CreateMultipartUpload(arg0 context.Context, arg1 *v1.CreateMultipartUploadInput) (*v1.CreateMultipartUploadOutput, error) {
+func (m *MockObjectStorageServiceServer) CreateMultipartUpload(arg0 context.Context, arg1 *s3.CreateMultipartUploadInput) (*s3.CreateMultipartUploadOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateMultipartUpload", arg0, arg1)
-	ret0, _ := ret[0].(*v1.CreateMultipartUploadOutput)
+	ret0, _ := ret[0].(*s3.CreateMultipartUploadOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1191,10 +1191,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) CreateMultipartUpload(arg0
 }
 
 // DeleteObject mocks base method.
-func (m *MockObjectStorageServiceServer) DeleteObject(arg0 context.Context, arg1 *v1.DeleteObjectInput) (*v1.DeleteObjectOutput, error) {
+func (m *MockObjectStorageServiceServer) DeleteObject(arg0 context.Context, arg1 *s3.DeleteObjectInput) (*s3.DeleteObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteObject", arg0, arg1)
-	ret0, _ := ret[0].(*v1.DeleteObjectOutput)
+	ret0, _ := ret[0].(*s3.DeleteObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1206,10 +1206,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) DeleteObject(arg0, arg1 in
 }
 
 // DeleteObjectTagging mocks base method.
-func (m *MockObjectStorageServiceServer) DeleteObjectTagging(arg0 context.Context, arg1 *v1.DeleteObjectTaggingInput) (*v1.DeleteObjectTaggingOutput, error) {
+func (m *MockObjectStorageServiceServer) DeleteObjectTagging(arg0 context.Context, arg1 *s3.DeleteObjectTaggingInput) (*s3.DeleteObjectTaggingOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteObjectTagging", arg0, arg1)
-	ret0, _ := ret[0].(*v1.DeleteObjectTaggingOutput)
+	ret0, _ := ret[0].(*s3.DeleteObjectTaggingOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1221,10 +1221,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) DeleteObjectTagging(arg0, 
 }
 
 // DeleteObjects mocks base method.
-func (m *MockObjectStorageServiceServer) DeleteObjects(arg0 context.Context, arg1 *v1.DeleteObjectsInput) (*v1.DeleteObjectsOutput, error) {
+func (m *MockObjectStorageServiceServer) DeleteObjects(arg0 context.Context, arg1 *s3.DeleteObjectsInput) (*s3.DeleteObjectsOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteObjects", arg0, arg1)
-	ret0, _ := ret[0].(*v1.DeleteObjectsOutput)
+	ret0, _ := ret[0].(*s3.DeleteObjectsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1236,7 +1236,7 @@ func (mr *MockObjectStorageServiceServerMockRecorder) DeleteObjects(arg0, arg1 i
 }
 
 // GetObject mocks base method.
-func (m *MockObjectStorageServiceServer) GetObject(arg0 *v1.GetObjectInput, arg1 v1.ObjectStorageService_GetObjectServer) error {
+func (m *MockObjectStorageServiceServer) GetObject(arg0 *s3.GetObjectInput, arg1 s3.ObjectStorageService_GetObjectServer) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetObject", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -1250,10 +1250,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) GetObject(arg0, arg1 inter
 }
 
 // GetObjectCannedAcl mocks base method.
-func (m *MockObjectStorageServiceServer) GetObjectCannedAcl(arg0 context.Context, arg1 *v1.GetObjectCannedAclInput) (*v1.GetObjectCannedAclOutput, error) {
+func (m *MockObjectStorageServiceServer) GetObjectCannedAcl(arg0 context.Context, arg1 *s3.GetObjectCannedAclInput) (*s3.GetObjectCannedAclOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetObjectCannedAcl", arg0, arg1)
-	ret0, _ := ret[0].(*v1.GetObjectCannedAclOutput)
+	ret0, _ := ret[0].(*s3.GetObjectCannedAclOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1265,10 +1265,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) GetObjectCannedAcl(arg0, a
 }
 
 // GetObjectTagging mocks base method.
-func (m *MockObjectStorageServiceServer) GetObjectTagging(arg0 context.Context, arg1 *v1.GetObjectTaggingInput) (*v1.GetObjectTaggingOutput, error) {
+func (m *MockObjectStorageServiceServer) GetObjectTagging(arg0 context.Context, arg1 *s3.GetObjectTaggingInput) (*s3.GetObjectTaggingOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetObjectTagging", arg0, arg1)
-	ret0, _ := ret[0].(*v1.GetObjectTaggingOutput)
+	ret0, _ := ret[0].(*s3.GetObjectTaggingOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1280,10 +1280,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) GetObjectTagging(arg0, arg
 }
 
 // HeadObject mocks base method.
-func (m *MockObjectStorageServiceServer) HeadObject(arg0 context.Context, arg1 *v1.HeadObjectInput) (*v1.HeadObjectOutput, error) {
+func (m *MockObjectStorageServiceServer) HeadObject(arg0 context.Context, arg1 *s3.HeadObjectInput) (*s3.HeadObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HeadObject", arg0, arg1)
-	ret0, _ := ret[0].(*v1.HeadObjectOutput)
+	ret0, _ := ret[0].(*s3.HeadObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1295,10 +1295,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) HeadObject(arg0, arg1 inte
 }
 
 // IsObjectExist mocks base method.
-func (m *MockObjectStorageServiceServer) IsObjectExist(arg0 context.Context, arg1 *v1.IsObjectExistInput) (*v1.IsObjectExistOutput, error) {
+func (m *MockObjectStorageServiceServer) IsObjectExist(arg0 context.Context, arg1 *s3.IsObjectExistInput) (*s3.IsObjectExistOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsObjectExist", arg0, arg1)
-	ret0, _ := ret[0].(*v1.IsObjectExistOutput)
+	ret0, _ := ret[0].(*s3.IsObjectExistOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1310,10 +1310,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) IsObjectExist(arg0, arg1 i
 }
 
 // ListMultipartUploads mocks base method.
-func (m *MockObjectStorageServiceServer) ListMultipartUploads(arg0 context.Context, arg1 *v1.ListMultipartUploadsInput) (*v1.ListMultipartUploadsOutput, error) {
+func (m *MockObjectStorageServiceServer) ListMultipartUploads(arg0 context.Context, arg1 *s3.ListMultipartUploadsInput) (*s3.ListMultipartUploadsOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListMultipartUploads", arg0, arg1)
-	ret0, _ := ret[0].(*v1.ListMultipartUploadsOutput)
+	ret0, _ := ret[0].(*s3.ListMultipartUploadsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1325,10 +1325,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) ListMultipartUploads(arg0,
 }
 
 // ListObjectVersions mocks base method.
-func (m *MockObjectStorageServiceServer) ListObjectVersions(arg0 context.Context, arg1 *v1.ListObjectVersionsInput) (*v1.ListObjectVersionsOutput, error) {
+func (m *MockObjectStorageServiceServer) ListObjectVersions(arg0 context.Context, arg1 *s3.ListObjectVersionsInput) (*s3.ListObjectVersionsOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListObjectVersions", arg0, arg1)
-	ret0, _ := ret[0].(*v1.ListObjectVersionsOutput)
+	ret0, _ := ret[0].(*s3.ListObjectVersionsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1340,10 +1340,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) ListObjectVersions(arg0, a
 }
 
 // ListObjects mocks base method.
-func (m *MockObjectStorageServiceServer) ListObjects(arg0 context.Context, arg1 *v1.ListObjectsInput) (*v1.ListObjectsOutput, error) {
+func (m *MockObjectStorageServiceServer) ListObjects(arg0 context.Context, arg1 *s3.ListObjectsInput) (*s3.ListObjectsOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListObjects", arg0, arg1)
-	ret0, _ := ret[0].(*v1.ListObjectsOutput)
+	ret0, _ := ret[0].(*s3.ListObjectsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1355,10 +1355,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) ListObjects(arg0, arg1 int
 }
 
 // ListParts mocks base method.
-func (m *MockObjectStorageServiceServer) ListParts(arg0 context.Context, arg1 *v1.ListPartsInput) (*v1.ListPartsOutput, error) {
+func (m *MockObjectStorageServiceServer) ListParts(arg0 context.Context, arg1 *s3.ListPartsInput) (*s3.ListPartsOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListParts", arg0, arg1)
-	ret0, _ := ret[0].(*v1.ListPartsOutput)
+	ret0, _ := ret[0].(*s3.ListPartsOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1370,7 +1370,7 @@ func (mr *MockObjectStorageServiceServerMockRecorder) ListParts(arg0, arg1 inter
 }
 
 // PutObject mocks base method.
-func (m *MockObjectStorageServiceServer) PutObject(arg0 v1.ObjectStorageService_PutObjectServer) error {
+func (m *MockObjectStorageServiceServer) PutObject(arg0 s3.ObjectStorageService_PutObjectServer) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PutObject", arg0)
 	ret0, _ := ret[0].(error)
@@ -1384,10 +1384,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) PutObject(arg0 interface{}
 }
 
 // PutObjectCannedAcl mocks base method.
-func (m *MockObjectStorageServiceServer) PutObjectCannedAcl(arg0 context.Context, arg1 *v1.PutObjectCannedAclInput) (*v1.PutObjectCannedAclOutput, error) {
+func (m *MockObjectStorageServiceServer) PutObjectCannedAcl(arg0 context.Context, arg1 *s3.PutObjectCannedAclInput) (*s3.PutObjectCannedAclOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PutObjectCannedAcl", arg0, arg1)
-	ret0, _ := ret[0].(*v1.PutObjectCannedAclOutput)
+	ret0, _ := ret[0].(*s3.PutObjectCannedAclOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1399,10 +1399,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) PutObjectCannedAcl(arg0, a
 }
 
 // PutObjectTagging mocks base method.
-func (m *MockObjectStorageServiceServer) PutObjectTagging(arg0 context.Context, arg1 *v1.PutObjectTaggingInput) (*v1.PutObjectTaggingOutput, error) {
+func (m *MockObjectStorageServiceServer) PutObjectTagging(arg0 context.Context, arg1 *s3.PutObjectTaggingInput) (*s3.PutObjectTaggingOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PutObjectTagging", arg0, arg1)
-	ret0, _ := ret[0].(*v1.PutObjectTaggingOutput)
+	ret0, _ := ret[0].(*s3.PutObjectTaggingOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1414,10 +1414,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) PutObjectTagging(arg0, arg
 }
 
 // RestoreObject mocks base method.
-func (m *MockObjectStorageServiceServer) RestoreObject(arg0 context.Context, arg1 *v1.RestoreObjectInput) (*v1.RestoreObjectOutput, error) {
+func (m *MockObjectStorageServiceServer) RestoreObject(arg0 context.Context, arg1 *s3.RestoreObjectInput) (*s3.RestoreObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RestoreObject", arg0, arg1)
-	ret0, _ := ret[0].(*v1.RestoreObjectOutput)
+	ret0, _ := ret[0].(*s3.RestoreObjectOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1429,10 +1429,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) RestoreObject(arg0, arg1 i
 }
 
 // SignURL mocks base method.
-func (m *MockObjectStorageServiceServer) SignURL(arg0 context.Context, arg1 *v1.SignURLInput) (*v1.SignURLOutput, error) {
+func (m *MockObjectStorageServiceServer) SignURL(arg0 context.Context, arg1 *s3.SignURLInput) (*s3.SignURLOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignURL", arg0, arg1)
-	ret0, _ := ret[0].(*v1.SignURLOutput)
+	ret0, _ := ret[0].(*s3.SignURLOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1444,7 +1444,7 @@ func (mr *MockObjectStorageServiceServerMockRecorder) SignURL(arg0, arg1 interfa
 }
 
 // UpdateDownloadBandwidthRateLimit mocks base method.
-func (m *MockObjectStorageServiceServer) UpdateDownloadBandwidthRateLimit(arg0 context.Context, arg1 *v1.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+func (m *MockObjectStorageServiceServer) UpdateDownloadBandwidthRateLimit(arg0 context.Context, arg1 *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateDownloadBandwidthRateLimit", arg0, arg1)
 	ret0, _ := ret[0].(*emptypb.Empty)
@@ -1459,7 +1459,7 @@ func (mr *MockObjectStorageServiceServerMockRecorder) UpdateDownloadBandwidthRat
 }
 
 // UpdateUploadBandwidthRateLimit mocks base method.
-func (m *MockObjectStorageServiceServer) UpdateUploadBandwidthRateLimit(arg0 context.Context, arg1 *v1.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+func (m *MockObjectStorageServiceServer) UpdateUploadBandwidthRateLimit(arg0 context.Context, arg1 *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateUploadBandwidthRateLimit", arg0, arg1)
 	ret0, _ := ret[0].(*emptypb.Empty)
@@ -1474,7 +1474,7 @@ func (mr *MockObjectStorageServiceServerMockRecorder) UpdateUploadBandwidthRateL
 }
 
 // UploadPart mocks base method.
-func (m *MockObjectStorageServiceServer) UploadPart(arg0 v1.ObjectStorageService_UploadPartServer) error {
+func (m *MockObjectStorageServiceServer) UploadPart(arg0 s3.ObjectStorageService_UploadPartServer) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UploadPart", arg0)
 	ret0, _ := ret[0].(error)
@@ -1488,10 +1488,10 @@ func (mr *MockObjectStorageServiceServerMockRecorder) UploadPart(arg0 interface{
 }
 
 // UploadPartCopy mocks base method.
-func (m *MockObjectStorageServiceServer) UploadPartCopy(arg0 context.Context, arg1 *v1.UploadPartCopyInput) (*v1.UploadPartCopyOutput, error) {
+func (m *MockObjectStorageServiceServer) UploadPartCopy(arg0 context.Context, arg1 *s3.UploadPartCopyInput) (*s3.UploadPartCopyOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UploadPartCopy", arg0, arg1)
-	ret0, _ := ret[0].(*v1.UploadPartCopyOutput)
+	ret0, _ := ret[0].(*s3.UploadPartCopyOutput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1575,10 +1575,10 @@ func (mr *MockObjectStorageService_PutObjectServerMockRecorder) Context() *gomoc
 }
 
 // Recv mocks base method.
-func (m *MockObjectStorageService_PutObjectServer) Recv() (*v1.PutObjectInput, error) {
+func (m *MockObjectStorageService_PutObjectServer) Recv() (*s3.PutObjectInput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Recv")
-	ret0, _ := ret[0].(*v1.PutObjectInput)
+	ret0, _ := ret[0].(*s3.PutObjectInput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1604,7 +1604,7 @@ func (mr *MockObjectStorageService_PutObjectServerMockRecorder) RecvMsg(m interf
 }
 
 // SendAndClose mocks base method.
-func (m *MockObjectStorageService_PutObjectServer) SendAndClose(arg0 *v1.PutObjectOutput) error {
+func (m *MockObjectStorageService_PutObjectServer) SendAndClose(arg0 *s3.PutObjectOutput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendAndClose", arg0)
 	ret0, _ := ret[0].(error)
@@ -1723,7 +1723,7 @@ func (mr *MockObjectStorageService_GetObjectServerMockRecorder) RecvMsg(m interf
 }
 
 // Send mocks base method.
-func (m *MockObjectStorageService_GetObjectServer) Send(arg0 *v1.GetObjectOutput) error {
+func (m *MockObjectStorageService_GetObjectServer) Send(arg0 *s3.GetObjectOutput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Send", arg0)
 	ret0, _ := ret[0].(error)
@@ -1828,10 +1828,10 @@ func (mr *MockObjectStorageService_UploadPartServerMockRecorder) Context() *gomo
 }
 
 // Recv mocks base method.
-func (m *MockObjectStorageService_UploadPartServer) Recv() (*v1.UploadPartInput, error) {
+func (m *MockObjectStorageService_UploadPartServer) Recv() (*s3.UploadPartInput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Recv")
-	ret0, _ := ret[0].(*v1.UploadPartInput)
+	ret0, _ := ret[0].(*s3.UploadPartInput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1857,7 +1857,7 @@ func (mr *MockObjectStorageService_UploadPartServerMockRecorder) RecvMsg(m inter
 }
 
 // SendAndClose mocks base method.
-func (m *MockObjectStorageService_UploadPartServer) SendAndClose(arg0 *v1.UploadPartOutput) error {
+func (m *MockObjectStorageService_UploadPartServer) SendAndClose(arg0 *s3.UploadPartOutput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendAndClose", arg0)
 	ret0, _ := ret[0].(error)
@@ -1962,10 +1962,10 @@ func (mr *MockObjectStorageService_AppendObjectServerMockRecorder) Context() *go
 }
 
 // Recv mocks base method.
-func (m *MockObjectStorageService_AppendObjectServer) Recv() (*v1.AppendObjectInput, error) {
+func (m *MockObjectStorageService_AppendObjectServer) Recv() (*s3.AppendObjectInput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Recv")
-	ret0, _ := ret[0].(*v1.AppendObjectInput)
+	ret0, _ := ret[0].(*s3.AppendObjectInput)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1991,7 +1991,7 @@ func (mr *MockObjectStorageService_AppendObjectServerMockRecorder) RecvMsg(m int
 }
 
 // SendAndClose mocks base method.
-func (m *MockObjectStorageService_AppendObjectServer) SendAndClose(arg0 *v1.AppendObjectOutput) error {
+func (m *MockObjectStorageService_AppendObjectServer) SendAndClose(arg0 *s3.AppendObjectOutput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendAndClose", arg0)
 	ret0, _ := ret[0].(error)
