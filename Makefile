@@ -284,6 +284,13 @@ proto.doc:
 	@$(MAKE) proto.gen.doc
 
 # ==============================================================================
+## proto: Generate code and documentation based on the proto files.
+# ==============================================================================
+.PHONY: proto
+proto:
+	@$(MAKE) proto.gen.all
+
+# ==============================================================================
 ## proto.init: Install protoc-gen-go and protoc-gen-go-grpc
 # ==============================================================================
 .PHONY: proto.init
