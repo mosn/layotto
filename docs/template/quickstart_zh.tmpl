@@ -5,16 +5,16 @@
 
 {{.Description}}
 
-### step 1. 运行 Layotto
+## step 1. 运行 Layotto
 <!-- tabs:start -->
-#### **With Docker**
+### **With Docker**
 您可以用 Docker 启动 Layotto
 
 ```bash
 docker run -v "$(pwd)/configs/config_standalone.json:/runtime/configs/config.json" -d  -p 34904:34904 --name layotto layotto/layotto start
 ```
 
-#### **本地编译（不适合 Windows)**
+### **本地编译（不适合 Windows)**
 您可以本地编译、运行 Layotto。
 > [!TIP|label: 不适合 Windows 用户]
 > Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker 部署
@@ -39,9 +39,9 @@ go build
 
 <!-- tabs:end -->
 
-### step 2. 运行客户端程序，调用 Layotto {{.Name}} API
+## step 2. 运行客户端程序，调用 Layotto {{.Name}} API
 <!-- tabs:start -->
-#### **Go**
+### **Go**
 
 构建、运行 go 语言 demo:
 
@@ -57,7 +57,7 @@ go build
 TODO
 ```
 
-#### **Java**
+### **Java**
 
 下载 java sdk 和示例代码:
 
@@ -90,9 +90,9 @@ TODO
 
 <!-- tabs:end -->
 
-### step 3. 销毁容器,释放资源
+## step 3. 销毁容器,释放资源
 <!-- tabs:start -->
-#### **销毁 Docker container**
+### **销毁 Docker container**
 如果您是用 Docker 启动的 Layotto，可以按以下方式销毁容器：
 
 ```bash
@@ -101,18 +101,18 @@ docker rm -f layotto
 
 <!-- tabs:end -->
 
-### 下一步
-#### 这个客户端程序做了什么？
+## 下一步
+### 这个客户端程序做了什么？
 示例客户端程序中使用了 Layotto 提供的多语言 sdk，调用Layotto {{.Name}} API。
 
 go sdk位于`sdk`目录下，java sdk 在 https://github.com/layotto/java-sdk
 
 除了使用sdk调用Layotto提供的API，您也可以用任何您喜欢的语言、通过grpc直接和Layotto交互。
 
-#### 细节以后再说，继续体验其他API
+### 细节以后再说，继续体验其他API
 通过左侧的导航栏，继续体验别的API吧！
 
-#### Reference
+### Reference
 
 <!--api_reference_url-->
 

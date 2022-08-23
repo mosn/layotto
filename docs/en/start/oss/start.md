@@ -6,8 +6,9 @@ This example shows how to invoke Layotto ObjectStorageService API.
 ObjectStorageService is an abstraction for blob storage or so called "object storage", such as alibaba cloud OSS, such as AWS S3.
 You invoke ObjectStorageService API to do some CRUD operations on your binary file, e.g. query my file, delete my file, etc.
 
-### step 0. modify the configuration
+## step 0. modify the configuration
 Please modify the OSS configuration in the `configs/config_oss.json`
+
 ```json
 "grpc_config": {
   "oss": {
@@ -26,16 +27,16 @@ Please modify the OSS configuration in the `configs/config_oss.json`
 }
 ```
 
-### step 1. Deploy Layotto
+## step 1. Deploy Layotto
 <!-- tabs:start -->
-#### **With Docker**
+### **With Docker**
 You can start Layotto with docker
 
 ```bash
 docker run -v "$(pwd)/configs/config_oss.json:/runtime/configs/config.json" -d  -p 34904:34904 --name layotto layotto/layotto start
 ```
 
-#### **Compile locally (not for Windows)**
+### **Compile locally (not for Windows)**
 You can compile and run Layotto locally.
 
 > [!TIP|label: Not for Windows users]
@@ -61,9 +62,9 @@ Run it:
 
 <!-- tabs:end -->
 
-### step 2. Run the client program to invoke Layotto ObjectStorageService API
+## step 2. Run the client program to invoke Layotto ObjectStorageService API
 <!-- tabs:start -->
-#### **Go**
+### **Go**
 Build and run the golang [demo](https://github.com/mosn/layotto/blob/main/demo/oss/client.go) :
 
 ```shell
@@ -84,7 +85,7 @@ go build client.go
 
 ```
 
-#### **Java**
+### **Java**
 <!-- 
 
 Download java sdk and examples:
@@ -120,9 +121,9 @@ TODO
 
 <!-- tabs:end -->
 
-### step 3. Stop containers and release resources
+## step 3. Stop containers and release resources
 <!-- tabs:start -->
-#### **Destroy the Docker container**
+### **Destroy the Docker container**
 If you started Layotto with docker, you can destroy the container as follows:
 
 ```bash
@@ -131,18 +132,18 @@ docker rm -f layotto
 
 <!-- tabs:end -->
 
-### Next step
-#### What does this client program do?
+## Next step
+### What does this client program do?
 The demo client program uses the SDK provided by Layotto to invoke the Layotto ObjectStorageService API.
 
 The golang sdk is located in the `sdk` directory, and the java sdk is in https://github.com/layotto/java-sdk
 
 In addition to using sdk, you can also interact with Layotto directly through grpc in any language you like.
 
-#### Details later, let's continue to experience other APIs
+### Details later, let's continue to experience other APIs
 Explore other Quickstarts through the navigation bar on the left.
 
-#### Reference
+### Reference
 
 [API reference](https://mosn.io/layotto/api/v1/s3.html)
 
