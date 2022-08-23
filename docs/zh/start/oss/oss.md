@@ -7,7 +7,7 @@ Layotto提供了访问OSS的示例 [demo](https://github.com/mosn/layotto/blob/m
 
 ### step 1.  启动layotto
 
-layotto提供了aws的配置文件`configs/oss.json`，配置文件内容如下所示:
+layotto提供了aws的配置文件`configs/config_oss.json`，配置文件内容如下所示:
 
 ```json
 "grpc_config": {
@@ -54,7 +54,7 @@ go build -o layotto
 Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/oss/client.go)
 
 ```shell
-cd ${project_path}/demo/file/s3/
+cd ${project_path}/demo/oss/
 go build client.go
 
 # 上传名为test3.txt的文件到名为antsys-wenxuwan的bucket下，内容为"hello"
