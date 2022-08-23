@@ -1,4 +1,4 @@
-# How to generate `.pb.go` code and API reference
+# How to generate `.pb.go` code and corresponding documentation
 Note: the commands below should be executed under layotto directory
 
 ```shell
@@ -8,8 +8,8 @@ make proto
 Then you get:
 - `.pb.go` code
 - API reference docs
-- updated the API reference list
-- quickstart document
+- updated API reference list
+- quickstart document (both chinese and english)
 - updated sidebar (The tool will add the generated quickstart doc into the sidebar of https://mosn.io/layotto )
 - updated CI (The tool will add the generated quickstart doc into the CI script `etc/script/test-quickstart.sh`)
 

@@ -1,14 +1,14 @@
-# 如何基于proto文件生成代码、接口文档
+# 如何基于proto文件生成代码、文档
 
 ```shell
 make proto
 ```
 
 Then you get:
-- `.pb.go` code 
+- `.pb.go` code
 - API reference docs
-- updated the API reference list
-- quickstart document
+- updated API reference list
+- quickstart document (both chinese and english)
 - updated sidebar (The tool will add the generated quickstart doc into the sidebar of https://mosn.io/layotto )
 - updated CI (The tool will add the generated quickstart doc into the CI script `etc/script/test-quickstart.sh`)
 
