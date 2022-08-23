@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/dapr/components-contrib/secretstores"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/ref"
 )
