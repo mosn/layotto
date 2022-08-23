@@ -4,7 +4,7 @@ Layotto的RPC API基于[Mosn](https://mosn.io/docs/overview/)的grpc handler设�
 
 RPC API的接口与[Dapr](https://docs.dapr.io/zh-hans/developing-applications/building-blocks/service-invocation/service-invocation-overview/)一致，可以在代码[invoke.go](https://github.com/mosn/layotto/blob/3802c4591181fdbcfb7dd07cbbdbadeaaada650a/sdk/go-sdk/client/invoke.go)中看到接口的具体设计细节。
 
-使用 Layotto RPC API 进行服务调用，您的应用程序可以使用标准 HTTP 或 [X-Protocol](https://www.servicemesher.com/blog/x-protocol-common-address-solution/) 协议可靠且安全地与其他应用程序通信.
+使用 Layotto RPC API 进行服务调用，您的应用程序可以使用标准 HTTP 或 [X-Protocol](https://cloudnative.to/blog/x-protocol-common-address-solution/) 协议可靠且安全地与其他应用程序通信.
 
 ![sidecar](https://mosn.io/en/docs/concept/sidecar-pattern/sidecar-pattern.jpg)
 
