@@ -35,14 +35,12 @@ import (
 func NewLifecycleAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
 	return &server{
 		components: ac.DynamicComponents,
-		ac:         ac,
 	}
 }
 
 // server implements runtimev1pb.LifecycleServer
 type server struct {
 	components map[lifecycle.ComponentKey]common.DynamicComponent
-	ac         *grpc_api.ApplicationContext
 }
 
 func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.DynamicConfiguration) (*runtimev1pb.ApplyConfigurationResponse, error) {
