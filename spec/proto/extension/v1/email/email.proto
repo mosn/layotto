@@ -4,6 +4,7 @@ package spec.proto.extension.v1.email;
 
 option go_package = "mosn.io/layotto/spec/proto/extension/v1/email;email";
 
+/* @exclude quickstart generator */
 // EmailTemplateService is used to send emails with templates
 service EmailTemplateService {
 
