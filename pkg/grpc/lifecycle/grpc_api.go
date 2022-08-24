@@ -83,7 +83,7 @@ func checkDynamicComponent(kind string, name string, store interface{}, componen
 		name: name,
 	}] = &dynamicComponentHolder{
 		DynamicComponent: comp,
-		Mutex:            sync.Mutex{},
+		mu:               sync.Mutex{},
 	}
 }
 
@@ -100,7 +100,7 @@ type componentKey struct {
 
 type dynamicComponentHolder struct {
 	common.DynamicComponent
-	sync.Mutex
+	mu sync.Mutex
 }
 
 func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.DynamicConfiguration) (*runtimev1pb.ApplyConfigurationResponse, error) {
@@ -135,8 +135,8 @@ func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.Dynamic
 	}
 
 	// 3. lock
-	holder.Lock()
-	defer holder.Unlock()
+	holder.mu.Lock()
+	defer holder.mu.Unlock()
 
 	// 4. delegate to components
 	err := holder.ApplyConfig(ctx, in.GetComponentConfig().Metadata)
