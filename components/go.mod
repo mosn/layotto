@@ -40,9 +40,9 @@ require (
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
 	google.golang.org/grpc v1.38.0
-	mosn.io/api v1.0.0
-	mosn.io/mosn v1.0.2-0.20220624093205-6d37b64a8f06
-	mosn.io/pkg v1.0.0
+	mosn.io/api v1.1.0
+	mosn.io/mosn v1.1.0
+	mosn.io/pkg v1.1.0
 )
 
 replace github.com/klauspost/compress => github.com/klauspost/compress v1.13.1
