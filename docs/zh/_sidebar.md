@@ -17,6 +17,7 @@
         - [基于Minio](zh/start/file/minio.md)
     - [使用 OSS API](zh/start/oss/oss.md)
     <!--quickstart_generator-->
+    - [使用 lifecycle API](zh/start/lifecycle/start) 
     - [API插件：注册您自己的API](zh/start/api_plugin/helloworld.md)
     - 作为 Istio 的数据面
         - [集成 Istio 1.10.6 演示](zh/start/istio/)
