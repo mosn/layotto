@@ -60,34 +60,45 @@ TODO
 
 ### **Java**
 
-Download java sdk and examples:
+[comment]: <> (Download java sdk and examples:)
 
-```shell @if.not.exist java-sdk
-git clone https://github.com/layotto/java-sdk
-```
+[comment]: <> (```shell @if.not.exist java-sdk)
 
-```shell
-cd java-sdk
-```
+[comment]: <> (git clone https://github.com/layotto/java-sdk)
 
-Build the demo:
+[comment]: <> (```)
 
-```shell @if.not.exist examples-lifecycle/target/examples-lifecycle-1.1.0-jar-with-dependencies.jar
-# build example jar
-mvn -f examples-lifecycle/pom.xml clean package
-```
+[comment]: <> (```shell)
 
-Run it:
+[comment]: <> (cd java-sdk)
 
-```shell
-java -jar examples-lifecycle/target/examples-lifecycle-1.1.0-jar-with-dependencies.jar
-```
+[comment]: <> (```)
 
-If the following information is printed, the demo is successful:
+[comment]: <> (Build the demo:)
 
-```bash
-TODO
-```
+[comment]: <> (```shell @if.not.exist examples-lifecycle/target/examples-lifecycle-1.1.0-jar-with-dependencies.jar)
+
+[comment]: <> (# build example jar)
+
+[comment]: <> (mvn -f examples-lifecycle/pom.xml clean package)
+
+[comment]: <> (```)
+
+[comment]: <> (Run it:)
+
+[comment]: <> (```shell)
+
+[comment]: <> (java -jar examples-lifecycle/target/examples-lifecycle-1.1.0-jar-with-dependencies.jar)
+
+[comment]: <> (```)
+
+[comment]: <> (If the following information is printed, the demo is successful:)
+
+[comment]: <> (```bash)
+
+[comment]: <> (TODO)
+
+[comment]: <> (```)
 
 <!-- tabs:end -->
 
