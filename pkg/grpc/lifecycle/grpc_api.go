@@ -18,7 +18,6 @@ package lifecycle
 
 import (
 	"context"
-	"sync"
 
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -26,81 +25,24 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/pkg/common"
+	"mosn.io/layotto/pkg/runtime/lifecycle"
+
 	"mosn.io/layotto/pkg/grpc"
 	grpc_api "mosn.io/layotto/pkg/grpc"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 func NewLifecycleAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
-	components := make(map[componentKey]*dynamicComponentHolder)
-	for k, store := range ac.Hellos {
-		checkDynamicComponent(kindHello, k, store, components)
-	}
-	for k, store := range ac.ConfigStores {
-		checkDynamicComponent(kindConfig, k, store, components)
-	}
-	for k, store := range ac.Rpcs {
-		checkDynamicComponent(kindRPC, k, store, components)
-	}
-	for k, store := range ac.PubSubs {
-		checkDynamicComponent(kindPubsub, k, store, components)
-	}
-	for k, store := range ac.StateStores {
-		checkDynamicComponent(kindState, k, store, components)
-	}
-	for k, store := range ac.Files {
-		checkDynamicComponent(kindFile, k, store, components)
-	}
-	for k, store := range ac.Oss {
-		checkDynamicComponent(kindOss, k, store, components)
-	}
-	for k, store := range ac.LockStores {
-		checkDynamicComponent(kindLock, k, store, components)
-	}
-	for k, store := range ac.Sequencers {
-		checkDynamicComponent(kindSequencer, k, store, components)
-	}
-	for k, store := range ac.SecretStores {
-		checkDynamicComponent(kindSecret, k, store, components)
-	}
-	for k, store := range ac.CustomComponent {
-		checkDynamicComponent(kindCustom, k, store, components)
-	}
 	return &server{
-		components: components,
+		components: ac.DynamicComponents,
 		ac:         ac,
-	}
-}
-
-func checkDynamicComponent(kind string, name string, store interface{}, components map[componentKey]*dynamicComponentHolder) {
-	comp, ok := store.(common.DynamicComponent)
-	if !ok {
-		return
-	}
-	// put it in the components map
-	components[componentKey{
-		kind: kind,
-		name: name,
-	}] = &dynamicComponentHolder{
-		DynamicComponent: comp,
-		mu:               sync.Mutex{},
 	}
 }
 
 // server implements runtimev1pb.LifecycleServer
 type server struct {
-	components map[componentKey]*dynamicComponentHolder
+	components map[lifecycle.ComponentKey]common.DynamicComponent
 	ac         *grpc_api.ApplicationContext
-}
-
-type componentKey struct {
-	kind string
-	name string
-}
-
-type dynamicComponentHolder struct {
-	common.DynamicComponent
-	mu sync.Mutex
 }
 
 func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.DynamicConfiguration) (*runtimev1pb.ApplyConfigurationResponse, error) {
@@ -123,9 +65,9 @@ func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.Dynamic
 		return &runtimev1pb.ApplyConfigurationResponse{}, err
 	}
 	// 2. find the component
-	key := componentKey{
-		kind: kind,
-		name: name,
+	key := lifecycle.ComponentKey{
+		Kind: kind,
+		Name: name,
 	}
 	holder, ok := s.components[key]
 	if !ok {
@@ -134,11 +76,7 @@ func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.Dynamic
 		return &runtimev1pb.ApplyConfigurationResponse{}, err
 	}
 
-	// 3. lock
-	holder.mu.Lock()
-	defer holder.mu.Unlock()
-
-	// 4. delegate to components
+	// 3. delegate to the components
 	err := holder.ApplyConfig(ctx, in.GetComponentConfig().Metadata)
 	return &runtimev1pb.ApplyConfigurationResponse{}, err
 }

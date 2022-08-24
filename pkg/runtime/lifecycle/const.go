@@ -14,15 +14,16 @@
 package lifecycle
 
 const (
-	kindHello     = "hellos"
-	kindConfig    = "config_store"
-	kindRPC       = "rpcs"
-	kindPubsub    = "pub_subs"
-	kindState     = "state"
-	kindFile      = "file"
-	kindOss       = "oss"
-	kindLock      = "lock"
-	kindSequencer = "sequencer"
-	kindSecret    = "secret_store"
-	kindCustom    = "custom_component"
+	KindHello     = "hellos"
+	KindConfig    = "config_store"
+	KindRPC       = "rpcs"
+	KindPubsub    = "pub_subs"
+	KindState     = "state"
+	KindFile      = "file"
+	KindOss       = "oss"
+	KindLock      = "lock"
+	KindSequencer = "sequencer"
+	KindSecret    = "secret_store"
+	KindBinding   = "bindings"
+	KindCustom    = "custom_component"
 )
