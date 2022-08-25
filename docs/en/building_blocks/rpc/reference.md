@@ -4,7 +4,7 @@ Layotto's RPC API is based on [Mosn](https://mosn.io/en/)'s grpc handler, which 
 
 The interface of the RPC API are consistent with [Dapr](https://docs.dapr.io/developing-applications/building-blocks/service-invocation/service-invocation-overview/), you could see its details in [invoke.go](https://github.com/mosn/layotto/blob/3802c4591181fdbcfb7dd07cbbdbadeaaada650a/sdk/go-sdk/client/invoke.go).
 
-Using Layotto RPC invocation, your application can reliably and securely communicate with other applications using the standard  HTTP or [X-Protocol](https://www.servicemesher.com/blog/x-protocol-common-address-solution/) protocols.
+Using Layotto RPC invocation, your application can reliably and securely communicate with other applications using the standard  HTTP or [X-Protocol](https://cloudnative.to/blog/x-protocol-common-address-solution/) protocols.
 
 ![sidecar](https://mosn.io/en/docs/concept/sidecar-pattern/sidecar-pattern.jpg)
 
