@@ -10,7 +10,8 @@ option java_package = "spec.proto.runtime.v1";
 // For example, by invoking the lifecycle API, you can modify the components' configuration during runtime
 service Lifecycle {
 
-  // apply the dynamic configuration
+  // Apply the dynamic configuration.
+  // The DynamicConfiguration here should be full configuration, not incremental configuration
   rpc ApplyConfiguration(DynamicConfiguration) returns (ApplyConfigurationResponse){}
 
 }
