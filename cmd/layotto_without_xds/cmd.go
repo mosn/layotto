@@ -172,9 +172,9 @@ func ExtensionsRegister(_ *cli.Context) {
 	trace.RegisterDriver("SOFATracer", trace.NewDefaultDriverImpl())
 
 	// 2. xprotocol action register
-	// ResgisterXProtocolAction is MOSN's xprotocol framework's extensions.
+	// RegisterXProtocolAction is MOSN's xprotocol framework's extensions.
 	// when a xprotocol implementation (defined by api.XProtocolCodec) registered, the registered action will be called.
-	xprotocol.ResgisterXProtocolAction(xstream.NewConnPool, xstream.NewStreamFactory, func(codec api.XProtocolCodec) {
+	xprotocol.RegisterXProtocolAction(xstream.NewConnPool, xstream.NewStreamFactory, func(codec api.XProtocolCodec) {
 		name := codec.ProtocolName()
 		trace.RegisterTracerBuilder("SOFATracer", name, xtrace.NewTracer)
 	})
