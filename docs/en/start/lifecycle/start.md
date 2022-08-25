@@ -128,7 +128,7 @@ Explore other Quickstarts through the navigation bar on the left.
 
 [API Reference](https://mosn.io/layotto/api/v1/runtime.html)
 
-<!--design_doc_url-->
+[Design doc](zh/design/lifecycle/apply_configuration)
 
  <!-- end services -->
 

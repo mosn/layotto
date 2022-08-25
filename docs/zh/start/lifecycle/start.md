@@ -128,7 +128,7 @@ go sdk位于`sdk`目录下，java sdk 在 https://github.com/layotto/java-sdk
 
 [API Reference](https://mosn.io/layotto/api/v1/runtime.html)
 
-<!--design_doc_url-->
+[Design doc](zh/design/lifecycle/apply_configuration)
 
  <!-- end services -->
 
