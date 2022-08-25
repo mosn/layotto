@@ -46,21 +46,15 @@ type server struct {
 func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.DynamicConfiguration) (*runtimev1pb.ApplyConfigurationResponse, error) {
 	// 1. validate parameters
 	if in.ComponentConfig == nil || in.ComponentConfig.Kind == "" {
-		err := status.Errorf(codes.InvalidArgument, ErrNoField, "kind")
-		log.DefaultLogger.Errorf("ApplyConfiguration fail: %+v", err)
-		return &runtimev1pb.ApplyConfigurationResponse{}, err
+		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(ErrNoField, "kind")
 	}
 	kind := in.ComponentConfig.Kind
 	name := in.ComponentConfig.Name
 	if name == "" {
-		err := status.Errorf(codes.InvalidArgument, ErrNoField, "name")
-		log.DefaultLogger.Errorf("ApplyConfiguration fail: %+v", err)
-		return &runtimev1pb.ApplyConfigurationResponse{}, err
+		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(ErrNoField, "name")
 	}
 	if len(in.ComponentConfig.Metadata) == 0 {
-		err := status.Errorf(codes.InvalidArgument, ErrNoField, "metadata")
-		log.DefaultLogger.Errorf("ApplyConfiguration fail: %+v", err)
-		return &runtimev1pb.ApplyConfigurationResponse{}, err
+		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(ErrNoField, "metadata")
 	}
 	// 2. find the component
 	key := lifecycle.ComponentKey{
@@ -69,14 +63,18 @@ func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.Dynamic
 	}
 	holder, ok := s.components[key]
 	if !ok {
-		err := status.Errorf(codes.InvalidArgument, ErrComponentNotFound, kind, name)
-		log.DefaultLogger.Errorf("ApplyConfiguration fail: %+v", err)
-		return &runtimev1pb.ApplyConfigurationResponse{}, err
+		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(ErrComponentNotFound, kind, name)
 	}
 
 	// 3. delegate to the components
 	err := holder.ApplyConfig(ctx, in.GetComponentConfig().Metadata)
 	return &runtimev1pb.ApplyConfigurationResponse{}, err
+}
+
+func invalidArgumentError(format string, a ...interface{}) error {
+	err := status.Errorf(codes.InvalidArgument, format, a...)
+	log.DefaultLogger.Errorf("ApplyConfiguration fail: %+v", err)
+	return err
 }
 
 func (s *server) Init(conn *rawGRPC.ClientConn) error {
