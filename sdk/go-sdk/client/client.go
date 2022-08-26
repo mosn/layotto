@@ -19,6 +19,7 @@ package client
 import (
 	"context"
 	"log"
+	"mosn.io/layotto/spec/proto/extension/v1/s3"
 	"net"
 	"os"
 	"sync"
@@ -116,6 +117,8 @@ type Client interface {
 
 	// Close cleans up all resources created by the client.
 	Close()
+
+	s3.ObjectStorageServiceClient
 }
 
 // NewClient instantiates runtime client using runtime_GRPC_PORT environment variable as port.
@@ -165,13 +168,15 @@ func NewClientWithAddress(address string) (client Client, err error) {
 // NewClientWithConnection instantiates runtime client using specific connection.
 func NewClientWithConnection(conn *grpc.ClientConn) Client {
 	return &GRPCClient{
-		connection:  conn,
-		protoClient: runtimev1pb.NewRuntimeClient(conn),
+		ObjectStorageServiceClient: s3.NewObjectStorageServiceClient(conn),
+		connection:                 conn,
+		protoClient:                runtimev1pb.NewRuntimeClient(conn),
 	}
 }
 
 // GRPCClient is the gRPC implementation of runtime client.
 type GRPCClient struct {
+	s3.ObjectStorageServiceClient
 	connection  *grpc.ClientConn
 	protoClient runtimev1pb.RuntimeClient
 }
