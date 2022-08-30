@@ -191,21 +191,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	}
 	// 2. init GrpcAPI stage
 	var apis []grpc.GrpcAPI
-	ac := &grpc.ApplicationContext{
-		AppId:                 m.runtimeConfig.AppManagement.AppId,
-		Hellos:                m.hellos,
-		ConfigStores:          m.configStores,
-		Rpcs:                  m.rpcs,
-		PubSubs:               m.pubSubs,
-		StateStores:           m.states,
-		Files:                 m.files,
-		Oss:                   m.oss,
-		LockStores:            m.locks,
-		Sequencers:            m.sequencers,
-		SendToOutputBindingFn: m.sendToOutputBinding,
-		SecretStores:          m.secretStores,
-		CustomComponent:       m.customComponent,
-	}
+	ac := newApplicationContext(m)
 
 	for _, apiFactory := range o.apiFactorys {
 		api := apiFactory(ac)
