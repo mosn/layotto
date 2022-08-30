@@ -18,9 +18,9 @@ package client
 
 import (
 	"google.golang.org/grpc"
-	"mosn.io/layotto/spec/proto/extension/v1/s3"
+	v1 "mosn.io/layotto/spec/proto/runtime/v1"
 
-	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
+	"mosn.io/layotto/spec/proto/extension/v1/s3"
 )
 
 // Client is the interface for runtime client implementation.
@@ -34,7 +34,7 @@ type Client interface {
 func NewClientWithConnection(conn *grpc.ClientConn) Client {
 	return &GRPCClient{
 		connection:                 conn,
-		protoClient:                runtimev1pb.NewRuntimeClient(conn),
+		protoClient:                v1.NewRuntimeClient(conn),
 		ObjectStorageServiceClient: s3.NewObjectStorageServiceClient(conn),
 	}
 }
@@ -42,6 +42,6 @@ func NewClientWithConnection(conn *grpc.ClientConn) Client {
 // GRPCClient is the gRPC implementation of runtime client.
 type GRPCClient struct {
 	connection  *grpc.ClientConn
-	protoClient runtimev1pb.RuntimeClient
+	protoClient v1.RuntimeClient
 	s3.ObjectStorageServiceClient
 }

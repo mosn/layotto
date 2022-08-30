@@ -58,9 +58,9 @@ type ApplicationContext struct {
 	StateStores           map[string]state.Store
 	Files                 map[string]file.File
 	Oss                   map[string]oss.Oss
-	LockStores            map[string]lock.LockStore
 	Sequencers            map[string]sequencer.Store
 	SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 	SecretStores          map[string]secretstores.SecretStore
 	CustomComponent       map[string]map[string]custom.Component
+	GeneratedComponents
 }
