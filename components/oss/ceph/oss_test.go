@@ -20,9 +20,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"mosn.io/pkg/buffer"
-	"testing"
 
 	"mosn.io/layotto/components/oss"
 )

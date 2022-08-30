@@ -354,7 +354,6 @@ func (c *CephOss) PutObjectCannedAcl(ctx context.Context, req *oss.PutObjectCann
 	return &oss.PutObjectCannedAclOutput{RequestCharged: string(resp.RequestCharged)}, err
 }
 
-
 func (c *CephOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMultipartUploadInput) (*oss.CreateMultipartUploadOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
