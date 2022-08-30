@@ -29,7 +29,6 @@ import (
 	"mosn.io/layotto/components/custom"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/hello"
-	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
 )

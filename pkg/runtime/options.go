@@ -45,7 +45,6 @@ type services struct {
 	oss           []*oss.Factory
 	pubSubs       []*pubsub.Factory
 	states        []*state.Factory
-	locks         []*runtime_lock.Factory
 	sequencers    []*runtime_sequencer.Factory
 	outputBinding []*mbindings.OutputBindingFactory
 	inputBinding  []*mbindings.InputBindingFactory
@@ -53,6 +52,7 @@ type services struct {
 	// Custom components.
 	// The key is component kind
 	custom map[string][]*custom.ComponentFactory
+	generatedFactorys
 }
 
 type runtimeOptions struct {

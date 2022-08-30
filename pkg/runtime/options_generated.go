@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package grpc
+package runtime
 
-import "mosn.io/layotto/components/lock"
+import runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 
-type GeneratedComponents struct {
-	LockStores map[string]lock.LockStore
+type generatedFactorys struct {
+	locks []*runtime_lock.Factory
 }
