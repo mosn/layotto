@@ -471,9 +471,11 @@ func TestMosnRuntime_initLocks(t *testing.T) {
 		}
 
 		cfg := &MosnRuntimeConfig{
-			LockManagement: map[string]lock.Config{
-				"mock": {
-					Type: "lock",
+			GeneratedConfig: GeneratedConfig{
+				LockManagement: map[string]lock.Config{
+					"mock": {
+						Type: "lock",
+					},
 				},
 			},
 		}
