@@ -17,21 +17,18 @@ import "mosn.io/layotto/pkg/grpc"
 
 func newApplicationContext(m *MosnRuntime) *grpc.ApplicationContext {
 	return &grpc.ApplicationContext{
-		AppId:        m.runtimeConfig.AppManagement.AppId,
-		Hellos:       m.hellos,
-		ConfigStores: m.configStores,
-		Rpcs:         m.rpcs,
-		PubSubs:      m.pubSubs,
-		StateStores:  m.states,
-		Files:        m.files,
-		Oss:          m.oss,
-		//LockStores:            m.locks,
+		AppId:                 m.runtimeConfig.AppManagement.AppId,
+		Hellos:                m.hellos,
+		ConfigStores:          m.configStores,
+		Rpcs:                  m.rpcs,
+		PubSubs:               m.pubSubs,
+		StateStores:           m.states,
+		Files:                 m.files,
+		Oss:                   m.oss,
+		LockStores:            m.locks,
 		Sequencers:            m.sequencers,
 		SendToOutputBindingFn: m.sendToOutputBinding,
 		SecretStores:          m.secretStores,
 		CustomComponent:       m.customComponent,
-		GeneratedComponents: grpc.GeneratedComponents{
-			LockStores: m.locks,
-		},
 	}
 }
