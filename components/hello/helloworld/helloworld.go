@@ -18,12 +18,22 @@ package helloworld
 
 import (
 	"context"
+	"sync/atomic"
 
 	"mosn.io/layotto/components/hello"
 )
 
 type HelloWorld struct {
-	Say string
+	Say atomic.Value
+}
+
+func (hw *HelloWorld) ApplyConfig(ctx context.Context, metadata map[string]string) (err error) {
+	greetings, ok := metadata["hello"]
+	if !ok {
+		return nil
+	}
+	hw.Say.Store(greetings)
+	return nil
 }
 
 var _ hello.HelloService = &HelloWorld{}
@@ -33,12 +43,12 @@ func NewHelloWorld() hello.HelloService {
 }
 
 func (hw *HelloWorld) Init(config *hello.HelloConfig) error {
-	hw.Say = config.HelloString
+	hw.Say.Store(config.HelloString)
 	return nil
 }
 
 func (hw *HelloWorld) Hello(ctx context.Context, req *hello.HelloRequest) (*hello.HelloReponse, error) {
-	greetings := hw.Say
+	greetings, _ := hw.Say.Load().(string)
 	if req.Name != "" {
 		greetings = greetings + ", " + req.Name
 	}

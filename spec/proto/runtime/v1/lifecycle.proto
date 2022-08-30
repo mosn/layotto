@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package spec.proto.runtime.v1;
+
+option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
+option java_outer_classname = "LifecycleProto";
+option java_package = "spec.proto.runtime.v1";
+
+// Lifecycle API is used to manage the sidecar lifecycle.
+// For example, by invoking the lifecycle API, you can modify the components' configuration during runtime
+service Lifecycle {
+
+  // Apply the dynamic configuration.
+  // The DynamicConfiguration here should be full configuration, not incremental configuration
+  rpc ApplyConfiguration(DynamicConfiguration) returns (ApplyConfigurationResponse){}
+
+}
+
+// The dynamic configuration of the sidecar
+message DynamicConfiguration{
+
+  // Required. The dynamic configuration of a component
+  ComponentConfig component_config = 1;
+
+}
+
+// The response of the `ApplyConfiguration` method.
+message ApplyConfigurationResponse{
+
+}
+
+// The dynamic configuration of a component
+message ComponentConfig{
+
+  // Required. Which kind of API you are using, e.g. `lock`, `state`
+  string kind = 1;
+
+  // Required. The component name, e.g. `state_demo`
+  string name = 2;
+
+  // Required. The dynamic configuration of this component
+  map<string, string> metadata = 3;
+}
