@@ -23,6 +23,9 @@ import (
 	"github.com/dapr/components-contrib/state"
 	"google.golang.org/grpc"
 
+	"mosn.io/layotto/components/pkg/common"
+	"mosn.io/layotto/pkg/runtime/lifecycle"
+
 	"mosn.io/layotto/components/oss"
 
 	"mosn.io/layotto/components/configstores"
@@ -62,5 +65,6 @@ type ApplicationContext struct {
 	Sequencers            map[string]sequencer.Store
 	SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 	SecretStores          map[string]secretstores.SecretStore
+	DynamicComponents     map[lifecycle.ComponentKey]common.DynamicComponent
 	CustomComponent       map[string]map[string]custom.Component
 }
