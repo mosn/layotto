@@ -220,6 +220,39 @@
         
           
           <li>
+            <a href="#lifecycle.proto">lifecycle.proto</a>
+            <ul>
+            <!--
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ApplyConfigurationResponse"><span class="badge">M</span>ApplyConfigurationResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ComponentConfig"><span class="badge">M</span>ComponentConfig</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ComponentConfig.MetadataEntry"><span class="badge">M</span>ComponentConfig.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.DynamicConfiguration"><span class="badge">M</span>DynamicConfiguration</a>
+                </li>
+              
+              
+              
+              -->
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.Lifecycle"><span class="badge">S</span>Lifecycle</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
             <a href="#runtime.proto">runtime.proto</a>
             <ul>
             <!--
@@ -879,6 +912,140 @@ the data encoded in the URI is defined by the event producer. </p></td>
             
           </tbody>
         </table>
+      
+
+      
+
+    
+      
+      <div class="file-heading">
+        <h2 id="lifecycle.proto">lifecycle.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="spec.proto.runtime.v1.Lifecycle">[gRPC Service] Lifecycle</h3>
+        <p>Lifecycle API is used to manage the sidecar lifecycle.</p><p>For example, by invoking the lifecycle API, you can modify the components' configuration during runtime</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ApplyConfiguration</td>
+                <td><a href="#spec.proto.runtime.v1.DynamicConfiguration">DynamicConfiguration</a></td>
+                <td><a href="#spec.proto.runtime.v1.ApplyConfigurationResponse">ApplyConfigurationResponse</a></td>
+                <td><p>apply the dynamic configuration</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+
+      
+        <h3 id="spec.proto.runtime.v1.ApplyConfigurationResponse">ApplyConfigurationResponse</h3>
+        <p>The response of the `ApplyConfiguration` method.</p>
+
+        
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.ComponentConfig">ComponentConfig</h3>
+        <p>The dynamic configuration of a component</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>kind</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. Which kind of API you are using, e.g. `lock`, `state` </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The component name, e.g. `state_demo` </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.ComponentConfig.MetadataEntry">ComponentConfig.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>Required. The dynamic configuration of this component </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.ComponentConfig.MetadataEntry">ComponentConfig.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.DynamicConfiguration">DynamicConfiguration</h3>
+        <p>The dynamic configuration of the sidecar</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>component_config</td>
+                  <td><a href="#spec.proto.runtime.v1.ComponentConfig">ComponentConfig</a></td>
+                  <td></td>
+                  <td><p>Required. The dynamic configuration of a component </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
       
 
       
