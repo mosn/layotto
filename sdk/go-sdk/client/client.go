@@ -19,10 +19,11 @@ package client
 import (
 	"context"
 	"log"
-	"mosn.io/layotto/spec/proto/extension/v1/s3"
 	"net"
 	"os"
 	"sync"
+
+	"mosn.io/layotto/spec/proto/extension/v1/s3"
 
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
