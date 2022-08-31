@@ -18,6 +18,8 @@ import (
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/state"
+	"mosn.io/layotto/components/pkg/common"
+	"mosn.io/layotto/pkg/runtime/lifecycle"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/custom"
@@ -44,5 +46,6 @@ type ApplicationContext struct {
 	Sequencers            map[string]sequencer.Store
 	SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 	SecretStores          map[string]secretstores.SecretStore
+	DynamicComponents     map[lifecycle.ComponentKey]common.DynamicComponent
 	CustomComponent       map[string]map[string]custom.Component
 }

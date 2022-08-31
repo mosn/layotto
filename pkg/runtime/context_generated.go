@@ -29,6 +29,7 @@ func newApplicationContext(m *MosnRuntime) *grpc.ApplicationContext {
 		Sequencers:            m.sequencers,
 		SendToOutputBindingFn: m.sendToOutputBinding,
 		SecretStores:          m.secretStores,
+		DynamicComponents:     m.dynamicComponents,
 		CustomComponent:       m.customComponent,
 	}
 }
