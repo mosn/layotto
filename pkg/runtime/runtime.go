@@ -86,10 +86,10 @@ type MosnRuntime struct {
 	rpcs         map[string]rpc.Invoker
 	pubSubs      map[string]pubsub.PubSub
 	// state implementations store here are already initialized
-	states map[string]state.Store
-	files  map[string]file.File
-	oss    map[string]oss.Oss
-	//locks           map[string]lock.LockStore
+	states            map[string]state.Store
+	files             map[string]file.File
+	oss               map[string]oss.Oss
+	locks             map[string]lock.LockStore
 	sequencers        map[string]sequencer.Store
 	outputBindings    map[string]bindings.OutputBinding
 	secretStores      map[string]secretstores.SecretStore

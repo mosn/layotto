@@ -19,6 +19,8 @@ package runtime
 import (
 	"encoding/json"
 
+	"mosn.io/layotto/components/lock"
+
 	"mosn.io/layotto/components/oss"
 
 	"mosn.io/layotto/pkg/runtime/secretstores"
@@ -52,6 +54,7 @@ type MosnRuntimeConfig struct {
 	StateManagement        map[string]state.Config             `json:"state"`
 	Files                  map[string]file.FileConfig          `json:"file"`
 	Oss                    map[string]oss.Config               `json:"oss"`
+	LockManagement         map[string]lock.Config              `json:"lock"`
 	SequencerManagement    map[string]sequencer.Config         `json:"sequencer"`
 	Bindings               map[string]bindings.Metadata        `json:"bindings"`
 	SecretStoresManagement map[string]secretstores.Metadata    `json:"secret_store"`

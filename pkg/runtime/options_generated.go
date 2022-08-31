@@ -17,11 +17,9 @@ package runtime
 
 import (
 	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
-	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
 )
 
 type extensionComponentFactorys struct {
-	locks []*runtime_lock.Factory
 }
 
 func WithExtensionGrpcAPI() Option {

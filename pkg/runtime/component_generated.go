@@ -13,18 +13,13 @@
 
 package runtime
 
-import "mosn.io/layotto/components/lock"
-
 type extensionComponents struct {
-	locks map[string]lock.LockStore
 }
 
 func newExtensionComponents() *extensionComponents {
-	return &extensionComponents{
-		locks: make(map[string]lock.LockStore),
-	}
+	return &extensionComponents{}
 }
 
 func (m *MosnRuntime) initExtensionComponent(s services) error {
-	return m.initLocks(s.locks...)
+	return nil
 }

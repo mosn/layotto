@@ -13,8 +13,5 @@
 
 package runtime
 
-import "mosn.io/layotto/components/lock"
-
 type ExtensionComponentConfig struct {
-	LockManagement map[string]lock.Config `json:"lock"`
 }
