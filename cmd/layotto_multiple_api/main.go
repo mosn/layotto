@@ -22,6 +22,8 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/pkg/grpc/lifecycle"
+
 	"mosn.io/layotto/components/oss"
 
 	aws_oss "mosn.io/layotto/components/oss/aws"
@@ -260,8 +262,11 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithGrpcAPI(
 			// default GrpcAPI
 			default_api.NewGrpcAPI,
+			lifecycle.NewLifecycleAPI,
+
 			// a demo to show how to register your own gRPC API
 			helloworld_api.NewHelloWorldAPI,
+
 			// support Dapr API
 			// Currently it only support Dapr's InvokeService,secret API,state API and InvokeBinding API.
 			// Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.

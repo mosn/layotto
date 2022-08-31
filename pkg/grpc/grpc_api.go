@@ -18,6 +18,19 @@ package grpc
 
 import (
 	"google.golang.org/grpc"
+
+	"mosn.io/layotto/components/pkg/common"
+	"mosn.io/layotto/pkg/runtime/lifecycle"
+
+	"mosn.io/layotto/components/oss"
+
+	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/custom"
+	"mosn.io/layotto/components/file"
+	"mosn.io/layotto/components/hello"
+	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/rpc"
+	"mosn.io/layotto/components/sequencer"
 )
 
 // GrpcAPI is the interface of API plugin. It has lifecycle related methods
@@ -32,3 +45,22 @@ type GrpcAPI interface {
 
 // NewGrpcAPI is the constructor of GrpcAPI
 type NewGrpcAPI func(applicationContext *ApplicationContext) GrpcAPI
+
+// ApplicationContext contains all you need to construct your GrpcAPI, such as all the components.
+// For example, your `SuperState` GrpcAPI can hold the `StateStores` components and use them to implement your own `Super State API` logic.
+type ApplicationContext struct {
+	AppId                 string
+	Hellos                map[string]hello.HelloService
+	ConfigStores          map[string]configstores.Store
+	Rpcs                  map[string]rpc.Invoker
+	PubSubs               map[string]pubsub.PubSub
+	StateStores           map[string]state.Store
+	Files                 map[string]file.File
+	Oss                   map[string]oss.Oss
+	LockStores            map[string]lock.LockStore
+	Sequencers            map[string]sequencer.Store
+	SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
+	SecretStores          map[string]secretstores.SecretStore
+	DynamicComponents     map[lifecycle.ComponentKey]common.DynamicComponent
+	CustomComponent       map[string]map[string]custom.Component
+}

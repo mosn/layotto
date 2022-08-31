@@ -5,6 +5,8 @@ quickstart_path_zh="${project_path}/docs/zh/start"
 sidebar_path="${project_path}/docs/_sidebar.md"
 sidebar_path_zh="${project_path}/docs/zh/_sidebar.md"
 qs_ci_path="${project_path}/etc/script/test-quickstart.sh"
+proto_path_extension="spec/proto/extension/v1"
+
 true=0
 false=1
 
@@ -111,23 +113,22 @@ generateQuickstart() {
 }
 
 # 1. generate docs for extension/v1
-proto_path="spec/proto/extension/v1"
-echo "===========> Generating docs for ${proto_path}"
-res=$(cd $proto_path && ls -d *)
+echo "===========> Generating docs for ${proto_path_extension}"
+res=$(cd $proto_path_extension && ls -d *)
 for directory in $res; do
-  echo "===========> Generating the API reference for ${proto_path}/${directory}"
+  echo "===========> Generating the API reference for ${proto_path_extension}/${directory}"
   # 1.1. generate the API reference
   docker run --rm \
     -v ${project_path}/docs/api/v1:/out \
-    -v ${project_path}/${proto_path}/${directory}:/protos \
+    -v ${project_path}/${proto_path_extension}/${directory}:/protos \
     -v ${tpl_path}:/tpl \
     pseudomuto/protoc-gen-doc --doc_opt=/tpl/api_ref_html.tmpl,${directory}.html
 
   # 1.2. generate the quickstart document
   # find all protos
-  protos=$(cd ${proto_path}/${directory} && ls *.proto)
+  protos=$(cd ${proto_path_extension}/${directory} && ls *.proto)
   for p in ${protos}; do
-    generateQuickstart "${proto_path}/${directory}" "${p}" "${directory}" "https://mosn.io/layotto/api/v1/${directory}.html"
+    generateQuickstart "${proto_path_extension}/${directory}" "${p}" "${directory}" "https://mosn.io/layotto/api/v1/${directory}.html"
   done
 done
 
