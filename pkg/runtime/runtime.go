@@ -433,12 +433,11 @@ func (m *MosnRuntime) initOss(factorys ...*oss.Factory) error {
 	log.DefaultLogger.Infof("[runtime] init oss service")
 
 	// 1. register all oss store services implementation
-	reg := oss.NewRegistry(m.info)
-	reg.Register(factorys...)
+	m.ossRegistry.Register(factorys...)
 	// 2. loop initializing
 	for name, config := range m.runtimeConfig.Oss {
 		// 2.1. create the component
-		c, err := reg.Create(config.Type)
+		c, err := m.ossRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create oss component %s failed", name)
 			return err
