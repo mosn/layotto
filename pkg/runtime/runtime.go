@@ -134,14 +134,14 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		states:                  make(map[string]state.Store),
 		files:                   make(map[string]file.File),
 		oss:                     make(map[string]oss.Oss),
-		//locks:                   make(map[string]lock.LockStore),
-		sequencers:          make(map[string]sequencer.Store),
-		outputBindings:      make(map[string]bindings.OutputBinding),
-		secretStores:        make(map[string]secretstores.SecretStore),
-		customComponent:     make(map[string]map[string]custom.Component),
-		dynamicComponents:   make(map[lifecycle.ComponentKey]common.DynamicComponent),
-		extensionComponents: *newExtensionComponents(),
-		started:             false,
+		locks:                   make(map[string]lock.LockStore),
+		sequencers:              make(map[string]sequencer.Store),
+		outputBindings:          make(map[string]bindings.OutputBinding),
+		secretStores:            make(map[string]secretstores.SecretStore),
+		customComponent:         make(map[string]map[string]custom.Component),
+		dynamicComponents:       make(map[lifecycle.ComponentKey]common.DynamicComponent),
+		extensionComponents:     *newExtensionComponents(),
+		started:                 false,
 	}
 }
 
