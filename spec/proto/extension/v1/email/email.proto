@@ -5,18 +5,13 @@ package spec.proto.extension.v1.email;
 option go_package = "mosn.io/layotto/spec/proto/extension/v1/email;email";
 
 /* @exclude quickstart generator */
-// EmailTemplateService is used to send emails with templates
-service EmailTemplateService {
+// EmailService is used to send emails.
+service EmailService {
 
   // Send an email with template
   rpc SendEmailWithTemplate(SendEmailWithTemplateRequest) returns (SendEmailWithTemplateResponse) {}
 
-}
-
-// EmailTemplateService is used to send emails.
-service EmailService {
-
-  // Send an email.
+  // Send an email with raw content instead of using templates.
   rpc SendEmail(SendEmailRequest) returns (SendEmailResponse) {}
 
 }
