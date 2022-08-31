@@ -242,6 +242,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithGrpcAPI(
 			default_api.NewGrpcAPI,
 		),
+		runtime.WithExtensionGrpcAPI(),
 		// Hello
 		runtime.WithHelloFactory(
 			hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),

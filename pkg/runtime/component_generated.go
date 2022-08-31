@@ -13,17 +13,21 @@
 
 package runtime
 
-import (
-	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
-	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
-)
+import "mosn.io/layotto/components/lock"
 
-type extensionComponentFactorys struct {
-	locks []*runtime_lock.Factory
+type extensionComponents struct {
+	locks map[string]lock.LockStore
 }
 
-func WithExtensionGrpcAPI() Option {
-	return WithGrpcAPI(
-		s3ext.NewS3Server,
-	)
+func newExtensionComponents() *extensionComponents {
+	return &extensionComponents{
+		locks: make(map[string]lock.LockStore),
+	}
+}
+
+func (m *MosnRuntime) initExtensionComponent(s services) error {
+	if err := m.initLocks(s.locks...); err != nil {
+		return err
+	}
+	return nil
 }

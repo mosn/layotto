@@ -59,7 +59,7 @@ type MosnRuntimeConfig struct {
 	// e.g. <"super_pubsub","etcd",config>
 	CustomComponent map[string]map[string]custom.Config `json:"custom_component,omitempty"`
 	Extends         map[string]json.RawMessage          `json:"extends,omitempty"` // extend config
-	GeneratedConfig
+	ExtensionComponentConfig
 }
 
 func ParseRuntimeConfig(data json.RawMessage) (*MosnRuntimeConfig, error) {
