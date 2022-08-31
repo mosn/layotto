@@ -90,10 +90,10 @@ type MosnRuntime struct {
 	files  map[string]file.File
 	oss    map[string]oss.Oss
 	//locks           map[string]lock.LockStore
-	sequencers      map[string]sequencer.Store
-	outputBindings  map[string]bindings.OutputBinding
-	secretStores    map[string]secretstores.SecretStore
-	customComponent map[string]map[string]custom.Component
+	sequencers        map[string]sequencer.Store
+	outputBindings    map[string]bindings.OutputBinding
+	secretStores      map[string]secretstores.SecretStore
+	customComponent   map[string]map[string]custom.Component
 	dynamicComponents map[lifecycle.ComponentKey]common.DynamicComponent
 	extensionComponents
 	// app callback
@@ -139,7 +139,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		outputBindings:      make(map[string]bindings.OutputBinding),
 		secretStores:        make(map[string]secretstores.SecretStore),
 		customComponent:     make(map[string]map[string]custom.Component),
-		dynamicComponents:       make(map[lifecycle.ComponentKey]common.DynamicComponent),
+		dynamicComponents:   make(map[lifecycle.ComponentKey]common.DynamicComponent),
 		extensionComponents: *newExtensionComponents(),
 		started:             false,
 	}

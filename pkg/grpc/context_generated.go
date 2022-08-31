@@ -18,6 +18,7 @@ import (
 	"github.com/dapr/components-contrib/pubsub"
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/state"
+
 	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/pkg/runtime/lifecycle"
 

@@ -26,8 +26,5 @@ func newExtensionComponents() *extensionComponents {
 }
 
 func (m *MosnRuntime) initExtensionComponent(s services) error {
-	if err := m.initLocks(s.locks...); err != nil {
-		return err
-	}
-	return nil
+	return m.initLocks(s.locks...)
 }
