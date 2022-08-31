@@ -83,14 +83,15 @@ type MosnRuntime struct {
 	rpcs         map[string]rpc.Invoker
 	pubSubs      map[string]pubsub.PubSub
 	// state implementations store here are already initialized
-	states          map[string]state.Store
-	files           map[string]file.File
-	oss             map[string]oss.Oss
-	locks           map[string]lock.LockStore
+	states map[string]state.Store
+	files  map[string]file.File
+	oss    map[string]oss.Oss
+	//locks           map[string]lock.LockStore
 	sequencers      map[string]sequencer.Store
 	outputBindings  map[string]bindings.OutputBinding
 	secretStores    map[string]secretstores.SecretStore
 	customComponent map[string]map[string]custom.Component
+	extensionComponents
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
 	// extends
@@ -129,12 +130,13 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		states:                  make(map[string]state.Store),
 		files:                   make(map[string]file.File),
 		oss:                     make(map[string]oss.Oss),
-		locks:                   make(map[string]lock.LockStore),
-		sequencers:              make(map[string]sequencer.Store),
-		outputBindings:          make(map[string]bindings.OutputBinding),
-		secretStores:            make(map[string]secretstores.SecretStore),
-		customComponent:         make(map[string]map[string]custom.Component),
-		started:                 false,
+		//locks:                   make(map[string]lock.LockStore),
+		sequencers:          make(map[string]sequencer.Store),
+		outputBindings:      make(map[string]bindings.OutputBinding),
+		secretStores:        make(map[string]secretstores.SecretStore),
+		customComponent:     make(map[string]map[string]custom.Component),
+		extensionComponents: *newExtensionComponents(),
+		started:             false,
 	}
 }
 
@@ -270,6 +272,9 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initSequencers(o.services.sequencers...); err != nil {
 		return err
 	}
+	if err := m.initExtensionComponent(o.services); err != nil {
+		return err
+	}
 	return m.initInputBinding(o.services.inputBinding...)
 }
 
@@ -397,17 +402,21 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 	return nil
 }
 
-func (m *MosnRuntime) initOss(oss ...*oss.Factory) error {
+func (m *MosnRuntime) initOss(factorys ...*oss.Factory) error {
 	log.DefaultLogger.Infof("[runtime] init oss service")
 
-	// register all oss store services implementation
-	m.ossRegistry.Register(oss...)
+	// 1. register all oss store services implementation
+	reg := oss.NewRegistry(m.info)
+	reg.Register(factorys...)
+	// 2. loop initializing
 	for name, config := range m.runtimeConfig.Oss {
-		c, err := m.ossRegistry.Create(config.Type)
+		// 2.1. create the component
+		c, err := reg.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create oss component %s failed", name)
 			return err
 		}
+		// 2.2. init
 		if err := c.Init(context.TODO(), &config); err != nil {
 			m.errInt(err, "init oss component %s failed", name)
 			return err
