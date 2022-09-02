@@ -15,6 +15,7 @@ package snowflake
 
 import (
 	"database/sql"
+	"fmt"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -86,11 +87,13 @@ func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 
 	mset := mapset.NewSet()
 
-	var size int = 100
+	var size int = 1000
 	for i := 0; i < size; i++ {
 		resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
 			Key: key,
 		})
+
+		fmt.Printf("%b \n", resp.NextId)
 		assert.NoError(t, err)
 		mset.Add(resp.NextId)
 	}

@@ -33,23 +33,35 @@ type PaddedInt struct {
 	Value int64
 }
 
+//there are two ringbuffers, one is to store uid, another is to store flag, flag represents the slot is readable or writable
 type RingBuffer struct {
-	m      sync.Mutex
-	slots  []int64
-	flags  []PaddedInt
-	tail   PaddedInt
-	cursor PaddedInt
+	m sync.Mutex
+	//store uid
+	slots []int64
+	//store flag
+	flags []PaddedInt
+	//write pointer, wp is readable, next is writable
+	wp PaddedInt
+	//read pointer, rp is writable, next is readable
+	rp PaddedInt
 
-	MaxSeq     int64
-	GoNum      int32
+	//uid = 0 + WorkIdBits + TimeBits + SeqBits
 	TimeBits   int64
 	WorkIdBits int64
 	SeqBits    int64
-	bufferSize int64
-	WorkId     int64
 
-	PaddingFactor    int64
+	//ringbuffer's size
+	bufferSize int64
+	//when readable slots nums <= bufferSize * PaddingFactor / 100, start a new goroutine
+	PaddingFactor int64
+
+	//get id from Mysql at startup
+	WorkId int64
+	//get current timestamp at startup
 	CurrentTimeStamp int64
+
+	//asynchronously running padding goroutine numbers
+	GoNum int32
 }
 
 var cores int = runtime.NumCPU()
@@ -60,8 +72,8 @@ func NewRingBuffer(bufferSize int64) *RingBuffer {
 	return &RingBuffer{
 		slots:      make([]int64, bufferSize),
 		flags:      make([]PaddedInt, bufferSize),
-		tail:       p,
-		cursor:     p,
+		wp:         p,
+		rp:         p,
 		bufferSize: bufferSize,
 		GoNum:      1,
 	}
@@ -70,26 +82,27 @@ func NewRingBuffer(bufferSize int64) *RingBuffer {
 func (r *RingBuffer) Put(uid int64) (bool, error) {
 	r.m.Lock()
 	defer r.m.Unlock()
-	currentTail := r.tail.Value
-	currentCursor := r.cursor.Value
-	if currentCursor == -1 {
-		currentCursor = 0
+	currentWritePointer := r.wp.Value
+	currentReadPointer := r.rp.Value
+	if currentReadPointer == -1 {
+		currentReadPointer = 0
 	}
-	distance := currentTail - currentCursor
+	distance := currentWritePointer - currentReadPointer
+	//write pointer catches read pointer, ringbuffer is full
 	if distance == r.bufferSize-1 {
-		return false, errors.New("catched!Rejected putting buffer")
+		return false, errors.New("ringbuffer is full! Rejected putting buffer")
 	}
 
-	//(currentTail + 1) mod r.bufferSize
-	nextTailIndex := (currentTail + 1) & (r.bufferSize - 1)
+	//(currentWritePointer + 1) mod r.bufferSize
+	nextWriteIndex := (currentWritePointer + 1) & (r.bufferSize - 1)
 
-	if r.flags[nextTailIndex].Value != CAN_PUT_FLAG {
-		return false, errors.New("tail not in can put status")
+	if r.flags[nextWriteIndex].Value != CAN_PUT_FLAG {
+		return false, errors.New("slot is not in writable status")
 	}
 
-	r.slots[nextTailIndex] = uid
-	r.flags[nextTailIndex].Value = CAN_TAKE_FLAG
-	r.tail.Value++
+	r.slots[nextWriteIndex] = uid
+	r.flags[nextWriteIndex].Value = CAN_TAKE_FLAG
+	r.wp.Value++
 	return true, nil
 }
 
@@ -97,14 +110,14 @@ func (r *RingBuffer) Take() (int64, error) {
 	r.m.Lock()
 	defer r.m.Unlock()
 	var uid int64
-	currentCursor := r.cursor.Value
-	if r.cursor.Value != r.tail.Value {
-		r.cursor.Value++
-	}
-	nextCursor := r.cursor.Value
-	currentTail := r.tail.Value
 
-	if currentTail-nextCursor < r.PaddingFactor*r.bufferSize/100 {
+	if r.rp.Value != r.wp.Value {
+		r.rp.Value++
+	} else {
+		return uid, errors.New("buffer is empty, rejected take buffer")
+	}
+
+	if r.wp.Value-r.rp.Value < r.bufferSize*r.PaddingFactor/100 {
 		//limit the numbers of goroutine
 		if int(r.GoNum) <= 2*cores {
 			r.GoNum++
@@ -112,35 +125,39 @@ func (r *RingBuffer) Take() (int64, error) {
 		}
 	}
 
-	if currentCursor == nextCursor {
-		return uid, errors.New("buffer is empty, rejected take buffer")
-	}
-
 	//check next slot flag is CAN_TAKE_FLAG
-	nextCursorIndex := (nextCursor) & (r.bufferSize - 1)
-	if r.flags[nextCursorIndex].Value != CAN_TAKE_FLAG {
-		return uid, errors.New("curosr not in can take status")
+	nextReadIndex := (r.rp.Value) & (r.bufferSize - 1)
+	if r.flags[nextReadIndex].Value != CAN_TAKE_FLAG {
+		return uid, errors.New("slot not in readable status")
 	}
 
-	uid = r.slots[nextCursorIndex]
-	r.flags[nextCursorIndex].Value = CAN_PUT_FLAG
+	uid = r.slots[nextReadIndex]
+	r.flags[nextReadIndex].Value = CAN_PUT_FLAG
 	return uid, nil
 }
 
+//allocate bits for uid
+//workid + time + sequence
 func (r *RingBuffer) Allocator() int64 {
 	var sequence int64
+
 	timestampShift := r.SeqBits
 	workidShift := r.TimeBits + r.SeqBits
+
 	workid := r.WorkId
+
 	r.m.Lock()
 	timestamp := r.CurrentTimeStamp
 	r.CurrentTimeStamp++
 	r.m.Unlock()
+
 	return timestamp<<timestampShift | (workid << workidShift) | sequence
 }
 
+//put uid into ringbuffer
+//uid： workid + timestamp + (0 ~ maxSeq)
 func (r *RingBuffer) GenerateUid(cur int64) (bool, error) {
-	maxSeq := r.MaxSeq
+	var maxSeq int64 = ^(-1 << r.SeqBits) + 1
 	var offset int64
 	for offset = 0; offset < maxSeq; offset++ {
 		if ok, err := r.Put(cur + offset); !ok {
@@ -148,15 +165,16 @@ func (r *RingBuffer) GenerateUid(cur int64) (bool, error) {
 		}
 	}
 	return true, nil
-
 }
 
+//async padding ringbuffer
 func (r *RingBuffer) PaddingRingBuffer() {
 	defer func() {
 		if x := recover(); x != nil {
 			log.DefaultLogger.Errorf("panic when generatoring uid with snowflake algorithm and padding ringbuffer: %v", x)
 		}
 	}()
+
 	for {
 		u := r.Allocator()
 		if ok, err := r.GenerateUid(u); !ok || err != nil {

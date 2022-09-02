@@ -52,10 +52,11 @@ type SnowflakeMetadata struct {
 }
 
 type RingBufferMetadata struct {
+	//bufferSize = maxSeq << BoostPower, defalut BoostPower = 3
 	BoostPower    int64
 	PaddingFactor int64
-	TimeBits      int64
 	WorkIdBits    int64
+	TimeBits      int64
 	SeqBits       int64
 	StartTime     int64
 }
@@ -76,15 +77,15 @@ func ParseSnowflakeRingBufferMetadata(properties map[string]string) (RingBufferM
 			return metadata, err
 		}
 	}
-	metadata.TimeBits = defalutTimeBits
-	if val, ok := properties[timeBits]; ok && val != "" {
-		if metadata.TimeBits, err = strconv.ParseInt(val, 10, 64); err != nil {
-			return metadata, err
-		}
-	}
 	metadata.WorkIdBits = defalutWorkerBits
 	if val, ok := properties[workerBits]; ok && val != "" {
 		if metadata.WorkIdBits, err = strconv.ParseInt(val, 10, 64); err != nil {
+			return metadata, err
+		}
+	}
+	metadata.TimeBits = defalutTimeBits
+	if val, ok := properties[timeBits]; ok && val != "" {
+		if metadata.TimeBits, err = strconv.ParseInt(val, 10, 64); err != nil {
 			return metadata, err
 		}
 	}
@@ -96,13 +97,14 @@ func ParseSnowflakeRingBufferMetadata(properties map[string]string) (RingBufferM
 	}
 
 	if metadata.TimeBits+metadata.WorkIdBits+metadata.SeqBits+1 != 64 {
-		return metadata, errors.New("no enough 64bits")
+		return metadata, errors.New("not enough 64bits")
 	}
 
 	s := defalutStartTime
 	if val, ok := properties[startTime]; ok && val != "" {
 		s = val
 	}
+
 	var tmp time.Time
 	if tmp, err = time.ParseInLocation("2006-01-02", s, time.Local); err != nil {
 		return metadata, err
@@ -117,33 +119,41 @@ type MysqlMetadata struct {
 	DatabaseName string
 	TableName    string
 	Db           *sql.DB
-	MysqlUrl     string
+	//ip:port
+	MysqlUrl string
 }
 
 func ParseSnowflakeMysqlMetadata(properties map[string]string) (MysqlMetadata, error) {
 	m := MysqlMetadata{}
 	if val, ok := properties[tableName]; ok && val != "" {
 		m.TableName = val
+	} else {
+		return m, errors.New("mysql connect error: missing table name")
 	}
 	if val, ok := properties[databaseName]; ok && val != "" {
 		m.DatabaseName = val
+	} else {
+		return m, errors.New("mysql connect error: missing database name")
 	}
 	if val, ok := properties[userName]; ok && val != "" {
 		m.UserName = val
+	} else {
+		return m, errors.New("mysql connect error: missing username")
 	}
 	if val, ok := properties[password]; ok && val != "" {
 		m.Password = val
+	} else {
+		return m, errors.New("mysql connect error: missing password")
 	}
 	if val, ok := properties[mysqlUrl]; ok && val != "" {
 		m.MysqlUrl = val
+	} else {
+		return m, errors.New("mysql connect error: missing mysqlurl")
 	}
 	return m, nil
 }
 
 func NewMysqlClient(meta MysqlMetadata) (int64, error) {
-	if meta.TableName == "" {
-		meta.TableName = tableName
-	}
 
 	var workId int64
 	//for unit test
@@ -164,7 +174,7 @@ func NewMysqlClient(meta MysqlMetadata) (int64, error) {
 				ID BIGINT NOT NULL AUTO_INCREMENT COMMENT 'auto increment id',
 				HOST_NAME VARCHAR(64) NOT NULL COMMENT 'host name',
 				PORT VARCHAR(64) NOT NULL COMMENT 'port',
-			  CREATED TIMESTAMP NOT NULL COMMENT 'created time',
+			  	CREATED TIMESTAMP NOT NULL COMMENT 'created time',
 				PRIMARY KEY(ID)
 			)`, meta.TableName)
 		_, err = meta.Db.Exec(createTable)
@@ -183,8 +193,12 @@ func tableExists(meta MysqlMetadata) bool {
 	return err != sql.ErrNoRows
 }
 
+//get id from mysql
+//host_name = "ip"
+//port = "timestamp-random number"
 func NewWorkId(meta MysqlMetadata) (int64, error) {
 	defer meta.Db.Close()
+
 	var workId int64
 	ip, err := getIP()
 	stringIp := ip.String()
@@ -204,11 +218,11 @@ func NewWorkId(meta MysqlMetadata) (int64, error) {
 
 	err = begin.QueryRow("SELECT HOST_NAME, PORT FROM "+tableName+" WHERE HOST_NAME = ? AND PORT = ?", stringIp, mysqlPort).Scan(&host_name, &port)
 
+	//insert a new record if the records are duplicated, to avoid clock rollback problems after shutdown
 	for err == nil {
 		mysqlPort = getMysqlPort()
 		err = begin.QueryRow("SELECT HOST_NAME, PORT FROM "+tableName+" WHERE HOST_NAME = ? AND PORT = ?", stringIp, mysqlPort).Scan(&host_name, &port)
 	}
-
 	if err == sql.ErrNoRows {
 		_, err = begin.Exec("INSERT INTO "+tableName+"(HOST_NAME, PORT, CREATED) VALUES(?,?,?)", stringIp, mysqlPort, time.Now())
 

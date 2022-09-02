@@ -25,7 +25,6 @@ import (
 
 type SnowFlakeSequencer struct {
 	metadata   snowflake.SnowflakeMetadata
-	workId     int64
 	ringBuffer *snowflake.RingBuffer
 	db         *sql.DB
 	biggerThan map[string]int64
@@ -53,25 +52,19 @@ func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 		return err
 	}
 
-	s.workId = workId
-
 	rm, err := snowflake.ParseSnowflakeRingBufferMetadata(config.Properties)
 
-	startTime := rm.StartTime
-	seqBits := rm.SeqBits
-
-	var maxSeq int64 = ^(-1 << seqBits) + 1
+	var maxSeq int64 = ^(-1 << rm.SeqBits) + 1
 	bufferSize := maxSeq << rm.BoostPower
 
 	s.ringBuffer = snowflake.NewRingBuffer(bufferSize)
 
 	s.ringBuffer.WorkId = workId
-	s.ringBuffer.CurrentTimeStamp = time.Now().Unix() - startTime
+	s.ringBuffer.CurrentTimeStamp = time.Now().Unix() - rm.StartTime
 	s.ringBuffer.TimeBits = rm.TimeBits
 	s.ringBuffer.WorkIdBits = rm.WorkIdBits
-	s.ringBuffer.SeqBits = seqBits
+	s.ringBuffer.SeqBits = rm.SeqBits
 	s.ringBuffer.PaddingFactor = rm.PaddingFactor
-	s.ringBuffer.MaxSeq = ^(-1 << seqBits) + 1
 
 	s.ringBuffer.PaddingRingBuffer()
 
