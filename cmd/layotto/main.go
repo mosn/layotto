@@ -146,6 +146,7 @@ import (
 
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
+	_ "mosn.io/layotto/pkg/wasm/runtime/wasmtime"
 	_ "mosn.io/mosn/pkg/filter/network/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	_ "mosn.io/mosn/pkg/filter/network/proxy"

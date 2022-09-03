@@ -10,6 +10,7 @@ require (
 	github.com/SkyAPM/go2sky v0.5.0
 	github.com/agrea/ptr v0.0.0-20180711073057-77a518d99b7b
 	github.com/alicebob/miniredis/v2 v2.16.0
+	github.com/bytecodealliance/wasmtime-go v0.39.0
 	github.com/dapr/components-contrib v1.5.1-rc.1
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/dimchansky/utfbom v1.1.1 // indirect
@@ -31,6 +32,7 @@ require (
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.28.0
+	github.com/wasmerio/wasmer-go v1.0.3
 	go.uber.org/automaxprocs v1.4.0 // indirect
 	golang.org/x/tools v0.1.10 // indirect
 	google.golang.org/grpc v1.39.0
