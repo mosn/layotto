@@ -18,9 +18,9 @@ package helloworld
 
 import (
 	"context"
-	"mosn.io/layotto/components/configstores"
 	"sync/atomic"
 
+	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 )
 
