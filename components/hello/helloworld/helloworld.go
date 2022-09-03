@@ -39,13 +39,10 @@ func (hw *HelloWorld) ApplyConfig(ctx context.Context, metadata map[string]strin
 }
 
 func (hw *HelloWorld) InjectConfigComponent(configs []configstores.Store) (err error) {
-	hw.config = configs[0]
-	hw.config.Get(context.Background(), &configstores.GetRequest{
-		AppId:    "hello",
-		Group:    "hello",
-		Keys:     []string{"a", "b"},
-		Metadata: nil,
-	})
+	//save for use
+	if len(configs) > 0 {
+		hw.config = configs[0]
+	}
 	return nil
 }
 
