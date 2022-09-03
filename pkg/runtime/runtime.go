@@ -267,7 +267,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initConfigStores(o.services.configStores...); err != nil {
 		return err
 	}
-	m.Injector = ref.NewDefaultInjector(m.secretStores, m.configStores, m.runtimeConfig.ComponentRef)
+	m.Injector = ref.NewDefaultInjector(m.secretStores, m.configStores)
 	if err := m.initCustomComponents(o.services.custom); err != nil {
 		return err
 	}
@@ -317,6 +317,15 @@ func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
 		}
 		// register this component
 		m.hellos[name] = h
+		if _, ok := h.(common.InjectComponent); ok {
+			configRefs, err := m.Injector.InjectConfigRef(config.ConfigRef)
+			if err != nil {
+				return err
+			}
+			if err = h.(common.InjectComponent).InjectConfigComponent(configRefs); err != nil {
+				return err
+			}
+		}
 		m.storeDynamicComponent(lifecycle.KindHello, name, h)
 	}
 	return nil

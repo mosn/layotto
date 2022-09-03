@@ -18,13 +18,15 @@ package helloworld
 
 import (
 	"context"
+	"mosn.io/layotto/components/configstores"
 	"sync/atomic"
 
 	"mosn.io/layotto/components/hello"
 )
 
 type HelloWorld struct {
-	Say atomic.Value
+	Say    atomic.Value
+	config configstores.Store
 }
 
 func (hw *HelloWorld) ApplyConfig(ctx context.Context, metadata map[string]string) (err error) {
@@ -33,6 +35,17 @@ func (hw *HelloWorld) ApplyConfig(ctx context.Context, metadata map[string]strin
 		return nil
 	}
 	hw.Say.Store(greetings)
+	return nil
+}
+
+func (hw *HelloWorld) InjectConfigComponent(configs []configstores.Store) (err error) {
+	hw.config = configs[0]
+	hw.config.Get(context.Background(), &configstores.GetRequest{
+		AppId:    "hello",
+		Group:    "hello",
+		Keys:     []string{"a", "b"},
+		Metadata: nil,
+	})
 	return nil
 }
 

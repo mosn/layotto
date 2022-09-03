@@ -16,7 +16,10 @@
 
 package hello
 
-import "context"
+import (
+	"context"
+	"mosn.io/layotto/components/ref"
+)
 
 const ServiceName = "hello"
 
@@ -26,6 +29,7 @@ type HelloService interface {
 }
 
 type HelloConfig struct {
+	ref.Config
 	Type        string `json:"type"`
 	HelloString string `json:"hello"`
 }

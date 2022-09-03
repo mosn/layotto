@@ -19,8 +19,6 @@ package runtime
 import (
 	"encoding/json"
 
-	"mosn.io/layotto/components/ref"
-
 	"mosn.io/layotto/components/oss"
 
 	"mosn.io/layotto/pkg/runtime/secretstores"
@@ -62,7 +60,6 @@ type MosnRuntimeConfig struct {
 	// <component type,component name,config>
 	// e.g. <"super_pubsub","etcd",config>
 	CustomComponent map[string]map[string]custom.Config `json:"custom_component,omitempty"`
-	ComponentRef    ref.ComponentRefConfig              `json:"component_ref"`
 	Extends         map[string]json.RawMessage          `json:"extends,omitempty"` // extend config
 }
 

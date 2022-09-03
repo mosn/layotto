@@ -18,7 +18,6 @@ package ref
 
 import (
 	"fmt"
-
 	"github.com/dapr/components-contrib/secretstores"
 
 	"mosn.io/layotto/components/configstores"
@@ -34,18 +33,12 @@ type DefaultInjector struct {
 var defaultInjector *DefaultInjector
 
 // NewDefaultInjector return a single Inject
-func NewDefaultInjector(secretStores map[string]secretstores.SecretStore, configStores map[string]configstores.Store, config ref.ComponentRefConfig) *DefaultInjector {
+func NewDefaultInjector(secretStores map[string]secretstores.SecretStore, configStores map[string]configstores.Store) *DefaultInjector {
 	injector := &DefaultInjector{
 		Container: RefContainer{
 			SecretRef: secretStores,
 			ConfigRef: configStores,
 		},
-	}
-	for _, c := range config.ConfigRef {
-		injector.ComponentLimit[c] = struct{}{}
-	}
-	for _, c := range config.SecretRef {
-		injector.ComponentLimit[c] = struct{}{}
 	}
 	defaultInjector = injector
 	return injector
@@ -91,16 +84,14 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.SecretItem, metaData map[
 	return metaData, nil
 }
 
-func (i *DefaultInjector) InjectConfigRef(key string) (configstores.Store, error) {
-	if _, ok := i.ComponentLimit[key]; ok {
-		return i.Container.getConfigStore(key), nil
+func (i *DefaultInjector) InjectConfigRef(items []*ref.ConfigItem) ([]configstores.Store, error) {
+	var res []configstores.Store
+	for _, item := range items {
+		configStore := i.Container.getConfigStore(item.StoreName)
+		if configStore == nil {
+			return nil, fmt.Errorf("fail to get configStore:%v", item.StoreName)
+		}
+		res = append(res, configStore)
 	}
-	return nil, fmt.Errorf("do not allow get config store %s", key)
-}
-
-func (i *DefaultInjector) InjectPubSubRef(key string) (secretstores.SecretStore, error) {
-	if _, ok := i.ComponentLimit[key]; ok {
-		return i.Container.getSecretStore(key), nil
-	}
-	return nil, fmt.Errorf("do not allow get secret store %s", key)
+	return res, nil
 }

@@ -24,7 +24,20 @@
                       "hellos": {
                         "helloworld": {
                           "type": "helloworld",
-                          "hello": "greeting"
+                          "hello": "greeting",
+                          "secret_ref": [
+                            {
+                              "store_name": "local.file",
+                              "key": "db-user-pass:password",
+                              "sub_key": "db-user-pass:password",
+                              "inject_as": "redisPassword"
+                            }
+                          ],
+                          "config_ref": [
+                            {
+                              "store_name": "config_demo"
+                            }
+                          ]
                         }
                       },
                       "config_store": {
@@ -68,15 +81,6 @@
                       "app": {
                         "app_id": "app1",
                         "grpc_callback_port": 9999
-                      },
-                      "component_ref": {
-                        "config_store": [
-                          "config_demo"
-                        ],
-                        "secret_store": [
-                          "local.file",
-                          "local.env"
-                        ]
                       }
                     }
                   }
