@@ -96,7 +96,7 @@ Demo success!
 
 #### **Java**
 
-Download java sdk and examples:
+下载 java sdk 和示例代码:
 
 ```shell @if.not.exist java-sdk
 git clone https://github.com/layotto/java-sdk

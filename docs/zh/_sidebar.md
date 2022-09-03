@@ -16,6 +16,8 @@
     - 使用File API
         - [基于Minio](zh/start/file/minio.md)
     - [使用 OSS API](zh/start/oss/oss.md)
+    <!--quickstart_generator-->
+    - [使用 lifecycle API](zh/start/lifecycle/start) 
     - [API插件：注册您自己的API](zh/start/api_plugin/helloworld.md)
     - 作为 Istio 的数据面
         - [集成 Istio 1.10.6 演示](zh/start/istio/)
@@ -84,6 +86,7 @@
     - [如何部署、升级 Layotto](zh/operation/)
     - [如何本地开发、本地调试](zh/operation/local.md)
 - 设计文档
+    - [动态配置下发、组件热重载](zh/design/lifecycle/apply_configuration.md)
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
     - [Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)
