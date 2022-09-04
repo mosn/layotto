@@ -29,7 +29,7 @@ func NewwasmtimegoModule(vm *VM, module *wasmtimego.Module, wasmBytes []byte) *M
 }
 
 func (w *Module) Init() {
-	log.DefaultLogger.Infof("[wasmtimego][module] Init module")
+	log.DefaultLogger.Infof("[wasmtime][module] Init module")
 
 	w.abiNameList = w.GetABINameList()
 
