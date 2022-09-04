@@ -54,12 +54,12 @@ func (d *dwarfInfo) getLineReader() *dwarf.LineReader {
 	// Get the line table for the first CU.
 	cu, err := d.data.Reader().Next()
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasmer][debug] getLineReader fail to do d.Reader().Next(), err: %v", err)
+		log.DefaultLogger.Errorf("[wasmtime][debug] getLineReader fail to do d.Reader().Next(), err: %v", err)
 	}
 
 	lineReader, err := d.data.LineReader(cu)
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasmer][debug] getLineReader fail to do d.LineReader(), err: %v", err)
+		log.DefaultLogger.Errorf("[wasmtime][debug] getLineReader fail to do d.LineReader(), err: %v", err)
 	}
 
 	d.lineReader = lineReader
@@ -151,10 +151,10 @@ func loadCustomSections(data []byte) (map[string]CustomSection, int, error) {
 
 		if log.DefaultLogger.GetLogLevel() >= log.DEBUG {
 			if len(sectionName) > 0 {
-				log.DefaultLogger.Debugf("[wasmer][debug] loadCustomSections %v(%X) %v: data start at 0x%X, data size 0x%X",
+				log.DefaultLogger.Debugf("[wasmtime][debug] loadCustomSections %v(%X) %v: data start at 0x%X, data size 0x%X",
 					secTypeNames[sectionType], sectionType, sectionName, i, sectionDataSize)
 			} else {
-				log.DefaultLogger.Debugf("[wasmer][debug] loadCustomSections %v(%X): data start at 0x%X, data size 0x%X",
+				log.DefaultLogger.Debugf("[wasmtime][debug] loadCustomSections %v(%X): data start at 0x%X, data size 0x%X",
 					secTypeNames[sectionType], sectionType, i, sectionDataSize)
 			}
 		}

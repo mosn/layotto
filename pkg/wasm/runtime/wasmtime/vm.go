@@ -24,7 +24,7 @@ func NewwasmtimegoVM() types.WasmVM {
 }
 
 func (w *VM) Name() string {
-	return "wasmtimego"
+	return "wasmtime"
 }
 
 func (w *VM) Init() {

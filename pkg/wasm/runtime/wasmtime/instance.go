@@ -128,7 +128,7 @@ func (w *Instance) Start() error {
 
 	ins, err := wasmtimego.NewInstance(w.vm.store, w.module.module, w.importObject)
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasmtimego][instance] Start fail to new wasmtimego-go instance, err: %v", err)
+		log.DefaultLogger.Errorf("[wasmtime][instance] Start fail to new wasmtimego-go instance, err: %v", err)
 		return err
 	}
 
@@ -136,13 +136,13 @@ func (w *Instance) Start() error {
 
 	f := w.instance.GetFunc(w.vm.store,"_start")
 	if f == nil {
-		log.DefaultLogger.Errorf("[wasmtimego][instance] Start fail to get export func: _start, err: %v", err)
+		log.DefaultLogger.Errorf("[wasmtime][instance] Start fail to get export func: _start, err: %v", err)
 		return err
 	}
 
 	_, err = f.Call(w.vm.store)
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasmtimego][instance] Start fail to call _start func, err: %v", err)
+		log.DefaultLogger.Errorf("[wasmtime][instance] Start fail to call _start func, err: %v", err)
 		w.HandleError(err)
 		return err
 	}
@@ -184,23 +184,23 @@ type Val struct {
 
 func (w *Instance) RegisterFunc(namespace string, funcName string, f interface{}) error {
 	if w.checkStart() {
-		log.DefaultLogger.Errorf("[wasmtimego][instance] RegisterFunc not allow to register func after instance started, namespace: %v, funcName: %v",
+		log.DefaultLogger.Errorf("[wasmtime][instance] RegisterFunc not allow to register func after instance started, namespace: %v, funcName: %v",
 			namespace, funcName)
 		return ErrInstanceAlreadyStart
 	}
 
 	if namespace == "" || funcName == "" {
-		log.DefaultLogger.Errorf("[wasmtimego][instance] RegisterFunc invalid param, namespace: %v, funcName: %v", namespace, funcName)
+		log.DefaultLogger.Errorf("[wasmtime][instance] RegisterFunc invalid param, namespace: %v, funcName: %v", namespace, funcName)
 		return ErrInvalidParam
 	}
 
 	if f == nil || reflect.ValueOf(f).IsNil() {
-		log.DefaultLogger.Errorf("[wasmtimego][instance] RegisterFunc f is nil")
+		log.DefaultLogger.Errorf("[wasmtime][instance] RegisterFunc f is nil")
 		return ErrInvalidParam
 	}
 
 	if reflect.TypeOf(f).Kind() != reflect.Func {
-		log.DefaultLogger.Errorf("[wasmtimego][instance] RegisterFunc f is not func, actual type: %v", reflect.TypeOf(f))
+		log.DefaultLogger.Errorf("[wasmtime][instance] RegisterFunc f is not func, actual type: %v", reflect.TypeOf(f))
 		return ErrRegisterNotFunc
 	}
 
@@ -208,7 +208,7 @@ func (w *Instance) RegisterFunc(namespace string, funcName string, f interface{}
 
 	argsNum := funcType.NumIn()
 	if argsNum < 1 {
-		log.DefaultLogger.Errorf("[wasmtimego][instance] RegisterFunc invalid args num: %v, must >= 1", argsNum)
+		log.DefaultLogger.Errorf("[wasmtime][instance] RegisterFunc invalid args num: %v, must >= 1", argsNum)
 		return ErrRegisterArgNum
 	}
 
@@ -229,7 +229,7 @@ func (w *Instance) RegisterFunc(namespace string, funcName string, f interface{}
 		func(caller *wasmtimego.Caller,args []wasmtimego.Val) (callRes []wasmtimego.Val, trap *wasmtimego.Trap) {
 			defer func() {
 				if r := recover(); r != nil {
-					log.DefaultLogger.Errorf("[wasmtimego][instance] RegisterFunc recover func call: %v, r: %v, stack: %v",
+					log.DefaultLogger.Errorf("[wasmtime][instance] RegisterFunc recover func call: %v, r: %v, stack: %v",
 						funcName, r, string(debug.Stack()))
 					callRes = nil
 					err := fmt.Sprintf("panic [%v] when calling func [%v]", r, funcName)
@@ -259,7 +259,7 @@ func (w *Instance) RegisterFunc(namespace string, funcName string, f interface{}
 
 func (w *Instance) Malloc(size int32) (uint64, error) {
 	if !w.checkStart() {
-		log.DefaultLogger.Errorf("[wasmtimego][instance] call malloc before starting instance")
+		log.DefaultLogger.Errorf("[wasmtime][instance] call malloc before starting instance")
 		return 0, ErrInstanceNotStart
 	}
 
@@ -279,7 +279,7 @@ func (w *Instance) Malloc(size int32) (uint64, error) {
 
 func (w *Instance) GetExportsFunc(funcName string) (types.WasmFunction, error) {
 	if !w.checkStart() {
-		log.DefaultLogger.Errorf("[wasmtimego][instance] call GetExportsFunc before starting instance")
+		log.DefaultLogger.Errorf("[wasmtime][instance] call GetExportsFunc before starting instance")
 		return nil, ErrInstanceNotStart
 	}
 
@@ -303,7 +303,7 @@ func (w *Instance) GetExportsFunc(funcName string) (types.WasmFunction, error) {
 
 func (w *Instance) GetExportsMem(memName string) ([]byte, error) {
 	if !w.checkStart() {
-		log.DefaultLogger.Errorf("[wasmtimego][instance] call GetExportsMem before starting instance")
+		log.DefaultLogger.Errorf("[wasmtime][instance] call GetExportsMem before starting instance")
 		return nil, ErrInstanceNotStart
 	}
 
@@ -419,12 +419,12 @@ func (w *Instance) HandleError(err error) {
 		return
 	}
 
-	log.DefaultLogger.Errorf("[wasmtimego][instance] HandleError err: %v, trace:", err)
+	log.DefaultLogger.Errorf("[wasmtime][instance] HandleError err: %v, trace:", err)
 
 	if w.debug == nil {
 		// do not have dwarf debug info
 		for _, t := range trace {
-			log.DefaultLogger.Errorf("[wasmtimego][instance]\t funcIndex: %v, funcOffset: 0x%08x, moduleOffset: 0x%08x",
+			log.DefaultLogger.Errorf("[wasmtime][instance]\t funcIndex: %v, funcOffset: 0x%08x, moduleOffset: 0x%08x",
 				t.FuncIndex(), t.FuncOffset(), t.ModuleOffset())
 		}
 	} else {
@@ -432,10 +432,10 @@ func (w *Instance) HandleError(err error) {
 			pc := uint64(t.ModuleOffset())
 			line := w.debug.SeekPC(pc)
 			if line != nil {
-				log.DefaultLogger.Errorf("[wasmtimego][instance]\t funcIndex: %v, funcOffset: 0x%08x, pc: 0x%08x %v:%v",
+				log.DefaultLogger.Errorf("[wasmtime][instance]\t funcIndex: %v, funcOffset: 0x%08x, pc: 0x%08x %v:%v",
 					t.FuncIndex(), t.FuncOffset(), pc, line.File.Name, line.Line)
 			} else {
-				log.DefaultLogger.Errorf("[wasmtimego][instance]\t funcIndex: %v, funcOffset: 0x%08x, pc: 0x%08x fail to seek pc",
+				log.DefaultLogger.Errorf("[wasmtime][instance]\t funcIndex: %v, funcOffset: 0x%08x, pc: 0x%08x fail to seek pc",
 					t.FuncIndex(), t.FuncOffset(), t.ModuleOffset())
 			}
 		}
