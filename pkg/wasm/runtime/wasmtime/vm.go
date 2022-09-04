@@ -36,8 +36,8 @@ func (w *VM) NewModule(wasmBytes []byte) types.WasmModule {
 	if len(wasmBytes) == 0 {
 		return nil
 	}
-	wasm, err := wasmtimego.Wat2Wasm(string(wasmBytes))
-	m, err := wasmtimego.NewModule(w.engine, wasm)
+	//wasm, err := wasmtimego.wat2wasm(string(wasmBytes))
+	m, err := wasmtimego.NewModule(w.engine, wasmBytes)
 	if err != nil {
 		log.DefaultLogger.Errorf("[wasmtimego][vm] fail to new module, err: %v", err)
 		return nil

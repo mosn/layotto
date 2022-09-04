@@ -74,7 +74,7 @@
                   "name": "function2",
                   "instance_num": 1,
                   "vm_config": {
-                    "engine": "wasmer",
+                    "engine": "wasmtime",
                     "path": "demo/faas/code/golang/server/function_2.wasm"
                   }
                 }
