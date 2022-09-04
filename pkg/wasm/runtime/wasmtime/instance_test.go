@@ -121,10 +121,11 @@ func TestInstanceMem(t *testing.T) {
 
 func TestInstanceData(t *testing.T) {
 	vm := NewwasmtimegoVM()
-	module := vm.NewModule([]byte(`
+	wasm, _ := wasmtimego.Wat2Wasm(`
 			(module
 				(func (export "_start")))
-	`))
+	`)
+	module := vm.NewModule(wasm)
 	ins := module.NewInstance()
 	assert.Nil(t, ins.Start())
 
@@ -169,7 +170,11 @@ func TestRefCount(t *testing.T) {
 	})
 
 	vm := NewwasmtimegoVM()
-	module := vm.NewModule([]byte(`(module (func (export "_start")))`))
+	wasm, _ := wasmtimego.Wat2Wasm(`
+			(module
+				(func (export "_start")))
+	`)
+	module := vm.NewModule(wasm)
 	ins := NewwasmtimegoInstance(vm.(*VM), module.(*Module))
 
 	ins.abiList = []types.ABI{abi}
