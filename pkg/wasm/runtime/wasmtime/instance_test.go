@@ -15,7 +15,8 @@ func TestRegisterFunc(t *testing.T) {
 	vm := NewwasmtimegoVM()
 	assert.Equal(t, vm.Name(), "wasmtimego")
 
-	module := vm.NewModule([]byte(`(module (func (export "_start")))`))
+	wasm, _ := wasmtimego.Wat2Wasm(`(module (func (export "_start")))`)
+	module := vm.NewModule(wasm)
 	ins := module.NewInstance()
 
 	// invalid namespace
@@ -41,13 +42,14 @@ func TestRegisterFunc(t *testing.T) {
 
 func TestRegisterFuncRecoverPanic(t *testing.T) {
 	vm := NewwasmtimegoVM()
-	module := vm.NewModule([]byte(`
+	wasm, _ := wasmtimego.Wat2Wasm(`
 			(module
 				(import "TestRegisterFuncRecover" "somePanic" (func $somePanic (result i32)))
 				(func (export "_start"))
 				(func (export "panicTrigger") (param) (result i32)
 					call $somePanic))
-	`))
+	`)
+	module := vm.NewModule(wasm)
 	ins := module.NewInstance()
 
 	assert.Nil(t, ins.RegisterFunc("TestRegisterFuncRecover", "somePanic", func(instance types.WasmInstance) int32 {
@@ -66,11 +68,15 @@ func TestRegisterFuncRecoverPanic(t *testing.T) {
 
 func TestInstanceMalloc(t *testing.T) {
 	vm := NewwasmtimegoVM()
-	module := vm.NewModule([]byte(`
+	wasm, err := wasmtimego.Wat2Wasm(`
 			(module
 				(func (export "_start"))
 				(func (export "malloc") (param i32) (result i32) i32.const 10))
-	`))
+	`)
+	if err != nil {
+		panic("Wat2Wasm failed")
+	}
+	module := vm.NewModule(wasm)
 	ins := module.NewInstance()
 
 	assert.Nil(t, ins.RegisterFunc("TestRegisterFuncRecover", "somePanic", func(instance types.WasmInstance) int32 {
@@ -86,7 +92,8 @@ func TestInstanceMalloc(t *testing.T) {
 
 func TestInstanceMem(t *testing.T) {
 	vm := NewwasmtimegoVM()
-	module := vm.NewModule([]byte(`(module (memory (export "memory") 1) (func (export "_start")))`))
+	wasm, err := wasmtimego.Wat2Wasm(`(module (memory (export "memory") 1) (func (export "_start")))`)
+	module := vm.NewModule(wasm)
 	ins := module.NewInstance()
 	assert.Nil(t, ins.Start())
 
