@@ -29,7 +29,7 @@ require (
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.8.0
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.28.0
@@ -49,6 +49,7 @@ require (
 )
 
 replace (
+	github.com/bytecodealliance/wasmtime-go => ./wasmtime-go
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/klauspost/compress => github.com/klauspost/compress v1.13.0
 	mosn.io/layotto/components => ./components
