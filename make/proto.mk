@@ -22,7 +22,7 @@ proto.gen.init:
 
 .PHONY: proto.gen.code
 proto.gen.code:
-	$(DOCKER) build -t layotto/protoc $(ROOT_DIR)/docker/proto && sh ${SCRIPT_DIR}/generate-code.sh
+	sh ${SCRIPT_DIR}/generate-code.sh
 	$(MAKE) format
 
 .PHONY: proto.comments
