@@ -5,12 +5,17 @@ make proto
 ```
 
 Then you get:
-- `.pb.go` code
-- API reference docs
-- updated API reference list
-- quickstart document (both chinese and english)
-- updated sidebar (The tool will add the generated quickstart doc into the sidebar of https://mosn.io/layotto )
-- updated CI (The tool will add the generated quickstart doc into the CI script `etc/script/test-quickstart.sh`)
+- Generated code
+    - `.pb.go` code
+    - `_grpc.pb.go` code
+    - layotto go-sdk code
+    - layotto sidecar code
+- Generated documentation
+    - API reference docs
+    - updated API reference list
+    - quickstart document (both chinese and english)
+    - updated sidebar (The tool will add the generated quickstart doc into the sidebar of https://mosn.io/layotto )
+- Updated CI (The tool will add the generated quickstart doc into the CI script `etc/script/test-quickstart.sh`)
 
 That's all :)
 
