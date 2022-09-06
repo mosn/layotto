@@ -18,6 +18,10 @@ needGenerate() {
 generateSdkAndSidecar() {
   protos=$*
 
+  if test ${#protos[@]} -eq 0; then
+    return 0
+  fi
+
   protoc -I . \
     --go_out spec/proto/extension/v1 --go_opt=paths=source_relative \
     --go-grpc_out=spec/proto/extension/v1 \
