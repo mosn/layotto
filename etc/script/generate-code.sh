@@ -22,6 +22,8 @@ generateSdkAndSidecar() {
     return 0
   fi
 
+  mkdir _output/tmp
+
   protoc -I . \
     --go_out . --go_opt=paths=source_relative \
     --go-grpc_out=. \
