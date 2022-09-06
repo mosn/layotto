@@ -2,9 +2,10 @@ project_path=$(pwd)
 true=0
 false=1
 
+# don't build layotto/protoc if it already exists
 CON=$(docker image ls 'layotto/protoc:latest' | wc -l) #‘redis:latest'根据镜像和版本自己修改
 if [ $CON -eq 1 ]; then
-  # the image does not exist
+  # 1 means that the image does not exist
   docker build -t layotto/protoc docker/proto
 fi
 
