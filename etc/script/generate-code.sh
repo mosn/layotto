@@ -22,23 +22,23 @@ generateSdkAndSidecar() {
     --go_out spec/proto/extension/v1 --go_opt=paths=source_relative \
     --go-grpc_out=spec/proto/extension/v1 \
     --go-grpc_opt=require_unimplemented_servers=false,paths=source_relative \
-    --p6_out spec/proto/extension/v1 --p6_opt=paths=source_relative \
+    --p6_out _output/tmp --p6_opt=paths=source_relative \
     ${protos}
 
   # move code to the right places
   # sdk
-  mv spec/proto/extension/v1/client/client_generated.go sdk/go-sdk/client/client_generated.go
-  mv spec/proto/extension/v1/grpc/context_generated.go pkg/grpc/context_generated.go
+  mv _output/tmp/client/client_generated.go sdk/go-sdk/client/client_generated.go
+  mv _output/tmp/grpc/context_generated.go pkg/grpc/context_generated.go
   # runtime related code
-  mv spec/proto/extension/v1/runtime/* pkg/runtime/
+  mv _output/tmp/runtime/* pkg/runtime/
 
   # api plugin
-  mv spec/proto/extension/v1/grpc/* pkg/grpc/
-  rm -rf spec/proto/extension/v1/grpc
+  mv _output/tmp/grpc/* pkg/grpc/
+  rm -rf _output/tmp/grpc
 
   # component
-  mv spec/proto/extension/v1/components/* components/
-  rm -rf spec/proto/extension/v1/components
+  mv _output/tmp/components/* components/
+  rm -rf _output/tmp/components
 
 }
 
@@ -48,7 +48,7 @@ res=$(ls -d spec/proto/extension/v1/*/)
 toGenerate=()
 idx=0
 for r in $res; do
-  echo $r
+  #  echo $r
   docker run --rm \
     -v $project_path/$r:/api/proto \
     layotto/protoc
@@ -64,9 +64,9 @@ for r in $res; do
     fi
   done
 done
+echo "${#toGenerate[*]} packages need code generate generation"
 
 echo "===========> Generating sdk & sidecar code for spec/proto/extension/v1/"
-echo "${#toGenerate[*]} packages need code generate generation"
 generateSdkAndSidecar "${toGenerate[*]}"
 
 # generate .pb.go for runtime/v1
