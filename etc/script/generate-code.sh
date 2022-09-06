@@ -38,11 +38,12 @@ generateSdkAndSidecar() {
 
   # api plugin
   mv _output/tmp/grpc/* pkg/grpc/
-  rm -rf _output/tmp/grpc
+  #  rm -rf _output/tmp/grpc
 
   # component
   mv _output/tmp/components/* components/
-  rm -rf _output/tmp/components
+  #  rm -rf _output/tmp/components
+  rm -rf _output/tmp
 
 }
 
