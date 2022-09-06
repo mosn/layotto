@@ -23,8 +23,8 @@ generateSdkAndSidecar() {
   fi
 
   protoc -I . \
-    --go_out spec/proto/extension/v1 --go_opt=paths=source_relative \
-    --go-grpc_out=spec/proto/extension/v1 \
+    --go_out . --go_opt=paths=source_relative \
+    --go-grpc_out=. \
     --go-grpc_opt=require_unimplemented_servers=false,paths=source_relative \
     --p6_out _output/tmp --p6_opt=paths=source_relative \
     ${protos}
