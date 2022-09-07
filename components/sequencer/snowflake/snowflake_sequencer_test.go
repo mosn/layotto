@@ -127,13 +127,6 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 	cfg.Properties["userName"] = userName
 	cfg.Properties["password"] = password
 
-	cfg.Properties["boostPower"] = boostPower
-	cfg.Properties["paddingFactor"] = paddingFactor
-	cfg.Properties["timeBits"] = timeBits
-	cfg.Properties["workerBits"] = workerBits
-	cfg.Properties["seqBits"] = seqBits
-	cfg.Properties["startTime"] = startTime
-
 	err = s.Init(cfg)
 
 	assert.NoError(t, err)
@@ -148,6 +141,11 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 
 	for i := 0; i < cores; i++ {
 		go func() {
+			defer func() {
+				if x := recover(); x != nil {
+					log.DefaultLogger.Errorf("panic when testing parallel generatoring uid with snowflake algorithm: %v", x)
+				}
+			}()
 			for j := 0; j < size; j++ {
 				resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
 					Key: key,

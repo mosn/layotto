@@ -19,11 +19,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseSnowflakeRingBufferMetadata(t *testing.T) {
+func TestParseSnowflakeRingBufferMetadataBitsSum(t *testing.T) {
 	properties := make(map[string]string)
 	properties["workerBits"] = "1"
 	properties["timeBits"] = "1"
 	properties["seqBits"] = "1"
+
+	_, err := ParseSnowflakeRingBufferMetadata(properties)
+	assert.Error(t, err)
+}
+
+func TestParseSnowflakeRingBufferMetadataTimeFormat(t *testing.T) {
+	properties := make(map[string]string)
+	properties["startTime"] = "2022.01.01"
 
 	_, err := ParseSnowflakeRingBufferMetadata(properties)
 	assert.Error(t, err)
