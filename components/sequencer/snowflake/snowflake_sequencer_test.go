@@ -140,7 +140,7 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 
 	mset := mapset.NewSet()
 
-	var size int = 10000
+	var size int = 1000
 	var cores int = runtime.NumCPU()
 
 	var wg sync.WaitGroup
@@ -159,5 +159,5 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 		}()
 	}
 	wg.Wait()
-	assert.Equal(t, size * cores, mset.Cardinality())
+	assert.Equal(t, size*cores, mset.Cardinality())
 }
