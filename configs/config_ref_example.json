@@ -53,7 +53,7 @@
                       "local.file": {
                         "type": "local.file",
                         "metadata": {
-                          "secretsFile": "/Users/zlb/GolandProjects/layotto/configs/secret/config_secret_local_file.json"
+                          "secretsFile": "../../configs/secret/config_secret_local_file.json"
                         }
                       },
                       "local.env": {
