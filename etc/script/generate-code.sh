@@ -3,10 +3,17 @@ true=0
 false=1
 
 # don't build layotto/protoc if it already exists
-CON=$(docker image ls 'layotto/protoc:latest' | wc -l) #‘redis:latest'根据镜像和版本自己修改
+CON=$(docker image ls 'layotto/protoc:latest' | wc -l)
 if [ $CON -eq 1 ]; then
   # 1 means that the image does not exist
   docker build -t layotto/protoc docker/proto
+fi
+
+# check if protoc-gen-p6 has been installed
+CON=$(which protoc-gen-p6 | wc -l)
+if [ $CON -eq 0 ]; then
+  # 0 means that protoc-gen-p6 does not exist
+  go install github.com/seeflood/protoc-gen-p6@latest
 fi
 
 needGenerate() {
