@@ -318,11 +318,18 @@ func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
 		// register this component
 		m.hellos[name] = h
 		if _, ok := h.(common.InjectComponent); ok {
-			configRefs, err := m.Injector.InjectConfigRef(config.ConfigRef)
+			configRef, err := m.Injector.InjectConfigStoreRef(config.ComponentRef)
 			if err != nil {
 				return err
 			}
-			if err = h.(common.InjectComponent).InjectConfigComponent(configRefs); err != nil {
+			if err = h.(common.InjectComponent).InjectConfigComponent(configRef); err != nil {
+				return err
+			}
+			secretRef, err := m.Injector.InjectSecretStoreRef(config.ComponentRef)
+			if err != nil {
+				return err
+			}
+			if err = h.(common.InjectComponent).InjectSecretComponent(secretRef); err != nil {
 				return err
 			}
 		}

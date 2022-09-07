@@ -17,9 +17,11 @@
 package common
 
 import (
+	"github.com/dapr/components-contrib/secretstores"
 	"mosn.io/layotto/components/configstores"
 )
 
 type InjectComponent interface {
-	InjectConfigComponent(configs []configstores.Store) (err error)
+	InjectConfigComponent(cs configstores.Store) (err error)
+	InjectSecretComponent(ss secretstores.SecretStore) (err error)
 }

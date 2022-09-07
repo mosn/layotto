@@ -18,6 +18,7 @@ package helloworld
 
 import (
 	"context"
+	"github.com/dapr/components-contrib/secretstores"
 	"sync/atomic"
 
 	"mosn.io/layotto/components/configstores"
@@ -25,8 +26,9 @@ import (
 )
 
 type HelloWorld struct {
-	Say    atomic.Value
-	config configstores.Store
+	Say         atomic.Value
+	config      configstores.Store
+	secretStore secretstores.SecretStore
 }
 
 func (hw *HelloWorld) ApplyConfig(ctx context.Context, metadata map[string]string) (err error) {
@@ -38,11 +40,14 @@ func (hw *HelloWorld) ApplyConfig(ctx context.Context, metadata map[string]strin
 	return nil
 }
 
-func (hw *HelloWorld) InjectConfigComponent(configs []configstores.Store) (err error) {
+func (hw *HelloWorld) InjectConfigComponent(cs configstores.Store) (err error) {
 	//save for use
-	if len(configs) > 0 {
-		hw.config = configs[0]
-	}
+	hw.config = cs
+	return nil
+}
+func (hw *HelloWorld) InjectSecretComponent(ss secretstores.SecretStore) (err error) {
+	//save for use
+	hw.secretStore = ss
 	return nil
 }
 

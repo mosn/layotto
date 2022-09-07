@@ -50,7 +50,7 @@ func GetDefaultInjector() *DefaultInjector {
 
 //InjectSecretRef  inject secret to metaData
 // TODO: permission control
-func (i *DefaultInjector) InjectSecretRef(items []*ref.SecretItem, metaData map[string]string) (map[string]string, error) {
+func (i *DefaultInjector) InjectSecretRef(items []*ref.SecretRefConfig, metaData map[string]string) (map[string]string, error) {
 	if metaData == nil {
 		metaData = make(map[string]string)
 	}
@@ -85,14 +85,18 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.SecretItem, metaData map[
 	return metaData, nil
 }
 
-func (i *DefaultInjector) InjectConfigRef(items []*ref.ConfigItem) ([]configstores.Store, error) {
-	var res []configstores.Store
-	for _, item := range items {
-		configStore := i.Container.getConfigStore(item.StoreName)
-		if configStore == nil {
-			return nil, fmt.Errorf("fail to get configStore:%v", item.StoreName)
-		}
-		res = append(res, configStore)
+func (i *DefaultInjector) InjectConfigStoreRef(cf *ref.ComponentRefConfig) (configstores.Store, error) {
+	configStore := i.Container.getConfigStore(cf.ConfigStoreRef)
+	if configStore == nil {
+		return nil, fmt.Errorf("fail to get configStore:%v", cf.ConfigStoreRef)
 	}
-	return res, nil
+	return configStore, nil
+}
+
+func (i *DefaultInjector) InjectSecretStoreRef(cf *ref.ComponentRefConfig) (secretstores.SecretStore, error) {
+	secretStore := i.Container.getSecretStore(cf.SecretStoreRef)
+	if secretStore == nil {
+		return nil, fmt.Errorf("fail to get secretStore:%v", cf.SecretStoreRef)
+	}
+	return secretStore, nil
 }
