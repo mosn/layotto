@@ -19,7 +19,6 @@ package client
 import (
 	"context"
 	"log"
-	"mosn.io/layotto/spec/proto/extension/v1/s3"
 	"net"
 	"os"
 	"sync"
@@ -42,9 +41,7 @@ var (
 	doOnce        sync.Once
 )
 
-// Client is the interface for runtime client implementation.
-
-type Client interface {
+type runtimeAPI interface {
 	SayHello(ctx context.Context, in *SayHelloRequest) (*SayHelloResp, error)
 
 	GetConfiguration(ctx context.Context, in *ConfigurationRequestItem) ([]*ConfigurationItem, error)
@@ -117,8 +114,6 @@ type Client interface {
 
 	// Close cleans up all resources created by the client.
 	Close()
-
-	s3.ObjectStorageServiceClient
 }
 
 // NewClient instantiates runtime client using runtime_GRPC_PORT environment variable as port.
@@ -163,22 +158,6 @@ func NewClientWithAddress(address string) (client Client, err error) {
 	}
 
 	return NewClientWithConnection(conn), nil
-}
-
-// NewClientWithConnection instantiates runtime client using specific connection.
-func NewClientWithConnection(conn *grpc.ClientConn) Client {
-	return &GRPCClient{
-		ObjectStorageServiceClient: s3.NewObjectStorageServiceClient(conn),
-		connection:                 conn,
-		protoClient:                runtimev1pb.NewRuntimeClient(conn),
-	}
-}
-
-// GRPCClient is the gRPC implementation of runtime client.
-type GRPCClient struct {
-	s3.ObjectStorageServiceClient
-	connection  *grpc.ClientConn
-	protoClient runtimev1pb.RuntimeClient
 }
 
 // Close cleans up all resources created by the client.
