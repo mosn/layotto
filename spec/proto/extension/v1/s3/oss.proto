@@ -8,6 +8,8 @@ package spec.proto.extension.v1.s3;
 import "google/protobuf/empty.proto";
 
 option go_package = "mosn.io/layotto/spec/proto/extension/v1/s3;s3";
+option java_outer_classname = "ObjectStorageProto";
+option java_package = "spec.proto.extension.v1.s3";
 
 /* @exclude quickstart generator */
 /* @exclude code generator */
