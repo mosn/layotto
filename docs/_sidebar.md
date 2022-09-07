@@ -16,6 +16,8 @@
   - [Use OSS API](en/start/oss/start.md)
   - [API plugin: register your own API](en/start/api_plugin/helloworld.md)
   <!--quickstart_generator-->  
+  - [(Under construction) Use phone API](en/start/phone/start) 
+  - [(Under construction) Use email API](en/start/email/start) 
   - [Use lifecycle API](en/start/lifecycle/start) 
   - As the data plane of istio
     - [Integrate with istio 1.10.6](en/start/istio/)
