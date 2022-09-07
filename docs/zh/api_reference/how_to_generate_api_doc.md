@@ -31,9 +31,11 @@ service EmailService {
   // ...
 }
 
+// Wrong: there should be only one `service` in a `.proto` file
 service EmailService2 {
   // ...
 }
+
 // different message types......
 ```
 
