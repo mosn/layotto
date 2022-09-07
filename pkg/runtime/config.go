@@ -19,6 +19,8 @@ package runtime
 import (
 	"encoding/json"
 
+	"mosn.io/layotto/components/lock"
+
 	"mosn.io/layotto/components/oss"
 
 	"mosn.io/layotto/pkg/runtime/secretstores"
@@ -31,7 +33,6 @@ import (
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
-	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/runtime/pubsub"
@@ -61,6 +62,7 @@ type MosnRuntimeConfig struct {
 	// e.g. <"super_pubsub","etcd",config>
 	CustomComponent map[string]map[string]custom.Config `json:"custom_component,omitempty"`
 	Extends         map[string]json.RawMessage          `json:"extends,omitempty"` // extend config
+	ExtensionComponentConfig
 }
 
 func ParseRuntimeConfig(data json.RawMessage) (*MosnRuntimeConfig, error) {
