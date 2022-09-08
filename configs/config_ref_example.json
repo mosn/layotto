@@ -34,56 +34,55 @@
                             }
                           ],
                           "component_ref": {
-                            "config_store": "config_demo",
-                            "secret_store": "local.file"
+                            "config_store_ref": "config_demo",
+                            "secret_store_ref": "local.file"
                           }
-                        }
-                      }
-                    },
-                    "config_store": {
-                      "config_demo": {
-                        "type": "etcd",
-                        "address": [
-                          "127.0.0.1:2379"
-                        ],
-                        "timeout": "10"
-                      }
-                    },
-                    "secret_store": {
-                      "local.file": {
-                        "type": "local.file",
-                        "metadata": {
-                          "secretsFile": "../../configs/secret/config_secret_local_file.json"
                         }
                       },
-                      "local.env": {
-                        "type": "local.env",
-                        "metadata": {
+                      "config_store": {
+                        "config_demo": {
+                          "type": "etcd",
+                          "address": [
+                            "127.0.0.1:2379"
+                          ],
+                          "timeout": "10"
                         }
-                      }
-                    },
-                    "sequencer": {
-                      "redis": {
-                        "type": "redis",
-                        "metadata": {
-                          "redisHost": "127.0.0.1:6380"
-                        },
-                        "secret_ref": [
-                          {
-                            "store_name": "local.file",
-                            "key": "db-user-pass:password",
-                            "sub_key": "db-user-pass:password",
-                            "inject_as": "redisPassword"
+                      },
+                      "secret_store": {
+                        "local.file": {
+                          "type": "local.file",
+                          "metadata": {
+                            "secretsFile": "/Users/zlb/GolandProjects/layotto/configs/secret/config_secret_local_file.json"
                           }
-                        ]
+                        },
+                        "local.env": {
+                          "type": "local.env",
+                          "metadata": {
+                          }
+                        }
+                      },
+                      "sequencer": {
+                        "redis": {
+                          "type": "redis",
+                          "metadata": {
+                            "redisHost": "127.0.0.1:6380"
+                          },
+                          "secret_ref": [
+                            {
+                              "store_name": "local.file",
+                              "key": "db-user-pass:password",
+                              "sub_key": "db-user-pass:password",
+                              "inject_as": "redisPassword"
+                            }
+                          ]
+                        }
+                      },
+                      "app": {
+                        "app_id": "app1",
+                        "grpc_callback_port": 9999
                       }
-                    },
-                    "app": {
-                      "app_id": "app1",
-                      "grpc_callback_port": 9999
                     }
                   }
-                }
                 }
               ]
             }

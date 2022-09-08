@@ -19,7 +19,7 @@ package ref
 //Config is ref json config
 type Config struct {
 	SecretRef    []*SecretRefConfig  `json:"secret_ref"`
-	ComponentRef *ComponentRefConfig `json:"config_ref"`
+	ComponentRef *ComponentRefConfig `json:"component_ref"`
 }
 
 type SecretRefConfig struct {
