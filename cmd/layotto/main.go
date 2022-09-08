@@ -208,8 +208,6 @@ import (
 	_ "mosn.io/mosn/pkg/upstream/servicediscovery/dubbod"
 
 	_ "mosn.io/layotto/diagnostics/exporter_iml"
-
-	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
 )
 
 // loggerForDaprComp is constructed for reusing dapr's components.
@@ -262,8 +260,8 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithGrpcAPI(
 			default_api.NewGrpcAPI,
 			lifecycle.NewLifecycleAPI,
-			s3ext.NewS3Server,
 		),
+		runtime.WithExtensionGrpcAPI(),
 		// Hello
 		runtime.WithHelloFactory(
 			hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),
