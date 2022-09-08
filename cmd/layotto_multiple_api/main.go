@@ -61,17 +61,15 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
+	"mosn.io/layotto/components/configstores/etcdv3"
 	"mosn.io/layotto/components/custom"
+	"mosn.io/layotto/components/file"
 	aws_file "mosn.io/layotto/components/file/aws"
 	"mosn.io/layotto/components/file/minio"
 	"mosn.io/layotto/components/file/qiniu"
 	"mosn.io/layotto/components/file/tencentcloud"
-	"mosn.io/layotto/pkg/grpc/dapr"
-	s3ext "mosn.io/layotto/pkg/grpc/extension/s3"
-
-	"mosn.io/layotto/components/configstores/etcdv3"
-	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/sequencer"
+	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/runtime/bindings"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 
@@ -273,8 +271,8 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			// Currently it only support Dapr's InvokeService,secret API,state API and InvokeBinding API.
 			// Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.
 			dapr.NewDaprAPI_Alpha,
-			s3ext.NewS3Server,
 		),
+		runtime.WithExtensionGrpcAPI(),
 		// Hello
 		runtime.WithHelloFactory(
 			hello.NewHelloFactory("helloworld", helloworld.NewHelloWorld),

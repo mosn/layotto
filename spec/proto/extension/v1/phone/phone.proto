@@ -18,7 +18,7 @@ message SendVoiceWithTemplateRequest{
 
   // If your system uses multiple IVR services at the same time,
   // you can specify which service to use with this field.
-  string service_name = 1;
+  string component_name = 1;
 
   // Required
   VoiceTemplate template = 2;
