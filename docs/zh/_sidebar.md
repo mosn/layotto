@@ -107,9 +107,9 @@
         - [使用工具自动测试 Quickstart 文档](zh/development/test-quickstart.md)
     - [想要开发新的组件?](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
-        - [新增API时的开发规范](zh/development/developing-api.md)
-        - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
         - [如何基于proto文件生成代码、接口文档](zh/api_reference/how_to_generate_api_doc.md)
+        - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
+        - [新增API时的开发规范](zh/development/developing-api.md)
     - [Layotto 四大 Github Workflows 说明](zh/development/github-workflows.md)
     - [Layotto 命令行工具指南](zh/development/commands.md)
     - 如何给 issue 打 label

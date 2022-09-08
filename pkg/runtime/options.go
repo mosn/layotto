@@ -53,6 +53,7 @@ type services struct {
 	// Custom components.
 	// The key is component kind
 	custom map[string][]*custom.ComponentFactory
+	extensionComponentFactorys
 }
 
 type runtimeOptions struct {

@@ -46,15 +46,15 @@ type server struct {
 func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.DynamicConfiguration) (*runtimev1pb.ApplyConfigurationResponse, error) {
 	// 1. validate parameters
 	if in.ComponentConfig == nil || in.ComponentConfig.Kind == "" {
-		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(ErrNoField, "kind")
+		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(grpc_api.ErrNoField, "kind")
 	}
 	kind := in.ComponentConfig.Kind
 	name := in.ComponentConfig.Name
 	if name == "" {
-		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(ErrNoField, "name")
+		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(grpc_api.ErrNoField, "name")
 	}
 	if len(in.ComponentConfig.Metadata) == 0 {
-		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(ErrNoField, "metadata")
+		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(grpc_api.ErrNoField, "metadata")
 	}
 	// 2. find the component
 	key := lifecycle.ComponentKey{
@@ -63,7 +63,7 @@ func (s *server) ApplyConfiguration(ctx context.Context, in *runtimev1pb.Dynamic
 	}
 	holder, ok := s.components[key]
 	if !ok {
-		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(ErrComponentNotFound, kind, name)
+		return &runtimev1pb.ApplyConfigurationResponse{}, invalidArgumentError(grpc_api.ErrComponentNotFound, kind, name)
 	}
 
 	// 3. delegate to the components
