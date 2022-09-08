@@ -312,15 +312,20 @@ func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
 			if err != nil {
 				return err
 			}
-			if err = h.(common.InjectComponent).InjectConfigComponent(configRef); err != nil {
-				return err
+			if configRef != nil {
+				if err = h.(common.InjectComponent).InjectConfigComponent(configRef); err != nil {
+					return err
+				}
 			}
+
 			secretRef, err := m.Injector.InjectSecretStoreRef(config.ComponentRef)
 			if err != nil {
 				return err
 			}
-			if err = h.(common.InjectComponent).InjectSecretComponent(secretRef); err != nil {
-				return err
+			if secretRef != nil {
+				if err = h.(common.InjectComponent).InjectSecretComponent(secretRef); err != nil {
+					return err
+				}
 			}
 		}
 		m.storeDynamicComponent(lifecycle.KindHello, name, h)

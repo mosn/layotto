@@ -86,6 +86,9 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.SecretRefConfig, metaData
 }
 
 func (i *DefaultInjector) InjectConfigStoreRef(cf *ref.ComponentRefConfig) (configstores.Store, error) {
+	if cf.ConfigStoreRef == "" {
+		return nil, nil
+	}
 	configStore := i.Container.getConfigStore(cf.ConfigStoreRef)
 	if configStore == nil {
 		return nil, fmt.Errorf("fail to get configStore:%v", cf.ConfigStoreRef)
@@ -94,6 +97,9 @@ func (i *DefaultInjector) InjectConfigStoreRef(cf *ref.ComponentRefConfig) (conf
 }
 
 func (i *DefaultInjector) InjectSecretStoreRef(cf *ref.ComponentRefConfig) (secretstores.SecretStore, error) {
+	if cf.SecretStoreRef == "" {
+		return nil, nil
+	}
 	secretStore := i.Container.getSecretStore(cf.SecretStoreRef)
 	if secretStore == nil {
 		return nil, fmt.Errorf("fail to get secretStore:%v", cf.SecretStoreRef)
