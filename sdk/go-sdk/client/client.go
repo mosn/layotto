@@ -41,9 +41,7 @@ var (
 	doOnce        sync.Once
 )
 
-// Client is the interface for runtime client implementation.
-
-type Client interface {
+type runtimeAPI interface {
 	SayHello(ctx context.Context, in *SayHelloRequest) (*SayHelloResp, error)
 
 	GetConfiguration(ctx context.Context, in *ConfigurationRequestItem) ([]*ConfigurationItem, error)
@@ -160,20 +158,6 @@ func NewClientWithAddress(address string) (client Client, err error) {
 	}
 
 	return NewClientWithConnection(conn), nil
-}
-
-// NewClientWithConnection instantiates runtime client using specific connection.
-func NewClientWithConnection(conn *grpc.ClientConn) Client {
-	return &GRPCClient{
-		connection:  conn,
-		protoClient: runtimev1pb.NewRuntimeClient(conn),
-	}
-}
-
-// GRPCClient is the gRPC implementation of runtime client.
-type GRPCClient struct {
-	connection  *grpc.ClientConn
-	protoClient runtimev1pb.RuntimeClient
 }
 
 // Close cleans up all resources created by the client.

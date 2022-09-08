@@ -23,6 +23,9 @@ import (
 	"strings"
 	"time"
 
+	"mosn.io/layotto/components/pkg/common"
+	"mosn.io/layotto/pkg/runtime/lifecycle"
+
 	"mosn.io/layotto/components/oss"
 
 	"mosn.io/layotto/pkg/runtime/ref"
@@ -83,14 +86,16 @@ type MosnRuntime struct {
 	rpcs         map[string]rpc.Invoker
 	pubSubs      map[string]pubsub.PubSub
 	// state implementations store here are already initialized
-	states          map[string]state.Store
-	files           map[string]file.File
-	oss             map[string]oss.Oss
-	locks           map[string]lock.LockStore
-	sequencers      map[string]sequencer.Store
-	outputBindings  map[string]bindings.OutputBinding
-	secretStores    map[string]secretstores.SecretStore
-	customComponent map[string]map[string]custom.Component
+	states            map[string]state.Store
+	files             map[string]file.File
+	oss               map[string]oss.Oss
+	locks             map[string]lock.LockStore
+	sequencers        map[string]sequencer.Store
+	outputBindings    map[string]bindings.OutputBinding
+	secretStores      map[string]secretstores.SecretStore
+	customComponent   map[string]map[string]custom.Component
+	dynamicComponents map[lifecycle.ComponentKey]common.DynamicComponent
+	extensionComponents
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
 	// extends
@@ -134,6 +139,8 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		outputBindings:          make(map[string]bindings.OutputBinding),
 		secretStores:            make(map[string]secretstores.SecretStore),
 		customComponent:         make(map[string]map[string]custom.Component),
+		dynamicComponents:       make(map[lifecycle.ComponentKey]common.DynamicComponent),
+		extensionComponents:     *newExtensionComponents(),
 		started:                 false,
 	}
 }
@@ -191,21 +198,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 	}
 	// 2. init GrpcAPI stage
 	var apis []grpc.GrpcAPI
-	ac := &grpc.ApplicationContext{
-		AppId:                 m.runtimeConfig.AppManagement.AppId,
-		Hellos:                m.hellos,
-		ConfigStores:          m.configStores,
-		Rpcs:                  m.rpcs,
-		PubSubs:               m.pubSubs,
-		StateStores:           m.states,
-		Files:                 m.files,
-		Oss:                   m.oss,
-		LockStores:            m.locks,
-		Sequencers:            m.sequencers,
-		SendToOutputBindingFn: m.sendToOutputBinding,
-		SecretStores:          m.secretStores,
-		CustomComponent:       m.customComponent,
-	}
+	ac := newApplicationContext(m)
 
 	for _, apiFactory := range o.apiFactorys {
 		api := apiFactory(ac)
@@ -232,6 +225,18 @@ func (m *MosnRuntime) Stop() {
 	}
 }
 
+func (m *MosnRuntime) storeDynamicComponent(kind string, name string, store interface{}) {
+	comp, ok := store.(common.DynamicComponent)
+	if !ok {
+		return
+	}
+	// put it in the components map
+	m.dynamicComponents[lifecycle.ComponentKey{
+		Kind: kind,
+		Name: name,
+	}] = lifecycle.ConcurrentDynamicComponent(comp)
+}
+
 func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if m.runtimeConfig == nil {
 		return errors.New("[runtime] init error:no runtimeConfig")
@@ -240,6 +245,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initAppCallbackConnection(); err != nil {
 		return err
 	}
+
 	// init all kinds of components with config
 	//init secret & config first
 	if err := m.initSecretStores(o.services.secretStores...); err != nil {
@@ -284,6 +290,9 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 	if err := m.initSequencers(o.services.sequencers...); err != nil {
 		return err
 	}
+	if err := m.initExtensionComponent(o.services); err != nil {
+		return err
+	}
 	return m.initInputBinding(o.services.inputBinding...)
 }
 
@@ -301,7 +310,9 @@ func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
 			m.errInt(err, "init hello's component %s failed", name)
 			return err
 		}
+		// register this component
 		m.hellos[name] = h
+		m.storeDynamicComponent(lifecycle.KindHello, name, h)
 	}
 	return nil
 }
@@ -321,7 +332,9 @@ func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactor
 			m.errInt(err, "init configstore's component %s failed", name)
 			return err
 		}
+		// register this component
 		m.configStores[name] = c
+		m.storeDynamicComponent(lifecycle.KindConfig, name, c)
 	}
 	return nil
 }
@@ -340,7 +353,9 @@ func (m *MosnRuntime) initRpcs(rpcs ...*rpc.Factory) error {
 			m.errInt(err, "init rpc's component %s failed", name)
 			return err
 		}
+		// register this component
 		m.rpcs[name] = c
+		m.storeDynamicComponent(lifecycle.KindRPC, name, c)
 	}
 	return nil
 }
@@ -376,6 +391,7 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 		}
 		// register this component
 		m.pubSubs[name] = comp
+		m.storeDynamicComponent(lifecycle.KindPubsub, name, comp)
 	}
 	return nil
 }
@@ -401,6 +417,8 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 			return err
 		}
 		m.states[name] = comp
+		m.storeDynamicComponent(lifecycle.KindState, name, comp)
+
 		// 2.2. save prefix strategy
 		err = runtime_state.SaveStateConfiguration(name, config.Metadata)
 		if err != nil {
@@ -411,22 +429,27 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 	return nil
 }
 
-func (m *MosnRuntime) initOss(oss ...*oss.Factory) error {
+func (m *MosnRuntime) initOss(factorys ...*oss.Factory) error {
 	log.DefaultLogger.Infof("[runtime] init oss service")
 
-	// register all oss store services implementation
-	m.ossRegistry.Register(oss...)
+	// 1. register all oss store services implementation
+	m.ossRegistry.Register(factorys...)
+	// 2. loop initializing
 	for name, config := range m.runtimeConfig.Oss {
+		// 2.1. create the component
 		c, err := m.ossRegistry.Create(config.Type)
 		if err != nil {
 			m.errInt(err, "create oss component %s failed", name)
 			return err
 		}
+		// 2.2. init
 		if err := c.Init(context.TODO(), &config); err != nil {
 			m.errInt(err, "init oss component %s failed", name)
 			return err
 		}
+		// register this component
 		m.oss[name] = c
+		m.storeDynamicComponent(lifecycle.KindOss, name, c)
 	}
 	return nil
 }
@@ -448,6 +471,7 @@ func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
 			return err
 		}
 		m.files[name] = c
+		m.storeDynamicComponent(lifecycle.KindFile, name, c)
 	}
 	return nil
 }
@@ -480,6 +504,7 @@ func (m *MosnRuntime) initLocks(factorys ...*runtime_lock.Factory) error {
 			return err
 		}
 		m.locks[name] = comp
+		m.storeDynamicComponent(lifecycle.KindLock, name, comp)
 	}
 	return nil
 }
@@ -514,7 +539,9 @@ func (m *MosnRuntime) initSequencers(factorys ...*runtime_sequencer.Factory) err
 			m.errInt(err, "save sequencer configuration %s failed", name)
 			return err
 		}
+		// register this component
 		m.sequencers[name] = comp
+		m.storeDynamicComponent(lifecycle.KindSequencer, name, comp)
 	}
 	return nil
 }
@@ -569,6 +596,7 @@ func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFact
 		}
 		// 2.3. put it into the runtime component pool
 		m.outputBindings[name] = comp
+		m.storeDynamicComponent(lifecycle.KindBinding, name, comp)
 	}
 	return nil
 }
@@ -598,6 +626,7 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFa
 
 		// 2.3. save runtime related configs
 		m.secretStores[name] = comp
+		m.storeDynamicComponent(lifecycle.KindSecret, name, comp)
 	}
 	return nil
 }
@@ -678,6 +707,7 @@ func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Co
 			}
 			// initialization finish
 			m.SetCustomComponent(kind, name, comp)
+			m.storeDynamicComponent(fmt.Sprintf("%s.%s", lifecycle.KindCustom, kind), name, comp)
 		}
 	}
 	return nil

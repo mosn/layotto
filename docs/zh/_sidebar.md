@@ -16,6 +16,8 @@
     - 使用File API
         - [基于Minio](zh/start/file/minio.md)
     - [使用 OSS API](zh/start/oss/oss.md)
+    <!--quickstart_generator-->
+    - [使用 lifecycle API](zh/start/lifecycle/start) 
     - [API插件：注册您自己的API](zh/start/api_plugin/helloworld.md)
     - 作为 Istio 的数据面
         - [集成 Istio 1.10.6 演示](zh/start/istio/)
@@ -84,6 +86,7 @@
     - [如何部署、升级 Layotto](zh/operation/)
     - [如何本地开发、本地调试](zh/operation/local.md)
 - 设计文档
+    - [动态配置下发、组件热重载](zh/design/lifecycle/apply_configuration.md)
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
     - [Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)
@@ -104,9 +107,9 @@
         - [使用工具自动测试 Quickstart 文档](zh/development/test-quickstart.md)
     - [想要开发新的组件?](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
-        - [新增API时的开发规范](zh/development/developing-api.md)
-        - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
         - [如何基于proto文件生成代码、接口文档](zh/api_reference/how_to_generate_api_doc.md)
+        - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
+        - [新增API时的开发规范](zh/development/developing-api.md)
     - [Layotto 四大 Github Workflows 说明](zh/development/github-workflows.md)
     - [Layotto 命令行工具指南](zh/development/commands.md)
     - 如何给 issue 打 label

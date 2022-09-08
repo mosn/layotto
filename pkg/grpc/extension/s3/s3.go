@@ -22,7 +22,7 @@ import (
 	"io"
 	"sync"
 
-	s32 "mosn.io/layotto/spec/proto/extension/v1/s3"
+	"mosn.io/layotto/spec/proto/extension/v1/s3"
 
 	l8s3 "mosn.io/layotto/components/oss"
 
@@ -65,7 +65,7 @@ func (s *S3Server) Init(conn *rawGRPC.ClientConn) error {
 }
 
 func (s *S3Server) Register(rawGrpcServer *rawGRPC.Server) error {
-	s32.RegisterObjectStorageServiceServer(rawGrpcServer, s)
+	s3.RegisterObjectStorageServiceServer(rawGrpcServer, s)
 	return nil
 }
 
@@ -78,7 +78,7 @@ func transferData(source interface{}, target interface{}) error {
 	return err
 }
 
-func (s *S3Server) GetObject(req *s32.GetObjectInput, stream s32.ObjectStorageService_GetObjectServer) error {
+func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.ObjectStorageService_GetObjectServer) error {
 	// 1. validate
 	if s.ossInstance[req.StoreName] == nil {
 		return status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
@@ -113,7 +113,7 @@ func (s *S3Server) GetObject(req *s32.GetObjectInput, stream s32.ObjectStorageSe
 			return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
 		}
 		if err == nil || (err == io.EOF && length != 0) {
-			resp := &s32.GetObjectOutput{}
+			resp := &s3.GetObjectOutput{}
 			err := transferData(result, resp)
 			if err != nil {
 				return status.Errorf(codes.InvalidArgument, "transfer request data fail for GetObject,err: %+v", err)
@@ -131,10 +131,10 @@ func (s *S3Server) GetObject(req *s32.GetObjectInput, stream s32.ObjectStorageSe
 
 type putObjectStreamReader struct {
 	data   []byte
-	server s32.ObjectStorageService_PutObjectServer
+	server s3.ObjectStorageService_PutObjectServer
 }
 
-func newPutObjectStreamReader(data []byte, server s32.ObjectStorageService_PutObjectServer) *putObjectStreamReader {
+func newPutObjectStreamReader(data []byte, server s3.ObjectStorageService_PutObjectServer) *putObjectStreamReader {
 	return &putObjectStreamReader{data: data, server: server}
 }
 
@@ -161,7 +161,7 @@ func (r *putObjectStreamReader) Read(p []byte) (int, error) {
 	}
 }
 
-func (s *S3Server) PutObject(stream s32.ObjectStorageService_PutObjectServer) error {
+func (s *S3Server) PutObject(stream s3.ObjectStorageService_PutObjectServer) error {
 	req, err := stream.Recv()
 	if err != nil {
 		//if client send eof error directly, return nil
@@ -186,7 +186,7 @@ func (s *S3Server) PutObject(stream s32.ObjectStorageService_PutObjectServer) er
 	if resp, err = s.ossInstance[req.StoreName].PutObject(stream.Context(), st); err != nil {
 		return status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.PutObjectOutput{}
+	output := &s3.PutObjectOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return status.Errorf(codes.Internal, "transfer response data fail for PutObject,err: %+v", err)
@@ -194,7 +194,7 @@ func (s *S3Server) PutObject(stream s32.ObjectStorageService_PutObjectServer) er
 	return stream.SendAndClose(output)
 }
 
-func (s *S3Server) DeleteObject(ctx context.Context, req *s32.DeleteObjectInput) (*s32.DeleteObjectOutput, error) {
+func (s *S3Server) DeleteObject(ctx context.Context, req *s3.DeleteObjectInput) (*s3.DeleteObjectOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -207,14 +207,14 @@ func (s *S3Server) DeleteObject(ctx context.Context, req *s32.DeleteObjectInput)
 	if resp, err = s.ossInstance[req.StoreName].DeleteObject(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.DeleteObjectOutput{}
+	output := &s3.DeleteObjectOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for DeleteObject,err: %+v", err)
 	}
 	return output, nil
 }
-func (s *S3Server) PutObjectTagging(ctx context.Context, req *s32.PutObjectTaggingInput) (*s32.PutObjectTaggingOutput, error) {
+func (s *S3Server) PutObjectTagging(ctx context.Context, req *s3.PutObjectTaggingInput) (*s3.PutObjectTaggingOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -228,14 +228,14 @@ func (s *S3Server) PutObjectTagging(ctx context.Context, req *s32.PutObjectTaggi
 	if resp, err = s.ossInstance[req.StoreName].PutObjectTagging(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.PutObjectTaggingOutput{}
+	output := &s3.PutObjectTaggingOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for PutObjectTagging,err: %+v", err)
 	}
 	return output, nil
 }
-func (s *S3Server) DeleteObjectTagging(ctx context.Context, req *s32.DeleteObjectTaggingInput) (*s32.DeleteObjectTaggingOutput, error) {
+func (s *S3Server) DeleteObjectTagging(ctx context.Context, req *s3.DeleteObjectTaggingInput) (*s3.DeleteObjectTaggingOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -248,14 +248,14 @@ func (s *S3Server) DeleteObjectTagging(ctx context.Context, req *s32.DeleteObjec
 	if resp, err = s.ossInstance[req.StoreName].DeleteObjectTagging(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.DeleteObjectTaggingOutput{}
+	output := &s3.DeleteObjectTaggingOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for DeleteObjectTagging,err: %+v", err)
 	}
 	return output, nil
 }
-func (s *S3Server) GetObjectTagging(ctx context.Context, req *s32.GetObjectTaggingInput) (*s32.GetObjectTaggingOutput, error) {
+func (s *S3Server) GetObjectTagging(ctx context.Context, req *s3.GetObjectTaggingInput) (*s3.GetObjectTaggingOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -268,14 +268,14 @@ func (s *S3Server) GetObjectTagging(ctx context.Context, req *s32.GetObjectTaggi
 	if resp, err = s.ossInstance[req.StoreName].GetObjectTagging(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.GetObjectTaggingOutput{}
+	output := &s3.GetObjectTaggingOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for GetObjectTagging,err: %+v", err)
 	}
 	return output, nil
 }
-func (s *S3Server) CopyObject(ctx context.Context, req *s32.CopyObjectInput) (*s32.CopyObjectOutput, error) {
+func (s *S3Server) CopyObject(ctx context.Context, req *s3.CopyObjectInput) (*s3.CopyObjectOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -288,7 +288,7 @@ func (s *S3Server) CopyObject(ctx context.Context, req *s32.CopyObjectInput) (*s
 	if resp, err = s.ossInstance[req.StoreName].CopyObject(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.CopyObjectOutput{}
+	output := &s3.CopyObjectOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for CopyObject,err: %+v", err)
@@ -296,7 +296,7 @@ func (s *S3Server) CopyObject(ctx context.Context, req *s32.CopyObjectInput) (*s
 	return output, nil
 
 }
-func (s *S3Server) DeleteObjects(ctx context.Context, req *s32.DeleteObjectsInput) (*s32.DeleteObjectsOutput, error) {
+func (s *S3Server) DeleteObjects(ctx context.Context, req *s3.DeleteObjectsInput) (*s3.DeleteObjectsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -309,7 +309,7 @@ func (s *S3Server) DeleteObjects(ctx context.Context, req *s32.DeleteObjectsInpu
 	if resp, err = s.ossInstance[req.StoreName].DeleteObjects(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.DeleteObjectsOutput{}
+	output := &s3.DeleteObjectsOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for DeleteObjects,err: %+v", err)
@@ -317,7 +317,7 @@ func (s *S3Server) DeleteObjects(ctx context.Context, req *s32.DeleteObjectsInpu
 	return output, nil
 
 }
-func (s *S3Server) ListObjects(ctx context.Context, req *s32.ListObjectsInput) (*s32.ListObjectsOutput, error) {
+func (s *S3Server) ListObjects(ctx context.Context, req *s3.ListObjectsInput) (*s3.ListObjectsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -330,7 +330,7 @@ func (s *S3Server) ListObjects(ctx context.Context, req *s32.ListObjectsInput) (
 	if resp, err = s.ossInstance[req.StoreName].ListObjects(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.ListObjectsOutput{}
+	output := &s3.ListObjectsOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for ListObjects,err: %+v", err)
@@ -338,7 +338,7 @@ func (s *S3Server) ListObjects(ctx context.Context, req *s32.ListObjectsInput) (
 	return output, nil
 
 }
-func (s *S3Server) GetObjectCannedAcl(ctx context.Context, req *s32.GetObjectCannedAclInput) (*s32.GetObjectCannedAclOutput, error) {
+func (s *S3Server) GetObjectCannedAcl(ctx context.Context, req *s3.GetObjectCannedAclInput) (*s3.GetObjectCannedAclOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -351,7 +351,7 @@ func (s *S3Server) GetObjectCannedAcl(ctx context.Context, req *s32.GetObjectCan
 	if resp, err = s.ossInstance[req.StoreName].GetObjectCannedAcl(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.GetObjectCannedAclOutput{}
+	output := &s3.GetObjectCannedAclOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for GetObjectAcl,err: %+v", err)
@@ -359,7 +359,7 @@ func (s *S3Server) GetObjectCannedAcl(ctx context.Context, req *s32.GetObjectCan
 	return output, nil
 
 }
-func (s *S3Server) PutObjectCannedAcl(ctx context.Context, req *s32.PutObjectCannedAclInput) (*s32.PutObjectCannedAclOutput, error) {
+func (s *S3Server) PutObjectCannedAcl(ctx context.Context, req *s3.PutObjectCannedAclInput) (*s3.PutObjectCannedAclOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -372,7 +372,7 @@ func (s *S3Server) PutObjectCannedAcl(ctx context.Context, req *s32.PutObjectCan
 	if resp, err = s.ossInstance[req.StoreName].PutObjectCannedAcl(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.PutObjectCannedAclOutput{}
+	output := &s3.PutObjectCannedAclOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for PutObjectAcl,err: %+v", err)
@@ -380,7 +380,7 @@ func (s *S3Server) PutObjectCannedAcl(ctx context.Context, req *s32.PutObjectCan
 	return output, nil
 
 }
-func (s *S3Server) RestoreObject(ctx context.Context, req *s32.RestoreObjectInput) (*s32.RestoreObjectOutput, error) {
+func (s *S3Server) RestoreObject(ctx context.Context, req *s3.RestoreObjectInput) (*s3.RestoreObjectOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -393,7 +393,7 @@ func (s *S3Server) RestoreObject(ctx context.Context, req *s32.RestoreObjectInpu
 	if resp, err = s.ossInstance[req.StoreName].RestoreObject(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.RestoreObjectOutput{}
+	output := &s3.RestoreObjectOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for RestoreObject,err: %+v", err)
@@ -401,7 +401,7 @@ func (s *S3Server) RestoreObject(ctx context.Context, req *s32.RestoreObjectInpu
 	return output, nil
 
 }
-func (s *S3Server) CreateMultipartUpload(ctx context.Context, req *s32.CreateMultipartUploadInput) (*s32.CreateMultipartUploadOutput, error) {
+func (s *S3Server) CreateMultipartUpload(ctx context.Context, req *s3.CreateMultipartUploadInput) (*s3.CreateMultipartUploadOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -414,7 +414,7 @@ func (s *S3Server) CreateMultipartUpload(ctx context.Context, req *s32.CreateMul
 	if resp, err = s.ossInstance[req.StoreName].CreateMultipartUpload(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.CreateMultipartUploadOutput{}
+	output := &s3.CreateMultipartUploadOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for CreateMultipartUpload,err: %+v", err)
@@ -425,10 +425,10 @@ func (s *S3Server) CreateMultipartUpload(ctx context.Context, req *s32.CreateMul
 
 type uploadPartStreamReader struct {
 	data   []byte
-	server s32.ObjectStorageService_UploadPartServer
+	server s3.ObjectStorageService_UploadPartServer
 }
 
-func newUploadPartStreamReader(data []byte, server s32.ObjectStorageService_UploadPartServer) *uploadPartStreamReader {
+func newUploadPartStreamReader(data []byte, server s3.ObjectStorageService_UploadPartServer) *uploadPartStreamReader {
 	return &uploadPartStreamReader{data: data, server: server}
 }
 
@@ -455,7 +455,7 @@ func (r *uploadPartStreamReader) Read(p []byte) (int, error) {
 	}
 }
 
-func (s *S3Server) UploadPart(stream s32.ObjectStorageService_UploadPartServer) error {
+func (s *S3Server) UploadPart(stream s3.ObjectStorageService_UploadPartServer) error {
 	req, err := stream.Recv()
 	if err != nil {
 		//if client send eof error directly, return nil
@@ -480,7 +480,7 @@ func (s *S3Server) UploadPart(stream s32.ObjectStorageService_UploadPartServer) 
 	if resp, err = s.ossInstance[req.StoreName].UploadPart(stream.Context(), st); err != nil {
 		return status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.UploadPartOutput{}
+	output := &s3.UploadPartOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return status.Errorf(codes.Internal, "transfer response data fail for UploadPart,err: %+v", err)
@@ -488,7 +488,7 @@ func (s *S3Server) UploadPart(stream s32.ObjectStorageService_UploadPartServer) 
 	return stream.SendAndClose(output)
 
 }
-func (s *S3Server) UploadPartCopy(ctx context.Context, req *s32.UploadPartCopyInput) (*s32.UploadPartCopyOutput, error) {
+func (s *S3Server) UploadPartCopy(ctx context.Context, req *s3.UploadPartCopyInput) (*s3.UploadPartCopyOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -501,7 +501,7 @@ func (s *S3Server) UploadPartCopy(ctx context.Context, req *s32.UploadPartCopyIn
 	if resp, err = s.ossInstance[req.StoreName].UploadPartCopy(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.UploadPartCopyOutput{}
+	output := &s3.UploadPartCopyOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for UploadPartCopy,err: %+v", err)
@@ -509,7 +509,7 @@ func (s *S3Server) UploadPartCopy(ctx context.Context, req *s32.UploadPartCopyIn
 	return output, nil
 
 }
-func (s *S3Server) CompleteMultipartUpload(ctx context.Context, req *s32.CompleteMultipartUploadInput) (*s32.CompleteMultipartUploadOutput, error) {
+func (s *S3Server) CompleteMultipartUpload(ctx context.Context, req *s3.CompleteMultipartUploadInput) (*s3.CompleteMultipartUploadOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -522,7 +522,7 @@ func (s *S3Server) CompleteMultipartUpload(ctx context.Context, req *s32.Complet
 	if resp, err = s.ossInstance[req.StoreName].CompleteMultipartUpload(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.CompleteMultipartUploadOutput{}
+	output := &s3.CompleteMultipartUploadOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for CompleteMultipartUpload,err: %+v", err)
@@ -530,7 +530,7 @@ func (s *S3Server) CompleteMultipartUpload(ctx context.Context, req *s32.Complet
 	return output, nil
 
 }
-func (s *S3Server) AbortMultipartUpload(ctx context.Context, req *s32.AbortMultipartUploadInput) (*s32.AbortMultipartUploadOutput, error) {
+func (s *S3Server) AbortMultipartUpload(ctx context.Context, req *s3.AbortMultipartUploadInput) (*s3.AbortMultipartUploadOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -543,7 +543,7 @@ func (s *S3Server) AbortMultipartUpload(ctx context.Context, req *s32.AbortMulti
 	if resp, err = s.ossInstance[req.StoreName].AbortMultipartUpload(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.AbortMultipartUploadOutput{}
+	output := &s3.AbortMultipartUploadOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for AbortMultipartUpload,err: %+v", err)
@@ -551,7 +551,7 @@ func (s *S3Server) AbortMultipartUpload(ctx context.Context, req *s32.AbortMulti
 	return output, nil
 
 }
-func (s *S3Server) ListMultipartUploads(ctx context.Context, req *s32.ListMultipartUploadsInput) (*s32.ListMultipartUploadsOutput, error) {
+func (s *S3Server) ListMultipartUploads(ctx context.Context, req *s3.ListMultipartUploadsInput) (*s3.ListMultipartUploadsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -564,14 +564,14 @@ func (s *S3Server) ListMultipartUploads(ctx context.Context, req *s32.ListMultip
 	if resp, err = s.ossInstance[req.StoreName].ListMultipartUploads(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.ListMultipartUploadsOutput{}
+	output := &s3.ListMultipartUploadsOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for AbortMultipartUpload,err: %+v", err)
 	}
 	return output, nil
 }
-func (s *S3Server) ListObjectVersions(ctx context.Context, req *s32.ListObjectVersionsInput) (*s32.ListObjectVersionsOutput, error) {
+func (s *S3Server) ListObjectVersions(ctx context.Context, req *s3.ListObjectVersionsInput) (*s3.ListObjectVersionsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -584,7 +584,7 @@ func (s *S3Server) ListObjectVersions(ctx context.Context, req *s32.ListObjectVe
 	if resp, err = s.ossInstance[req.StoreName].ListObjectVersions(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.ListObjectVersionsOutput{}
+	output := &s3.ListObjectVersionsOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for ListObjectVersions,err: %+v", err)
@@ -593,7 +593,7 @@ func (s *S3Server) ListObjectVersions(ctx context.Context, req *s32.ListObjectVe
 
 }
 
-func (s *S3Server) HeadObject(ctx context.Context, req *s32.HeadObjectInput) (*s32.HeadObjectOutput, error) {
+func (s *S3Server) HeadObject(ctx context.Context, req *s3.HeadObjectInput) (*s3.HeadObjectOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -606,7 +606,7 @@ func (s *S3Server) HeadObject(ctx context.Context, req *s32.HeadObjectInput) (*s
 	if resp, err = s.ossInstance[req.StoreName].HeadObject(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.HeadObjectOutput{}
+	output := &s3.HeadObjectOutput{}
 	err = transferData(resp, output)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "transfer response data fail for ListObjectVersions,err: %+v", err)
@@ -615,7 +615,7 @@ func (s *S3Server) HeadObject(ctx context.Context, req *s32.HeadObjectInput) (*s
 
 }
 
-func (s *S3Server) IsObjectExist(ctx context.Context, req *s32.IsObjectExistInput) (*s32.IsObjectExistOutput, error) {
+func (s *S3Server) IsObjectExist(ctx context.Context, req *s3.IsObjectExistInput) (*s3.IsObjectExistOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -628,12 +628,12 @@ func (s *S3Server) IsObjectExist(ctx context.Context, req *s32.IsObjectExistInpu
 	if resp, err = s.ossInstance[req.StoreName].IsObjectExist(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.IsObjectExistOutput{}
+	output := &s3.IsObjectExistOutput{}
 	output.FileExist = resp.FileExist
 	return output, nil
 }
 
-func (s *S3Server) SignURL(ctx context.Context, req *s32.SignURLInput) (*s32.SignURLOutput, error) {
+func (s *S3Server) SignURL(ctx context.Context, req *s3.SignURLInput) (*s3.SignURLOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -646,12 +646,12 @@ func (s *S3Server) SignURL(ctx context.Context, req *s32.SignURLInput) (*s32.Sig
 	if resp, err = s.ossInstance[req.StoreName].SignURL(ctx, st); err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.SignURLOutput{}
+	output := &s3.SignURLOutput{}
 	output.SignedUrl = resp.SignedUrl
 	return output, nil
 }
 
-func (s *S3Server) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *s32.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+func (s *S3Server) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -666,7 +666,7 @@ func (s *S3Server) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *s3
 	return &emptypb.Empty{}, nil
 }
 
-func (s *S3Server) UpdateUploadBandwidthRateLimit(ctx context.Context, req *s32.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+func (s *S3Server) UpdateUploadBandwidthRateLimit(ctx context.Context, req *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -683,10 +683,10 @@ func (s *S3Server) UpdateUploadBandwidthRateLimit(ctx context.Context, req *s32.
 
 type appendObjectStreamReader struct {
 	data   []byte
-	server s32.ObjectStorageService_AppendObjectServer
+	server s3.ObjectStorageService_AppendObjectServer
 }
 
-func newAppendObjectStreamReader(data []byte, server s32.ObjectStorageService_AppendObjectServer) *appendObjectStreamReader {
+func newAppendObjectStreamReader(data []byte, server s3.ObjectStorageService_AppendObjectServer) *appendObjectStreamReader {
 	return &appendObjectStreamReader{data: data, server: server}
 }
 
@@ -713,7 +713,7 @@ func (r *appendObjectStreamReader) Read(p []byte) (int, error) {
 	}
 }
 
-func (s *S3Server) AppendObject(stream s32.ObjectStorageService_AppendObjectServer) error {
+func (s *S3Server) AppendObject(stream s3.ObjectStorageService_AppendObjectServer) error {
 	req, err := stream.Recv()
 	if err != nil {
 		//if client send eof error directly, return nil
@@ -738,13 +738,13 @@ func (s *S3Server) AppendObject(stream s32.ObjectStorageService_AppendObjectServ
 	if resp, err = s.ossInstance[req.StoreName].AppendObject(stream.Context(), st); err != nil {
 		return status.Errorf(codes.Internal, err.Error())
 	}
-	output := &s32.AppendObjectOutput{}
+	output := &s3.AppendObjectOutput{}
 	output.AppendPosition = resp.AppendPosition
 	return stream.SendAndClose(output)
 
 }
 
-func (s *S3Server) ListParts(ctx context.Context, req *s32.ListPartsInput) (*s32.ListPartsOutput, error) {
+func (s *S3Server) ListParts(ctx context.Context, req *s3.ListPartsInput) (*s3.ListPartsOutput, error) {
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -757,7 +757,7 @@ func (s *S3Server) ListParts(ctx context.Context, req *s32.ListPartsInput) (*s32
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	out := &s32.ListPartsOutput{}
+	out := &s3.ListPartsOutput{}
 	err = transferData(resp, out)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transfer response data fail for ListParts,err: %+v", err)
