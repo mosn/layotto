@@ -100,6 +100,45 @@ client2 succeeded in unlocking
 Demo success!
 ```
 
+#### **Java**
+
+下载 java sdk 和示例代码:
+
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+切换目录:
+
+```shell
+cd java-sdk
+```
+
+构建:
+
+```shell @if.not.exist examples-sequencer/target/examples-lock-1.2.0-SNAPSHOT-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-lock/pom.xml clean package
+```
+
+运行:
+
+```shell
+java -jar examples-lock/target/examples-lock-1.2.0-SNAPSHOT-jar-with-dependencies.jar
+```
+
+打印出以下信息说明运行成功:
+
+```bash
+TryLockResponse{success=true}
+TryLockResponse{success=true}
+TryLockResponse{success=true}
+UnlockResponse{status=SUCCESS}
+TryLockResponse{success=true}
+UnlockResponse{status=LOCK_UNEXIST}
+```
+
+
 ### 下一步
 #### 这个客户端程序做了什么？
 示例客户端程序中使用了Layotto提供的golang版本sdk，调用Layotto 分布式锁API,启动多个协程进行抢锁、解锁操作。
