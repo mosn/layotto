@@ -31,7 +31,7 @@ type Instance struct {
 	module       *Module
 	importObject []wasmtimego.AsExtern
 	instance     *wasmtimego.Instance
-	linker      *wasmtimego.Linker
+	linker       *wasmtimego.Linker
 	debug        *dwarfInfo
 	abiList      []types.ABI
 
@@ -129,10 +129,13 @@ func (w *Instance) Start() error {
 	}
 
 	//ins, err := wasmtimego.NewInstance(w.vm.store, w.module.module, w.importObject)
+	//w.linker.Define("wasi_snapshot_preview1", "fd_write", wasmtimego.WrapFunc(w.vm.store, func() {}))
+	//w.linker.Define("wasi_snapshot_preview1", "args_sizes_get", wasmtimego.WrapFunc(w.vm.store, func() {}))
+	//w.linker.Define("wasi_snapshot_preview1", "args_get", wasmtimego.WrapFunc(w.vm.store, func() {}))
 
 	ins, err :=  w.linker.Instantiate(w.vm.store,  w.module.module)
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasmtime][instance] Start fail to new wasmtimego-go instance, err: %v", err)
+		log.DefaultLogger.Errorf("[wasmtime][instance] Start fail to new wasmtimego instance, err: %v", err)
 		return err
 	}
 
