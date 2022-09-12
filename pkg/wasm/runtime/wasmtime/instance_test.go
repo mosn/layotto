@@ -34,7 +34,7 @@ func TestRegisterFunc(t *testing.T) {
 	assert.Equal(t, ins.RegisterFunc("TestRegisterFuncNamespace", "funcName", func() {}), ErrRegisterArgNum)
 
 	// wrong number of imports
-	// assert.Nil(t, ins.RegisterFunc("TestRegisterFuncNamespace", "funcName", func(f types.WasmInstance) {}))
+	assert.Nil(t, ins.RegisterFunc("TestRegisterFuncNamespace", "funcName", func(f types.WasmInstance) {}))
 
 	assert.Nil(t, ins.Start())
 
@@ -80,9 +80,10 @@ func TestInstanceMalloc(t *testing.T) {
 	module := vm.NewModule(wasm)
 	ins := module.NewInstance()
 
-	//assert.Nil(t, ins.RegisterFunc("TestRegisterFuncRecover", "somePanic", func(instance types.WasmInstance) int32 {
-	//	panic("some panic")
-	//}))
+
+	assert.Nil(t, ins.RegisterFunc("TestRegisterFuncRecover", "somePanic", func(instance types.WasmInstance) int32 {
+		panic("some panic")
+	}))
 
 	assert.Nil(t, ins.Start())
 
