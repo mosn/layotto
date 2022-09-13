@@ -2,7 +2,7 @@
 
 Writing the API plugin yourself is boring. You can use code generator to generate all the code.
 
-Let's say you want to add a `PublishTransactionalMessage` method to existing pubsub API. You write a new proto file [cmd/layotto_multiple_api/advanced_queue/advanced_queue.proto](cmd/layotto_multiple_api/advanced_queue/advanced_queue.proto) :
+Let's say you want to add a `PublishTransactionalMessage` method to existing pubsub API. You write a new proto file `cmd/layotto_multiple_api/advanced_queue/advanced_queue.proto` :
 
 ```protobuf
 // ......
