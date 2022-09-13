@@ -21,50 +21,90 @@ Layotto 提供了丰富的命令行工具，方便贡献者开发和测试 Layot
 具体细节可查看一下命令，或执行 `make help` 查看：
 
 ```
-Layotto commands 👀: 
+Layotto is an open source project for a fast and efficient cloud native application runtime.
 
-A fast and efficient cloud native application runtime 🚀.
-Commands below are used in Development 💻 and GitHub workflow 🌊.
+Usage:
+  make <Target> <Option>
 
-Usage: make <COMMANDS> <ARGS> ...
+Targets:
 
-COMMANDS:
-  build               Build layotto for host platform.
-  build.multiarch     Build layotto for multiple platforms. See option PLATFORMS.
-  image               Build docker images for host arch.
-  image.multiarch     Build docker images for multiple platforms. See option PLATFORMS.
-  push                Push docker images to registry.
-  push.multiarch      Push docker images for multiple platforms to registry.
-  app                 Build app docker images for host arch. [`/docker/app` contains apps dockerfiles]
-  app.multiarch       Build app docker images for multiple platforms. See option PLATFORMS.
-  wasm                Build layotto wasm for linux arm64 platform.
-  wasm.multiarch      Build layotto wasm for multiple platform.
-  wasm.image          Build layotto wasm image for multiple platform.
-  wasm.image.push     Push layotto wasm image for multiple platform.
-  check               Run all go checks of code sources.
-  check.lint          Run go syntax and styling of go sources.
-  check.unit          Run go unit test.
-  check.style         Run go style test.
-  style.coverage      Run coverage analysis.
-  style.deadlink      Run deadlink check test.
-  style.quickstart    Run quickstart check test.
-  license             Add license headers for code files.
-  integrate.wasm      Run integration test with wasm.
-  integrate.runtime   Run integration test with runtime.
-  format              Format layotto go codes style with gofmt and goimports.
-  clean               Remove all files that are created by building.
-  all                 Run format codes, check codes, build Layotto codes for host platform with one command
-  help                Show this help info.
+Golang Development
+  build            Build layotto for host platform.
+  multiarch        Build layotto for multiple platforms.
+  clean            clean all unused generated files.
+  lint             Run go syntax and styling of go sources.
+  test             Run golang unit test in target paths.
+  workspace        check if workspace is clean and committed.
+  format           Format codes style with gofmt and goimports.
 
-ARGS:
+Image Development
+  image            Build docker images for host arch.
+  image-multiarch  Build docker images for multiple platforms.
+  image-push       Push docker images to registry.
+  image-multiarch  Push docker images for multiple platforms to registry.
+  image-proxyv2    Build proxy image for host arch.
+  image-proxyv2-push  Push proxy image to registry.
+
+Proto Development
+  proto-doc        Generate documentation based on the proto files.
+  proto-gen        Generate code and documentation based on the proto files.
+  proto-lint       Run Protobuffer Linter with Buf Tool
+
+Kubernetes Development
+  deploy-k8s       Install Layotto in Kubernetes.
+  undeploy-k8s     Uninstall Layotto in Kubernetes.
+
+WebAssembly Development
+  wasm-build       Build layotto wasm for linux arm64 platform.
+  wasm-image       Build layotto wasm image for multiple platform.
+  wasm-push        Push layotto wasm image for multiple platform.
+
+CI/CD Development
+  base             Build base docker images for host arch.
+  base-multiarch   Build base docker images for multiple platforms.
+  deadlink         Run deadlink check test.
+  quickstart       Run quickstart check test.
+  coverage         Run coverage analysis.
+  license          Add license headers for code files.
+  license-check    Check codes license headers.
+  integrate-wasm   Run integration test with wasm.
+  integrate-runtime  Run integration test with runtime.
+
+
+Options:
+
   BINS         The binaries to build. Default is all of cmd.
-               This option is available when using: make build/build.multiarch
-               Example: make build BINS="layotto_multiple_api layotto"
+               This option is available when using: make build/multiarch
+               Examples:
+               * make multiarch BINS="layotto"
+               * make build BINS="layotto_multiple_api layotto"
   IMAGES       Backend images to make. Default is all of cmds.
-               This option is available when using: make image/image.multiarch/push/push.multiarch
-               Example: make image.multiarch IMAGES="layotto_multiple_api layotto"
+               This option is available when using: make image/image-multiarch/push/push-multiarch
+               Examples: 
+               * make image IMAGES="layotto"
+               * make image-multiarch IMAGES="layotto"
+               * make push IMAGES="layotto_multiple_api"
+               * make push-multiarch IMAGES="layotto_multiple_api"
+  NAMESPACE    The namepace to deploy. Default is `default`.
+               This option is available when using: make deploy-k8s/undeploy-k8s
+               Examples: 
+               * make deploy-k8s NAMESPACE="layotto"
+               * make undeploy-k8s NAMESPACE="default"
+  VERSION    The image tag version to build. Default is the latest release tag.
+               This option is available when using: make image/image-multiarch/push/push-multiarch
+               Examples: 
+               * make image VERSION="latest"
+               * make image-multiarch VERSION="v1.0.0"
+               * make push-multiarch VERSION="v2.0.0"
+  REGISTRY_PREFIX    The docker image registry repo name to push. Default is `layotto`.
+               This option is available when using: make push/push-multiarch
+               Examples: 
+               * make push IMAGES="layotto" REGISTRY_PREFIX="mosn"
+               * make push IMAGES="layotto_multiple_api" REGISTRY_PREFIX="mosn"
+               Supported Platforms: linux_amd64 linux_arm64 darwin_amd64 darwin_arm64
   PLATFORMS    The multiple platforms to build. Default is linux_amd64 and linux_arm64.
-               This option is available when using: make build.multiarch/image.multiarch/push.multiarch
-               Example: make image.multiarch IMAGES="layotto" PLATFORMS="linux_amd64 linux_arm64"
+               This option is available when using: make multiarch
+               Examples: 
+               * make multiarch BINS="layotto" PLATFORMS="linux_amd64 linux_arm64"
                Supported Platforms: linux_amd64 linux_arm64 darwin_amd64 darwin_arm64
 ```

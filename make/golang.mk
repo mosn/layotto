@@ -14,8 +14,10 @@
 GO := go
 GO_FMT := gofmt
 GO_IMPORTS := goimports
+
 GO_MODULE := mosn.io/layotto
 VERSION_PACKAGE := main
+BINARY_PREFIX := layotto
 
 GO_LDFLAGS += -X $(VERSION_PACKAGE).GitVersion=$(VERSION) \
 	# -X $(VERSION_PACKAGE).GitCommit=$(GIT_COMMIT) \
@@ -40,6 +42,45 @@ endif
 ifeq (${BINS},)
   $(error Could not determine BINS, set ROOT_DIR or run in source dir)
 endif
+
+##@ Golang Development
+
+# ==============================================================================
+# Public Commands:
+# ==============================================================================
+
+.PHONY: build
+build: ## Build layotto for host platform.
+build: go.build
+
+.PHONY: multiarch
+multiarch: ## Build layotto for multiple platforms.
+multiarch: go.build.multiarch
+
+.PHONY: clean
+clean: ## clean all unused generated files.
+clean: go.clean
+
+.PHONY: lint
+lint: ## Run go syntax and styling of go sources.
+lint: go.lint
+
+.PHONY: tests
+test: ## Run golang unit test in target paths.
+test: go.test
+
+.PHONY: workspace
+workspace: ## check if workspace is clean and committed.
+workspace: go.style
+
+.PHONY: format
+format: ## Format codes style with gofmt and goimports.
+format: go.format
+
+# ==============================================================================
+# Private Commands:
+# ==============================================================================
+
 
 .PHONY: go.build.%
 go.build.%:
@@ -114,7 +155,7 @@ go.test: go.test.verify
 .PHONY: go.style
 go.style:  
 	@echo "===========> Running go style check"
-	$(MAKE) format && git status && [[ -z `git status -s` ]] || echo -e "\n${RED}Error: there are uncommitted changes after formatting all the code. ${GREEN}\nHow to fix it:${NO_COLOR} please 'make format' and then use git to commit all those changed files. "
+	@$(MAKE) format && git status && [[ -z `git status -s` ]] || echo -e "\n${RED}Error: there are uncommitted changes after formatting all the code. ${GREEN}\nHow to fix it:${NO_COLOR} please 'make format' and then use git to commit all those changed files. "
 
 .PHONY: go.format.verify
 go.format.verify:  

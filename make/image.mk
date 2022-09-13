@@ -37,6 +37,41 @@ ifeq (${IMAGES},)
   $(error Could not determine IMAGES, set ROOT_DIR or run in source dir)
 endif
 
+##@ Image Development
+
+# ==============================================================================
+# Public Commands:
+# ==============================================================================
+
+.PHONY: image
+image: ## Build docker images for host arch.
+image: image.build
+
+.PHONY: image-multiarch
+image-multiarch: ## Build docker images for multiple platforms.
+image-multiarch: image.build.multiarch
+
+.PHONY: image-push
+image-push: ## Push docker images to registry.
+image-push: image.push
+
+.PHONY: image-multiarch
+image-multiarch: ## Push docker images for multiple platforms to registry.
+image-multiarch: image.push.multiarch
+
+.PHONY: image-proxyv2
+image-proxyv2: ## Build proxy image for host arch.
+image-proxyv2: image.proxyv2.build
+
+.PHONY: image-proxyv2-push
+image-proxyv2-push: ## Push proxy image to registry.
+image-proxyv2-push: image.proxyv2.push
+
+# ==============================================================================
+# Private Commands:
+# ==============================================================================
+
+
 .PHONY: image.daemon.verify
 image.daemon.verify:
 	$(eval PASS := $(shell $(DOCKER) version | grep -q -E 'Experimental: {1,5}true' && echo 1 || echo 0))
@@ -60,15 +95,6 @@ image.build: image.verify  $(addprefix image.build., $(addprefix $(IMAGE_PLAT).,
 
 .PHONY: image.build.multiarch
 image.build.multiarch: image.verify  $(foreach p,$(IMAGE_PLATFORMS),$(addprefix image.build., $(addprefix $(p)., $(IMAGES))))
-
-.PHONY: image.proxyv2.build
-image.proxyv2.build: go.build.linux_amd64.layotto
-	cp $(OUTPUT_DIR)/linux/amd64/layotto $(ROOT_DIR)/docker/proxyv2
-	cd $(ROOT_DIR)/docker/proxyv2 && $(DOCKER) build --no-cache --rm -t layotto/proxyv2:$(VERSION) .
-
-.PHONY: image.proxyv2.push
-image.proxyv2.push:
-	$(DOCKER) push layotto/proxyv2:$(VERSION)
 
 .PHONY: image.build.%
 image.build.%: go.build.%
@@ -111,3 +137,12 @@ image.push.%:
 		echo "===========> Pushing docker image tag $(REGISTRY_PREFIX)/$(IMAGE).$(ARCH):$(VERSION) for $(ARCH)"; \
 		$(DOCKER) push $(REGISTRY_PREFIX)/$(IMAGE).$(ARCH):$(VERSION); \
 	fi
+
+.PHONY: image.proxyv2.build
+image.proxyv2.build: go.build.linux_amd64.layotto
+	cp $(OUTPUT_DIR)/linux/amd64/layotto $(ROOT_DIR)/docker/proxyv2
+	cd $(ROOT_DIR)/docker/proxyv2 && $(DOCKER) build --no-cache --rm -t layotto/proxyv2:$(VERSION) .
+
+.PHONY: image.proxyv2.push
+image.proxyv2.push:
+	$(DOCKER) push layotto/proxyv2:$(VERSION)
