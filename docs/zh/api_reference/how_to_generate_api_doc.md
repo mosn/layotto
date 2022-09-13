@@ -39,14 +39,14 @@ service EmailService2 {
 // different message types......
 ```
 
-- If you don't want to generate the quickstart docs for the proto, add a comment `/* @exclude quickstart generator */` . 
-- If you don't want to generate the sdk & sidecar code for the proto, add a comment `/* @exclude code generator */` . 
+- If you don't want to generate the quickstart docs for the proto, add a comment `/* @exclude skip quickstart_generator */` . 
+- If you don't want to generate the sdk & sidecar code for the proto, add a comment `/* @exclude skip code_generator */` . 
   
 You can take the `spec/proto/extension/v1/s3/oss.proto` as an example:
 
 ```protobuf
-/* @exclude quickstart generator */
-/* @exclude code generator */
+/* @exclude skip quickstart_generator */
+/* @exclude skip code_generator */
 // ObjectStorageService is an abstraction for blob storage or so called "object storage", such as alibaba cloud OSS, such as AWS S3.
 // You invoke ObjectStorageService API to do some CRUD operations on your binary file, e.g. query my file, delete my file, etc.
 service ObjectStorageService{
