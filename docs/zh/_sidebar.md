@@ -18,7 +18,9 @@
     - [使用 OSS API](zh/start/oss/oss.md)
     <!--quickstart_generator-->
     - [使用 lifecycle API](zh/start/lifecycle/start) 
-    - [API插件：注册您自己的API](zh/start/api_plugin/helloworld.md)
+    - API插件
+        - [注册您自己的API](zh/start/api_plugin/helloworld.md)
+        - [自动生成 API 插件](zh/start/api_plugin/generate.md)
     - 作为 Istio 的数据面
         - [集成 Istio 1.10.6 演示](zh/start/istio/)
         - [集成 Istio 1.5.x 演示](zh/start/istio/start.md)

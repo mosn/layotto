@@ -14,7 +14,9 @@
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
   - [Use OSS API](en/start/oss/start.md)
-  - [API plugin: register your own API](en/start/api_plugin/helloworld.md)
+  - API plugin
+    - [Register your own API](en/start/api_plugin/helloworld.md)
+    - [Generate API plugin automatically](en/start/api_plugin/generate.md)
   <!--quickstart_generator-->  
   - [Use lifecycle API](en/start/lifecycle/start) 
   - As the data plane of istio
