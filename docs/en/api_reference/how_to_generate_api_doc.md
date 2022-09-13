@@ -54,6 +54,8 @@ service ObjectStorageService{
 }
 ```
 
+These special comments are called "Master's commands". There are many other commands, and you can check [the doc](https://github.com/seeflood/protoc-gen-p6#masters-commands) for more details.
+
 ## step 2. Check the environment
 To run the generator, you need:
 - Go version >=1.16
