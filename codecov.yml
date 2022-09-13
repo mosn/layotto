@@ -29,3 +29,4 @@ ignore:
   - "components/rpc/invoker/mosn/channel/xchannel.go"
   - "diagnostics/**/*"
   - "components/pkg/mock/**/*"
+  - "**/*_generated.go"

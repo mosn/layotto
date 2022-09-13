@@ -18,6 +18,8 @@
     - [Register your own API](en/start/api_plugin/helloworld.md)
     - [Generate API plugin automatically](en/start/api_plugin/generate.md)
   <!--quickstart_generator-->  
+  - [(Under construction) Use phone API](en/start/phone/start) 
+  - [(Under construction) Use email API](en/start/email/start) 
   - [Use lifecycle API](en/start/lifecycle/start) 
   - As the data plane of istio
     - [Integrate with istio 1.10.6](en/start/istio/)
