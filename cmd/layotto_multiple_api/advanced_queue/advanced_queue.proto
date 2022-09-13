@@ -9,6 +9,7 @@ package cmd.layotto_multiple_api.advanced_queue;
 // AdvancedQueue is advanced pubsub API
 service AdvancedQueue {
 
+  // Publish a transactional message
   rpc PublishTransactionalMessage(TransactionalMessageRequest) returns (TransactionalMessageResponse);
 
 }
