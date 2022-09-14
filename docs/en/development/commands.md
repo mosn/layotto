@@ -37,14 +37,15 @@ Golang Development
 Image Development
   image            Build docker images for host arch.
   image-multiarch  Build docker images for multiple platforms.
-  image-push       Push docker images to registry.
-  image-multiarch  Push docker images for multiple platforms to registry.
-  image-proxyv2    Build proxy image for host arch.
-  image-proxyv2-push  Push proxy image to registry.
+  push             Push docker images to registry.
+  push-multiarch   Push docker images for multiple platforms to registry.
+  proxyv2          Build proxy image for host arch.
+  proxyv2-push     Push proxy image to registry.
 
 Proto Development
+  proto            Generate code and documentation based on the proto files.
   proto-doc        Generate documentation based on the proto files.
-  proto-gen        Generate code and documentation based on the proto files.
+  proto-code       Generate code based on the proto files.
   proto-lint       Run Protobuffer Linter with Buf Tool
 
 Kubernetes Development

@@ -51,21 +51,21 @@ image: image.build
 image-multiarch: ## Build docker images for multiple platforms.
 image-multiarch: image.build.multiarch
 
-.PHONY: image-push
-image-push: ## Push docker images to registry.
-image-push: image.push
+.PHONY: push
+push: ## Push docker images to registry.
+push: image.push
 
-.PHONY: image-multiarch
-image-multiarch: ## Push docker images for multiple platforms to registry.
-image-multiarch: image.push.multiarch
+.PHONY: push-multiarch
+push-multiarch: ## Push docker images for multiple platforms to registry.
+push-multiarch: image.push.multiarch
 
-.PHONY: image-proxyv2
-image-proxyv2: ## Build proxy image for host arch.
-image-proxyv2: image.proxyv2.build
+.PHONY: proxyv2
+proxyv2: ## Build proxy image for host arch.
+proxyv2: image.proxyv2.build
 
-.PHONY: image-proxyv2-push
-image-proxyv2-push: ## Push proxy image to registry.
-image-proxyv2-push: image.proxyv2.push
+.PHONY: proxyv2-push
+proxyv2-push: ## Push proxy image to registry.
+proxyv2-push: image.proxyv2.push
 
 # ==============================================================================
 # Private Commands:
