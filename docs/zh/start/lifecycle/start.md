@@ -76,7 +76,7 @@ TODO
 
 [comment]: <> (构建 examples:)
 
-[comment]: <> (```shell @if.not.exist examples-lifecycle/target/examples-lifecycle-1.1.0-jar-with-dependencies.jar)
+[comment]: <> (```shell @if.not.exist examples-lifecycle/target/examples-lifecycle-jar-with-dependencies.jar)
 
 [comment]: <> (# build example jar)
 
@@ -88,7 +88,7 @@ TODO
 
 [comment]: <> (```shell)
 
-[comment]: <> (java -jar examples-lifecycle/target/examples-lifecycle-1.1.0-jar-with-dependencies.jar)
+[comment]: <> (java -jar examples-lifecycle/target/examples-lifecycle-jar-with-dependencies.jar)
 
 [comment]: <> (```)
 
