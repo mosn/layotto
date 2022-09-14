@@ -1,9 +1,9 @@
 name: Layotto Env Pipeline 🌊
 
+# Deadlink Validation will auto run at 0:00 am everyday.
 on:
-  pull_request:
-    branches:
-      - main
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   check:
