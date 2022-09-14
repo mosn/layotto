@@ -40,7 +40,7 @@ func TestHelloApi(t *testing.T) {
 	ctx := context.Background()
 
 	helloReq := &client.SayHelloRequest{
-		ServiceName: "quick_start_demo",
+		ServiceName: "helloworld",
 	}
 	helloResp, err := cli.SayHello(ctx, helloReq)
 	assert.Nil(t, err)

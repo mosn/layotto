@@ -100,7 +100,7 @@ cd java-sdk
 
 Build the demo:
 
-```shell @if.not.exist examples-oss/target/examples-oss-1.1.0-jar-with-dependencies.jar
+```shell @if.not.exist examples-oss/target/examples-oss-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-oss/pom.xml clean package
 ```
@@ -108,7 +108,7 @@ mvn -f examples-oss/pom.xml clean package
 Run it:
 
 ```shell
-java -jar examples-oss/target/examples-oss-1.1.0-jar-with-dependencies.jar
+java -jar examples-oss/target/examples-oss-jar-with-dependencies.jar
 ```
 
 If the following information is printed, the demo is successful:
