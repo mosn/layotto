@@ -71,7 +71,7 @@ cd java-sdk
 
 构建 examples:
 
-```shell @if.not.exist examples-phone/target/examples-phone-1.1.0-jar-with-dependencies.jar
+```shell @if.not.exist examples-phone/target/examples-phone-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-phone/pom.xml clean package
 ```
@@ -79,7 +79,7 @@ mvn -f examples-phone/pom.xml clean package
 运行:
 
 ```shell
-java -jar examples-phone/target/examples-phone-1.1.0-jar-with-dependencies.jar
+java -jar examples-phone/target/examples-phone-jar-with-dependencies.jar
 ```
 
 打印出以下信息说明运行成功:

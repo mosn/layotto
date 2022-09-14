@@ -71,7 +71,7 @@ cd java-sdk
 
 Build the demo:
 
-```shell @if.not.exist examples-email/target/examples-email-1.1.0-jar-with-dependencies.jar
+```shell @if.not.exist examples-email/target/examples-email-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-email/pom.xml clean package
 ```
@@ -79,7 +79,7 @@ mvn -f examples-email/pom.xml clean package
 Run it:
 
 ```shell
-java -jar examples-email/target/examples-email-1.1.0-jar-with-dependencies.jar
+java -jar examples-email/target/examples-email-jar-with-dependencies.jar
 ```
 
 If the following information is printed, the demo is successful:

@@ -72,7 +72,7 @@ func MyFunc(_ json.RawMessage) *grpc.Server {
 									"server_name":"runtime",
 									"grpc_config": {
 										"hellos": {
-											"quick_start_demo": {
+											"helloworld": {
                                                 "type": "helloworld",
 												"hello": "greeting"
 											}
