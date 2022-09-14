@@ -104,7 +104,7 @@ cd java-sdk
 
 Build the demo:
 
-```shell @if.not.exist examples-sequencer/target/examples-sequencer-1.1.0-jar-with-dependencies.jar
+```shell @if.not.exist examples-sequencer/target/examples-sequencer-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-sequencer/pom.xml clean package
 ```
@@ -112,7 +112,7 @@ mvn -f examples-sequencer/pom.xml clean package
 Run it:
 
 ```shell
-java -jar examples-sequencer/target/examples-sequencer-1.1.0-jar-with-dependencies.jar
+java -jar examples-sequencer/target/examples-sequencer-jar-with-dependencies.jar
 ```
 
 If the following information is printed, the demo is successful:

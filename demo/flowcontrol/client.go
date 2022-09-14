@@ -36,7 +36,7 @@ func main() {
 
 	for i := 0; i < 10; i++ {
 		r, err := c.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
-			ServiceName: "quick_start_demo",
+			ServiceName: "helloworld",
 		})
 		if err != nil {
 			fmt.Println("get an error: ", err)
