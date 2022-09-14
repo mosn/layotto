@@ -102,7 +102,7 @@ The steps above generate everything, but what if I only want to generate `.pb.go
 #### **Make cmmand(recommended)**
 
 ```bash
-make proto.code
+make proto-code
 ```
 
 This command uses docker to run protoc and generate `.pb.go` code files.
@@ -127,7 +127,7 @@ We can use [protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc) and do
 #### **Make command(recommended)**
 
 ```bash
-make proto.doc
+make proto-doc
 ```
 
 This command uses docker to run protoc-gen-doc and generate docs.

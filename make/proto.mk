@@ -17,13 +17,17 @@
 # Public Commands:
 # ==============================================================================
 
+.PHONY: proto
+proto: ## Generate code and documentation based on the proto files.
+proto: proto.gen.all
+
 .PHONY: proto-doc
 proto-doc: ## Generate documentation based on the proto files.
 proto-doc: proto.gen.doc
 
-.PHONY: proto-gen
-proto-gen: ## Generate code and documentation based on the proto files.
-proto-gen: proto.gen.all
+.PHONY: proto-code
+proto-code: ## Generate code based on the proto files.
+proto-code: proto.gen.code
 
 .PHONY: proto-lint
 proto-lint: ## Run Protobuffer Linter with Buf Tool
@@ -62,4 +66,4 @@ endif
 	buf lint $(ROOT_DIR)
 
 .PHONY: proto.gen.all
-proto.gen.all: proto.gen.init proto.gen.code proto.gen.doc
+proto.gen.all: proto.gen.code proto.gen.doc
