@@ -71,7 +71,7 @@ cd java-sdk
 
 构建 examples:
 
-```shell @if.not.exist examples-email/target/examples-email-1.1.0-jar-with-dependencies.jar
+```shell @if.not.exist examples-email/target/examples-email-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-email/pom.xml clean package
 ```
@@ -79,7 +79,7 @@ mvn -f examples-email/pom.xml clean package
 运行:
 
 ```shell
-java -jar examples-email/target/examples-email-1.1.0-jar-with-dependencies.jar
+java -jar examples-email/target/examples-email-jar-with-dependencies.jar
 ```
 
 打印出以下信息说明运行成功:
