@@ -71,7 +71,7 @@ cd java-sdk
 
 Build the demo:
 
-```shell @if.not.exist examples-{{$file_name}}/target/examples-{{$file_name}}-1.1.0-jar-with-dependencies.jar
+```shell @if.not.exist examples-{{$file_name}}/target/examples-{{$file_name}}-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-{{$file_name}}/pom.xml clean package
 ```
@@ -79,7 +79,7 @@ mvn -f examples-{{$file_name}}/pom.xml clean package
 Run it:
 
 ```shell
-java -jar examples-{{$file_name}}/target/examples-{{$file_name}}-1.1.0-jar-with-dependencies.jar
+java -jar examples-{{$file_name}}/target/examples-{{$file_name}}-jar-with-dependencies.jar
 ```
 
 If the following information is printed, the demo is successful:

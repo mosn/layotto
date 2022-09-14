@@ -50,7 +50,7 @@ cd java-sdk
 # build example jar
 mvn -f examples-pubsub-subscriber/pom.xml clean package
 # run the example
-java -jar examples-pubsub-subscriber/target/examples-pubsub-subscriber-1.1.0-jar-with-dependencies.jar
+java -jar examples-pubsub-subscriber/target/examples-pubsub-subscriber-jar-with-dependencies.jar
 ```
 
 <!-- tabs:end -->
@@ -150,7 +150,7 @@ cd java-sdk
 
 构建:
 
-```shell @if.not.exist examples-pubsub-publisher/target/examples-pubsub-publisher-1.1.0-jar-with-dependencies.jar
+```shell @if.not.exist examples-pubsub-publisher/target/examples-pubsub-publisher-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-pubsub-publisher/pom.xml clean package
 ```
@@ -159,7 +159,7 @@ mvn -f examples-pubsub-publisher/pom.xml clean package
 
 ```shell
 # run the example
-java -jar examples-pubsub-publisher/target/examples-pubsub-publisher-1.1.0-jar-with-dependencies.jar
+java -jar examples-pubsub-publisher/target/examples-pubsub-publisher-jar-with-dependencies.jar
 ```
 
 
