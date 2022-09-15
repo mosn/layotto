@@ -18,8 +18,9 @@ package helloworld
 
 import (
 	"context"
-	"github.com/dapr/components-contrib/secretstores"
 	"sync/atomic"
+
+	"github.com/dapr/components-contrib/secretstores"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
