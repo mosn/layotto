@@ -14,7 +14,25 @@
 # This file contains commands to deploy/undeploy layotto into Kubernetes
 # Default namespace is `default`
 
+##@ Kubernetes Development
+
 NAMESPACE := default
+
+# ==============================================================================
+# Public Commands:
+# ==============================================================================
+
+.PHONY: deploy-k8s
+deploy-k8s: ## Install Layotto in Kubernetes.
+deploy-k8s: deploy.k8s 
+
+.PHONY: undeploy-k8s
+undeploy-k8s: ## Uninstall Layotto in Kubernetes.
+undeploy-k8s: undeploy.k8s 
+
+# ==============================================================================
+# Private Commands:
+# ==============================================================================
 
 .PHONY: deploy.k8s
 deploy.k8s: deploy.k8s.standalone
