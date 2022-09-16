@@ -14,7 +14,7 @@
 * limitations under the License.
  */
 
-package aws
+package oss
 
 import (
 	"time"
@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	int642time = copier.TypeConverter{
+	Int64ToTime = copier.TypeConverter{
 		SrcType: int64(0),
 		DstType: &time.Time{},
 		Fn: func(src interface{}) (interface{}, error) {
@@ -32,7 +32,7 @@ var (
 			return &t, nil
 		},
 	}
-	time2int64 = copier.TypeConverter{
+	TimeToInt64 = copier.TypeConverter{
 		SrcType: &time.Time{},
 		DstType: int64(0),
 		Fn: func(src interface{}) (interface{}, error) {

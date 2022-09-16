@@ -14,7 +14,7 @@
 * limitations under the License.
  */
 
-package aws
+package oss
 
 import (
 	"testing"
@@ -38,7 +38,7 @@ func TestCopierOption(t *testing.T) {
 	timer := time.Now().Unix()
 	srcValue := &ValueWithInt64{TestInt64toTime: timer}
 	destValue := &ValueWithTimer{}
-	err := copier.CopyWithOption(destValue, srcValue, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{int642time}})
+	err := copier.CopyWithOption(destValue, srcValue, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{Int64ToTime}})
 	assert.Nil(t, err)
 	assert.Nil(t, destValue.TestString)
 	assert.Equal(t, timer, destValue.TestInt64toTime.Unix())
@@ -46,7 +46,7 @@ func TestCopierOption(t *testing.T) {
 	ti := time.Now()
 	src := &ValueWithTimer{TestInt64toTime: &ti}
 	dst := &ValueWithInt64{}
-	err = copier.CopyWithOption(dst, src, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
+	err = copier.CopyWithOption(dst, src, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{TimeToInt64}})
 	assert.Nil(t, err)
 	assert.Equal(t, ti.Unix(), dst.TestInt64toTime)
 }

@@ -39,14 +39,14 @@ const (
 )
 
 func TestCephDefaultInitFunc(t *testing.T) {
-	a := &CephOss{}
+	a := &CephOSS{}
 	err := a.Init(context.TODO(), &oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte("hello")}})
 	assert.Equal(t, err, oss.ErrInvalid)
 	assert.Nil(t, a.client)
 }
 
 func TestCephOss(t *testing.T) {
-	instance := &CephOss{}
+	instance := &CephOSS{}
 	err := instance.Init(context.TODO(), &oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte(confWithoutUidAndBucket)}})
 	assert.Nil(t, err)
 

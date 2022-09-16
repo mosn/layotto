@@ -260,7 +260,7 @@ func (a *AwsOss) ListObjects(ctx context.Context, req *oss.ListObjectsInput) (*o
 		return nil, err
 	}
 	output := &oss.ListObjectsOutput{}
-	err = copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
+	err = copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
 	// if not return NextMarker, use the value of the last Key in the response as the marker
 	if output.IsTruncated && output.NextMarker == "" {
 		index := len(output.Contents) - 1
@@ -304,7 +304,7 @@ func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMulti
 		return nil, err
 	}
 	input := &s3.CreateMultipartUploadInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{int642time}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.Int64ToTime}})
 	if err != nil {
 		log.DefaultLogger.Errorf("copy CreateMultipartUploadInput fail, err: %+v", err)
 		return nil, err
@@ -314,7 +314,7 @@ func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMulti
 		return nil, err
 	}
 	output := &oss.CreateMultipartUploadOutput{}
-	copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
+	copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
 	return output, err
 }
 func (a *AwsOss) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*oss.UploadPartOutput, error) {
@@ -460,7 +460,7 @@ func (a *AwsOss) ListObjectVersions(ctx context.Context, req *oss.ListObjectVers
 	}
 	for _, v := range resp.Versions {
 		version := &oss.ObjectVersion{}
-		copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
+		copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
 		output.Versions = append(output.Versions, version)
 	}
 	return output, err

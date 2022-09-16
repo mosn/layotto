@@ -39,16 +39,16 @@ import (
 	"mosn.io/layotto/components/pkg/utils"
 )
 
-type CephOss struct {
+type CephOSS struct {
 	client    *s3.Client
 	basicConf json.RawMessage
 }
 
 func NewCephOss() oss.Oss {
-	return &CephOss{}
+	return &CephOSS{}
 }
 
-func (c *CephOss) Init(ctx context.Context, config *oss.Config) error {
+func (c *CephOSS) Init(ctx context.Context, config *oss.Config) error {
 	c.basicConf = config.Metadata[oss.BasicConfiguration]
 	m := &utils.OssMetadata{}
 	err := json.Unmarshal(c.basicConf, &m)
@@ -82,7 +82,7 @@ func (c *CephOss) Init(ctx context.Context, config *oss.Config) error {
 	return nil
 }
 
-func (c *CephOss) GetObject(ctx context.Context, req *oss.GetObjectInput) (*oss.GetObjectOutput, error) {
+func (c *CephOSS) GetObject(ctx context.Context, req *oss.GetObjectInput) (*oss.GetObjectOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -107,7 +107,7 @@ func (c *CephOss) GetObject(ctx context.Context, req *oss.GetObjectInput) (*oss.
 	return out, nil
 }
 
-func (c *CephOss) PutObject(ctx context.Context, req *oss.PutObjectInput) (*oss.PutObjectOutput, error) {
+func (c *CephOSS) PutObject(ctx context.Context, req *oss.PutObjectInput) (*oss.PutObjectOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -133,7 +133,7 @@ func (c *CephOss) PutObject(ctx context.Context, req *oss.PutObjectInput) (*oss.
 	return out, err
 }
 
-func (c *CephOss) DeleteObject(ctx context.Context, req *oss.DeleteObjectInput) (*oss.DeleteObjectOutput, error) {
+func (c *CephOSS) DeleteObject(ctx context.Context, req *oss.DeleteObjectInput) (*oss.DeleteObjectOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -155,7 +155,7 @@ func (c *CephOss) DeleteObject(ctx context.Context, req *oss.DeleteObjectInput) 
 	return &oss.DeleteObjectOutput{DeleteMarker: resp.DeleteMarker, RequestCharged: string(resp.RequestCharged), VersionId: versionId}, err
 }
 
-func (c *CephOss) PutObjectTagging(ctx context.Context, req *oss.PutObjectTaggingInput) (*oss.PutObjectTaggingOutput, error) {
+func (c *CephOSS) PutObjectTagging(ctx context.Context, req *oss.PutObjectTaggingInput) (*oss.PutObjectTaggingOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -175,7 +175,7 @@ func (c *CephOss) PutObjectTagging(ctx context.Context, req *oss.PutObjectTaggin
 	return &oss.PutObjectTaggingOutput{}, err
 }
 
-func (c *CephOss) DeleteObjectTagging(ctx context.Context, req *oss.DeleteObjectTaggingInput) (*oss.DeleteObjectTaggingOutput, error) {
+func (c *CephOSS) DeleteObjectTagging(ctx context.Context, req *oss.DeleteObjectTaggingInput) (*oss.DeleteObjectTaggingOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -198,7 +198,7 @@ func (c *CephOss) DeleteObjectTagging(ctx context.Context, req *oss.DeleteObject
 	return &oss.DeleteObjectTaggingOutput{VersionId: versionId}, err
 }
 
-func (c *CephOss) GetObjectTagging(ctx context.Context, req *oss.GetObjectTaggingInput) (*oss.GetObjectTaggingOutput, error) {
+func (c *CephOSS) GetObjectTagging(ctx context.Context, req *oss.GetObjectTaggingInput) (*oss.GetObjectTaggingOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -221,7 +221,7 @@ func (c *CephOss) GetObjectTagging(ctx context.Context, req *oss.GetObjectTaggin
 	return output, err
 }
 
-func (c *CephOss) CopyObject(ctx context.Context, req *oss.CopyObjectInput) (*oss.CopyObjectOutput, error) {
+func (c *CephOSS) CopyObject(ctx context.Context, req *oss.CopyObjectInput) (*oss.CopyObjectOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -232,7 +232,7 @@ func (c *CephOss) CopyObject(ctx context.Context, req *oss.CopyObjectInput) (*os
 	}
 
 	input := &s3.CopyObjectInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{int642time}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.Int64ToTime}})
 	if err != nil {
 		return nil, err
 	}
@@ -254,7 +254,7 @@ func (c *CephOss) CopyObject(ctx context.Context, req *oss.CopyObjectInput) (*os
 	return out, err
 }
 
-func (c *CephOss) DeleteObjects(ctx context.Context, req *oss.DeleteObjectsInput) (*oss.DeleteObjectsOutput, error) {
+func (c *CephOSS) DeleteObjects(ctx context.Context, req *oss.DeleteObjectsInput) (*oss.DeleteObjectsOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -284,7 +284,7 @@ func (c *CephOss) DeleteObjects(ctx context.Context, req *oss.DeleteObjectsInput
 	return output, err
 }
 
-func (c *CephOss) ListObjects(ctx context.Context, req *oss.ListObjectsInput) (*oss.ListObjectsOutput, error) {
+func (c *CephOSS) ListObjects(ctx context.Context, req *oss.ListObjectsInput) (*oss.ListObjectsOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -301,7 +301,7 @@ func (c *CephOss) ListObjects(ctx context.Context, req *oss.ListObjectsInput) (*
 	}
 
 	output := &oss.ListObjectsOutput{}
-	err = copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
+	err = copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
 	// if not return NextMarker, use the value of the last Key in the response as the marker
 	if output.IsTruncated && output.NextMarker == "" {
 		index := len(output.Contents) - 1
@@ -310,7 +310,7 @@ func (c *CephOss) ListObjects(ctx context.Context, req *oss.ListObjectsInput) (*
 	return output, err
 }
 
-func (c *CephOss) GetObjectCannedAcl(ctx context.Context, req *oss.GetObjectCannedAclInput) (*oss.GetObjectCannedAclOutput, error) {
+func (c *CephOSS) GetObjectCannedAcl(ctx context.Context, req *oss.GetObjectCannedAclInput) (*oss.GetObjectCannedAclOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -341,7 +341,7 @@ func (c *CephOss) GetObjectCannedAcl(ctx context.Context, req *oss.GetObjectCann
 	return out, nil
 }
 
-func (c *CephOss) PutObjectCannedAcl(ctx context.Context, req *oss.PutObjectCannedAclInput) (*oss.PutObjectCannedAclOutput, error) {
+func (c *CephOSS) PutObjectCannedAcl(ctx context.Context, req *oss.PutObjectCannedAclInput) (*oss.PutObjectCannedAclOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -354,14 +354,14 @@ func (c *CephOss) PutObjectCannedAcl(ctx context.Context, req *oss.PutObjectCann
 	return &oss.PutObjectCannedAclOutput{RequestCharged: string(resp.RequestCharged)}, err
 }
 
-func (c *CephOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMultipartUploadInput) (*oss.CreateMultipartUploadOutput, error) {
+func (c *CephOSS) CreateMultipartUpload(ctx context.Context, req *oss.CreateMultipartUploadInput) (*oss.CreateMultipartUploadOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
 	}
 
 	input := &s3.CreateMultipartUploadInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{int642time}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.Int64ToTime}})
 	if err != nil {
 		log.DefaultLogger.Errorf("copy CreateMultipartUploadInput fail, err: %+v", err)
 		return nil, err
@@ -372,11 +372,11 @@ func (c *CephOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMult
 	}
 
 	output := &oss.CreateMultipartUploadOutput{}
-	copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
+	copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
 	return output, err
 }
 
-func (c *CephOss) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*oss.UploadPartOutput, error) {
+func (c *CephOSS) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*oss.UploadPartOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -401,7 +401,7 @@ func (c *CephOss) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*os
 	return output, err
 }
 
-func (c *CephOss) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInput) (*oss.UploadPartCopyOutput, error) {
+func (c *CephOSS) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInput) (*oss.UploadPartCopyOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -430,7 +430,7 @@ func (c *CephOss) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInp
 	return out, err
 }
 
-func (c *CephOss) CompleteMultipartUpload(ctx context.Context, req *oss.CompleteMultipartUploadInput) (*oss.CompleteMultipartUploadOutput, error) {
+func (c *CephOSS) CompleteMultipartUpload(ctx context.Context, req *oss.CompleteMultipartUploadInput) (*oss.CompleteMultipartUploadOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -451,7 +451,7 @@ func (c *CephOss) CompleteMultipartUpload(ctx context.Context, req *oss.Complete
 	return output, err
 }
 
-func (c *CephOss) AbortMultipartUpload(ctx context.Context, req *oss.AbortMultipartUploadInput) (*oss.AbortMultipartUploadOutput, error) {
+func (c *CephOSS) AbortMultipartUpload(ctx context.Context, req *oss.AbortMultipartUploadInput) (*oss.AbortMultipartUploadOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -473,7 +473,7 @@ func (c *CephOss) AbortMultipartUpload(ctx context.Context, req *oss.AbortMultip
 	return output, err
 }
 
-func (c *CephOss) ListParts(ctx context.Context, req *oss.ListPartsInput) (*oss.ListPartsOutput, error) {
+func (c *CephOSS) ListParts(ctx context.Context, req *oss.ListPartsInput) (*oss.ListPartsOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -497,7 +497,7 @@ func (c *CephOss) ListParts(ctx context.Context, req *oss.ListPartsInput) (*oss.
 	return output, err
 }
 
-func (c *CephOss) ListMultipartUploads(ctx context.Context, req *oss.ListMultipartUploadsInput) (*oss.ListMultipartUploadsOutput, error) {
+func (c *CephOSS) ListMultipartUploads(ctx context.Context, req *oss.ListMultipartUploadsInput) (*oss.ListMultipartUploadsOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -529,7 +529,7 @@ func (c *CephOss) ListMultipartUploads(ctx context.Context, req *oss.ListMultipa
 	return output, err
 }
 
-func (c *CephOss) ListObjectVersions(ctx context.Context, req *oss.ListObjectVersionsInput) (*oss.ListObjectVersionsOutput, error) {
+func (c *CephOSS) ListObjectVersions(ctx context.Context, req *oss.ListObjectVersionsInput) (*oss.ListObjectVersionsOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -559,13 +559,13 @@ func (c *CephOss) ListObjectVersions(ctx context.Context, req *oss.ListObjectVer
 	}
 	for _, v := range resp.Versions {
 		version := &oss.ObjectVersion{}
-		copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
+		copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
 		output.Versions = append(output.Versions, version)
 	}
 	return output, err
 }
 
-func (c *CephOss) HeadObject(ctx context.Context, req *oss.HeadObjectInput) (*oss.HeadObjectOutput, error) {
+func (c *CephOSS) HeadObject(ctx context.Context, req *oss.HeadObjectInput) (*oss.HeadObjectOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -582,7 +582,7 @@ func (c *CephOss) HeadObject(ctx context.Context, req *oss.HeadObjectInput) (*os
 	return &oss.HeadObjectOutput{ResultMetadata: resp.Metadata}, nil
 }
 
-func (c *CephOss) IsObjectExist(ctx context.Context, req *oss.IsObjectExistInput) (*oss.IsObjectExistOutput, error) {
+func (c *CephOSS) IsObjectExist(ctx context.Context, req *oss.IsObjectExistInput) (*oss.IsObjectExistOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -599,7 +599,7 @@ func (c *CephOss) IsObjectExist(ctx context.Context, req *oss.IsObjectExistInput
 	return &oss.IsObjectExistOutput{FileExist: true}, nil
 }
 
-func (c *CephOss) SignURL(ctx context.Context, req *oss.SignURLInput) (*oss.SignURLOutput, error) {
+func (c *CephOSS) SignURL(ctx context.Context, req *oss.SignURLInput) (*oss.SignURLOutput, error) {
 	client, err := c.getClient()
 	if err != nil {
 		return nil, err
@@ -625,22 +625,22 @@ func (c *CephOss) SignURL(ctx context.Context, req *oss.SignURLInput) (*oss.Sign
 	}
 }
 
-func (c *CephOss) RestoreObject(ctx context.Context, req *oss.RestoreObjectInput) (*oss.RestoreObjectOutput, error) {
+func (c *CephOSS) RestoreObject(ctx context.Context, req *oss.RestoreObjectInput) (*oss.RestoreObjectOutput, error) {
 	return nil, errors.New("RestoreObject method not supported on AWS")
 }
 
-func (c *CephOss) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *oss.UpdateBandwidthRateLimitInput) error {
+func (c *CephOSS) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *oss.UpdateBandwidthRateLimitInput) error {
 	return errors.New("UpdateDownloadBandwidthRateLimit method not supported now")
 }
 
-func (c *CephOss) UpdateUploadBandwidthRateLimit(ctx context.Context, req *oss.UpdateBandwidthRateLimitInput) error {
+func (c *CephOSS) UpdateUploadBandwidthRateLimit(ctx context.Context, req *oss.UpdateBandwidthRateLimitInput) error {
 	return errors.New("UpdateUploadBandwidthRateLimit method not supported now")
 }
-func (c *CephOss) AppendObject(ctx context.Context, req *oss.AppendObjectInput) (*oss.AppendObjectOutput, error) {
+func (c *CephOSS) AppendObject(ctx context.Context, req *oss.AppendObjectInput) (*oss.AppendObjectOutput, error) {
 	return nil, errors.New("AppendObject method not supported on AWS")
 }
 
-func (c *CephOss) getClient() (*s3.Client, error) {
+func (c *CephOSS) getClient() (*s3.Client, error) {
 	if c.client == nil {
 		return nil, utils.ErrNotInitClient
 	}
