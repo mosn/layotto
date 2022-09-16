@@ -129,6 +129,9 @@ func (w *Instance) Start() error {
 	}
 
 	//ins, err := wasmtimego.NewInstance(w.vm.store, w.module.module, w.importObject)
+	//w.linker.Define("wasi_snapshot_preview1", "fd_write", wasmtimego.WrapFunc(w.vm.store, func() {}))
+	//w.linker.Define("wasi_snapshot_preview1", "args_sizes_get", wasmtimego.WrapFunc(w.vm.store, func() {}))
+	//w.linker.Define("wasi_snapshot_preview1", "args_get", wasmtimego.WrapFunc(w.vm.store, func() {}))
 
 	ins, err :=  w.linker.Instantiate(w.vm.store,  w.module.module)
 	if err != nil {
