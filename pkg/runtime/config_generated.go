@@ -11,9 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package lifecycle
+package runtime
 
-const (
-	ErrNoField           = "field %s is not configured"
-	ErrComponentNotFound = "component not found. kind: %v , name: %v"
-)
+type ExtensionComponentConfig struct {
+}
