@@ -28,6 +28,7 @@ var (
 
 type Instance struct {
 	vm           *VM
+	store        *wasmtimego.Store
 	module       *Module
 	importObject []wasmtimego.AsExtern
 	instance     *wasmtimego.Instance
@@ -71,8 +72,16 @@ func NewwasmtimegoInstance(vm *VM, module *Module, options ...InstanceOptions) *
 	}
 
 	ins.importObject = make([]wasmtimego.AsExtern, 0)
-	ins.linker = wasmtimego.NewLinker(vm.store.Engine)
+	ins.linker = wasmtimego.NewLinker(vm.engine)
+	err := ins.linker.DefineWasi()
+	if err != nil {
+		log.DefaultLogger.Errorf("[wasmtime][instance] DefineWasi failed, err: %v", err)
+		return nil
+	}
 
+	wasiConfig := wasmtimego.NewWasiConfig()
+	ins.store = wasmtimego.NewStore(vm.engine)
+	ins.store.SetWasi(wasiConfig)
 	return ins
 }
 
@@ -128,12 +137,7 @@ func (w *Instance) Start() error {
 		abi.OnInstanceCreate(w)
 	}
 
-	//ins, err := wasmtimego.NewInstance(w.vm.store, w.module.module, w.importObject)
-	//w.linker.Define("wasi_snapshot_preview1", "fd_write", wasmtimego.WrapFunc(w.vm.store, func() {}))
-	//w.linker.Define("wasi_snapshot_preview1", "args_sizes_get", wasmtimego.WrapFunc(w.vm.store, func() {}))
-	//w.linker.Define("wasi_snapshot_preview1", "args_get", wasmtimego.WrapFunc(w.vm.store, func() {}))
-
-	ins, err :=  w.linker.Instantiate(w.vm.store,  w.module.module)
+	ins, err :=  w.linker.Instantiate(w.store,  w.module.module)
 	if err != nil {
 		log.DefaultLogger.Errorf("[wasmtime][instance] Start fail to new wasmtimego instance, err: %v", err)
 		return err
@@ -141,13 +145,13 @@ func (w *Instance) Start() error {
 
 	w.instance = ins
 
-	f := w.instance.GetFunc(w.vm.store,"_start")
+	f := w.instance.GetFunc(w.store,"_start")
 	if f == nil {
 		log.DefaultLogger.Errorf("[wasmtime][instance] Start fail to get export func: _start, err: %v", err)
 		return err
 	}
 
-	_, err = f.Call(w.vm.store)
+	_, err = f.Call(w.store)
 	if err != nil {
 		log.DefaultLogger.Errorf("[wasmtime][instance] Start fail to call _start func, err: %v", err)
 		w.HandleError(err)
@@ -231,7 +235,7 @@ func (w *Instance) RegisterFunc(namespace string, funcName string, f interface{}
 	}
 
 	fwasmtimego := wasmtimego.NewFunc(
-		w.vm.store,
+		w.store,
 		wasmtimego.NewFuncType(argsKind, retsKind),
 		func(caller *wasmtimego.Caller,args []wasmtimego.Val) (callRes []wasmtimego.Val, trap *wasmtimego.Trap) {
 			defer func() {
@@ -296,13 +300,13 @@ func (w *Instance) GetExportsFunc(funcName string) (types.WasmFunction, error) {
 		return v.(*Function), nil
 	}
 
-	f := w.instance.GetFunc(w.vm.store, funcName)
+	f := w.instance.GetFunc(w.store, funcName)
 	if f == nil {
 		return nil, errors.New("func" + funcName +" is not exist")
 	}
 
 	ff := &Function{
-		vm:       w.vm,
+		ins:       w,
 		function: f,
 	}
 
@@ -317,7 +321,7 @@ func (w *Instance) GetExportsMem(memName string) ([]byte, error) {
 	}
 
 	if w.memory == nil {
-		m := w.instance.GetExport(w.vm.store, memName).Memory()
+		m := w.instance.GetExport(w.store, memName).Memory()
 		if m == nil {
 			return nil, errors.New("mem " + memName + " is not exist")
 		}
@@ -325,7 +329,7 @@ func (w *Instance) GetExportsMem(memName string) ([]byte, error) {
 		w.memory = m
 	}
 
-	return w.memory.UnsafeData(w.vm.store), nil
+	return w.memory.UnsafeData(w.store), nil
 }
 
 func (w *Instance) GetMemory(addr uint64, size uint64) ([]byte, error) {

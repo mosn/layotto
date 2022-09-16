@@ -13,7 +13,6 @@ func init() {
 
 type VM struct {
 	engine *wasmtimego.Engine
-	store  *wasmtimego.Store
 }
 
 func NewwasmtimegoVM() types.WasmVM {
@@ -29,14 +28,12 @@ func (w *VM) Name() string {
 
 func (w *VM) Init() {
 	w.engine = wasmtimego.NewEngine()
-	w.store = wasmtimego.NewStore(w.engine)
 }
 
 func (w *VM) NewModule(wasmBytes []byte) types.WasmModule {
 	if len(wasmBytes) == 0 {
 		return nil
 	}
-	//wasm, err := wasmtimego.wat2wasm(string(wasmBytes))
 	m, err := wasmtimego.NewModule(w.engine, wasmBytes)
 	if err != nil {
 		log.DefaultLogger.Errorf("[wasmtimego][vm] fail to new module, err: %v", err)
@@ -45,6 +42,7 @@ func (w *VM) NewModule(wasmBytes []byte) types.WasmModule {
 
 	return NewwasmtimegoModule(w, m, wasmBytes)
 }
+
 /*
 
 config := wasmtimego.NewConfig()
@@ -102,4 +100,4 @@ config := wasmtimego.NewConfig()
 			panic(err)
 		}
 	}
- */
+*/
