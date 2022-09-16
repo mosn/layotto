@@ -104,7 +104,7 @@ The steps above generate everything, but what if I only want to generate `.pb.go
 本地启动 docker 后，在项目根目录下运行：
 
 ```bash
-make proto.code
+make proto-code
 ```
 
 该命令会用 docker 启动 protoc，生成`.pb.go`代码。
@@ -132,13 +132,13 @@ protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_o
 本地启动 docker 后，在项目根目录下运行：
 
 ```bash
-make proto.doc
+make proto-doc
 ```
 
 该命令会用 docker 启动 protoc-gen-doc，生成文档
 
 #### **用 docker 启动 protoc-gen-doc**
-`make proto.doc` invokes the script `etc/script/generate-doc.sh`, which uses docker to run protoc-gen-doc.
+`make proto-doc` invokes the script `etc/script/generate-doc.sh`, which uses docker to run protoc-gen-doc.
 
 You can check `etc/script/generate-doc.sh` for more details.
 
