@@ -136,7 +136,7 @@ make proto-doc
 该命令会用 docker 启动 protoc-gen-doc，生成文档
 
 #### **用 docker 启动 protoc-gen-doc**
-`make proto.doc` invokes the script `etc/script/generate-doc.sh`, which uses docker to run protoc-gen-doc.
+`make proto-doc` invokes the script `etc/script/generate-doc.sh`, which uses docker to run protoc-gen-doc.
 
 You can check `etc/script/generate-doc.sh` for more details.
 
