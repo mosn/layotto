@@ -152,7 +152,7 @@ func TestDeepCopy(t *testing.T) {
 		VersionId:    &value,
 	}
 	tovalue := &oss.ObjectVersion{}
-	err := copier.CopyWithOption(tovalue, fromValue, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
+	err := copier.CopyWithOption(tovalue, fromValue, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
 	assert.Nil(t, err)
 	assert.Equal(t, tovalue.Owner.DisplayName, value)
 }
