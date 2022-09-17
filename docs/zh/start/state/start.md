@@ -129,7 +129,7 @@ cd java-sdk
 
 构建:
 
-```shell @if.not.exist examples-state/target/examples-state-1.1.0-jar-with-dependencies.jar
+```shell @if.not.exist examples-state/target/examples-state-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-state/pom.xml clean package
 ```
@@ -137,7 +137,7 @@ mvn -f examples-state/pom.xml clean package
 运行:
 
 ```
-java -jar examples-state/target/examples-state-1.1.0-jar-with-dependencies.jar
+java -jar examples-state/target/examples-state-jar-with-dependencies.jar
 ```
 
 打印出以下信息说明运行成功:

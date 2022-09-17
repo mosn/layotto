@@ -96,7 +96,7 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 	if req.Timeout == 0 {
 		req.Timeout = rpc.DefaultRequestTimeoutMs
 		if ts, ok := req.Header[rpc.RequestTimeoutMs]; ok && len(ts) > 0 {
-			t, err := strconv.Atoi(ts[0])
+			t, err := strconv.ParseInt(ts[0], 10, 32)
 			if err == nil && t != 0 {
 				req.Timeout = int32(t)
 			}
