@@ -11,12 +11,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# This is a wrapper to set common variables
+#
+# All make targets related to common variables are defined in this file.
+
+# ====================================================================================================
+# Configure Make itself:
+# ====================================================================================================
+
+# Turn off .INTERMEDIATE file removal by marking all files as
+# .SECONDARY.  .INTERMEDIATE file removal is a space-saving hack from
+# a time when drives were small; on modern computers with plenty of
+# storage, it causes nothing but headaches.
+#
+# https://news.ycombinator.com/item?id=16486331
+
+.SECONDARY:
+
+# ==============================================================================
+# Common Variables:
+# ==============================================================================
+
 SHELL := /bin/bash
 
-# include the common make file
+ROOT_PACKAGE=mosn.io/layotto
+
 COMMON_SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+
 PROJECT_NAME := mosn.io/layotto
-BINARY_PREFIX := layotto
 
 ifeq ($(origin ROOT_DIR),undefined)
 ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR)/.. && pwd -P))
@@ -89,12 +111,25 @@ else
 	IMAGE_PLAT := $(PLATFORM)
 endif
 
-COMMA := ,
-SPACE :=
-SPACE +=
+# ==============================================================================
+# Colors: globel colors to share.
+# ==============================================================================
 
-# Colors
-NO_COLOR := \033[0m # No Color
-RED := \033[0;31m
-GREEN := \033[0;32m
-YELLOW := \033[0;33m
+NO_COLOR := \033[0m
+BOLD_COLOR := \n\033[1m
+RED_COLOR := \033[0;31m
+GREEN_COLOR := \033[0;32m
+YELLOW_COLOR := \033[0;33m
+BLUE_COLOR := \033[36m
+
+# ==============================================================================
+# Includes:
+# ==============================================================================
+
+include make/golang.mk
+include make/image.mk
+include make/proto.mk
+include make/deploy.mk
+include make/wasm.mk
+include make/ci.mk
+include make/help.mk

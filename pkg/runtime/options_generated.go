@@ -18,6 +18,9 @@ package runtime
 import (
 	email "mosn.io/layotto/components/email"
 	phone "mosn.io/layotto/components/phone"
+	email1 "mosn.io/layotto/pkg/grpc/email"
+	s3 "mosn.io/layotto/pkg/grpc/extension/s3"
+	phone1 "mosn.io/layotto/pkg/grpc/phone"
 )
 
 type extensionComponentFactorys struct {
@@ -40,4 +43,12 @@ func WithPhoneCallServiceFactory(phone ...*phone.Factory) Option {
 	return func(o *runtimeOptions) {
 		o.services.phone = append(o.services.phone, phone...)
 	}
+}
+
+func WithExtensionGrpcAPI() Option {
+	return WithGrpcAPI(
+		s3.NewS3Server,
+		email1.NewAPI,
+		phone1.NewAPI,
+	)
 }

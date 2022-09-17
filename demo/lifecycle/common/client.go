@@ -17,7 +17,7 @@ func main() {
 	// 1. invoke sayHello API
 	client := runtimev1pb.NewRuntimeClient(conn)
 	hello, err := client.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
-		ServiceName: "quick_start_demo",
+		ServiceName: "helloworld",
 		Name:        "eva",
 	})
 	if err != nil {
@@ -36,7 +36,7 @@ func main() {
 	metaData["hello"] = "goodbye"
 	req := &runtimev1pb.DynamicConfiguration{ComponentConfig: &runtimev1pb.ComponentConfig{
 		Kind:     "hellos",
-		Name:     "quick_start_demo",
+		Name:     "helloworld",
 		Metadata: metaData,
 	}}
 	_, err = c.ApplyConfiguration(context.Background(), req)
@@ -46,7 +46,7 @@ func main() {
 	// 3. invoke sayHello API again
 	client = runtimev1pb.NewRuntimeClient(conn)
 	hello, err = client.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
-		ServiceName: "quick_start_demo",
+		ServiceName: "helloworld",
 		Name:        "eva",
 	})
 	if err != nil {
