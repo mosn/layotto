@@ -86,23 +86,23 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.SecretRefConfig, metaData
 }
 
 func (i *DefaultInjector) InjectConfigStoreRef(cf *ref.ComponentRefConfig) (configstores.Store, error) {
-	if cf == nil || cf.ConfigStoreRef == "" {
+	if cf == nil || cf.ConfigStore == "" {
 		return nil, nil
 	}
-	configStore := i.Container.getConfigStore(cf.ConfigStoreRef)
+	configStore := i.Container.getConfigStore(cf.ConfigStore)
 	if configStore == nil {
-		return nil, fmt.Errorf("fail to get configStore:%v", cf.ConfigStoreRef)
+		return nil, fmt.Errorf("fail to get configStore:%v", cf.ConfigStore)
 	}
 	return configStore, nil
 }
 
 func (i *DefaultInjector) InjectSecretStoreRef(cf *ref.ComponentRefConfig) (secretstores.SecretStore, error) {
-	if cf == nil || cf.SecretStoreRef == "" {
+	if cf == nil || cf.SecretStore == "" {
 		return nil, nil
 	}
-	secretStore := i.Container.getSecretStore(cf.SecretStoreRef)
+	secretStore := i.Container.getSecretStore(cf.SecretStore)
 	if secretStore == nil {
-		return nil, fmt.Errorf("fail to get secretStore:%v", cf.SecretStoreRef)
+		return nil, fmt.Errorf("fail to get secretStore:%v", cf.SecretStore)
 	}
 	return secretStore, nil
 }

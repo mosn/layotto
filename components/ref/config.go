@@ -34,6 +34,6 @@ type SecretRefConfig struct {
 }
 
 type ComponentRefConfig struct {
-	SecretStoreRef string `json:"secret_store_ref"`
-	ConfigStoreRef string `json:"config_store_ref"`
+	SecretStore string `json:"secret_store"`
+	ConfigStore string `json:"config_store"`
 }

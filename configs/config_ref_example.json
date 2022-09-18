@@ -34,8 +34,8 @@
                             }
                           ],
                           "component_ref": {
-                            "config_store_ref": "config_demo",
-                            "secret_store_ref": "local.file"
+                            "config_store": "config_demo",
+                            "secret_store": "local.file"
                           }
                         }
                       },
