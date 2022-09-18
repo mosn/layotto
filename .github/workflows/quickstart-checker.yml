@@ -42,7 +42,7 @@ jobs:
           fi
 
       - name: Test quickstart in Golang 1.14.13
-        run: make style.quickstart
+        run: make quickstart
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
@@ -50,4 +50,4 @@ jobs:
           go-version: 1.17.8
 
       - name: Test quickstart in Golang 1.17.8
-        run: make style.quickstart QUICKSTART_VERSION=1.17
+        run: make quickstart QUICKSTART_VERSION=1.17
