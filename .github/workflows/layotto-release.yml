@@ -17,7 +17,7 @@ jobs:
           go-version: 1.18.1
       - name: Format Go
         run: |
-           make check.style
+           make workspace
 
   resolve-modules:
     name: "👀 Resolve Go Modules"
@@ -60,7 +60,7 @@ jobs:
       with:
         go-version: 1.18.1
     - name: Go Unit Test
-      run: make check.unit
+      run: make test
 
   coverage:
     name: "🤔 Coverage Analysis"
@@ -70,7 +70,7 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
     - name: Test Coverage
-      run: make style.coverage 
+      run: make coverage 
     - name: Post Coverage
       run: bash <(curl -s https://codecov.io/bash)
 
@@ -86,7 +86,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Run Integrate tests
-        run:  make integrate.wasm
+        run:  make integrate-wasm
 
   runtime-integrate:
     name: "⚙️ Integrate with Runtime"
@@ -100,7 +100,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Run Integrate tests
-        run:  make integrate.runtime
+        run:  make integrate-runtime
 
   build-binary-darwin-amd64-artifact:
     name:  "🧳 Darwin AMD64 Artifact"

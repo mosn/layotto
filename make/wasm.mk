@@ -15,6 +15,28 @@ WASM_PLATFORM ?= linux_amd64
 WASM_PLATFORMS ?= linux_amd64
 WASM_BUILD ?= faas
 
+##@ WebAssembly Development
+
+# ==============================================================================
+# Public Commands:
+# ==============================================================================
+
+.PHONY: wasm-build
+wasm-build: ## Build layotto wasm for linux arm64 platform.
+wasm-build: go.wasm
+
+.PHONY: wasm-image
+wasm-image: ## Build layotto wasm image for multiple platform.
+wasm-image: go.wasm.image
+
+.PHONY: wasm-push
+wasm-push: ## Push layotto wasm image for multiple platform.
+wasm-push: go.wasm.image.push
+
+# ==============================================================================
+# Private Commands:
+# ==============================================================================
+
 .PHONY: go.wasm
 go.wasm:  $(addprefix go.wasm., $(addprefix $(WASM_PLATFORM)., $(WASM_BUILD)))
 
