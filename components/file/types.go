@@ -19,6 +19,7 @@ package file
 import (
 	"encoding/json"
 	"io"
+
 	"mosn.io/layotto/components/ref"
 )
 
