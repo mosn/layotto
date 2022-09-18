@@ -30,6 +30,8 @@ import (
 
 	"mosn.io/layotto/pkg/runtime/ref"
 
+	refconfig "mosn.io/layotto/components/ref"
+
 	"github.com/dapr/components-contrib/secretstores"
 
 	"mosn.io/layotto/components/custom"
@@ -307,27 +309,11 @@ func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
 		}
 		// register this component
 		m.hellos[name] = h
-		if _, ok := h.(common.InjectComponent); ok {
-			configRef, err := m.Injector.InjectConfigStoreRef(config.ComponentRef)
-			if err != nil {
-				return err
-			}
-			if configRef != nil {
-				if err = h.(common.InjectComponent).InjectConfigComponent(configRef); err != nil {
-					return err
-				}
-			}
 
-			secretRef, err := m.Injector.InjectSecretStoreRef(config.ComponentRef)
-			if err != nil {
-				return err
-			}
-			if secretRef != nil {
-				if err = h.(common.InjectComponent).InjectSecretComponent(secretRef); err != nil {
-					return err
-				}
-			}
+		if err := m.initComponentInject(h, config.ComponentRef); err != nil {
+			return err
 		}
+
 		m.storeDynamicComponent(lifecycle.KindHello, name, h)
 	}
 	return nil
@@ -724,6 +710,31 @@ func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Co
 			// initialization finish
 			m.SetCustomComponent(kind, name, comp)
 			m.storeDynamicComponent(fmt.Sprintf("%s.%s", lifecycle.KindCustom, kind), name, comp)
+		}
+	}
+	return nil
+}
+
+func (m *MosnRuntime) initComponentInject(h interface{}, config *refconfig.ComponentRefConfig) error {
+	if _, ok := h.(common.InjectComponent); ok {
+		configRef, err := m.Injector.InjectConfigStoreRef(config)
+		if err != nil {
+			return err
+		}
+		if configRef != nil {
+			if err = h.(common.InjectComponent).InjectConfigComponent(configRef); err != nil {
+				return err
+			}
+		}
+
+		secretRef, err := m.Injector.InjectSecretStoreRef(config)
+		if err != nil {
+			return err
+		}
+		if secretRef != nil {
+			if err = h.(common.InjectComponent).InjectSecretComponent(secretRef); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
