@@ -11,6 +11,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+##@ Proto Development
+
+# ==============================================================================
+# Public Commands:
+# ==============================================================================
+
+.PHONY: proto
+proto: ## Generate code and documentation based on the proto files.
+proto: proto.gen.all
+
+.PHONY: proto-doc
+proto-doc: ## Generate documentation based on the proto files.
+proto-doc: proto.gen.doc
+
+.PHONY: proto-code
+proto-code: ## Generate code based on the proto files.
+proto-code: proto.gen.code
+
+.PHONY: proto-lint
+proto-lint: ## Run Protobuffer Linter with Buf Tool
+proto-lint: proto.lint
+
+
+# ==============================================================================
+# Private Commands:
+# ==============================================================================
+
 .PHONY: proto.gen.doc
 proto.gen.doc:
 	sh ${SCRIPT_DIR}/generate-doc.sh
@@ -26,8 +53,8 @@ proto.gen.code:
 	sh ${SCRIPT_DIR}/generate-code.sh
 	$(MAKE) format
 
-.PHONY: proto.comments
-proto.comments:
+.PHONY: proto.lint
+proto.lint:
 ifeq (,$(shell which buf))
 	@echo "===========> Installing buf linter"
 	@curl -fsSL \
