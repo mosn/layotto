@@ -393,6 +393,9 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 		}
 		// register this component
 		m.pubSubs[name] = comp
+		if err := m.initComponentInject(comp, config.ComponentRef); err != nil {
+			return err
+		}
 		m.storeDynamicComponent(lifecycle.KindPubsub, name, comp)
 	}
 	return nil
@@ -419,6 +422,9 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 			return err
 		}
 		m.states[name] = comp
+		if err := m.initComponentInject(comp, config.ComponentRef); err != nil {
+			return err
+		}
 		m.storeDynamicComponent(lifecycle.KindState, name, comp)
 
 		// 2.2. save prefix strategy
@@ -451,6 +457,9 @@ func (m *MosnRuntime) initOss(factorys ...*oss.Factory) error {
 		}
 		// register this component
 		m.oss[name] = c
+		if err := m.initComponentInject(c, config.ComponentRef); err != nil {
+			return err
+		}
 		m.storeDynamicComponent(lifecycle.KindOss, name, c)
 	}
 	return nil
@@ -473,6 +482,9 @@ func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
 			return err
 		}
 		m.files[name] = c
+		if err := m.initComponentInject(c, config.ComponentRef); err != nil {
+			return err
+		}
 		m.storeDynamicComponent(lifecycle.KindFile, name, c)
 	}
 	return nil
@@ -506,6 +518,9 @@ func (m *MosnRuntime) initLocks(factorys ...*runtime_lock.Factory) error {
 			return err
 		}
 		m.locks[name] = comp
+		if err := m.initComponentInject(comp, config.ComponentRef); err != nil {
+			return err
+		}
 		m.storeDynamicComponent(lifecycle.KindLock, name, comp)
 	}
 	return nil
@@ -543,6 +558,9 @@ func (m *MosnRuntime) initSequencers(factorys ...*runtime_sequencer.Factory) err
 		}
 		// register this component
 		m.sequencers[name] = comp
+		if err := m.initComponentInject(comp, config.ComponentRef); err != nil {
+			return err
+		}
 		m.storeDynamicComponent(lifecycle.KindSequencer, name, comp)
 	}
 	return nil
@@ -598,6 +616,9 @@ func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFact
 		}
 		// 2.3. put it into the runtime component pool
 		m.outputBindings[name] = comp
+		if err := m.initComponentInject(comp, config.ComponentRef); err != nil {
+			return err
+		}
 		m.storeDynamicComponent(lifecycle.KindBinding, name, comp)
 	}
 	return nil
@@ -628,6 +649,9 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFa
 
 		// 2.3. save runtime related configs
 		m.secretStores[name] = comp
+		if err := m.initComponentInject(comp, config.ComponentRef); err != nil {
+			return err
+		}
 		m.storeDynamicComponent(lifecycle.KindSecret, name, comp)
 	}
 	return nil
@@ -709,20 +733,23 @@ func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Co
 			}
 			// initialization finish
 			m.SetCustomComponent(kind, name, comp)
+			if err := m.initComponentInject(comp, config.ComponentRef); err != nil {
+				return err
+			}
 			m.storeDynamicComponent(fmt.Sprintf("%s.%s", lifecycle.KindCustom, kind), name, comp)
 		}
 	}
 	return nil
 }
 
-func (m *MosnRuntime) initComponentInject(h interface{}, config *refconfig.ComponentRefConfig) error {
-	if _, ok := h.(common.InjectComponent); ok {
+func (m *MosnRuntime) initComponentInject(comp interface{}, config *refconfig.ComponentRefConfig) error {
+	if _, ok := comp.(common.InjectComponent); ok {
 		configRef, err := m.Injector.InjectConfigStoreRef(config)
 		if err != nil {
 			return err
 		}
 		if configRef != nil {
-			if err = h.(common.InjectComponent).InjectConfigComponent(configRef); err != nil {
+			if err = comp.(common.InjectComponent).InjectConfigComponent(configRef); err != nil {
 				return err
 			}
 		}
@@ -732,7 +759,7 @@ func (m *MosnRuntime) initComponentInject(h interface{}, config *refconfig.Compo
 			return err
 		}
 		if secretRef != nil {
-			if err = h.(common.InjectComponent).InjectSecretComponent(secretRef); err != nil {
+			if err = comp.(common.InjectComponent).InjectSecretComponent(secretRef); err != nil {
 				return err
 			}
 		}

@@ -19,10 +19,12 @@ package file
 import (
 	"encoding/json"
 	"io"
+	"mosn.io/layotto/components/ref"
 )
 
 // FileConfig wraps configuration for a file implementation
 type FileConfig struct {
+	ref.Config
 	Metadata json.RawMessage `json:"metadata"`
 	Type     string          `json:"type"`
 }
