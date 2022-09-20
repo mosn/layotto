@@ -35,7 +35,7 @@ func TestInject(t *testing.T) {
 	cf := &mock.MockStore{}
 	container.ConfigRef["mock_config_store"] = cf
 
-	injector := DefaultInjector{Container: *container}
+	injector := NewDefaultInjector(container.SecretRef, container.ConfigRef)
 	meta := make(map[string]string)
 
 	var items []*ref.SecretRefConfig
@@ -59,5 +59,25 @@ func TestInject(t *testing.T) {
 	injector.InjectSecretRef(items, meta)
 	assert.Equal(t, meta["ref-key"], "life is good")
 	assert.Equal(t, meta["good-key"], "life is good")
+	secretStoreRef, err := injector.InjectSecretStoreRef(&ref.ComponentRefConfig{
+		SecretStore: "fake_secret_store",
+	})
+	assert.Nil(t, err)
+	assert.Equal(t, secretStoreRef, ss)
 
+	_, err = injector.InjectSecretStoreRef(&ref.ComponentRefConfig{
+		SecretStore: "null",
+	})
+	assert.NotNil(t, err)
+
+	configStoreRef, err := injector.InjectConfigStoreRef(&ref.ComponentRefConfig{
+		ConfigStore: "mock_config_store",
+	})
+	assert.Nil(t, err)
+	assert.Equal(t, configStoreRef, cf)
+
+	_, err = injector.InjectConfigStoreRef(&ref.ComponentRefConfig{
+		ConfigStore: "null",
+	})
+	assert.NotNil(t, err)
 }

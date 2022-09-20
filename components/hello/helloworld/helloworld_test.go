@@ -20,6 +20,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"mosn.io/layotto/components/pkg/common"
 
 	"mosn.io/layotto/components/hello"
@@ -59,4 +61,10 @@ func TestHelloWorld(t *testing.T) {
 	if resp.HelloString != "Bye, Layotto" {
 		t.Fatalf("hello output failed")
 	}
+
+	component := hs.(common.InjectComponent)
+	err = component.InjectConfigComponent(nil)
+	assert.Nil(t, err)
+	err = component.InjectSecretComponent(nil)
+	assert.Nil(t, err)
 }
