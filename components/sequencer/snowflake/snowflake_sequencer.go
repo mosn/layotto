@@ -42,6 +42,7 @@ func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 	if err != nil {
 		return err
 	}
+	//for unit test
 	mm.Db = s.db
 
 	s.metadata.MysqlMetadata = &mm
@@ -54,7 +55,7 @@ func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 
 	rm, err := snowflake.ParseSnowflakeRingBufferMetadata(config.Properties)
 
-	var maxSeq int64 = ^(-1 << rm.SeqBits) + 1
+	var maxSeq int64 = 1 << rm.SeqBits
 	bufferSize := maxSeq << rm.BoostPower
 
 	s.ringBuffer = snowflake.NewRingBuffer(bufferSize)

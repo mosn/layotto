@@ -21,6 +21,8 @@ import (
 	"net"
 	"strconv"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 const (
@@ -167,30 +169,21 @@ func NewMysqlClient(meta MysqlMetadata) (int64, error) {
 	}
 
 	var err error
-	exists := tableExists(meta)
-	if !exists {
-		createTable := fmt.Sprintf(
-			`CREATE TABLE IF NOT EXISTS %s(
-				ID BIGINT NOT NULL AUTO_INCREMENT COMMENT 'auto increment id',
-				HOST_NAME VARCHAR(64) NOT NULL COMMENT 'host name',
-				PORT VARCHAR(64) NOT NULL COMMENT 'port',
-			  	CREATED TIMESTAMP NOT NULL COMMENT 'created time',
-				PRIMARY KEY(ID)
-			)`, meta.TableName)
-		_, err = meta.Db.Exec(createTable)
-		if err != nil {
-			return workId, err
-		}
+	createTable := fmt.Sprintf(
+		`CREATE TABLE IF NOT EXISTS %s
+		(
+			ID BIGINT NOT NULL AUTO_INCREMENT COMMENT 'auto increment id',
+			HOST_NAME VARCHAR(64) NOT NULL COMMENT 'host name',
+			PORT VARCHAR(64) NOT NULL COMMENT 'port',
+				CREATED TIMESTAMP NOT NULL COMMENT 'created time',
+			PRIMARY KEY(ID)
+		)`, meta.TableName)
+	if _, err = meta.Db.Exec(createTable); err != nil {
+		return workId, err
 	}
 
 	workId, err = NewWorkId(meta)
 	return workId, err
-}
-
-func tableExists(meta MysqlMetadata) bool {
-	var result string
-	err := meta.Db.QueryRow("SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_NAME = ?", meta.TableName).Scan(&result)
-	return err != sql.ErrNoRows
 }
 
 //get id from mysql

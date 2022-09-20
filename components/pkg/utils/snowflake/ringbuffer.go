@@ -15,9 +15,9 @@ package snowflake
 
 import (
 	"errors"
-	"runtime"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"mosn.io/pkg/log"
 )
@@ -45,14 +45,14 @@ type RingBuffer struct {
 	//read pointer, rp is writable, next is readable
 	rp PaddedInt
 
-	//uid = 0 + WorkIdBits + TimeBits + SeqBits
+	//1 + WorkIdBits + TimeBits + SeqBits = 64
 	TimeBits   int64
 	WorkIdBits int64
 	SeqBits    int64
 
 	//ringbuffer's size
 	bufferSize int64
-	//when readable slots nums <= bufferSize * PaddingFactor / 100, start a new goroutine
+	//when readable slots nums <= bufferSize * PaddingFactor / 100, start padding goroutine
 	PaddingFactor int64
 
 	//get id from Mysql at startup
@@ -60,11 +60,9 @@ type RingBuffer struct {
 	//get current timestamp at startup
 	CurrentTimeStamp int64
 
-	//asynchronously running padding goroutine numbers
-	GoNum int32
+	//whether there is a running padding goroutine
+	running int32
 }
-
-var cores int = runtime.NumCPU()
 
 func NewRingBuffer(bufferSize int64) *RingBuffer {
 	p := PaddedInt{}
@@ -75,7 +73,7 @@ func NewRingBuffer(bufferSize int64) *RingBuffer {
 		wp:         p,
 		rp:         p,
 		bufferSize: bufferSize,
-		GoNum:      1,
+		running:    0,
 	}
 }
 
@@ -87,17 +85,20 @@ func (r *RingBuffer) Put(uid int64) (bool, error) {
 	if currentReadPointer == -1 {
 		currentReadPointer = 0
 	}
+
 	distance := currentWritePointer - currentReadPointer
 	//write pointer catches read pointer, ringbuffer is full
 	if distance == r.bufferSize-1 {
 		return false, errors.New("ringbuffer is full! Rejected putting buffer")
 	}
 
-	//(currentWritePointer + 1) mod r.bufferSize
 	nextWriteIndex := (currentWritePointer + 1) & (r.bufferSize - 1)
-
 	if r.flags[nextWriteIndex].Value != CAN_PUT_FLAG {
-		return false, errors.New("slot is not in writable status")
+		//The flag at this location may not have been updated
+		time.Sleep(time.Microsecond)
+		if r.flags[nextWriteIndex].Value != CAN_PUT_FLAG {
+			return false, errors.New("slot is not in writable status")
+		}
 	}
 
 	r.slots[nextWriteIndex] = uid
@@ -106,29 +107,43 @@ func (r *RingBuffer) Put(uid int64) (bool, error) {
 	return true, nil
 }
 
+//taking uid is a lock free operation to ensure the only padding goroutine can get enough time slices
 func (r *RingBuffer) Take() (int64, error) {
-	r.m.Lock()
-	defer r.m.Unlock()
 	var uid int64
+	var currentReadPointer int64
+	var nextReadPointer int64
 
-	if r.rp.Value != r.wp.Value {
-		r.rp.Value++
-	} else {
-		return uid, errors.New("buffer is empty, rejected take buffer")
+	//atomically update r.rp.value if r.rp.Value != r.wp.Value
+	for {
+		currentReadPointer = r.rp.Value
+		nextReadPointer = currentReadPointer
+		if currentReadPointer < r.wp.Value {
+			nextReadPointer++
+		}
+		if atomic.CompareAndSwapInt64(&r.rp.Value, currentReadPointer, nextReadPointer) {
+			break
+		}
 	}
 
-	if r.wp.Value-r.rp.Value < r.bufferSize*r.PaddingFactor/100 {
-		//limit the numbers of goroutine
-		if int(r.GoNum) <= 2*cores {
-			r.GoNum++
-			go r.PaddingRingBuffer()
+	if r.wp.Value-currentReadPointer < r.bufferSize*r.PaddingFactor/100 {
+		go r.PaddingRingBuffer()
+	}
+
+	//if buffer is empty, wait a moment
+	if currentReadPointer == nextReadPointer {
+		running := false
+		for !running {
+			running = r.PaddingRingBuffer()
+		}
+		if currentReadPointer == nextReadPointer {
+			log.DefaultLogger.Warnf("buffer is empty")
 		}
 	}
 
 	//check next slot flag is CAN_TAKE_FLAG
-	nextReadIndex := (r.rp.Value) & (r.bufferSize - 1)
-	if r.flags[nextReadIndex].Value != CAN_TAKE_FLAG {
-		return uid, errors.New("slot not in readable status")
+	nextReadIndex := nextReadPointer & (r.bufferSize - 1)
+	if atomic.LoadInt64(&r.flags[nextReadIndex].Value) != CAN_TAKE_FLAG {
+		return uid, errors.New("buffer is empty! Please request again")
 	}
 
 	uid = r.slots[nextReadIndex]
@@ -136,28 +151,23 @@ func (r *RingBuffer) Take() (int64, error) {
 	return uid, nil
 }
 
-//allocate bits for uid
-//workid + time + sequence
+//allocate workid and timestamp for uid
 func (r *RingBuffer) Allocator() int64 {
-	var sequence int64
-
 	timestampShift := r.SeqBits
 	workidShift := r.TimeBits + r.SeqBits
 
 	workid := r.WorkId
-
-	r.m.Lock()
 	timestamp := r.CurrentTimeStamp
 	r.CurrentTimeStamp++
-	r.m.Unlock()
 
+	var sequence int64
 	return timestamp<<timestampShift | (workid << workidShift) | sequence
 }
 
 //put uid into ringbuffer
 //uid： workid + timestamp + (0 ~ maxSeq)
 func (r *RingBuffer) GenerateUid(cur int64) (bool, error) {
-	var maxSeq int64 = ^(-1 << r.SeqBits) + 1
+	var maxSeq int64 = 1 << r.SeqBits
 	var offset int64
 	for offset = 0; offset < maxSeq; offset++ {
 		if ok, err := r.Put(cur + offset); !ok {
@@ -168,12 +178,17 @@ func (r *RingBuffer) GenerateUid(cur int64) (bool, error) {
 }
 
 //async padding ringbuffer
-func (r *RingBuffer) PaddingRingBuffer() {
+func (r *RingBuffer) PaddingRingBuffer() bool {
 	defer func() {
 		if x := recover(); x != nil {
 			log.DefaultLogger.Errorf("panic when generatoring uid with snowflake algorithm and padding ringbuffer: %v", x)
 		}
 	}()
+
+	//there can only be one padding goroutine at a time, to ensure uids are strictly increasing
+	if !atomic.CompareAndSwapInt32(&r.running, 0, 1) {
+		return false
+	}
 
 	for {
 		u := r.Allocator()
@@ -182,5 +197,9 @@ func (r *RingBuffer) PaddingRingBuffer() {
 			break
 		}
 	}
-	atomic.AddInt32(&r.GoNum, -1)
+
+	if !atomic.CompareAndSwapInt32(&r.running, 1, 0) {
+		panic("running num is false")
+	}
+	return true
 }

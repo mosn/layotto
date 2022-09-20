@@ -55,7 +55,6 @@ func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 	s := NewSnowFlakeSequencer(log.DefaultLogger)
 	s.db = db
 
-	mock.ExpectQuery("SELECT TABLE_NAME").WillReturnError(sql.ErrNoRows)
 	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT HOST_NAME").WillReturnError(sql.ErrNoRows)
@@ -88,14 +87,22 @@ func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 
 	mset := mapset.NewSet()
 
+	var falseUidNum int
+	var preUid int64
 	var size int = 10000
 	for i := 0; i < size; i++ {
 		resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
 			Key: key,
 		})
+		//assert next uid is bigger than previous
+		if preUid != 0 && resp.NextId <= preUid {
+			falseUidNum++
+		}
+		preUid = resp.NextId
 		assert.NoError(t, err)
 		mset.Add(resp.NextId)
 	}
+	assert.Equal(t, falseUidNum, 0)
 	assert.Equal(t, size, mset.Cardinality())
 }
 
@@ -108,7 +115,6 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 	s := NewSnowFlakeSequencer(log.DefaultLogger)
 	s.db = db
 
-	mock.ExpectQuery("SELECT TABLE_NAME").WillReturnError(sql.ErrNoRows)
 	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT HOST_NAME").WillReturnError(sql.ErrNoRows)
@@ -134,9 +140,12 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 	mset := mapset.NewSet()
 
 	var size int = 1000
+	var falseUidNum int
+	var preUid int64
 	var cores int = runtime.NumCPU()
 
 	var wg sync.WaitGroup
+	var mu sync.Mutex
 	wg.Add(cores)
 
 	for i := 0; i < cores; i++ {
@@ -147,9 +156,15 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 				}
 			}()
 			for j := 0; j < size; j++ {
+				mu.Lock()
 				resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
 					Key: key,
 				})
+				if preUid != 0 && resp.NextId <= preUid {
+					falseUidNum++
+				}
+				preUid = resp.NextId
+				mu.Unlock()
 				assert.NoError(t, err)
 				mset.Add(resp.NextId)
 			}
