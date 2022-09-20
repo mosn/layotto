@@ -22,6 +22,7 @@ import (
 	"strconv"
 	"time"
 
+	// mysql driver
 	_ "github.com/go-sql-driver/mysql"
 )
 
