@@ -35,13 +35,12 @@ const (
 	userName     = "root"
 	password     = "123456"
 
-	boostPower       = "3"
-	paddingFactor    = "50"
-	scheduleInterval = "5"
-	timeBits         = "28"
-	workerBits       = "22"
-	seqBits          = "13"
-	startTime        = "2022-01-01"
+	boostPower    = "3"
+	paddingFactor = "50"
+	timeBits      = "28"
+	workerBits    = "22"
+	seqBits       = "13"
+	startTime     = "2022-01-01"
 
 	key = "resource_xxx"
 )
