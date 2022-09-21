@@ -46,6 +46,13 @@ const (
 	key = "resource_xxx"
 )
 
+func TestInit(t *testing.T) {
+	s := NewSnowFlakeSequencer(log.DefaultLogger)
+	cfg := sequencer.Configuration{}
+	err := s.Init(cfg)
+	assert.Error(t, err)
+}
+
 func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -75,7 +82,6 @@ func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 
 	cfg.Properties["boostPower"] = boostPower
 	cfg.Properties["paddingFactor"] = paddingFactor
-	cfg.Properties["scheduleInterval"] = scheduleInterval
 	cfg.Properties["timeBits"] = timeBits
 	cfg.Properties["workerBits"] = workerBits
 	cfg.Properties["seqBits"] = seqBits
