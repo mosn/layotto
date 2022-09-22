@@ -51,7 +51,7 @@ func TestCephOss(t *testing.T) {
 	assert.Nil(t, err)
 
 	appendObjectResp, err := instance.AppendObject(context.TODO(), &oss.AppendObjectInput{})
-	assert.Equal(t, errors.New("AppendObject method not supported on AWS"), err)
+	assert.Equal(t, errors.New("AppendObject method not supported on CEPH"), err)
 	assert.Nil(t, appendObjectResp)
 
 	_, err = instance.AbortMultipartUpload(context.TODO(), &oss.AbortMultipartUploadInput{})
