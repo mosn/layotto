@@ -626,7 +626,7 @@ func (c *CephOSS) SignURL(ctx context.Context, req *oss.SignURLInput) (*oss.Sign
 }
 
 func (c *CephOSS) RestoreObject(ctx context.Context, req *oss.RestoreObjectInput) (*oss.RestoreObjectOutput, error) {
-	return nil, errors.New("RestoreObject method not supported on AWS")
+	return nil, errors.New("RestoreObject method not supported on CEPH")
 }
 
 func (c *CephOSS) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *oss.UpdateBandwidthRateLimitInput) error {
@@ -637,7 +637,7 @@ func (c *CephOSS) UpdateUploadBandwidthRateLimit(ctx context.Context, req *oss.U
 	return errors.New("UpdateUploadBandwidthRateLimit method not supported now")
 }
 func (c *CephOSS) AppendObject(ctx context.Context, req *oss.AppendObjectInput) (*oss.AppendObjectOutput, error) {
-	return nil, errors.New("AppendObject method not supported on AWS")
+	return nil, errors.New("AppendObject method not supported on CEPH")
 }
 
 func (c *CephOSS) getClient() (*s3.Client, error) {
