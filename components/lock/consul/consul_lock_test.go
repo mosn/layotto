@@ -1,4 +1,3 @@
-//
 // Copyright 2021 Layotto Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,7 +48,7 @@ func TestConsulLock_Features(t *testing.T) {
 	assert.True(t, len(comp.Features()) == 0)
 }
 
-//A lock A unlock
+// A lock A unlock
 func TestConsulLock_TryLock(t *testing.T) {
 	//mock
 	ctrl := gomock.NewController(t)
@@ -94,7 +93,7 @@ func TestConsulLock_TryLock(t *testing.T) {
 
 }
 
-//A lock B lock
+// A lock B lock
 func TestConsulLock_ALock_BLock(t *testing.T) {
 
 	//mock

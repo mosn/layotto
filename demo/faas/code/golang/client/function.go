@@ -104,6 +104,7 @@ func (ctx *httpHeaders) OnHttpStreamDone() {
 const ID = "id_1"
 
 // DO NOT MODIFY THE FOLLOWING FUNCTIONS!
+//
 //export proxy_get_id
 func GetID() {
 	_ = ID[len(ID)-1]

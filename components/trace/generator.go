@@ -27,7 +27,7 @@ var (
 	generators sync.Map
 )
 
-//Generator  is used to get or generate traceId/spanId/context
+// Generator  is used to get or generate traceId/spanId/context
 type Generator interface {
 	GetTraceId(ctx context.Context) string
 	GetSpanId(ctx context.Context) string

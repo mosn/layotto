@@ -131,7 +131,7 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 	return nil
 }
 
-//ListFile list all files
+// ListFile list all files
 func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error) {
 	if in.Request == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "request can't be nil")
@@ -159,7 +159,7 @@ func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*r
 	return &runtimev1pb.ListFileResp{Files: files, Marker: resp.Marker, IsTruncated: resp.IsTruncated}, nil
 }
 
-//DelFile delete specific file
+// DelFile delete specific file
 func (a *api) DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error) {
 	errCode := codes.Internal
 	if in.Request == nil {
@@ -181,7 +181,7 @@ func (a *api) DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emp
 	return &emptypb.Empty{}, nil
 }
 
-//GetFileMeta get meta of file
+// GetFileMeta get meta of file
 func (a *api) GetFileMeta(ctx context.Context, in *runtimev1pb.GetFileMetaRequest) (*runtimev1pb.GetFileMetaResponse, error) {
 	errCode := codes.Internal
 	if in.Request == nil {

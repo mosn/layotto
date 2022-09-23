@@ -209,7 +209,7 @@ func TestDeleteObject(t *testing.T) {
 	assert.Equal(t, "123", resp.VersionId)
 }
 
-//TestPutObjectTagging
+// TestPutObjectTagging
 func TestPutObjectTagging(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -230,7 +230,7 @@ func TestPutObjectTagging(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-//TestDeleteObjectTagging
+// TestDeleteObjectTagging
 func TestDeleteObjectTagging(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -251,7 +251,7 @@ func TestDeleteObjectTagging(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-//TestGetObjectTagging
+// TestGetObjectTagging
 func TestGetObjectTagging(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -274,7 +274,7 @@ func TestGetObjectTagging(t *testing.T) {
 	assert.Equal(t, "123", resp.VersionId)
 }
 
-//TestCopyObject
+// TestCopyObject
 func TestCopyObject(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -296,7 +296,7 @@ func TestCopyObject(t *testing.T) {
 	assert.Equal(t, "etag", resp.CopyObjectResult.Etag)
 }
 
-//TestDeleteObjects
+// TestDeleteObjects
 func TestDeleteObjects(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -319,7 +319,7 @@ func TestDeleteObjects(t *testing.T) {
 	assert.Equal(t, "version", resp.Deleted[0].VersionId)
 }
 
-//TestListObjects
+// TestListObjects
 func TestListObjects(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -363,7 +363,7 @@ func TestListObjects(t *testing.T) {
 	assert.Equal(t, "delimiter", resp.Delimiter)
 }
 
-//TestGetObjectCannedAcl
+// TestGetObjectCannedAcl
 func TestGetObjectCannedAcl(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -397,7 +397,7 @@ func TestGetObjectCannedAcl(t *testing.T) {
 	assert.Equal(t, "yes", resp.RequestCharged)
 }
 
-//TestPutObjectCannedAcl
+// TestPutObjectCannedAcl
 func TestPutObjectCannedAcl(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -430,7 +430,7 @@ func TestPutObjectCannedAcl(t *testing.T) {
 	assert.Equal(t, "yes", resp.RequestCharged)
 }
 
-//TestRestoreObject
+// TestRestoreObject
 func TestRestoreObject(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -464,7 +464,7 @@ func TestRestoreObject(t *testing.T) {
 	assert.Equal(t, "yes", resp.RestoreOutputPath)
 }
 
-//TestCreateMultipartUpload
+// TestCreateMultipartUpload
 func TestCreateMultipartUpload(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -497,7 +497,7 @@ func TestCreateMultipartUpload(t *testing.T) {
 	assert.Equal(t, "object", resp.Key)
 }
 
-//TestUploadPartCopy
+// TestUploadPartCopy
 func TestUploadPartCopy(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -530,7 +530,7 @@ func TestUploadPartCopy(t *testing.T) {
 	assert.Equal(t, true, resp.BucketKeyEnabled)
 }
 
-//TestCompleteMultipartUpload
+// TestCompleteMultipartUpload
 func TestCompleteMultipartUpload(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -569,7 +569,7 @@ func TestCompleteMultipartUpload(t *testing.T) {
 	assert.Equal(t, true, resp.BucketKeyEnabled)
 }
 
-//TestAbortMultipartUpload
+// TestAbortMultipartUpload
 func TestAbortMultipartUpload(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -604,7 +604,7 @@ func TestAbortMultipartUpload(t *testing.T) {
 	assert.Equal(t, "true", resp.RequestCharged)
 }
 
-//TestListMultipartUploads
+// TestListMultipartUploads
 func TestListMultipartUploads(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -635,7 +635,7 @@ func TestListMultipartUploads(t *testing.T) {
 	assert.Equal(t, "layotto", resp.Bucket)
 }
 
-//TestListObjectVersions
+// TestListObjectVersions
 func TestListObjectVersions(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -668,7 +668,7 @@ func TestListObjectVersions(t *testing.T) {
 	assert.Equal(t, "layotto", resp.Delimiter)
 }
 
-//TestHeadObject
+// TestHeadObject
 func TestHeadObject(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -701,7 +701,7 @@ func TestHeadObject(t *testing.T) {
 	assert.Equal(t, map[string]string{"key": "value"}, resp.ResultMetadata)
 }
 
-//TestIsObjectExist
+// TestIsObjectExist
 func TestIsObjectExist(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -734,7 +734,7 @@ func TestIsObjectExist(t *testing.T) {
 	assert.Equal(t, true, resp.FileExist)
 }
 
-//TestSignURL
+// TestSignURL
 func TestSignURL(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -767,7 +767,7 @@ func TestSignURL(t *testing.T) {
 	assert.Equal(t, "http://object", resp.SignedUrl)
 }
 
-//TestUpdateDownLoadBandwidthRateLimit
+// TestUpdateDownLoadBandwidthRateLimit
 func TestUpdateDownLoadBandwidthRateLimit(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -794,7 +794,7 @@ func TestUpdateDownLoadBandwidthRateLimit(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-//TestUpdateUpLoadBandwidthRateLimit
+// TestUpdateUpLoadBandwidthRateLimit
 func TestUpdateUpLoadBandwidthRateLimit(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
@@ -821,7 +821,7 @@ func TestUpdateUpLoadBandwidthRateLimit(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-//TestListParts
+// TestListParts
 func TestListParts(t *testing.T) {
 	// prepare oss server
 	ac := &grpc.ApplicationContext{AppId: "test", Oss: map[string]l8s3.Oss{}}
