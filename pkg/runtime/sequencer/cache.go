@@ -1,4 +1,3 @@
-//
 // Copyright 2021 Layotto Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +59,7 @@ func NewDoubleBuffer(key string, store sequencer.Store) *DoubleBuffer {
 	return d
 }
 
-//init double buffer
+// init double buffer
 func (d *DoubleBuffer) init() error {
 
 	buffer, err := d.getNewBuffer()
@@ -73,7 +72,7 @@ func (d *DoubleBuffer) init() error {
 	return nil
 }
 
-//getId next id
+// getId next id
 func (d *DoubleBuffer) getId() (int64, error) {
 
 	d.lock.Lock()
@@ -123,7 +122,7 @@ func (d *DoubleBuffer) getId() (int64, error) {
 	return next, nil
 }
 
-//swap inUseBuffer and BackUpBuffer, must be locked
+// swap inUseBuffer and BackUpBuffer, must be locked
 func (d *DoubleBuffer) swap() error {
 
 	select {
@@ -140,7 +139,7 @@ func (d *DoubleBuffer) swap() error {
 	}
 }
 
-//getNewBuffer return a new segment
+// getNewBuffer return a new segment
 func (d *DoubleBuffer) getNewBuffer() (*Buffer, error) {
 	support, result, err := d.Store.GetSegment(&sequencer.GetSegmentRequest{
 		Key:  d.Key,
@@ -161,7 +160,7 @@ func (d *DoubleBuffer) getNewBuffer() (*Buffer, error) {
 // BufferCatch catch key and buffer
 var BufferCatch = map[string]*DoubleBuffer{}
 
-//read/write lock for BufferCatch
+// read/write lock for BufferCatch
 var rwLock sync.RWMutex
 
 func GetNextIdFromCache(ctx context.Context, store sequencer.Store, req *sequencer.GetNextIdRequest) (bool, int64, error) {

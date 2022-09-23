@@ -54,15 +54,15 @@ func NewEndpoint() *Endpoint {
 
 // Handle will check health status.The structure of the returned map is like:
 //
-// {
-//  "status": "DOWN",
-//  "components": {
-//    "readinessProbe": {
-//      "status": "DOWN",
-//      "details": {}
-//    }
-//  }
-// }
+//	{
+//	 "status": "DOWN",
+//	 "components": {
+//	   "readinessProbe": {
+//	     "status": "DOWN",
+//	     "details": {}
+//	   }
+//	 }
+//	}
 func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[string]interface{}, error) {
 	result := make(map[string]interface{})
 	// 1. validate params

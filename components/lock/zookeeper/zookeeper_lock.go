@@ -43,7 +43,7 @@ type ZookeeperLock struct {
 	logger     log.ErrorLogger
 }
 
-//NewZookeeperLock Create ZookeeperLock
+// NewZookeeperLock Create ZookeeperLock
 func NewZookeeperLock(logger log.ErrorLogger) *ZookeeperLock {
 	lock := &ZookeeperLock{
 		logger: logger,
@@ -76,7 +76,7 @@ func (p *ZookeeperLock) Features() []lock.Feature {
 	return nil
 }
 
-//TryLock Node tries to acquire a zookeeper lock
+// TryLock Node tries to acquire a zookeeper lock
 func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 
 	conn, err := p.factory.NewConnection(time.Duration(req.Expire)*time.Second, p.metadata)
@@ -110,7 +110,7 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 
 }
 
-//Unlock Node tries to release a zookeeper lock
+// Unlock Node tries to release a zookeeper lock
 func (p *ZookeeperLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 
 	conn := p.unlockConn
