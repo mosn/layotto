@@ -1,4 +1,3 @@
-//
 // Copyright 2021 Layotto Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,8 +27,8 @@ import (
 	"mosn.io/layotto/components/pkg/utils"
 )
 
-//RedLock
-//it will be best to use at least 5 hosts
+// RedLock
+// it will be best to use at least 5 hosts
 type ClusterRedisLock struct {
 	clients  []*redis.Client
 	metadata utils.RedisClusterMetadata

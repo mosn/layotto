@@ -86,7 +86,7 @@ var (
 	initOnce = new(sync.Once)
 )
 
-//For hot reloading app-level dumpConfig
+// For hot reloading app-level dumpConfig
 func UpdateAppDumpConfig(value string) bool {
 	if value == "" {
 		return false
@@ -129,7 +129,7 @@ func UpdateAppDumpConfig(value string) bool {
 	return true
 }
 
-//For hot reloading global dumpConfig
+// For hot reloading global dumpConfig
 func UpdateGlobalDumpConfig(value string) bool {
 	if "" == value {
 		return false
