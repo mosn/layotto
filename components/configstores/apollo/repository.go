@@ -52,7 +52,7 @@ func init() {
 	agollo.SetLogger(NewDefaultLogger(log.DefaultLogger))
 }
 
-//Implement Repository interface
+// Implement Repository interface
 type AgolloRepository struct {
 	client agollo.Client
 	cfg    *repoConfig
