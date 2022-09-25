@@ -20,7 +20,6 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	mapset "github.com/deckarep/golang-set"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/pkg/log"
@@ -44,13 +43,6 @@ const (
 
 	key = "resource_xxx"
 )
-
-func TestInit(t *testing.T) {
-	s := NewSnowFlakeSequencer(log.DefaultLogger)
-	cfg := sequencer.Configuration{}
-	err := s.Init(cfg)
-	assert.Error(t, err)
-}
 
 func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 	db, mock, err := sqlmock.New()
@@ -90,8 +82,6 @@ func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	mset := mapset.NewSet()
-
 	var falseUidNum int
 	var preUid int64
 	var size int = 10000
@@ -105,10 +95,8 @@ func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 		}
 		preUid = resp.NextId
 		assert.NoError(t, err)
-		mset.Add(resp.NextId)
 	}
 	assert.Equal(t, falseUidNum, 0)
-	assert.Equal(t, size, mset.Cardinality())
 }
 
 func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
@@ -142,8 +130,6 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	mset := mapset.NewSet()
-
 	var size int = 1000
 	var falseUidNum int
 	var preUid int64
@@ -171,11 +157,9 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 				preUid = resp.NextId
 				mu.Unlock()
 				assert.NoError(t, err)
-				mset.Add(resp.NextId)
 			}
 			wg.Done()
 		}()
 	}
 	wg.Wait()
-	assert.Equal(t, size*cores, mset.Cardinality())
 }
