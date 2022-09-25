@@ -16,6 +16,60 @@
 
 go build ./cmd/layotto
 nohup redis-server --port 6380 &
-nohup ./layotto start -c ./configs/config_redis.json &
+cd ..
+nohup etcd &
+cd layotto
+bash /usr/share/zookeeper/bin/zkServer.sh start
+nohup ./layotto start -c ./configs/config_integrate_test.json &
 cd sdk/go-sdk/test/runtime
+nohup bash /usr/share/zookeeper/bin/zkCli.sh < zkCreateZnode.sh
+
+# run integrate_test
 go test -p 1 -v ./...
+
+# run demo/
+cd ../../../../demo/configuration/common
+go build -o client
+names="etcd_config_demo"
+for key in ${names}; do
+    ./client -s $key
+done
+
+cd ../../state/common
+go build -o client
+names="redis_state_demo zookeeper_state_demo"
+for key in ${names}; do
+    ./client -s $key
+done
+
+cd ../../lock/common
+go build -o client
+names="redis_lock_demo etcd_lock_demo zookeeper_lock_demo"
+for key in ${names}; do
+    ./client -s $key
+done
+
+cd ../../sequencer/common
+go build -o client
+names="redis_sequencer_demo etcd_sequencer_demo zookeeper_sequencer_demo"
+for key in ${names}; do
+    ./client -s $key
+done
+
+cd ../../pubsub/server
+names="redis_pub_subs_demo"
+for key in ${names}; do
+    cd ../server
+    go build -o subscriber
+    ./subscriber -s $key &
+    cd ../client
+    go build -o publisher
+    ./publisher -s $key  
+done
+
+cd ../../secret/common
+go build -o client
+names="local_file_secret_demo"
+for key in ${names}; do
+    ./client -s $key
+done
