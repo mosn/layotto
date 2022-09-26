@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  layotto:
+    image: layotto/layotto:latest
+    command:
+      - start
+    volumes:
+      - ./components_state_redis.json:/runtime/configs/config.json
+    ports:
+        - 34903:34903
+        - 34904:34904
+        - 34999:34999
+    depends_on:
+      - redis
+  redis:
+    image: "redis:latest"
+    ports:
+      - 6379:6379

@@ -1,0 +1,36 @@
+{
+  "servers": [
+    {
+      "listeners": [
+        {
+          "name": "grpc",
+          "address": "0.0.0.0:34904",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "state": {
+                        "test_components_state_redis": {
+                          "type": "redis",
+                          "metadata": {
+                            "redisHost": "redis:6379",
+                            "redisPassword": ""
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
