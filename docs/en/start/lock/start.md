@@ -76,6 +76,8 @@ The layotto file will be generated in the directory, run it:
 <!-- tabs:end -->
 
 ## step 2. Run the client program, call Layotto to add, delete, modify and query
+<!-- tabs:start -->
+#### **Go**
 
 ```shell
  cd ${project_path}/demo/lock/common/
@@ -97,6 +99,46 @@ client2 got lock.ResourceId is resource_a
 client2 succeeded in unlocking
 Demo success!
 ```
+
+#### **Java**
+
+Download java sdk and examples:
+
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+Change directory:
+
+```shell
+cd java-sdk
+```
+
+Build:
+
+```shell @if.not.exist examples-lock/target/examples-lock-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-lock/pom.xml clean package
+```
+
+Run the examples:
+
+```shell
+java -jar examples-lock/target/examples-lock-jar-with-dependencies.jar
+```
+
+And you will see:
+
+```bash
+TryLockResponse{success=true}
+TryLockResponse{success=true}
+TryLockResponse{success=true}
+UnlockResponse{status=SUCCESS}
+TryLockResponse{success=true}
+UnlockResponse{status=LOCK_UNEXIST}
+```
+
+<!-- tabs:end -->
 
 ## Next Step
 ### What did this client Demo do?

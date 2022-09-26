@@ -78,6 +78,8 @@ go build -o layotto
 <!-- tabs:end -->
 
 ### step 2. 运行客户端程序，调用Layotto抢锁/解锁
+<!-- tabs:start -->
+#### **Go**
 
 ```shell
  cd ${project_path}/demo/lock/common/
@@ -116,7 +118,7 @@ cd java-sdk
 
 构建:
 
-```shell @if.not.exist examples-sequencer/target/examples-lock-1.2.0-SNAPSHOT-jar-with-dependencies.jar
+```shell @if.not.exist examples-lock/target/examples-lock-jar-with-dependencies.jar
 # build example jar
 mvn -f examples-lock/pom.xml clean package
 ```
@@ -124,7 +126,7 @@ mvn -f examples-lock/pom.xml clean package
 运行:
 
 ```shell
-java -jar examples-lock/target/examples-lock-1.2.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar examples-lock/target/examples-lock-jar-with-dependencies.jar
 ```
 
 打印出以下信息说明运行成功:
@@ -138,6 +140,7 @@ TryLockResponse{success=true}
 UnlockResponse{status=LOCK_UNEXIST}
 ```
 
+<!-- tabs:end -->
 
 ### 下一步
 #### 这个客户端程序做了什么？
