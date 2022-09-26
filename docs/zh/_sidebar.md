@@ -100,7 +100,7 @@
     - [FaaS 设计文档](zh/design/faas/faas-poc-design.md)
     - [API插件](zh/design/api_plugin/design.md)
     - [支持Dapr API](zh/design/api_plugin/dapr_api.md)
-    - [OSS API设计文档](zh/design/oss/oss-api-design.md)
+    - [OSS API设计文档](zh/design/oss/design.md)
 - 贡献指南
     - [Layotto 贡献指南](zh/development/CONTRIBUTING.md)
     - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
