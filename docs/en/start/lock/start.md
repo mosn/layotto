@@ -77,7 +77,7 @@ The layotto file will be generated in the directory, run it:
 
 ## step 2. Run the client program, call Layotto to add, delete, modify and query
 <!-- tabs:start -->
-#### **Go**
+### **Go**
 
 ```shell
  cd ${project_path}/demo/lock/common/
@@ -100,7 +100,7 @@ client2 succeeded in unlocking
 Demo success!
 ```
 
-#### **Java**
+### **Java**
 
 Download java sdk and examples:
 
