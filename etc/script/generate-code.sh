@@ -20,7 +20,7 @@ needGenerate() {
   file=$1
 
   # check no `@exclude` tag
-  if [ $(grep "@exclude code generator" $file | wc -l) -eq 0 ]; then
+  if [ $(grep "@exclude skip code_generator" $file | wc -l) -eq 0 ]; then
     # check if there's a gRPC service in it
     if [ $(grep "service " $file | wc -l) -gt 0 ]; then
       return $true
