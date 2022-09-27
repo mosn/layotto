@@ -61,7 +61,7 @@ func setupChangeListener() *changeListener {
 	return newChangeListener(mockRepo)
 }
 
-//Test modified
+// Test modified
 func Test_changeListener_OnChange(t *testing.T) {
 	lis := setupChangeListener()
 	ch := make(chan *configstores.SubscribeResp)

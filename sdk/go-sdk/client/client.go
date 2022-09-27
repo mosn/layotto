@@ -120,9 +120,10 @@ type runtimeAPI interface {
 // Note, this default factory function creates runtime client only once. All subsequent invocations
 // will return the already created instance. To create multiple instances of the runtime client,
 // use one of the parameterized factory functions:
-//   NewClientWithPort(port string) (client Client, err error)
-//   NewClientWithAddress(address string) (client Client, err error)
-//   NewClientWithConnection(conn *grpc.ClientConn) Client
+//
+// NewClientWithPort(port string) (client Client, err error)
+// NewClientWithAddress(address string) (client Client, err error)
+// NewClientWithConnection(conn *grpc.ClientConn) Client
 func NewClient() (client Client, err error) {
 	port := os.Getenv(runtimePortEnvVarName)
 	if port == "" {
