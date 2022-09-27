@@ -13,20 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package runtime
+package delay_queue
 
 import (
-	delay_queue "mosn.io/layotto/pkg/grpc/delay_queue"
-	email "mosn.io/layotto/pkg/grpc/email"
-	s3 "mosn.io/layotto/pkg/grpc/extension/s3"
-	phone "mosn.io/layotto/pkg/grpc/phone"
+	context "context"
 )
 
-func WithExtensionGrpcAPI() Option {
-	return WithGrpcAPI(
-		s3.NewS3Server,
-		delay_queue.NewAPI,
-		email.NewAPI,
-		phone.NewAPI,
-	)
+type DelayQueue interface {
+	PublishDelayMessage(context.Context, *DelayMessageRequest) (*DelayMessageResponse, error)
 }
