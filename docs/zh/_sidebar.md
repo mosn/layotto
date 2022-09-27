@@ -20,7 +20,9 @@
     - [(建设中)使用 phone API](zh/start/phone/start) 
     - [(建设中)使用 email API](zh/start/email/start) 
     - [使用 lifecycle API](zh/start/lifecycle/start) 
-    - [API插件：注册您自己的API](zh/start/api_plugin/helloworld.md)
+    - API插件
+        - [注册您自己的API](zh/start/api_plugin/helloworld.md)
+        - [自动生成 API 插件](zh/start/api_plugin/generate.md)
     - 作为 Istio 的数据面
         - [集成 Istio 1.10.6 演示](zh/start/istio/)
         - [集成 Istio 1.5.x 演示](zh/start/istio/start.md)
@@ -100,7 +102,7 @@
     - [FaaS 设计文档](zh/design/faas/faas-poc-design.md)
     - [API插件](zh/design/api_plugin/design.md)
     - [支持Dapr API](zh/design/api_plugin/dapr_api.md)
-    - [OSS API设计文档](zh/design/oss/oss-api-design.md)
+    - [OSS API设计文档](zh/design/oss/design.md)
 - 贡献指南
     - [Layotto 贡献指南](zh/development/CONTRIBUTING.md)
     - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
