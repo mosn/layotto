@@ -80,7 +80,7 @@ func (l *Layotto) ensureStared() error {
 	// FIXME this is a temporary solution. Layotto have a healthcheck API,
 	// however, it doesn't require all components implement this API. So we
 	// don’t know component is successed.
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Second * 3)
 
 	return nil
 }

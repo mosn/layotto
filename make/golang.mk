@@ -65,7 +65,7 @@ clean: go.clean
 lint: ## Run go syntax and styling of go sources.
 lint: go.lint
 
-.PHONY: tests
+.PHONY: test
 test: ## Run golang unit test in target paths.
 test: go.test
 
@@ -135,7 +135,7 @@ go.lint: go.lint.verify
 	@golangci-lint run -v
 
 .PHONY: go.test.verify
-go.test.verify:  
+go.test.verify:
 ifeq ($(shell which go-junit-report), )
 	@echo "===========> Installing go-junit-report"
 	@GO111MODULE=off $(GO) get -u github.com/jstemmer/go-junit-report
@@ -151,35 +151,37 @@ go.test: go.test.verify
 	@cd components/ && $(GO) test -count=1 -timeout=10m -short -v `go list ./...`
 	@echo "===========> Run unit test in pkg"
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./pkg/...`
+	@echo "===========> Run integration test in tests/integration"
+	$(GO) test -count=1 -timeout=10m -short -v `go list ./tests/integration/...`
 
 .PHONY: go.style
-go.style:  
+go.style:
 	@echo "===========> Running go style check"
 	@$(MAKE) format && git status && [[ -z `git status -s` ]] || echo -e "\n${RED}Error: there are uncommitted changes after formatting all the code. ${GREEN}\nHow to fix it:${NO_COLOR} please 'make format' and then use git to commit all those changed files. "
 
 .PHONY: go.format.verify
-go.format.verify:  
+go.format.verify:
 ifeq ($(shell which goimports), )
 	@echo "===========> Installing missing goimports"
 	@mkdir -p $(GOPATH)/src/github.com/golang
 	@mkdir -p $(GOPATH)/src/golang.org/x
 ifeq ($(shell if [ -d $(GOPATH)/src/github.com/golang/tools ]; then echo "exist"; else echo ""; fi;), )
 	@git clone https://github.com/golang/tools.git $(GOPATH)/src/github.com/golang/tools
-endif 
+endif
 ifeq ($(shell if [ -d $(GOPATH)/src/golang.org/x/tools ]; then echo "exist"; else echo ""; fi;), )
 	@ln -s $(GOPATH)/src/github.com/golang/tools $(GOPATH)/src/golang.org/x/tools
 endif
 
 ifeq ($(shell if [ -d $(GOPATH)/src/github.com/golang/mod ]; then echo "exist"; else echo ""; fi;), )
 	@git clone https://github.com/golang/mod.git $(GOPATH)/src/github.com/golang/mod
-endif 
+endif
 ifeq ($(shell if [ -d $(GOPATH)/src/golang.org/x/mod ]; then echo "exist"; else echo ""; fi;), )
 	@ln -s $(GOPATH)/src/github.com/golang/mod $(GOPATH)/src/golang.org/x/mod
 endif
 
 ifeq ($(shell if [ -d $(GOPATH)/src/github.com/golang/sys ]; then echo "exist"; else echo ""; fi;), )
 	@git clone https://github.com/golang/sys.git $(GOPATH)/src/github.com/golang/sys
-endif 
+endif
 ifeq ($(shell if [ -d $(GOPATH)/src/golang.org/x/sys ]; then echo "exist"; else echo ""; fi;), )
 	@ln -s $(GOPATH)/src/github.com/golang/sys $(GOPATH)/src/golang.org/x/sys
 endif
