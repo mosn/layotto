@@ -12,12 +12,13 @@ require (
 	github.com/envoyproxy/go-control-plane v0.10.0
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gammazero/workerpool v1.1.2
+	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/helbing/testtools v0.0.0-20220926001938-2b28af4a440f
+	github.com/helbing/testtools v0.1.1
 	github.com/json-iterator/go v1.1.12
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/openzipkin/zipkin-go v0.2.2
