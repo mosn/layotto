@@ -68,7 +68,10 @@ func (s *server) SendEmail(ctx context.Context, in *email1.SendEmailRequest) (*e
 	// convert response
 	out := &email1.SendEmailResponse{}
 	err = copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
-	return out, err
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Error when converting the response: %s", err.Error())
+	}
+	return out, nil
 }
 
 func (s *server) SendEmailWithTemplate(ctx context.Context, in *email1.SendEmailWithTemplateRequest) (*email1.SendEmailWithTemplateResponse, error) {
@@ -94,7 +97,10 @@ func (s *server) SendEmailWithTemplate(ctx context.Context, in *email1.SendEmail
 	// convert response
 	out := &email1.SendEmailWithTemplateResponse{}
 	err = copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
-	return out, err
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Error when converting the response: %s", err.Error())
+	}
+	return out, nil
 }
 
 func invalidArgumentError(method string, format string, a ...interface{}) error {
