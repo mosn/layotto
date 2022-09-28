@@ -31,8 +31,6 @@ type DefaultInjector struct {
 	Container      RefContainer
 }
 
-var defaultInjector *DefaultInjector
-
 // NewDefaultInjector return a single Inject
 func NewDefaultInjector(secretStores map[string]secretstores.SecretStore, configStores map[string]configstores.Store) *DefaultInjector {
 	injector := &DefaultInjector{
@@ -41,11 +39,7 @@ func NewDefaultInjector(secretStores map[string]secretstores.SecretStore, config
 			ConfigRef: configStores,
 		},
 	}
-	defaultInjector = injector
 	return injector
-}
-func GetDefaultInjector() *DefaultInjector {
-	return defaultInjector
 }
 
 //InjectSecretRef  inject secret to metaData

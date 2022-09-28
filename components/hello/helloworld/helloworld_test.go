@@ -62,9 +62,9 @@ func TestHelloWorld(t *testing.T) {
 		t.Fatalf("hello output failed")
 	}
 
-	component := hs.(common.InjectComponent)
-	err = component.InjectConfigComponent(nil)
+	component := hs.(common.SetComponent)
+	err = component.SetConfigStore(nil)
 	assert.Nil(t, err)
-	err = component.InjectSecretComponent(nil)
+	err = component.SetSecretStore(nil)
 	assert.Nil(t, err)
 }

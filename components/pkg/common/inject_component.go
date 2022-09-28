@@ -22,7 +22,7 @@ import (
 	"github.com/dapr/components-contrib/secretstores"
 )
 
-type InjectComponent interface {
-	InjectConfigComponent(cs configstores.Store) (err error)
-	InjectSecretComponent(ss secretstores.SecretStore) (err error)
+type SetComponent interface {
+	SetConfigStore(cs configstores.Store) (err error)
+	SetSecretStore(ss secretstores.SecretStore) (err error)
 }

@@ -743,13 +743,13 @@ func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Co
 }
 
 func (m *MosnRuntime) initComponentInject(comp interface{}, config *refconfig.ComponentRefConfig) error {
-	if _, ok := comp.(common.InjectComponent); ok {
+	if _, ok := comp.(common.SetComponent); ok {
 		configRef, err := m.Injector.InjectConfigStoreRef(config)
 		if err != nil {
 			return err
 		}
 		if configRef != nil {
-			if err = comp.(common.InjectComponent).InjectConfigComponent(configRef); err != nil {
+			if err = comp.(common.SetComponent).SetConfigStore(configRef); err != nil {
 				return err
 			}
 		}
@@ -759,7 +759,7 @@ func (m *MosnRuntime) initComponentInject(comp interface{}, config *refconfig.Co
 			return err
 		}
 		if secretRef != nil {
-			if err = comp.(common.InjectComponent).InjectSecretComponent(secretRef); err != nil {
+			if err = comp.(common.SetComponent).SetSecretStore(secretRef); err != nil {
 				return err
 			}
 		}

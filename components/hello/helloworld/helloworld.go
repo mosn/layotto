@@ -41,12 +41,12 @@ func (hw *HelloWorld) ApplyConfig(ctx context.Context, metadata map[string]strin
 	return nil
 }
 
-func (hw *HelloWorld) InjectConfigComponent(cs configstores.Store) (err error) {
+func (hw *HelloWorld) SetConfigStore(cs configstores.Store) (err error) {
 	//save for use
 	hw.config = cs
 	return nil
 }
-func (hw *HelloWorld) InjectSecretComponent(ss secretstores.SecretStore) (err error) {
+func (hw *HelloWorld) SetSecretStore(ss secretstores.SecretStore) (err error) {
 	//save for use
 	hw.secretStore = ss
 	return nil
