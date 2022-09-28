@@ -29,7 +29,8 @@ go build -o layotto
 ```
 
 ### 第二步：运行客户端程序，调用 Layotto 获取 secret
-
+<!-- tabs:start -->
+### **Go**
 ```shell
  cd ${project_path}/demo/secret/common/
 ```
@@ -48,7 +49,38 @@ go build -o layotto
 data:{key:"db-user-pass:password" value:"S!S*d$zDsb="}
 data:{key:"db-user-pass:password" value:{secrets:{key:"db-user-pass:password" value:"S!S*d$zDsb="}}} data:{key:"db-user-pass:username" value:{secrets:{key:"db-user-pass:username" value:"devuser"}}}
 ```
+### **Java**
+下载 java sdk 和示例代码:
 
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
 
+切换目录:
+
+```shell
+cd java-sdk
+```
+
+构建:
+
+```shell @if.not.exist examples-secret/target/examples-secret-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-secret/pom.xml clean package
+```
+
+运行:
+
+```shell
+java -jar examples-secret/target/examples-secret-jar-with-dependencies.jar
+```
+
+打印出以下信息说明运行成功:
+
+```bash
+{db-user-pass:password=S!S*d$zDsb=}
+{redisPassword={redisPassword=redis123}, db-user-pass:password={db-user-pass:password=S!S*d$zDsb=}, db-user-pass:username={db-user-pass:username=devuser}}
+```
+<!-- tabs:end -->
 ## 想要详细了解Secret API?
 Layotto复用了Dapr的Secret API，了解更多：https://docs.dapr.io/operations/components/setup-secret-store/

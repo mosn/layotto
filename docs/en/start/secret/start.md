@@ -30,7 +30,8 @@ Once finished, the layotto file will be generated in the directory, run it:
 ```
 
 ### Step 2: Run the client program and call Layotto to get the secret
-
+<!-- tabs:start -->
+### **Go**
 ```shell
  cd ${project_path}/demo/secret/common/
 ```
@@ -49,7 +50,39 @@ If the following information is printed, the demo is successful:
 data:{key:"db-user-pass:password" value:"S!S*d$zDsb="}
 data:{key:"db-user-pass:password" value:{secrets:{key:"db-user-pass:password" value:"S!S*d$zDsb="}}} data:{key:"db-user-pass:username" value:{secrets:{key:"db-user-pass:username" value:"devuser"}}}
 ```
+### **Java**
 
+Download java sdk and examples:
 
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+Change directory:
+
+```shell
+cd java-sdk
+```
+
+Build:
+
+```shell @if.not.exist examples-secret/target/examples-secret-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-secret/pom.xml clean package
+```
+
+Run the examples:
+
+```shell
+java -jar examples-secret/target/examples-secret-jar-with-dependencies.jar
+```
+
+And you will see:
+
+```bash
+{db-user-pass:password=S!S*d$zDsb=}
+{redisPassword={redisPassword=redis123}, db-user-pass:password={db-user-pass:password=S!S*d$zDsb=}, db-user-pass:username={db-user-pass:username=devuser}}
+```
+<!-- tabs:end -->
 ## Want to learn more about Secret API?
 Layotto reuse Dapr Secret API，learn more：https://docs.dapr.io/operations/components/setup-secret-store/
