@@ -17,8 +17,9 @@ package delay_queue
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+
+	"github.com/jinzhu/copier"
 
 	"mosn.io/pkg/log"
 
@@ -62,33 +63,21 @@ func (s *server) PublishDelayMessage(ctx context.Context, in *delay_queue1.Delay
 	}
 
 	// convert request
-	var req delay_queue.DelayMessageRequest
-	bytes, err := json.Marshal(in)
+	req := &delay_queue.DelayMessageRequest{}
+	err := copier.CopyWithOption(req, in, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Marshal the request: %s", err.Error())
-	}
-	err = json.Unmarshal(bytes, &req)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Unmarshal the request: %s", err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when converting the request: %s", err.Error())
 	}
 
 	// delegate to the component
-	resp, err := comp.PublishDelayMessage(ctx, &req)
+	resp, err := comp.PublishDelayMessage(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	// convert response
-	var out delay_queue1.DelayMessageResponse
-	bytes, err = json.Marshal(resp)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Marshal the response: %s", err.Error())
-	}
-	err = json.Unmarshal(bytes, &out)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Unmarshal the response: %s", err.Error())
-	}
-	return &out, nil
+	out := &delay_queue1.DelayMessageResponse{MessageId: resp.MessageId}
+	return out, nil
 }
 
 func invalidArgumentError(method string, format string, a ...interface{}) error {
