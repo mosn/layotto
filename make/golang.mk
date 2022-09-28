@@ -152,7 +152,7 @@ go.test: go.test.verify
 	@echo "===========> Run unit test in pkg"
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./pkg/...`
 	@echo "===========> Run integration test in tests/integration"
-	$(GO) test -count=1 -timeout=10m -short -v `go list ./tests/integration/...`
+	$(GO) test -count=1 -timeout=10m -short -v `go list ./tests/... | grep -v wasm`
 
 .PHONY: go.style
 go.style:

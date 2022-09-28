@@ -20,11 +20,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/helbing/testtools/flow"
 	"github.com/stretchr/testify/assert"
 
 	"mosn.io/layotto/sdk/go-sdk/client"
-	"mosn.io/layotto/tests/tools/envrunner"
+	"mosn.io/layotto/tests/tools/envs/layotto"
+	"mosn.io/layotto/tests/tools/flow"
 )
 
 func TestComponentsStateRedis(t *testing.T) {
@@ -38,7 +38,7 @@ func TestComponentsStateRedis(t *testing.T) {
 		value     = []byte("hello world")
 	)
 
-	flow.New(envrunner.NewLayotto(t, "./docker-compose.yaml")).
+	flow.New(layotto.New(t, "./docker-compose.yaml")).
 		Case("Test state", func(t *testing.T) {
 			key := "test_state_key"
 

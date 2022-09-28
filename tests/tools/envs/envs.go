@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-// Packer envrunner is to implement env runners to up & down the environments
-// that test cases need.
-package envrunner
+// Package envs is the set of any environments you want to up & down when
+// testing.
+package envs

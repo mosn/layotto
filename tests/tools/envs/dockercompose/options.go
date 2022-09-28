@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package envrunner
+package dockercompose
 
 type Config struct {
 	workingDir string
@@ -23,6 +23,7 @@ type Config struct {
 	envVas map[string]string
 }
 
+// Option of New docker-compose runner.
 type Option func(*Config)
 
 func WithWorkingDir(dir string) Option {
