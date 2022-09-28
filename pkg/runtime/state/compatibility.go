@@ -1,4 +1,3 @@
-//
 // Copyright 2021 Layotto Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,7 +38,7 @@ type StoreConfiguration struct {
 	keyPrefixStrategy string
 }
 
-//Save StateConfiguration by storeName
+// Save StateConfiguration by storeName
 func SaveStateConfiguration(storeName string, metadata map[string]string) error {
 	// convert
 	strategy := metadata[strategyKey]

@@ -14,7 +14,7 @@ needGenerateQuickstart() {
   file=$1
 
   # check no `@exclude` tag
-  if [ $(grep "@exclude quickstart generator" $file | wc -l) -eq 0 ]; then
+  if [ $(grep "@exclude skip quickstart_generator" $file | wc -l) -eq 0 ]; then
     # check if there's a gRPC service in it
     if [ $(grep "service " $file | wc -l) -gt 0 ]; then
       return $true

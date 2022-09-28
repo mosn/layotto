@@ -42,7 +42,7 @@ func NewDefaultInjector(secretStores map[string]secretstores.SecretStore, config
 	return injector
 }
 
-//InjectSecretRef  inject secret to metaData
+// InjectSecretRef  inject secret to metaData
 // TODO: permission control
 func (i *DefaultInjector) InjectSecretRef(items []*ref.SecretRefConfig, metaData map[string]string) (map[string]string, error) {
 	if metaData == nil {
