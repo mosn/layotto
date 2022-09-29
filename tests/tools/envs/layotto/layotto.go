@@ -81,7 +81,7 @@ func (r *Runner) ensureStared() error {
 	// FIXME this is a temporary solution. Layotto have a healthcheck API,
 	// however, it doesn't require all components implement this API. So we
 	// don’t know if component is successed.
-	time.Sleep(time.Second * 3)
+	time.Sleep(time.Second * 5)
 
 	return nil
 }
