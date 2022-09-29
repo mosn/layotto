@@ -13,20 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package phone
+package delay_queue
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/jinzhu/copier"
+
 	"mosn.io/pkg/log"
 
-	phone "mosn.io/layotto/components/phone"
-	phone1 "mosn.io/layotto/spec/proto/extension/v1/phone"
+	delay_queue "mosn.io/layotto/components/delay_queue"
+	delay_queue1 "mosn.io/layotto/spec/proto/extension/v1/delay_queue"
 
 	rawGRPC "google.golang.org/grpc"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -34,43 +34,49 @@ import (
 )
 
 func NewAPI(ac *grpc_api.ApplicationContext) grpc_api.GrpcAPI {
-	return &server{
+	result := &server{
 		appId:      ac.AppId,
-		components: ac.PhoneCallService,
+		components: make(map[string]delay_queue.DelayQueue),
 	}
+
+	for k, v := range ac.PubSubs {
+		comp, ok := v.(delay_queue.DelayQueue)
+		if !ok {
+			continue
+		}
+		// put it in the components map
+		result.components[k] = comp
+	}
+	return result
 }
 
 type server struct {
 	appId      string
-	components map[string]phone.PhoneCallService
+	components map[string]delay_queue.DelayQueue
 }
 
-func (s *server) SendVoiceWithTemplate(ctx context.Context, in *phone1.SendVoiceWithTemplateRequest) (*phone1.SendVoiceWithTemplateResponse, error) {
+func (s *server) PublishDelayMessage(ctx context.Context, in *delay_queue1.DelayMessageRequest) (*delay_queue1.DelayMessageResponse, error) {
 	// find the component
 	comp := s.components[in.ComponentName]
 	if comp == nil {
-		return nil, invalidArgumentError("SendVoiceWithTemplate", grpc_api.ErrComponentNotFound, "phone1", in.ComponentName)
+		return nil, invalidArgumentError("PublishDelayMessage", grpc_api.ErrComponentNotFound, "delay_queue1", in.ComponentName)
 	}
 
 	// convert request
-	req := &phone.SendVoiceWithTemplateRequest{}
+	req := &delay_queue.DelayMessageRequest{}
 	err := copier.CopyWithOption(req, in, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Error when converting the request: %s", err.Error())
 	}
 
 	// delegate to the component
-	resp, err := comp.SendVoiceWithTemplate(ctx, req)
+	resp, err := comp.PublishDelayMessage(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	// convert response
-	out := &phone1.SendVoiceWithTemplateResponse{}
-	err = copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when converting the response: %s", err.Error())
-	}
+	out := &delay_queue1.DelayMessageResponse{MessageId: resp.MessageId}
 	return out, nil
 }
 
@@ -85,6 +91,6 @@ func (s *server) Init(conn *rawGRPC.ClientConn) error {
 }
 
 func (s *server) Register(rawGrpcServer *rawGRPC.Server) error {
-	phone1.RegisterPhoneCallServiceServer(rawGrpcServer, s)
+	delay_queue1.RegisterDelayQueueServer(rawGrpcServer, s)
 	return nil
 }

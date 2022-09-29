@@ -17,9 +17,9 @@ package email
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
+	"github.com/jinzhu/copier"
 	"mosn.io/pkg/log"
 
 	email "mosn.io/layotto/components/email"
@@ -53,33 +53,25 @@ func (s *server) SendEmail(ctx context.Context, in *email1.SendEmailRequest) (*e
 	}
 
 	// convert request
-	var req email.SendEmailRequest
-	bytes, err := json.Marshal(in)
+	req := &email.SendEmailRequest{}
+	err := copier.CopyWithOption(req, in, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Marshal the request: %s", err.Error())
-	}
-	err = json.Unmarshal(bytes, &req)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Unmarshal the request: %s", err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when converting the request: %s", err.Error())
 	}
 
 	// delegate to the component
-	resp, err := comp.SendEmail(ctx, &req)
+	resp, err := comp.SendEmail(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	// convert response
-	var out email1.SendEmailResponse
-	bytes, err = json.Marshal(resp)
+	out := &email1.SendEmailResponse{}
+	err = copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Marshal the response: %s", err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when converting the response: %s", err.Error())
 	}
-	err = json.Unmarshal(bytes, &out)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Unmarshal the response: %s", err.Error())
-	}
-	return &out, nil
+	return out, nil
 }
 
 func (s *server) SendEmailWithTemplate(ctx context.Context, in *email1.SendEmailWithTemplateRequest) (*email1.SendEmailWithTemplateResponse, error) {
@@ -90,33 +82,25 @@ func (s *server) SendEmailWithTemplate(ctx context.Context, in *email1.SendEmail
 	}
 
 	// convert request
-	var req email.SendEmailWithTemplateRequest
-	bytes, err := json.Marshal(in)
+	req := &email.SendEmailWithTemplateRequest{}
+	err := copier.CopyWithOption(req, in, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Marshal the request: %s", err.Error())
-	}
-	err = json.Unmarshal(bytes, &req)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Unmarshal the request: %s", err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when converting the request: %s", err.Error())
 	}
 
 	// delegate to the component
-	resp, err := comp.SendEmailWithTemplate(ctx, &req)
+	resp, err := comp.SendEmailWithTemplate(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	// convert response
-	var out email1.SendEmailWithTemplateResponse
-	bytes, err = json.Marshal(resp)
+	out := &email1.SendEmailWithTemplateResponse{}
+	err = copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Marshal the response: %s", err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when converting the response: %s", err.Error())
 	}
-	err = json.Unmarshal(bytes, &out)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Unmarshal the response: %s", err.Error())
-	}
-	return &out, nil
+	return out, nil
 }
 
 func invalidArgumentError(method string, format string, a ...interface{}) error {
