@@ -27,7 +27,7 @@ import (
 )
 
 const (
-	mysqlUrl      = "mysql"
+	mysqlHost     = "mysqlHost"
 	databaseName  = "databaseName"
 	tableName     = "tableName"
 	userName      = "userName"
@@ -40,6 +40,7 @@ const (
 	seqBits       = "seqBits"
 	startTime     = "startTime"
 
+	defaultTableName     = "layotto_sequencer_snowflake"
 	defalutBoostPower    = 3
 	defalutPaddingFactor = 50
 	defalutTimeBits      = 28
@@ -123,15 +124,14 @@ type MysqlMetadata struct {
 	TableName    string
 	Db           *sql.DB
 	//ip:port
-	MysqlUrl string
+	MysqlHost string
 }
 
 func ParseSnowflakeMysqlMetadata(properties map[string]string) (MysqlMetadata, error) {
 	m := MysqlMetadata{}
+	m.TableName = defaultTableName
 	if val, ok := properties[tableName]; ok && val != "" {
 		m.TableName = val
-	} else {
-		return m, errors.New("mysql connect error: missing table name")
 	}
 	if val, ok := properties[databaseName]; ok && val != "" {
 		m.DatabaseName = val
@@ -148,10 +148,10 @@ func ParseSnowflakeMysqlMetadata(properties map[string]string) (MysqlMetadata, e
 	} else {
 		return m, errors.New("mysql connect error: missing password")
 	}
-	if val, ok := properties[mysqlUrl]; ok && val != "" {
-		m.MysqlUrl = val
+	if val, ok := properties[mysqlHost]; ok && val != "" {
+		m.MysqlHost = val
 	} else {
-		return m, errors.New("mysql connect error: missing mysqlurl")
+		return m, errors.New("mysql connect error: missing mysqlHost")
 	}
 	return m, nil
 }
@@ -161,7 +161,7 @@ func NewMysqlClient(meta MysqlMetadata) (int64, error) {
 	var workId int64
 	//for unit test
 	if meta.Db == nil {
-		mysql := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=true&loc=Local", meta.UserName, meta.Password, meta.MysqlUrl, meta.DatabaseName, charset)
+		mysql := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=true&loc=Local", meta.UserName, meta.Password, meta.MysqlHost, meta.DatabaseName, charset)
 		db, err := sql.Open("mysql", mysql)
 		if err != nil {
 			return workId, err

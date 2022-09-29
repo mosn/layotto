@@ -29,9 +29,9 @@ import (
 )
 
 const (
-	mysqlUrl     = "localhost:3306"
-	databaseName = "layotto_sequence"
-	tableName    = "layotto_sequence_snowflake"
+	mysqlHost    = "localhost:3306"
+	databaseName = "layotto_sequencer"
+	tableName    = "layotto_sequencer_snowflake"
 	userName     = "root"
 	password     = "123456"
 
@@ -73,7 +73,7 @@ func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 		BiggerThan: make(map[string]int64),
 	}
 
-	cfg.Properties["mysql"] = mysqlUrl
+	cfg.Properties["mysqlHost"] = mysqlHost
 	cfg.Properties["databaseName"] = databaseName
 	cfg.Properties["tableName"] = tableName
 	cfg.Properties["userName"] = userName
@@ -132,7 +132,7 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 		BiggerThan: make(map[string]int64),
 	}
 
-	cfg.Properties["mysql"] = mysqlUrl
+	cfg.Properties["mysqlHost"] = mysqlHost
 	cfg.Properties["databaseName"] = databaseName
 	cfg.Properties["tableName"] = tableName
 	cfg.Properties["userName"] = userName

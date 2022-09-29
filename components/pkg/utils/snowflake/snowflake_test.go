@@ -61,7 +61,7 @@ func TestParseSnowflakeMysqlMetadata(t *testing.T) {
 	_, err := ParseSnowflakeMysqlMetadata(properties)
 	assert.Error(t, err)
 
-	properties["tableName"] = "layotto_sequence_snowflake"
+	properties["databaseName"] = "layotto_sequence_snowflake"
 	_, err = ParseSnowflakeMysqlMetadata(properties)
 	assert.Error(t, err)
 }
