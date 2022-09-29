@@ -26,9 +26,7 @@ import (
 )
 
 type DefaultInjector struct {
-	//limit ref component
-	ComponentLimit map[string]struct{}
-	Container      RefContainer
+	Container RefContainer
 }
 
 // NewDefaultInjector return a single Inject
