@@ -16,28 +16,17 @@
 package runtime
 
 import (
-	email "mosn.io/layotto/components/email"
-	phone "mosn.io/layotto/components/phone"
+	delay_queue "mosn.io/layotto/pkg/grpc/delay_queue"
+	email "mosn.io/layotto/pkg/grpc/email"
+	s3 "mosn.io/layotto/pkg/grpc/extension/s3"
+	phone "mosn.io/layotto/pkg/grpc/phone"
 )
 
-type extensionComponentFactorys struct {
-	// "mosn.io/layotto/spec/proto/extension/v1/email"
-	// email.
-	email []*email.Factory
-
-	// "mosn.io/layotto/spec/proto/extension/v1/phone"
-	// phone.
-	phone []*phone.Factory
-}
-
-func WithEmailServiceFactory(email ...*email.Factory) Option {
-	return func(o *runtimeOptions) {
-		o.services.email = append(o.services.email, email...)
-	}
-}
-
-func WithPhoneCallServiceFactory(phone ...*phone.Factory) Option {
-	return func(o *runtimeOptions) {
-		o.services.phone = append(o.services.phone, phone...)
-	}
+func WithExtensionGrpcAPI() Option {
+	return WithGrpcAPI(
+		s3.NewS3Server,
+		delay_queue.NewAPI,
+		email.NewAPI,
+		phone.NewAPI,
+	)
 }

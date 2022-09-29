@@ -13,31 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package runtime
+package delay_queue
 
 import (
-	email "mosn.io/layotto/components/email"
-	phone "mosn.io/layotto/components/phone"
+	context "context"
 )
 
-type extensionComponentFactorys struct {
-	// "mosn.io/layotto/spec/proto/extension/v1/email"
-	// email.
-	email []*email.Factory
-
-	// "mosn.io/layotto/spec/proto/extension/v1/phone"
-	// phone.
-	phone []*phone.Factory
-}
-
-func WithEmailServiceFactory(email ...*email.Factory) Option {
-	return func(o *runtimeOptions) {
-		o.services.email = append(o.services.email, email...)
-	}
-}
-
-func WithPhoneCallServiceFactory(phone ...*phone.Factory) Option {
-	return func(o *runtimeOptions) {
-		o.services.phone = append(o.services.phone, phone...)
-	}
+type DelayQueue interface {
+	PublishDelayMessage(context.Context, *DelayMessageRequest) (*DelayMessageResponse, error)
 }

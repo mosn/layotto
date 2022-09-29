@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "github.com/mosn/layotto/cmd/layotto_multiple_api/advanced_queue;advanced_queue";
+
+package cmd.layotto_multiple_api.advanced_queue;
+
+/* @exclude skip sdk_generator */
+/* @exclude extends pub_subs */
+// AdvancedQueue is advanced pubsub API
+service AdvancedQueue {
+
+  // Publish a transactional message
+  rpc PublishTransactionalMessage(TransactionalMessageRequest) returns (TransactionalMessageResponse);
+
+}
+
+// TransactionalMessageRequest
+message TransactionalMessageRequest {
+  //  Required
+  string store_name = 1;
+  //  Required
+  string content = 2;
+}
+
+// TransactionalMessageResponse
+message TransactionalMessageResponse {
+
+  // message_id is identifier of a message
+  string message_id = 1;
+}
