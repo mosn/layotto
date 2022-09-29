@@ -38,12 +38,9 @@ func TestPaddingRingBuffer(t *testing.T) {
 	rb.PaddingRingBuffer()
 
 	var uid int64
-	for i := 0; i < 8192; i++ {
+	for i := 0; i < 10000; i++ {
 		uid, err = rb.Take()
 		assert.NoError(t, err)
 		assert.NotEqual(t, uid, 0)
 	}
-	uid, err = rb.Take()
-	assert.NoError(t, err)
-	assert.NotEqual(t, uid, 0)
 }
