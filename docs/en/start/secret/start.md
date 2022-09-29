@@ -32,6 +32,7 @@ Once finished, the layotto file will be generated in the directory, run it:
 ### Step 2: Run the client program and call Layotto to get the secret
 <!-- tabs:start -->
 ### **Go**
+
 ```shell
  cd ${project_path}/demo/secret/common/
 ```
@@ -50,6 +51,7 @@ If the following information is printed, the demo is successful:
 data:{key:"db-user-pass:password" value:"S!S*d$zDsb="}
 data:{key:"db-user-pass:password" value:{secrets:{key:"db-user-pass:password" value:"S!S*d$zDsb="}}} data:{key:"db-user-pass:username" value:{secrets:{key:"db-user-pass:username" value:"devuser"}}}
 ```
+
 ### **Java**
 
 Download java sdk and examples:

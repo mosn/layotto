@@ -31,6 +31,7 @@ go build -o layotto
 ### 第二步：运行客户端程序，调用 Layotto 获取 secret
 <!-- tabs:start -->
 ### **Go**
+
 ```shell
  cd ${project_path}/demo/secret/common/
 ```
@@ -49,6 +50,7 @@ go build -o layotto
 data:{key:"db-user-pass:password" value:"S!S*d$zDsb="}
 data:{key:"db-user-pass:password" value:{secrets:{key:"db-user-pass:password" value:"S!S*d$zDsb="}}} data:{key:"db-user-pass:username" value:{secrets:{key:"db-user-pass:username" value:"devuser"}}}
 ```
+
 ### **Java**
 下载 java sdk 和示例代码:
 
