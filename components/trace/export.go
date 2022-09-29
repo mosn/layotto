@@ -1,4 +1,3 @@
-//
 // Copyright 2021 Layotto Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +16,7 @@ import (
 	"sync"
 )
 
-//Exporter  is used to export Span
+// Exporter  is used to export Span
 type Exporter interface {
 	ExportSpan(s *Span)
 }

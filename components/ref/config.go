@@ -16,7 +16,7 @@
 
 package ref
 
-//Config is ref json config
+// Config is ref json config
 type Config struct {
 	SecretRef []*Item `json:"secret_ref"`
 }

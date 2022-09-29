@@ -1,4 +1,3 @@
-//
 // Copyright 2021 Layotto Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +59,7 @@ func NewStore() configstores.Store {
 	return &EtcdV3ConfigStore{subscribeKey: make(map[string]string), watchRespCh: make(chan *configstores.SubscribeResp)}
 }
 
-//Init init the configuration store.
+// Init init the configuration store.
 func (c *EtcdV3ConfigStore) Init(config *configstores.StoreConfig) error {
 	t, err := strconv.Atoi(config.TimeOut)
 	if err != nil {
