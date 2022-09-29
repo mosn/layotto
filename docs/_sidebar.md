@@ -4,7 +4,9 @@
   - Use Configuration API
     - [Use Apollo as configuration center](en/start/configuration/start-apollo.md)
     - [Use Etcd as configuration center](en/start/configuration/start.md)
-  - [Use Pub/Sub API](en/start/pubsub/start.md)
+  - Publish or subscribe messages
+    - [Use Pub/Sub API](en/start/pubsub/start.md)
+    - [(Under construction) Use DelayQueue API](en/start/delay_queue/start)
   - [Use Distributed Lock API](en/start/lock/start.md)
   - [Use Sequencer API](en/start/sequencer/start.md)
   - Use Secret API

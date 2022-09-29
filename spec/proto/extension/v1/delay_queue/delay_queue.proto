@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package spec.proto.extension.v1.delay_queue;
+
+option go_package = "mosn.io/layotto/spec/proto/extension/v1/delay_queue;delay_queue";
+
+/* @exclude extends pub_subs */
+// DelayQueue is a special kind of message queue, which lets you postpone the delivery of new messages to consumers.
+service DelayQueue {
+
+  // Publish a delay message
+  rpc PublishDelayMessage(DelayMessageRequest) returns (DelayMessageResponse) {}
+
+}
+
+// DelayMessageRequest is the message to publish
+message DelayMessageRequest {
+
+  // Required. The name of the DelayQueue component
+  string component_name = 1;
+
+  // Required. The pubsub topic
+  string topic = 2;
+
+  // Required. The data which will be published to topic.
+  bytes data = 3;
+
+  // The content type for the data (optional).
+  string data_content_type = 4;
+
+
+  // The length of time, in seconds, for which the delivery
+  // of this messages is delayed.  Default: 0.
+  int32 delay_in_seconds = 5;
+
+  // The metadata passing to pub components
+  //
+  // metadata property:
+  // - key : the key of the message.
+  map<string, string> metadata = 6;
+}
+
+// DelayMessageResponse is the response
+message DelayMessageResponse {
+
+  // The message identifier
+  string message_id = 1;
+}
