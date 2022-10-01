@@ -59,24 +59,24 @@ func TestInject(t *testing.T) {
 	injector.InjectSecretRef(items, meta)
 	assert.Equal(t, meta["ref-key"], "life is good")
 	assert.Equal(t, meta["good-key"], "life is good")
-	secretStoreRef, err := injector.InjectSecretStoreRef(&ref.ComponentRefConfig{
+	secretStoreRef, err := injector.GetSecretStore(&ref.ComponentRefConfig{
 		SecretStore: "fake_secret_store",
 	})
 	assert.Nil(t, err)
 	assert.Equal(t, secretStoreRef, ss)
 
-	_, err = injector.InjectSecretStoreRef(&ref.ComponentRefConfig{
+	_, err = injector.GetSecretStore(&ref.ComponentRefConfig{
 		SecretStore: "null",
 	})
 	assert.NotNil(t, err)
 
-	configStoreRef, err := injector.InjectConfigStoreRef(&ref.ComponentRefConfig{
+	configStoreRef, err := injector.GetConfigStore(&ref.ComponentRefConfig{
 		ConfigStore: "mock_config_store",
 	})
 	assert.Nil(t, err)
 	assert.Equal(t, configStoreRef, cf)
 
-	_, err = injector.InjectConfigStoreRef(&ref.ComponentRefConfig{
+	_, err = injector.GetConfigStore(&ref.ComponentRefConfig{
 		ConfigStore: "null",
 	})
 	assert.NotNil(t, err)
