@@ -14,6 +14,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.14
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.10
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
+	github.com/dapr/components-contrib v1.5.2 // indirect
 	github.com/go-redis/redis/v8 v8.8.0
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/golang/mock v1.6.0
@@ -36,9 +37,8 @@ require (
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.etcd.io/etcd/server/v3 v3.5.0
 	go.mongodb.org/mongo-driver v1.8.0
-	go.uber.org/atomic v1.7.0
+	go.uber.org/atomic v1.8.0
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
-	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
 	google.golang.org/grpc v1.38.0
 	mosn.io/api v1.1.0
 	mosn.io/mosn v1.1.0
