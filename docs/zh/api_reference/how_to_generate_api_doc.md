@@ -1,6 +1,7 @@
 # 如何基于proto文件生成代码、文档
 
-假设你已经实现了一个新的proto文件`spec/proto/extension/v1/email/email.proto`，并且想在Layotto中实现这个API。
+假设你写了一个新的proto文件`spec/proto/extension/v1/email/email.proto`，并且想在Layotto中实现这个API。
+
 ```protobuf
 // EmailService 用来发送电子邮件
 service EmailService {
@@ -13,7 +14,7 @@ service EmailService {
 
 }
 
-// 不同的信息类型......
+// 不同的message类型......
 ```
 
 这将会是一项非常繁琐的工作，你必须为此编写大量的代码和文档。
@@ -35,11 +36,11 @@ service EmailService2 {
   // ...
 }
 
-// 不同的信息类型......
+// 不同的message类型......
 ```
 
 - 如果你不想为proto生成quickstart docs，添加注释`/* @exclude skip quickstart_generator */` 。
-- 如果你不想为proto生成sdk和sidecar，添加注释`/* @exclude skip code_generator */` 。
+- 如果你不想为proto生成sdk和sidecar代码，添加注释`/* @exclude skip code_generator */` 。
 
 你可以把 `spec/proto/extension/v1/s3/oss.proto` 作为一个例子 :
 
@@ -73,13 +74,13 @@ make proto
   - `.pb.go`
   - `_grpc.pb.go`
   - layotto go-sdk
-  - layotto sidecar
+  - layotto sidecar 代码（实现了新的 API ）
 - 生成的文档
-  - API参考文档
-  - 更新的API参考列表
-  - 快速入门文件（包括中文和英文）
-  - 更新的侧边栏（该工具将把生成的快速入门文档添加到https://mosn.io/layotto 的侧边栏中）
-- 更新的CI（该工具将把生成的快速入门文档添加到CI脚本`etc/script/test-quickstart.sh`中）
+  - API 参考文档
+  - 自动更新 API 文档列表
+  - quickstart 文档（包括中文和英文）
+  - 自动更新侧边栏（该工具将把生成的快速入门文档添加到https://mosn.io/layotto 的侧边栏中）
+- 自动更新 CI（该工具将把生成的快速入门文档添加到CI脚本`etc/script/test-quickstart.sh`中）
 ## 步骤四：编写其余的代码
 现在，你需要完成如下代码的编写工作：
 
@@ -92,8 +93,8 @@ make proto
 
 ![image](https://user-images.githubusercontent.com/26001097/188782989-9aec893f-9d12-4ee6-9a64-940b0ba1ba1b.png)
 
-## 花絮
-我们有一个叫做[protoc-gen-p6](https://github.com/seeflood/protoc-gen-p6)的protoc插件，主要为Layotto生成代码。 
+## 实现原理
+我们有一个叫做[protoc-gen-p6](https://github.com/seeflood/protoc-gen-p6)的protoc插件，用于为Layotto生成代码。 
 
 ## 如果只想生成pb/documentataion怎么办？
 上面的步骤生成了所有的文件，但如果只想生成`.pb.go`代码怎么办？如果只想生成文档呢？
