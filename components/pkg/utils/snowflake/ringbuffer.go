@@ -15,9 +15,9 @@ package snowflake
 
 import (
 	"errors"
+	"runtime"
 	"sync"
 	"sync/atomic"
-	"time"
 
 	"mosn.io/pkg/log"
 )
@@ -93,12 +93,9 @@ func (r *RingBuffer) Put(uid int64) (bool, error) {
 	}
 
 	nextWriteIndex := (currentWritePointer + 1) & (r.bufferSize - 1)
-	if r.flags[nextWriteIndex].Value != CAN_PUT_FLAG {
-		//The flag at this location may not have been updated
-		time.Sleep(time.Microsecond)
-		if r.flags[nextWriteIndex].Value != CAN_PUT_FLAG {
-			return false, errors.New("slot is not in writable status")
-		}
+	//The flag at this location may not have been updated after reading a uid, so yield the processor to update it
+	for r.flags[nextWriteIndex].Value != CAN_PUT_FLAG {
+		runtime.Gosched()
 	}
 
 	r.slots[nextWriteIndex] = uid
@@ -113,12 +110,14 @@ func (r *RingBuffer) Take() (int64, error) {
 	var currentReadPointer int64
 	var nextReadPointer int64
 
-	//atomically update r.rp.value if r.rp.Value != r.wp.Value
+	//atomically update r.rp.value if r.rp.Value != r.wp.Value, otherwise wait until r.rp.Value != r.wp.Value
 	for {
 		currentReadPointer = r.rp.Value
 		nextReadPointer = currentReadPointer
 		if currentReadPointer < r.wp.Value {
 			nextReadPointer++
+		} else {
+			continue
 		}
 		if atomic.CompareAndSwapInt64(&r.rp.Value, currentReadPointer, nextReadPointer) {
 			break
@@ -129,21 +128,14 @@ func (r *RingBuffer) Take() (int64, error) {
 		go r.PaddingRingBuffer()
 	}
 
-	//if buffer is empty, wait a moment
 	if currentReadPointer == nextReadPointer {
-		running := false
-		for !running {
-			running = r.PaddingRingBuffer()
-		}
-		if currentReadPointer == nextReadPointer {
-			log.DefaultLogger.Warnf("buffer is empty")
-		}
+		panic("read pointer is false")
 	}
 
-	//check next slot flag is CAN_TAKE_FLAG
 	nextReadIndex := nextReadPointer & (r.bufferSize - 1)
+	//check next slot flag is CAN_TAKE_FLAG
 	if atomic.LoadInt64(&r.flags[nextReadIndex].Value) != CAN_TAKE_FLAG {
-		return uid, errors.New("buffer is empty! Please request again")
+		panic("slot is not in can take status")
 	}
 
 	uid = r.slots[nextReadIndex]
@@ -186,7 +178,7 @@ func (r *RingBuffer) PaddingRingBuffer() bool {
 	}()
 
 	//there can only be one padding goroutine at a time, to ensure uids are strictly increasing
-	if !atomic.CompareAndSwapInt32(&r.running, 0, 1) {
+	if r.wp.Value-r.rp.Value > r.bufferSize*r.PaddingFactor/100 || !atomic.CompareAndSwapInt32(&r.running, 0, 1) {
 		return false
 	}
 

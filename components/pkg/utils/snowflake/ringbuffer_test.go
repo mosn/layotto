@@ -21,7 +21,7 @@ import (
 )
 
 func TestPaddingRingBuffer(t *testing.T) {
-	rb := NewRingBuffer(8192)
+	rb := NewRingBuffer(65536)
 
 	rb.TimeBits = 28
 	rb.WorkIdBits = 22
@@ -38,7 +38,7 @@ func TestPaddingRingBuffer(t *testing.T) {
 	rb.PaddingRingBuffer()
 
 	var uid int64
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 100000; i++ {
 		uid, err = rb.Take()
 		assert.NoError(t, err)
 		assert.NotEqual(t, uid, 0)

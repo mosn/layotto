@@ -84,7 +84,7 @@ func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 
 	var falseUidNum int
 	var preUid int64
-	var size int = 10000
+	var size int = 100000
 	for i := 0; i < size; i++ {
 		resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
 			Key: key,
@@ -130,16 +130,16 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	var size int = 1000
+	var size int = 100000
 	var falseUidNum int
 	var preUid int64
 	var cores int = runtime.NumCPU()
 
 	var wg sync.WaitGroup
 	var mu sync.Mutex
-	wg.Add(cores)
+	wg.Add(2 * cores)
 
-	for i := 0; i < cores; i++ {
+	for i := 0; i < 2*cores; i++ {
 		go func() {
 			defer func() {
 				if x := recover(); x != nil {
@@ -147,6 +147,7 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 				}
 			}()
 			for j := 0; j < size; j++ {
+				//assert next uid is bigger than previous
 				mu.Lock()
 				resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
 					Key: key,

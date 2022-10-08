@@ -11,8 +11,8 @@
 | password      | Y    | mysql密码                                                    |
 | databaseName  | Y    | mysql数据库名                                                |
 | tableName     | N    | mysql表名                                                    |
-| boostPower    | N    | RingBuffer扩容参数，默认3，扩容后buffersize = 8192 << 3=65536 |
-| paddingFactor | N    | 少于总容量的该百分比向RingBuffer中填充UID，取值为（0，100），默认为50 |
+| boostPower    | N    | RingBuffer扩容参数，默认3，扩容后buffersize = 8192 << 3=65536。id需求量大时可适当调大 |
+| paddingFactor | N    | 少于总容量的该百分比向RingBuffer中填充UID，取值为（0，100），默认为50。id需求量大时可适当调大 |
 | timeBits      | N    | 时间戳所占位数大小。默认为28                                 |
 | workerBits    | N    | 机器id所占位数大小。默认为22                                 |
 | seqBits       | N    | 序列号所占位数大小。默认为13                                 |
@@ -27,6 +27,8 @@
 ## 怎么启动 mysql
 
 如果想启动snowflake的demo，需要先用Docker启动一个mysql命令：
+
+>如果3306端口被其他服务占用，需要先退出其他服务
 
 ```shell 
 docker pull mysql:latest
