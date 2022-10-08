@@ -33,7 +33,7 @@ func TestRefContainer(t *testing.T) {
 	container.SecretRef["fake"] = ss
 	cf := &mock.MockStore{}
 	container.ConfigRef["mock"] = cf
-	assert.Equal(t, ss, container.GetSecretStore("fake"))
-	assert.Equal(t, cf, container.GetConfigStore("mock"))
+	assert.Equal(t, ss, container.getSecretStore("fake"))
+	assert.Equal(t, cf, container.getConfigStore("mock"))
 
 }
