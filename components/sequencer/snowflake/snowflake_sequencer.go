@@ -100,8 +100,13 @@ func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 func (s *SnowFlakeSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequencer.GetNextIdResponse, error) {
 	var id int64
 	var ok bool
-	if id, ok = <-s.ch; !ok {
-		return nil, errors.New("timeBits has been used up, please adjust the start time")
+	select {
+	case id, ok = <-s.ch:
+		if !ok {
+			return nil, errors.New("timeBits has been used up, please adjust the start time")
+		}
+	case <-time.After(10 * time.Second):
+		return nil, errors.New("time out, please request again")
 	}
 
 	return &sequencer.GetNextIdResponse{
