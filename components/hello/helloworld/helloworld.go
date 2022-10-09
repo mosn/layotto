@@ -20,11 +20,16 @@ import (
 	"context"
 	"sync/atomic"
 
+	"github.com/dapr/components-contrib/secretstores"
+
+	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 )
 
 type HelloWorld struct {
-	Say atomic.Value
+	Say         atomic.Value
+	config      configstores.Store
+	secretStore secretstores.SecretStore
 }
 
 func (hw *HelloWorld) ApplyConfig(ctx context.Context, metadata map[string]string) (err error) {
@@ -33,6 +38,17 @@ func (hw *HelloWorld) ApplyConfig(ctx context.Context, metadata map[string]strin
 		return nil
 	}
 	hw.Say.Store(greetings)
+	return nil
+}
+
+func (hw *HelloWorld) SetConfigStore(cs configstores.Store) (err error) {
+	//save for use
+	hw.config = cs
+	return nil
+}
+func (hw *HelloWorld) SetSecretStore(ss secretstores.SecretStore) (err error) {
+	//save for use
+	hw.secretStore = ss
 	return nil
 }
 
