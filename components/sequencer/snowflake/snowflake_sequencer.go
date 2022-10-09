@@ -86,12 +86,11 @@ func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 					if len(s.ch) == 0 {
 						close(s.ch)
 						return
-					} else {
-						continue
 					}
+				} else {
+					s.ch <- id
+					id++
 				}
-				s.ch <- id
-				id++
 			}
 		}
 	}(s.ctx, startId, maxId)
