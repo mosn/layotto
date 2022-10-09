@@ -47,13 +47,13 @@ const (
 
 type SnowflakeMetadata struct {
 	// MysqlMetadata
+	//ip:port
+	MysqlHost    string
 	UserName     string
 	Password     string
 	DatabaseName string
 	TableName    string
 	Db           *sql.DB
-	//ip:port
-	MysqlHost string
 
 	WorkIdBits int64
 	TimeBits   int64

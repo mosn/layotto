@@ -26,7 +26,7 @@ import (
 )
 
 type SnowFlakeSequencer struct {
-	metadata   *utils.SnowflakeMetadata
+	metadata   utils.SnowflakeMetadata
 	ch         chan int64
 	db         *sql.DB
 	biggerThan map[string]int64
@@ -50,12 +50,12 @@ func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 	//for unit test
 	mm.Db = s.db
 
-	s.metadata = &mm
+	s.metadata = mm
 	s.biggerThan = config.BiggerThan
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
 	var workId int64
-	if workId, err = utils.NewMysqlClient(*s.metadata); err != nil {
+	if workId, err = utils.NewMysqlClient(s.metadata); err != nil {
 		return err
 	}
 
