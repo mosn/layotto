@@ -28,6 +28,7 @@ type RefContainer struct {
 	ConfigRef map[string]configstores.Store
 }
 
+// NewRefContainer return a new container
 func NewRefContainer() *RefContainer {
 	return &RefContainer{
 		SecretRef: make(map[string]secretstores.SecretStore),
@@ -35,10 +36,10 @@ func NewRefContainer() *RefContainer {
 	}
 }
 
-func (r *RefContainer) GetSecretStore(key string) secretstores.SecretStore {
+func (r *RefContainer) getSecretStore(key string) secretstores.SecretStore {
 	return r.SecretRef[key]
 }
 
-func (r *RefContainer) GetConfigStore(key string) configstores.Store {
+func (r *RefContainer) getConfigStore(key string) configstores.Store {
 	return r.ConfigRef[key]
 }

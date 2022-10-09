@@ -13,6 +13,8 @@ Layotto 有多个 gRPC proto 文件, 对应的接口文档在：
 
 
 
+delay_queue: [spec/proto/extension/v1/delay_queue](https://mosn.io/layotto/api/v1/delay_queue.html) 
+
 email: [spec/proto/extension/v1/email](https://mosn.io/layotto/api/v1/email.html) 
 
 phone: [spec/proto/extension/v1/phone](https://mosn.io/layotto/api/v1/phone.html) 

@@ -18,7 +18,7 @@ const (
 	defaultGenerator   = "mosntracing"
 )
 
-//grpcTracer  is used to start a new Span
+// grpcTracer  is used to start a new Span
 type grpcTracer struct {
 	config map[string]interface{}
 }

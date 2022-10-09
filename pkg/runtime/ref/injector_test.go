@@ -35,23 +35,23 @@ func TestInject(t *testing.T) {
 	cf := &mock.MockStore{}
 	container.ConfigRef["mock_config_store"] = cf
 
-	injector := DefaultInjector{Container: *container}
+	injector := NewDefaultInjector(container.SecretRef, container.ConfigRef)
 	meta := make(map[string]string)
 
-	var items []*ref.Item
+	var items []*ref.SecretRefConfig
 	secretRef, err := injector.InjectSecretRef(nil, meta)
 	assert.Nil(t, err)
 	assert.Equal(t, len(secretRef), 0)
 	secretRef, err = injector.InjectSecretRef(items, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, len(secretRef), 0)
-	items = append(items, &ref.Item{
+	items = append(items, &ref.SecretRefConfig{
 		StoreName: "fake_secret_store",
 		Key:       "good-key",
 		SubKey:    "good-key",
 		InjectAs:  "ref-key",
 	})
-	items = append(items, &ref.Item{
+	items = append(items, &ref.SecretRefConfig{
 		StoreName: "fake_secret_store",
 		Key:       "good-key",
 		SubKey:    "good-key",
@@ -59,5 +59,25 @@ func TestInject(t *testing.T) {
 	injector.InjectSecretRef(items, meta)
 	assert.Equal(t, meta["ref-key"], "life is good")
 	assert.Equal(t, meta["good-key"], "life is good")
+	secretStoreRef, err := injector.GetSecretStore(&ref.ComponentRefConfig{
+		SecretStore: "fake_secret_store",
+	})
+	assert.Nil(t, err)
+	assert.Equal(t, secretStoreRef, ss)
 
+	_, err = injector.GetSecretStore(&ref.ComponentRefConfig{
+		SecretStore: "null",
+	})
+	assert.NotNil(t, err)
+
+	configStoreRef, err := injector.GetConfigStore(&ref.ComponentRefConfig{
+		ConfigStore: "mock_config_store",
+	})
+	assert.Nil(t, err)
+	assert.Equal(t, configStoreRef, cf)
+
+	_, err = injector.GetConfigStore(&ref.ComponentRefConfig{
+		ConfigStore: "null",
+	})
+	assert.NotNil(t, err)
 }

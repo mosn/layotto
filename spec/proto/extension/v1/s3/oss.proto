@@ -11,8 +11,8 @@ option go_package = "mosn.io/layotto/spec/proto/extension/v1/s3;s3";
 option java_outer_classname = "ObjectStorageProto";
 option java_package = "spec.proto.extension.v1.s3";
 
-/* @exclude quickstart generator */
-/* @exclude code generator */
+/* @exclude skip quickstart_generator */
+/* @exclude skip code_generator */
 // ObjectStorageService is an abstraction for blob storage or so called "object storage", such as alibaba cloud OSS, such as AWS S3.
 // You invoke ObjectStorageService API to do some CRUD operations on your binary file, e.g. query my file, delete my file, etc.
 service ObjectStorageService{

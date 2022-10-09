@@ -1,85 +1,88 @@
 # 如何基于proto文件生成代码、文档
 
-Suppose you wrote a new proto file `spec/proto/extension/v1/email/email.proto` and you want to implement this API in Layotto:
+假设你写了一个新的proto文件`spec/proto/extension/v1/email/email.proto`，并且想在Layotto中实现这个API。
 
 ```protobuf
-// EmailService is used to send emails.
+// EmailService 用来发送电子邮件
 service EmailService {
 
-  // Send an email with template
+  // 发送带有模板的电子邮件
   rpc SendEmailWithTemplate(SendEmailWithTemplateRequest) returns (SendEmailWithTemplateResponse) {}
 
-  // Send an email with raw content instead of using templates.
+  // 不使用模板，发送带有原始信息的电子邮件
   rpc SendEmail(SendEmailRequest) returns (SendEmailResponse) {}
 
 }
 
-// different message types......
+// 不同的message类型......
 ```
 
-It's a tedious job because you have to write a lot of code and docs.
+这将会是一项非常繁琐的工作，你必须为此编写大量的代码和文档。
 
-Fortunately, Layotto has tools to generate the code/docs/CI configuration automatically. You don't have to do the job yourself!
+幸运的是，Layotto通过工具可以自动生成代码/文档/CI配置，这将为你节省大量的时间！
 
-## step 1. Make sure your proto file meets the following requirements
-- The file path should be `spec/proto/extension/v1/{api short name}/{api short name}.proto`
-- There should be only one `service` in the proto file. For example, the following file is **WRONG** :
+## 步骤一：请确保你的proto文件满足以下要求
+- 文件路径应该为`spec/proto/extension/v1/{api short name}/{api short name}.proto`
+- 每个proto文件中只能有一个`service`。下面是一个错误的示例:
 
 ```protobuf
-// EmailService is used to send emails.
+//  EmailService 用来发送电子邮件
 service EmailService {
   // ...
 }
 
-// Wrong: there should be only one `service` in a `.proto` file
+// Wrong: 在.proto文件中应该只有一个service。
 service EmailService2 {
   // ...
 }
 
-// different message types......
+// 不同的message类型......
 ```
 
-- If you don't want to generate the quickstart docs for the proto, add a comment `/* @exclude quickstart generator */` . 
-- If you don't want to generate the sdk & sidecar code for the proto, add a comment `/* @exclude code generator */` . 
-  
-You can take the `spec/proto/extension/v1/s3/oss.proto` as an example:
+- 如果你不想为proto生成quickstart docs，添加注释`/* @exclude skip quickstart_generator */` 。
+- 如果你不想为proto生成sdk和sidecar代码，添加注释`/* @exclude skip code_generator */` 。
+
+你可以把 `spec/proto/extension/v1/s3/oss.proto` 作为一个例子 :
 
 ```protobuf
-/* @exclude quickstart generator */
-/* @exclude code generator */
-// ObjectStorageService is an abstraction for blob storage or so called "object storage", such as alibaba cloud OSS, such as AWS S3.
-// You invoke ObjectStorageService API to do some CRUD operations on your binary file, e.g. query my file, delete my file, etc.
+/* @exclude skip quickstart_generator */
+/* @exclude skip code_generator */
+// ObjectStorageService是对blob存储或所谓的 "对象存储 "的抽象，例如阿里云OSS，AWS S3。
+// 调用ObjectStorageService API对二进制文件进行一些CRUD操作，例如，对文件进行查询，删除操作等。
 service ObjectStorageService{
   //......
 }
 ```
 
-## step 2. Check the environment
-To run the generator, you need:
-- Go version >=1.16
-- Start Docker
+这些特殊的注释被称为 "Master's commands"，还有许多其他的命令，你可以查看[文档](https://github.com/seeflood/protoc-gen-p6#masters-commands)了解更多细节。
 
-## step 3. Generate everything
+## 步骤二：检查环境
+
+要运行生成器，你需要满足如下条件：
+- Go语言版本 >=1.16
+- 启用Docker
+
+## 步骤三：开始生成
 
 ```shell
 make proto
 ```
 
-Then you get:
-- Generated code
-    - `.pb.go` code
-    - `_grpc.pb.go` code
-    - layotto go-sdk code
-    - layotto sidecar code
-- Generated documentation
-    - API reference docs
-    - updated API reference list
-    - quickstart document (both chinese and english)
-    - updated sidebar (The tool will add the generated quickstart doc into the sidebar of https://mosn.io/layotto )
-- Updated CI (The tool will add the generated quickstart doc into the CI script `etc/script/test-quickstart.sh`)
+执行命令后，你将会得到：
 
-## step 4. Write the rest of the code
-Now it's your job to implement:
+- 生成的代码
+  - `.pb.go`
+  - `_grpc.pb.go`
+  - layotto go-sdk
+  - layotto sidecar 代码（实现了新的 API ）
+- 生成的文档
+  - API 参考文档
+  - 自动更新 API 文档列表
+  - quickstart 文档（包括中文和英文）
+  - 自动更新侧边栏（该工具将把生成的快速入门文档添加到https://mosn.io/layotto 的侧边栏中）
+- 自动更新 CI（该工具将把生成的快速入门文档添加到CI脚本`etc/script/test-quickstart.sh`中）
+## 步骤四：编写其余的代码
+现在，你需要完成如下代码的编写工作：
 
 - Layotto component
 - go examples
@@ -90,11 +93,11 @@ Now it's your job to implement:
 
 ![image](https://user-images.githubusercontent.com/26001097/188782989-9aec893f-9d12-4ee6-9a64-940b0ba1ba1b.png)
 
-## Behind the scenes
-We have a protoc plugin called [protoc-gen-p6](https://github.com/seeflood/protoc-gen-p6) to generate code for Layotto. 
+## 实现原理
+我们有一个叫做[protoc-gen-p6](https://github.com/seeflood/protoc-gen-p6)的protoc插件，用于为Layotto生成代码。 
 
-## What if I want to generate pb/documentation only?
-The steps above generate everything, but what if I only want to generate `.pb.go` code ? What if I only want to generate the docs?
+## 如果只想生成pb/documentataion怎么办？
+上面的步骤生成了所有的文件，但如果只想生成`.pb.go`代码怎么办？如果只想生成文档呢？
 
 ### 如何把 proto 文件编译成`.pb.go`代码
 <!-- tabs:start -->
@@ -110,11 +113,11 @@ make proto-code
 这种方式更方便，开发者不需要修改本地 protoc 版本，省去了很多烦恼。
 
 #### **手动安装工具**
-1. Install protoc version: [v3.17.3](https://github.com/protocolbuffers/protobuf/releases/tag/v3.17.3)
+1. 安装 protoc version: [v3.17.3](https://github.com/protocolbuffers/protobuf/releases/tag/v3.17.3)
 
-2. Install protoc-gen-go v1.28 and protoc-gen-go-grpc v1.2
-
-3. Generate gRPC `.pb.go` code
+2. 安装 protoc-gen-go v1.28 和 protoc-gen-go-grpc v1.2
+ 
+3. 生成gRPC `.pb.go`
 
 ```bash
 cd spec/proto/runtime/v1
@@ -136,8 +139,8 @@ make proto-doc
 该命令会用 docker 启动 protoc-gen-doc，生成文档
 
 #### **用 docker 启动 protoc-gen-doc**
-`make proto-doc` invokes the script `etc/script/generate-doc.sh`, which uses docker to run protoc-gen-doc.
+`make proto-doc` 调用了脚本 `etc/script/generate-doc.sh`,这个脚本的作用是使用docker运行protoc-gen-doc.
 
-You can check `etc/script/generate-doc.sh` for more details.
+你可以在 `etc/script/generate-doc.sh` 查看更多细节。
 
 <!-- tabs:end -->

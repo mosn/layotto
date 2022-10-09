@@ -17,9 +17,6 @@ linters :
     - gofmt
     - ineffassign
     - govet
-    - deadcode
-    - structcheck
-    - varcheck
     - typecheck
     - unconvert
     - staticcheck
