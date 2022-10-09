@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package snowflake
+package utils
 
 import (
 	"database/sql"
@@ -21,48 +21,33 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseSnowflakeRingBufferMetadata(t *testing.T) {
+func TestParseSnowflakeMetadata(t *testing.T) {
 	properties := make(map[string]string)
 
+	_, err := ParseSnowflakeMetadata(properties)
+	assert.Error(t, err)
+
+	properties["mysqlHost"] = "localhost:3306"
+	properties["databaseName"] = "layotto_sequencer_snowflake"
+	properties["userName"] = "root"
+	properties["password"] = "123456"
+	_, err = ParseSnowflakeMetadata(properties)
+	assert.NoError(t, err)
+
+	properties["workerBits"] = "a"
+	_, err = ParseSnowflakeMetadata(properties)
+	assert.Error(t, err)
+
+	properties["workerBits"] = ""
+	properties["startTime"] = "2022.01.01"
+	_, err = ParseSnowflakeMetadata(properties)
+	assert.Error(t, err)
+
+	properties["startTime"] = "2022-01-01"
 	properties["workerBits"] = "1"
 	properties["timeBits"] = "1"
 	properties["seqBits"] = "1"
-	_, err := ParseSnowflakeRingBufferMetadata(properties)
-	assert.Error(t, err)
-
-	properties["startTime"] = "2022.01.01"
-	_, err = ParseSnowflakeRingBufferMetadata(properties)
-	assert.Error(t, err)
-
-	properties["boostPower"] = "a"
-	_, err = ParseSnowflakeRingBufferMetadata(properties)
-	assert.Error(t, err)
-
-	properties["paddingFactor"] = "a"
-	_, err = ParseSnowflakeRingBufferMetadata(properties)
-	assert.Error(t, err)
-
-	properties["workerBits"] = "a"
-	_, err = ParseSnowflakeRingBufferMetadata(properties)
-	assert.Error(t, err)
-
-	properties["timeBits"] = "a"
-	_, err = ParseSnowflakeRingBufferMetadata(properties)
-	assert.Error(t, err)
-
-	properties["seqBits"] = "a"
-	_, err = ParseSnowflakeRingBufferMetadata(properties)
-	assert.Error(t, err)
-}
-
-func TestParseSnowflakeMysqlMetadata(t *testing.T) {
-	properties := make(map[string]string)
-
-	_, err := ParseSnowflakeMysqlMetadata(properties)
-	assert.Error(t, err)
-
-	properties["databaseName"] = "layotto_sequence_snowflake"
-	_, err = ParseSnowflakeMysqlMetadata(properties)
+	_, err = ParseSnowflakeMetadata(properties)
 	assert.Error(t, err)
 }
 
@@ -84,7 +69,7 @@ func TestNewMysqlClient(t *testing.T) {
 	mock.ExpectQuery("SELECT ID").WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 	mock.ExpectCommit()
 
-	m := MysqlMetadata{}
+	m := SnowflakeMetadata{}
 	m.Db = db
 	workId, err := NewMysqlClient(m)
 	assert.NoError(t, err)

@@ -11,9 +11,7 @@ Example: configs/config_snowflake.json
 | password      | Y        | mysql password                                               |
 | databaseName  | Y        | mysql database name                                          |
 | tableName     | N        | mysql table name                                             |
-| boostPower    | N        | RingBuffer expansion parameters, default value is 3，after expansion, buffersize = 8192 << 3 = 65536. It can be appropriately increased when the id demand is large |
-| paddingFactor | N        | when the percentage less than the total capacity, start filling the RingBuffer with UID. The value is between 0 and 100, default is 50. It can be appropriately increased when the id demand is large |
-| timeBits      | N        | time id size,  default value is 28                      |
+| timeBits      | N        | time id size,  default value is 28                           |
 | workerBits    | N        | worker id size, default value is 22                          |
 | seqBits       | N        | sequence id size, default value is 13                        |
 | startTime     | N        | time base, default value is “2022-01-01”                     |

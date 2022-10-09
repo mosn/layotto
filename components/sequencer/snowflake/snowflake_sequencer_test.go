@@ -34,12 +34,10 @@ const (
 	userName     = "root"
 	password     = "123456"
 
-	boostPower    = "3"
-	paddingFactor = "50"
-	timeBits      = "28"
-	workerBits    = "22"
-	seqBits       = "13"
-	startTime     = "2022-01-01"
+	timeBits   = "28"
+	workerBits = "22"
+	seqBits    = "13"
+	startTime  = "2022-01-01"
 
 	key = "resource_xxx"
 )
@@ -71,8 +69,6 @@ func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 	cfg.Properties["userName"] = userName
 	cfg.Properties["password"] = password
 
-	cfg.Properties["boostPower"] = boostPower
-	cfg.Properties["paddingFactor"] = paddingFactor
 	cfg.Properties["timeBits"] = timeBits
 	cfg.Properties["workerBits"] = workerBits
 	cfg.Properties["seqBits"] = seqBits

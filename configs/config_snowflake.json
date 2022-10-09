@@ -36,8 +36,6 @@
                               "password": "123456",
                               "databaseName": "layotto_sequencer",
                               "tableName": "layotto_sequencer_snowflake",
-                              "boostPower": "3",
-                              "paddingFactor": "50",
                               "timeBits": "28",
                               "workerBits": "22",
                               "seqBits": "13",

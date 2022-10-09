@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package snowflake
+package utils
 
 import (
 	"database/sql"
@@ -27,60 +27,75 @@ import (
 )
 
 const (
-	mysqlHost     = "mysqlHost"
-	databaseName  = "databaseName"
-	tableName     = "tableName"
-	userName      = "userName"
-	password      = "password"
-	charset       = "utf8"
-	boostPower    = "boostPower"
-	paddingFactor = "paddingFactor"
-	timeBits      = "timeBits"
-	workerBits    = "workerBits"
-	seqBits       = "seqBits"
-	startTime     = "startTime"
+	mysqlHost         = "mysqlHost"
+	mysqlDatabaseName = "databaseName"
+	mysqlTableName    = "tableName"
+	mysqlUserName     = "userName"
+	mysqlPassword     = "password"
+	mysqlCharset      = "utf8"
+	timeBits          = "timeBits"
+	workerBits        = "workerBits"
+	seqBits           = "seqBits"
+	startTime         = "startTime"
 
-	defaultTableName     = "layotto_sequencer_snowflake"
-	defalutBoostPower    = 3
-	defalutPaddingFactor = 50
-	defalutTimeBits      = 28
-	defalutWorkerBits    = 22
-	defalutSeqBits       = 13
-	defalutStartTime     = "2022-01-01"
+	defaultMysqlTableName = "layotto_sequencer_snowflake"
+	defalutTimeBits       = 28
+	defalutWorkerBits     = 22
+	defalutSeqBits        = 13
+	defalutStartTime      = "2022-01-01"
 )
 
 type SnowflakeMetadata struct {
-	MysqlMetadata      *MysqlMetadata
-	RingBufferMetadata *RingBufferMetadata
-	LogInfo            bool
+	// MysqlMetadata
+	UserName     string
+	Password     string
+	DatabaseName string
+	TableName    string
+	Db           *sql.DB
+	//ip:port
+	MysqlHost string
+
+	WorkIdBits int64
+	TimeBits   int64
+	SeqBits    int64
+	StartTime  int64
+	WorkId     int64
+	LogInfo    bool
 }
 
-type RingBufferMetadata struct {
-	//bufferSize = maxSeq << BoostPower, defalut BoostPower = 3
-	BoostPower    int64
-	PaddingFactor int64
-	WorkIdBits    int64
-	TimeBits      int64
-	SeqBits       int64
-	StartTime     int64
-}
-
-func ParseSnowflakeRingBufferMetadata(properties map[string]string) (RingBufferMetadata, error) {
-	metadata := RingBufferMetadata{}
-
+func ParseSnowflakeMetadata(properties map[string]string) (SnowflakeMetadata, error) {
+	metadata := SnowflakeMetadata{}
 	var err error
-	metadata.BoostPower = defalutBoostPower
-	if val, ok := properties[boostPower]; ok && val != "" {
-		if metadata.BoostPower, err = strconv.ParseInt(val, 10, 64); err != nil {
-			return metadata, err
-		}
+
+	metadata.TableName = defaultTableName
+	if val, ok := properties[mysqlTableName]; ok && val != "" {
+		metadata.TableName = val
 	}
-	metadata.PaddingFactor = defalutPaddingFactor
-	if val, ok := properties[paddingFactor]; ok && val != "" {
-		if metadata.PaddingFactor, err = strconv.ParseInt(val, 10, 64); err != nil {
-			return metadata, err
-		}
+
+	if val, ok := properties[mysqlDatabaseName]; ok && val != "" {
+		metadata.DatabaseName = val
+	} else {
+		return metadata, errors.New("mysql connect error: missing database name")
 	}
+
+	if val, ok := properties[mysqlUserName]; ok && val != "" {
+		metadata.UserName = val
+	} else {
+		return metadata, errors.New("mysql connect error: missing username")
+	}
+
+	if val, ok := properties[mysqlPassword]; ok && val != "" {
+		metadata.Password = val
+	} else {
+		return metadata, errors.New("mysql connect error: missing password")
+	}
+
+	if val, ok := properties[mysqlHost]; ok && val != "" {
+		metadata.MysqlHost = val
+	} else {
+		return metadata, errors.New("mysql connect error: missing mysqlHost")
+	}
+
 	metadata.WorkIdBits = defalutWorkerBits
 	if val, ok := properties[workerBits]; ok && val != "" {
 		if metadata.WorkIdBits, err = strconv.ParseInt(val, 10, 64); err != nil {
@@ -114,54 +129,16 @@ func ParseSnowflakeRingBufferMetadata(properties map[string]string) (RingBufferM
 		return metadata, err
 	}
 	metadata.StartTime = tmp.Unix()
+
 	return metadata, nil
 }
 
-type MysqlMetadata struct {
-	UserName     string
-	Password     string
-	DatabaseName string
-	TableName    string
-	Db           *sql.DB
-	//ip:port
-	MysqlHost string
-}
-
-func ParseSnowflakeMysqlMetadata(properties map[string]string) (MysqlMetadata, error) {
-	m := MysqlMetadata{}
-	m.TableName = defaultTableName
-	if val, ok := properties[tableName]; ok && val != "" {
-		m.TableName = val
-	}
-	if val, ok := properties[databaseName]; ok && val != "" {
-		m.DatabaseName = val
-	} else {
-		return m, errors.New("mysql connect error: missing database name")
-	}
-	if val, ok := properties[userName]; ok && val != "" {
-		m.UserName = val
-	} else {
-		return m, errors.New("mysql connect error: missing username")
-	}
-	if val, ok := properties[password]; ok && val != "" {
-		m.Password = val
-	} else {
-		return m, errors.New("mysql connect error: missing password")
-	}
-	if val, ok := properties[mysqlHost]; ok && val != "" {
-		m.MysqlHost = val
-	} else {
-		return m, errors.New("mysql connect error: missing mysqlHost")
-	}
-	return m, nil
-}
-
-func NewMysqlClient(meta MysqlMetadata) (int64, error) {
+func NewMysqlClient(meta SnowflakeMetadata) (int64, error) {
 
 	var workId int64
 	//for unit test
 	if meta.Db == nil {
-		mysql := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=true&loc=Local", meta.UserName, meta.Password, meta.MysqlHost, meta.DatabaseName, charset)
+		mysql := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=true&loc=Local", meta.UserName, meta.Password, meta.MysqlHost, meta.DatabaseName, mysqlCharset)
 		db, err := sql.Open("mysql", mysql)
 		if err != nil {
 			return workId, err
@@ -190,7 +167,7 @@ func NewMysqlClient(meta MysqlMetadata) (int64, error) {
 //get id from mysql
 //host_name = "ip"
 //port = "timestamp-random number"
-func NewWorkId(meta MysqlMetadata) (int64, error) {
+func NewWorkId(meta SnowflakeMetadata) (int64, error) {
 	defer meta.Db.Close()
 
 	var workId int64
@@ -238,6 +215,7 @@ func NewWorkId(meta MysqlMetadata) (int64, error) {
 	}
 	return workId, nil
 }
+
 func getMysqlPort() string {
 	currentTimeMills := time.Now().Unix()
 	rand.Seed(time.Now().UnixNano())
