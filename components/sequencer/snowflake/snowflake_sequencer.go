@@ -43,26 +43,26 @@ func NewSnowFlakeSequencer(logger log.ErrorLogger) *SnowFlakeSequencer {
 }
 
 func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
-	mm, err := utils.ParseSnowflakeMetadata(config.Properties)
+	sm, err := utils.ParseSnowflakeMetadata(config.Properties)
 	if err != nil {
 		return err
 	}
 	//for unit test
-	mm.Db = s.db
+	sm.MysqlMetadata.Db = s.db
 
-	s.metadata = mm
+	s.metadata = sm
 	s.biggerThan = config.BiggerThan
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
 	var workId int64
-	if workId, err = utils.NewMysqlClient(s.metadata); err != nil {
+	if workId, err = utils.NewMysqlClient(*s.metadata.MysqlMetadata); err != nil {
 		return err
 	}
 
-	timestampShift := mm.SeqBits
-	workidShift := mm.TimeBits + mm.SeqBits
+	timestampShift := sm.SeqBits
+	workidShift := sm.TimeBits + sm.SeqBits
 
-	currentTimeStamp := time.Now().Unix() - mm.StartTime
+	currentTimeStamp := time.Now().Unix() - sm.StartTime
 
 	var sequence int64
 	startId := workId<<workidShift | currentTimeStamp<<timestampShift | sequence

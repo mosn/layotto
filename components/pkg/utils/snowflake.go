@@ -46,16 +46,9 @@ const (
 )
 
 type SnowflakeMetadata struct {
-	// MysqlMetadata
-	//ip:port
-	MysqlHost    string
-	UserName     string
-	Password     string
-	DatabaseName string
-	TableName    string
-	Db           *sql.DB
+	MysqlMetadata *SnowflakeMysqlMetadata
 
-	WorkIdBits int64
+	WorkerBits int64
 	TimeBits   int64
 	SeqBits    int64
 	StartTime  int64
@@ -63,42 +56,63 @@ type SnowflakeMetadata struct {
 	LogInfo    bool
 }
 
+type SnowflakeMysqlMetadata struct {
+	//ip:port
+	MysqlHost    string
+	UserName     string
+	Password     string
+	DatabaseName string
+	TableName    string
+	Db           *sql.DB
+}
+
+func ParseSnowflakeMysqlMetadata(properties map[string]string) (SnowflakeMysqlMetadata, error) {
+	mm := SnowflakeMysqlMetadata{}
+
+	mm.TableName = defaultTableName
+	if val, ok := properties[mysqlTableName]; ok && val != "" {
+		mm.TableName = val
+	}
+
+	if val, ok := properties[mysqlHost]; ok && val != "" {
+		mm.MysqlHost = val
+	} else {
+		return mm, errors.New("mysql connect error: missing mysqlHost")
+	}
+
+	if val, ok := properties[mysqlDatabaseName]; ok && val != "" {
+		mm.DatabaseName = val
+	} else {
+		return mm, errors.New("mysql connect error: missing database name")
+	}
+
+	if val, ok := properties[mysqlUserName]; ok && val != "" {
+		mm.UserName = val
+	} else {
+		return mm, errors.New("mysql connect error: missing username")
+	}
+
+	if val, ok := properties[mysqlPassword]; ok && val != "" {
+		mm.Password = val
+	} else {
+		return mm, errors.New("mysql connect error: missing password")
+	}
+	return mm, nil
+}
+
 func ParseSnowflakeMetadata(properties map[string]string) (SnowflakeMetadata, error) {
 	metadata := SnowflakeMetadata{}
 	var err error
 
-	metadata.TableName = defaultTableName
-	if val, ok := properties[mysqlTableName]; ok && val != "" {
-		metadata.TableName = val
+	mm, err := ParseSnowflakeMysqlMetadata(properties)
+	if err != nil {
+		return metadata, err
 	}
+	metadata.MysqlMetadata = &mm
 
-	if val, ok := properties[mysqlDatabaseName]; ok && val != "" {
-		metadata.DatabaseName = val
-	} else {
-		return metadata, errors.New("mysql connect error: missing database name")
-	}
-
-	if val, ok := properties[mysqlUserName]; ok && val != "" {
-		metadata.UserName = val
-	} else {
-		return metadata, errors.New("mysql connect error: missing username")
-	}
-
-	if val, ok := properties[mysqlPassword]; ok && val != "" {
-		metadata.Password = val
-	} else {
-		return metadata, errors.New("mysql connect error: missing password")
-	}
-
-	if val, ok := properties[mysqlHost]; ok && val != "" {
-		metadata.MysqlHost = val
-	} else {
-		return metadata, errors.New("mysql connect error: missing mysqlHost")
-	}
-
-	metadata.WorkIdBits = defalutWorkerBits
+	metadata.WorkerBits = defalutWorkerBits
 	if val, ok := properties[workerBits]; ok && val != "" {
-		if metadata.WorkIdBits, err = strconv.ParseInt(val, 10, 64); err != nil {
+		if metadata.WorkerBits, err = strconv.ParseInt(val, 10, 64); err != nil {
 			return metadata, err
 		}
 	}
@@ -115,7 +129,7 @@ func ParseSnowflakeMetadata(properties map[string]string) (SnowflakeMetadata, er
 		}
 	}
 
-	if metadata.TimeBits+metadata.WorkIdBits+metadata.SeqBits+1 != 64 {
+	if metadata.TimeBits+metadata.WorkerBits+metadata.SeqBits+1 != 64 {
 		return metadata, errors.New("not enough 64bits")
 	}
 
@@ -133,7 +147,7 @@ func ParseSnowflakeMetadata(properties map[string]string) (SnowflakeMetadata, er
 	return metadata, nil
 }
 
-func NewMysqlClient(meta SnowflakeMetadata) (int64, error) {
+func NewMysqlClient(meta SnowflakeMysqlMetadata) (int64, error) {
 
 	var workId int64
 	//for unit test
@@ -167,7 +181,7 @@ func NewMysqlClient(meta SnowflakeMetadata) (int64, error) {
 //get id from mysql
 //host_name = "ip"
 //port = "timestamp-random number"
-func NewWorkId(meta SnowflakeMetadata) (int64, error) {
+func NewWorkId(meta SnowflakeMysqlMetadata) (int64, error) {
 	defer meta.Db.Close()
 
 	var workId int64

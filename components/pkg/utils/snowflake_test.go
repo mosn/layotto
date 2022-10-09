@@ -69,7 +69,7 @@ func TestNewMysqlClient(t *testing.T) {
 	mock.ExpectQuery("SELECT ID").WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 	mock.ExpectCommit()
 
-	m := SnowflakeMetadata{}
+	m := SnowflakeMysqlMetadata{}
 	m.Db = db
 	workId, err := NewMysqlClient(m)
 	assert.NoError(t, err)
