@@ -52,6 +52,10 @@ go build -o layotto
 > 遇到这种情况，您可以先尝试其他 demo，例如 [etcd demo](zh/start/configuration/start)
 
 ## 第三步：启动客户端Demo，调用Layotto增删改查
+<!-- tabs:start -->
+#### **Go**
+
+构建、运行 go 语言 demo:
 
 ```shell
  cd ${project_path}/demo/configuration/common
@@ -75,6 +79,55 @@ delete keys success
 write start
 receive subscribe resp store_name:"config_demo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
 ```
+
+#### **Java**
+
+下载 java sdk 和示例代码:
+
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+切换目录:
+
+```shell
+cd java-sdk
+```
+
+构建:
+
+```shell @if.not.exist examples-configuration/target/examples-configuration-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-configuration/pom.xml clean package
+```
+
+运行:
+
+```shell
+java -jar examples-configuration/target/examples-configuration-jar-with-dependencies.jar
+```
+
+打印出以下信息说明运行成功:
+
+```bash
+2022-10-10 21:32:03 INFO  Configuration - save key success
+2022-10-10 21:32:05 INFO  Configuration - get configuration key1 = value1
+2022-10-10 21:32:05 INFO  Configuration - get configuration haha = heihei
+2022-10-10 21:32:05 INFO  Configuration - delete keys success
+2022-10-10 21:32:07 INFO  Configuration - get configuration key1 = value1
+2022-10-10 21:32:09 INFO  Configuration - receive subscribe heihei = heihei0
+2022-10-10 21:32:11 INFO  Configuration - receive subscribe heihei = heihei1
+2022-10-10 21:32:13 INFO  Configuration - receive subscribe heihei = heihei3
+2022-10-10 21:32:15 INFO  Configuration - receive subscribe heihei = heihei5
+2022-10-10 21:32:17 INFO  Configuration - receive subscribe heihei = heihei6
+2022-10-10 21:32:19 INFO  Configuration - receive subscribe heihei = heihei7
+2022-10-10 21:32:22 INFO  Configuration - receive subscribe heihei = heihei8
+2022-10-10 21:32:25 INFO  Configuration - receive subscribe heihei = heihei9
+2022-10-10 21:32:28 INFO  Configuration - receive subscribe heihei = heihei10
+...
+```
+
+<!-- tabs:end -->
 
 ## 下一步
 ### 这个客户端Demo做了什么？
