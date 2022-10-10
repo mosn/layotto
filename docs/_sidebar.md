@@ -4,7 +4,9 @@
   - Use Configuration API
     - [Use Apollo as configuration center](en/start/configuration/start-apollo.md)
     - [Use Etcd as configuration center](en/start/configuration/start.md)
-  - [Use Pub/Sub API](en/start/pubsub/start.md)
+  - Publish or subscribe messages
+    - [Use Pub/Sub API](en/start/pubsub/start.md)
+    - [(Under construction) Use DelayQueue API](en/start/delay_queue/start)
   - [Use Distributed Lock API](en/start/lock/start.md)
   - [Use Sequencer API](en/start/sequencer/start.md)
   - Use Secret API
@@ -13,7 +15,14 @@
   - Service Invocation
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
-  - [API plugin: register your own API](en/start/api_plugin/helloworld.md)
+  - [Use OSS API](en/start/oss/start.md)
+  - API plugin
+    - [Register your own API](en/start/api_plugin/helloworld.md)
+    - [Generate API plugin automatically](en/start/api_plugin/generate.md)
+  <!--quickstart_generator-->  
+  - [(Under construction) Use phone API](en/start/phone/start) 
+  - [(Under construction) Use email API](en/start/email/start) 
+  - [Use lifecycle API](en/start/lifecycle/start) 
   - As the data plane of istio
     - [Integrate with istio 1.10.6](en/start/istio/)
     - [Integrate with istio 1.5.x](en/start/istio/start.md)
@@ -39,10 +48,7 @@
     - [Pub/Sub API](en/building_blocks/pubsub/reference.md)
     - [RPC API](en/building_blocks/rpc/reference.md)    
     - [Configuration API](en/building_blocks/configuration/reference.md)
-  - API reference
-    - [spec/proto/runtime/v1/runtime.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/runtime_v1.md)
-    - [spec/proto/runtime/v1/appcallback.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/appcallback_v1.md)
-    - [spec/proto/extension/v1/oss.proto](https://github.com/mosn/layotto/blob/main/docs/en/api_reference/oss_v1.md)
+  - [API reference](en/api_reference/README)
   - SDK reference
     - [java sdk](https://github.com/layotto/java-sdk)
     - [.net sdk](https://github.com/layotto/dotnet-sdk)
@@ -89,9 +95,9 @@
   - [Automate testing of Quickstart documentation with tools](en/development/test-quickstart.md)
   - [Component Development Guide](en/development/developing-component.md)
   - Want to modify proto files or API definition?
-    - [Development specification when adding API](en/development/developing-api.md)
-    - [Comment specification of proto file](en/api_reference/comment_spec_of_proto.md)
     - [How to generate pb code and API reference](en/api_reference/how_to_generate_api_doc.md)
+    - [Comment specification of proto file](en/api_reference/comment_spec_of_proto.md)
+    - [Development specification when adding API](en/development/developing-api.md)
   - [Layotto Github Workflows Guide](en/development/github-workflows.md)
   - [Layotto Commands Guide](en/development/commands.md)
   - [Layotto contributor guide](en/development/CONTRIBUTING.md)

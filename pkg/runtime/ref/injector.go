@@ -17,8 +17,11 @@
 package ref
 
 import (
+	"fmt"
+
 	"github.com/dapr/components-contrib/secretstores"
 
+	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/ref"
 )
 
@@ -26,9 +29,20 @@ type DefaultInjector struct {
 	Container RefContainer
 }
 
-//InjectSecretRef  inject secret to metaData
+// NewDefaultInjector return a single Inject
+func NewDefaultInjector(secretStores map[string]secretstores.SecretStore, configStores map[string]configstores.Store) *DefaultInjector {
+	injector := &DefaultInjector{
+		Container: RefContainer{
+			SecretRef: secretStores,
+			ConfigRef: configStores,
+		},
+	}
+	return injector
+}
+
+// InjectSecretRef  inject secret to metaData
 // TODO: permission control
-func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string]string) (map[string]string, error) {
+func (i *DefaultInjector) InjectSecretRef(items []*ref.SecretRefConfig, metaData map[string]string) (map[string]string, error) {
 	if metaData == nil {
 		metaData = make(map[string]string)
 	}
@@ -38,7 +52,7 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 
 	meta := make(map[string]string)
 	for _, item := range items {
-		store := i.Container.GetSecretStore(item.StoreName)
+		store := i.Container.getSecretStore(item.StoreName)
 		secret, err := store.GetSecret(secretstores.GetSecretRequest{
 			Name: item.Key,
 		})
@@ -61,4 +75,26 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.Item, metaData map[string
 		metaData[k] = v
 	}
 	return metaData, nil
+}
+
+func (i *DefaultInjector) GetConfigStore(cf *ref.ComponentRefConfig) (configstores.Store, error) {
+	if cf == nil || cf.ConfigStore == "" {
+		return nil, nil
+	}
+	configStore := i.Container.getConfigStore(cf.ConfigStore)
+	if configStore == nil {
+		return nil, fmt.Errorf("fail to get configStore:%v", cf.ConfigStore)
+	}
+	return configStore, nil
+}
+
+func (i *DefaultInjector) GetSecretStore(cf *ref.ComponentRefConfig) (secretstores.SecretStore, error) {
+	if cf == nil || cf.SecretStore == "" {
+		return nil, nil
+	}
+	secretStore := i.Container.getSecretStore(cf.SecretStore)
+	if secretStore == nil {
+		return nil, fmt.Errorf("fail to get secretStore:%v", cf.SecretStore)
+	}
+	return secretStore, nil
 }

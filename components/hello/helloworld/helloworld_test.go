@@ -20,6 +20,10 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
+	"mosn.io/layotto/components/pkg/common"
+
 	"mosn.io/layotto/components/hello"
 )
 
@@ -37,4 +41,30 @@ func TestHelloWorld(t *testing.T) {
 	if resp.HelloString != "Hi, Layotto" {
 		t.Fatalf("hello output failed")
 	}
+
+	// ApplyConfig, but nil
+	dc := hs.(common.DynamicComponent)
+	err := dc.ApplyConfig(context.Background(), nil)
+	if err != nil {
+		t.Fatalf("hello ApplyConfig failed")
+	}
+	if resp.HelloString != "Hi, Layotto" {
+		t.Fatalf("hello output failed")
+	}
+
+	// Apply new config
+	err = dc.ApplyConfig(context.Background(), map[string]string{"hello": "Bye"})
+	if err != nil {
+		t.Fatalf("hello ApplyConfig failed")
+	}
+	resp, _ = hs.Hello(context.Background(), req)
+	if resp.HelloString != "Bye, Layotto" {
+		t.Fatalf("hello output failed")
+	}
+
+	component := hs.(common.SetComponent)
+	err = component.SetConfigStore(nil)
+	assert.Nil(t, err)
+	err = component.SetSecretStore(nil)
+	assert.Nil(t, err)
 }

@@ -11,6 +11,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
  
+##@ CI/CD Development
+
+# ==============================================================================
+# Public Commands:
+# ==============================================================================
+
+.PHONY: base
+base: ## Build base docker images for host arch.
+base: app.image
+
+.PHONY: base-multiarch
+base-multiarch: ## Build base docker images for multiple platforms.
+base-multiarch: app.image.multiarch
+
+.PHONY: deadlink
+deadlink: ## Run deadlink check test.
+deadlink: checker.deadlink
+
+.PHONY: quickstart
+quickstart: ## Run quickstart check test.
+quickstart: checker.quickstart
+
+.PHONY: coverage
+coverage: ## Run coverage analysis.
+coverage: checker.coverage
+
+.PHONY: license
+license: ## Add license headers for code files.
+license: checker.license.fix
+
+.PHONY: license-check
+license-check: ## Check codes license headers.
+license-check: checker.license
+
+.PHONY: integrate-wasm
+integrate-wasm: ## Run integration test with wasm.
+integrate-wasm: integration.wasm
+
+.PHONY: integrate-runtime
+integrate-runtime: ## Run integration test with runtime.
+integrate-runtime: integration.runtime
+
+
+# ==============================================================================
+# Private Commands:
+# ==============================================================================
 
 APPS ?= faas integrate
 APP_PLATFORMS = linux_amd64 linux_arm64 

@@ -9,6 +9,7 @@ option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 option java_outer_classname = "AppCallbackProto";
 option java_package = "spec.proto.runtime.v1";
 
+/* @exclude skip quickstart_generator */
 // AppCallback V1 allows user application to interact with runtime.
 // User application needs to implement AppCallback service if it needs to
 // receive message from runtime.

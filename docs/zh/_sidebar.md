@@ -4,7 +4,9 @@
     - 使用Configuration API
         - [使用Apollo配置中心](zh/start/configuration/start-apollo.md)
         - [使用Etcd配置中心](zh/start/configuration/start.md)
-    - [使用Pub/Sub API](zh/start/pubsub/start.md)
+    - 发布、订阅消息
+        - [使用Pub/Sub API](zh/start/pubsub/start.md)
+        - [(建设中) 使用 DelayQueue API](zh/start/delay_queue/start)
     - [使用分布式锁 API](zh/start/lock/start.md)
     - [使用Sequencer API生成分布式自增id](zh/start/sequencer/start.md)
     - 使用 Secret API
@@ -16,7 +18,13 @@
     - 使用File API
         - [基于Minio](zh/start/file/minio.md)
     - [使用 OSS API](zh/start/oss/oss.md)
-    - [API插件：注册您自己的API](zh/start/api_plugin/helloworld.md)
+    <!--quickstart_generator-->
+    - [(建设中)使用 phone API](zh/start/phone/start) 
+    - [(建设中)使用 email API](zh/start/email/start) 
+    - [使用 lifecycle API](zh/start/lifecycle/start) 
+    - API插件
+        - [注册您自己的API](zh/start/api_plugin/helloworld.md)
+        - [自动生成 API 插件](zh/start/api_plugin/generate.md)
     - 作为 Istio 的数据面
         - [集成 Istio 1.10.6 演示](zh/start/istio/)
         - [集成 Istio 1.5.x 演示](zh/start/istio/start.md)
@@ -84,6 +92,7 @@
     - [如何部署、升级 Layotto](zh/operation/)
     - [如何本地开发、本地调试](zh/operation/local.md)
 - 设计文档
+    - [动态配置下发、组件热重载](zh/design/lifecycle/apply_configuration.md)
     - [Actuator设计文档](zh/design/actuator/actuator-design-doc.md)
     - [gRPC框架设计文档](zh/design/actuator/grpc-design-doc.md)
     - [Configuration API with Apollo](zh/design/configuration/configuration-api-with-apollo.md)
@@ -95,7 +104,7 @@
     - [FaaS 设计文档](zh/design/faas/faas-poc-design.md)
     - [API插件](zh/design/api_plugin/design.md)
     - [支持Dapr API](zh/design/api_plugin/dapr_api.md)
-    - [OSS API设计文档](zh/design/oss/oss-api-design.md)
+    - [OSS API设计文档](zh/design/oss/design.md)
 - 贡献指南
     - [Layotto 贡献指南](zh/development/CONTRIBUTING.md)
     - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)
@@ -104,9 +113,9 @@
         - [使用工具自动测试 Quickstart 文档](zh/development/test-quickstart.md)
     - [想要开发新的组件?](zh/development/developing-component.md)
     - 想要修改proto文件或API定义？
-        - [新增API时的开发规范](zh/development/developing-api.md)
-        - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
         - [如何基于proto文件生成代码、接口文档](zh/api_reference/how_to_generate_api_doc.md)
+        - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
+        - [新增API时的开发规范](zh/development/developing-api.md)
     - [Layotto 四大 Github Workflows 说明](zh/development/github-workflows.md)
     - [Layotto 命令行工具指南](zh/development/commands.md)
     - 如何给 issue 打 label

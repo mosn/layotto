@@ -10,7 +10,7 @@ require (
 	github.com/SkyAPM/go2sky v0.5.0
 	github.com/agrea/ptr v0.0.0-20180711073057-77a518d99b7b
 	github.com/alicebob/miniredis/v2 v2.16.0
-	github.com/dapr/components-contrib v1.5.1-rc.1
+	github.com/dapr/components-contrib v1.5.2
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/envoyproxy/go-control-plane v0.10.0
@@ -21,6 +21,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/jinzhu/copier v0.3.6-0.20220506024824-3e39b055319a
 	github.com/json-iterator/go v1.1.12
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/openzipkin/zipkin-go v0.2.2
@@ -36,11 +37,11 @@ require (
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
 	google.golang.org/protobuf v1.27.1
-	mosn.io/api v1.0.0
+	mosn.io/api v1.1.0
 	mosn.io/layotto/components v0.0.0-20220413092851-55c58dbb1a23
 	mosn.io/layotto/spec v0.0.0-20220413092851-55c58dbb1a23
-	mosn.io/mosn v1.0.2-0.20220624093205-6d37b64a8f06
-	mosn.io/pkg v1.0.0
+	mosn.io/mosn v1.1.0
+	mosn.io/pkg v1.1.0
 	mosn.io/proxy-wasm-go-host v0.1.1-0.20210524020952-3fb13ba763a6
 	nhooyr.io/websocket v1.8.7 // indirect
 )
