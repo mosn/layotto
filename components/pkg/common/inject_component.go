@@ -14,32 +14,15 @@
  * limitations under the License.
  */
 
-package ref
+package common
 
 import (
-	"github.com/dapr/components-contrib/secretstores"
-
 	"mosn.io/layotto/components/configstores"
+
+	"github.com/dapr/components-contrib/secretstores"
 )
 
-// RefContainer  hold all secret&config store
-type RefContainer struct {
-	SecretRef map[string]secretstores.SecretStore
-	ConfigRef map[string]configstores.Store
-}
-
-// NewRefContainer return a new container
-func NewRefContainer() *RefContainer {
-	return &RefContainer{
-		SecretRef: make(map[string]secretstores.SecretStore),
-		ConfigRef: make(map[string]configstores.Store),
-	}
-}
-
-func (r *RefContainer) getSecretStore(key string) secretstores.SecretStore {
-	return r.SecretRef[key]
-}
-
-func (r *RefContainer) getConfigStore(key string) configstores.Store {
-	return r.ConfigRef[key]
+type SetComponent interface {
+	SetConfigStore(cs configstores.Store) (err error)
+	SetSecretStore(ss secretstores.SecretStore) (err error)
 }
