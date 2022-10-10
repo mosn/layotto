@@ -110,7 +110,7 @@ func newHttpClient() httpClient {
 	}
 }
 
-//Init SetConfig the configuration store.
+// Init SetConfig the configuration store.
 func (c *ConfigStore) Init(config *configstores.StoreConfig) error {
 	err := c.doInit(config)
 	if err != nil {
@@ -602,7 +602,7 @@ func (c *ConfigStore) initTagsClient(tagCfg *repoConfig) error {
 	return c.tagsRepo.Connect()
 }
 
-//refer to https://www.apolloconfig.com/#/zh/usage/apollo-open-api-platform?id=_327-%e5%88%9b%e5%bb%banamespace
+// refer to https://www.apolloconfig.com/#/zh/usage/apollo-open-api-platform?id=_327-%e5%88%9b%e5%bb%banamespace
 func (c *ConfigStore) createNamespace(env string, appId string, cluster string, namespace string) error {
 	// 1. request
 	url := fmt.Sprintf(createNamespaceUrlTpl, c.openAPIAddress, appId)

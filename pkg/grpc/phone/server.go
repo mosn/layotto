@@ -17,9 +17,9 @@ package phone
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
+	"github.com/jinzhu/copier"
 	"mosn.io/pkg/log"
 
 	phone "mosn.io/layotto/components/phone"
@@ -53,33 +53,25 @@ func (s *server) SendVoiceWithTemplate(ctx context.Context, in *phone1.SendVoice
 	}
 
 	// convert request
-	var req phone.SendVoiceWithTemplateRequest
-	bytes, err := json.Marshal(in)
+	req := &phone.SendVoiceWithTemplateRequest{}
+	err := copier.CopyWithOption(req, in, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Marshal the request: %s", err.Error())
-	}
-	err = json.Unmarshal(bytes, &req)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Unmarshal the request: %s", err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when converting the request: %s", err.Error())
 	}
 
 	// delegate to the component
-	resp, err := comp.SendVoiceWithTemplate(ctx, &req)
+	resp, err := comp.SendVoiceWithTemplate(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	// convert response
-	var out phone1.SendVoiceWithTemplateResponse
-	bytes, err = json.Marshal(resp)
+	out := &phone1.SendVoiceWithTemplateResponse{}
+	err = copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Marshal the response: %s", err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when converting the response: %s", err.Error())
 	}
-	err = json.Unmarshal(bytes, &out)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Error when json.Unmarshal the response: %s", err.Error())
-	}
-	return &out, nil
+	return out, nil
 }
 
 func invalidArgumentError(method string, format string, a ...interface{}) error {

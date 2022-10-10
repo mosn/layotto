@@ -19,6 +19,8 @@ package oss
 import (
 	"encoding/json"
 	"errors"
+
+	"mosn.io/layotto/components/ref"
 )
 
 const (
@@ -31,6 +33,7 @@ var (
 
 // Config wraps configuration for a oss implementation
 type Config struct {
+	ref.Config
 	Metadata map[string]json.RawMessage `json:"metadata"`
 	Type     string                     `json:"type"`
 }

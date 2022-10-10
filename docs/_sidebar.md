@@ -4,7 +4,9 @@
   - Use Configuration API
     - [Use Apollo as configuration center](en/start/configuration/start-apollo.md)
     - [Use Etcd as configuration center](en/start/configuration/start.md)
-  - [Use Pub/Sub API](en/start/pubsub/start.md)
+  - Publish or subscribe messages
+    - [Use Pub/Sub API](en/start/pubsub/start.md)
+    - [(Under construction) Use DelayQueue API](en/start/delay_queue/start)
   - [Use Distributed Lock API](en/start/lock/start.md)
   - [Use Sequencer API](en/start/sequencer/start.md)
   - Use Secret API
@@ -14,7 +16,9 @@
     - [Hello World](en/start/rpc/helloworld.md)
     - [Dubbo JSON RPC](en/start/rpc/dubbo_json_rpc.md)    
   - [Use OSS API](en/start/oss/start.md)
-  - [API plugin: register your own API](en/start/api_plugin/helloworld.md)
+  - API plugin
+    - [Register your own API](en/start/api_plugin/helloworld.md)
+    - [Generate API plugin automatically](en/start/api_plugin/generate.md)
   <!--quickstart_generator-->  
   - [(Under construction) Use phone API](en/start/phone/start) 
   - [(Under construction) Use email API](en/start/email/start) 
