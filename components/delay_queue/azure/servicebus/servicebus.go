@@ -14,6 +14,8 @@ package servicebus
 
 import (
 	"context"
+	"net/http"
+	"time"
 
 	azservicebus "github.com/dapr/components-contrib/pubsub/azure/servicebus"
 
@@ -36,6 +38,9 @@ func NewAzureServiceBus(logger logger.Logger) pubsub.PubSub {
 
 func (a *azureServiceBus) PublishDelayMessage(ctx context.Context, request *delay_queue.DelayMessageRequest) (*delay_queue.DelayMessageResponse, error) {
 	// convert ScheduledEnqueueTimeUtc
+	nowUtc := time.Now().UTC()
+	enqueueTime := nowUtc.Add(time.Second * time.Duration(request.DelayInSeconds))
+	request.Metadata["metadata.ScheduledEnqueueTimeUtc"] = enqueueTime.Format(http.TimeFormat)
 
 	req := &pubsub.PublishRequest{
 		Data:       request.Data,
