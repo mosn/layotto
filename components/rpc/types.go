@@ -78,6 +78,8 @@ type RPCResponse struct {
 	Header      RPCHeader
 	ContentType string
 	Data        []byte
+	Success     bool
+	ErrorMsg    string
 }
 
 type RpcConfig struct {

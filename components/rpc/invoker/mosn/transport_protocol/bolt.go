@@ -64,21 +64,23 @@ func (b *boltCommon) Init(conf map[string]interface{}) error {
 func (b *boltCommon) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	respCode := uint16(resp.GetStatusCode())
 	rpcResp, err := b.fromFrame.FromFrame(resp)
+	rpcResp.Success = false
 	if err != nil {
 		return nil, common.Errorf(common.InternalCode, "bolt error code %d, transform RPCResponse fail with err: %+v", respCode, err)
 	}
 	switch respCode {
 	case bolt.ResponseStatusSuccess:
-		return rpcResp, nil
+		rpcResp.Success = true
 	case bolt.ResponseStatusServerDeserialException:
-		return rpcResp, common.Errorf(common.InternalCode, "bolt error code %d, ServerDeserializeException", respCode)
+		rpcResp.ErrorMsg = common.Errorf(common.InternalCode, "bolt error code %d, ServerDeserializeException", respCode).Error()
 	case bolt.ResponseStatusServerSerialException:
-		return rpcResp, common.Errorf(common.InternalCode, "bolt error code %d, ServerSerializeException", respCode)
+		rpcResp.ErrorMsg = common.Errorf(common.InternalCode, "bolt error code %d, ServerSerializeException", respCode).Error()
 	case bolt.ResponseStatusCodecException:
-		return rpcResp, common.Errorf(common.InternalCode, "bolt error code %d, CodecException", respCode)
+		rpcResp.ErrorMsg = common.Errorf(common.InternalCode, "bolt error code %d, CodecException", respCode).Error()
 	default:
-		return rpcResp, common.Errorf(common.UnavailebleCode, "bolt error code %d", respCode)
+		rpcResp.ErrorMsg = common.Errorf(common.UnavailebleCode, "bolt error code %d", respCode).Error()
 	}
+	return rpcResp, nil
 }
 
 // newBoltProtocol is create boltProtocol
