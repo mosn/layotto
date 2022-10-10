@@ -342,6 +342,9 @@ func (a *AwsOss) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInpu
 	}
 	input.CopySource = &copySource
 	resp, err := client.UploadPartCopy(ctx, input)
+	if err != nil {
+		return nil, err
+	}
 
 	return oss.GetUploadPartCopyOutput(resp)
 }
