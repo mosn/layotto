@@ -17,6 +17,9 @@
 package oss
 
 import (
+	"bytes"
+	"encoding/json"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"time"
 
 	"github.com/jinzhu/copier"
@@ -41,3 +44,105 @@ var (
 		},
 	}
 )
+
+func GetGetObjectOutput(ob *s3.GetObjectOutput) (*GetObjectOutput, error) {
+	out := &GetObjectOutput{}
+	err := copier.Copy(out, ob)
+	if err != nil {
+		return nil, err
+	}
+	out.DataStream = ob.Body
+	return out, nil
+}
+
+func GetListObjectsOutput(resp *s3.ListObjectsOutput) (*ListObjectsOutput, error) {
+	output := &ListObjectsOutput{}
+	err := copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{TimeToInt64}})
+	// if not return NextMarker, use the value of the last Key in the response as the marker
+	if output.IsTruncated && output.NextMarker == "" {
+		index := len(output.Contents) - 1
+		output.NextMarker = output.Contents[index].Key
+	}
+	return output, err
+}
+
+func GetGetObjectCannedAclOutput(resp *s3.GetObjectAclOutput) (*GetObjectCannedAclOutput, error) {
+	out := &GetObjectCannedAclOutput{}
+	err := copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
+	if err != nil {
+		return nil, err
+	}
+	bs, _ := json.Marshal(resp.Grants)
+	var bf bytes.Buffer
+	err = json.Indent(&bf, bs, "", "\t")
+	if err != nil {
+		return nil, err
+	}
+	out.CannedAcl = bf.String()
+	return out, nil
+}
+
+func GetUploadPartOutput(resp *s3.UploadPartOutput) (*UploadPartOutput, error) {
+	output := &UploadPartOutput{}
+	err := copier.Copy(output, resp)
+	if err != nil {
+		return nil, err
+	}
+	return output, err
+}
+
+func GetUploadPartCopyOutput(resp *s3.UploadPartCopyOutput) (*UploadPartCopyOutput, error) {
+	out := &UploadPartCopyOutput{}
+	err := copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
+	if err != nil {
+		return nil, err
+	}
+	return out, err
+}
+
+func GetListPartsOutput(resp *s3.ListPartsOutput) (*ListPartsOutput, error) {
+	output := &ListPartsOutput{}
+	err := copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
+	if err != nil {
+		return nil, err
+	}
+	return output, err
+}
+
+func GetListMultipartUploadsOutput(resp *s3.ListMultipartUploadsOutput) (*ListMultipartUploadsOutput, error) {
+	output := &ListMultipartUploadsOutput{CommonPrefixes: []string{}, Uploads: []*MultipartUpload{}}
+	err := copier.Copy(output, resp)
+	if err != nil {
+		return nil, err
+	}
+	for _, v := range resp.CommonPrefixes {
+		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
+	}
+	for _, v := range resp.Uploads {
+		upload := &MultipartUpload{}
+		copier.CopyWithOption(upload, v, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+		output.Uploads = append(output.Uploads, upload)
+	}
+	return output, err
+}
+
+func GetListObjectVersionsOutput(resp *s3.ListObjectVersionsOutput) (*ListObjectVersionsOutput, error) {
+	output := &ListObjectVersionsOutput{}
+	err := copier.Copy(output, resp)
+	if err != nil {
+		return nil, err
+	}
+	for _, v := range resp.CommonPrefixes {
+		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
+	}
+	for _, v := range resp.DeleteMarkers {
+		entry := &DeleteMarkerEntry{IsLatest: v.IsLatest, Key: *v.Key, Owner: &Owner{DisplayName: *v.Owner.DisplayName, ID: *v.Owner.ID}, VersionId: *v.VersionId}
+		output.DeleteMarkers = append(output.DeleteMarkers, entry)
+	}
+	for _, v := range resp.Versions {
+		version := &ObjectVersion{}
+		copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{TimeToInt64}})
+		output.Versions = append(output.Versions, version)
+	}
+	return output, err
+}

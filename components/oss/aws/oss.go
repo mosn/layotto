@@ -89,13 +89,8 @@ func (a *AwsOss) GetObject(ctx context.Context, req *oss.GetObjectInput) (*oss.G
 	if err != nil {
 		return nil, err
 	}
-	out := &oss.GetObjectOutput{}
-	err = copier.Copy(out, ob)
-	if err != nil {
-		return nil, err
-	}
-	out.DataStream = ob.Body
-	return out, nil
+
+	return oss.GetGetObjectOutput(ob)
 }
 
 func (a *AwsOss) PutObject(ctx context.Context, req *oss.PutObjectInput) (*oss.PutObjectOutput, error) {
@@ -259,14 +254,8 @@ func (a *AwsOss) ListObjects(ctx context.Context, req *oss.ListObjectsInput) (*o
 	if err != nil {
 		return nil, err
 	}
-	output := &oss.ListObjectsOutput{}
-	err = copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
-	// if not return NextMarker, use the value of the last Key in the response as the marker
-	if output.IsTruncated && output.NextMarker == "" {
-		index := len(output.Contents) - 1
-		output.NextMarker = output.Contents[index].Key
-	}
-	return output, err
+
+	return oss.GetListObjectsOutput(resp)
 }
 func (a *AwsOss) GetObjectCannedAcl(ctx context.Context, req *oss.GetObjectCannedAclInput) (*oss.GetObjectCannedAclOutput, error) {
 	return nil, errors.New("GetObjectCannedAcl method not supported on AWS")
@@ -332,12 +321,8 @@ func (a *AwsOss) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*oss
 	if err != nil {
 		return nil, err
 	}
-	output := &oss.UploadPartOutput{}
-	err = copier.Copy(output, resp)
-	if err != nil {
-		return nil, err
-	}
-	return output, err
+
+	return oss.GetUploadPartOutput(resp)
 }
 func (a *AwsOss) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInput) (*oss.UploadPartCopyOutput, error) {
 	client, err := a.getClient()
@@ -357,12 +342,8 @@ func (a *AwsOss) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInpu
 	}
 	input.CopySource = &copySource
 	resp, err := client.UploadPartCopy(ctx, input)
-	if err != nil {
-		return nil, err
-	}
-	output := &oss.UploadPartCopyOutput{}
-	err = copier.Copy(output, resp)
-	return output, err
+
+	return oss.GetUploadPartCopyOutput(resp)
 }
 func (a *AwsOss) CompleteMultipartUpload(ctx context.Context, req *oss.CompleteMultipartUploadInput) (*oss.CompleteMultipartUploadOutput, error) {
 	client, err := a.getClient()
@@ -417,20 +398,8 @@ func (a *AwsOss) ListMultipartUploads(ctx context.Context, req *oss.ListMultipar
 	if err != nil {
 		return nil, err
 	}
-	output := &oss.ListMultipartUploadsOutput{CommonPrefixes: []string{}, Uploads: []*oss.MultipartUpload{}}
-	err = copier.Copy(output, resp)
-	if err != nil {
-		return nil, err
-	}
-	for _, v := range resp.CommonPrefixes {
-		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
-	}
-	for _, v := range resp.Uploads {
-		upload := &oss.MultipartUpload{}
-		copier.CopyWithOption(upload, v, copier.Option{IgnoreEmpty: true, DeepCopy: true})
-		output.Uploads = append(output.Uploads, upload)
-	}
-	return output, err
+
+	return oss.GetListMultipartUploadsOutput(resp)
 }
 func (a *AwsOss) ListObjectVersions(ctx context.Context, req *oss.ListObjectVersionsInput) (*oss.ListObjectVersionsOutput, error) {
 	client, err := a.getClient()
@@ -446,24 +415,8 @@ func (a *AwsOss) ListObjectVersions(ctx context.Context, req *oss.ListObjectVers
 	if err != nil {
 		return nil, err
 	}
-	output := &oss.ListObjectVersionsOutput{}
-	err = copier.Copy(output, resp)
-	if err != nil {
-		return nil, err
-	}
-	for _, v := range resp.CommonPrefixes {
-		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
-	}
-	for _, v := range resp.DeleteMarkers {
-		entry := &oss.DeleteMarkerEntry{IsLatest: v.IsLatest, Key: *v.Key, Owner: &oss.Owner{DisplayName: *v.Owner.DisplayName, ID: *v.Owner.ID}, VersionId: *v.VersionId}
-		output.DeleteMarkers = append(output.DeleteMarkers, entry)
-	}
-	for _, v := range resp.Versions {
-		version := &oss.ObjectVersion{}
-		copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
-		output.Versions = append(output.Versions, version)
-	}
-	return output, err
+
+	return oss.GetListObjectVersionsOutput(resp)
 }
 
 func (a *AwsOss) HeadObject(ctx context.Context, req *oss.HeadObjectInput) (*oss.HeadObjectOutput, error) {

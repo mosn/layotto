@@ -17,7 +17,6 @@
 package ceph
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -98,13 +97,7 @@ func (c *CephOSS) GetObject(ctx context.Context, req *oss.GetObjectInput) (*oss.
 		return nil, err
 	}
 
-	out := &oss.GetObjectOutput{}
-	err = copier.Copy(out, ob)
-	if err != nil {
-		return nil, err
-	}
-	out.DataStream = ob.Body
-	return out, nil
+	return oss.GetGetObjectOutput(ob)
 }
 
 func (c *CephOSS) PutObject(ctx context.Context, req *oss.PutObjectInput) (*oss.PutObjectOutput, error) {
@@ -300,14 +293,7 @@ func (c *CephOSS) ListObjects(ctx context.Context, req *oss.ListObjectsInput) (*
 		return nil, err
 	}
 
-	output := &oss.ListObjectsOutput{}
-	err = copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
-	// if not return NextMarker, use the value of the last Key in the response as the marker
-	if output.IsTruncated && output.NextMarker == "" {
-		index := len(output.Contents) - 1
-		output.NextMarker = output.Contents[index].Key
-	}
-	return output, err
+	return oss.GetListObjectsOutput(resp)
 }
 
 func (c *CephOSS) GetObjectCannedAcl(ctx context.Context, req *oss.GetObjectCannedAclInput) (*oss.GetObjectCannedAclOutput, error) {
@@ -326,19 +312,7 @@ func (c *CephOSS) GetObjectCannedAcl(ctx context.Context, req *oss.GetObjectCann
 		return nil, err
 	}
 
-	out := &oss.GetObjectCannedAclOutput{}
-	err = copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
-	if err != nil {
-		return nil, err
-	}
-	bs, _ := json.Marshal(resp.Grants)
-	var bf bytes.Buffer
-	err = json.Indent(&bf, bs, "", "\t")
-	if err != nil {
-		return nil, err
-	}
-	out.CannedAcl = bf.String()
-	return out, nil
+	return oss.GetGetObjectCannedAclOutput(resp)
 }
 
 func (c *CephOSS) PutObjectCannedAcl(ctx context.Context, req *oss.PutObjectCannedAclInput) (*oss.PutObjectCannedAclOutput, error) {
@@ -393,12 +367,7 @@ func (c *CephOSS) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*os
 		return nil, err
 	}
 
-	output := &oss.UploadPartOutput{}
-	err = copier.Copy(output, resp)
-	if err != nil {
-		return nil, err
-	}
-	return output, err
+	return oss.GetUploadPartOutput(resp)
 }
 
 func (c *CephOSS) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInput) (*oss.UploadPartCopyOutput, error) {
@@ -422,12 +391,7 @@ func (c *CephOSS) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInp
 		return nil, err
 	}
 
-	out := &oss.UploadPartCopyOutput{}
-	err = copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
-	if err != nil {
-		return nil, err
-	}
-	return out, err
+	return oss.GetUploadPartCopyOutput(resp)
 }
 
 func (c *CephOSS) CompleteMultipartUpload(ctx context.Context, req *oss.CompleteMultipartUploadInput) (*oss.CompleteMultipartUploadOutput, error) {
@@ -489,12 +453,7 @@ func (c *CephOSS) ListParts(ctx context.Context, req *oss.ListPartsInput) (*oss.
 		return nil, err
 	}
 
-	output := &oss.ListPartsOutput{}
-	err = copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
-	if err != nil {
-		return nil, err
-	}
-	return output, err
+	return oss.GetListPartsOutput(resp)
 }
 
 func (c *CephOSS) ListMultipartUploads(ctx context.Context, req *oss.ListMultipartUploadsInput) (*oss.ListMultipartUploadsOutput, error) {
@@ -513,20 +472,7 @@ func (c *CephOSS) ListMultipartUploads(ctx context.Context, req *oss.ListMultipa
 		return nil, err
 	}
 
-	output := &oss.ListMultipartUploadsOutput{CommonPrefixes: []string{}, Uploads: []*oss.MultipartUpload{}}
-	err = copier.Copy(output, resp)
-	if err != nil {
-		return nil, err
-	}
-	for _, v := range resp.CommonPrefixes {
-		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
-	}
-	for _, v := range resp.Uploads {
-		upload := &oss.MultipartUpload{}
-		copier.CopyWithOption(upload, v, copier.Option{IgnoreEmpty: true, DeepCopy: true})
-		output.Uploads = append(output.Uploads, upload)
-	}
-	return output, err
+	return oss.GetListMultipartUploadsOutput(resp)
 }
 
 func (c *CephOSS) ListObjectVersions(ctx context.Context, req *oss.ListObjectVersionsInput) (*oss.ListObjectVersionsOutput, error) {
@@ -545,24 +491,7 @@ func (c *CephOSS) ListObjectVersions(ctx context.Context, req *oss.ListObjectVer
 		return nil, err
 	}
 
-	output := &oss.ListObjectVersionsOutput{}
-	err = copier.Copy(output, resp)
-	if err != nil {
-		return nil, err
-	}
-	for _, v := range resp.CommonPrefixes {
-		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
-	}
-	for _, v := range resp.DeleteMarkers {
-		entry := &oss.DeleteMarkerEntry{IsLatest: v.IsLatest, Key: *v.Key, Owner: &oss.Owner{DisplayName: *v.Owner.DisplayName, ID: *v.Owner.ID}, VersionId: *v.VersionId}
-		output.DeleteMarkers = append(output.DeleteMarkers, entry)
-	}
-	for _, v := range resp.Versions {
-		version := &oss.ObjectVersion{}
-		copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
-		output.Versions = append(output.Versions, version)
-	}
-	return output, err
+	return oss.GetListObjectVersionsOutput(resp)
 }
 
 func (c *CephOSS) HeadObject(ctx context.Context, req *oss.HeadObjectInput) (*oss.HeadObjectOutput, error) {
