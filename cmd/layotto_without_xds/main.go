@@ -132,6 +132,7 @@ import (
 	sequencer_inmemory "mosn.io/layotto/components/sequencer/in-memory"
 	sequencer_mongo "mosn.io/layotto/components/sequencer/mongo"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
+	sequencer_snowflake "mosn.io/layotto/components/sequencer/snowflake"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 
 	// Actuator
@@ -425,6 +426,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
 				return sequencer_inmemory.NewInMemorySequencer()
+			}),
+			runtime_sequencer.NewFactory("snowflake", func() sequencer.Store {
+				return sequencer_snowflake.NewSnowFlakeSequencer(log.DefaultLogger)
 			}),
 		),
 		// secretstores

@@ -167,7 +167,7 @@ func NewMysqlClient(meta SnowflakeMysqlMetadata) (int64, error) {
 			ID BIGINT NOT NULL AUTO_INCREMENT COMMENT 'auto increment id',
 			HOST_NAME VARCHAR(64) NOT NULL COMMENT 'host name',
 			PORT VARCHAR(64) NOT NULL COMMENT 'port',
-				CREATED TIMESTAMP NOT NULL COMMENT 'created time',
+			CREATED TIMESTAMP NOT NULL COMMENT 'created time',
 			PRIMARY KEY(ID)
 		)`, meta.TableName)
 	if _, err = meta.Db.Exec(createTable); err != nil {
