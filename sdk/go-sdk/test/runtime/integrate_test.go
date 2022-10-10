@@ -24,11 +24,11 @@ import (
 	"testing"
 	"time"
 
-	"google.golang.org/grpc"
-
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc"
+	
 	"mosn.io/layotto/sdk/go-sdk/client"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
