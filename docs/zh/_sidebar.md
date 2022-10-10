@@ -87,6 +87,7 @@
                 - [Zookeeper](zh/component_specs/sequencer/zookeeper.md)
                 - [MongoDB](zh/component_specs/sequencer/mongo.md)
                 - [Mysql](zh/component_specs/sequencer/mysql.md)
+                - [Snowflake](zh/component_specs/sequencer/snowflake.md)
             - [Secret Store](zh/component_specs/secret/common.md)  
             - [自定义组件](zh/component_specs/custom/common.md)
     - [如何部署、升级 Layotto](zh/operation/)
