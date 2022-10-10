@@ -18,10 +18,11 @@ package ref
 
 // Config is ref json config
 type Config struct {
-	SecretRef []*Item `json:"secret_ref"`
+	SecretRef    []*SecretRefConfig  `json:"secret_ref"`
+	ComponentRef *ComponentRefConfig `json:"component_ref"`
 }
 
-type Item struct {
+type SecretRefConfig struct {
 	//secret component name, such as : local.file
 	StoreName string `json:"store_name"`
 	// key in the secret component
@@ -30,4 +31,9 @@ type Item struct {
 	SubKey string `json:"sub_key"`
 	// key need to inject into metadata
 	InjectAs string `json:"inject_as"`
+}
+
+type ComponentRefConfig struct {
+	SecretStore string `json:"secret_store"`
+	ConfigStore string `json:"config_store"`
 }
