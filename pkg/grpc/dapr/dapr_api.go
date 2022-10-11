@@ -118,6 +118,16 @@ func (d *daprGrpcAPI) InvokeService(ctx context.Context, in *dapr_v1pb.InvokeSer
 		return nil, runtime_common.ToGrpcError(err)
 	}
 
+	//5. request not success, but decode bolt success, return the details of response to user
+	if !resp.Success && resp.Error != nil {
+		errorMsg := resp.Error.Error()
+		// use bolt body as error message
+		if string(resp.Data) != "" {
+			errorMsg = string(resp.Data)
+		}
+		return nil, status.Error(codes.Internal, errorMsg)
+	}
+
 	if resp.Header != nil {
 		header := metadata.Pairs()
 		for k, values := range resp.Header {

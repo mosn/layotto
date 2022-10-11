@@ -79,7 +79,7 @@ type RPCResponse struct {
 	ContentType string
 	Data        []byte
 	Success     bool
-	ErrorMsg    string
+	Error       error
 }
 
 type RpcConfig struct {

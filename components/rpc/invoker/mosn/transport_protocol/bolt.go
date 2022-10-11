@@ -72,13 +72,13 @@ func (b *boltCommon) FromFrame(resp api.XRespFrame) (*rpc.RPCResponse, error) {
 	case bolt.ResponseStatusSuccess:
 		rpcResp.Success = true
 	case bolt.ResponseStatusServerDeserialException:
-		rpcResp.ErrorMsg = common.Errorf(common.InternalCode, "bolt error code %d, ServerDeserializeException", respCode).Error()
+		rpcResp.Error = common.Errorf(common.InternalCode, "bolt error code %d, ServerDeserializeException", respCode)
 	case bolt.ResponseStatusServerSerialException:
-		rpcResp.ErrorMsg = common.Errorf(common.InternalCode, "bolt error code %d, ServerSerializeException", respCode).Error()
+		rpcResp.Error = common.Errorf(common.InternalCode, "bolt error code %d, ServerSerializeException", respCode)
 	case bolt.ResponseStatusCodecException:
-		rpcResp.ErrorMsg = common.Errorf(common.InternalCode, "bolt error code %d, CodecException", respCode).Error()
+		rpcResp.Error = common.Errorf(common.InternalCode, "bolt error code %d, CodecException", respCode)
 	default:
-		rpcResp.ErrorMsg = common.Errorf(common.UnavailebleCode, "bolt error code %d", respCode).Error()
+		rpcResp.Error = common.Errorf(common.UnavailebleCode, "bolt error code %d", respCode)
 	}
 	return rpcResp, nil
 }
