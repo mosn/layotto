@@ -138,6 +138,39 @@ TryLockResponse{success=true}
 UnlockResponse{status=LOCK_UNEXIST}
 ```
 
+### **JavaScript**
+
+下载 js sdk 和示例代码:
+
+```shell @if.not.exist js-sdk
+git clone https://github.com/layotto/js-sdk.git
+```
+
+切换目录:
+
+```shell
+cd js-sdk/demo
+```
+
+构建:
+
+```shell
+npm install
+```
+
+运行:
+
+```shell
+npm run test:lock
+```
+
+打印出以下信息说明运行成功:
+
+```bash
+true
+{ status: 0 }
+```
+
 <!-- tabs:end -->
 
 ## 下一步

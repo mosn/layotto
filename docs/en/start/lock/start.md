@@ -138,6 +138,39 @@ TryLockResponse{success=true}
 UnlockResponse{status=LOCK_UNEXIST}
 ```
 
+### **JavaScript**
+
+Download js sdk and examples:
+
+```shell @if.not.exist js-sdk
+git clone https://github.com/layotto/js-sdk.git
+```
+
+Change directory:
+
+```shell
+cd js-sdk/demo
+```
+
+Build:
+
+```shell
+npm install
+```
+
+Run the examples:
+
+```shell
+npm run test:lock
+```
+
+And you will see:
+
+```bash
+true
+{ status: 0 }
+```
+
 <!-- tabs:end -->
 
 ## Next Step
