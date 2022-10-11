@@ -20,7 +20,7 @@
 
 雪花算法生成id的整体设计如下图：
 
-![img.jpg](../../../img/sequencer/snowflake/snowflake_id.jpg)
+![img.jpg](https://www.gitlink.org.cn/api/attachments/397699)
 
 ## 怎么启动 mysql
 
