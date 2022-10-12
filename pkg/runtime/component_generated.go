@@ -20,11 +20,14 @@ import (
 
 	"mosn.io/pkg/log"
 
+	cryption "mosn.io/layotto/components/cryption"
 	email "mosn.io/layotto/components/email"
 	phone "mosn.io/layotto/components/phone"
 )
 
 type extensionComponents struct {
+	cryptionService map[string]cryption.CryptionService
+
 	emailService map[string]email.EmailService
 
 	phoneCallService map[string]phone.PhoneCallService
@@ -32,10 +35,40 @@ type extensionComponents struct {
 
 func newExtensionComponents() *extensionComponents {
 	return &extensionComponents{
+		cryptionService: make(map[string]cryption.CryptionService),
+
 		emailService: make(map[string]email.EmailService),
 
 		phoneCallService: make(map[string]phone.PhoneCallService),
 	}
+}
+
+func (m *MosnRuntime) initCryptionService(factorys ...*cryption.Factory) error {
+	log.DefaultLogger.Infof("[runtime] init CryptionService")
+
+	// 1. register all implementation
+	reg := cryption.NewRegistry(m.info)
+	reg.Register(factorys...)
+	// 2. loop initializing
+	for name, config := range m.runtimeConfig.CryptionService {
+		// 2.1. create the component
+		c, err := reg.Create(config.Type)
+		if err != nil {
+			m.errInt(err, "create the component %s failed", name)
+			return err
+		}
+		//inject secret to component
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
+			return err
+		}
+		// 2.2. init
+		if err := c.Init(context.TODO(), &config); err != nil {
+			m.errInt(err, "init the component %s failed", name)
+			return err
+		}
+		m.cryptionService[name] = c
+	}
+	return nil
 }
 
 func (m *MosnRuntime) initEmailService(factorys ...*email.Factory) error {
@@ -95,6 +128,10 @@ func (m *MosnRuntime) initPhoneCallService(factorys ...*phone.Factory) error {
 }
 
 func (m *MosnRuntime) initExtensionComponent(s services) error {
+	if err := m.initCryptionService(s.cryption...); err != nil {
+		return err
+	}
+
 	if err := m.initEmailService(s.email...); err != nil {
 		return err
 	}
