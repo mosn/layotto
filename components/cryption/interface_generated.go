@@ -13,24 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package runtime
+package cryption
 
 import (
-	cryption "mosn.io/layotto/components/cryption"
-	email "mosn.io/layotto/components/email"
-	phone "mosn.io/layotto/components/phone"
+	context "context"
 )
 
-type ExtensionComponentConfig struct {
-	// "mosn.io/layotto/spec/proto/extension/v1/cryption"
-	// cryption.
-	CryptionService map[string]cryption.Config `json:"cryption"`
+type CryptionService interface {
+	Init(context.Context, *Config) error
 
-	// "mosn.io/layotto/spec/proto/extension/v1/email"
-	// email.
-	EmailService map[string]email.Config `json:"email"`
+	Decrypt(context.Context, *DecryptRequest) (*DecryptResponse, error)
 
-	// "mosn.io/layotto/spec/proto/extension/v1/phone"
-	// phone.
-	PhoneCallService map[string]phone.Config `json:"phone"`
+	Encrypt(context.Context, *EncryptRequest) (*EncryptResponse, error)
 }
