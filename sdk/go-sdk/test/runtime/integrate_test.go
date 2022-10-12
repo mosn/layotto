@@ -96,7 +96,7 @@ func TestStateApi(t *testing.T) {
 
 	ctx := context.Background()
 
-	stateKey := "/MyStateKey"
+	stateKey := "MyStateKey"
 	stateValue := []byte("Hello Layotto!")
 
 	componentArray := [...]string{"redis_state_demo", "zookeeper_state_demo"}

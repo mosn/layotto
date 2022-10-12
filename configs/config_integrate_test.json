@@ -50,7 +50,8 @@
                               "servers": "127.0.0.1",
                               "zookeeperPassword": "",
                               "sessionTimeout": "3s",
-                              "logInfo": "false"
+                              "logInfo": "false",
+                              "keyPrefixPath": "/"
                             }
                           }
                         },
