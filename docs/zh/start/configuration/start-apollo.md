@@ -96,8 +96,7 @@ cd java-sdk
 
 构建:
 
-```shell @if.not.exist examples-configuration/target/examples-configuration-jar-with-dependencies.jar
-# build example jar
+```shell
 mvn -f examples-configuration/pom.xml clean package
 ```
 
