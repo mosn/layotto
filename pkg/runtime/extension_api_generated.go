@@ -16,6 +16,7 @@
 package runtime
 
 import (
+	cryption "mosn.io/layotto/pkg/grpc/cryption"
 	delay_queue "mosn.io/layotto/pkg/grpc/delay_queue"
 	email "mosn.io/layotto/pkg/grpc/email"
 	s3 "mosn.io/layotto/pkg/grpc/extension/s3"
@@ -25,6 +26,7 @@ import (
 func WithExtensionGrpcAPI() Option {
 	return WithGrpcAPI(
 		s3.NewS3Server,
+		cryption.NewAPI,
 		delay_queue.NewAPI,
 		email.NewAPI,
 		phone.NewAPI,

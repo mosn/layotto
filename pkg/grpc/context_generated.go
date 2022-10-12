@@ -22,6 +22,7 @@ import (
 	state "github.com/dapr/components-contrib/state"
 
 	configstores "mosn.io/layotto/components/configstores"
+	cryption "mosn.io/layotto/components/cryption"
 	custom "mosn.io/layotto/components/custom"
 	email "mosn.io/layotto/components/email"
 	file "mosn.io/layotto/components/file"
@@ -52,7 +53,9 @@ type ApplicationContext struct {
 	SecretStores          map[string]secretstores.SecretStore
 	DynamicComponents     map[lifecycle.ComponentKey]common.DynamicComponent
 	CustomComponent       map[string]map[string]custom.Component
-	EmailService          map[string]email.EmailService
+	CryptionService       map[string]cryption.CryptionService
+
+	EmailService map[string]email.EmailService
 
 	PhoneCallService map[string]phone.PhoneCallService
 }
