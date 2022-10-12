@@ -14,20 +14,23 @@
 # limitations under the License.
 #
 
-go build ./cmd/layotto
+# start storage systems, e.g. redis, zk, etcd
 nohup redis-server --port 6380 &
+bash /usr/share/zookeeper/bin/zkServer.sh start
+nohup bash /usr/share/zookeeper/bin/zkCli.sh < zkCreateZnode.sh
 cd ..
 nohup etcd &
+
+# build and run Layotto
 cd layotto
-bash /usr/share/zookeeper/bin/zkServer.sh start
+go build ./cmd/layotto
 nohup ./layotto start -c ./configs/config_integrate_test.json &
-cd sdk/go-sdk/test/runtime
-nohup bash /usr/share/zookeeper/bin/zkCli.sh < zkCreateZnode.sh
 
 # run integrate_test
+cd sdk/go-sdk/test/runtime
 go test -p 1 -v ./...
 
-# run demo/
+# run demos
 cd ../../../../demo/configuration/common
 go build -o client
 names="etcd_config_demo"
