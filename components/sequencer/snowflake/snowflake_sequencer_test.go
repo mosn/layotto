@@ -15,7 +15,6 @@ package snowflake
 
 import (
 	"database/sql"
-	"runtime"
 	"sync"
 	"testing"
 
@@ -42,7 +41,7 @@ const (
 	key = "resource_xxx"
 )
 
-func TestSnowFlakeSequence_GetNextId(t *testing.T) {
+func TestSnowflakeSequence_GetNextId(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -52,10 +51,18 @@ func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 	s.db = db
 
 	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT HOST_NAME").WillReturnError(sql.ErrNoRows)
 	mock.ExpectExec("INSERT INTO").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectQuery("SELECT ID").WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
+	mock.ExpectCommit()
+
+	mock.ExpectQuery("SELECT WORKER_ID").WillReturnError(sql.ErrNoRows)
+	mock.ExpectBegin()
+	mock.ExpectQuery("SELECT WORKER_ID").WillReturnError(sql.ErrNoRows)
+	mock.ExpectExec("INSERT INTO").WillReturnResult(sqlmock.NewResult(1, 1))
+	// mock.ExpectExec("UPDATE").WillReturnError(errors.New("update error"))
 	mock.ExpectCommit()
 
 	cfg := sequencer.Configuration{
@@ -95,7 +102,7 @@ func TestSnowFlakeSequence_GetNextId(t *testing.T) {
 	assert.Equal(t, falseUidNum, 0)
 }
 
-func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
+func TestSnowflakeSequence_ParallelGetNextId(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -105,10 +112,17 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 	s.db = db
 
 	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT HOST_NAME").WillReturnError(sql.ErrNoRows)
 	mock.ExpectExec("INSERT INTO").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectQuery("SELECT ID").WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
+	mock.ExpectCommit()
+
+	mock.ExpectQuery("SELECT WORKER_ID").WillReturnError(sql.ErrNoRows)
+	mock.ExpectBegin()
+	mock.ExpectQuery("SELECT WORKER_ID").WillReturnError(sql.ErrNoRows)
+	mock.ExpectExec("INSERT INTO").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	cfg := sequencer.Configuration{
@@ -128,23 +142,20 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 
 	var size int = 100000
 	var falseUidNum int
-	var preUid int64
-	var cores int = runtime.NumCPU()
 
 	var wg sync.WaitGroup
-	var mu sync.Mutex
-	wg.Add(2 * cores)
+	wg.Add(2)
 
-	for i := 0; i < 2*cores; i++ {
+	for i := 0; i < 2; i++ {
 		go func() {
 			defer func() {
 				if x := recover(); x != nil {
 					log.DefaultLogger.Errorf("panic when testing parallel generatoring uid with snowflake algorithm: %v", x)
 				}
 			}()
+			var preUid int64
 			for j := 0; j < size; j++ {
 				//assert next uid is bigger than previous
-				mu.Lock()
 				resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
 					Key: key,
 				})
@@ -152,7 +163,6 @@ func TestSnowFlakeSequence_ParallelGetNextId(t *testing.T) {
 					falseUidNum++
 				}
 				preUid = resp.NextId
-				mu.Unlock()
 				assert.NoError(t, err)
 			}
 			wg.Done()

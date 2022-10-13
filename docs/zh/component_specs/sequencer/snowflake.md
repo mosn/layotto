@@ -15,12 +15,14 @@
 | workerBits    | N    | 机器id所占位数大小。默认为22                                 |
 | seqBits       | N    | 序列号所占位数大小。默认为13                                 |
 | startTime     | N    | 时间基点。默认为“2022-01-01”                                 |
+| reqTimeout    | N    | 请求id超时时间。默认为500毫秒                                 |
+| keyTimeout    | N    | key命名空间超时时间。默认为24小时                              |
 
 ## 整体设计
 
 雪花算法生成id的整体设计如下图：
 
-![img.jpg](../../../img/sequencer/snowflake/snowflake_id.jpg)
+![img.jpg](https://www.gitlink.org.cn/api/attachments/397699)
 
 ## 怎么启动 mysql
 

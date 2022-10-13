@@ -30,6 +30,7 @@ const (
 	mysqlHost         = "mysqlHost"
 	mysqlDatabaseName = "databaseName"
 	mysqlTableName    = "tableName"
+	mysqlKeyTableName = "keyTableName"
 	mysqlUserName     = "userName"
 	mysqlPassword     = "password"
 	mysqlCharset      = "utf8"
@@ -37,23 +38,32 @@ const (
 	workerBits        = "workerBits"
 	seqBits           = "seqBits"
 	startTime         = "startTime"
+	reqTimeout        = "reqTimeout"
+	keyTimeout        = "keyTimeout"
 
 	defaultMysqlTableName = "layotto_sequencer_snowflake"
-	defalutTimeBits       = 28
-	defalutWorkerBits     = 22
-	defalutSeqBits        = 13
-	defalutStartTime      = "2022-01-01"
+	defaultKeyTableName   = "layotto_sequencer_snowflake_key"
+	defaultTimeBits       = 28
+	defaultWorkerBits     = 22
+	defaultSeqBits        = 13
+	defaultStartTime      = "2022-01-01"
+	defaultReqTimeout     = 500 * time.Millisecond
+	defaultKeyTimeout     = 24 * time.Hour
 )
 
 type SnowflakeMetadata struct {
-	MysqlMetadata *SnowflakeMysqlMetadata
+	MysqlMetadata SnowflakeMysqlMetadata
 
-	WorkerBits int64
-	TimeBits   int64
-	SeqBits    int64
-	StartTime  int64
-	WorkId     int64
-	LogInfo    bool
+	WorkerBits     int64
+	TimeBits       int64
+	SeqBits        int64
+	WorkidShift    int64
+	TimestampShift int64
+	StartTime      int64
+	WorkId         int64
+	ReqTimeout     time.Duration
+	KeyTimeout     time.Duration
+	LogInfo        bool
 }
 
 type SnowflakeMysqlMetadata struct {
@@ -63,6 +73,7 @@ type SnowflakeMysqlMetadata struct {
 	Password     string
 	DatabaseName string
 	TableName    string
+	KeyTableName string
 	Db           *sql.DB
 }
 
@@ -72,6 +83,11 @@ func ParseSnowflakeMysqlMetadata(properties map[string]string) (SnowflakeMysqlMe
 	mm.TableName = defaultTableName
 	if val, ok := properties[mysqlTableName]; ok && val != "" {
 		mm.TableName = val
+	}
+
+	mm.KeyTableName = defaultKeyTableName
+	if val, ok := properties[mysqlKeyTableName]; ok && val != "" {
+		mm.KeyTableName = val
 	}
 
 	if val, ok := properties[mysqlHost]; ok && val != "" {
@@ -108,21 +124,21 @@ func ParseSnowflakeMetadata(properties map[string]string) (SnowflakeMetadata, er
 	if err != nil {
 		return metadata, err
 	}
-	metadata.MysqlMetadata = &mm
+	metadata.MysqlMetadata = mm
 
-	metadata.WorkerBits = defalutWorkerBits
+	metadata.WorkerBits = defaultWorkerBits
 	if val, ok := properties[workerBits]; ok && val != "" {
 		if metadata.WorkerBits, err = strconv.ParseInt(val, 10, 64); err != nil {
 			return metadata, err
 		}
 	}
-	metadata.TimeBits = defalutTimeBits
+	metadata.TimeBits = defaultTimeBits
 	if val, ok := properties[timeBits]; ok && val != "" {
 		if metadata.TimeBits, err = strconv.ParseInt(val, 10, 64); err != nil {
 			return metadata, err
 		}
 	}
-	metadata.SeqBits = defalutSeqBits
+	metadata.SeqBits = defaultSeqBits
 	if val, ok := properties[seqBits]; ok && val != "" {
 		if metadata.SeqBits, err = strconv.ParseInt(val, 10, 64); err != nil {
 			return metadata, err
@@ -133,21 +149,41 @@ func ParseSnowflakeMetadata(properties map[string]string) (SnowflakeMetadata, er
 		return metadata, errors.New("not enough 64bits")
 	}
 
-	s := defalutStartTime
+	s := defaultStartTime
 	if val, ok := properties[startTime]; ok && val != "" {
 		s = val
 	}
-
 	var tmp time.Time
 	if tmp, err = time.ParseInLocation("2006-01-02", s, time.Local); err != nil {
 		return metadata, err
 	}
 	metadata.StartTime = tmp.Unix()
 
+	metadata.ReqTimeout = defaultReqTimeout
+	if val, ok := properties[reqTimeout]; ok && val != "" {
+		parsedVal, err := strconv.Atoi(val)
+		if err != nil {
+			return metadata, err
+		}
+		metadata.ReqTimeout = time.Duration(parsedVal) * time.Millisecond
+	}
+
+	metadata.KeyTimeout = defaultKeyTimeout
+	if val, ok := properties[keyTimeout]; ok && val != "" {
+		parsedVal, err := strconv.Atoi(val)
+		if err != nil {
+			return metadata, err
+		}
+		metadata.KeyTimeout = time.Duration(parsedVal) * time.Hour
+	}
+
+	metadata.TimestampShift = metadata.WorkerBits + metadata.SeqBits
+	metadata.WorkidShift = metadata.SeqBits
+
 	return metadata, nil
 }
 
-func NewMysqlClient(meta SnowflakeMysqlMetadata) (int64, error) {
+func NewMysqlClient(meta *SnowflakeMysqlMetadata) (int64, error) {
 
 	var workId int64
 	//for unit test
@@ -174,7 +210,19 @@ func NewMysqlClient(meta SnowflakeMysqlMetadata) (int64, error) {
 		return workId, err
 	}
 
-	workId, err = NewWorkId(meta)
+	createKeyTable := fmt.Sprintf(
+		`CREATE TABLE IF NOT EXISTS %s
+		(
+			SEQUENCER_KEY VARCHAR(64) NOT NULL COMMENT 'sequencer key',
+			WORKER_ID VARCHAR(64) NOT NULL COMMENT 'worker id',
+			TIMESTAMP VARCHAR(64) NOT NULL COMMENT 'timestamp',
+			UNIQUE INDEX (SEQUENCER_KEY)
+		)`, meta.KeyTableName)
+	if _, err = meta.Db.Exec(createKeyTable); err != nil {
+		return workId, err
+	}
+
+	workId, err = NewWorkId(*meta)
 	return workId, err
 }
 
@@ -182,8 +230,6 @@ func NewMysqlClient(meta SnowflakeMysqlMetadata) (int64, error) {
 //host_name = "ip"
 //port = "timestamp-random number"
 func NewWorkId(meta SnowflakeMysqlMetadata) (int64, error) {
-	defer meta.Db.Close()
-
 	var workId int64
 	ip, err := getIP()
 	stringIp := ip.String()

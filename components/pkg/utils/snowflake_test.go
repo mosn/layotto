@@ -34,19 +34,25 @@ func TestParseSnowflakeMetadata(t *testing.T) {
 	_, err = ParseSnowflakeMetadata(properties)
 	assert.NoError(t, err)
 
-	properties["workerBits"] = "a"
+	properties["keyTimeout"] = "a"
 	_, err = ParseSnowflakeMetadata(properties)
 	assert.Error(t, err)
 
-	properties["workerBits"] = ""
+	properties["reqTimeout"] = "a"
+	_, err = ParseSnowflakeMetadata(properties)
+	assert.Error(t, err)
+
 	properties["startTime"] = "2022.01.01"
 	_, err = ParseSnowflakeMetadata(properties)
 	assert.Error(t, err)
 
-	properties["startTime"] = "2022-01-01"
 	properties["workerBits"] = "1"
 	properties["timeBits"] = "1"
 	properties["seqBits"] = "1"
+	_, err = ParseSnowflakeMetadata(properties)
+	assert.Error(t, err)
+
+	properties["workerBits"] = "a"
 	_, err = ParseSnowflakeMetadata(properties)
 	assert.Error(t, err)
 }
@@ -71,7 +77,7 @@ func TestNewMysqlClient(t *testing.T) {
 
 	m := SnowflakeMysqlMetadata{}
 	m.Db = db
-	workId, err := NewMysqlClient(m)
+	workId, err := NewMysqlClient(&m)
 	assert.NoError(t, err)
 	assert.Equal(t, workId, int64(1))
 }
