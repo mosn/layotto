@@ -20,10 +20,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"testing"
+
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/pkg/buffer"
-	"testing"
 
 	"mosn.io/layotto/components/oss"
 )
