@@ -15,8 +15,10 @@ package snowflake
 
 import (
 	"database/sql"
+	"strconv"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	_ "github.com/go-sql-driver/mysql"
@@ -58,13 +60,6 @@ func TestSnowflakeSequence_GetNextId(t *testing.T) {
 	mock.ExpectQuery("SELECT ID").WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 	mock.ExpectCommit()
 
-	mock.ExpectQuery("SELECT WORKER_ID").WillReturnError(sql.ErrNoRows)
-	mock.ExpectBegin()
-	mock.ExpectQuery("SELECT WORKER_ID").WillReturnError(sql.ErrNoRows)
-	mock.ExpectExec("INSERT INTO").WillReturnResult(sqlmock.NewResult(1, 1))
-	// mock.ExpectExec("UPDATE").WillReturnError(errors.New("update error"))
-	mock.ExpectCommit()
-
 	cfg := sequencer.Configuration{
 		Properties: make(map[string]string),
 		BiggerThan: make(map[string]int64),
@@ -87,7 +82,7 @@ func TestSnowflakeSequence_GetNextId(t *testing.T) {
 
 	var falseUidNum int
 	var preUid int64
-	var size int = 100000
+	var size int = 1000
 	for i := 0; i < size; i++ {
 		resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
 			Key: key,
@@ -103,6 +98,71 @@ func TestSnowflakeSequence_GetNextId(t *testing.T) {
 }
 
 func TestSnowflakeSequence_ParallelGetNextId(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	s := NewSnowFlakeSequencer(log.DefaultLogger)
+	s.db = db
+
+	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectBegin()
+	mock.ExpectQuery("SELECT HOST_NAME").WillReturnError(sql.ErrNoRows)
+	mock.ExpectExec("INSERT INTO").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectQuery("SELECT ID").WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
+	mock.ExpectCommit()
+
+	cfg := sequencer.Configuration{
+		Properties: make(map[string]string),
+		BiggerThan: make(map[string]int64),
+	}
+
+	cfg.Properties["mysqlHost"] = mysqlHost
+	cfg.Properties["databaseName"] = databaseName
+	cfg.Properties["tableName"] = tableName
+	cfg.Properties["userName"] = userName
+	cfg.Properties["password"] = password
+
+	err = s.Init(cfg)
+
+	assert.NoError(t, err)
+
+	var size int = 100
+	var falseUidNum int
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	for i := 0; i < 2; i++ {
+		go func() {
+			defer func() {
+				if x := recover(); x != nil {
+					log.DefaultLogger.Errorf("panic when testing parallel generatoring uid with snowflake algorithm: %v", x)
+				}
+			}()
+			var preUid int64
+			var key string
+			for j := 0; j < size; j++ {
+				key = strconv.Itoa(j)
+				//assert next uid is bigger than previous
+				resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
+					Key: key,
+				})
+				if preUid != 0 && resp.NextId <= preUid {
+					falseUidNum++
+				}
+				preUid = resp.NextId
+				assert.NoError(t, err)
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
+
+func TestKeyTimeout(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -136,37 +196,19 @@ func TestSnowflakeSequence_ParallelGetNextId(t *testing.T) {
 	cfg.Properties["userName"] = userName
 	cfg.Properties["password"] = password
 
+	cfg.Properties["timeBits"] = timeBits
+	cfg.Properties["workerBits"] = workerBits
+	cfg.Properties["seqBits"] = seqBits
+	cfg.Properties["startTime"] = startTime
+	cfg.Properties["keyTimeout"] = "0"
+
 	err = s.Init(cfg)
 
 	assert.NoError(t, err)
 
-	var size int = 100000
-	var falseUidNum int
-
-	var wg sync.WaitGroup
-	wg.Add(2)
-
-	for i := 0; i < 2; i++ {
-		go func() {
-			defer func() {
-				if x := recover(); x != nil {
-					log.DefaultLogger.Errorf("panic when testing parallel generatoring uid with snowflake algorithm: %v", x)
-				}
-			}()
-			var preUid int64
-			for j := 0; j < size; j++ {
-				//assert next uid is bigger than previous
-				resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
-					Key: key,
-				})
-				if preUid != 0 && resp.NextId <= preUid {
-					falseUidNum++
-				}
-				preUid = resp.NextId
-				assert.NoError(t, err)
-			}
-			wg.Done()
-		}()
-	}
-	wg.Wait()
+	_, err = s.GetNextId(&sequencer.GetNextIdRequest{
+		Key: key,
+	})
+	time.Sleep(time.Second)
+	assert.NoError(t, err)
 }
