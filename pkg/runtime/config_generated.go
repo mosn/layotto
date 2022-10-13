@@ -16,11 +16,16 @@
 package runtime
 
 import (
+	cryption "mosn.io/layotto/components/cryption"
 	email "mosn.io/layotto/components/email"
 	phone "mosn.io/layotto/components/phone"
 )
 
 type ExtensionComponentConfig struct {
+	// "mosn.io/layotto/spec/proto/extension/v1/cryption"
+	// cryption.
+	CryptionService map[string]cryption.Config `json:"cryption"`
+
 	// "mosn.io/layotto/spec/proto/extension/v1/email"
 	// email.
 	EmailService map[string]email.Config `json:"email"`

@@ -20,6 +20,7 @@ import (
 
 	grpc "google.golang.org/grpc"
 
+	cryption "mosn.io/layotto/spec/proto/extension/v1/cryption"
 	delay_queue "mosn.io/layotto/spec/proto/extension/v1/delay_queue"
 	email "mosn.io/layotto/spec/proto/extension/v1/email"
 	phone "mosn.io/layotto/spec/proto/extension/v1/phone"
@@ -35,6 +36,9 @@ type Client interface {
 	runtimeAPI
 
 	s3.ObjectStorageServiceClient
+
+	// "mosn.io/layotto/spec/proto/extension/v1/cryption"
+	cryption.CryptionServiceClient
 
 	// "mosn.io/layotto/spec/proto/extension/v1/delay_queue"
 	delay_queue.DelayQueueClient
@@ -52,6 +56,9 @@ func NewClientWithConnection(conn *grpc.ClientConn) Client {
 		connection:                 conn,
 		protoClient:                v1.NewRuntimeClient(conn),
 		ObjectStorageServiceClient: s3.NewObjectStorageServiceClient(conn),
+		// "mosn.io/layotto/spec/proto/extension/v1/cryption"
+		CryptionServiceClient: cryption.NewCryptionServiceClient(conn),
+
 		// "mosn.io/layotto/spec/proto/extension/v1/delay_queue"
 		DelayQueueClient: delay_queue.NewDelayQueueClient(conn),
 
@@ -68,6 +75,8 @@ type GRPCClient struct {
 	connection  *grpc.ClientConn
 	protoClient v1.RuntimeClient
 	s3.ObjectStorageServiceClient
+	// "mosn.io/layotto/spec/proto/extension/v1/cryption"
+	cryption.CryptionServiceClient
 	// "mosn.io/layotto/spec/proto/extension/v1/delay_queue"
 	delay_queue.DelayQueueClient
 	// "mosn.io/layotto/spec/proto/extension/v1/email"
