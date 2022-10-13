@@ -87,6 +87,7 @@ func (s *SnowFlakeSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequen
 		var sequence int64
 		var workerId = s.workerId
 		startId := cts<<s.metadata.TimestampShift | workerId<<s.metadata.WorkidShift | sequence
+
 		//producer
 		go s.producer(startId, currentTimeStamp, seed, req.Key)
 	}
@@ -140,30 +141,6 @@ func (s *SnowFlakeSequencer) producer(id, currentTimeStamp int64, ch chan int64,
 				s.logger.Errorf("%v", err)
 			}
 			return
-			// var mysqlWorkerId int64
-			// var mysqlTimestamp int64
-
-			// begin, err := s.metadata.MysqlMetadata.Db.Begin()
-			// if err != nil {
-			// 	return
-			// }
-			// err = begin.QueryRow("SELECT WORKER_ID, TIMESTAMP FROM "+s.metadata.MysqlMetadata.KeyTableName+" WHERE SEQUENCER_KEY = ?", key).Scan(&mysqlWorkerId, &mysqlTimestamp)
-			// if err == sql.ErrNoRows {
-			// 	_, err = begin.Exec("INSERT INTO "+s.metadata.MysqlMetadata.KeyTableName+"(SEQUENCER_KEY, WORKER_ID, TIMESTAMP) VALUES(?,?,?)", key, s.workerId, currentTimeStamp)
-			// 	if err != nil {
-			// 		return
-			// 	}
-			// } else {
-			// 	_, err = begin.Exec("UPDATE INTO "+s.metadata.MysqlMetadata.KeyTableName+"(SEQUENCER_KEY, WORKER_ID, TIMESTAMP) VALUES(?,?,?)", key, s.workerId, currentTimeStamp)
-			// 	if err != nil {
-			// 		return
-			// 	}
-			// }
-			// if err = begin.Commit(); err != nil {
-			// 	begin.Rollback()
-			// 	return
-			// }
-			// return
 		case ch <- id:
 			if currentTimeStamp == maxTimeStamp {
 				//if id reach the max value, wait for the id to be used up
