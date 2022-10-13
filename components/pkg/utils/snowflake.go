@@ -47,8 +47,8 @@ const (
 	defaultWorkerBits     = 22
 	defaultSeqBits        = 13
 	defaultStartTime      = "2022-01-01"
-	defaultReqTimeout     = 500 * time.Millisecond
-	defaultKeyTimeout     = 24 * time.Hour
+	defaultReqTimeout     = 500
+	defaultKeyTimeout     = 24
 )
 
 type SnowflakeMetadata struct {
@@ -60,7 +60,6 @@ type SnowflakeMetadata struct {
 	WorkidShift    int64
 	TimestampShift int64
 	StartTime      int64
-	WorkId         int64
 	ReqTimeout     time.Duration
 	KeyTimeout     time.Duration
 	LogInfo        bool
@@ -116,33 +115,56 @@ func ParseSnowflakeMysqlMetadata(properties map[string]string) (SnowflakeMysqlMe
 	return mm, nil
 }
 
+func Parsebits(val string, defaultVal int64) (int64, error) {
+	var bits int64
+	var err error
+	if val != "" {
+		if bits, err = strconv.ParseInt(val, 10, 64); err != nil {
+			return bits, err
+		}
+	} else {
+		bits = defaultVal
+	}
+	return bits, nil
+}
+
+func Parsetime(val string, defaultVal int) (int, error) {
+	var parsedVal int
+	var err error
+
+	if val != "" {
+		parsedVal, err = strconv.Atoi(val)
+		if err != nil {
+			return parsedVal, err
+		}
+	} else {
+		parsedVal = defaultVal
+	}
+	return parsedVal, nil
+}
+
 func ParseSnowflakeMetadata(properties map[string]string) (SnowflakeMetadata, error) {
 	metadata := SnowflakeMetadata{}
 	var err error
 
-	mm, err := ParseSnowflakeMysqlMetadata(properties)
+	metadata.MysqlMetadata, err = ParseSnowflakeMysqlMetadata(properties)
 	if err != nil {
 		return metadata, err
 	}
-	metadata.MysqlMetadata = mm
 
-	metadata.WorkerBits = defaultWorkerBits
-	if val, ok := properties[workerBits]; ok && val != "" {
-		if metadata.WorkerBits, err = strconv.ParseInt(val, 10, 64); err != nil {
-			return metadata, err
-		}
+	metadata.WorkerBits, err = Parsebits(properties[workerBits], defaultWorkerBits)
+	if err != nil {
+		return metadata, err
 	}
-	metadata.TimeBits = defaultTimeBits
-	if val, ok := properties[timeBits]; ok && val != "" {
-		if metadata.TimeBits, err = strconv.ParseInt(val, 10, 64); err != nil {
-			return metadata, err
-		}
+
+	metadata.TimeBits, err = Parsebits(properties[timeBits], defaultTimeBits)
+	if err != nil {
+		return metadata, err
 	}
-	metadata.SeqBits = defaultSeqBits
-	if val, ok := properties[seqBits]; ok && val != "" {
-		if metadata.SeqBits, err = strconv.ParseInt(val, 10, 64); err != nil {
-			return metadata, err
-		}
+
+	metadata.SeqBits, err = Parsebits(properties[seqBits], defaultSeqBits)
+	if err != nil {
+		return metadata, err
 	}
 
 	if metadata.TimeBits+metadata.WorkerBits+metadata.SeqBits+1 != 64 {
@@ -159,23 +181,17 @@ func ParseSnowflakeMetadata(properties map[string]string) (SnowflakeMetadata, er
 	}
 	metadata.StartTime = tmp.Unix()
 
-	metadata.ReqTimeout = defaultReqTimeout
-	if val, ok := properties[reqTimeout]; ok && val != "" {
-		parsedVal, err := strconv.Atoi(val)
-		if err != nil {
-			return metadata, err
-		}
-		metadata.ReqTimeout = time.Duration(parsedVal) * time.Millisecond
+	parsedReqTimeout, err := Parsetime(properties[reqTimeout], defaultReqTimeout)
+	if err != nil {
+		return metadata, err
 	}
+	metadata.ReqTimeout = time.Duration(parsedReqTimeout) * time.Millisecond
 
-	metadata.KeyTimeout = defaultKeyTimeout
-	if val, ok := properties[keyTimeout]; ok && val != "" {
-		parsedVal, err := strconv.Atoi(val)
-		if err != nil {
-			return metadata, err
-		}
-		metadata.KeyTimeout = time.Duration(parsedVal) * time.Hour
+	parsedKeyTimeout, err := Parsetime(properties[keyTimeout], defaultKeyTimeout)
+	if err != nil {
+		return metadata, err
 	}
+	metadata.KeyTimeout = time.Duration(parsedKeyTimeout) * time.Hour
 
 	metadata.TimestampShift = metadata.WorkerBits + metadata.SeqBits
 	metadata.WorkidShift = metadata.SeqBits
