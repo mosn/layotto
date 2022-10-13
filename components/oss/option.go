@@ -19,8 +19,9 @@ package oss
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"time"
+
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 
 	"github.com/jinzhu/copier"
 )
