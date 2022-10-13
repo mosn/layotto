@@ -13,7 +13,7 @@ fi
 CON=$(which protoc-gen-p6 | wc -l)
 if [ $CON -eq 0 ]; then
   # 0 means that protoc-gen-p6 does not exist
-  go install github.com/seeflood/protoc-gen-p6@latest
+  go install github.com/layotto/protoc-gen-p6@latest
 fi
 
 needGenerate() {
