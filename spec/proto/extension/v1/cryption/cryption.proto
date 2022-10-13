@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package spec.proto.extension.v1.cryption;
+
+option go_package = "mosn.io/layotto/spec/proto/extension/v1/cryption;cryption";
+
+// CryptionService is used to encrypt or decrypt data.
+service CryptionService {
+
+  // Encrypt data
+  rpc Encrypt(EncryptRequest) returns (EncryptResponse) {}
+
+  // Decrypt data
+  rpc Decrypt(DecryptRequest) returns (DecryptResponse) {}
+
+}
+
+// EncryptRequest is the request to encrypt data.
+message EncryptRequest {
+
+  // The cryption service name, e.g. 'aliyun.kms'
+  string component_name = 1;
+
+  // Required. Raw plaintext.
+  bytes plain_text = 2;
+
+  // Required.
+  string key_id = 3;
+
+}
+
+// EncryptResponse is the response of the `Encrypt` method.
+message EncryptResponse {
+
+  // The encrypted text
+  bytes cipher_text = 1;
+
+  // The id of the key used to decrypt this text.
+  string key_id = 2;
+
+  // The version of the key
+  string key_version_id = 3;
+}
+
+// DecryptRequest is the request of the `Decrypt` method.
+message DecryptRequest {
+
+  // The cryption service name, e.g. 'aliyun.kms'
+  string component_name = 1;
+
+  // Required. The encrypted text
+  bytes cipher_text = 2;
+
+}
+
+// DecryptResponse is the response of the `Decrypt` method.
+message DecryptResponse {
+
+  // Raw plaintext.
+  bytes plain_text = 1;
+
+  // The id of the key used to decrypt this text.
+  string key_id = 2;
+
+  // The version of the key
+  string key_version_id = 3;
+
+}
