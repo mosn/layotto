@@ -14,28 +14,21 @@
 * limitations under the License.
  */
 
-package aws
+package ceph
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
 	"testing"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-
-	"github.com/jinzhu/copier"
-
-	"github.com/aws/aws-sdk-go-v2/service/s3/types"
-
-	"mosn.io/layotto/components/oss"
-
+	"github.com/stretchr/testify/assert"
 	"mosn.io/pkg/buffer"
 
-	"github.com/stretchr/testify/assert"
+	"mosn.io/layotto/components/oss"
 )
 
 const (
@@ -48,21 +41,20 @@ const (
 			`
 )
 
-func TestAwsDefaultInitFunc(t *testing.T) {
-	a := &AwsOss{}
+func TestCephDefaultInitFunc(t *testing.T) {
+	a := &CephOSS{}
 	err := a.Init(context.TODO(), &oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte("hello")}})
 	assert.Equal(t, err, oss.ErrInvalid)
 	assert.Nil(t, a.client)
-
 }
 
-func TestAwsOss(t *testing.T) {
-	instance := &AwsOss{}
+func TestCephOss(t *testing.T) {
+	instance := &CephOSS{}
 	err := instance.Init(context.TODO(), &oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte(confWithoutUidAndBucket)}})
 	assert.Nil(t, err)
 
 	appendObjectResp, err := instance.AppendObject(context.TODO(), &oss.AppendObjectInput{})
-	assert.Equal(t, errors.New("AppendObject method not supported on AWS"), err)
+	assert.Equal(t, errors.New("AppendObject method not supported on CEPH"), err)
 	assert.Nil(t, appendObjectResp)
 
 	_, err = instance.AbortMultipartUpload(context.TODO(), &oss.AbortMultipartUploadInput{})
@@ -151,6 +143,8 @@ func TestAwsOss(t *testing.T) {
 	assert.Nil(t, err)
 	_, err = oss.GetGetObjectTaggingOutput(&s3.GetObjectTaggingOutput{})
 	assert.Nil(t, err)
+	_, err = oss.GetCopyObjectOutput(&s3.CopyObjectOutput{})
+	assert.Nil(t, err)
 	_, err = oss.GetListObjectsOutput(&s3.ListObjectsOutput{})
 	assert.Nil(t, err)
 	_, err = oss.GetGetObjectCannedAclOutput(&s3.GetObjectAclOutput{})
@@ -165,23 +159,4 @@ func TestAwsOss(t *testing.T) {
 	assert.Nil(t, err)
 	_, err = oss.GetListObjectVersionsOutput(&s3.ListObjectVersionsOutput{})
 	assert.Nil(t, err)
-}
-
-func TestDeepCopy(t *testing.T) {
-	value := "hello"
-	t1 := time.Now()
-	fromValue := &types.ObjectVersion{
-		ETag:         &value,
-		IsLatest:     true,
-		Key:          &value,
-		LastModified: &t1,
-		Owner:        &types.Owner{DisplayName: &value, ID: &value},
-		Size:         10,
-		StorageClass: "hello",
-		VersionId:    &value,
-	}
-	tovalue := &oss.ObjectVersion{}
-	err := copier.CopyWithOption(tovalue, fromValue, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
-	assert.Nil(t, err)
-	assert.Equal(t, tovalue.Owner.DisplayName, value)
 }
