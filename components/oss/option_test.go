@@ -17,6 +17,7 @@
 package oss
 
 import (
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"testing"
 	"time"
 
@@ -49,4 +50,23 @@ func TestCopierOption(t *testing.T) {
 	err = copier.CopyWithOption(dst, src, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{TimeToInt64}})
 	assert.Nil(t, err)
 	assert.Equal(t, ti.Unix(), dst.TestInt64toTime)
+}
+
+func TestGetOutput(t *testing.T) {
+	_, err := GetGetObjectOutput(&s3.GetObjectOutput{})
+	assert.Nil(t, err)
+	_, err = GetListObjectsOutput(&s3.ListObjectsOutput{})
+	assert.Nil(t, err)
+	_, err = GetGetObjectCannedAclOutput(&s3.GetObjectAclOutput{})
+	assert.Nil(t, err)
+	_, err = GetUploadPartOutput(&s3.UploadPartOutput{})
+	assert.Nil(t, err)
+	_, err = GetUploadPartCopyOutput(&s3.UploadPartCopyOutput{})
+	assert.Nil(t, err)
+	_, err = GetListPartsOutput(&s3.ListPartsOutput{})
+	assert.Nil(t, err)
+	_, err = GetListMultipartUploadsOutput(&s3.ListMultipartUploadsOutput{})
+	assert.Nil(t, err)
+	_, err = GetListObjectVersionsOutput(&s3.ListObjectVersionsOutput{})
+	assert.Nil(t, err)
 }
