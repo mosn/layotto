@@ -20,13 +20,13 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/copier"
-
 	"mosn.io/pkg/log"
 
 	delay_queue "mosn.io/layotto/components/delay_queue"
 	delay_queue1 "mosn.io/layotto/spec/proto/extension/v1/delay_queue"
 
 	rawGRPC "google.golang.org/grpc"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -59,7 +59,7 @@ func (s *server) PublishDelayMessage(ctx context.Context, in *delay_queue1.Delay
 	// find the component
 	comp := s.components[in.ComponentName]
 	if comp == nil {
-		return nil, invalidArgumentError("PublishDelayMessage", grpc_api.ErrComponentNotFound, "delay_queue1", in.ComponentName)
+		return nil, invalidArgumentError("PublishDelayMessage", grpc_api.ErrComponentNotFound, "delay_queue", in.ComponentName)
 	}
 
 	// convert request

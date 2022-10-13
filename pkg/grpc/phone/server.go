@@ -49,7 +49,7 @@ func (s *server) SendVoiceWithTemplate(ctx context.Context, in *phone1.SendVoice
 	// find the component
 	comp := s.components[in.ComponentName]
 	if comp == nil {
-		return nil, invalidArgumentError("SendVoiceWithTemplate", grpc_api.ErrComponentNotFound, "phone1", in.ComponentName)
+		return nil, invalidArgumentError("SendVoiceWithTemplate", grpc_api.ErrComponentNotFound, "phone", in.ComponentName)
 	}
 
 	// convert request

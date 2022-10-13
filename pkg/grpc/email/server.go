@@ -49,7 +49,7 @@ func (s *server) SendEmail(ctx context.Context, in *email1.SendEmailRequest) (*e
 	// find the component
 	comp := s.components[in.ComponentName]
 	if comp == nil {
-		return nil, invalidArgumentError("SendEmail", grpc_api.ErrComponentNotFound, "email1", in.ComponentName)
+		return nil, invalidArgumentError("SendEmail", grpc_api.ErrComponentNotFound, "email", in.ComponentName)
 	}
 
 	// convert request
@@ -78,7 +78,7 @@ func (s *server) SendEmailWithTemplate(ctx context.Context, in *email1.SendEmail
 	// find the component
 	comp := s.components[in.ComponentName]
 	if comp == nil {
-		return nil, invalidArgumentError("SendEmailWithTemplate", grpc_api.ErrComponentNotFound, "email1", in.ComponentName)
+		return nil, invalidArgumentError("SendEmailWithTemplate", grpc_api.ErrComponentNotFound, "email", in.ComponentName)
 	}
 
 	// convert request
