@@ -109,12 +109,8 @@ func (a *AwsOss) PutObject(ctx context.Context, req *oss.PutObjectInput) (*oss.P
 	if err != nil {
 		return nil, err
 	}
-	out := &oss.PutObjectOutput{}
-	err = copier.Copy(out, resp)
-	if err != nil {
-		return nil, err
-	}
-	return out, err
+
+	return oss.GetPutObjectOutput(resp)
 }
 
 func (a *AwsOss) DeleteObject(ctx context.Context, req *oss.DeleteObjectInput) (*oss.DeleteObjectOutput, error) {
@@ -130,7 +126,7 @@ func (a *AwsOss) DeleteObject(ctx context.Context, req *oss.DeleteObjectInput) (
 	if err != nil {
 		return nil, err
 	}
-	return &oss.DeleteObjectOutput{DeleteMarker: resp.DeleteMarker, RequestCharged: string(resp.RequestCharged), VersionId: *resp.VersionId}, err
+	return oss.GetDeleteObjectOutput(resp)
 }
 
 func (a *AwsOss) PutObjectTagging(ctx context.Context, req *oss.PutObjectTaggingInput) (*oss.PutObjectTaggingOutput, error) {
@@ -164,7 +160,7 @@ func (a *AwsOss) DeleteObjectTagging(ctx context.Context, req *oss.DeleteObjectT
 	if err != nil {
 		return nil, err
 	}
-	return &oss.DeleteObjectTaggingOutput{VersionId: *resp.VersionId}, err
+	return oss.GetDeleteObjectTaggingOutput(resp)
 }
 
 func (a *AwsOss) GetObjectTagging(ctx context.Context, req *oss.GetObjectTaggingInput) (*oss.GetObjectTaggingOutput, error) {
@@ -182,11 +178,7 @@ func (a *AwsOss) GetObjectTagging(ctx context.Context, req *oss.GetObjectTagging
 		return nil, err
 	}
 
-	output := &oss.GetObjectTaggingOutput{Tags: map[string]string{}}
-	for _, tags := range resp.TagSet {
-		output.Tags[*tags.Key] = *tags.Value
-	}
-	return output, err
+	return oss.GetGetObjectTaggingOutput(resp)
 }
 
 func (a *AwsOss) CopyObject(ctx context.Context, req *oss.CopyObjectInput) (*oss.CopyObjectOutput, error) {

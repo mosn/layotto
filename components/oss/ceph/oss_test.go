@@ -22,6 +22,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/pkg/buffer"
@@ -132,6 +134,16 @@ func TestCephOss(t *testing.T) {
 	assert.NotNil(t, err)
 
 	_, err = oss.GetGetObjectOutput(&s3.GetObjectOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetPutObjectOutput(&manager.UploadOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetDeleteObjectOutput(&s3.DeleteObjectOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetDeleteObjectOutput(&s3.DeleteObjectOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetGetObjectTaggingOutput(&s3.GetObjectTaggingOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetCopyObjectOutput(&s3.CopyObjectOutput{})
 	assert.Nil(t, err)
 	_, err = oss.GetListObjectsOutput(&s3.ListObjectsOutput{})
 	assert.Nil(t, err)

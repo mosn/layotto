@@ -118,12 +118,7 @@ func (c *CephOSS) PutObject(ctx context.Context, req *oss.PutObjectInput) (*oss.
 		return nil, err
 	}
 
-	out := &oss.PutObjectOutput{}
-	err = copier.Copy(out, resp)
-	if err != nil {
-		return nil, err
-	}
-	return out, err
+	return oss.GetPutObjectOutput(resp)
 }
 
 func (c *CephOSS) DeleteObject(ctx context.Context, req *oss.DeleteObjectInput) (*oss.DeleteObjectOutput, error) {
@@ -141,11 +136,7 @@ func (c *CephOSS) DeleteObject(ctx context.Context, req *oss.DeleteObjectInput) 
 		return nil, err
 	}
 
-	versionId := ""
-	if resp.VersionId != nil {
-		versionId = *resp.VersionId
-	}
-	return &oss.DeleteObjectOutput{DeleteMarker: resp.DeleteMarker, RequestCharged: string(resp.RequestCharged), VersionId: versionId}, err
+	return oss.GetDeleteObjectOutput(resp)
 }
 
 func (c *CephOSS) PutObjectTagging(ctx context.Context, req *oss.PutObjectTaggingInput) (*oss.PutObjectTaggingOutput, error) {
@@ -184,11 +175,7 @@ func (c *CephOSS) DeleteObjectTagging(ctx context.Context, req *oss.DeleteObject
 		return nil, err
 	}
 
-	versionId := ""
-	if resp.VersionId != nil {
-		versionId = *resp.VersionId
-	}
-	return &oss.DeleteObjectTaggingOutput{VersionId: versionId}, err
+	return oss.GetDeleteObjectTaggingOutput(resp)
 }
 
 func (c *CephOSS) GetObjectTagging(ctx context.Context, req *oss.GetObjectTaggingInput) (*oss.GetObjectTaggingOutput, error) {
@@ -207,11 +194,7 @@ func (c *CephOSS) GetObjectTagging(ctx context.Context, req *oss.GetObjectTaggin
 		return nil, err
 	}
 
-	output := &oss.GetObjectTaggingOutput{Tags: map[string]string{}}
-	for _, tags := range resp.TagSet {
-		output.Tags[*tags.Key] = *tags.Value
-	}
-	return output, err
+	return oss.GetGetObjectTaggingOutput(resp)
 }
 
 func (c *CephOSS) CopyObject(ctx context.Context, req *oss.CopyObjectInput) (*oss.CopyObjectOutput, error) {
@@ -239,12 +222,7 @@ func (c *CephOSS) CopyObject(ctx context.Context, req *oss.CopyObjectInput) (*os
 		return nil, err
 	}
 
-	out := &oss.CopyObjectOutput{}
-	err = copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
-	if err != nil {
-		return nil, err
-	}
-	return out, err
+	return oss.GetCopyObjectOutput(resp)
 }
 
 func (c *CephOSS) DeleteObjects(ctx context.Context, req *oss.DeleteObjectsInput) (*oss.DeleteObjectsOutput, error) {

@@ -21,6 +21,8 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
 	"github.com/jinzhu/copier"
@@ -53,6 +55,48 @@ func GetGetObjectOutput(ob *s3.GetObjectOutput) (*GetObjectOutput, error) {
 		return nil, err
 	}
 	out.DataStream = ob.Body
+	return out, nil
+}
+
+func GetPutObjectOutput(resp *manager.UploadOutput) (*PutObjectOutput, error) {
+	out := &PutObjectOutput{}
+	err := copier.Copy(out, resp)
+	if err != nil {
+		return nil, err
+	}
+	return out, err
+}
+
+func GetDeleteObjectOutput(resp *s3.DeleteObjectOutput) (*DeleteObjectOutput, error) {
+	versionId := ""
+	if resp.VersionId != nil {
+		versionId = *resp.VersionId
+	}
+	return &DeleteObjectOutput{DeleteMarker: resp.DeleteMarker, RequestCharged: string(resp.RequestCharged), VersionId: versionId}, nil
+}
+
+func GetDeleteObjectTaggingOutput(resp *s3.DeleteObjectTaggingOutput) (*DeleteObjectTaggingOutput, error) {
+	versionId := ""
+	if resp.VersionId != nil {
+		versionId = *resp.VersionId
+	}
+	return &DeleteObjectTaggingOutput{VersionId: versionId}, nil
+}
+
+func GetGetObjectTaggingOutput(resp *s3.GetObjectTaggingOutput) (*GetObjectTaggingOutput, error) {
+	output := &GetObjectTaggingOutput{Tags: map[string]string{}}
+	for _, tags := range resp.TagSet {
+		output.Tags[*tags.Key] = *tags.Value
+	}
+	return output, nil
+}
+
+func GetCopyObjectOutput(resp *s3.CopyObjectOutput) (*CopyObjectOutput, error) {
+	out := &CopyObjectOutput{}
+	err := copier.CopyWithOption(out, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{}})
+	if err != nil {
+		return nil, err
+	}
 	return out, nil
 }
 

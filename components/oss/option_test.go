@@ -20,6 +20,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
 	"github.com/stretchr/testify/assert"
@@ -55,6 +57,16 @@ func TestCopierOption(t *testing.T) {
 
 func TestGetOutput(t *testing.T) {
 	_, err := GetGetObjectOutput(&s3.GetObjectOutput{})
+	assert.Nil(t, err)
+	_, err = GetPutObjectOutput(&manager.UploadOutput{})
+	assert.Nil(t, err)
+	_, err = GetDeleteObjectOutput(&s3.DeleteObjectOutput{})
+	assert.Nil(t, err)
+	_, err = GetDeleteObjectTaggingOutput(&s3.DeleteObjectTaggingOutput{})
+	assert.Nil(t, err)
+	_, err = GetGetObjectTaggingOutput(&s3.GetObjectTaggingOutput{})
+	assert.Nil(t, err)
+	_, err = GetCopyObjectOutput(&s3.CopyObjectOutput{})
 	assert.Nil(t, err)
 	_, err = GetListObjectsOutput(&s3.ListObjectsOutput{})
 	assert.Nil(t, err)
