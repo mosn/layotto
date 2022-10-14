@@ -146,16 +146,16 @@ UnlockResponse{status=LOCK_UNEXIST}
 git clone https://github.com/layotto/js-sdk.git
 ```
 
-切换目录:
-
-```shell
-cd js-sdk/demo
-```
-
 构建:
 
 ```shell
 npm install
+```
+
+切换目录:
+
+```shell
+cd js-sdk/demo
 ```
 
 运行:
@@ -169,6 +169,25 @@ npm run test:lock
 ```bash
 true
 { status: 0 }
+```
+
+<!-- tabs:end -->
+
+## step 3. 销毁容器，释放资源
+<!-- tabs:start -->
+### **关闭 Docker Compose**
+如果您是用 docker-compose 启动的 Redis 和 Layotto，可以按以下方式关闭：
+
+```bash
+cd ${project_path}/docker/layotto-redis
+docker-compose stop
+```
+
+### **销毁 Redis Docker 容器**
+如果您是用 Docker 启动的 Redis，可以按以下方式销毁 Redis 容器：
+
+```shell
+docker rm -f redis-test
 ```
 
 <!-- tabs:end -->

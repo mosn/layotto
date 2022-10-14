@@ -146,16 +146,16 @@ Download js sdk and examples:
 git clone https://github.com/layotto/js-sdk.git
 ```
 
-Change directory:
-
-```shell
-cd js-sdk/demo
-```
-
 Build:
 
 ```shell
 npm install
+```
+
+Change directory:
+
+```shell
+cd js-sdk/demo
 ```
 
 Run the examples:
@@ -169,6 +169,25 @@ And you will see:
 ```bash
 true
 { status: 0 }
+```
+
+<!-- tabs:end -->
+
+## step 3. Stop containers and release resources
+<!-- tabs:start -->
+### **Docker Compose**
+If you started Redis and Layotto with docker-compose, you can shut them down as follows:
+
+```bash
+cd ${project_path}/docker/layotto-redis
+docker-compose stop
+```
+
+### **Destroy the Redis container**
+If you started Redis with Docker, you can destroy the Redis container as follows:
+
+```shell
+docker rm -f redis-test
 ```
 
 <!-- tabs:end -->
