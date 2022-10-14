@@ -146,21 +146,22 @@ Download js sdk and examples:
 git clone https://github.com/layotto/js-sdk.git
 ```
 
+Change directory:
+
+```shell
+cd js-sdk
+```
+
 Build:
 
 ```shell
 npm install
 ```
 
-Change directory:
-
-```shell
-cd js-sdk/demo
-```
-
 Run the examples:
 
 ```shell
+cd demo
 npm run test:lock
 ```
 

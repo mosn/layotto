@@ -146,21 +146,22 @@ UnlockResponse{status=LOCK_UNEXIST}
 git clone https://github.com/layotto/js-sdk.git
 ```
 
+切换目录:
+
+```shell
+cd js-sdk
+```
+
 构建:
 
 ```shell
 npm install
 ```
 
-切换目录:
-
-```shell
-cd js-sdk/demo
-```
-
 运行:
 
 ```shell
+cd demo
 npm run test:lock
 ```
 
