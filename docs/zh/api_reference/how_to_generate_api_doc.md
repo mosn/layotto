@@ -54,7 +54,7 @@ service ObjectStorageService{
 }
 ```
 
-这些特殊的注释被称为 "Master's commands"，还有许多其他的命令，你可以查看[文档](https://github.com/seeflood/protoc-gen-p6#masters-commands)了解更多细节。
+这些特殊的注释被称为 "Master's commands"，还有许多其他的命令，你可以查看[文档](https://github.com/layotto/protoc-gen-p6#masters-commands)了解更多细节。
 
 ## 步骤二：检查环境
 
@@ -94,7 +94,7 @@ make proto
 ![image](https://user-images.githubusercontent.com/26001097/188782989-9aec893f-9d12-4ee6-9a64-940b0ba1ba1b.png)
 
 ## 实现原理
-我们有一个叫做[protoc-gen-p6](https://github.com/seeflood/protoc-gen-p6)的protoc插件，用于为Layotto生成代码。 
+我们有一个叫做[protoc-gen-p6](https://github.com/layotto/protoc-gen-p6)的protoc插件，用于为Layotto生成代码。 
 
 ## 如果只想生成pb/documentataion怎么办？
 上面的步骤生成了所有的文件，但如果只想生成`.pb.go`代码怎么办？如果只想生成文档呢？
