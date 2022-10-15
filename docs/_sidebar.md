@@ -20,6 +20,7 @@
     - [Register your own API](en/start/api_plugin/helloworld.md)
     - [Generate API plugin automatically](en/start/api_plugin/generate.md)
   <!--quickstart_generator-->  
+  - [(Under construction) Use cryption API](en/start/cryption/start) 
   - [(Under construction) Use phone API](en/start/phone/start) 
   - [(Under construction) Use email API](en/start/email/start) 
   - [Use lifecycle API](en/start/lifecycle/start) 

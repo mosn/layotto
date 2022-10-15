@@ -200,6 +200,14 @@
                 </li>
               
                 <li>
+                  <a href="#spec.proto.extension.v1.s3.CSVInput"><span class="badge">M</span>CSVInput</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.extension.v1.s3.CSVOutput"><span class="badge">M</span>CSVOutput</a>
+                </li>
+              
+                <li>
                   <a href="#spec.proto.extension.v1.s3.CompleteMultipartUploadInput"><span class="badge">M</span>CompleteMultipartUploadInput</a>
                 </li>
               
@@ -336,6 +344,10 @@
                 </li>
               
                 <li>
+                  <a href="#spec.proto.extension.v1.s3.GlacierJobParameters"><span class="badge">M</span>GlacierJobParameters</a>
+                </li>
+              
+                <li>
                   <a href="#spec.proto.extension.v1.s3.HeadObjectInput"><span class="badge">M</span>HeadObjectInput</a>
                 </li>
               
@@ -349,6 +361,10 @@
               
                 <li>
                   <a href="#spec.proto.extension.v1.s3.Initiator"><span class="badge">M</span>Initiator</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.extension.v1.s3.InputSerialization"><span class="badge">M</span>InputSerialization</a>
                 </li>
               
                 <li>
@@ -408,6 +424,14 @@
                 </li>
               
                 <li>
+                  <a href="#spec.proto.extension.v1.s3.OutputLocation"><span class="badge">M</span>OutputLocation</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.extension.v1.s3.OutputSerialization"><span class="badge">M</span>OutputSerialization</a>
+                </li>
+              
+                <li>
                   <a href="#spec.proto.extension.v1.s3.Owner"><span class="badge">M</span>Owner</a>
                 </li>
               
@@ -461,6 +485,14 @@
               
                 <li>
                   <a href="#spec.proto.extension.v1.s3.RestoreObjectOutput"><span class="badge">M</span>RestoreObjectOutput</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.extension.v1.s3.RestoreRequest"><span class="badge">M</span>RestoreRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.extension.v1.s3.SelectParameters"><span class="badge">M</span>SelectParameters</a>
                 </li>
               
                 <li>
@@ -996,6 +1028,156 @@ for all objects except for S3 Standard storage class objects. </p></td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
                   <td><p>Next append position </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.extension.v1.s3.CSVInput">CSVInput</h3>
+        <p>CSVInput</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>allow_quoted_record_delimiter</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Specifies that CSV field values may contain quoted record delimiters and such
+records should be allowed. Default value is FALSE. Setting this value to TRUE
+may lower performance. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>comments</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>A single character used to indicate that a row should be ignored when the
+character is present at the start of that row. You can specify any character to
+indicate a comment line. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>field_delimiter</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>A single character used to separate individual fields in a record. You can
+specify an arbitrary delimiter. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>file_header_info</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Describes the first line of input. Valid values are:
+
+* NONE: First line is not
+a header.
+
+* IGNORE: First line is a header, but you can't use the header values
+to indicate the column in an expression. You can use column position (such as
+_1, _2, …) to indicate the column (SELECT s._1 FROM OBJECT s).
+
+* Use: First
+line is a header, and you can use the header value to identify a column in an
+expression (SELECT "name" FROM OBJECT). </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quote_character</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>A single character used for escaping when the field delimiter is part of the
+value. For example, if the value is a, b, Amazon S3 wraps this field value in
+quotation marks, as follows: " a , b ". Type: String Default: " Ancestors: CSV </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quote_escape_character</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>A single character used for escaping the quotation mark character inside an
+already escaped value. For example, the value """ a , b """ is parsed as " a , b
+". </p></td>
+                </tr>
+              
+                <tr>
+                  <td>record_delimiter</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>A single character used to separate individual records in the input. Instead of
+the default value, you can specify an arbitrary delimiter. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.extension.v1.s3.CSVOutput">CSVOutput</h3>
+        <p>CSVOutput</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>field_delimiter</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The value used to separate individual fields in a record. You can specify an
+arbitrary delimiter. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quote_character</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>A single character used for escaping when the field delimiter is part of the
+value. For example, if the value is a, b, Amazon S3 wraps this field value in
+quotation marks, as follows: " a , b ". </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quote_escape_character</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The single character used for escaping the quote character inside an already
+escaped value. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quote_fields</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Indicates whether to use quotation marks around output fields.
+
+* ALWAYS: Always
+use quotation marks for output fields.
+
+* ASNEEDED: Use quotation marks for
+output fields when needed. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>record_delimiter</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>A single character used to separate individual records in the output. Instead of
+the default value, you can specify an arbitrary delimiter. </p></td>
                 </tr>
               
             </tbody>
@@ -2972,6 +3154,31 @@ This member is required. </p></td>
 
         
       
+        <h3 id="spec.proto.extension.v1.s3.GlacierJobParameters">GlacierJobParameters</h3>
+        <p>GlacierJobParameters</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>tier</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Retrieval tier at which the restore will be processed.
+This member is required. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="spec.proto.extension.v1.s3.HeadObjectInput">HeadObjectInput</h3>
         <p>HeadObjectInput</p>
 
@@ -3188,6 +3395,45 @@ encrypting data </p></td>
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p>Initiator id </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.extension.v1.s3.InputSerialization">InputSerialization</h3>
+        <p>InputSerialization</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>csv</td>
+                  <td><a href="#spec.proto.extension.v1.s3.CSVInput">CSVInput</a></td>
+                  <td></td>
+                  <td><p>Describes the serialization of a CSV-encoded object. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>compression_type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Specifies object's compression format. Valid values: NONE, GZIP, BZIP2. Default
+Value: NONE. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>json</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Specifies JSON as object's input serialization format. </p></td>
                 </tr>
               
             </tbody>
@@ -4250,6 +4496,70 @@ This member is required. </p></td>
 
         
       
+        <h3 id="spec.proto.extension.v1.s3.OutputLocation">OutputLocation</h3>
+        <p>OutPutLocation</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>bucket_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of the bucket where the restore results will be placed.
+This member is required. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>prefix</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The prefix that is prepended to the restore results for this request.
+This member is required. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.extension.v1.s3.OutputSerialization">OutputSerialization</h3>
+        <p>OutputSerialization</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>csv</td>
+                  <td><a href="#spec.proto.extension.v1.s3.CSVOutput">CSVOutput</a></td>
+                  <td></td>
+                  <td><p>Describes the serialization of CSV-encoded Select results. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>json</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Specifies JSON as request's output serialization format. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="spec.proto.extension.v1.s3.Owner">Owner</h3>
         <p>Owner</p>
 
@@ -4522,6 +4832,13 @@ information, see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
                   <td><a href="#spec.proto.extension.v1.s3.PutObjectInput.TaggingEntry">PutObjectInput.TaggingEntry</a></td>
                   <td>repeated</td>
                   <td><p>The tag-set for the object. The tag-set must be encoded as URL Query parameters. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>storage_class</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Storage class options. </p></td>
                 </tr>
               
             </tbody>
@@ -4827,6 +5144,13 @@ This member is required. </p></td>
                 </tr>
               
                 <tr>
+                  <td>restore_request</td>
+                  <td><a href="#spec.proto.extension.v1.s3.RestoreRequest">RestoreRequest</a></td>
+                  <td></td>
+                  <td><p>The information of restoring request. </p></td>
+                </tr>
+              
+                <tr>
                   <td>version_id</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
@@ -4864,6 +5188,121 @@ request. </p></td>
                   <td></td>
                   <td><p>Indicates the path in the provided S3 output location where Select results will
 be restored to. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.extension.v1.s3.RestoreRequest">RestoreRequest</h3>
+        <p>RestoreRequest</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>days</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>Lifetime of the active copy in days. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>description</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The optional description for the job. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>glacier_job_parameters</td>
+                  <td><a href="#spec.proto.extension.v1.s3.GlacierJobParameters">GlacierJobParameters</a></td>
+                  <td></td>
+                  <td><p>S3 Glacier related parameters pertaining to this job. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>output_location</td>
+                  <td><a href="#spec.proto.extension.v1.s3.OutputLocation">OutputLocation</a></td>
+                  <td></td>
+                  <td><p>Describes the location where the restore job's output is stored. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>select_parameters</td>
+                  <td><a href="#spec.proto.extension.v1.s3.SelectParameters">SelectParameters</a></td>
+                  <td></td>
+                  <td><p>Describes the parameters for Select job types. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tier</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Retrieval tier at which the restore will be processed. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Type of restore request. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.extension.v1.s3.SelectParameters">SelectParameters</h3>
+        <p>SelectParameters</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>expression</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The expression that is used to query the object.
+This member is required. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>expression_type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The type of the provided expression (for example, SQL).
+This member is required. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>input_serialization</td>
+                  <td><a href="#spec.proto.extension.v1.s3.InputSerialization">InputSerialization</a></td>
+                  <td></td>
+                  <td><p>Describes the serialization format of the object.
+This member is required. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>output_serialization</td>
+                  <td><a href="#spec.proto.extension.v1.s3.OutputSerialization">OutputSerialization</a></td>
+                  <td></td>
+                  <td><p>Describes how the results of the Select job are serialized.
+This member is required. </p></td>
                 </tr>
               
             </tbody>
