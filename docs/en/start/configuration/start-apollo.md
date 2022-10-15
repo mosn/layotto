@@ -41,7 +41,9 @@ After success, a new layotto file will be generated in the directory. Let's run 
 >
 > In this case, you can try other demos, such as [the etcd demo](en/start/configuration/start.md)
 
-## Step 3. Run the client demo 
+## Step 3. Run the client demo
+<!-- tabs:start -->
+### **Go**
 
 The client demo calls Layotto to add, delete, modify, and query configuration
 
@@ -67,6 +69,49 @@ delete keys success
 write start
 receive subscribe resp store_name:"config_demo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
 ```
+
+### **Java**
+
+Download java sdk and examples:
+
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+After downloading the project code to the local, switch the code directory:
+
+```shell
+cd java-sdk
+```
+
+Build and run the demo:
+
+```shell
+mvn -f examples-configuration/pom.xml clean package
+java -jar examples-configuration/target/examples-configuration-jar-with-dependencies.jar
+```
+
+If the following information is printed, the demo is successful:
+
+```bash
+2022-10-10 21:32:03 INFO  Configuration - save key success
+2022-10-10 21:32:05 INFO  Configuration - get configuration key1 = value1
+2022-10-10 21:32:05 INFO  Configuration - get configuration haha = heihei
+2022-10-10 21:32:05 INFO  Configuration - delete keys success
+2022-10-10 21:32:07 INFO  Configuration - get configuration key1 = value1
+2022-10-10 21:32:09 INFO  Configuration - receive subscribe heihei = heihei0
+2022-10-10 21:32:11 INFO  Configuration - receive subscribe heihei = heihei1
+2022-10-10 21:32:13 INFO  Configuration - receive subscribe heihei = heihei3
+2022-10-10 21:32:15 INFO  Configuration - receive subscribe heihei = heihei5
+2022-10-10 21:32:17 INFO  Configuration - receive subscribe heihei = heihei6
+2022-10-10 21:32:19 INFO  Configuration - receive subscribe heihei = heihei7
+2022-10-10 21:32:22 INFO  Configuration - receive subscribe heihei = heihei8
+2022-10-10 21:32:25 INFO  Configuration - receive subscribe heihei = heihei9
+2022-10-10 21:32:28 INFO  Configuration - receive subscribe heihei = heihei10
+...
+```
+
+<!-- tabs:end -->
 
 ### Next step
 #### What did this client Demo do?

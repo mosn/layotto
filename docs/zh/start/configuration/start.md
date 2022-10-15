@@ -63,7 +63,7 @@ go build -o layotto
 
 ## step 2. 启动测试demo
 <!-- tabs:start -->
-#### **Go**
+### **Go**
 
 构建、运行 go 语言 demo:
 
@@ -90,7 +90,7 @@ write start
 receive subscribe resp store_name:"config_demo" app_id:"apollo" items:<key:"heihei" content:"heihei1" group:"application" label:"prod" tags:<key:"feature" value:"haha" > tags:<key:"release" value:"16" > >
 ```
 
-#### **Java**
+### **Java**
 
 下载 java sdk 和示例代码:
 
