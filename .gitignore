@@ -54,6 +54,7 @@ cmd/layotto_multiple_api/nohup.out
 default.etcd/
 demo/configuration/common/client
 demo/file/client
+demo/oss/client
 demo/flowcontrol/client
 demo/lock/redis/client
 demo/pubsub/redis/client/publisher
