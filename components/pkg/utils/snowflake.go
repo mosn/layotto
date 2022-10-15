@@ -292,6 +292,33 @@ func NewWorkId(meta SnowflakeMysqlMetadata) (int64, error) {
 	return workId, nil
 }
 
+func MysqlRecord(db *sql.DB, keyTableName, key string, workerId, timestamp int64) error {
+	var mysqlWorkerId int64
+	var mysqlTimestamp int64
+
+	begin, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	err = begin.QueryRow("SELECT WORKER_ID, TIMESTAMP FROM "+keyTableName+" WHERE SEQUENCER_KEY = ?", key).Scan(&mysqlWorkerId, &mysqlTimestamp)
+	if err == sql.ErrNoRows {
+		_, err = begin.Exec("INSERT INTO "+keyTableName+"(SEQUENCER_KEY, WORKER_ID, TIMESTAMP) VALUES(?,?,?)", key, workerId, timestamp)
+		if err != nil {
+			return err
+		}
+	} else {
+		_, err = begin.Exec("UPDATE INTO "+keyTableName+"(SEQUENCER_KEY, WORKER_ID, TIMESTAMP) VALUES(?,?,?)", key, workerId, timestamp)
+		if err != nil {
+			return err
+		}
+	}
+	if err = begin.Commit(); err != nil {
+		begin.Rollback()
+		return err
+	}
+	return err
+}
+
 func getMysqlPort() string {
 	currentTimeMills := time.Now().Unix()
 	rand.Seed(time.Now().UnixNano())

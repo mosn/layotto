@@ -82,7 +82,7 @@ func TestSnowflakeSequence_GetNextId(t *testing.T) {
 
 	var falseUidNum int
 	var preUid int64
-	var size int = 1000
+	var size int = 10000
 	for i := 0; i < size; i++ {
 		resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
 			Key: key,
@@ -129,23 +129,22 @@ func TestSnowflakeSequence_ParallelGetNextId(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	var size int = 100
+	var size int = 20000
 	var falseUidNum int
 
 	var wg sync.WaitGroup
 	wg.Add(2)
-
+	var key string
 	for i := 0; i < 2; i++ {
-		go func() {
+		key = strconv.Itoa(i)
+		go func(key string) {
 			defer func() {
 				if x := recover(); x != nil {
 					log.DefaultLogger.Errorf("panic when testing parallel generatoring uid with snowflake algorithm: %v", x)
 				}
 			}()
 			var preUid int64
-			var key string
 			for j := 0; j < size; j++ {
-				key = strconv.Itoa(j)
 				//assert next uid is bigger than previous
 				resp, err := s.GetNextId(&sequencer.GetNextIdRequest{
 					Key: key,
@@ -157,7 +156,7 @@ func TestSnowflakeSequence_ParallelGetNextId(t *testing.T) {
 				assert.NoError(t, err)
 			}
 			wg.Done()
-		}()
+		}(key)
 	}
 	wg.Wait()
 }
