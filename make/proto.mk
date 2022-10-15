@@ -46,7 +46,7 @@ proto.gen.doc:
 proto.gen.init:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
-	go install github.com/seeflood/protoc-gen-p6@latest
+	go install github.com/layotto/protoc-gen-p6@latest
 
 .PHONY: proto.gen.code
 proto.gen.code:
