@@ -92,19 +92,16 @@ func (s *SnowFlakeSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequen
 	defer timeout.Stop()
 
 	var id int64
-	for {
-		timeout.Reset(s.metadata.ReqTimeout)
-		select {
-		case id, ok = <-ch:
-			if !ok {
-				return nil, errors.New("please try again or adjust the start time")
-			}
-			return &sequencer.GetNextIdResponse{
-				NextId: id,
-			}, nil
-		case <-timeout.C:
-			return nil, errors.New("request id time out")
+	select {
+	case id, ok = <-ch:
+		if !ok {
+			return nil, errors.New("please try again or adjust the start time")
 		}
+		return &sequencer.GetNextIdResponse{
+			NextId: id,
+		}, nil
+	case <-timeout.C:
+		return nil, errors.New("request id time out")
 	}
 }
 
@@ -147,11 +144,8 @@ func (s *SnowFlakeSequencer) producer(id, currentTimeStamp int64, ch chan int64,
 			return
 		case ch <- id:
 			if currentTimeStamp == maxTimeStamp {
-				//if id reach the max value, wait for the id to be used up
-				if len(ch) == 0 {
-					close(ch)
-					return
-				}
+				close(ch)
+				return
 			} else {
 				if id&maxSeqId != maxSeqId {
 					id++
