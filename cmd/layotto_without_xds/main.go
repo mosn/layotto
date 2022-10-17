@@ -30,6 +30,8 @@ import (
 
 	aliyun_oss "mosn.io/layotto/components/oss/aliyun"
 
+	ceph_oss "mosn.io/layotto/components/oss/ceph"
+
 	"mosn.io/layotto/components/file/aliyun"
 	aws_file "mosn.io/layotto/components/file/aws"
 	"mosn.io/layotto/components/file/minio"
@@ -409,6 +411,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithOssFactory(
 			oss.NewFactory("aws.oss", aws_oss.NewAwsOss),
 			oss.NewFactory("aliyun.oss", aliyun_oss.NewAliyunOss),
+			oss.NewFactory("ceph", ceph_oss.NewCephOss),
 		),
 
 		// Sequencer

@@ -118,6 +118,7 @@ type PutObjectInput struct {
 	SignedUrl            string            `json:"signed_url,omitempty"`
 	Meta                 map[string]string `json:"meta,omitempty"`
 	Tagging              map[string]string `json:"tagging,omitempty"`
+	StorageClass         string            `json:"storage_class,omitempty"`
 }
 
 type PutObjectOutput struct {
@@ -274,10 +275,59 @@ type PutObjectCannedAclOutput struct {
 	RequestCharged string `json:"request_charged,omitempty"`
 }
 
+type GlacierJobParameters struct {
+	Tier string `json:"tier,omitempty"`
+}
+type OutputLocation struct {
+	BucketName string `json:"bucket_name,omitempty"`
+	Prefix     string `json:"prefix,omitempty"`
+}
+type CSVInput struct {
+	AllowQuotedRecordDelimiter bool   `json:"allow_quoted_record_delimiter,omitempty"`
+	Comments                   string `json:"comments,omitempty"`
+	FieldDelimiter             string `json:"field_delimiter,omitempty"`
+	FileHeaderInfo             string `json:"file_header_info,omitempty"`
+	QuoteCharacter             string `json:"quote_character,omitempty"`
+	QuoteEscapeCharacter       string `json:"quote_escape_character,omitempty"`
+	RecordDelimiter            string `json:"record_delimiter,omitempty"`
+}
+type InputSerialization struct {
+	CSV             CSVInput `json:"csv,omitempty"`
+	CompressionType string   `json:"compression_type,omitempty"`
+	JSON            string   `json:"json,omitempty"`
+}
+type CSVOutput struct {
+	FieldDelimiter       string `json:"field_delimiter,omitempty"`
+	QuoteCharacter       string `json:"quote_character,omitempty"`
+	QuoteEscapeCharacter string `json:"quote_escape_character,omitempty"`
+	QuoteFields          string `json:"quote_fields,omitempty"`
+	RecordDelimiter      string `json:"record_delimiter,omitempty"`
+}
+type OutputSerialization struct {
+	Csv  CSVOutput `json:"csv,omitempty"`
+	Json string    `json:"json,omitempty"`
+}
+type SelectParameters struct {
+	Expression          string              `json:"expression,omitempty"`
+	ExpressionType      string              `json:"expression_type,omitempty"`
+	InputSerialization  InputSerialization  `json:"input_serialization,omitempty"`
+	OutputSerialization OutputSerialization `json:"output_serialization,omitempty"`
+}
+type RestoreRequest struct {
+	Days                 int32                `json:"days,omitempty"`
+	Description          string               `json:"description,omitempty"`
+	GlacierJobParameters GlacierJobParameters `json:"glacier_job_parameters,omitempty"`
+	OutputLocation       OutputLocation       `json:"output_location,omitempty"`
+	SelectParameters     SelectParameters     `json:"select_parameters,omitempty"`
+	Tier                 string               `json:"tier,omitempty"`
+	Type                 string               `json:"type,omitempty"`
+}
+
 type RestoreObjectInput struct {
-	Bucket    string `json:"bucket,omitempty"`
-	Key       string `json:"key,omitempty"`
-	VersionId string `json:"version_id,omitempty"`
+	Bucket         string         `json:"bucket,omitempty"`
+	Key            string         `json:"key,omitempty"`
+	RestoreRequest RestoreRequest `json:"restore_request,omitempty"`
+	VersionId      string         `json:"version_id,omitempty"`
 }
 type RestoreObjectOutput struct {
 	RequestCharged    string `json:"request_charged,omitempty"`

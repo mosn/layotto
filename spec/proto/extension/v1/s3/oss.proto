@@ -271,6 +271,8 @@ message PutObjectInput{
     map<string, string> meta = 13;
     // The tag-set for the object. The tag-set must be encoded as URL Query parameters.
     map<string, string> tagging = 14;
+    // Storage class options.
+    string storage_class = 15;
 }
 
 // PutObjectOutput
@@ -640,6 +642,140 @@ message PutObjectCannedAclOutput{
     string request_charged = 1;
 }
 
+// GlacierJobParameters
+message GlacierJobParameters{
+    // Retrieval tier at which the restore will be processed.
+    // This member is required.
+    string tier = 1;
+}
+
+// OutPutLocation
+message OutputLocation{
+    // The name of the bucket where the restore results will be placed.
+    // This member is required.
+    string bucket_name = 1;
+    // The prefix that is prepended to the restore results for this request.
+    // This member is required.
+    string prefix = 2;
+}
+
+// CSVInput
+message CSVInput{
+    // Specifies that CSV field values may contain quoted record delimiters and such
+    // records should be allowed. Default value is FALSE. Setting this value to TRUE
+    // may lower performance.
+    bool allow_quoted_record_delimiter = 1;
+    // A single character used to indicate that a row should be ignored when the
+    // character is present at the start of that row. You can specify any character to
+    // indicate a comment line.
+    string comments = 2;
+    // A single character used to separate individual fields in a record. You can
+    // specify an arbitrary delimiter.
+    string field_delimiter = 3;
+    // Describes the first line of input. Valid values are:
+    //
+    // * NONE: First line is not
+    // a header.
+    //
+    // * IGNORE: First line is a header, but you can't use the header values
+    // to indicate the column in an expression. You can use column position (such as
+    // _1, _2, …) to indicate the column (SELECT s._1 FROM OBJECT s).
+    //
+    // * Use: First
+    // line is a header, and you can use the header value to identify a column in an
+    // expression (SELECT "name" FROM OBJECT).
+    string file_header_info = 4;
+    // A single character used for escaping when the field delimiter is part of the
+    // value. For example, if the value is a, b, Amazon S3 wraps this field value in
+    // quotation marks, as follows: " a , b ". Type: String Default: " Ancestors: CSV
+    string quote_character = 5;
+    // A single character used for escaping the quotation mark character inside an
+    // already escaped value. For example, the value """ a , b """ is parsed as " a , b
+    // ".
+    string quote_escape_character = 6;
+    // A single character used to separate individual records in the input. Instead of
+    // the default value, you can specify an arbitrary delimiter.
+    string record_delimiter = 7;
+}
+
+// InputSerialization
+message InputSerialization{
+    // Describes the serialization of a CSV-encoded object.
+    CSVInput csv = 1;
+    // Specifies object's compression format. Valid values: NONE, GZIP, BZIP2. Default
+    // Value: NONE.
+    string compression_type = 2;
+    // Specifies JSON as object's input serialization format.
+    string json = 3;
+}
+
+// CSVOutput
+message CSVOutput{
+    // The value used to separate individual fields in a record. You can specify an
+    // arbitrary delimiter.
+    string field_delimiter = 1;
+    // A single character used for escaping when the field delimiter is part of the
+    // value. For example, if the value is a, b, Amazon S3 wraps this field value in
+    // quotation marks, as follows: " a , b ".
+    string quote_character = 2;
+    // The single character used for escaping the quote character inside an already
+    // escaped value.
+    string quote_escape_character = 3;
+    // Indicates whether to use quotation marks around output fields.
+    //
+    // * ALWAYS: Always
+    // use quotation marks for output fields.
+    //
+    // * ASNEEDED: Use quotation marks for
+    // output fields when needed.
+    string quote_fields = 4;
+    // A single character used to separate individual records in the output. Instead of
+    // the default value, you can specify an arbitrary delimiter.
+    string record_delimiter = 5;
+}
+
+// OutputSerialization
+message OutputSerialization{
+    // Describes the serialization of CSV-encoded Select results.
+    CSVOutput csv = 1;
+    // Specifies JSON as request's output serialization format.
+    string json = 2;
+}
+
+// SelectParameters
+message SelectParameters{
+    // The expression that is used to query the object.
+    // This member is required.
+    string expression = 1;
+    // The type of the provided expression (for example, SQL).
+    // This member is required.
+    string expression_type = 2;
+    // Describes the serialization format of the object.
+    // This member is required.
+    InputSerialization input_serialization = 3;
+    // Describes how the results of the Select job are serialized.
+    // This member is required.
+    OutputSerialization output_serialization = 4;
+}
+
+// RestoreRequest
+message RestoreRequest{
+    // Lifetime of the active copy in days.
+    int32 days = 1;
+    // The optional description for the job.
+    string description = 2;
+    // S3 Glacier related parameters pertaining to this job.
+    GlacierJobParameters glacier_job_parameters = 3;
+    // Describes the location where the restore job's output is stored.
+    OutputLocation output_location = 4;
+    // Describes the parameters for Select job types.
+    SelectParameters select_parameters = 5;
+    // Retrieval tier at which the restore will be processed.
+    string tier = 6;
+    // Type of restore request.
+    string type = 7;
+}
+
 // RestoreObjectInput
 message RestoreObjectInput{
     // Required. The name of oss store.
@@ -650,6 +786,8 @@ message RestoreObjectInput{
     // Name of the object key.
     // This member is required.
     string key = 3;
+    // The information of restoring request.
+    RestoreRequest restore_request = 4;
     // VersionId used to reference a specific version of the object.
     string version_id = 5;
 }
