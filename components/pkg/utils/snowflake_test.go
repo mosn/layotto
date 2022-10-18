@@ -69,6 +69,7 @@ func TestNewMysqlClient(t *testing.T) {
 	}
 
 	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectBegin()
 	mock.ExpectQuery("SELECT HOST_NAME").WillReturnError(sql.ErrNoRows)
 	mock.ExpectExec("INSERT INTO").WillReturnResult(sqlmock.NewResult(1, 1))
