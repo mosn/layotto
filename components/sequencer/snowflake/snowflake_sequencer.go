@@ -146,13 +146,12 @@ func (s *SnowFlakeSequencer) producer(id, currentTimeStamp int64, ch chan int64,
 			if currentTimeStamp == maxTimeStamp {
 				close(ch)
 				return
+			}
+			if id&maxSeqId != maxSeqId {
+				id++
 			} else {
-				if id&maxSeqId != maxSeqId {
-					id++
-				} else {
-					currentTimeStamp++
-					id = currentTimeStamp<<s.metadata.TimestampShift | s.workerId<<s.metadata.WorkidShift
-				}
+				currentTimeStamp++
+				id = currentTimeStamp<<s.metadata.TimestampShift | s.workerId<<s.metadata.WorkidShift
 			}
 		}
 	}
