@@ -17,7 +17,7 @@
 # start storage systems, e.g. redis, zk, etcd
 nohup redis-server --port 6380 &
 bash /usr/share/zookeeper/bin/zkServer.sh start
-nohup bash /usr/share/zookeeper/bin/zkCli.sh < zkCreateZnode.sh
+nohup bash /usr/share/zookeeper/bin/zkCli.sh < ./sdk/go-sdk/test/runtime/zkCreateZnode.sh
 cd ..
 nohup etcd &
 
