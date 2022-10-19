@@ -149,7 +149,7 @@ git clone https://github.com/layotto/js-sdk.git
 Change directory:
 
 ```shell
-cd js-sdk/demo
+cd js-sdk
 ```
 
 Build:

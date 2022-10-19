@@ -149,7 +149,7 @@ git clone https://github.com/layotto/js-sdk.git
 切换目录:
 
 ```shell
-cd js-sdk/demo
+cd js-sdk
 ```
 
 构建:
