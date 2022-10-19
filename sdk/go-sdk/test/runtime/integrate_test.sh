@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+# fail fast
+set -e
+
 # start storage systems, e.g. redis, zk, etcd
 nohup redis-server --port 6380 &
 bash /usr/share/zookeeper/bin/zkServer.sh start
