@@ -81,6 +81,8 @@ func (s *SnowFlakeSequencer) GetNextId(req *sequencer.GetNextIdRequest) (*sequen
 			if oldWorkerId == s.workerId {
 				timestamp = oldTimeStamp + 1
 			}
+		} else if err != sql.ErrNoRows {
+			return nil, err
 		}
 		startId := timestamp<<s.metadata.TimestampShift | s.workerId<<s.metadata.WorkidShift
 

@@ -59,6 +59,7 @@ func TestSnowflakeSequence_GetNextId(t *testing.T) {
 	mock.ExpectExec("INSERT INTO").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectQuery("SELECT ID").WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 	mock.ExpectCommit()
+	mock.ExpectQuery("SELECT WORKER_ID").WillReturnError(sql.ErrNoRows)
 
 	cfg := sequencer.Configuration{
 		Properties: make(map[string]string),
@@ -113,6 +114,8 @@ func TestSnowflakeSequence_ParallelGetNextId(t *testing.T) {
 	mock.ExpectExec("INSERT INTO").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectQuery("SELECT ID").WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 	mock.ExpectCommit()
+	mock.ExpectQuery("SELECT WORKER_ID").WillReturnError(sql.ErrNoRows)
+	mock.ExpectQuery("SELECT WORKER_ID").WillReturnError(sql.ErrNoRows)
 
 	cfg := sequencer.Configuration{
 		Properties: make(map[string]string),

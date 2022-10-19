@@ -269,6 +269,9 @@ func NewWorkId(meta SnowflakeMysqlMetadata) (int64, error) {
 	for err == nil {
 		mysqlPort = getMysqlPort()
 		err = begin.QueryRow("SELECT HOST_NAME, PORT FROM "+tableName+" WHERE HOST_NAME = ? AND PORT = ?", stringIp, mysqlPort).Scan(&host_name, &port)
+		if err != nil && err != sql.ErrNoRows {
+			return workId, err
+		}
 	}
 	if err == sql.ErrNoRows {
 		_, err = begin.Exec("INSERT INTO "+tableName+"(HOST_NAME, PORT, CREATED) VALUES(?,?,?)", stringIp, mysqlPort, time.Now())
@@ -301,16 +304,19 @@ func MysqlRecord(db *sql.DB, keyTableName, key string, workerId, timestamp int64
 		return err
 	}
 	err = begin.QueryRow("SELECT WORKER_ID, TIMESTAMP FROM "+keyTableName+" WHERE SEQUENCER_KEY = ?", key).Scan(&mysqlWorkerId, &mysqlTimestamp)
-	if err == sql.ErrNoRows {
+	if err == nil {
+		_, err = begin.Exec("UPDATE INTO "+keyTableName+"(SEQUENCER_KEY, WORKER_ID, TIMESTAMP) VALUES(?,?,?)", key, workerId, timestamp)
+
+		if err != nil {
+			return err
+		}
+	} else if err == sql.ErrNoRows {
 		_, err = begin.Exec("INSERT INTO "+keyTableName+"(SEQUENCER_KEY, WORKER_ID, TIMESTAMP) VALUES(?,?,?)", key, workerId, timestamp)
 		if err != nil {
 			return err
 		}
 	} else {
-		_, err = begin.Exec("UPDATE INTO "+keyTableName+"(SEQUENCER_KEY, WORKER_ID, TIMESTAMP) VALUES(?,?,?)", key, workerId, timestamp)
-		if err != nil {
-			return err
-		}
+		return err
 	}
 	if err = begin.Commit(); err != nil {
 		begin.Rollback()
