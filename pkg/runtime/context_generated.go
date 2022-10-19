@@ -40,5 +40,7 @@ func newApplicationContext(m *MosnRuntime) *grpc.ApplicationContext {
 		EmailService: m.emailService,
 
 		PhoneCallService: m.phoneCallService,
+
+		SmsService: m.smsService,
 	}
 }

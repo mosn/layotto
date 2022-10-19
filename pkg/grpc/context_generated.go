@@ -33,6 +33,7 @@ import (
 	common "mosn.io/layotto/components/pkg/common"
 	rpc "mosn.io/layotto/components/rpc"
 	sequencer "mosn.io/layotto/components/sequencer"
+	sms "mosn.io/layotto/components/sms"
 	lifecycle "mosn.io/layotto/pkg/runtime/lifecycle"
 )
 
@@ -58,4 +59,6 @@ type ApplicationContext struct {
 	EmailService map[string]email.EmailService
 
 	PhoneCallService map[string]phone.PhoneCallService
+
+	SmsService map[string]sms.SmsService
 }

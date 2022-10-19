@@ -25,6 +25,7 @@ import (
 	email "mosn.io/layotto/spec/proto/extension/v1/email"
 	phone "mosn.io/layotto/spec/proto/extension/v1/phone"
 	s3 "mosn.io/layotto/spec/proto/extension/v1/s3"
+	sms "mosn.io/layotto/spec/proto/extension/v1/sms"
 	v1 "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
@@ -48,6 +49,9 @@ type Client interface {
 
 	// "mosn.io/layotto/spec/proto/extension/v1/phone"
 	phone.PhoneCallServiceClient
+
+	// "mosn.io/layotto/spec/proto/extension/v1/sms"
+	sms.SmsServiceClient
 }
 
 // NewClientWithConnection instantiates runtime client using specific connection.
@@ -67,6 +71,9 @@ func NewClientWithConnection(conn *grpc.ClientConn) Client {
 
 		// "mosn.io/layotto/spec/proto/extension/v1/phone"
 		PhoneCallServiceClient: phone.NewPhoneCallServiceClient(conn),
+
+		// "mosn.io/layotto/spec/proto/extension/v1/sms"
+		SmsServiceClient: sms.NewSmsServiceClient(conn),
 	}
 }
 
@@ -83,4 +90,6 @@ type GRPCClient struct {
 	email.EmailServiceClient
 	// "mosn.io/layotto/spec/proto/extension/v1/phone"
 	phone.PhoneCallServiceClient
+	// "mosn.io/layotto/spec/proto/extension/v1/sms"
+	sms.SmsServiceClient
 }

@@ -13,24 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package runtime
+package sms
 
 import (
-	cryption "mosn.io/layotto/pkg/grpc/cryption"
-	delay_queue "mosn.io/layotto/pkg/grpc/delay_queue"
-	email "mosn.io/layotto/pkg/grpc/email"
-	s3 "mosn.io/layotto/pkg/grpc/extension/s3"
-	phone "mosn.io/layotto/pkg/grpc/phone"
-	sms "mosn.io/layotto/pkg/grpc/sms"
+	context "context"
 )
 
-func WithExtensionGrpcAPI() Option {
-	return WithGrpcAPI(
-		s3.NewS3Server,
-		cryption.NewAPI,
-		delay_queue.NewAPI,
-		email.NewAPI,
-		phone.NewAPI,
-		sms.NewAPI,
-	)
+type SmsService interface {
+	Init(context.Context, *Config) error
+
+	SendSmsWithTemplate(context.Context, *SendSmsWithTemplateRequest) (*SendSmsWithTemplateResponse, error)
 }
