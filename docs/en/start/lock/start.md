@@ -149,19 +149,19 @@ git clone https://github.com/layotto/js-sdk.git
 Change directory:
 
 ```shell
-cd js-sdk
+cd js-sdk/demo
 ```
 
 Build:
 
 ```shell
-npm install
+yarn install
 ```
 
 Run the examples:
 
 ```shell
-npm run test:lock
+yarn run test:lock
 ```
 
 And you will see:

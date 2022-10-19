@@ -149,19 +149,19 @@ git clone https://github.com/layotto/js-sdk.git
 切换目录:
 
 ```shell
-cd js-sdk
+cd js-sdk/demo
 ```
 
 构建:
 
 ```shell
-npm install
+yarn install
 ```
 
 运行:
 
 ```shell
-npm run test:lock
+yarn run test:lock
 ```
 
 打印出以下信息说明运行成功:
