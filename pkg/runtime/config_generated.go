@@ -19,6 +19,7 @@ import (
 	cryption "mosn.io/layotto/components/cryption"
 	email "mosn.io/layotto/components/email"
 	phone "mosn.io/layotto/components/phone"
+	sms "mosn.io/layotto/components/sms"
 )
 
 type ExtensionComponentConfig struct {
@@ -33,4 +34,8 @@ type ExtensionComponentConfig struct {
 	// "mosn.io/layotto/spec/proto/extension/v1/phone"
 	// phone.
 	PhoneCallService map[string]phone.Config `json:"phone"`
+
+	// "mosn.io/layotto/spec/proto/extension/v1/sms"
+	// sms.
+	SmsService map[string]sms.Config `json:"sms"`
 }

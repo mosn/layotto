@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package spec.proto.extension.v1.sms;
+
+option go_package = "mosn.io/layotto/spec/proto/extension/v1/sms;sms";
+
+// SmsService is used to send SMS messages.
+service SmsService {
+
+  // Send the SMS message.
+  rpc SendSmsWithTemplate(SendSmsWithTemplateRequest) returns (SendSmsWithTemplateResponse) {}
+
+}
+
+// SendSmsRequest is the request of the `SendSms` method.
+message SendSmsWithTemplateRequest {
+
+  // Required. The saas service name
+  //  If your system uses multiple SMS services at the same time,
+  //  you can specify which service to use with this field.
+  string component_name = 1;
+
+  // Required. The SMS receive phone numbers.
+  repeated string phone_numbers = 2;
+
+  // Required.
+  Template template = 3;
+
+  // The registered sign name
+  string sign_name = 4;
+
+  // The SMS sender tag.
+  string sender_id = 5;
+
+  // The metadata which will be sent to SMS components.
+  map<string, string> metadata = 6;
+}
+
+// Sms template
+message Template{
+
+  // Required
+  string template_id = 1;
+
+  // Required
+  map<string, string>  template_params = 2;
+
+}
+
+// SendSmsResponse is the reponse of the `SendSms` method.
+message SendSmsWithTemplateResponse {
+  // The unique requestId.
+  string request_id = 1;
+
+  // "OK" represents success.
+  string code = 2;
+
+  // The error message.
+  string message = 3;
+
+  // The metadata returned from SMS service.
+  map<string, string> metadata = 4;
+}
