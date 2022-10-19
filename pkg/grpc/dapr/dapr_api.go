@@ -117,6 +117,10 @@ func (d *daprGrpcAPI) InvokeService(ctx context.Context, in *dapr_v1pb.InvokeSer
 	if err != nil {
 		return nil, runtime_common.ToGrpcError(err)
 	}
+	// 5. convert result
+	if !resp.Success && resp.Error != nil {
+		return nil, runtime_common.ToGrpcError(resp.Error)
+	}
 
 	if resp.Header != nil {
 		header := metadata.Pairs()

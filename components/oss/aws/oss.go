@@ -89,13 +89,8 @@ func (a *AwsOss) GetObject(ctx context.Context, req *oss.GetObjectInput) (*oss.G
 	if err != nil {
 		return nil, err
 	}
-	out := &oss.GetObjectOutput{}
-	err = copier.Copy(out, ob)
-	if err != nil {
-		return nil, err
-	}
-	out.DataStream = ob.Body
-	return out, nil
+
+	return oss.GetGetObjectOutput(ob)
 }
 
 func (a *AwsOss) PutObject(ctx context.Context, req *oss.PutObjectInput) (*oss.PutObjectOutput, error) {
@@ -114,12 +109,8 @@ func (a *AwsOss) PutObject(ctx context.Context, req *oss.PutObjectInput) (*oss.P
 	if err != nil {
 		return nil, err
 	}
-	out := &oss.PutObjectOutput{}
-	err = copier.Copy(out, resp)
-	if err != nil {
-		return nil, err
-	}
-	return out, err
+
+	return oss.GetPutObjectOutput(resp)
 }
 
 func (a *AwsOss) DeleteObject(ctx context.Context, req *oss.DeleteObjectInput) (*oss.DeleteObjectOutput, error) {
@@ -135,7 +126,7 @@ func (a *AwsOss) DeleteObject(ctx context.Context, req *oss.DeleteObjectInput) (
 	if err != nil {
 		return nil, err
 	}
-	return &oss.DeleteObjectOutput{DeleteMarker: resp.DeleteMarker, RequestCharged: string(resp.RequestCharged), VersionId: *resp.VersionId}, err
+	return oss.GetDeleteObjectOutput(resp)
 }
 
 func (a *AwsOss) PutObjectTagging(ctx context.Context, req *oss.PutObjectTaggingInput) (*oss.PutObjectTaggingOutput, error) {
@@ -169,7 +160,7 @@ func (a *AwsOss) DeleteObjectTagging(ctx context.Context, req *oss.DeleteObjectT
 	if err != nil {
 		return nil, err
 	}
-	return &oss.DeleteObjectTaggingOutput{VersionId: *resp.VersionId}, err
+	return oss.GetDeleteObjectTaggingOutput(resp)
 }
 
 func (a *AwsOss) GetObjectTagging(ctx context.Context, req *oss.GetObjectTaggingInput) (*oss.GetObjectTaggingOutput, error) {
@@ -187,11 +178,7 @@ func (a *AwsOss) GetObjectTagging(ctx context.Context, req *oss.GetObjectTagging
 		return nil, err
 	}
 
-	output := &oss.GetObjectTaggingOutput{Tags: map[string]string{}}
-	for _, tags := range resp.TagSet {
-		output.Tags[*tags.Key] = *tags.Value
-	}
-	return output, err
+	return oss.GetGetObjectTaggingOutput(resp)
 }
 
 func (a *AwsOss) CopyObject(ctx context.Context, req *oss.CopyObjectInput) (*oss.CopyObjectOutput, error) {
@@ -259,14 +246,8 @@ func (a *AwsOss) ListObjects(ctx context.Context, req *oss.ListObjectsInput) (*o
 	if err != nil {
 		return nil, err
 	}
-	output := &oss.ListObjectsOutput{}
-	err = copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
-	// if not return NextMarker, use the value of the last Key in the response as the marker
-	if output.IsTruncated && output.NextMarker == "" {
-		index := len(output.Contents) - 1
-		output.NextMarker = output.Contents[index].Key
-	}
-	return output, err
+
+	return oss.GetListObjectsOutput(resp)
 }
 func (a *AwsOss) GetObjectCannedAcl(ctx context.Context, req *oss.GetObjectCannedAclInput) (*oss.GetObjectCannedAclOutput, error) {
 	return nil, errors.New("GetObjectCannedAcl method not supported on AWS")
@@ -304,7 +285,7 @@ func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMulti
 		return nil, err
 	}
 	input := &s3.CreateMultipartUploadInput{}
-	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{int642time}})
+	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.Int64ToTime}})
 	if err != nil {
 		log.DefaultLogger.Errorf("copy CreateMultipartUploadInput fail, err: %+v", err)
 		return nil, err
@@ -314,7 +295,7 @@ func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMulti
 		return nil, err
 	}
 	output := &oss.CreateMultipartUploadOutput{}
-	copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
+	copier.CopyWithOption(output, resp, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
 	return output, err
 }
 func (a *AwsOss) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*oss.UploadPartOutput, error) {
@@ -332,12 +313,8 @@ func (a *AwsOss) UploadPart(ctx context.Context, req *oss.UploadPartInput) (*oss
 	if err != nil {
 		return nil, err
 	}
-	output := &oss.UploadPartOutput{}
-	err = copier.Copy(output, resp)
-	if err != nil {
-		return nil, err
-	}
-	return output, err
+
+	return oss.GetUploadPartOutput(resp)
 }
 func (a *AwsOss) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInput) (*oss.UploadPartCopyOutput, error) {
 	client, err := a.getClient()
@@ -360,9 +337,8 @@ func (a *AwsOss) UploadPartCopy(ctx context.Context, req *oss.UploadPartCopyInpu
 	if err != nil {
 		return nil, err
 	}
-	output := &oss.UploadPartCopyOutput{}
-	err = copier.Copy(output, resp)
-	return output, err
+
+	return oss.GetUploadPartCopyOutput(resp)
 }
 func (a *AwsOss) CompleteMultipartUpload(ctx context.Context, req *oss.CompleteMultipartUploadInput) (*oss.CompleteMultipartUploadOutput, error) {
 	client, err := a.getClient()
@@ -417,20 +393,8 @@ func (a *AwsOss) ListMultipartUploads(ctx context.Context, req *oss.ListMultipar
 	if err != nil {
 		return nil, err
 	}
-	output := &oss.ListMultipartUploadsOutput{CommonPrefixes: []string{}, Uploads: []*oss.MultipartUpload{}}
-	err = copier.Copy(output, resp)
-	if err != nil {
-		return nil, err
-	}
-	for _, v := range resp.CommonPrefixes {
-		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
-	}
-	for _, v := range resp.Uploads {
-		upload := &oss.MultipartUpload{}
-		copier.CopyWithOption(upload, v, copier.Option{IgnoreEmpty: true, DeepCopy: true})
-		output.Uploads = append(output.Uploads, upload)
-	}
-	return output, err
+
+	return oss.GetListMultipartUploadsOutput(resp)
 }
 func (a *AwsOss) ListObjectVersions(ctx context.Context, req *oss.ListObjectVersionsInput) (*oss.ListObjectVersionsOutput, error) {
 	client, err := a.getClient()
@@ -446,24 +410,8 @@ func (a *AwsOss) ListObjectVersions(ctx context.Context, req *oss.ListObjectVers
 	if err != nil {
 		return nil, err
 	}
-	output := &oss.ListObjectVersionsOutput{}
-	err = copier.Copy(output, resp)
-	if err != nil {
-		return nil, err
-	}
-	for _, v := range resp.CommonPrefixes {
-		output.CommonPrefixes = append(output.CommonPrefixes, *v.Prefix)
-	}
-	for _, v := range resp.DeleteMarkers {
-		entry := &oss.DeleteMarkerEntry{IsLatest: v.IsLatest, Key: *v.Key, Owner: &oss.Owner{DisplayName: *v.Owner.DisplayName, ID: *v.Owner.ID}, VersionId: *v.VersionId}
-		output.DeleteMarkers = append(output.DeleteMarkers, entry)
-	}
-	for _, v := range resp.Versions {
-		version := &oss.ObjectVersion{}
-		copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
-		output.Versions = append(output.Versions, version)
-	}
-	return output, err
+
+	return oss.GetListObjectVersionsOutput(resp)
 }
 
 func (a *AwsOss) HeadObject(ctx context.Context, req *oss.HeadObjectInput) (*oss.HeadObjectOutput, error) {

@@ -47,4 +47,4 @@ Fix the path error and then you can register this API plugin in you `main`.
 
 [How to generate code and documentation from the .proto files](en/api_reference/how_to_generate_api_doc)
 
-[protoc-gen-p6](https://github.com/seeflood/protoc-gen-p6)
+[protoc-gen-p6](https://github.com/layotto/protoc-gen-p6)

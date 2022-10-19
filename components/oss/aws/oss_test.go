@@ -23,6 +23,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+
 	"github.com/jinzhu/copier"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
@@ -136,6 +140,31 @@ func TestAwsOss(t *testing.T) {
 
 	err = instance.UpdateUploadBandwidthRateLimit(context.TODO(), &oss.UpdateBandwidthRateLimitInput{})
 	assert.NotNil(t, err)
+
+	_, err = oss.GetGetObjectOutput(&s3.GetObjectOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetPutObjectOutput(&manager.UploadOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetDeleteObjectOutput(&s3.DeleteObjectOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetDeleteObjectOutput(&s3.DeleteObjectOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetGetObjectTaggingOutput(&s3.GetObjectTaggingOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetListObjectsOutput(&s3.ListObjectsOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetGetObjectCannedAclOutput(&s3.GetObjectAclOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetUploadPartOutput(&s3.UploadPartOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetUploadPartCopyOutput(&s3.UploadPartCopyOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetListPartsOutput(&s3.ListPartsOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetListMultipartUploadsOutput(&s3.ListMultipartUploadsOutput{})
+	assert.Nil(t, err)
+	_, err = oss.GetListObjectVersionsOutput(&s3.ListObjectVersionsOutput{})
+	assert.Nil(t, err)
 }
 
 func TestDeepCopy(t *testing.T) {
@@ -152,7 +181,7 @@ func TestDeepCopy(t *testing.T) {
 		VersionId:    &value,
 	}
 	tovalue := &oss.ObjectVersion{}
-	err := copier.CopyWithOption(tovalue, fromValue, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{time2int64}})
+	err := copier.CopyWithOption(tovalue, fromValue, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
 	assert.Nil(t, err)
 	assert.Equal(t, tovalue.Owner.DisplayName, value)
 }

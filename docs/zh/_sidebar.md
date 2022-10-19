@@ -19,6 +19,8 @@
         - [基于Minio](zh/start/file/minio.md)
     - [使用 OSS API](zh/start/oss/oss.md)
     <!--quickstart_generator-->
+    - [(建设中)使用 sms API](zh/start/sms/start) 
+    - [(建设中)使用 cryption API](zh/start/cryption/start) 
     - [(建设中)使用 phone API](zh/start/phone/start) 
     - [(建设中)使用 email API](zh/start/email/start) 
     - [使用 lifecycle API](zh/start/lifecycle/start) 

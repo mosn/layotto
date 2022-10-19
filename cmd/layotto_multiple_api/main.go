@@ -30,6 +30,8 @@ import (
 
 	aliyun_oss "mosn.io/layotto/components/oss/aliyun"
 
+	ceph_oss "mosn.io/layotto/components/oss/ceph"
+
 	aliyun_file "mosn.io/layotto/components/file/aliyun"
 	"mosn.io/layotto/components/file/local"
 
@@ -85,7 +87,6 @@ import (
 	dapr_comp_pubsub "github.com/dapr/components-contrib/pubsub"
 	pubsub_snssqs "github.com/dapr/components-contrib/pubsub/aws/snssqs"
 	pubsub_eventhubs "github.com/dapr/components-contrib/pubsub/azure/eventhubs"
-	"github.com/dapr/components-contrib/pubsub/azure/servicebus"
 	pubsub_gcp "github.com/dapr/components-contrib/pubsub/gcp/pubsub"
 	pubsub_hazelcast "github.com/dapr/components-contrib/pubsub/hazelcast"
 	pubsub_inmemory "github.com/dapr/components-contrib/pubsub/in-memory"
@@ -96,6 +97,8 @@ import (
 	"github.com/dapr/components-contrib/pubsub/rabbitmq"
 	pubsub_redis "github.com/dapr/components-contrib/pubsub/redis"
 	"github.com/dapr/kit/logger"
+
+	"mosn.io/layotto/components/delay_queue/azure/servicebus"
 
 	"mosn.io/layotto/pkg/runtime/pubsub"
 
@@ -302,6 +305,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithOssFactory(
 			oss.NewFactory("aws.oss", aws_oss.NewAwsOss),
 			oss.NewFactory("aliyun.oss", aliyun_oss.NewAliyunOss),
+			oss.NewFactory("ceph", ceph_oss.NewCephOss),
 		),
 
 		// PubSub
