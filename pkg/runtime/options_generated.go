@@ -19,6 +19,7 @@ import (
 	cryption "mosn.io/layotto/components/cryption"
 	email "mosn.io/layotto/components/email"
 	phone "mosn.io/layotto/components/phone"
+	sms "mosn.io/layotto/components/sms"
 )
 
 type extensionComponentFactorys struct {
@@ -33,6 +34,10 @@ type extensionComponentFactorys struct {
 	// "mosn.io/layotto/spec/proto/extension/v1/phone"
 	// phone.
 	phone []*phone.Factory
+
+	// "mosn.io/layotto/spec/proto/extension/v1/sms"
+	// sms.
+	sms []*sms.Factory
 }
 
 func WithCryptionServiceFactory(cryption ...*cryption.Factory) Option {
@@ -50,5 +55,11 @@ func WithEmailServiceFactory(email ...*email.Factory) Option {
 func WithPhoneCallServiceFactory(phone ...*phone.Factory) Option {
 	return func(o *runtimeOptions) {
 		o.services.phone = append(o.services.phone, phone...)
+	}
+}
+
+func WithSmsServiceFactory(sms ...*sms.Factory) Option {
+	return func(o *runtimeOptions) {
+		o.services.sms = append(o.services.sms, sms...)
 	}
 }
