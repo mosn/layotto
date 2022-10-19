@@ -23,6 +23,7 @@ import (
 	cryption "mosn.io/layotto/components/cryption"
 	email "mosn.io/layotto/components/email"
 	phone "mosn.io/layotto/components/phone"
+	sms "mosn.io/layotto/components/sms"
 )
 
 type extensionComponents struct {
@@ -31,6 +32,8 @@ type extensionComponents struct {
 	emailService map[string]email.EmailService
 
 	phoneCallService map[string]phone.PhoneCallService
+
+	smsService map[string]sms.SmsService
 }
 
 func newExtensionComponents() *extensionComponents {
@@ -40,6 +43,8 @@ func newExtensionComponents() *extensionComponents {
 		emailService: make(map[string]email.EmailService),
 
 		phoneCallService: make(map[string]phone.PhoneCallService),
+
+		smsService: make(map[string]sms.SmsService),
 	}
 }
 
@@ -127,6 +132,34 @@ func (m *MosnRuntime) initPhoneCallService(factorys ...*phone.Factory) error {
 	return nil
 }
 
+func (m *MosnRuntime) initSmsService(factorys ...*sms.Factory) error {
+	log.DefaultLogger.Infof("[runtime] init SmsService")
+
+	// 1. register all implementation
+	reg := sms.NewRegistry(m.info)
+	reg.Register(factorys...)
+	// 2. loop initializing
+	for name, config := range m.runtimeConfig.SmsService {
+		// 2.1. create the component
+		c, err := reg.Create(config.Type)
+		if err != nil {
+			m.errInt(err, "create the component %s failed", name)
+			return err
+		}
+		//inject secret to component
+		if config.Metadata, err = m.Injector.InjectSecretRef(config.SecretRef, config.Metadata); err != nil {
+			return err
+		}
+		// 2.2. init
+		if err := c.Init(context.TODO(), &config); err != nil {
+			m.errInt(err, "init the component %s failed", name)
+			return err
+		}
+		m.smsService[name] = c
+	}
+	return nil
+}
+
 func (m *MosnRuntime) initExtensionComponent(s services) error {
 	if err := m.initCryptionService(s.cryption...); err != nil {
 		return err
@@ -137,6 +170,10 @@ func (m *MosnRuntime) initExtensionComponent(s services) error {
 	}
 
 	if err := m.initPhoneCallService(s.phone...); err != nil {
+		return err
+	}
+
+	if err := m.initSmsService(s.sms...); err != nil {
 		return err
 	}
 

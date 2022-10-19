@@ -16,6 +16,10 @@ In addition to this, Layotto also provides some extension APIs, including:
 
 
 
+
+
+
+
 cryption: [spec/proto/extension/v1/cryption](https://mosn.io/layotto/api/v1/cryption.html) 
 
 delay_queue: [spec/proto/extension/v1/delay_queue](https://mosn.io/layotto/api/v1/delay_queue.html) 
@@ -25,3 +29,5 @@ email: [spec/proto/extension/v1/email](https://mosn.io/layotto/api/v1/email.html
 phone: [spec/proto/extension/v1/phone](https://mosn.io/layotto/api/v1/phone.html) 
 
 s3: [spec/proto/extension/v1/s3](https://mosn.io/layotto/api/v1/s3.html) 
+
+sms: [spec/proto/extension/v1/sms](https://mosn.io/layotto/api/v1/sms.html) 
