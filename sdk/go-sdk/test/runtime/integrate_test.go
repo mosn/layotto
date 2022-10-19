@@ -55,7 +55,6 @@ func TestHelloApi(t *testing.T) {
 	helloResp, err := cli.SayHello(ctx, helloReq)
 	assert.Nil(t, err)
 	assert.Equal(t, "greeting", helloResp.Hello)
-	panic("test")
 }
 
 func TestConfigurationApi(t *testing.T) {

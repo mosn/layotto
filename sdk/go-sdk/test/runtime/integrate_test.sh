@@ -36,7 +36,7 @@ go test -p 1 -v ./...
 # run demos
 cd ../../../../demo/configuration/common
 go build -o client
-names="etcd_config_demo"
+names="panic etcd_config_demo"
 for key in ${names}; do
     ./client -s $key
 done
