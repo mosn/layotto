@@ -53,7 +53,7 @@ func TestHelloApi(t *testing.T) {
 		ServiceName: "quick_start_demo",
 	}
 	helloResp, err := cli.SayHello(ctx, helloReq)
-	assert.NotNil(t, err)
+	assert.Nil(t, err)
 	assert.Equal(t, "greeting", helloResp.Hello)
 }
 
