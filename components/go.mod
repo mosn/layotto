@@ -16,6 +16,7 @@ require (
 	github.com/dapr/components-contrib v1.5.2
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/go-redis/redis/v8 v8.8.0
+	github.com/go-sql-driver/mysql v1.5.0
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
