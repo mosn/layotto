@@ -29,18 +29,11 @@ import (
 )
 
 const (
-	mysqlHost    = "localhost:3306"
+	mysqlHostUrl = "localhost:3306"
 	databaseName = "layotto_sequencer"
-	tableName    = "layotto_sequencer_snowflake"
 	userName     = "root"
 	password     = "123456"
-
-	timeBits   = "28"
-	workerBits = "22"
-	seqBits    = "13"
-	startTime  = "2022-01-01"
-
-	key = "resource_xxx"
+	key          = "resource_xxx"
 )
 
 func TestSnowflakeSequence_GetNextId(t *testing.T) {
@@ -66,16 +59,16 @@ func TestSnowflakeSequence_GetNextId(t *testing.T) {
 		BiggerThan: make(map[string]int64),
 	}
 
-	cfg.Properties["mysqlHost"] = mysqlHost
+	cfg.Properties["mysqlHost"] = mysqlHostUrl
 	cfg.Properties["databaseName"] = databaseName
-	cfg.Properties["tableName"] = tableName
+	cfg.Properties["tableName"] = defaultMysqlTableName
 	cfg.Properties["userName"] = userName
 	cfg.Properties["password"] = password
 
-	cfg.Properties["timeBits"] = timeBits
-	cfg.Properties["workerBits"] = workerBits
-	cfg.Properties["seqBits"] = seqBits
-	cfg.Properties["startTime"] = startTime
+	cfg.Properties["timeBits"] = "28"
+	cfg.Properties["workerBits"] = "22"
+	cfg.Properties["seqBits"] = "13"
+	cfg.Properties["startTime"] = "2022-01-01"
 
 	err = s.Init(cfg)
 
@@ -122,9 +115,9 @@ func TestSnowflakeSequence_ParallelGetNextId(t *testing.T) {
 		BiggerThan: make(map[string]int64),
 	}
 
-	cfg.Properties["mysqlHost"] = mysqlHost
+	cfg.Properties["mysqlHost"] = mysqlHostUrl
 	cfg.Properties["databaseName"] = databaseName
-	cfg.Properties["tableName"] = tableName
+	cfg.Properties["tableName"] = defaultMysqlTableName
 	cfg.Properties["userName"] = userName
 	cfg.Properties["password"] = password
 
@@ -192,16 +185,12 @@ func TestKeyTimeout(t *testing.T) {
 		BiggerThan: make(map[string]int64),
 	}
 
-	cfg.Properties["mysqlHost"] = mysqlHost
+	cfg.Properties["mysqlHost"] = mysqlHostUrl
 	cfg.Properties["databaseName"] = databaseName
-	cfg.Properties["tableName"] = tableName
+	cfg.Properties["tableName"] = defaultMysqlTableName
 	cfg.Properties["userName"] = userName
 	cfg.Properties["password"] = password
 
-	cfg.Properties["timeBits"] = timeBits
-	cfg.Properties["workerBits"] = workerBits
-	cfg.Properties["seqBits"] = seqBits
-	cfg.Properties["startTime"] = startTime
 	cfg.Properties["keyTimeout"] = "0"
 
 	err = s.Init(cfg)

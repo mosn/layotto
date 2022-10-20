@@ -22,12 +22,11 @@ import (
 
 	"mosn.io/pkg/log"
 
-	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
 )
 
 type SnowFlakeSequencer struct {
-	metadata   utils.SnowflakeMetadata
+	metadata   SnowflakeMetadata
 	workerId   int64
 	db         *sql.DB
 	mu         sync.Mutex
@@ -47,7 +46,7 @@ func NewSnowFlakeSequencer(logger log.ErrorLogger) *SnowFlakeSequencer {
 
 func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 	var err error
-	s.metadata, err = utils.ParseSnowflakeMetadata(config.Properties)
+	s.metadata, err = ParseSnowflakeMetadata(config.Properties)
 	if err != nil {
 		return err
 	}
@@ -57,7 +56,7 @@ func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 	s.biggerThan = config.BiggerThan
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
-	if s.workerId, err = utils.NewMysqlClient(&s.metadata.MysqlMetadata); err != nil {
+	if s.workerId, err = NewMysqlClient(&s.metadata.MysqlMetadata); err != nil {
 		return err
 	}
 	return err
@@ -138,7 +137,7 @@ func (s *SnowFlakeSequencer) producer(id, currentTimeStamp int64, ch chan int64,
 			delete(s.smap, key)
 			close(ch)
 
-			err := utils.MysqlRecord(s.metadata.MysqlMetadata.Db, s.metadata.MysqlMetadata.KeyTableName, key, s.workerId, currentTimeStamp)
+			err := MysqlRecord(s.metadata.MysqlMetadata.Db, s.metadata.MysqlMetadata.KeyTableName, key, s.workerId, currentTimeStamp)
 			if err != nil {
 				s.logger.Errorf("%v", err)
 			}

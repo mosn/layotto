@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package utils
+package snowflake
 
 import (
 	"database/sql"
@@ -79,7 +79,7 @@ type SnowflakeMysqlMetadata struct {
 func ParseSnowflakeMysqlMetadata(properties map[string]string) (SnowflakeMysqlMetadata, error) {
 	mm := SnowflakeMysqlMetadata{}
 
-	mm.TableName = defaultTableName
+	mm.TableName = defaultMysqlTableName
 	if val, ok := properties[mysqlTableName]; ok && val != "" {
 		mm.TableName = val
 	}
