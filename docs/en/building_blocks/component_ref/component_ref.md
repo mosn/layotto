@@ -8,12 +8,14 @@ When a component is initialized, it needs to refer to the ability of other compo
 
 Currently, only two component types that need to be applied most are supported: ConfigStore and SecretStore, that is, configuration components and secret key components.
 Ref interface design, components need to implement this interface to achieve injection.
-````go
+
+```go
 type SetComponent interface {
 SetConfigStore(cs configstores.Store) (err error)
 SetSecretStore(ss secretstores.SecretStore) (err error)
 }
-````
+```
+
 The old components do not adapt to this interface. Users who have injection requirements can implement the injection by implementing the Ref interface.
 
 ### How to configure
@@ -22,7 +24,8 @@ You can refer to the configuration file: `configs/config_ref_example.json`, conf
 
 ### How to use
 Take the `helloword` component as an example. First, the `helloword` component needs to implement the `SetConfigStore` and `SetSecretStore` interfaces. The interface implementation is the user's own logic, for example:
-````go
+
+```go
 func (hw *HelloWorld) SetConfigStore(cs configstores.Store) (err error) {
 //save for use
 hw.config=cs
@@ -33,9 +36,11 @@ func (hw *HelloWorld) SetSecretStore(ss secretstores.SecretStore) (err error) {
 hw.secretStore = ss
 return nil
 }
-````
+```
+
 Then configure other components that need to be injected to the helloworld component in the configuration file, for example:
-````json
+
+```json
         {
   "helloworld": {
     "type": "helloworld",
@@ -54,5 +59,6 @@ Then configure other components that need to be injected to the helloworld compo
     }
   }
 }
-````
+```
+
 The `helloword` component can use the `config_demo` and `local.file` components during initialization
