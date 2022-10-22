@@ -50,6 +50,8 @@
     - [Pub/Sub API](en/building_blocks/pubsub/reference.md)
     - [RPC API](en/building_blocks/rpc/reference.md)    
     - [Configuration API](en/building_blocks/configuration/reference.md)
+    - [Component Ref](en/building_blocks/component_ref/component_ref.md)
+
   - [API reference](en/api_reference/README)
   - SDK reference
     - [java sdk](https://github.com/layotto/java-sdk)

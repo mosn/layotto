@@ -54,6 +54,7 @@
         - [Pub/Sub API](zh/building_blocks/pubsub/reference.md)
         - [RPC API](zh/building_blocks/rpc/reference.md)
         - [Configuration API](zh/building_blocks/configuration/reference.md)
+        - [Component Ref](zh/building_blocks/component_ref/component_ref.md)
         - 可扩展性
             - [API插件](zh/design/api_plugin/design.md)
     - [gRPC API 接口文档](zh/api_reference/README.md)
