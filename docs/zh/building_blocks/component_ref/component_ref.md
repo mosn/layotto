@@ -8,12 +8,14 @@
 
 目前只支持最需要被应用的两个组件类型:ConfigStore和SecretStore,即配置组件和秘钥组件。  
 Ref接口设计，组件需实现此接口才能实现注入。  
+
 ```go
 type SetComponent interface {
 	SetConfigStore(cs configstores.Store) (err error)
 	SetSecretStore(ss secretstores.SecretStore) (err error)
 }
 ```
+
 旧组件不去适配此接口，用户有注入需求可以通过实现Ref接口来实现注入。
 
 ### 如何配置
@@ -22,6 +24,7 @@ type SetComponent interface {
 
 ### 如何使用
 以`helloword`组件为例,首先`helloword`组件需要实现`SetConfigStore`和`SetSecretStore`接口,接口实现里是用户自己的逻辑，例如：
+
 ```go
 func (hw *HelloWorld) SetConfigStore(cs configstores.Store) (err error) {
 	//save for use
@@ -34,7 +37,9 @@ func (hw *HelloWorld) SetSecretStore(ss secretstores.SecretStore) (err error) {
 	return nil
 }
 ```
+
 然后再配置文件里给helloworld组件配置需要注入的其他组件，例如：
+
 ```json
         {
   "helloworld": {
@@ -55,4 +60,5 @@ func (hw *HelloWorld) SetSecretStore(ss secretstores.SecretStore) (err error) {
   }
 }
 ```
+
 `helloword`组件在初始化的时候便可以使用`config_demo`和`local.file`组件
