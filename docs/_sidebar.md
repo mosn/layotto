@@ -50,8 +50,6 @@
     - [Pub/Sub API](en/building_blocks/pubsub/reference.md)
     - [RPC API](en/building_blocks/rpc/reference.md)    
     - [Configuration API](en/building_blocks/configuration/reference.md)
-    - [Component Ref](en/building_blocks/component_ref/component_ref.md)
-
   - [API reference](en/api_reference/README)
   - SDK reference
     - [java sdk](https://github.com/layotto/java-sdk)
@@ -99,6 +97,7 @@
   - [Document Contribution Guide](en/development/contributing-doc.md)
   - [Automate testing of Quickstart documentation with tools](en/development/test-quickstart.md)
   - [Component Development Guide](en/development/developing-component.md)
+  - [Component Ref Guide](en/development/component_ref/component_ref.md)
   - Want to modify proto files or API definition?
     - [How to generate pb code and API reference](en/api_reference/how_to_generate_api_doc.md)
     - [Comment specification of proto file](en/api_reference/comment_spec_of_proto.md)

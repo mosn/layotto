@@ -54,7 +54,6 @@
         - [Pub/Sub API](zh/building_blocks/pubsub/reference.md)
         - [RPC API](zh/building_blocks/rpc/reference.md)
         - [Configuration API](zh/building_blocks/configuration/reference.md)
-        - [Component Ref](zh/building_blocks/component_ref/component_ref.md)
         - 可扩展性
             - [API插件](zh/design/api_plugin/design.md)
     - [gRPC API 接口文档](zh/api_reference/README.md)
@@ -116,6 +115,7 @@
         - [文档贡献指南](zh/development/contributing-doc.md)
         - [使用工具自动测试 Quickstart 文档](zh/development/test-quickstart.md)
     - [想要开发新的组件?](zh/development/developing-component.md)
+    - [组件引用开发指南](zh/development/component_ref/component_ref.md)
     - 想要修改proto文件或API定义？
         - [如何基于proto文件生成代码、接口文档](zh/api_reference/how_to_generate_api_doc.md)
         - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
