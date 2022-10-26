@@ -20,6 +20,8 @@
     - [Register your own API](en/start/api_plugin/helloworld.md)
     - [Generate API plugin automatically](en/start/api_plugin/generate.md)
   <!--quickstart_generator-->  
+  - [(Under construction) Use sms API](en/start/sms/start) 
+  - [(Under construction) Use cryption API](en/start/cryption/start) 
   - [(Under construction) Use phone API](en/start/phone/start) 
   - [(Under construction) Use email API](en/start/email/start) 
   - [Use lifecycle API](en/start/lifecycle/start) 
@@ -81,6 +83,7 @@
         - [Zookeeper](en/component_specs/sequencer/zookeeper.md)
         - [MongoDB](en/component_specs/sequencer/mongo.md)
         - [Mysql](en/component_specs/sequencer/mysql.md)
+        - [Snowflake](en/component_specs/sequencer/snowflake.md)
       - [Secret Store](en/component_specs/secret/common.md)
   - [How to deploy and upgrade Layotto](en/operation/)
 - Design documents

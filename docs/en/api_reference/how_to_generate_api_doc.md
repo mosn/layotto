@@ -54,7 +54,7 @@ service ObjectStorageService{
 }
 ```
 
-These special comments are called "Master's commands". There are many other commands, and you can check [the doc](https://github.com/seeflood/protoc-gen-p6#masters-commands) for more details.
+These special comments are called "Master's commands". There are many other commands, and you can check [the doc](https://github.com/layotto/protoc-gen-p6#masters-commands) for more details.
 
 ## step 2. Check the environment
 To run the generator, you need:
@@ -94,7 +94,7 @@ Now it's your job to implement:
 ![image](https://user-images.githubusercontent.com/26001097/188782989-9aec893f-9d12-4ee6-9a64-940b0ba1ba1b.png)
 
 ## Behind the scenes
-We have a protoc plugin called [protoc-gen-p6](https://github.com/seeflood/protoc-gen-p6) to generate code for Layotto.
+We have a protoc plugin called [protoc-gen-p6](https://github.com/layotto/protoc-gen-p6) to generate code for Layotto.
 
 ## What if I want to generate pb/documentation only?
 The steps above generate everything, but what if I only want to generate `.pb.go` code ? What if I only want to generate the docs?

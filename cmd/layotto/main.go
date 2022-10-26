@@ -30,6 +30,8 @@ import (
 
 	aliyun_oss "mosn.io/layotto/components/oss/aliyun"
 
+	ceph_oss "mosn.io/layotto/components/oss/ceph"
+
 	"mosn.io/mosn/pkg/istio"
 
 	aliyun_file "mosn.io/layotto/components/file/aliyun"
@@ -77,7 +79,6 @@ import (
 	dapr_comp_pubsub "github.com/dapr/components-contrib/pubsub"
 	pubsub_snssqs "github.com/dapr/components-contrib/pubsub/aws/snssqs"
 	pubsub_eventhubs "github.com/dapr/components-contrib/pubsub/azure/eventhubs"
-	"github.com/dapr/components-contrib/pubsub/azure/servicebus"
 	pubsub_gcp "github.com/dapr/components-contrib/pubsub/gcp/pubsub"
 	pubsub_hazelcast "github.com/dapr/components-contrib/pubsub/hazelcast"
 	pubsub_inmemory "github.com/dapr/components-contrib/pubsub/in-memory"
@@ -90,6 +91,8 @@ import (
 	"github.com/dapr/kit/logger"
 
 	"mosn.io/layotto/pkg/runtime/pubsub"
+
+	servicebus "mosn.io/layotto/components/delay_queue/azure/servicebus"
 
 	// RPC
 	"mosn.io/layotto/components/rpc"
@@ -135,6 +138,7 @@ import (
 	sequencer_mongo "mosn.io/layotto/components/sequencer/mongo"
 	sequencer_mysql "mosn.io/layotto/components/sequencer/mysql"
 	sequencer_redis "mosn.io/layotto/components/sequencer/redis"
+	sequencer_snowflake "mosn.io/layotto/components/sequencer/snowflake"
 	sequencer_zookeeper "mosn.io/layotto/components/sequencer/zookeeper"
 
 	// Actuator
@@ -288,6 +292,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithOssFactory(
 			oss.NewFactory("aws.oss", aws_oss.NewAwsOss),
 			oss.NewFactory("aliyun.oss", aliyun_oss.NewAliyunOss),
+			oss.NewFactory("ceph", ceph_oss.NewCephOss),
 		),
 		// PubSub
 		runtime.WithPubSubFactory(
@@ -440,6 +445,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			runtime_sequencer.NewFactory("mysql", func() sequencer.Store {
 				return sequencer_mysql.NewMySQLSequencer(log.DefaultLogger)
+			}),
+			runtime_sequencer.NewFactory("snowflake", func() sequencer.Store {
+				return sequencer_snowflake.NewSnowFlakeSequencer(log.DefaultLogger)
 			}),
 		),
 		// secretstores
