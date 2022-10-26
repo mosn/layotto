@@ -119,6 +119,7 @@ type PutObjectInput struct {
 	Meta                 map[string]string `json:"meta,omitempty"`
 	Tagging              map[string]string `json:"tagging,omitempty"`
 	StorageClass         string            `json:"storage_class,omitempty"`
+	ContentLength        int64             `json:"content_length,omitempty"`
 }
 
 type PutObjectOutput struct {
