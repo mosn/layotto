@@ -273,6 +273,9 @@ message PutObjectInput{
     map<string, string> tagging = 14;
     // Storage class options.
     string storage_class = 15;
+    // Size of the body in bytes. This parameter is useful when the size of the body
+    // cannot be determined automatically
+    int64 content_length = 16;
 }
 
 // PutObjectOutput
