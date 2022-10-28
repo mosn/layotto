@@ -9,7 +9,7 @@ title: "Develop a new component for XXX API; 为 XXX API 开发新的组件"
 
 **What would you like to be added**:
 
-Develop a new component for **(FIXME) distributed lock** API.
+Develop a new component for **(FIXME) XXX** API.
 
 Choose an open source component or cloud service (such as zookeeper) you like to implement this API. For example:
 
@@ -18,6 +18,8 @@ Choose an open source component or cloud service (such as zookeeper) you like to
 - [ ] etcd
 - [ ] Consul
 - [ ] Mongo 
+- [ ] Mysql 
+- [ ] Postgresql 
 - [ ] MinIO 
 - [ ] Cassandra
 - [ ] Cloud service provided by Alibaba cloud
@@ -37,7 +39,7 @@ API design doc:
 API quickstart doc: 
 
 chinese:
-选择一个你喜欢的开源组件或云服务（比如zookeeper）实现**分布式锁API(FIXME)**, 
+选择一个你喜欢的开源组件或云服务（比如zookeeper）实现**XXX API(FIXME)**, 
 参考资料见上。
 
 
