@@ -105,8 +105,11 @@ generateQuickstart() {
   fi
 
   # 6. add the quickstart doc into the test-quickstart.sh
-  addQuickstartIntoCI "docs/en/start/${nickname}/start.md"
-  addQuickstartIntoCI "docs/zh/start/${nickname}/start.md"
+  # check no `@exclude` tag
+  if [ $(grep "@exclude skip ci" "${proto_path}/${proto_name}" | wc -l) -eq 0 ]; then
+    addQuickstartIntoCI "docs/en/start/${nickname}/start.md"
+    addQuickstartIntoCI "docs/zh/start/${nickname}/start.md"
+  fi
 
   # 7. clean up
   rm "${proto_path}/${nickname}"
