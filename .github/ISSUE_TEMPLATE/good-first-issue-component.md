@@ -2,6 +2,7 @@
 name: "Good first issue (develop a new component)"
 about: Submit a good first issue
 labels: ["kind/component", "help wanted","good first issue","medium" ]
+title: "Develop a new component for XXX API; 为 XXX API 开发新的组件"
 
 ---
 <!-- Please only use this template for submitting good first issues -->
