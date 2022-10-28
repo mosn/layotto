@@ -168,8 +168,8 @@ sed -i "" '/.*: \[.*\]\(.*\)/d' $sidebar
 # reinsert the reference lines
 for r in $res; do
   # ignore empty directory
-  if test $(ls ${proto_path_extension}/${directory}/*.proto |wc -l) -eq 0; then
-    echo "[Warn] Directory ${directory} is empty. Ignore it."
+  if test $(ls ${proto_path_extension}/${r}/*.proto |wc -l) -eq 0; then
+    echo "[Warn] Directory ${r} is empty. Ignore it."
     continue
   fi
   # insert
