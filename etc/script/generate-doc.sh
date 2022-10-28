@@ -118,7 +118,7 @@ res=$(cd $proto_path_extension && ls -d *)
 for directory in $res; do
   # ignore empty directory
   if test $(ls ${proto_path_extension}/${directory}/*.proto |wc -l) -eq 0; then
-    echo "[Warn] Directory ${r} is empty. Ignore it."
+    echo "[Warn] Directory ${directory} is empty. Ignore it."
     continue
   fi
 
