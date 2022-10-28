@@ -160,7 +160,7 @@ done
 cd $project_path
 sidebar_zh=docs/zh/api_reference/README.md
 sidebar=docs/en/api_reference/README.md
-echo "===========> Updating the sidebar"
+echo "===========> Updating the API reference index"
 # delete existing lines
 # -i "" is for compatibility with MacOS. See https://blog.csdn.net/dawn_moon/article/details/8547408
 sed -i "" '/.*: \[.*\]\(.*\)/d' $sidebar_zh
@@ -183,8 +183,3 @@ sed -i "" '$d' $sidebar
 # 4. update the sidebar
 cd $project_path
 # TODO
-
-cd $project_path
-# generate index for api references
-#idx=$(cd docs && ls api/v1/*)
-#echo $idx > docs/api/extensions.txt
