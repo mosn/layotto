@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.17.3
-// source: spec/proto/extension/v1/cryption/cryption.proto
+// source: cryption.proto
 
 package cryption
 
@@ -140,5 +140,5 @@ var CryptionService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "spec/proto/extension/v1/cryption/cryption.proto",
+	Metadata: "cryption.proto",
 }

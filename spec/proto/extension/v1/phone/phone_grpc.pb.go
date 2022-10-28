@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.17.3
-// source: spec/proto/extension/v1/phone/phone.proto
+// source: phone.proto
 
 package phone
 
@@ -102,5 +102,5 @@ var PhoneCallService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "spec/proto/extension/v1/phone/phone.proto",
+	Metadata: "phone.proto",
 }
