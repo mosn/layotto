@@ -4,6 +4,7 @@ package spec.proto.extension.v1.cryption;
 
 option go_package = "mosn.io/layotto/spec/proto/extension/v1/cryption;cryption";
 
+/* @exclude skip ci_generator */
 // CryptionService is used to encrypt or decrypt data.
 service CryptionService {
 
