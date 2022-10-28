@@ -36,8 +36,10 @@ generateSdkAndSidecar() {
     return 0
   fi
 
+  # 1. create directory
   mkdir _output/tmp
 
+  # 2. generate code
   protoc -I . \
     --go_out . --go_opt=paths=source_relative \
     --go-grpc_out=. \
@@ -45,7 +47,7 @@ generateSdkAndSidecar() {
     --p6_out _output/tmp --p6_opt=paths=source_relative \
     ${protos}
 
-  # move code to the right places
+  # 3. move code to the right places
   # sdk
   mv _output/tmp/client/client_generated.go sdk/go-sdk/client/client_generated.go
   mv _output/tmp/grpc/context_generated.go pkg/grpc/context_generated.go

@@ -83,11 +83,11 @@ func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 				return nil, err
 			}
 			// the goroutine model is:
-			// request goroutine --->  localTcpConn ---> mosn
-			//		^										|
-			//		|										|
-			//		|										|
-			// 		hstate <-- readloop goroutine 	<------
+			// request goroutine --->  localTcpConn ---> 	mosn
+			//		^											|
+			//		|											|
+			//		|											|
+			// 		hstate(net.Pipe) <-- readloop goroutine <---
 			return localTcpConn, nil
 		},
 		// stateFunc
