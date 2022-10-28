@@ -1,7 +1,7 @@
 ---
 name: "Good first issue (develop a component)"
 about: Submit a good first issue
-labels: kind/component
+labels: "kind/component"
 
 ---
 <!-- Please only use this template for submitting good first issues -->
