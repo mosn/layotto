@@ -116,21 +116,22 @@ generateQuickstart() {
 echo "===========> Generating docs for ${proto_path_extension}"
 res=$(cd $proto_path_extension && ls -d *)
 for directory in $res; do
-  # ignore empty directory
+  echo "===========> Generating the API reference for ${proto_path_extension}/${directory}"
+
+  # 1.1. ignore empty directory
   if test $(ls ${proto_path_extension}/${directory}/*.proto |wc -l) -eq 0; then
     echo "[Warn] Directory ${directory} is empty. Ignore it."
     continue
   fi
 
-  echo "===========> Generating the API reference for ${proto_path_extension}/${directory}"
-  # 1.1. generate the API reference
+  # 1.2. generate the API reference
   docker run --rm \
     -v ${project_path}/docs/api/v1:/out \
     -v ${project_path}/${proto_path_extension}/${directory}:/protos \
     -v ${tpl_path}:/tpl \
     pseudomuto/protoc-gen-doc --doc_opt=/tpl/api_ref_html.tmpl,${directory}.html
 
-  # 1.2. generate the quickstart document
+  # 1.3. generate the quickstart document
   # find all protos
   protos=$(cd ${proto_path_extension}/${directory} && ls *.proto)
   for p in ${protos}; do
