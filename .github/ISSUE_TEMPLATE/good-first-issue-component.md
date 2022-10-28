@@ -1,7 +1,7 @@
 ---
-name: "Good first issue (develop a component)"
+name: "Good first issue (develop a new component)"
 about: Submit a good first issue
-labels: ["kind/component", "help wanted","good first issue"]
+labels: ["kind/component", "help wanted","good first issue","medium" ]
 
 ---
 <!-- Please only use this template for submitting good first issues -->
