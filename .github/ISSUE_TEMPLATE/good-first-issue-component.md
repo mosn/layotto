@@ -1,5 +1,5 @@
 ---
-name: Good first issue: develop a component
+name: "Good first issue: develop a component"
 about: Suggest an enhancement
 labels: "kind/component","help wanted","good first issue","medium"
 
