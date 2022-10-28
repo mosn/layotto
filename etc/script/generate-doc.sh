@@ -116,6 +116,12 @@ generateQuickstart() {
 echo "===========> Generating docs for ${proto_path_extension}"
 res=$(cd $proto_path_extension && ls -d *)
 for directory in $res; do
+  # ignore empty directory
+  if test $(ls ${proto_path_extension}/${directory}/*.proto |wc -l) -eq 0; then
+    echo "[Warn] Directory ${r} is empty. Ignore it."
+    continue
+  fi
+
   echo "===========> Generating the API reference for ${proto_path_extension}/${directory}"
   # 1.1. generate the API reference
   docker run --rm \

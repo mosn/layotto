@@ -68,14 +68,20 @@ res=$(ls -d spec/proto/extension/v1/*/)
 toGenerate=()
 idx=0
 for r in $res; do
-  #  echo $r
+  # ignore empty directory
+  if test $(ls ${r}*.proto|wc -l) -eq 0; then
+    echo "[Warn] Directory ${r} is empty. Ignore it."
+    continue
+  fi
+
+  # generate .pb.go
   docker run --rm \
     -v $project_path/$r:/api/proto \
     layotto/protoc
 
+  # check if it needs sdk & sidecar generation
   protos=$(ls ${r}*.proto)
   for proto in ${protos}; do
-    # check if it needs sdk & sidecar generation
     needGenerate "${proto}"
     if test $? -eq $true; then
       echo "${proto} needs code generation."
