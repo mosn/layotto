@@ -167,6 +167,12 @@ sed -i "" '/.*: \[.*\]\(.*\)/d' $sidebar_zh
 sed -i "" '/.*: \[.*\]\(.*\)/d' $sidebar
 # reinsert the reference lines
 for r in $res; do
+  # ignore empty directory
+  if test $(ls ${proto_path_extension}/${directory}/*.proto |wc -l) -eq 0; then
+    echo "[Warn] Directory ${directory} is empty. Ignore it."
+    continue
+  fi
+  # insert
   echo "$r: [spec/proto/extension/v1/$r](https://mosn.io/layotto/api/v1/$r.html) \n" >>$sidebar_zh
   echo "$r: [spec/proto/extension/v1/$r](https://mosn.io/layotto/api/v1/$r.html) \n" >>$sidebar
 done
