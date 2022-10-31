@@ -34,11 +34,13 @@ For example, you can choose any one in the list below:
 
 **Reference(FIXME)**:
 
-An example pull request : #100
-
-API design doc:
+An example pull request : 
 
 API quickstart doc: 
+
+API reference: 
+
+API design doc/discussion:
 
 chinese:
 选择一个你喜欢的开源组件或云服务（比如zookeeper）实现**XXX API(FIXME)**, 
