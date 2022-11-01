@@ -50,7 +50,7 @@ require (
 
 replace (
 	github.com/Shopify/sarama => github.com/Shopify/sarama v1.24.0
-	github.com/apache/pulsar-client-go => github.com/apache/pulsar-client-go v0.1.1
+	github.com/apache/pulsar-client-go => github.com/apache/pulsar-client-go v0.1.0
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/klauspost/compress => github.com/klauspost/compress v1.13.0
 	mosn.io/layotto/components => ./components
