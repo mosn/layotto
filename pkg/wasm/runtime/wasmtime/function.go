@@ -13,14 +13,15 @@
 
 package wasmtime
 
-import 	wasmtimego "github.com/bytecodealliance/wasmtime-go"
+import (
+	wasmtimego "github.com/bytecodealliance/wasmtime-go"
+)
 
 type Function struct {
-	ins           *Instance
-	function  *wasmtimego.Func
+	ins      *Instance
+	function *wasmtimego.Func
 }
 
-func (self *Function) Call(parameters ...interface{}) (interface{}, error) {
-	return self.function.Call(self.ins.store, parameters...)
+func (f *Function) Call(parameters ...interface{}) (interface{}, error) {
+	return f.function.Call(f.ins.store, parameters...)
 }
-

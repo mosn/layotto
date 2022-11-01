@@ -57,11 +57,11 @@ func convertFromGoValue(val reflect.Value) wasmtimego.Val {
 	case reflect.Int32:
 		return wasmtimego.ValI32(int32(val.Int()))
 	case reflect.Int64:
-		return wasmtimego.ValI64(int64(val.Int()))
+		return wasmtimego.ValI64(val.Int())
 	case reflect.Float32:
 		return wasmtimego.ValF32(float32(val.Float()))
 	case reflect.Float64:
-		return wasmtimego.ValF64(float64(val.Float()))
+		return wasmtimego.ValF64(val.Float())
 	default:
 		log.DefaultLogger.Errorf("[wasmtimego][type] convertFromGoValue unsupported val type: %v", val.Kind().String())
 	}

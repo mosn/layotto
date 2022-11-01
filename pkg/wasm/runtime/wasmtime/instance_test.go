@@ -12,12 +12,14 @@
 // limitations under the License.
 
 package wasmtime
+
 import (
 	"reflect"
 	"testing"
 	"time"
 
 	"fmt"
+
 	wasmtimego "github.com/bytecodealliance/wasmtime-go"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -94,7 +96,6 @@ func TestInstanceMalloc(t *testing.T) {
 	module := vm.NewModule(wasm)
 	ins := module.NewInstance()
 
-
 	assert.Nil(t, ins.RegisterFunc("TestRegisterFuncRecover", "somePanic", func(instance types.WasmInstance) int32 {
 		panic("some panic")
 	}))
@@ -109,6 +110,7 @@ func TestInstanceMalloc(t *testing.T) {
 func TestInstanceMem(t *testing.T) {
 	vm := NewwasmtimegoVM()
 	wasm, err := wasmtimego.Wat2Wasm(`(module (memory (export "memory") 1) (func (export "_start")))`)
+	assert.Nil(t, err)
 	module := vm.NewModule(wasm)
 	ins := module.NewInstance()
 	assert.Nil(t, ins.Start())
@@ -155,7 +157,7 @@ func TestInstanceData(t *testing.T) {
 	}
 }
 
-func TestwasmtimegoTypes(t *testing.T) {
+func TestWasmtimegoTypes(t *testing.T) {
 	testDatas := []struct {
 		refType     reflect.Type
 		refValue    reflect.Value
@@ -217,6 +219,7 @@ func TestRefCount(t *testing.T) {
 	assert.Equal(t, ins.refCount, 0)
 	assert.Equal(t, destroyCount, 1)
 }
+
 const TextWat = `
 (module
     ;; Import the required fd_write WASI function which will write the given io vectors to stdout

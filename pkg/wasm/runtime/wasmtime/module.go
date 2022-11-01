@@ -70,9 +70,9 @@ func (w *Module) GetABINameList() []string {
 
 	for _, export := range exportList {
 		//if export.Type() == wasmtimego.FuncType{
-			if strings.HasPrefix(export.Name(), "proxy_abi") {
-				abiNameList = append(abiNameList, export.Name())
-			}
+		if strings.HasPrefix(export.Name(), "proxy_abi") {
+			abiNameList = append(abiNameList, export.Name())
+		}
 		//}
 	}
 

@@ -150,7 +150,7 @@ func (w *Instance) Start() error {
 		abi.OnInstanceCreate(w)
 	}
 
-	ins, err :=  w.linker.Instantiate(w.store,  w.module.module)
+	ins, err := w.linker.Instantiate(w.store, w.module.module)
 	if err != nil {
 		log.DefaultLogger.Errorf("[wasmtime][instance] Start fail to new wasmtimego instance, err: %v", err)
 		return err
@@ -158,7 +158,7 @@ func (w *Instance) Start() error {
 
 	w.instance = ins
 
-	f := w.instance.GetFunc(w.store,"_start")
+	f := w.instance.GetFunc(w.store, "_start")
 	if f == nil {
 		log.DefaultLogger.Errorf("[wasmtime][instance] Start fail to get export func: _start, err: %v", err)
 		return err
@@ -250,7 +250,7 @@ func (w *Instance) RegisterFunc(namespace string, funcName string, f interface{}
 	fwasmtimego := wasmtimego.NewFunc(
 		w.store,
 		wasmtimego.NewFuncType(argsKind, retsKind),
-		func(caller *wasmtimego.Caller,args []wasmtimego.Val) (callRes []wasmtimego.Val, trap *wasmtimego.Trap) {
+		func(caller *wasmtimego.Caller, args []wasmtimego.Val) (callRes []wasmtimego.Val, trap *wasmtimego.Trap) {
 			defer func() {
 				if r := recover(); r != nil {
 					log.DefaultLogger.Errorf("[wasmtime][instance] RegisterFunc recover func call: %v, r: %v, stack: %v",
@@ -315,11 +315,11 @@ func (w *Instance) GetExportsFunc(funcName string) (types.WasmFunction, error) {
 
 	f := w.instance.GetFunc(w.store, funcName)
 	if f == nil {
-		return nil, errors.New("func" + funcName +" is not exist")
+		return nil, errors.New("func" + funcName + " is not exist")
 	}
 
 	ff := &Function{
-		ins:       w,
+		ins:      w,
 		function: f,
 	}
 
