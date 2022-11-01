@@ -150,7 +150,6 @@ import (
 
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
-	_ "mosn.io/layotto/pkg/wasm/runtime/wasmtime"
 	_ "mosn.io/mosn/pkg/filter/network/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	_ "mosn.io/mosn/pkg/filter/network/proxy"
@@ -169,6 +168,7 @@ import (
 	"mosn.io/layotto/pkg/runtime"
 	_ "mosn.io/layotto/pkg/wasm"
 	_ "mosn.io/layotto/pkg/wasm/install"
+	_ "mosn.io/layotto/pkg/wasm/runtime/wasmtime"
 	_ "mosn.io/layotto/pkg/wasm/uninstall"
 	_ "mosn.io/layotto/pkg/wasm/update"
 
