@@ -2,14 +2,14 @@
 name: "Good first issue (js sdk)"
 about: Submit a good first issue
 labels: ["kind/component", "help wanted","good first issue","medium" ]
-title: "Implement XXX API for javascript sdk; 让 js sdk 支持 XXX API"
+title: "Implement XXX API for js sdk; 让 js sdk 支持 XXX API"
 
 ---
 <!-- Please only use this template for submitting good first issues -->
 
 **What would you like to be added**:
 
-Implement **(FIXME) XXX** API for javascript sdk.
+Implement **(FIXME) XXX** API for js sdk.
 
 **What can you learn from fixing this issue**:
 - Learn layotto API
