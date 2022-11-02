@@ -11,7 +11,7 @@ title: "Develop a new component for XXX API; 为 XXX API 开发新的组件"
 
 Develop a new component for **(FIXME) XXX** API.
 
-Choose an open source component or cloud service (such as zookeeper) you like to implement this API. 
+Choose an open source component or cloud service you like to implement this API. 
 
 For example, you can choose any one in the list below:
 
@@ -43,7 +43,7 @@ API reference:
 API design doc/discussion:
 
 chinese:
-选择一个你喜欢的开源组件或云服务（比如zookeeper）实现**XXX API(FIXME)**, 
+选择一个你喜欢的开源组件或云服务实现**XXX API(FIXME)**, 
 参考资料见上。
 
 
