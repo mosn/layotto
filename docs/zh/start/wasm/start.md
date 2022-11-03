@@ -115,24 +115,24 @@ docker rm -f redis-test
 }
 ```
 
-我们也可通过以下接口来动态的加载、更新、卸载 WASM 文件。
+我们也可通过以下接口来动态的卸载、加载、更新WASM 文件（由于示例启动时已经默认从配置文件中加载，故此处先卸载再加载）。
+
+#### 卸载
+
+```shell
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1"}' http://127.0.0.1:34998/wasm/uninstall
+```
 
 #### 加载
 
 ```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":1,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
 ```
 
 #### 更新实例数
 
 ```shell
 curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2}' http://127.0.0.1:34998/wasm/update
-```
-
-#### 卸载
-
-```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1"}' http://127.0.0.1:34998/wasm/uninstall
 ```
 
 ### 说明
