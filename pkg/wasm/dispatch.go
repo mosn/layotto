@@ -52,7 +52,6 @@ func (route *Router) RemoveRoute(id string) {
 func (route *Router) GetRandomPluginByID(id string) (*WasmPlugin, error) {
 	group, ok := route.routes[id]
 	if !ok {
-		log.DefaultLogger.Errorf("[proxywasm][filter] GetRandomPluginByID id not registered, id: %s", id)
 		return nil, errors.New("id is not registered")
 	}
 

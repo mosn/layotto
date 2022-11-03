@@ -144,6 +144,7 @@ func (f *FilterConfigFactory) Install(conf map[string]interface{}) error {
 func (f *FilterConfigFactory) UpdateInstanceNum(id string, instanceNum int) error {
 	wasmPlugin, _ := f.router.GetRandomPluginByID(id)
 	if wasmPlugin == nil {
+		log.DefaultLogger.Errorf("[proxywasm][factory] GetRandomPluginByID id not registerd, id: %s", id)
 		return errors.New(id + " is not registered")
 	}
 
@@ -189,6 +190,7 @@ func (f *FilterConfigFactory) UpdateInstanceNum(id string, instanceNum int) erro
 func (f *FilterConfigFactory) UnInstall(id string) error {
 	wasmPlugin, _ := f.router.GetRandomPluginByID(id)
 	if wasmPlugin == nil {
+		log.DefaultLogger.Errorf("[proxywasm][factory] GetRandomPluginByID id not registerd, id: %s", id)
 		return errors.New(id + " is not registered")
 	}
 	err := wasm.GetWasmManager().UninstallWasmPluginByName(wasmPlugin.pluginName)
