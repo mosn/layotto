@@ -176,4 +176,3 @@ Thank y'all!
 dapr is an excellent Runtime product, but it lacks the ability of Service Mesh, which is necessary for the Runtime
 product used in production environment, so we hope to combine Runtime with Service Mesh into one sidecar to meet
 more complex production requirements.
-
