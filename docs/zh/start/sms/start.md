@@ -3,6 +3,8 @@
 
 本示例演示如何调用 Layotto SmsService API.
 
+## 什么是 SmsService API ?
+
 SmsService is used to send SMS messages.
 
 ## step 1. 运行 Layotto
