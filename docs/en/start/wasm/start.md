@@ -103,7 +103,7 @@ We can specify the WASM file to be loaded in `./demo/faas/config.json` config fi
     "name": "function1",
     "instance_num": 1,
     "vm_config": {
-      "engine": "wasmer",
+      "engine": "wasmtime",
       "path": "demo/faas/code/golang/client/function_1.wasm"
     }
   },
@@ -111,7 +111,7 @@ We can specify the WASM file to be loaded in `./demo/faas/config.json` config fi
     "name": "function2",
     "instance_num": 1,
     "vm_config": {
-      "engine": "wasmer",
+      "engine": "wasmtime",
       "path": "demo/faas/code/golang/server/function_2.wasm"
     }
   }
@@ -129,7 +129,7 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -
 #### Install
 
 ```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":1,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":1,"vm_config":{"engine":"wasmtime","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
 ```
 
 #### Update Instance Number
