@@ -3,6 +3,8 @@
 
 本示例演示如何调用 Layotto EmailService API.
 
+## 什么是 EmailService API ?
+
 EmailService is used to send emails.
 
 ## step 1. 运行 Layotto

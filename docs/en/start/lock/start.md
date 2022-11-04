@@ -75,7 +75,10 @@ The layotto file will be generated in the directory, run it:
 
 <!-- tabs:end -->
 
-## step 2. Run the client program, call Layotto to add, delete, modify and query
+## step 2. Run the client demo
+
+The client demo invokes Layotto API to lock and unlock the resource.
+
 <!-- tabs:start -->
 ### **Go**
 
