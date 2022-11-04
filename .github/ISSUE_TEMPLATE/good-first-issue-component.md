@@ -22,8 +22,16 @@ For example, you can choose any one in the list below:
 - [ ] Mongo 
 - [ ] Mysql 
 - [ ] Postgresql 
-- [ ] MinIO 
 - [ ] Cassandra
+- [ ] MinIO 
+- [ ] Ceph
+- [ ] Alibaba Cloud OSS
+- [ ] AWS S3
+- [ ] Kafka
+- [ ] RabbitMQ
+- [ ] RocketMQ
+- [ ] ActiveMQ
+- [ ] RabbitMQ
 - [ ] Cloud service provided by Alibaba cloud
 - [ ] Cloud service provided by AWS
 - [ ] Cloud service provided by Azure
@@ -34,16 +42,22 @@ For example, you can choose any one in the list below:
 
 **Reference(FIXME)**:
 
-An example pull request : 
+Here are some resources to help you work on this issue.
 
 API quickstart doc: 
 
-API reference: 
+API definition(the `.proto` file):
+
+Component development guide: https://mosn.io/layotto/#/en/development/developing-component
+
+Component development guide(in chinese): https://mosn.io/layotto/#/zh/development/developing-component
+
+An example pull request to develop a new component: 
 
 API design doc/discussion:
 
 chinese:
-选择一个你喜欢的开源组件或云服务实现**XXX API(FIXME)**, 
+选择一个你喜欢的开源组件或云服务实现 **(FIXME) XXX** API, 
 参考资料见上。
 
 
