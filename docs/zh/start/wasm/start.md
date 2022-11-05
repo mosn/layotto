@@ -58,14 +58,14 @@ docker exec -i redis-test redis-cli get book1
 
 构建:
 
-```shell @if.not.exist layotto_wasmer
-go build -tags wasmer -o ./layotto_wasmer ./cmd/layotto
+```shell @if.not.exist layotto_wasmtime
+go build -tags wasm,wasmtime -o ./layotto_wasmtime ./cmd/layotto
 ```
 
 运行:
 
 ```shell @background
-./layotto_wasmer start -c ./demo/faas/config.json
+./layotto_wasmtime start -c ./demo/faas/config.json
 ```
 
 **注：需要把`./demo/faas/config.json`中的 redis 地址修改为实际地址，默认地址为：localhost:6379。**

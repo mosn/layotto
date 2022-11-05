@@ -1,5 +1,5 @@
-//go:build wasmer
-// +build wasmer
+//go:build wasmtime
+// +build wasmtime
 
 // Copyright 2021 Layotto Authors
 // Licensed under the Apache License, Version 2.0 (the "License");

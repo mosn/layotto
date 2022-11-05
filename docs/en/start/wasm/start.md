@@ -60,14 +60,14 @@ The result is:
 #### step 2. start Layotto server
 Build:
 
-```shell @if.not.exist layotto_wasmer
-go build -tags wasmer -o ./layotto_wasmer ./cmd/layotto
+```shell @if.not.exist layotto_wasmtime
+go build -tags wasm,wasmtime -o ./layotto_wasmtime ./cmd/layotto
 ```
 
 Run it:
 
 ```shell @background
-./layotto_wasmer start -c ./demo/faas/config.json
+./layotto_wasmtime start -c ./demo/faas/config.json
 ```
 
 **Note: You need to modify the redis address as needed, the default address is: localhost:6379**

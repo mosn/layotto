@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-go build -tags wasmer ./cmd/layotto
+go build -tags wasm,wasmtime ./cmd/layotto
 nohup ./layotto start -c ./demo/faas/config.json &
 nohup redis-server &
 go test -p 1 -v ./test/wasm/...
