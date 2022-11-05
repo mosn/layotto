@@ -59,7 +59,7 @@ go.wasm.%:
 	$(DOCKER) build -f ${DOCKER_FILE} -t  ${BUILD_IMAGE} .
 	@echo "===========> Building binary wasm in $(VERSION) for $(OS) $(ARCH)"
 	$(eval OUTPUT_PATH := ./_output/$(OS)/$(ARCH)/layotto)
-	$(eval ACTION := $(GO) build -o $(OUTPUT_PATH) -tags wasm,wasmtime -ldflags "$(GO_LDFLAGS)" $(ROOT_PACKAGE)/cmd/layotto)
+	$(eval ACTION := $(GO) build -o $(OUTPUT_PATH) -tags wasmcomm,wasmtime -ldflags "$(GO_LDFLAGS)" $(ROOT_PACKAGE)/cmd/layotto)
 	$(DOCKER) run --rm -v $(ROOT_DIR):/go/src/${PROJECT_NAME} -e GOOS=$(OS) -e GOARCH=$(ARCH) -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE} ${ACTION}
 
 .PHONY: go.wasm.image

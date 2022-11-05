@@ -61,7 +61,7 @@ The result is:
 Build:
 
 ```shell @if.not.exist layotto_wasmtime
-go build -tags wasm,wasmtime -o ./layotto_wasmtime ./cmd/layotto
+go build -tags wasmcomm,wasmtime -o ./layotto_wasmtime ./cmd/layotto
 ```
 
 Run it:

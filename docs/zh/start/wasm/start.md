@@ -59,7 +59,7 @@ docker exec -i redis-test redis-cli get book1
 构建:
 
 ```shell @if.not.exist layotto_wasmtime
-go build -tags wasm,wasmtime -o ./layotto_wasmtime ./cmd/layotto
+go build -tags wasmcomm,wasmtime -o ./layotto_wasmtime ./cmd/layotto
 ```
 
 运行:
