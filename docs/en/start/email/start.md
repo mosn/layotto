@@ -3,6 +3,8 @@
 
 This example shows how to invoke Layotto EmailService API.
 
+## What is EmailService API used for?
+
 EmailService is used to send emails.
 
 ## step 1. Deploy Layotto
