@@ -4,7 +4,8 @@ package spec.proto.extension.v1.phone;
 
 option go_package = "mosn.io/layotto/spec/proto/extension/v1/phone;phone";
 
-// PhoneCallService is one of Notify APIs. It's used to send voice messages
+/* @exclude skip ci_generator */
+// PhoneCallService API is used to send voice messages.
 service PhoneCallService {
 
   // Send voice using the specific template

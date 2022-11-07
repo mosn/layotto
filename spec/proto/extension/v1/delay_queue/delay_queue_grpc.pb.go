@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.17.3
-// source: spec/proto/extension/v1/delay_queue/delay_queue.proto
+// source: delay_queue.proto
 
 package delay_queue
 
@@ -102,5 +102,5 @@ var DelayQueue_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "spec/proto/extension/v1/delay_queue/delay_queue.proto",
+	Metadata: "delay_queue.proto",
 }

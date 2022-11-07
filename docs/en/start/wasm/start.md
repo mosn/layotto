@@ -118,24 +118,24 @@ We can specify the WASM file to be loaded in `./demo/faas/config.json` config fi
 }
 ```
 
-We can also install, update, and uninstall WASM file dynamically through the following Apis.
+We can also install, update, and uninstall WASM file dynamically through the following Apis(The example is already loaded from the configuration file by default when it starts, so here it is unloaded and then reloaded).
+
+#### Uninstall
+
+```shell
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1"}' http://127.0.0.1:34998/wasm/uninstall
+```
 
 #### Install
 
 ```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":1,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
 ```
 
 #### Update Instance Number
 
 ```shell
 curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":2}' http://127.0.0.1:34998/wasm/update
-```
-
-#### Uninstall
-
-```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1"}' http://127.0.0.1:34998/wasm/uninstall
 ```
 
 ### Note

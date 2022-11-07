@@ -4,8 +4,10 @@ package spec.proto.extension.v1.delay_queue;
 
 option go_package = "mosn.io/layotto/spec/proto/extension/v1/delay_queue;delay_queue";
 
+/* @exclude skip ci_generator */
 /* @exclude extends pub_subs */
 // DelayQueue is a special kind of message queue, which lets you postpone the delivery of new messages to consumers.
+// For example, you can invoke this API and tell the message queue "please send this message to the consumers after 5 minutes".
 service DelayQueue {
 
   // Publish a delay message
@@ -27,7 +29,6 @@ message DelayMessageRequest {
 
   // The content type for the data (optional).
   string data_content_type = 4;
-
 
   // The length of time, in seconds, for which the delivery
   // of this messages is delayed.  Default: 0.

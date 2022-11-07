@@ -36,16 +36,15 @@ generateSdkAndSidecar() {
     return 0
   fi
 
+  # 1. create directory
   mkdir _output/tmp
 
+  # 2. generate code
   protoc -I . \
-    --go_out . --go_opt=paths=source_relative \
-    --go-grpc_out=. \
-    --go-grpc_opt=require_unimplemented_servers=false,paths=source_relative \
     --p6_out _output/tmp --p6_opt=paths=source_relative \
     ${protos}
 
-  # move code to the right places
+  # 3. move code to the right places
   # sdk
   mv _output/tmp/client/client_generated.go sdk/go-sdk/client/client_generated.go
   mv _output/tmp/grpc/context_generated.go pkg/grpc/context_generated.go
@@ -69,14 +68,20 @@ res=$(ls -d spec/proto/extension/v1/*/)
 toGenerate=()
 idx=0
 for r in $res; do
-  #  echo $r
+  # ignore empty directory
+  if test $(ls ${r}*.proto|wc -l) -eq 0; then
+    echo "[Warn] Directory ${r} is empty. Ignore it."
+    continue
+  fi
+
+  # generate .pb.go
   docker run --rm \
     -v $project_path/$r:/api/proto \
     layotto/protoc
 
+  # check if it needs sdk & sidecar generation
   protos=$(ls ${r}*.proto)
   for proto in ${protos}; do
-    # check if it needs sdk & sidecar generation
     needGenerate "${proto}"
     if test $? -eq $true; then
       echo "${proto} needs code generation."

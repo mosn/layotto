@@ -148,8 +148,12 @@ func (stm *StageManager) runStartStage() {
 
 ### 0x01 Dubbo-go-sample client 发起请求
 
-根据 [Dubbo Json Rpc Example](https://mosn.io/layotto/#/zh/start/rpc/dubbo_json_rpc)例子运行如下命令
+根据 [Dubbo Json Rpc Example](https://mosn.io/layotto/#/zh/start/rpc/dubbo_json_rpc) 例子运行如下命令
+
+```shell
 go run demo/rpc/dubbo_json_rpc/dubbo_json_client/client.go -d '{"jsonrpc":"2.0","method":"GetUser","params":["A003"],"id":9527}'
+```
+
 使用 Layotto 对 App 提供的 Grpc API InvokeService 发起 RPC 调用，经过数据填充和连接建立等流程，最终通过 Grpc clientStream 中调用 SendMsg 向 Layotto 发送数据，具体流程如下。
 
 ```go
