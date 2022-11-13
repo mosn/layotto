@@ -61,6 +61,7 @@ docker exec -i redis-test redis-cli get book1
 ```shell @if.not.exist layotto_wasmtime
 go build -tags wasmcomm,wasmtime -o ./layotto_wasmtime ./cmd/layotto
 ```
+
 如果你想使用 wasmer 作为 WebAssembly 运行时, 可以修改 build 指令为: `go build -tags wasmcomm,wasmer -o ./layotto_wasmtime ./cmd/layotto`
 
 运行:
@@ -115,6 +116,7 @@ docker rm -f redis-test
   }
 }
 ```
+
 提示：我们还支持将 wasmer 作为 vm_config 中的 engine 的值。
 
 我们也可通过以下接口来动态的卸载、加载、更新WASM 文件（由于示例启动时已经默认从配置文件中加载，故此处先卸载再加载）。
