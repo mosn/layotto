@@ -64,6 +64,8 @@ Build:
 go build -tags wasmcomm,wasmtime -o ./layotto_wasmtime ./cmd/layotto
 ```
 
+if you want to use wasmer as WebAssembly Runtime, please use update build tags: `go build -tags wasmcomm,wasmer -o ./layotto_wasmtime ./cmd/layotto`
+
 Run it:
 
 ```shell @background
@@ -117,6 +119,7 @@ We can specify the WASM file to be loaded in `./demo/faas/config.json` config fi
   }
 }
 ```
+tip: we also support wasmer as the engine value in vm_config.
 
 We can also install, update, and uninstall WASM file dynamically through the following Apis(The example is already loaded from the configuration file by default when it starts, so here it is unloaded and then reloaded).
 
