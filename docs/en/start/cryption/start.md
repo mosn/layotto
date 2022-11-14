@@ -3,6 +3,8 @@
 
 This example shows how to invoke Layotto CryptionService API.
 
+## What is CryptionService API used for?
+
 CryptionService is used to encrypt or decrypt data.
 
 ## step 1. Deploy Layotto

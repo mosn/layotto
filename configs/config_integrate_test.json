@@ -1,0 +1,216 @@
+{
+    "servers": [
+      {
+        "default_log_path": "stdout",
+        "default_log_level": "DEBUG",
+        "routers": [
+          {
+            "router_config_name": "actuator_dont_need_router"
+          }
+        ],
+        "listeners": [
+          {
+            "name": "grpc",
+            "address": "127.0.0.1:34904",
+            "bind_port": true,
+            "filter_chains": [
+              {
+                "filters": [
+                  {
+                    "type": "grpc",
+                    "config": {
+                      "server_name": "runtime",
+                      "grpc_config": {
+                        "hellos": {
+                          "quick_start_demo": {
+                            "type": "helloworld",
+                            "hello": "greeting"
+                          }
+                        },
+                        "config_store": {
+                          "etcd_config_demo": {
+                              "type": "etcd",
+                              "address": [
+                              "127.0.0.1:2379"
+                              ],
+                              "timeout": "10"
+                          }
+                        },
+                        "state": {
+                          "redis_state_demo": {
+                            "type": "redis",
+                            "metadata": {
+                              "redisHost": "localhost:6380",
+                              "redisPassword": ""
+                            }
+                          },
+                          "zookeeper_state_demo": {
+                            "type": "zookeeper",
+                            "metadata": {
+                              "servers": "127.0.0.1",
+                              "zookeeperPassword": "",
+                              "sessionTimeout": "3s",
+                              "logInfo": "false",
+                              "keyPrefixPath": "/"
+                            }
+                          }
+                        },
+                        "lock": {
+                          "redis_lock_demo": {
+                            "type": "redis",
+                            "metadata": {
+                              "redisHost": "localhost:6380",
+                              "redisPassword": ""
+                            }
+                          },
+                          "etcd_lock_demo": {
+                            "type": "etcd",
+                            "metadata": {
+                              "endpoints": "localhost:2379",
+                              "username": "",
+                              "password": "",
+                              "keyPrefixPath": "/lock",
+                              "dialTimeout": "5"
+                            }
+                          },
+                          "zookeeper_lock_demo": {
+                            "type": "zookeeper",
+                            "metadata": {
+                              "zookeeperHosts": "127.0.0.1",
+                              "zookeeperPassword": "",
+                              "sessionTimeout": "3",
+                              "logInfo": "false",
+                              "keyPrefixPath": "/"
+                            }
+                          }
+                        },
+                        "sequencer": {
+                          "redis_sequencer_demo": {
+                            "type": "redis",
+                            "metadata": {
+                              "redisHost": "127.0.0.1:6380",
+                              "redisPassword": ""
+                            }
+                          },
+                          "etcd_sequencer_demo": {
+                            "type": "etcd",
+                            "metadata": {
+                              "endpoints": "localhost:2379",
+                              "segmentCacheEnable": "false",
+                              "segmentStep": "1",
+                              "username": "",
+                              "password": "",
+                              "dialTimeout": "5"
+                            }
+                          },
+                          "zookeeper_sequencer_demo": {
+                            "type": "zookeeper",
+                            "metadata": {
+                              "zookeeperHosts": "127.0.0.1",
+                              "zookeeperPassword": "",
+                              "sessionTimeout": "3",
+                              "logInfo": "false",
+                              "keyPrefixPath": "/"
+                            }
+                          }
+                        },
+                        "pub_subs": {
+                          "redis_pub_subs_demo": {
+                            "type": "redis",
+                            "metadata": {
+                              "redisHost": "localhost:6380",
+                              "redisPassword": ""
+                            }
+                          }
+                        },
+                        "secret_store": {
+                          "local_file_secret_demo": {
+                            "type": "local.file",
+                            "metadata": {
+                              "secretsFile": "./configs/secret/config_test_secret_demo.json"
+                            }
+                          }
+                        },
+                        "app": {
+                          "app_id": "app1",
+                          "grpc_callback_port": 9999
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "actuator",
+            "address": "127.0.0.1:34999",
+            "bind_port": true,
+            "filter_chains": [
+              {
+                "filters": [
+                  {
+                    "type": "proxy",
+                    "config": {
+                      "downstream_protocol": "Http1",
+                      "upstream_protocol": "Http1",
+                      "router_config_name": "actuator_dont_need_router"
+                    }
+                  }
+                ]
+              }
+            ],
+            "stream_filters": [
+              {
+                "type": "actuator_filter"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+  "dynamic_resources": {
+    "lds_config": {
+      "ads": {},
+      "initial_fetch_timeout": "0s",
+      "resource_api_version": "V3"
+    },
+    "cds_config": {
+      "ads": {},
+      "initial_fetch_timeout": "0s",
+      "resource_api_version": "V3"
+    },
+    "ads_config": {
+      "api_type": "GRPC",
+      "set_node_on_first_message_only": true,
+      "transport_api_version": "V3",
+      "grpc_services": [{
+        "envoy_grpc": {
+          "cluster_name": "xds-grpc"
+        }
+      }]
+    }
+  },
+  "static_resources": {
+    "clusters": [{
+      "name": "xds-grpc",
+      "type": "STATIC",
+      "connect_timeout": "1s",
+      "lb_policy": "ROUND_ROBIN",
+      "load_assignment": {
+        "cluster_name": "xds-grpc",
+        "endpoints": [{
+          "lb_endpoints": [{
+            "endpoint": {
+              "address": {
+                "socket_address": {"address": "127.0.0.1", "port_value": 30681}
+              }
+            }
+          }
+          ]
+        }]
+      }
+    }]
+  }
+  }
+  

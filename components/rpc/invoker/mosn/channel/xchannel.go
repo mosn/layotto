@@ -67,6 +67,13 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 			if err := acceptFunc(remoteTcpConn, config.Listener); err != nil {
 				return nil, err
 			}
+			// the goroutine model is:
+			// request goroutine --->  localTcpConn ---> 	mosn
+			//		^											|
+			//		|											|
+			//		|											|
+			//		|											v
+			// 		xstate.calls[reqId](a channel) <-- readloop goroutine
 			return localTcpConn, nil
 		},
 		// stateFunc

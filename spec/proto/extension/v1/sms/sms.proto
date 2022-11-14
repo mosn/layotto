@@ -4,6 +4,7 @@ package spec.proto.extension.v1.sms;
 
 option go_package = "mosn.io/layotto/spec/proto/extension/v1/sms;sms";
 
+/* @exclude skip ci_generator */
 // SmsService is used to send SMS messages.
 service SmsService {
 

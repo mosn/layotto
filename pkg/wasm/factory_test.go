@@ -59,6 +59,29 @@ func TestFilterConfigFactory_Install_WithErrorConfig(t *testing.T) {
 	assert.Equal(t, "nil vm config", err.Error())
 }
 
+func TestFilterConfigFactory_UnInstall_WithNoInstall(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	engine := mock.NewMockWasmVM(ctrl)
+	wasm.RegisterWasmEngine("wasmer", engine)
+
+	id := "id_1"
+	err := factory.UnInstall(id)
+	assert.Equal(t, "id_1 is not registered", err.Error())
+}
+
+func TestFilterConfigFactory_UpdateInstanceNum_WithNoInstall(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	engine := mock.NewMockWasmVM(ctrl)
+	wasm.RegisterWasmEngine("wasmer", engine)
+
+	id := "id_1"
+	instanceNum := 1
+	err := factory.UpdateInstanceNum(id, instanceNum)
+	assert.Equal(t, "id_1 is not registered", err.Error())
+}
+
 func TestCreateProxyWasmFilterFactory(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
