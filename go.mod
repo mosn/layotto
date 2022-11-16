@@ -3,13 +3,13 @@ module mosn.io/layotto
 go 1.14
 
 require (
-	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/Azure/go-autorest/autorest/azure/cli v0.4.2 // indirect
 	github.com/Azure/go-autorest/autorest/validation v0.3.1 // indirect
 	github.com/Azure/go-autorest/logger v0.2.1 // indirect
 	github.com/SkyAPM/go2sky v0.5.0
 	github.com/agrea/ptr v0.0.0-20180711073057-77a518d99b7b
 	github.com/alicebob/miniredis/v2 v2.16.0
+	github.com/bytecodealliance/wasmtime-go v0.40.0
 	github.com/dapr/components-contrib v1.5.2
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/dimchansky/utfbom v1.1.1 // indirect
@@ -28,11 +28,13 @@ require (
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.8.0
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.28.0
 	go.uber.org/automaxprocs v1.4.0 // indirect
+	golang.org/x/sys v0.0.0-20220204135822-1c1b9b1eba6a // indirect
+	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/tools v0.1.10 // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
@@ -47,6 +49,8 @@ require (
 )
 
 replace (
+	github.com/Shopify/sarama => github.com/Shopify/sarama v1.24.0
+	github.com/apache/pulsar-client-go => github.com/apache/pulsar-client-go v0.1.0
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/klauspost/compress => github.com/klauspost/compress v1.13.0
 	mosn.io/layotto/components => ./components

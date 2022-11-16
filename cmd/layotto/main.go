@@ -168,6 +168,7 @@ import (
 	"mosn.io/layotto/pkg/runtime"
 	_ "mosn.io/layotto/pkg/wasm"
 	_ "mosn.io/layotto/pkg/wasm/install"
+	_ "mosn.io/layotto/pkg/wasm/runtime/wasmtime"
 	_ "mosn.io/layotto/pkg/wasm/uninstall"
 	_ "mosn.io/layotto/pkg/wasm/update"
 

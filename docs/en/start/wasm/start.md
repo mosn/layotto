@@ -60,14 +60,16 @@ The result is:
 #### step 2. start Layotto server
 Build:
 
-```shell @if.not.exist layotto_wasmer
-go build -tags wasmer -o ./layotto_wasmer ./cmd/layotto
+```shell @if.not.exist layotto_wasmtime
+go build -tags wasmcomm,wasmtime -o ./layotto_wasmtime ./cmd/layotto
 ```
+
+if you want to use wasmer as WebAssembly Runtime, please use build command as: `go build -tags wasmcomm,wasmer -o ./layotto_wasmtime ./cmd/layotto`
 
 Run it:
 
 ```shell @background
-./layotto_wasmer start -c ./demo/faas/config.json
+./layotto_wasmtime start -c ./demo/faas/config.json
 ```
 
 **Note: You need to modify the redis address as needed, the default address is: localhost:6379**
@@ -103,7 +105,7 @@ We can specify the WASM file to be loaded in `./demo/faas/config.json` config fi
     "name": "function1",
     "instance_num": 1,
     "vm_config": {
-      "engine": "wasmer",
+      "engine": "wasmtime",
       "path": "demo/faas/code/golang/client/function_1.wasm"
     }
   },
@@ -111,12 +113,14 @@ We can specify the WASM file to be loaded in `./demo/faas/config.json` config fi
     "name": "function2",
     "instance_num": 1,
     "vm_config": {
-      "engine": "wasmer",
+      "engine": "wasmtime",
       "path": "demo/faas/code/golang/server/function_2.wasm"
     }
   }
 }
 ```
+
+tip: we also support wasmer as the engine value in vm_config.
 
 We can also install, update, and uninstall WASM file dynamically through the following Apis(The example is already loaded from the configuration file by default when it starts, so here it is unloaded and then reloaded).
 
@@ -129,7 +133,7 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -
 #### Install
 
 ```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":1,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":1,"vm_config":{"engine":"wasmtime","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
 ```
 
 #### Update Instance Number
