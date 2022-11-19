@@ -65,6 +65,7 @@ demo/state/common/client
 etc/script/mdx
 etcd
 layotto_wasmer
+layotto_wasmtime
 nohup.out
 /demo/lock/common/client
 /demo/secret/common/client

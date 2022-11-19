@@ -90,7 +90,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 sudo systemctl restart containerd
 ```
 
-#### F、安装 wasmer
+#### F、安装 wasmer(如果vm engine 使用 wasmer 则执行如下命令)
 
 ```
 > curl -L -O https://github.com/wasmerio/wasmer/releases/download/2.0.0/wasmer-linux-amd64.tar.gz

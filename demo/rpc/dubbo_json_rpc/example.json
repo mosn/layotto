@@ -1,55 +1,68 @@
 {
-  "servers":[
+  "servers": [
     {
-      "default_log_path":"./debug.log",
+      "default_log_path": "./debug.log",
       "default_log_level": "DEBUG",
       "routers": [
         {
-          "router_config_name":"http_router",
-          "virtual_hosts":[{
-            "name":"http_host",
-            "domains": ["*"],
-            "routers": [
-              {
-                "match":{
-                  "regex": ".*"
-                },
-                "route":{"cluster_name":"http_server"}
-              }
-            ]
-          }]
-        }],
-      "listeners":[
+          "router_config_name": "http_router",
+          "virtual_hosts": [
+            {
+              "name": "http_host",
+              "domains": [
+                "*"
+              ],
+              "routers": [
+                {
+                  "match": {
+                    "regex": ".*"
+                  },
+                  "route": {
+                    "cluster_name": "http_server"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "listeners": [
         {
-          "name":"grpc",
+          "name": "grpc",
           "address": "127.0.0.1:34904",
           "bind_port": true,
-          "filter_chains": [{
-            "filters": [
-              {
-                "type": "grpc",
-                "config": {
-                  "server_name":"runtime",
-                  "grpc_config": {
-                    "rpcs": {
-                      "mosn": {
-                        "config": {
-                          "before_invoke": [{
-                            "name": "dubbo_json_rpc"
-                          }],
-                          "channel": [{
-                            "size": 1,
-                            "protocol": "http",
-                            "listener": "egress_runtime_http"
-                          }]
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "rpcs": {
+                        "mosn": {
+                          "config": {
+                            "before_invoke": [
+                              {
+                                "name": "dubbo_json_rpc"
+                              }
+                            ],
+                            "channel": [
+                              {
+                                "size": 1,
+                                "protocol": "http",
+                                "listener": "egress_runtime_http"
+                              }
+                            ]
+                          }
                         }
                       }
                     }
                   }
                 }
-              }
-            ]
-          }]
+              ]
+            }
+          ]
         },
         {
           "name": "egress_runtime_http",
@@ -90,6 +103,59 @@
             "weight": 1
           }
         ]
+      }
+    ]
+  },
+  "dynamic_resources": {
+    "lds_config": {
+      "ads": {},
+      "initial_fetch_timeout": "0s",
+      "resource_api_version": "V3"
+    },
+    "cds_config": {
+      "ads": {},
+      "initial_fetch_timeout": "0s",
+      "resource_api_version": "V3"
+    },
+    "ads_config": {
+      "api_type": "GRPC",
+      "set_node_on_first_message_only": true,
+      "transport_api_version": "V3",
+      "grpc_services": [
+        {
+          "envoy_grpc": {
+            "cluster_name": "xds-grpc"
+          }
+        }
+      ]
+    }
+  },
+  "static_resources": {
+    "clusters": [
+      {
+        "name": "xds-grpc",
+        "type": "STATIC",
+        "connect_timeout": "1s",
+        "lb_policy": "ROUND_ROBIN",
+        "load_assignment": {
+          "cluster_name": "xds-grpc",
+          "endpoints": [
+            {
+              "lb_endpoints": [
+                {
+                  "endpoint": {
+                    "address": {
+                      "socket_address": {
+                        "address": "127.0.0.1",
+                        "port_value": 30681
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
       }
     ]
   }

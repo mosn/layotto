@@ -90,7 +90,7 @@ Restart containerd for the latest configuration to take effect
 sudo systemctl restart containerd
 ```
 
-#### F、Install wasmer
+#### F、Install wasmer (If the vm engine uses wasmer, you need to execute the following command)
 
 ```
 > curl -L -O https://github.com/wasmerio/wasmer/releases/download/2.0.0/wasmer-linux-amd64.tar.gz

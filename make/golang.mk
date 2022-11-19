@@ -119,7 +119,7 @@ go.clean:
 	@rm -f demo/state/common/client
 	@rm -f etc/script/mdx
 	@rm -f etcd
-	@rm -f layotto_wasmer
+	@rm -f layotto_wasmtime
 	@rm -f nohup.out
 
 .PHONY: go.lint.verify
@@ -134,15 +134,8 @@ go.lint: go.lint.verify
 	@echo "===========> Run golangci to lint source codes"
 	@golangci-lint run -v
 
-.PHONY: go.test.verify
-go.test.verify:  
-ifeq ($(shell which go-junit-report), )
-	@echo "===========> Installing go-junit-report"
-	@GO111MODULE=off $(GO) get -u github.com/jstemmer/go-junit-report
-endif
-
 .PHONY: go.test
-go.test: go.test.verify
+go.test:
 	@echo "===========> Run unit test in diagnostics"
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./diagnostics/...`
 	@echo "===========> Run unit test in sdk/go-sdk"
