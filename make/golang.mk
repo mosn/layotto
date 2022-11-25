@@ -119,7 +119,7 @@ go.clean:
 	@rm -f demo/state/common/client
 	@rm -f etc/script/mdx
 	@rm -f etcd
-	@rm -f layotto_wasmer
+	@rm -f layotto_wasmtime
 	@rm -f nohup.out
 
 .PHONY: go.lint.verify

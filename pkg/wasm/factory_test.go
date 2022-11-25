@@ -35,10 +35,10 @@ func TestFilterConfigFactory_Install(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	engine := mock.NewMockWasmVM(ctrl)
-	wasm.RegisterWasmEngine("wasmer", engine)
+	wasm.RegisterWasmEngine("wasmtime", engine)
 
 	conf := make(map[string]interface{})
-	config := "{\"name\":\"id_1\",\"instance_num\":2,\"vm_config\":{\"engine\":\"wasmer\",\"path\":\"nofile\"}}"
+	config := "{\"name\":\"id_1\",\"instance_num\":2,\"vm_config\":{\"engine\":\"wasmtime\",\"path\":\"nofile\"}}"
 	err := json.Unmarshal([]byte(config), &conf)
 	assert.NoError(t, err)
 	err = factory.Install(conf)
@@ -49,7 +49,7 @@ func TestFilterConfigFactory_Install_WithErrorConfig(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	engine := mock.NewMockWasmVM(ctrl)
-	wasm.RegisterWasmEngine("wasmer", engine)
+	wasm.RegisterWasmEngine("wasmtime", engine)
 
 	conf := make(map[string]interface{})
 	config := "{\"name\":\"id_1\"}"
@@ -63,7 +63,7 @@ func TestFilterConfigFactory_UnInstall_WithNoInstall(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	engine := mock.NewMockWasmVM(ctrl)
-	wasm.RegisterWasmEngine("wasmer", engine)
+	wasm.RegisterWasmEngine("wasmtime", engine)
 
 	id := "id_1"
 	err := factory.UnInstall(id)
@@ -74,7 +74,7 @@ func TestFilterConfigFactory_UpdateInstanceNum_WithNoInstall(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	engine := mock.NewMockWasmVM(ctrl)
-	wasm.RegisterWasmEngine("wasmer", engine)
+	wasm.RegisterWasmEngine("wasmtime", engine)
 
 	id := "id_1"
 	instanceNum := 1
@@ -86,7 +86,7 @@ func TestCreateProxyWasmFilterFactory(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	engine := mock.NewMockWasmVM(ctrl)
-	wasm.RegisterWasmEngine("wasmer", engine)
+	wasm.RegisterWasmEngine("wasmtime", engine)
 
 	config := `
 				{
@@ -96,7 +96,7 @@ func TestCreateProxyWasmFilterFactory(t *testing.T) {
 						  "name": "function1",
 						  "instance_num": 1,
 						  "vm_config": {
-							"engine": "wasmer",
+							"engine": "wasmtime",
 							"path": "nofile"
 						  }
 						},
@@ -104,7 +104,7 @@ func TestCreateProxyWasmFilterFactory(t *testing.T) {
 						  "name": "function2",
 						  "instance_num": 1,
 						  "vm_config": {
-							"engine": "wasmer",
+							"engine": "wasmtime",
 							"path": "nofile"
 						  }
 						}
