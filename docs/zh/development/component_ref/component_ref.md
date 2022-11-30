@@ -23,18 +23,29 @@ type SetComponent interface {
 可参考配置文件:`configs/config_ref_example.json`, 在组件配置中配置需要使用的组件，便可以在组件初始化时注入给组件。
 
 ### 如何使用
+假如我们要想开发一个helloword组件，它需要在启动的时候，从 secret store 中读取秘钥(比如用来获取连接数据库的秘钥)、从 config store 读取配置(例如读取数据库的 ip 地址，以便连接数据库), 那么 helloword 组件应该如何开发呢？
 以`helloword`组件为例,首先`helloword`组件需要实现`SetConfigStore`和`SetSecretStore`接口,接口实现里是用户自己的逻辑，例如：
 
 ```go
 func (hw *HelloWorld) SetConfigStore(cs configstores.Store) (err error) {
-	//save for use
-	hw.config = cs
-	return nil
+//save for use
+hw.config=cs
+return nil
 }
 func (hw *HelloWorld) SetSecretStore(ss secretstores.SecretStore) (err error) {
-	//save for use
-	hw.secretStore = ss
-	return nil
+//save for use
+hw.secretStore = ss
+return nil
+}
+//fetch secret/config when component init
+func (hw *HelloWorld) Init(config *hello.HelloConfig) error {
+  hw.secretStore.GetSecret(secretstores.GetSecretRequest{
+     Name:     "dbPassword",
+  })
+  hw.config.Get(context.Background(),&configstores.GetRequest{
+     Keys:     []string{"dbAddress"},
+  })
+  return nil
 }
 ```
 
