@@ -3,7 +3,10 @@
 
 This example shows how to invoke Layotto DelayQueue API.
 
+## What is DelayQueue API used for?
+
 DelayQueue is a special kind of message queue, which lets you postpone the delivery of new messages to consumers.
+For example, you can invoke this API and tell the message queue "please send this message to the consumers after 5 minutes".
 
 ## step 1. Deploy Layotto
 <!-- tabs:start -->

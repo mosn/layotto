@@ -3,6 +3,8 @@
 
 This example shows how to invoke Layotto SmsService API.
 
+## What is SmsService API used for?
+
 SmsService is used to send SMS messages.
 
 ## step 1. Deploy Layotto

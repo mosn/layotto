@@ -53,7 +53,7 @@ func TestXProxyWasmConfigWithoutUserData(t *testing.T) {
 func TestXProxyWasmConfigWithVM(t *testing.T) {
 	configMap := map[string]interface{}{
 		"vm_config": map[string]interface{}{
-			"engine": "wasmer",
+			"engine": "wasmtime",
 			"path":   "path",
 			"cpu":    100,
 		},

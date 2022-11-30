@@ -3,7 +3,9 @@
 
 本示例演示如何调用 Layotto PhoneCallService API.
 
-PhoneCallService is one of Notify APIs. It's used to send voice messages
+## 什么是 PhoneCallService API ?
+
+PhoneCallService API is used to send voice messages.
 
 ## step 1. 运行 Layotto
 <!-- tabs:start -->
