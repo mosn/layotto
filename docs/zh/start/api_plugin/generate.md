@@ -1,6 +1,16 @@
 # 自动生成 API 插件
 
-Writing the API plugin yourself is boring. You can use code generator to generate all the code.
+Writing the API plugin yourself is boring. You can use Layotto's code generator to generate all the code.
+
+> [!TIP|label: Types of API plugins]
+> There are two types of API plugins:
+>- In-tree plugins.
+>- Out-of-tree plugins
+>
+> The code of in-tree plugins is in the layotto repo, while the code of out-of-tree plugins can be put in your own repo outside layotto repo.
+>
+> **This guide introduce how to generate out-of-tree plugins**. If you want to generate in-tree plugins, check [the other doc](en/api_reference/how_to_generate_api_doc) for help
+
 
 Let's say you want to add a `PublishTransactionalMessage` method to existing pubsub API. You write a new proto file `cmd/layotto_multiple_api/advanced_queue/advanced_queue.proto` :
 
