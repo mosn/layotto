@@ -4,16 +4,14 @@ import (
 	"context"
 	"strings"
 
-	"mosn.io/api"
-
-	"mosn.io/mosn/pkg/types"
-
 	"google.golang.org/grpc/metadata"
-	mosnctx "mosn.io/mosn/pkg/context"
+
+	"mosn.io/api"
+	"mosn.io/layotto/components/trace"
 	mtrace "mosn.io/mosn/pkg/trace"
 	"mosn.io/mosn/pkg/trace/sofa"
-
-	"mosn.io/layotto/components/trace"
+	"mosn.io/mosn/pkg/types"
+	"mosn.io/pkg/variable"
 )
 
 func init() {
@@ -72,6 +70,6 @@ func (o *OpenGenerator) GenerateNewContext(ctx context.Context, span api.Span) c
 		span.SetTag(trace.LAYOTTO_ATTRS_CONTENT, v[0])
 	}
 	ctx = metadata.NewIncomingContext(ctx, newMd)
-	ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
+	_ = variable.Set(ctx, types.VariableTraceSpan, span)
 	return ctx
 }

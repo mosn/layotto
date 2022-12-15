@@ -31,20 +31,18 @@ require (
 	github.com/stretchr/testify v1.8.0
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/urfave/cli v1.22.1
-	github.com/valyala/fasthttp v1.28.0
+	github.com/valyala/fasthttp v1.40.0
 	go.uber.org/automaxprocs v1.4.0 // indirect
-	golang.org/x/sys v0.0.0-20220204135822-1c1b9b1eba6a // indirect
-	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/tools v0.1.10 // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
 	google.golang.org/protobuf v1.27.1
-	mosn.io/api v1.1.0
+	mosn.io/api v1.3.0
 	mosn.io/layotto/components v0.0.0-20220413092851-55c58dbb1a23
 	mosn.io/layotto/spec v0.0.0-20220413092851-55c58dbb1a23
-	mosn.io/mosn v1.1.0
-	mosn.io/pkg v1.1.0
-	mosn.io/proxy-wasm-go-host v0.1.1-0.20210524020952-3fb13ba763a6
+	mosn.io/mosn v1.3.0
+	mosn.io/pkg v1.3.0
+	mosn.io/proxy-wasm-go-host v0.2.1-0.20221123073237-4f948bf02510
 	nhooyr.io/websocket v1.8.7 // indirect
 )
 
@@ -55,5 +53,5 @@ replace (
 	github.com/klauspost/compress => github.com/klauspost/compress v1.13.0
 	mosn.io/layotto/components => ./components
 	mosn.io/layotto/spec => ./spec
-	mosn.io/proxy-wasm-go-host => github.com/layotto/proxy-wasm-go-host v0.1.1-0.20210929091514-828451606147
+	mosn.io/proxy-wasm-go-host => github.com/layotto/proxy-wasm-go-host v0.1.1-0.20221214084628-5862a697bdd8
 )
