@@ -58,14 +58,16 @@ docker exec -i redis-test redis-cli get book1
 
 构建:
 
-```shell @if.not.exist layotto_wasmer
-go build -tags wasmer -o ./layotto_wasmer ./cmd/layotto
+```shell @if.not.exist layotto_wasmtime
+go build -tags wasmcomm,wasmtime -o ./layotto_wasmtime ./cmd/layotto
 ```
+
+如果你想使用 wasmer 作为 WebAssembly 运行时, 可以修改 build 指令为: `go build -tags wasmcomm,wasmer -o ./layotto_wasmtime ./cmd/layotto`
 
 运行:
 
 ```shell @background
-./layotto_wasmer start -c ./demo/faas/config.json
+./layotto_wasmtime start -c ./demo/faas/config.json
 ```
 
 **注：需要把`./demo/faas/config.json`中的 redis 地址修改为实际地址，默认地址为：localhost:6379。**
@@ -100,7 +102,7 @@ docker rm -f redis-test
     "name": "function1",
     "instance_num": 1,
     "vm_config": {
-      "engine": "wasmer",
+      "engine": "wasmtime",
       "path": "demo/faas/code/golang/client/function_1.wasm"
     }
   },
@@ -108,12 +110,14 @@ docker rm -f redis-test
     "name": "function2",
     "instance_num": 1,
     "vm_config": {
-      "engine": "wasmer",
+      "engine": "wasmtime",
       "path": "demo/faas/code/golang/server/function_2.wasm"
     }
   }
 }
 ```
+
+提示：我们还支持将 wasmer 作为 vm_config 中的 engine 的值。
 
 我们也可通过以下接口来动态的卸载、加载、更新WASM 文件（由于示例启动时已经默认从配置文件中加载，故此处先卸载再加载）。
 
@@ -126,7 +130,7 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -
 #### 加载
 
 ```shell
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":1,"vm_config":{"engine":"wasmer","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"id_1","instance_num":1,"vm_config":{"engine":"wasmtime","path":"demo/faas/code/golang/client/function_1.wasm"}}' http://127.0.0.1:34998/wasm/install
 ```
 
 #### 更新实例数

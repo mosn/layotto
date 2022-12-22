@@ -47,8 +47,8 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 ```
 > git clone https://github.com/mosn/layotto.git
 > cd layotto
-> make wasm
-> minikube cp ./layotto /home/docker/layotto
+> make wasm-build
+> minikube cp ./_output/linux/amd64/layotto /home/docker/layotto
 > minikube cp ./demo/faas/config.json /home/docker/config.json
 > minikube ssh
 > sudo chmod +x layotto
@@ -90,7 +90,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
 sudo systemctl restart containerd
 ```
 
-#### F、安装 wasmer
+#### F、安装 wasmer(如果vm engine 使用 wasmer 则执行如下命令)
 
 ```
 > curl -L -O https://github.com/wasmerio/wasmer/releases/download/2.0.0/wasmer-linux-amd64.tar.gz

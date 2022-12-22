@@ -47,8 +47,8 @@ The example only needs a Redis server that can be used normally. As for where it
 ```
 > git clone https://github.com/mosn/layotto.git
 > cd layotto
-> make wasm
-> minikube cp ./layotto /home/docker/layotto
+> make wasm-build
+> minikube cp ./_output/linux/amd64/layotto /home/docker/layotto
 > minikube cp ./demo/faas/config.json /home/docker/config.json
 > minikube ssh
 > sudo chmod +x layotto
@@ -90,7 +90,7 @@ Restart containerd for the latest configuration to take effect
 sudo systemctl restart containerd
 ```
 
-#### F、Install wasmer
+#### F、Install wasmer (If the vm engine uses wasmer, you need to execute the following command)
 
 ```
 > curl -L -O https://github.com/wasmerio/wasmer/releases/download/2.0.0/wasmer-linux-amd64.tar.gz

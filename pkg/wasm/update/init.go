@@ -1,5 +1,5 @@
-//go:build wasmer
-// +build wasmer
+//go:build wasmcomm
+// +build wasmcomm
 
 /*
  * Copyright 2021 Layotto Authors
