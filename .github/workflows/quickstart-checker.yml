@@ -16,7 +16,7 @@ jobs:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
         with:
-          go-version: 1.14.13
+          go-version: 1.18.5
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
@@ -41,13 +41,5 @@ jobs:
               go get -v -t -d ./...
           fi
 
-      - name: Test quickstart in Golang 1.14.13
+      - name: Test quickstart in Golang 1.18.5
         run: make quickstart
-
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17.8
-
-      - name: Test quickstart in Golang 1.17.8
-        run: make quickstart QUICKSTART_VERSION=1.17
