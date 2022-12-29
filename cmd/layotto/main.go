@@ -170,6 +170,7 @@ import (
 	_ "mosn.io/layotto/pkg/wasm/install"
 	_ "mosn.io/layotto/pkg/wasm/uninstall"
 	_ "mosn.io/layotto/pkg/wasm/update"
+
 	_ "mosn.io/proxy-wasm-go-host/wasmtime"
 
 	_ "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/router/v3"
