@@ -133,10 +133,10 @@ exporter接口定了如何将Span的信息上报给远端，对应配置中的ex
 GenerateNewContext(ctx context.Context, span api.Span) context.Context
 ```
 
-GenerateNewContext用于生成新的context，我们通过mosnctx可以将该context实现上下文之间的互相传递：
+GenerateNewContext用于生成新的context，Layotto通过Mosn的variable能力实现Span信息在上下文之间的传递：
 
 ```go
-ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
+_ = variable.Set(ctx, types.VariableTraceSpan, span)
 ```
 
 可以参考代码中的[OpenGenerator](https://github.com/mosn/layotto/blob/main/diagnostics/genetator.go) 的实现
