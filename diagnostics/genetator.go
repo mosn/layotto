@@ -7,11 +7,12 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	"mosn.io/api"
-	"mosn.io/layotto/components/trace"
 	mtrace "mosn.io/mosn/pkg/trace"
 	"mosn.io/mosn/pkg/trace/sofa"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/pkg/variable"
+
+	"mosn.io/layotto/components/trace"
 )
 
 func init() {
