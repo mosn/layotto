@@ -6,13 +6,13 @@ import (
 
 	"google.golang.org/grpc/metadata"
 
-	"mosn.io/layotto/components/trace"
-
 	"mosn.io/api"
 	mtrace "mosn.io/mosn/pkg/trace"
 	"mosn.io/mosn/pkg/trace/sofa"
 	"mosn.io/mosn/pkg/types"
 	"mosn.io/pkg/variable"
+
+	"mosn.io/layotto/components/trace"
 )
 
 func init() {
