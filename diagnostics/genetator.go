@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"google.golang.org/grpc/metadata"
-
 	"mosn.io/api"
 	"mosn.io/layotto/components/trace"
 	mtrace "mosn.io/mosn/pkg/trace"
