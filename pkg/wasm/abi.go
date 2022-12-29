@@ -21,7 +21,7 @@ import (
 	v1 "mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 )
 
-const AbiV2 = "proxy_abi_version_0_2_0"
+const AbiV2 = "proxy_abi_version_0_1_0"
 
 // registers an abi
 func init() {
