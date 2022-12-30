@@ -18,13 +18,14 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	mosnctx "mosn.io/mosn/pkg/context"
 	"mosn.io/mosn/pkg/types"
+	"mosn.io/pkg/variable"
 )
 
 func TestSetExtraComponentInfo(t *testing.T) {
 	var span Span
-	ctx := mosnctx.WithValue(context.TODO(), types.ContextKeyActiveSpan, &span)
+	ctx := variable.NewVariableContext(context.TODO())
+	_ = variable.Set(ctx, types.VariableTraceSpan, &span)
 	SetExtraComponentInfo(ctx, "hello")
 	v := span.Tag(LAYOTTO_COMPONENT_DETAIL)
 	assert.Equal(t, v, "hello")
