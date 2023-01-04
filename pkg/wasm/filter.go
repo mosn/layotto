@@ -23,8 +23,8 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"mosn.io/mosn/pkg/variable"
 	"mosn.io/mosn/pkg/wasm/abi"
+	"mosn.io/pkg/variable"
 	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 
 	"mosn.io/api"
