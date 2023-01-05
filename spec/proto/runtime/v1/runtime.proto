@@ -37,6 +37,9 @@ service Runtime {
   // A method trying to unlock.
   rpc Unlock(UnlockRequest)returns (UnlockResponse) {}
 
+  // A method used to support lease renewal for distributed lock.
+  rpc LockKeepAlive(LockKeepAliveRequest) returns (LockKeepAliveResponse){}
+
   // Sequencer API
   // Get next unique id with some auto-increment guarantee
   rpc GetNextId(GetNextIdRequest)returns (GetNextIdResponse) {}
@@ -302,6 +305,35 @@ message UnlockResponse {
 
   // The status of unlock
   Status status = 1;
+}
+
+// LockKeepAlive request message
+message LockKeepAliveRequest {
+  // resource_id is the lock key.
+  string resource_id = 1;
+  // The owner of the lock.
+  string lock_owner = 2;
+  // expire is the time to expire.
+  int64 expire = 3;
+}
+
+// LockKeepAlive response message
+message LockKeepAliveResponse {
+  // The enum of LockKeepAlive status
+  enum Status {
+    // Lease renewal success
+    SUCCESS = 0;
+    // The lock is not exist
+    LOCK_UNEXIST = 1;
+    // The lock is belong to others
+    LOCK_BELONG_TO_OTHERS = 2;
+    // Internal error
+    INTERNAL_ERROR = 3;
+  }
+  // resource_id is the lock key.
+  string resource_id = 1;
+  // The status of LockKeepAlive
+  Status status = 2;
 }
 
 // Hello request message

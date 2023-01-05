@@ -41,6 +41,8 @@ type RuntimeClient interface {
 	TryLock(ctx context.Context, in *TryLockRequest, opts ...grpc.CallOption) (*TryLockResponse, error)
 	// A method trying to unlock.
 	Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error)
+	// A method used to support lease renewal for distributed lock.
+	LockKeepAlive(ctx context.Context, in *LockKeepAliveRequest, opts ...grpc.CallOption) (*LockKeepAliveResponse, error)
 	// Sequencer API
 	// Get next unique id with some auto-increment guarantee
 	GetNextId(ctx context.Context, in *GetNextIdRequest, opts ...grpc.CallOption) (*GetNextIdResponse, error)
@@ -172,6 +174,15 @@ func (c *runtimeClient) TryLock(ctx context.Context, in *TryLockRequest, opts ..
 func (c *runtimeClient) Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error) {
 	out := new(UnlockResponse)
 	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.Runtime/Unlock", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeClient) LockKeepAlive(ctx context.Context, in *LockKeepAliveRequest, opts ...grpc.CallOption) (*LockKeepAliveResponse, error) {
+	out := new(LockKeepAliveResponse)
+	err := c.cc.Invoke(ctx, "/spec.proto.runtime.v1.Runtime/LockKeepAlive", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -391,6 +402,8 @@ type RuntimeServer interface {
 	TryLock(context.Context, *TryLockRequest) (*TryLockResponse, error)
 	// A method trying to unlock.
 	Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error)
+	// A method used to support lease renewal for distributed lock.
+	LockKeepAlive(context.Context, *LockKeepAliveRequest) (*LockKeepAliveResponse, error)
 	// Sequencer API
 	// Get next unique id with some auto-increment guarantee
 	GetNextId(context.Context, *GetNextIdRequest) (*GetNextIdResponse, error)
@@ -453,6 +466,9 @@ func (UnimplementedRuntimeServer) TryLock(context.Context, *TryLockRequest) (*Tr
 }
 func (UnimplementedRuntimeServer) Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Unlock not implemented")
+}
+func (UnimplementedRuntimeServer) LockKeepAlive(context.Context, *LockKeepAliveRequest) (*LockKeepAliveResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LockKeepAlive not implemented")
 }
 func (UnimplementedRuntimeServer) GetNextId(context.Context, *GetNextIdRequest) (*GetNextIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNextId not implemented")
@@ -662,6 +678,24 @@ func _Runtime_Unlock_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimeServer).Unlock(ctx, req.(*UnlockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Runtime_LockKeepAlive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LockKeepAliveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServer).LockKeepAlive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/spec.proto.runtime.v1.Runtime/LockKeepAlive",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServer).LockKeepAlive(ctx, req.(*LockKeepAliveRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -999,6 +1033,10 @@ var Runtime_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Unlock",
 			Handler:    _Runtime_Unlock_Handler,
+		},
+		{
+			MethodName: "LockKeepAlive",
+			Handler:    _Runtime_LockKeepAlive_Handler,
 		},
 		{
 			MethodName: "GetNextId",
