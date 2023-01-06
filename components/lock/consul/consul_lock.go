@@ -13,6 +13,7 @@
 package consul
 
 import (
+	"context"
 	"runtime"
 	"strconv"
 	"sync"
@@ -61,6 +62,11 @@ func (c *ConsulLock) Init(metadata lock.Metadata) error {
 }
 func (c *ConsulLock) Features() []lock.Feature {
 	return nil
+}
+
+//TODO: implemnt function
+func (c *ConsulLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	return nil, nil
 }
 
 func getTTL(expire int32) string {

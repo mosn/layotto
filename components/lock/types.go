@@ -51,6 +51,17 @@ type UnlockResponse struct {
 	Status LockStatus
 }
 
+type LockKeepAliveRequest struct {
+	ResourceId string
+	LockOwner  string
+	Expire     int64
+}
+
+type LockKeepAliveResponse struct {
+	ResourceId string
+	Status     LockStatus
+}
+
 type LockStatus int32
 
 // lock status

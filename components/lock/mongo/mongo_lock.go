@@ -108,6 +108,11 @@ func (e *MongoLock) Features() []lock.Feature {
 	return e.features
 }
 
+//TODO: implemnt function
+func (c *MongoLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	return nil, nil
+}
+
 func (e *MongoLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	var err error
 	// create mongo session

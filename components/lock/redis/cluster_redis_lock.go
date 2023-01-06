@@ -80,6 +80,11 @@ func (c *ClusterRedisLock) Features() []lock.Feature {
 	return c.features
 }
 
+//TODO: implemnt function
+func (c *ClusterRedisLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	return nil, nil
+}
+
 func (c *ClusterRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	//try to get lock on all redis nodes
 	intervalStart := utils.GetMiliTimestamp(time.Now().UnixNano())

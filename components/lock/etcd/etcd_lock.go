@@ -65,6 +65,11 @@ func (e *EtcdLock) Init(metadata lock.Metadata) error {
 	return err
 }
 
+//TODO: implemnt function
+func (c *EtcdLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	return nil, nil
+}
+
 // Features is to get EtcdLock's features
 func (e *EtcdLock) Features() []lock.Feature {
 	return e.features
