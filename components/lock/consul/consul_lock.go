@@ -64,8 +64,9 @@ func (c *ConsulLock) Features() []lock.Feature {
 	return nil
 }
 
-//TODO: implemnt function
+// LockKeepAlive try to renewal lease
 func (c *ConsulLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	//TODO: implemnt function
 	return nil, nil
 }
 

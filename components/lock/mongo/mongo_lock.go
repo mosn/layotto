@@ -108,8 +108,9 @@ func (e *MongoLock) Features() []lock.Feature {
 	return e.features
 }
 
-//TODO: implemnt function
+// LockKeepAlive try to renewal lease
 func (c *MongoLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	//TODO: implemnt function
 	return nil, nil
 }
 

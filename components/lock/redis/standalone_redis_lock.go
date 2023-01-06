@@ -69,8 +69,9 @@ func (p *StandaloneRedisLock) Features() []lock.Feature {
 	return p.features
 }
 
-//TODO: implemnt function
+// LockKeepAlive try to renewal lease
 func (c *StandaloneRedisLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	//TODO: implemnt function
 	return nil, nil
 }
 

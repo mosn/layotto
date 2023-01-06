@@ -55,8 +55,9 @@ func (s *InMemoryLock) Init(_ lock.Metadata) error {
 	return nil
 }
 
-//TODO: implemnt function
+// LockKeepAlive try to renewal lease
 func (c *InMemoryLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	//TODO: implemnt function
 	return nil, nil
 }
 
