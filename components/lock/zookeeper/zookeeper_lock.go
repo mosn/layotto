@@ -78,7 +78,7 @@ func (p *ZookeeperLock) Features() []lock.Feature {
 }
 
 // LockKeepAlive try to renewal lease
-func (c *ZookeeperLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+func (p *ZookeeperLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
 	//TODO: implemnt function
 	return nil, nil
 }
