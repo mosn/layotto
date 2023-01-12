@@ -332,10 +332,8 @@ message LockKeepAliveResponse {
     // Internal error
     INTERNAL_ERROR = 3;
   }
-  // resource_id is the lock key.
-  string resource_id = 1;
   // The status of LockKeepAlive
-  Status status = 2;
+  Status status = 1;
 }
 
 // Hello request message

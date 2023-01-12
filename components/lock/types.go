@@ -54,7 +54,7 @@ type UnlockResponse struct {
 type LockKeepAliveRequest struct {
 	ResourceId string
 	LockOwner  string
-	Expire     int64
+	Expire     int32
 }
 
 type LockKeepAliveResponse struct {
