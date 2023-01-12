@@ -486,6 +486,14 @@
                 </li>
               
                 <li>
+                  <a href="#spec.proto.runtime.v1.LockKeepAliveRequest"><span class="badge">M</span>LockKeepAliveRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.LockKeepAliveResponse"><span class="badge">M</span>LockKeepAliveResponse</a>
+                </li>
+              
+                <li>
                   <a href="#spec.proto.runtime.v1.PublishEventRequest"><span class="badge">M</span>PublishEventRequest</a>
                 </li>
               
@@ -580,6 +588,10 @@
               
                 <li>
                   <a href="#spec.proto.runtime.v1.HTTPExtension.Verb"><span class="badge">E</span>HTTPExtension.Verb</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.LockKeepAliveResponse.Status"><span class="badge">E</span>LockKeepAliveResponse.Status</a>
                 </li>
               
                 <li>
@@ -1122,6 +1134,13 @@ A non-blocking method trying to get a lock with ttl.</p></td>
                 <td><a href="#spec.proto.runtime.v1.UnlockRequest">UnlockRequest</a></td>
                 <td><a href="#spec.proto.runtime.v1.UnlockResponse">UnlockResponse</a></td>
                 <td><p>A method trying to unlock.</p></td>
+              </tr>
+            
+              <tr>
+                <td>LockKeepAlive</td>
+                <td><a href="#spec.proto.runtime.v1.LockKeepAliveRequest">LockKeepAliveRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.LockKeepAliveResponse">LockKeepAliveResponse</a></td>
+                <td><p>A method used to support lease renewal for distributed lock.</p></td>
               </tr>
             
               <tr>
@@ -3223,6 +3242,82 @@ in the binding definition. </p></td>
 
         
       
+        <h3 id="spec.proto.runtime.v1.LockKeepAliveRequest">LockKeepAliveRequest</h3>
+        <p>LockKeepAlive request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The lock store name,e.g. `redis`. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>resource_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. resource_id is the lock key. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>lock_owner</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The owner of the lock. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>expire</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>Required. expire is the time before expire.The time unit is second. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.LockKeepAliveResponse">LockKeepAliveResponse</h3>
+        <p>LockKeepAlive response message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>resource_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>resource_id is the lock key. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#spec.proto.runtime.v1.LockKeepAliveResponse.Status">LockKeepAliveResponse.Status</a></td>
+                  <td></td>
+                  <td><p>The status of LockKeepAlive </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="spec.proto.runtime.v1.PublishEventRequest">PublishEventRequest</h3>
         <p>PublishEventRequest is the message to publish event data to pubsub topic</p>
 
@@ -4132,6 +4227,41 @@ So this field in the request shouldn't be removed. </p></td>
                 <td>PATCH</td>
                 <td>9</td>
                 <td><p>PATCH method</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="spec.proto.runtime.v1.LockKeepAliveResponse.Status">LockKeepAliveResponse.Status</h3>
+        <p>The enum of LockKeepAlive status</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>SUCCESS</td>
+                <td>0</td>
+                <td><p>Lease renewal success</p></td>
+              </tr>
+            
+              <tr>
+                <td>LOCK_UNEXIST</td>
+                <td>1</td>
+                <td><p>The lock is not exist</p></td>
+              </tr>
+            
+              <tr>
+                <td>LOCK_BELONG_TO_OTHERS</td>
+                <td>2</td>
+                <td><p>The lock is belong to others</p></td>
+              </tr>
+            
+              <tr>
+                <td>INTERNAL_ERROR</td>
+                <td>3</td>
+                <td><p>Internal error</p></td>
               </tr>
             
           </tbody>

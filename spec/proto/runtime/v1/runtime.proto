@@ -309,12 +309,14 @@ message UnlockResponse {
 
 // LockKeepAlive request message
 message LockKeepAliveRequest {
-  // resource_id is the lock key.
-  string resource_id = 1;
-  // The owner of the lock.
-  string lock_owner = 2;
-  // expire is the time to expire.
-  int64 expire = 3;
+  // Required. The lock store name,e.g. `redis`.
+  string store_name = 1;
+  // Required. resource_id is the lock key.
+  string resource_id = 2;
+  // Required. The owner of the lock.
+  string lock_owner = 3;
+  // Required. expire is the time before expire.The time unit is second.
+  int32 expire = 4;
 }
 
 // LockKeepAlive response message
