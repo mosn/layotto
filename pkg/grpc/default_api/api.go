@@ -43,6 +43,7 @@ import (
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
+	"mosn.io/layotto/spec/proto/runtime/v1"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
@@ -112,6 +113,7 @@ type API interface {
 
 // api is a default implementation for MosnRuntimeServer.
 type api struct {
+	runtime.UnimplementedRuntimeServer
 	daprAPI                  dapr.DaprGrpcAPI
 	appId                    string
 	hellos                   map[string]hello.HelloService
