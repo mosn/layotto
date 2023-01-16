@@ -15,6 +15,7 @@
 package zookeeper
 
 import (
+	"context"
 	"os"
 	"testing"
 	"time"
@@ -187,4 +188,9 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, lock.SUCCESS, unlock.Status)
+
+	// not implement LockKeepAlive
+	keepAliveResp, err := comp.LockKeepAlive(context.TODO(), &lock.LockKeepAliveRequest{})
+	assert.Nil(t, keepAliveResp)
+	assert.Nil(t, err)
 }

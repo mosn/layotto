@@ -13,6 +13,7 @@
 package mongo
 
 import (
+	"context"
 	"sync"
 	"testing"
 
@@ -185,4 +186,9 @@ func TestMongoLock_Unlock(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, lock.SUCCESS, resp.Status)
+
+	// not implement LockKeepAlive
+	keepAliveResp, err := comp.LockKeepAlive(context.TODO(), &lock.LockKeepAliveRequest{})
+	assert.Nil(t, keepAliveResp)
+	assert.Nil(t, err)
 }
