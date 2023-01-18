@@ -99,6 +99,7 @@ type API interface {
 	// Distributed Lock API
 	TryLock(context.Context, *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error)
 	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
+	LockKeepAlive(ctx context.Context, request *runtimev1pb.LockKeepAliveRequest) (*runtimev1pb.LockKeepAliveResponse, error)
 	// Sequencer API
 	GetNextId(context.Context, *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
 	// InvokeBinding Binding API

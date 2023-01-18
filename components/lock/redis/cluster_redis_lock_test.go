@@ -13,6 +13,7 @@
 package redis
 
 import (
+	"context"
 	"strings"
 	"sync"
 	"testing"
@@ -150,4 +151,8 @@ func TestClusterRedisLock_TryLock(t *testing.T) {
 		wg.Done()
 	}()
 	wg.Wait()
+	// not implement LockKeepAlive
+	keepAliveResp, err := comp.LockKeepAlive(context.TODO(), &lock.LockKeepAliveRequest{})
+	assert.Nil(t, keepAliveResp)
+	assert.Nil(t, err)
 }

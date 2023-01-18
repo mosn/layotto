@@ -17,6 +17,7 @@
 package in_memory
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -164,4 +165,8 @@ func TestUnLock(t *testing.T) {
 	assert.NotNil(t, req)
 	assert.Equal(t, lock.LOCK_UNEXIST, resp.Status)
 
+	// not implement LockKeepAlive
+	keepAliveResp, err := s.LockKeepAlive(context.TODO(), &lock.LockKeepAliveRequest{})
+	assert.Nil(t, keepAliveResp)
+	assert.Nil(t, err)
 }
