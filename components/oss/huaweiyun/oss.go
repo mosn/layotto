@@ -448,6 +448,7 @@ func (h *HuaweiyunOSS) convertGetObjectCannedAclOutput(obsOutput *obs.GetObjectA
 		},
 		RequestCharged: "",
 	}
+	return output, nil
 }
 
 func (h *HuaweiyunOSS) PutObjectCannedAcl(ctx context.Context, input *oss.PutObjectCannedAclInput) (*oss.PutObjectCannedAclOutput, error) {
@@ -746,6 +747,7 @@ func (h *HuaweiyunOSS) convertListMultipartUploadsOutput(obsOutput *obs.ListMult
 		uploads = append(uploads, upload)
 	}
 	output.Uploads = uploads
+	return output, nil
 }
 
 func (h *HuaweiyunOSS) ListObjectVersions(ctx context.Context, input *oss.ListObjectVersionsInput) (*oss.ListObjectVersionsOutput, error) {
