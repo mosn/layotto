@@ -18,6 +18,7 @@ package main
 
 import (
 	"encoding/json"
+	_ "net/http/pprof"
 	"os"
 	"strconv"
 	"time"
@@ -168,9 +169,10 @@ import (
 	"mosn.io/layotto/pkg/runtime"
 	_ "mosn.io/layotto/pkg/wasm"
 	_ "mosn.io/layotto/pkg/wasm/install"
-	_ "mosn.io/layotto/pkg/wasm/runtime/wasmtime"
 	_ "mosn.io/layotto/pkg/wasm/uninstall"
 	_ "mosn.io/layotto/pkg/wasm/update"
+
+	_ "mosn.io/proxy-wasm-go-host/wasmtime"
 
 	_ "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/router/v3"
 	_ "mosn.io/mosn/istio/istio1106"

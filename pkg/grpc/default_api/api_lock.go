@@ -113,6 +113,10 @@ func (a *api) Unlock(ctx context.Context, req *runtimev1pb.UnlockRequest) (*runt
 	return resp, nil
 }
 
+func (a *api) LockKeepAlive(ctx context.Context, request *runtimev1pb.LockKeepAliveRequest) (*runtimev1pb.LockKeepAliveResponse, error) {
+	return nil, nil
+}
+
 func newInternalErrorUnlockResponse() *runtimev1pb.UnlockResponse {
 	return &runtimev1pb.UnlockResponse{
 		Status: runtimev1pb.UnlockResponse_INTERNAL_ERROR,

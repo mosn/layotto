@@ -13,6 +13,7 @@
 package consul
 
 import (
+	"context"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -189,4 +190,9 @@ func TestConsulLock_ALock_BUnlock(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, lock.SUCCESS, unlock2.Status)
+
+	// not implement LockKeepAlive
+	keepAliveResp, err := comp.LockKeepAlive(context.TODO(), &lock.LockKeepAliveRequest{})
+	assert.Nil(t, keepAliveResp)
+	assert.Nil(t, err)
 }
