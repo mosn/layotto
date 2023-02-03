@@ -26,6 +26,7 @@ import (
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/types"
+	"mosn.io/pkg/variable"
 
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/model"
 	"mosn.io/layotto/pkg/filter/network/tcpcopy/persistence"
@@ -112,9 +113,11 @@ func UploadPortraitData(businessType _type.BusinessType, data interface{}, ctx c
 	}
 	port := ""
 	if ctx != nil {
-		listener_port := ctx.Value(types.ContextKeyListenerPort)
-		if listener_port != nil {
-			port = strconv.Itoa(listener_port.(int))
+		listener_port, err := variable.Get(ctx, types.VariableListenerPort)
+		if err == nil {
+			if portInt, ok := listener_port.(int); ok {
+				port = strconv.Itoa(portInt)
+			}
 		}
 	}
 

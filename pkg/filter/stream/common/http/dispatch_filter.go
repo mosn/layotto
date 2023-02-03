@@ -25,9 +25,9 @@ import (
 	"mosn.io/api"
 	mosnhttp "mosn.io/mosn/pkg/protocol/http"
 	"mosn.io/mosn/pkg/types"
-	"mosn.io/mosn/pkg/variable"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
+	"mosn.io/pkg/variable"
 )
 
 type DispatchFilter struct {

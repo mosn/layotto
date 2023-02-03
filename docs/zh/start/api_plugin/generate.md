@@ -2,17 +2,18 @@
 
 Writing the API plugin yourself is boring. You can use Layotto's code generator to generate all the code.
 
+
 > [!TIP|label: Types of API plugins]
 > There are two types of API plugins:
 >- In-tree plugins.
 >- Out-of-tree plugins
 >
-> The code of in-tree plugins is in the layotto repo, while the code of out-of-tree plugins can be put in your own repo outside layotto repo.
+> The code of in-tree plugins is located in the layotto repo, while the code of out-of-tree plugins can be placed in your own repo outside the layotto repo.
 >
-> **This guide introduce how to generate out-of-tree plugins**. If you want to generate in-tree plugins, check [the other doc](en/api_reference/how_to_generate_api_doc) for help
+> **This guide will show you how to generate out-of-tree plugins**. If you want to generate in-tree plugins, see [the other doc](en/api_reference/how_to_generate_api_doc) for help.
 
 
-Let's say you want to add a `PublishTransactionalMessage` method to existing pubsub API. You write a new proto file `cmd/layotto_multiple_api/advanced_queue/advanced_queue.proto` :
+Let's say you want to add a `PublishTransactionalMessage` method to the existing pubsub API. You write a new proto file `cmd/layotto_multiple_api/advanced_queue/advanced_queue.proto`:
 
 ```protobuf
 // ......
@@ -51,7 +52,7 @@ then you get the code:
 
 <img src="https://user-images.githubusercontent.com/26001097/189822603-c4c9d0c6-86a1-4a66-bba8-3d01758808e7.png" width="30%" height="30%" />
 
-Fix the path error and then you can register this API plugin in you `main`.
+Fix the path error and then you can register this API plugin in your `main`.
 
 ## Reference
 

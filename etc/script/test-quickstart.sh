@@ -9,7 +9,7 @@ set -e
 
 GO_VERSION=${1:-"default"}
 
-# By default,we test these docs with golang 1.14
+# By default,we test these docs with golang 1.18
 quickstarts_in_default="docs/en/start/configuration/start.md
 docs/zh/start/lifecycle/start.md
 docs/en/start/lifecycle/start.md

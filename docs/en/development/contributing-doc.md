@@ -13,7 +13,7 @@ Documents are stored in the 'docs/' directory, where 'docs/en' stores English do
 ## 2. Documentation Site Description
 Files under docs/ directory will be automatically deployed to github pages and rendered through [docsify](https://docsify.js.org/#/).
 
-Generally speaking, after the .md file is merged into the main branch, you can see the new page on the Layotto's documentation site, and all deployment and rendering processes are done automatically.
+Generally speaking, after the .md file is merged into the main branch, you can see the new page on Layotto's documentation site, and all deployment and rendering processes are done automatically.
 
 ## 3. How to Add a New Document
 ### step 1. Write a new markdown file
@@ -28,12 +28,12 @@ Chinese sidebar: 'docs/zh/_sidebar.md'
 
 English sidebar: 'docs/_sidebar.md'
 
-### step 3. Submit a Pull request 
-After writing the above Markdown files, submitting pr and merging it into the main branch, new documents are now available on the official website.
+### step 3. Submit a Pull request
+After writing the above Markdown files, submitting pr, and merging it into the main branch, new documents are now available on the official website.
 
 ## 4. Tips on Hyperlinks
 
-One annoying problem with Docsify is that the use of hyperlinks are confusing.
+One annoying problem with Docsify is that the use of hyperlinks is confusing.
 
 The hyperlink mentioned here is the kind of links that will jump to other documents once clicked, such as the following:
 
@@ -69,10 +69,10 @@ It is recommended to use the full path when referencing images in documents, to 
 
 For example, when referencing the images under the main branch, the prefix of the image url is `raw.githubusercontent.com/mosn/layotto/main/docs/img/xxx`
 
-and the Markdown phrase refering to an image will be ：
+and the Markdown phrase referring to an image will be ：
 
 ```markdown
 ![Architecture](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
 ```
 
-Note: Relative paths can also be used, but you may encounter many problems. For example, the relative path logic of the `<img>` tag and `![xxx](url)` tag are different; for example, users may access the README through different paths so that it's hard for you to define the relative path. To avoid these problems,it's recommended to use a full url.
+Note: Relative paths can also be used, but you may encounter many problems. For example, the relative path logic of the `<img>` tag and `![xxx](url)` tag are different; for example, users may access the README through different paths, so it's hard for you to define the relative path. To avoid these problems, it's recommended to use a full url.

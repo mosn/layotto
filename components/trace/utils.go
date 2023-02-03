@@ -16,14 +16,13 @@ import (
 	"context"
 
 	"mosn.io/mosn/pkg/types"
-
-	mosnctx "mosn.io/mosn/pkg/context"
+	"mosn.io/pkg/variable"
 )
 
 func SetExtraComponentInfo(ctx context.Context, info string) {
-	span := mosnctx.Get(ctx, types.ContextKeyActiveSpan)
-	if span == nil {
-		return
+	if val, err := variable.Get(ctx, types.VariableTraceSpan); err == nil {
+		if span, ok := val.(*Span); ok {
+			span.SetTag(LAYOTTO_COMPONENT_DETAIL, info)
+		}
 	}
-	span.(*Span).SetTag(LAYOTTO_COMPONENT_DETAIL, info)
 }

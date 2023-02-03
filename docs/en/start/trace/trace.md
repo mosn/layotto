@@ -131,10 +131,10 @@ Refer to the implementation of [StdoutExporter](https://github.com/mosn/layotto/
 GenerateNewContext(ctx context.Context, span api.Span) context.Context
 ```
 
-GenerateNewContext is used to generate a new context, and we can pass the context between contexts through mosnctx:
+GenerateNewContext is used to generate a new context, and Layotto use the variable ability of Mosn to realize the transfer of Span information between contexts:
 
 ```go
-ctx = mosnctx.WithValue(ctx, types.ContextKeyActiveSpan, span)
+_ = variable.Set(ctx, types.VariableTraceSpan, span)
 ```
 
 You can refer to the implementation of [OpenGenerator](https://github.com/mosn/layotto/blob/main/diagnostics/genetator.go) in the code
