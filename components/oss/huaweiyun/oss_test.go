@@ -19,13 +19,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"io"
-	"mosn.io/layotto/components/oss"
-	"mosn.io/layotto/components/pkg/utils"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"mosn.io/layotto/components/oss"
+	"mosn.io/layotto/components/pkg/utils"
 )
 
 const (

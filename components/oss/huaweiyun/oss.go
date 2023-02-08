@@ -18,11 +18,13 @@ package huaweiyun
 import (
 	"context"
 	"encoding/json"
+	"strconv"
+
 	"github.com/huaweicloud/huaweicloud-sdk-go-obs/obs"
 	"github.com/jinzhu/copier"
+
 	"mosn.io/layotto/components/oss"
 	"mosn.io/layotto/components/pkg/utils"
-	"strconv"
 )
 
 const connectTimeoutSec = "connectTimeoutSec"
