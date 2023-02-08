@@ -17,6 +17,10 @@ type HuaweiyunOSS struct {
 	metadata utils.OssMetadata
 }
 
+func NewHuaweiyunOss() oss.Oss {
+	return &HuaweiyunOSS{}
+}
+
 func (h *HuaweiyunOSS) Init(ctx context.Context, config *oss.Config) error {
 	connectTimeout := 30
 	jsonRawMessage := config.Metadata[oss.BasicConfiguration]
