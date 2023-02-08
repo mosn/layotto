@@ -3,12 +3,11 @@ package huaweiyun
 import (
 	"context"
 	"encoding/json"
-	"encoding/xml"
 	"github.com/huaweicloud/huaweicloud-sdk-go-obs/obs"
+	"github.com/jinzhu/copier"
 	"mosn.io/layotto/components/oss"
 	"mosn.io/layotto/components/pkg/utils"
 	"strconv"
-	"time"
 )
 
 const connectTimeoutSec = "connectTimeoutSec"
@@ -45,71 +44,27 @@ func (h *HuaweiyunOSS) GetObject(ctx context.Context, input *oss.GetObjectInput)
 		return nil, err
 	}
 
-	obsInput, err := h.convertGetObjectInput(input)
-	if err != nil {
+	obsInput := &obs.GetObjectInput{}
+	if err = copier.CopyWithOption(obsInput, input, copier.Option{IgnoreEmpty: true, Converters: []copier.TypeConverter{oss.Int64ToTime}}); err != nil {
 		return nil, err
 	}
+	metadataInput := &obs.GetObjectMetadataInput{}
+	copier.Copy(metadataInput, input)
+	obsInput.GetObjectMetadataInput = *metadataInput
+	obsInput.RangeStart = input.Start
+	obsInput.RangeEnd = input.End
+
 	obsOutput, err := client.GetObject(obsInput)
 	if err != nil {
 		return nil, err
 	}
 
-	output, err := h.convertGetObjectOutput(obsOutput)
-	if err != nil {
+	output := &oss.GetObjectOutput{}
+	if err = copier.CopyWithOption(output, obsOutput, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
 		return nil, err
 	}
+	output.DataStream = obsOutput.Body
 
-	return output, nil
-}
-
-func (h *HuaweiyunOSS) convertGetObjectInput(input *oss.GetObjectInput) (*obs.GetObjectInput, error) {
-	obsInput := &obs.GetObjectInput{
-		GetObjectMetadataInput: obs.GetObjectMetadataInput{
-			Bucket:        input.Bucket,
-			Key:           input.Key,
-			VersionId:     input.VersionId,
-			Origin:        "",
-			RequestHeader: "",
-			SseHeader:     nil,
-		},
-		IfMatch:                    input.IfMatch,
-		IfNoneMatch:                input.IfNoneMatch,
-		IfUnmodifiedSince:          time.Unix(input.IfUnmodifiedSince, 0),
-		IfModifiedSince:            time.Unix(input.IfModifiedSince, 0),
-		RangeStart:                 input.Start,
-		RangeEnd:                   input.End,
-		ImageProcess:               "",
-		ResponseCacheControl:       input.ResponseCacheControl,
-		ResponseContentDisposition: input.ResponseContentDisposition,
-		ResponseContentEncoding:    input.ResponseContentEncoding,
-		ResponseContentLanguage:    input.ResponseContentLanguage,
-		ResponseContentType:        input.ResponseContentType,
-		ResponseExpires:            input.ResponseExpires,
-	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertGetObjectOutput(obsOutput *obs.GetObjectOutput) (*oss.GetObjectOutput, error) {
-	output := &oss.GetObjectOutput{
-		DataStream:         obsOutput.Body,
-		CacheControl:       obsOutput.CacheControl,
-		ContentDisposition: obsOutput.ContentDisposition,
-		ContentEncoding:    obsOutput.ContentEncoding,
-		ContentLanguage:    obsOutput.ContentLanguage,
-		ContentLength:      obsOutput.ContentLength,
-		ContentRange:       "",
-		ContentType:        obsOutput.ContentType,
-		DeleteMarker:       obsOutput.DeleteMarker,
-		Etag:               obsOutput.ETag,
-		Expiration:         obsOutput.Expiration,
-		Expires:            obsOutput.Expires,
-		LastModified:       obsOutput.LastModified.Unix(),
-		VersionId:          obsOutput.VersionId,
-		TagCount:           0,
-		StorageClass:       string(obsOutput.StorageClass),
-		PartsCount:         0,
-		Metadata:           obsOutput.Metadata,
-	}
 	return output, nil
 }
 
@@ -118,53 +73,30 @@ func (h *HuaweiyunOSS) PutObject(ctx context.Context, input *oss.PutObjectInput)
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertPutObjectInput(input)
-	if err != nil {
+
+	obsInput := &obs.PutObjectInput{}
+	obsInput.Body = input.DataStream
+	basicInput := &obs.PutObjectBasicInput{}
+	if err = copier.Copy(basicInput, input); err != nil {
 		return nil, err
 	}
+	obsInput.PutObjectBasicInput = *basicInput
+	operationInput := &obs.ObjectOperationInput{}
+	if err = copier.CopyWithOption(operationInput, input, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
+		return nil, err
+	}
+	basicInput.ObjectOperationInput = *operationInput
+
 	obsOutput, err := client.PutObject(obsInput)
 	if err != nil {
 		return nil, err
 	}
-	output, err := h.convertPutObjectOutput(obsOutput)
-	if err != nil {
+
+	output := &oss.PutObjectOutput{}
+	if err = copier.Copy(output, obsOutput); err != nil {
 		return nil, err
 	}
-	return output, nil
-}
 
-func (h *HuaweiyunOSS) convertPutObjectInput(input *oss.PutObjectInput) (*obs.PutObjectInput, error) {
-	obsInput := &obs.PutObjectInput{
-		PutObjectBasicInput: obs.PutObjectBasicInput{
-			ObjectOperationInput: obs.ObjectOperationInput{
-				Bucket:                  input.Bucket,
-				Key:                     input.Key,
-				ACL:                     obs.AclType(input.ACL),
-				GrantReadId:             "",
-				GrantReadAcpId:          "",
-				GrantWriteAcpId:         "",
-				GrantFullControlId:      "",
-				StorageClass:            obs.StorageClassType(input.StorageClass),
-				WebsiteRedirectLocation: "",
-				Expires:                 input.Expires,
-				SseHeader:               nil,
-				Metadata:                input.Meta,
-			},
-			ContentType:     "",
-			ContentMD5:      "",
-			ContentLength:   input.ContentLength,
-			ContentEncoding: input.ContentEncoding,
-		},
-		Body: input.DataStream,
-	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertPutObjectOutput(obsOutput *obs.PutObjectOutput) (*oss.PutObjectOutput, error) {
-	output := &oss.PutObjectOutput{
-		BucketKeyEnabled: false,
-		ETag:             obsOutput.ETag,
-	}
 	return output, nil
 }
 
@@ -173,52 +105,35 @@ func (h *HuaweiyunOSS) DeleteObject(ctx context.Context, input *oss.DeleteObject
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertDeleteObjectInput(input)
-	if err != nil {
+
+	obsInput := &obs.DeleteObjectInput{}
+	if err = copier.Copy(obsInput, input); err != nil {
 		return nil, err
 	}
+
 	obsOutput, err := client.DeleteObject(obsInput)
 	if err != nil {
 		return nil, err
 	}
-	output, err := h.convertDeleteObjectOutput(obsOutput)
-	if err != nil {
+
+	output := &oss.DeleteObjectOutput{}
+	if err = copier.Copy(output, obsOutput); err != nil {
 		return nil, err
 	}
-	return output, nil
-}
 
-func (h *HuaweiyunOSS) convertDeleteObjectInput(input *oss.DeleteObjectInput) (*obs.DeleteObjectInput, error) {
-	obsInput := &obs.DeleteObjectInput{
-		Bucket:    input.Bucket,
-		Key:       input.Key,
-		VersionId: input.VersionId,
-	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertDeleteObjectOutput(obsOutput *obs.DeleteObjectOutput) (*oss.DeleteObjectOutput, error) {
-	output := &oss.DeleteObjectOutput{
-		DeleteMarker:   obsOutput.DeleteMarker,
-		RequestCharged: "",
-		VersionId:      obsOutput.VersionId,
-	}
 	return output, nil
 }
 
 func (h *HuaweiyunOSS) PutObjectTagging(ctx context.Context, input *oss.PutObjectTaggingInput) (*oss.PutObjectTaggingOutput, error) {
-	//TODO implement me
-	panic("implement me")
+	return nil, ErrHaveNotTag
 }
 
 func (h *HuaweiyunOSS) DeleteObjectTagging(ctx context.Context, input *oss.DeleteObjectTaggingInput) (*oss.DeleteObjectTaggingOutput, error) {
-	//TODO implement me
-	panic("implement me")
+	return nil, ErrHaveNotTag
 }
 
 func (h *HuaweiyunOSS) GetObjectTagging(ctx context.Context, input *oss.GetObjectTaggingInput) (*oss.GetObjectTaggingOutput, error) {
-	//TODO implement me
-	panic("implement me")
+	return nil, ErrHaveNotTag
 }
 
 func (h *HuaweiyunOSS) CopyObject(ctx context.Context, input *oss.CopyObjectInput) (*oss.CopyObjectOutput, error) {
@@ -226,62 +141,27 @@ func (h *HuaweiyunOSS) CopyObject(ctx context.Context, input *oss.CopyObjectInpu
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertCopyObjectInput(input)
-	if err != nil {
+
+	obsInput := &obs.CopyObjectInput{}
+	if err = copier.CopyWithOption(obsInput, input.CopySource, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
 		return nil, err
 	}
+	operationInput := &obs.ObjectOperationInput{}
+	if err = copier.CopyWithOption(operationInput, input, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
+		return nil, err
+	}
+	obsInput.ObjectOperationInput = *operationInput
+
 	obsOutput, err := client.CopyObject(obsInput)
 	if err != nil {
 		return nil, err
 	}
-	output, err := h.convertCopyObjectOutput(obsOutput)
-	if err != nil {
+
+	output := &oss.CopyObjectOutput{}
+	if err = copier.CopyWithOption(output, obsOutput, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
 		return nil, err
 	}
-	return output, nil
-}
 
-func (h *HuaweiyunOSS) convertCopyObjectInput(input *oss.CopyObjectInput) (*obs.CopyObjectInput, error) {
-	obsInput := &obs.CopyObjectInput{
-		ObjectOperationInput: obs.ObjectOperationInput{
-			Bucket:                  input.Bucket,
-			Key:                     input.Key,
-			ACL:                     "",
-			GrantReadId:             "",
-			GrantReadAcpId:          "",
-			GrantWriteAcpId:         "",
-			GrantFullControlId:      "",
-			StorageClass:            "",
-			WebsiteRedirectLocation: "",
-			Expires:                 input.Expires,
-			SseHeader:               nil,
-			Metadata:                input.Metadata,
-		},
-		CopySourceBucket:            input.CopySource.CopySourceBucket,
-		CopySourceKey:               input.CopySource.CopySourceKey,
-		CopySourceVersionId:         input.CopySource.CopySourceVersionId,
-		CopySourceIfMatch:           "",
-		CopySourceIfNoneMatch:       "",
-		CopySourceIfUnmodifiedSince: time.Time{},
-		CopySourceIfModifiedSince:   time.Time{},
-		SourceSseHeader:             nil,
-		CacheControl:                "",
-		ContentDisposition:          "",
-		ContentEncoding:             "",
-		ContentLanguage:             "",
-		ContentType:                 "",
-		Expires:                     "",
-		MetadataDirective:           "",
-		SuccessActionRedirect:       "",
-	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertCopyObjectOutput(obsOutput *obs.CopyObjectOutput) (*oss.CopyObjectOutput, error) {
-	output := &oss.CopyObjectOutput{CopyObjectResult: &oss.CopyObjectResult{
-		ETag:         obsOutput.ETag,
-		LastModified: obsOutput.LastModified.Unix(),
-	}}
 	return output, nil
 }
 
@@ -290,55 +170,34 @@ func (h *HuaweiyunOSS) DeleteObjects(ctx context.Context, input *oss.DeleteObjec
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertDeleteObjectsInput(input)
-	if err != nil {
-		return nil, err
+
+	obsInput := &obs.DeleteObjectsInput{}
+	obsInput.Bucket = input.Bucket
+	obsInput.Quiet = input.Delete.Quiet
+	objects := make([]obs.ObjectToDelete, 0, len(input.Delete.Objects))
+	for _, v := range input.Delete.Objects {
+		object := &obs.ObjectToDelete{}
+		if err = copier.Copy(object, v); err != nil {
+			return nil, err
+		}
+		objects = append(objects, *object)
 	}
+	obsInput.Objects = objects
+
 	obsOutput, err := client.DeleteObjects(obsInput)
 	if err != nil {
 		return nil, err
 	}
-	output, err := h.convertDeleteObjectsOutput(obsOutput)
-	if err != nil {
-		return nil, err
-	}
-	return output, nil
-}
 
-func (h *HuaweiyunOSS) convertDeleteObjectsInput(input *oss.DeleteObjectsInput) (*obs.DeleteObjectsInput, error) {
-	obsInput := &obs.DeleteObjectsInput{
-		Bucket:       input.Bucket,
-		XMLName:      xml.Name{},
-		Quiet:        input.Delete.Quiet,
-		Objects:      nil,
-		EncodingType: "",
-	}
-	objects := make([]obs.ObjectToDelete, len(input.Delete.Objects))
-	for _, v := range input.Delete.Objects {
-		object := obs.ObjectToDelete{
-			XMLName:   xml.Name{},
-			Key:       v.Key,
-			VersionId: v.VersionId,
-		}
-		objects = append(objects, object)
-	}
-	obsInput.Objects = objects
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertDeleteObjectsOutput(obsOutput *obs.DeleteObjectsOutput) (*oss.DeleteObjectsOutput, error) {
-	output := &oss.DeleteObjectsOutput{}
-	deleteObjects := make([]*oss.DeletedObject, len(obsOutput.Deleteds))
+	output := &oss.DeleteObjectsOutput{Deleted: make([]*oss.DeletedObject, 0, len(obsOutput.Deleteds))}
 	for _, v := range obsOutput.Deleteds {
-		object := &oss.DeletedObject{
-			DeleteMarker:          v.DeleteMarker,
-			DeleteMarkerVersionId: v.DeleteMarkerVersionId,
-			Key:                   v.Key,
-			VersionId:             v.VersionId,
+		deleteObject := &oss.DeletedObject{}
+		if err = copier.Copy(deleteObject, v); err != nil {
+			return nil, err
 		}
-		deleteObjects = append(deleteObjects, object)
+		output.Deleted = append(output.Deleted, deleteObject)
 	}
-	output.Deleted = deleteObjects
+
 	return output, nil
 }
 
@@ -347,108 +206,46 @@ func (h *HuaweiyunOSS) ListObjects(ctx context.Context, input *oss.ListObjectsIn
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertListObjectsInput(input)
-	if err != nil {
+
+	obsInput := &obs.ListObjectsInput{}
+	if err = copier.Copy(obsInput, input); err != nil {
 		return nil, err
 	}
+	objsInput := &obs.ListObjsInput{}
+	if err = copier.Copy(objsInput, input); err != nil {
+		return nil, err
+	}
+	obsInput.ListObjsInput = *objsInput
+
 	obsOutput, err := client.ListObjects(obsInput)
 	if err != nil {
 		return nil, err
 	}
-	output, err := h.convertListObjectsOutput(obsOutput)
-	if err != nil {
+
+	output := &oss.ListObjectsOutput{}
+	if err = copier.Copy(output, obsOutput); err != nil {
 		return nil, err
 	}
-	return output, nil
-}
-
-func (h *HuaweiyunOSS) convertListObjectsInput(input *oss.ListObjectsInput) (*obs.ListObjectsInput, error) {
-	obsInput := &obs.ListObjectsInput{
-		ListObjsInput: obs.ListObjsInput{
-			Prefix:        input.Prefix,
-			MaxKeys:       int(input.MaxKeys),
-			Delimiter:     input.Delimiter,
-			Origin:        "",
-			RequestHeader: "",
-			EncodingType:  input.EncodingType,
-		},
-		Bucket: input.Bucket,
-		Marker: input.Marker,
-	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertListObjectsOutput(obsOutput *obs.ListObjectsOutput) (*oss.ListObjectsOutput, error) {
-	output := &oss.ListObjectsOutput{
-		CommonPrefixes: obsOutput.CommonPrefixes,
-		Contents:       nil,
-		Delimiter:      obsOutput.Delimiter,
-		EncodingType:   obsOutput.EncodingType,
-		IsTruncated:    obsOutput.IsTruncated,
-		Marker:         obsOutput.Marker,
-		MaxKeys:        int32(obsOutput.MaxKeys),
-		Name:           obsOutput.Name,
-		NextMarker:     obsOutput.NextMarker,
-		Prefix:         obsOutput.Prefix,
-	}
-	contexts := make([]*oss.Object, len(obsOutput.Contents))
+	contents := make([]*oss.Object, 0, len(obsOutput.Contents))
 	for _, v := range obsOutput.Contents {
-		context := &oss.Object{
-			ETag:         v.ETag,
-			Key:          v.Key,
-			LastModified: v.LastModified.Unix(),
-			Owner: &oss.Owner{
-				DisplayName: v.Owner.DisplayName,
-				ID:          v.Owner.ID,
-			},
-			Size:         v.Size,
-			StorageClass: string(v.StorageClass),
+		content := &oss.Object{}
+		if err = copier.CopyWithOption(content, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+			return nil, err
 		}
-		contexts = append(contexts, context)
+		owner := &oss.Owner{}
+		if err = copier.Copy(owner, v.Owner); err != nil {
+			return nil, err
+		}
+		content.Owner = owner
+		contents = append(contents, content)
 	}
-	output.Contents = contexts
+	output.Contents = contents
+
 	return output, nil
 }
 
 func (h *HuaweiyunOSS) GetObjectCannedAcl(ctx context.Context, input *oss.GetObjectCannedAclInput) (*oss.GetObjectCannedAclOutput, error) {
-	client, err := h.getClient()
-	if err != nil {
-		return nil, err
-	}
-	obsInput, err := h.convertGetObjectCannedAclInput(input)
-	if err != nil {
-		return nil, err
-	}
-	obsOutput, err := client.GetObjectAcl(obsInput)
-	if err != nil {
-		return nil, err
-	}
-	output, err := h.convertGetObjectCannedAclOutput(obsOutput)
-	if err != nil {
-		return nil, err
-	}
-	return output, nil
-}
-
-func (h *HuaweiyunOSS) convertGetObjectCannedAclInput(input *oss.GetObjectCannedAclInput) (*obs.GetObjectAclInput, error) {
-	obsInput := &obs.GetObjectAclInput{
-		Bucket:    input.Bucket,
-		Key:       input.Key,
-		VersionId: input.VersionId,
-	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertGetObjectCannedAclOutput(obsOutput *obs.GetObjectAclOutput) (*oss.GetObjectCannedAclOutput, error) {
-	output := &oss.GetObjectCannedAclOutput{
-		CannedAcl: "",
-		Owner: &oss.Owner{
-			DisplayName: obsOutput.Owner.DisplayName,
-			ID:          obsOutput.Owner.ID,
-		},
-		RequestCharged: "",
-	}
-	return output, nil
+	return nil, ErrNotSupportAclGet
 }
 
 func (h *HuaweiyunOSS) PutObjectCannedAcl(ctx context.Context, input *oss.PutObjectCannedAclInput) (*oss.PutObjectCannedAclOutput, error) {
@@ -456,34 +253,18 @@ func (h *HuaweiyunOSS) PutObjectCannedAcl(ctx context.Context, input *oss.PutObj
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertPutObjectCannedAclInput(input)
-	if err != nil {
-		return nil, err
-	}
-	obsBaseModel, err := client.SetObjectAcl(obsInput)
-	if err != nil {
-		return nil, err
-	}
-	output, err := h.convertPutObjectCannedAclOutput(obsBaseModel)
-	if err != nil {
-		return nil, err
-	}
-	return output, nil
-}
 
-func (h *HuaweiyunOSS) convertPutObjectCannedAclInput(input *oss.PutObjectCannedAclInput) (*obs.SetObjectAclInput, error) {
-	obsInput := &obs.SetObjectAclInput{
-		Bucket:              input.Bucket,
-		Key:                 input.Key,
-		VersionId:           input.VersionId,
-		ACL:                 obs.AclType(input.Acl),
-		AccessControlPolicy: obs.AccessControlPolicy{},
+	obsInput := &obs.SetObjectAclInput{}
+	if err = copier.Copy(obsInput, input); err != nil {
+		return nil, err
 	}
-	return obsInput, nil
-}
+	obsInput.ACL = obs.AclType(input.Acl)
 
-func (h *HuaweiyunOSS) convertPutObjectCannedAclOutput(baseModel *obs.BaseModel) (*oss.PutObjectCannedAclOutput, error) {
-	output := &oss.PutObjectCannedAclOutput{RequestCharged: ""}
+	_, err = client.SetObjectAcl(obsInput)
+	if err != nil {
+		return nil, err
+	}
+	output := &oss.PutObjectCannedAclOutput{}
 	return output, nil
 }
 
@@ -492,44 +273,54 @@ func (h *HuaweiyunOSS) RestoreObject(ctx context.Context, input *oss.RestoreObje
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertRestoreObjectInput(input)
-	if err != nil {
-		return nil, err
-	}
-	obsBaseModel, err := client.RestoreObject(obsInput)
-	if err != nil {
-		return nil, err
-	}
-	output, err := h.convertRestoreObjectOutput(obsBaseModel)
-	if err != nil {
-		return nil, err
-	}
-	return output, nil
-}
 
-func (h *HuaweiyunOSS) convertRestoreObjectInput(input *oss.RestoreObjectInput) (*obs.RestoreObjectInput, error) {
-	obsInput := &obs.RestoreObjectInput{
-		Bucket:    input.Bucket,
-		Key:       input.Key,
-		VersionId: input.VersionId,
-		XMLName:   xml.Name{},
-		Days:      int(input.RestoreRequest.Days),
-		Tier:      obs.RestoreTierType(input.RestoreRequest.Tier),
+	obsInput := &obs.RestoreObjectInput{}
+	if err = copier.Copy(obsInput, input); err != nil {
+		return nil, err
 	}
-	return obsInput, nil
-}
+	obsInput.Days = int(input.RestoreRequest.Days)
+	obsInput.Tier = obs.RestoreTierType(input.RestoreRequest.Tier)
 
-func (h *HuaweiyunOSS) convertRestoreObjectOutput(baseModel *obs.BaseModel) (*oss.RestoreObjectOutput, error) {
-	output := &oss.RestoreObjectOutput{
-		RequestCharged:    "",
-		RestoreOutputPath: "",
+	_, err = client.RestoreObject(obsInput)
+	if err != nil {
+		return nil, err
 	}
+
+	output := &oss.RestoreObjectOutput{}
+
 	return output, nil
 }
 
 func (h *HuaweiyunOSS) CreateMultipartUpload(ctx context.Context, input *oss.CreateMultipartUploadInput) (*oss.CreateMultipartUploadOutput, error) {
-	//TODO implement me
-	panic("implement me")
+	client, err := h.getClient()
+	if err != nil {
+		return nil, err
+	}
+
+	obsInput := &obs.InitiateMultipartUploadInput{}
+	if err = copier.Copy(obsInput, input); err != nil {
+		return nil, err
+	}
+	operationInput := &obs.ObjectOperationInput{}
+	if err = copier.Copy(operationInput, input); err != nil {
+		return nil, err
+	}
+	operationInput.GrantReadId = input.GrantRead
+	operationInput.GrantReadAcpId = input.GrantReadACP
+	operationInput.GrantWriteAcpId = input.GrantWriteACP
+	operationInput.GrantFullControlId = input.GrantFullControl
+
+	obsOutput, err := client.InitiateMultipartUpload(obsInput)
+	if err != nil {
+		return nil, err
+	}
+
+	output := &oss.CreateMultipartUploadOutput{}
+	if err = copier.Copy(output, obsOutput); err != nil {
+		return nil, err
+	}
+
+	return output, nil
 }
 
 func (h *HuaweiyunOSS) UploadPart(ctx context.Context, input *oss.UploadPartInput) (*oss.UploadPartOutput, error) {
@@ -537,53 +328,48 @@ func (h *HuaweiyunOSS) UploadPart(ctx context.Context, input *oss.UploadPartInpu
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertUploadPartInput(input)
-	if err != nil {
+	obsInput := &obs.UploadPartInput{}
+	if err = copier.CopyWithOption(obsInput, input, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
 		return nil, err
 	}
+	obsInput.Body = input.DataStream
 	obsOutput, err := client.UploadPart(obsInput)
 	if err != nil {
 		return nil, err
 	}
-	output, err := h.convertUploadPartOutput(obsOutput)
-	if err != nil {
+	output := &oss.UploadPartOutput{}
+	if err = copier.Copy(output, obsOutput); err != nil {
 		return nil, err
-	}
-	return output, nil
-}
-
-func (h *HuaweiyunOSS) convertUploadPartInput(input *oss.UploadPartInput) (*obs.UploadPartInput, error) {
-	obsInput := &obs.UploadPartInput{
-		Bucket:     input.Bucket,
-		Key:        input.Key,
-		PartNumber: int(input.PartNumber),
-		UploadId:   input.UploadId,
-		ContentMD5: input.ContentMd5,
-		SseHeader:  nil,
-		Body:       input.DataStream,
-		SourceFile: "",
-		Offset:     0,
-		PartSize:   int64(input.PartNumber),
-	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertUploadPartOutput(baseModel *obs.UploadPartOutput) (*oss.UploadPartOutput, error) {
-	output := &oss.UploadPartOutput{
-		BucketKeyEnabled:     false,
-		ETag:                 "",
-		RequestCharged:       "",
-		SSECustomerAlgorithm: "",
-		SSECustomerKeyMD5:    "",
-		SSEKMSKeyId:          "",
-		ServerSideEncryption: "",
 	}
 	return output, nil
 }
 
 func (h *HuaweiyunOSS) UploadPartCopy(ctx context.Context, input *oss.UploadPartCopyInput) (*oss.UploadPartCopyOutput, error) {
-	//TODO implement me
-	panic("implement me")
+	client, err := h.getClient()
+	if err != nil {
+		return nil, err
+	}
+
+	obsInput := &obs.CopyPartInput{}
+	if err = copier.Copy(obsInput, input); err != nil {
+		return nil, err
+	}
+	if err = copier.Copy(obsInput, input.CopySource); err != nil {
+		return nil, err
+	}
+
+	obsOutput, err := client.CopyPart(obsInput)
+	if err != nil {
+		return nil, err
+	}
+
+	output := &oss.UploadPartCopyOutput{}
+	partResult := &oss.CopyPartResult{}
+	if err = copier.CopyWithOption(partResult, obsOutput, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+		return nil, err
+	}
+	output.CopyPartResult = partResult
+	return output, nil
 }
 
 func (h *HuaweiyunOSS) CompleteMultipartUpload(ctx context.Context, input *oss.CompleteMultipartUploadInput) (*oss.CompleteMultipartUploadOutput, error) {
@@ -591,58 +377,22 @@ func (h *HuaweiyunOSS) CompleteMultipartUpload(ctx context.Context, input *oss.C
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertCompleteMultipartUploadInput(input)
-	if err != nil {
-		return nil, err
+	obsInput := &obs.CompleteMultipartUploadInput{}
+	copier.CopyWithOption(obsInput, input, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+	if input.MultipartUpload != nil && len(input.MultipartUpload.Parts) != 0 {
+		obsInput.Parts = make([]obs.Part, 0, len(input.MultipartUpload.Parts))
+		for _, v := range input.MultipartUpload.Parts {
+			part := &obs.Part{}
+			copier.CopyWithOption(part, v, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+			obsInput.Parts = append(obsInput.Parts, *part)
+		}
 	}
 	obsOutput, err := client.CompleteMultipartUpload(obsInput)
 	if err != nil {
 		return nil, err
 	}
-	output, err := h.convertCompleteMultipartUploadOutput(obsOutput)
-	if err != nil {
-		return nil, err
-	}
-	return output, nil
-}
-
-func (h *HuaweiyunOSS) convertCompleteMultipartUploadInput(input *oss.CompleteMultipartUploadInput) (*obs.CompleteMultipartUploadInput, error) {
-	obsInput := &obs.CompleteMultipartUploadInput{
-		Bucket:       input.Bucket,
-		Key:          input.Key,
-		UploadId:     input.UploadId,
-		XMLName:      xml.Name{},
-		Parts:        nil,
-		EncodingType: "",
-	}
-	parts := make([]obs.Part, len(input.MultipartUpload.Parts))
-	for _, v := range input.MultipartUpload.Parts {
-		part := obs.Part{
-			XMLName:      xml.Name{},
-			PartNumber:   int(v.PartNumber),
-			ETag:         v.ETag,
-			LastModified: time.Time{},
-			Size:         0,
-		}
-		parts = append(parts, part)
-	}
-	obsInput.Parts = parts
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertCompleteMultipartUploadOutput(baseModel *obs.CompleteMultipartUploadOutput) (*oss.CompleteMultipartUploadOutput, error) {
-	output := &oss.CompleteMultipartUploadOutput{
-		Bucket:               "",
-		Key:                  "",
-		BucketKeyEnabled:     false,
-		ETag:                 "",
-		Expiration:           "",
-		Location:             "",
-		RequestCharged:       "",
-		SSEKMSKeyId:          "",
-		ServerSideEncryption: "",
-		VersionId:            "",
-	}
+	output := &oss.CompleteMultipartUploadOutput{}
+	copier.CopyWithOption(output, obsOutput, copier.Option{IgnoreEmpty: true, DeepCopy: true})
 	return output, nil
 }
 
@@ -651,32 +401,13 @@ func (h *HuaweiyunOSS) AbortMultipartUpload(ctx context.Context, input *oss.Abor
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertAbortMultipartUploadInput(input)
+	obsInput := &obs.AbortMultipartUploadInput{}
+	copier.Copy(obsInput, input)
+	_, err = client.AbortMultipartUpload(obsInput)
 	if err != nil {
 		return nil, err
 	}
-	obsBaseModel, err := client.AbortMultipartUpload(obsInput)
-	if err != nil {
-		return nil, err
-	}
-	output, err := h.convertAbortMultipartUploadOutput(obsBaseModel)
-	if err != nil {
-		return nil, err
-	}
-	return output, nil
-}
-
-func (h *HuaweiyunOSS) convertAbortMultipartUploadInput(input *oss.AbortMultipartUploadInput) (*obs.AbortMultipartUploadInput, error) {
-	obsInput := &obs.AbortMultipartUploadInput{
-		Bucket:   input.Bucket,
-		Key:      input.Key,
-		UploadId: input.UploadId,
-	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertAbortMultipartUploadOutput(baseModel *obs.BaseModel) (*oss.AbortMultipartUploadOutput, error) {
-	output := &oss.AbortMultipartUploadOutput{RequestCharged: ""}
+	output := &oss.AbortMultipartUploadOutput{}
 	return output, nil
 }
 
@@ -685,74 +416,92 @@ func (h *HuaweiyunOSS) ListMultipartUploads(ctx context.Context, input *oss.List
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertListMultipartUploadsInput(input)
-	if err != nil {
+
+	obsInput := &obs.ListMultipartUploadsInput{}
+	if err = copier.Copy(obsInput, input); err != nil {
 		return nil, err
 	}
+
 	obsOutput, err := client.ListMultipartUploads(obsInput)
 	if err != nil {
 		return nil, err
 	}
-	output, err := h.convertListMultipartUploadsOutput(obsOutput)
-	if err != nil {
+
+	output := &oss.ListMultipartUploadsOutput{}
+	if err = copier.Copy(output, obsOutput); err != nil {
 		return nil, err
 	}
-	return output, nil
-}
-
-func (h *HuaweiyunOSS) convertListMultipartUploadsInput(input *oss.ListMultipartUploadsInput) (*obs.ListMultipartUploadsInput, error) {
-	obsInput := &obs.ListMultipartUploadsInput{
-		Bucket:         input.Bucket,
-		Prefix:         input.Prefix,
-		MaxUploads:     int(input.MaxUploads),
-		Delimiter:      input.Delimiter,
-		KeyMarker:      input.KeyMarker,
-		UploadIdMarker: input.UploadIdMarker,
-		EncodingType:   input.EncodingType,
-	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertListMultipartUploadsOutput(obsOutput *obs.ListMultipartUploadsOutput) (*oss.ListMultipartUploadsOutput, error) {
-	output := &oss.ListMultipartUploadsOutput{
-		Bucket:             obsOutput.Bucket,
-		CommonPrefixes:     obsOutput.CommonPrefixes,
-		Delimiter:          obsOutput.Delimiter,
-		EncodingType:       obsOutput.EncodingType,
-		IsTruncated:        obsOutput.IsTruncated,
-		KeyMarker:          obsOutput.KeyMarker,
-		MaxUploads:         int32(obsOutput.MaxUploads),
-		NextKeyMarker:      obsOutput.NextKeyMarker,
-		NextUploadIDMarker: obsOutput.NextUploadIdMarker,
-		Prefix:             obsOutput.Prefix,
-		UploadIDMarker:     obsOutput.UploadIdMarker,
-		Uploads:            nil,
-	}
-	uploads := make([]*oss.MultipartUpload, len(obsOutput.Uploads))
+	uploads := make([]*oss.MultipartUpload, 0, len(obsOutput.Uploads))
 	for _, v := range obsOutput.Uploads {
-		upload := &oss.MultipartUpload{
-			Initiated: v.Initiated.Unix(),
-			Initiator: &oss.Initiator{
-				DisplayName: v.Initiator.DisplayName,
-				ID:          v.Initiator.ID,
-			},
-			Key: v.Key,
-			Owner: &oss.Owner{
-				DisplayName: v.Owner.DisplayName,
-				ID:          v.Owner.ID,
-			},
-			StorageClass: string(v.StorageClass),
-			UploadId:     v.UploadId,
+		upload := &oss.MultipartUpload{}
+		if err = copier.CopyWithOption(upload, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+			return nil, err
 		}
+		initiator := &oss.Initiator{}
+		copier.Copy(initiator, v.Initiator)
+		upload.Initiator = initiator
+		owner := &oss.Owner{}
+		if err = copier.Copy(owner, v.Owner); err != nil {
+			return nil, err
+		}
+		upload.Owner = owner
 		uploads = append(uploads, upload)
 	}
 	output.Uploads = uploads
+
 	return output, nil
 }
 
 func (h *HuaweiyunOSS) ListObjectVersions(ctx context.Context, input *oss.ListObjectVersionsInput) (*oss.ListObjectVersionsOutput, error) {
-	//TODO implement me
-	panic("implement me")
+	client, err := h.getClient()
+	if err != nil {
+		return nil, err
+	}
+
+	obsInput := &obs.ListVersionsInput{}
+	if err = copier.Copy(obsInput, input); err != nil {
+		return nil, err
+	}
+	objsInput := &obs.ListObjsInput{}
+	if err = copier.Copy(objsInput, input); err != nil {
+		return nil, err
+	}
+	obsInput.ListObjsInput = *objsInput
+
+	obsOutput, err := client.ListVersions(obsInput)
+	if err != nil {
+		return nil, err
+	}
+
+	output := &oss.ListObjectVersionsOutput{}
+	if err = copier.CopyWithOption(output, obsOutput, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
+		return nil, err
+	}
+	deleteMarkers := make([]*oss.DeleteMarkerEntry, 0, len(obsOutput.DeleteMarkers))
+	for _, v := range obsOutput.DeleteMarkers {
+		entry := &oss.DeleteMarkerEntry{}
+		if err = copier.CopyWithOption(entry, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+			return nil, err
+		}
+		deleteMarkers = append(deleteMarkers, entry)
+	}
+	output.DeleteMarkers = deleteMarkers
+	versions := make([]*oss.ObjectVersion, 0, len(obsOutput.Versions))
+	for _, v := range obsOutput.Versions {
+		version := &oss.ObjectVersion{}
+		if err = copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+			return nil, err
+		}
+		owner := &oss.Owner{}
+		if err = copier.Copy(owner, v.Owner); err != nil {
+			return nil, err
+		}
+		version.Owner = owner
+		versions = append(versions, version)
+	}
+	output.Versions = versions
+
+	return output, nil
 }
 
 func (h *HuaweiyunOSS) HeadObject(ctx context.Context, input *oss.HeadObjectInput) (*oss.HeadObjectOutput, error) {
@@ -760,53 +509,97 @@ func (h *HuaweiyunOSS) HeadObject(ctx context.Context, input *oss.HeadObjectInpu
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertHeadObjectInput(input)
-	if err != nil {
-		return nil, err
+	if !input.WithDetails {
+		obsInput := &obs.HeadObjectInput{}
+		if err = copier.Copy(obsInput, input); err != nil {
+			return nil, err
+		}
+		obsBaseModel, err := client.HeadObject(obsInput)
+		if err != nil {
+			return nil, err
+		}
+		output := &oss.HeadObjectOutput{ResultMetadata: make(map[string]string, len(obsBaseModel.ResponseHeaders))}
+		for k, v := range obsBaseModel.ResponseHeaders {
+			for _, t := range v {
+				if _, ok := output.ResultMetadata[k]; ok {
+					output.ResultMetadata[k] = output.ResultMetadata[t] + "," + t
+				} else {
+					output.ResultMetadata[k] = t
+				}
+			}
+		}
+		return output, nil
 	}
-	obsBaseModel, err := client.HeadObject(obsInput)
-	if err != nil {
-		return nil, err
-	}
-	output, err := h.convertHeadObjectOutput(obsBaseModel)
-	if err != nil {
-		return nil, err
-	}
-	return output, nil
-}
 
-func (h *HuaweiyunOSS) convertHeadObjectInput(input *oss.HeadObjectInput) (*obs.HeadObjectInput, error) {
-	obsInput := &obs.HeadObjectInput{
-		Bucket:    input.Bucket,
-		Key:       input.Key,
-		VersionId: input.VersionId,
+	obsInput := &obs.GetObjectMetadataInput{}
+	copier.CopyWithOption(obsInput, input, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+	obsOutput, err := client.GetObjectMetadata(obsInput)
+	if err != nil {
+		return nil, err
 	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertHeadObjectOutput(baseModel *obs.BaseModel) (*oss.HeadObjectOutput, error) {
-	output := &oss.HeadObjectOutput{ResultMetadata: nil}
+	output := &oss.HeadObjectOutput{ResultMetadata: map[string]string{}}
+	copier.CopyWithOption(output.ResultMetadata, obsOutput.Metadata, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+	jsonByte, err := json.Marshal(obsOutput)
+	if err != nil {
+		return nil, err
+	}
+	valueMap := make(map[string]interface{})
+	if err := json.Unmarshal(jsonByte, &valueMap); err != nil {
+		return nil, err
+	}
+	for k, v := range valueMap {
+		if value, ok := v.(string); ok {
+			output.ResultMetadata[k] = value
+		}
+	}
 	return output, nil
 }
 
 func (h *HuaweiyunOSS) IsObjectExist(ctx context.Context, input *oss.IsObjectExistInput) (*oss.IsObjectExistOutput, error) {
-	//TODO implement me
-	panic("implement me")
+	listObjectsInput := &oss.ListObjectsInput{Bucket: input.Bucket}
+	listObjectsOutput, err := h.ListObjects(ctx, listObjectsInput)
+	if err != nil {
+		return nil, err
+	}
+	isExist := false
+	for _, v := range listObjectsOutput.Contents {
+		if v == nil {
+			continue
+		}
+		if v.Key == input.Key {
+			isExist = true
+			break
+		}
+	}
+	output := &oss.IsObjectExistOutput{FileExist: isExist}
+	return output, nil
 }
 
 func (h *HuaweiyunOSS) SignURL(ctx context.Context, input *oss.SignURLInput) (*oss.SignURLOutput, error) {
-	//TODO implement me
-	panic("implement me")
+	client, err := h.getClient()
+	if err != nil {
+		return nil, err
+	}
+
+	obsInput := &obs.CreateSignedUrlInput{}
+	if err = copier.Copy(obsInput, input); err != nil {
+		return nil, err
+	}
+	obsInput.Expires = int(input.ExpiredInSec)
+
+	obsOutput, err := client.CreateSignedUrl(obsInput)
+
+	output := &oss.SignURLOutput{SignedUrl: obsOutput.SignedUrl}
+
+	return output, nil
 }
 
 func (h *HuaweiyunOSS) UpdateDownloadBandwidthRateLimit(ctx context.Context, input *oss.UpdateBandwidthRateLimitInput) error {
-	//TODO implement me
-	panic("implement me")
+	return ErrDownloadNotBandwidthLimit
 }
 
 func (h *HuaweiyunOSS) UpdateUploadBandwidthRateLimit(ctx context.Context, input *oss.UpdateBandwidthRateLimitInput) error {
-	//TODO implement me
-	panic("implement me")
+	return ErrUploadNotBandwidthLimit
 }
 
 func (h *HuaweiyunOSS) AppendObject(ctx context.Context, input *oss.AppendObjectInput) (*oss.AppendObjectOutput, error) {
@@ -814,7 +607,20 @@ func (h *HuaweiyunOSS) AppendObject(ctx context.Context, input *oss.AppendObject
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertAppendObjectInput(input)
+
+	obsInput := &obs.AppendObjectInput{}
+	obsInput.Position = input.Position
+	obsInput.Body = input.DataStream
+	basicInput := &obs.PutObjectBasicInput{}
+	basicInput.ContentMD5 = input.ContentMd5
+	basicInput.ContentEncoding = input.ContentEncoding
+	operationInput := &obs.ObjectOperationInput{}
+	if err = copier.Copy(operationInput, input); err != nil {
+		return nil, err
+	}
+	basicInput.ObjectOperationInput = *operationInput
+	obsInput.PutObjectBasicInput = *basicInput
+
 	if err != nil {
 		return nil, err
 	}
@@ -822,52 +628,22 @@ func (h *HuaweiyunOSS) AppendObject(ctx context.Context, input *oss.AppendObject
 	if err != nil {
 		return nil, err
 	}
-	output, err := h.convertAppendObjectOutput(obsOutput)
-	if err != nil {
-		return nil, err
-	}
-	return output, nil
-}
 
-func (h *HuaweiyunOSS) convertAppendObjectInput(input *oss.AppendObjectInput) (*obs.AppendObjectInput, error) {
-	obsInput := &obs.AppendObjectInput{
-		PutObjectBasicInput: obs.PutObjectBasicInput{
-			ObjectOperationInput: obs.ObjectOperationInput{
-				Bucket:                  input.Bucket,
-				Key:                     input.Key,
-				ACL:                     obs.AclType(input.ACL),
-				GrantReadId:             "",
-				GrantReadAcpId:          "",
-				GrantWriteAcpId:         "",
-				GrantFullControlId:      "",
-				StorageClass:            obs.StorageClassType(input.StorageClass),
-				WebsiteRedirectLocation: "",
-				Expires:                 0,
-				SseHeader:               nil,
-				Metadata:                nil,
-			},
-			ContentType:     "",
-			ContentMD5:      input.ContentMd5,
-			ContentLength:   0,
-			ContentEncoding: input.ContentEncoding,
-		},
-		Body:     input.DataStream,
-		Position: input.Position,
-	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertAppendObjectOutput(obsOutput *obs.AppendObjectOutput) (*oss.AppendObjectOutput, error) {
 	output := &oss.AppendObjectOutput{AppendPosition: obsOutput.NextAppendPosition}
+
 	return output, nil
 }
 
+// todo 测试异常
 func (h *HuaweiyunOSS) ListParts(ctx context.Context, input *oss.ListPartsInput) (*oss.ListPartsOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
 	}
-	obsInput, err := h.convertListPartsInput(input)
+	obsInput := &obs.ListPartsInput{}
+	if err := copier.Copy(obsInput, input); err != nil {
+		return nil, err
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -875,46 +651,20 @@ func (h *HuaweiyunOSS) ListParts(ctx context.Context, input *oss.ListPartsInput)
 	if err != nil {
 		return nil, err
 	}
-	output, err := h.convertListPartsOutput(obsOutput)
-	if err != nil {
+	output := &oss.ListPartsOutput{}
+	if err := copier.Copy(output, obsOutput); err != nil {
 		return nil, err
 	}
-	return output, nil
-}
-
-func (h *HuaweiyunOSS) convertListPartsInput(input *oss.ListPartsInput) (*obs.ListPartsInput, error) {
-	obsInput := &obs.ListPartsInput{
-		Bucket:           input.Bucket,
-		Key:              input.Key,
-		UploadId:         input.UploadId,
-		MaxParts:         int(input.MaxParts),
-		PartNumberMarker: int(input.PartNumberMarker),
-		EncodingType:     "",
-	}
-	return obsInput, nil
-}
-
-func (h *HuaweiyunOSS) convertListPartsOutput(obsOutput *obs.ListPartsOutput) (*oss.ListPartsOutput, error) {
-	output := &oss.ListPartsOutput{
-		Bucket:               obsOutput.Bucket,
-		Key:                  obsOutput.Key,
-		UploadId:             obsOutput.UploadId,
-		NextPartNumberMarker: string(obsOutput.NextPartNumberMarker),
-		MaxParts:             int64(obsOutput.MaxParts),
-		IsTruncated:          obsOutput.IsTruncated,
-		Parts:                nil,
-	}
-	parts := make([]*oss.Part, len(output.Parts))
-	for _, v := range output.Parts {
-		part := &oss.Part{
-			Etag:         v.Etag,
-			LastModified: v.LastModified,
-			PartNumber:   v.PartNumber,
-			Size:         v.Size,
-		}
+	parts := make([]*oss.Part, 0, len(obsOutput.Parts))
+	for _, v := range obsOutput.Parts {
+		part := &oss.Part{}
+		copier.Copy(part, v)
 		parts = append(parts, part)
 	}
 	output.Parts = parts
+	if err != nil {
+		return nil, err
+	}
 	return output, nil
 }
 
