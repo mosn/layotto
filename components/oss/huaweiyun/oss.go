@@ -592,6 +592,9 @@ func (h *HuaweiyunOSS) SignURL(ctx context.Context, input *oss.SignURLInput) (*o
 	obsInput.Expires = int(input.ExpiredInSec)
 
 	obsOutput, err := client.CreateSignedUrl(obsInput)
+	if err != nil {
+		return nil, err
+	}
 
 	output := &oss.SignURLOutput{SignedUrl: obsOutput.SignedUrl}
 
