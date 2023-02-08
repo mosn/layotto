@@ -13,6 +13,7 @@
 package etcd
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"os"
@@ -224,6 +225,11 @@ func TestEtcdLock_UnLock(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, lock.SUCCESS, resp.Status)
+
+	// not implement LockKeepAlive
+	keepAliveResp, err := comp.LockKeepAlive(context.TODO(), &lock.LockKeepAliveRequest{})
+	assert.Nil(t, keepAliveResp)
+	assert.Nil(t, err)
 }
 
 func startEtcdServer(dir string, port int) (*embed.Etcd, error) {

@@ -65,6 +65,12 @@ func (e *EtcdLock) Init(metadata lock.Metadata) error {
 	return err
 }
 
+// LockKeepAlive try to renewal lease
+func (e *EtcdLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	//TODO: implemnt function
+	return nil, nil
+}
+
 // Features is to get EtcdLock's features
 func (e *EtcdLock) Features() []lock.Feature {
 	return e.features

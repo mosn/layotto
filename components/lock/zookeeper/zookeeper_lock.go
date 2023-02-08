@@ -15,6 +15,7 @@
 package zookeeper
 
 import (
+	"context"
 	"time"
 
 	"github.com/go-zookeeper/zk"
@@ -74,6 +75,12 @@ func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
 // Features is to get ZookeeperLock's features
 func (p *ZookeeperLock) Features() []lock.Feature {
 	return nil
+}
+
+// LockKeepAlive try to renewal lease
+func (p *ZookeeperLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	//TODO: implemnt function
+	return nil, nil
 }
 
 // TryLock Node tries to acquire a zookeeper lock

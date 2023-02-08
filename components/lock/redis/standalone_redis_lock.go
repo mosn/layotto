@@ -69,6 +69,12 @@ func (p *StandaloneRedisLock) Features() []lock.Feature {
 	return p.features
 }
 
+// LockKeepAlive try to renewal lease
+func (p *StandaloneRedisLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	//TODO: implemnt function
+	return nil, nil
+}
+
 // Node tries to acquire a redis lock
 func (p *StandaloneRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	// 1.Setting redis expiration time

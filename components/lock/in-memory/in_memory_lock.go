@@ -17,6 +17,7 @@
 package in_memory
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -52,6 +53,12 @@ func NewInMemoryLock() *InMemoryLock {
 
 func (s *InMemoryLock) Init(_ lock.Metadata) error {
 	return nil
+}
+
+// LockKeepAlive try to renewal lease
+func (s *InMemoryLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAliveRequest) (*lock.LockKeepAliveResponse, error) {
+	//TODO: implemnt function
+	return nil, nil
 }
 
 func (s *InMemoryLock) Features() []lock.Feature {
