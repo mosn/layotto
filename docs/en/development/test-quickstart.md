@@ -34,7 +34,7 @@ see https://github.com/seeflood/mdx#installation
 ## step 2. Close local software that may cause conflicts
 Close the local Layotto, to avoid port conflicts when running the document.
 
-Similarly, if the documentation will start containers like redis with Docker, you need to shut down and remove containers that may cause port conflicts and container name conflicts first.
+Similarly, if the documentation will start containers like Redis with Docker, you need to shut down and remove containers that may cause port conflicts and container name conflicts first.
 
 ## step 3. Running documentation
 
@@ -49,7 +49,7 @@ You can think of each document as a UT, which should have 4 phases: prepare, exe
 
 If the document runs with an error, it means that the case needs to be optimized.
 
-This is also the idea of "test-driven development", optimize the documentation to make it "testable", right?
+This is also the idea of "test-driven development", optimizing the documentation to make it "testable", right?
 
 For example, I ran the Quickstart documentation for the state API and found an error:
 
@@ -160,7 +160,7 @@ Don't run this script, add a "hidden script" that "runs Layotto in the backgroun
 
 #### How to deal with the command to switch directories?
 
-We can assume that the current directory is the project root path.
+We can assume that the current directory is the project's root path.
 
 
 Then the switch path can be written like this:
@@ -184,12 +184,12 @@ cd ${project_path}/demo/state/redis/
 
 ##### Solution 2:
 
-Add a hidden script to switch directories. For example write:
+Add a hidden script to switch directories. For example, write:
 
     <!-- The command below will be run when testing this file 
     ```shell
     cd ../../
-    # if we should wait for layotto start, we can:
+    # if we should wait for layotto to start, we can:
     # sleep 1s 
     ```
     -->

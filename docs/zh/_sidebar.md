@@ -115,6 +115,7 @@
         - [文档贡献指南](zh/development/contributing-doc.md)
         - [使用工具自动测试 Quickstart 文档](zh/development/test-quickstart.md)
     - [想要开发新的组件?](zh/development/developing-component.md)
+    - [组件引用开发指南](zh/development/component_ref/component_ref.md)
     - 想要修改proto文件或API定义？
         - [如何基于proto文件生成代码、接口文档](zh/api_reference/how_to_generate_api_doc.md)
         - [proto文件注释规范](zh/api_reference/comment_spec_of_proto.md)
