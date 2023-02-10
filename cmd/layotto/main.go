@@ -18,6 +18,7 @@ package main
 
 import (
 	"encoding/json"
+	_ "net/http/pprof"
 	"os"
 	"strconv"
 	"time"

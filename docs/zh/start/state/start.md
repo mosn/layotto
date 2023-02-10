@@ -185,7 +185,7 @@ sdk位于`sdk`目录下，用户可以通过sdk调用Layotto提供的API。
 #### 想要详细了解State API?
 State API是干嘛的，解决什么问题，我应该在什么场景使用它？
 
-如果您产生了这样的困惑，想要了解State API的更多细节，可以进一步阅读[State API使用文档](zh/api_reference/state/reference) 
+如果您产生了这样的困惑，想要了解State API的更多细节，可以进一步阅读[State API使用文档](zh/building_blocks/state/reference) 
 
 #### 细节以后再说，继续体验其他API
 通过左侧的导航栏，继续体验别的API吧！

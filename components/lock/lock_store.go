@@ -12,6 +12,8 @@
 // limitations under the License.
 package lock
 
+import "context"
+
 type LockStore interface {
 	// Init lock
 	Init(metadata Metadata) error
@@ -21,4 +23,6 @@ type LockStore interface {
 	TryLock(req *TryLockRequest) (*TryLockResponse, error)
 	// Node tries to release a lock
 	Unlock(req *UnlockRequest) (*UnlockResponse, error)
+	// Node tries to renewal lease
+	LockKeepAlive(context.Context, *LockKeepAliveRequest) (*LockKeepAliveResponse, error)
 }
