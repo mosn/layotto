@@ -28,8 +28,6 @@ import (
 	"github.com/dapr/components-contrib/state"
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/emptypb"
-
 	"mosn.io/layotto/components/file"
 	grpc_api "mosn.io/layotto/pkg/grpc"
 	"mosn.io/layotto/pkg/grpc/dapr"
@@ -65,56 +63,15 @@ var (
 )
 
 type API interface {
-	SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error)
-	// InvokeService do rpc calls.
-	InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error)
-	// GetConfiguration gets configuration from configuration store.
-	GetConfiguration(context.Context, *runtimev1pb.GetConfigurationRequest) (*runtimev1pb.GetConfigurationResponse, error)
-	// SaveConfiguration saves configuration into configuration store.
-	SaveConfiguration(context.Context, *runtimev1pb.SaveConfigurationRequest) (*emptypb.Empty, error)
-	// DeleteConfiguration deletes configuration from configuration store.
-	DeleteConfiguration(context.Context, *runtimev1pb.DeleteConfigurationRequest) (*emptypb.Empty, error)
-	// SubscribeConfiguration gets configuration from configuration store and subscribe the updates.
-	SubscribeConfiguration(runtimev1pb.Runtime_SubscribeConfigurationServer) error
-	// Publishes events to the specific topic.
-	PublishEvent(context.Context, *runtimev1pb.PublishEventRequest) (*emptypb.Empty, error)
-	// State
-	GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*runtimev1pb.GetStateResponse, error)
-	// Get a batch of state data
-	GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequest) (*runtimev1pb.GetBulkStateResponse, error)
-	SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (*emptypb.Empty, error)
-	DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateRequest) (*emptypb.Empty, error)
-	DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkStateRequest) (*emptypb.Empty, error)
-	ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*emptypb.Empty, error)
-	// Get File
-	GetFile(*runtimev1pb.GetFileRequest, runtimev1pb.Runtime_GetFileServer) error
-	// Put file with stream.
-	PutFile(runtimev1pb.Runtime_PutFileServer) error
-	// List all files
-	ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*runtimev1pb.ListFileResp, error)
-	//Delete specific file
-	DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emptypb.Empty, error)
-	// Get file meta data, if file not exist,return code.NotFound error
-	GetFileMeta(ctx context.Context, in *runtimev1pb.GetFileMetaRequest) (*runtimev1pb.GetFileMetaResponse, error)
-	// Distributed Lock API
-	TryLock(context.Context, *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error)
-	Unlock(context.Context, *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error)
-	LockKeepAlive(ctx context.Context, request *runtimev1pb.LockKeepAliveRequest) (*runtimev1pb.LockKeepAliveResponse, error)
-	// Sequencer API
-	GetNextId(context.Context, *runtimev1pb.GetNextIdRequest) (*runtimev1pb.GetNextIdResponse, error)
-	// InvokeBinding Binding API
-	InvokeBinding(context.Context, *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error)
-	// Gets secrets from secret stores.
-	GetSecret(context.Context, *runtimev1pb.GetSecretRequest) (*runtimev1pb.GetSecretResponse, error)
-	// Gets a bulk of secrets
-	GetBulkSecret(context.Context, *runtimev1pb.GetBulkSecretRequest) (*runtimev1pb.GetBulkSecretResponse, error)
+	//User SDK  related
+	runtime.RuntimeServer
+
 	// GrpcAPI related
 	grpc_api.GrpcAPI
 }
 
 // api is a default implementation for MosnRuntimeServer.
 type api struct {
-	runtime.UnimplementedRuntimeServer
 	daprAPI                  dapr.DaprGrpcAPI
 	appId                    string
 	hellos                   map[string]hello.HelloService
