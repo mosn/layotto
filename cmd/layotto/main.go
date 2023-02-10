@@ -18,7 +18,6 @@ package main
 
 import (
 	"encoding/json"
-	osshw "mosn.io/layotto/components/oss/huaweiyun"
 	_ "net/http/pprof"
 	"os"
 	"strconv"
@@ -27,6 +26,8 @@ import (
 	"mosn.io/layotto/pkg/grpc/lifecycle"
 
 	"mosn.io/layotto/components/oss"
+
+	huaweiyun_oss "mosn.io/layotto/components/oss/huaweiyun"
 
 	aws_oss "mosn.io/layotto/components/oss/aws"
 
@@ -297,7 +298,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			oss.NewFactory("aws.oss", aws_oss.NewAwsOss),
 			oss.NewFactory("aliyun.oss", aliyun_oss.NewAliyunOss),
 			oss.NewFactory("ceph", ceph_oss.NewCephOss),
-			oss.NewFactory("huaweiyun.oss", osshw.NewHuaweiyunOss),
+			oss.NewFactory("huaweiyun.oss", huaweiyun_oss.NewHuaweiyunOss),
 		),
 		// PubSub
 		runtime.WithPubSubFactory(
