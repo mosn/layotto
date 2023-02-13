@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
  */
-package huaweiyun
+package huaweicloud
 
 import (
 	"context"
@@ -40,15 +40,15 @@ const (
 	bucket = "your bucket"
 )
 
-var h *HuaweiyunOSS
+var h *HuaweicloudOSS
 
 func init() {
-	h = &HuaweiyunOSS{}
+	h = &HuaweicloudOSS{}
 	h.Init(context.TODO(), &oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte(config)}})
 }
 
-func TestInitHuaWeiYunObs(t *testing.T) {
-	h := &HuaweiyunOSS{}
+func TestInitHuaweicloudOBS(t *testing.T) {
+	h := &HuaweicloudOSS{}
 	_, err := h.getClient()
 	assert.Equal(t, err, utils.ErrNotInitClient)
 

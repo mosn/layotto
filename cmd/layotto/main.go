@@ -27,7 +27,7 @@ import (
 
 	"mosn.io/layotto/components/oss"
 
-	huaweiyun_oss "mosn.io/layotto/components/oss/huaweiyun"
+	huaweicloud_oss "mosn.io/layotto/components/oss/huaweicloud"
 
 	aws_oss "mosn.io/layotto/components/oss/aws"
 
@@ -298,7 +298,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			oss.NewFactory("aws.oss", aws_oss.NewAwsOss),
 			oss.NewFactory("aliyun.oss", aliyun_oss.NewAliyunOss),
 			oss.NewFactory("ceph", ceph_oss.NewCephOss),
-			oss.NewFactory("huaweiyun.oss", huaweiyun_oss.NewHuaweiyunOss),
+			oss.NewFactory("huaweicloud.oss", huaweicloud_oss.NewHuaweicloudOSS),
 		),
 		// PubSub
 		runtime.WithPubSubFactory(

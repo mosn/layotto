@@ -13,13 +13,13 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
  */
-package huaweiyun
+package huaweicloud
 
 import "errors"
 
 var (
-	ErrHaveNotTag                = errors.New("huaweiyun obs object haven't tagging feature")
-	ErrDownloadNotBandwidthLimit = errors.New("huaweiyun obs download haven't bandwidth limit feature")
-	ErrUploadNotBandwidthLimit   = errors.New("huaweiyun obs download haven't bandwidth limit feature")
-	ErrNotSupportAclGet          = errors.New("huaweiyun obs haven't acl-get support")
+	ErrHaveNotTag                = errors.New("Huaweicloud's OBS Service doesn't support object tag operations")
+	ErrDownloadNotBandwidthLimit = errors.New("Huaweicloud's OBS Service doesn't support object download with bandwidth limit")
+	ErrUploadNotBandwidthLimit   = errors.New("Huaweicloud's OBS Service doesn't support object upload with bandwidth limit")
+	ErrNotSupportAclGet          = errors.New("Huaweicloud's OBS Service doesn't support get operation for object ACL")
 )

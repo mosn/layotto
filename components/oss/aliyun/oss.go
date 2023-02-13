@@ -44,7 +44,7 @@ func NewAliyunOss() l8oss.Oss {
 }
 
 func (a *AliyunOSS) Init(ctx context.Context, config *l8oss.Config) error {
-	connectTimeout, readWriteTimeout := 30, 60
+	connectTimeout, readWriteTimeout := l8oss.DefaultConnectTimeout, l8oss.DefaultReadWriteTimeout
 	a.basicConf = config.Metadata[l8oss.BasicConfiguration]
 	m := utils.OssMetadata{}
 	if err := json.Unmarshal(a.basicConf, &m); err != nil {

@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
  */
-package huaweiyun
+package huaweicloud
 
 import (
 	"context"
@@ -29,17 +29,17 @@ import (
 
 const connectTimeoutSec = "connectTimeoutSec"
 
-type HuaweiyunOSS struct {
+type HuaweicloudOSS struct {
 	client   *obs.ObsClient
 	metadata utils.OssMetadata
 }
 
-func NewHuaweiyunOss() oss.Oss {
-	return &HuaweiyunOSS{}
+func NewHuaweicloudOSS() oss.Oss {
+	return &HuaweicloudOSS{}
 }
 
-func (h *HuaweiyunOSS) Init(ctx context.Context, config *oss.Config) error {
-	connectTimeout := 30
+func (h *HuaweicloudOSS) Init(ctx context.Context, config *oss.Config) error {
+	connectTimeout := oss.DefaultConnectTimeout
 	jsonRawMessage := config.Metadata[oss.BasicConfiguration]
 	err := json.Unmarshal(jsonRawMessage, &h.metadata)
 	if err != nil {
@@ -59,7 +59,7 @@ func (h *HuaweiyunOSS) Init(ctx context.Context, config *oss.Config) error {
 	return nil
 }
 
-func (h *HuaweiyunOSS) GetObject(ctx context.Context, input *oss.GetObjectInput) (*oss.GetObjectOutput, error) {
+func (h *HuaweicloudOSS) GetObject(ctx context.Context, input *oss.GetObjectInput) (*oss.GetObjectOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -89,7 +89,7 @@ func (h *HuaweiyunOSS) GetObject(ctx context.Context, input *oss.GetObjectInput)
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) PutObject(ctx context.Context, input *oss.PutObjectInput) (*oss.PutObjectOutput, error) {
+func (h *HuaweicloudOSS) PutObject(ctx context.Context, input *oss.PutObjectInput) (*oss.PutObjectOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func (h *HuaweiyunOSS) PutObject(ctx context.Context, input *oss.PutObjectInput)
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) DeleteObject(ctx context.Context, input *oss.DeleteObjectInput) (*oss.DeleteObjectOutput, error) {
+func (h *HuaweicloudOSS) DeleteObject(ctx context.Context, input *oss.DeleteObjectInput) (*oss.DeleteObjectOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -145,19 +145,19 @@ func (h *HuaweiyunOSS) DeleteObject(ctx context.Context, input *oss.DeleteObject
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) PutObjectTagging(ctx context.Context, input *oss.PutObjectTaggingInput) (*oss.PutObjectTaggingOutput, error) {
+func (h *HuaweicloudOSS) PutObjectTagging(ctx context.Context, input *oss.PutObjectTaggingInput) (*oss.PutObjectTaggingOutput, error) {
 	return nil, ErrHaveNotTag
 }
 
-func (h *HuaweiyunOSS) DeleteObjectTagging(ctx context.Context, input *oss.DeleteObjectTaggingInput) (*oss.DeleteObjectTaggingOutput, error) {
+func (h *HuaweicloudOSS) DeleteObjectTagging(ctx context.Context, input *oss.DeleteObjectTaggingInput) (*oss.DeleteObjectTaggingOutput, error) {
 	return nil, ErrHaveNotTag
 }
 
-func (h *HuaweiyunOSS) GetObjectTagging(ctx context.Context, input *oss.GetObjectTaggingInput) (*oss.GetObjectTaggingOutput, error) {
+func (h *HuaweicloudOSS) GetObjectTagging(ctx context.Context, input *oss.GetObjectTaggingInput) (*oss.GetObjectTaggingOutput, error) {
 	return nil, ErrHaveNotTag
 }
 
-func (h *HuaweiyunOSS) CopyObject(ctx context.Context, input *oss.CopyObjectInput) (*oss.CopyObjectOutput, error) {
+func (h *HuaweicloudOSS) CopyObject(ctx context.Context, input *oss.CopyObjectInput) (*oss.CopyObjectOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -186,7 +186,7 @@ func (h *HuaweiyunOSS) CopyObject(ctx context.Context, input *oss.CopyObjectInpu
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) DeleteObjects(ctx context.Context, input *oss.DeleteObjectsInput) (*oss.DeleteObjectsOutput, error) {
+func (h *HuaweicloudOSS) DeleteObjects(ctx context.Context, input *oss.DeleteObjectsInput) (*oss.DeleteObjectsOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -222,7 +222,7 @@ func (h *HuaweiyunOSS) DeleteObjects(ctx context.Context, input *oss.DeleteObjec
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) ListObjects(ctx context.Context, input *oss.ListObjectsInput) (*oss.ListObjectsOutput, error) {
+func (h *HuaweicloudOSS) ListObjects(ctx context.Context, input *oss.ListObjectsInput) (*oss.ListObjectsOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -265,11 +265,11 @@ func (h *HuaweiyunOSS) ListObjects(ctx context.Context, input *oss.ListObjectsIn
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) GetObjectCannedAcl(ctx context.Context, input *oss.GetObjectCannedAclInput) (*oss.GetObjectCannedAclOutput, error) {
+func (h *HuaweicloudOSS) GetObjectCannedAcl(ctx context.Context, input *oss.GetObjectCannedAclInput) (*oss.GetObjectCannedAclOutput, error) {
 	return nil, ErrNotSupportAclGet
 }
 
-func (h *HuaweiyunOSS) PutObjectCannedAcl(ctx context.Context, input *oss.PutObjectCannedAclInput) (*oss.PutObjectCannedAclOutput, error) {
+func (h *HuaweicloudOSS) PutObjectCannedAcl(ctx context.Context, input *oss.PutObjectCannedAclInput) (*oss.PutObjectCannedAclOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -289,7 +289,7 @@ func (h *HuaweiyunOSS) PutObjectCannedAcl(ctx context.Context, input *oss.PutObj
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) RestoreObject(ctx context.Context, input *oss.RestoreObjectInput) (*oss.RestoreObjectOutput, error) {
+func (h *HuaweicloudOSS) RestoreObject(ctx context.Context, input *oss.RestoreObjectInput) (*oss.RestoreObjectOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -312,7 +312,7 @@ func (h *HuaweiyunOSS) RestoreObject(ctx context.Context, input *oss.RestoreObje
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) CreateMultipartUpload(ctx context.Context, input *oss.CreateMultipartUploadInput) (*oss.CreateMultipartUploadOutput, error) {
+func (h *HuaweicloudOSS) CreateMultipartUpload(ctx context.Context, input *oss.CreateMultipartUploadInput) (*oss.CreateMultipartUploadOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -344,7 +344,7 @@ func (h *HuaweiyunOSS) CreateMultipartUpload(ctx context.Context, input *oss.Cre
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) UploadPart(ctx context.Context, input *oss.UploadPartInput) (*oss.UploadPartOutput, error) {
+func (h *HuaweicloudOSS) UploadPart(ctx context.Context, input *oss.UploadPartInput) (*oss.UploadPartOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -365,7 +365,7 @@ func (h *HuaweiyunOSS) UploadPart(ctx context.Context, input *oss.UploadPartInpu
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) UploadPartCopy(ctx context.Context, input *oss.UploadPartCopyInput) (*oss.UploadPartCopyOutput, error) {
+func (h *HuaweicloudOSS) UploadPartCopy(ctx context.Context, input *oss.UploadPartCopyInput) (*oss.UploadPartCopyOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -393,7 +393,7 @@ func (h *HuaweiyunOSS) UploadPartCopy(ctx context.Context, input *oss.UploadPart
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) CompleteMultipartUpload(ctx context.Context, input *oss.CompleteMultipartUploadInput) (*oss.CompleteMultipartUploadOutput, error) {
+func (h *HuaweicloudOSS) CompleteMultipartUpload(ctx context.Context, input *oss.CompleteMultipartUploadInput) (*oss.CompleteMultipartUploadOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -417,7 +417,7 @@ func (h *HuaweiyunOSS) CompleteMultipartUpload(ctx context.Context, input *oss.C
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) AbortMultipartUpload(ctx context.Context, input *oss.AbortMultipartUploadInput) (*oss.AbortMultipartUploadOutput, error) {
+func (h *HuaweicloudOSS) AbortMultipartUpload(ctx context.Context, input *oss.AbortMultipartUploadInput) (*oss.AbortMultipartUploadOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -432,7 +432,7 @@ func (h *HuaweiyunOSS) AbortMultipartUpload(ctx context.Context, input *oss.Abor
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) ListMultipartUploads(ctx context.Context, input *oss.ListMultipartUploadsInput) (*oss.ListMultipartUploadsOutput, error) {
+func (h *HuaweicloudOSS) ListMultipartUploads(ctx context.Context, input *oss.ListMultipartUploadsInput) (*oss.ListMultipartUploadsOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -473,7 +473,7 @@ func (h *HuaweiyunOSS) ListMultipartUploads(ctx context.Context, input *oss.List
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) ListObjectVersions(ctx context.Context, input *oss.ListObjectVersionsInput) (*oss.ListObjectVersionsOutput, error) {
+func (h *HuaweicloudOSS) ListObjectVersions(ctx context.Context, input *oss.ListObjectVersionsInput) (*oss.ListObjectVersionsOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -525,7 +525,7 @@ func (h *HuaweiyunOSS) ListObjectVersions(ctx context.Context, input *oss.ListOb
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) HeadObject(ctx context.Context, input *oss.HeadObjectInput) (*oss.HeadObjectOutput, error) {
+func (h *HuaweicloudOSS) HeadObject(ctx context.Context, input *oss.HeadObjectInput) (*oss.HeadObjectOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -576,7 +576,7 @@ func (h *HuaweiyunOSS) HeadObject(ctx context.Context, input *oss.HeadObjectInpu
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) IsObjectExist(ctx context.Context, input *oss.IsObjectExistInput) (*oss.IsObjectExistOutput, error) {
+func (h *HuaweicloudOSS) IsObjectExist(ctx context.Context, input *oss.IsObjectExistInput) (*oss.IsObjectExistOutput, error) {
 	listObjectsInput := &oss.ListObjectsInput{Bucket: input.Bucket}
 	listObjectsOutput, err := h.ListObjects(ctx, listObjectsInput)
 	if err != nil {
@@ -596,7 +596,7 @@ func (h *HuaweiyunOSS) IsObjectExist(ctx context.Context, input *oss.IsObjectExi
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) SignURL(ctx context.Context, input *oss.SignURLInput) (*oss.SignURLOutput, error) {
+func (h *HuaweicloudOSS) SignURL(ctx context.Context, input *oss.SignURLInput) (*oss.SignURLOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -618,15 +618,15 @@ func (h *HuaweiyunOSS) SignURL(ctx context.Context, input *oss.SignURLInput) (*o
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) UpdateDownloadBandwidthRateLimit(ctx context.Context, input *oss.UpdateBandwidthRateLimitInput) error {
+func (h *HuaweicloudOSS) UpdateDownloadBandwidthRateLimit(ctx context.Context, input *oss.UpdateBandwidthRateLimitInput) error {
 	return ErrDownloadNotBandwidthLimit
 }
 
-func (h *HuaweiyunOSS) UpdateUploadBandwidthRateLimit(ctx context.Context, input *oss.UpdateBandwidthRateLimitInput) error {
+func (h *HuaweicloudOSS) UpdateUploadBandwidthRateLimit(ctx context.Context, input *oss.UpdateBandwidthRateLimitInput) error {
 	return ErrUploadNotBandwidthLimit
 }
 
-func (h *HuaweiyunOSS) AppendObject(ctx context.Context, input *oss.AppendObjectInput) (*oss.AppendObjectOutput, error) {
+func (h *HuaweicloudOSS) AppendObject(ctx context.Context, input *oss.AppendObjectInput) (*oss.AppendObjectOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -659,7 +659,7 @@ func (h *HuaweiyunOSS) AppendObject(ctx context.Context, input *oss.AppendObject
 }
 
 // todo 测试异常
-func (h *HuaweiyunOSS) ListParts(ctx context.Context, input *oss.ListPartsInput) (*oss.ListPartsOutput, error) {
+func (h *HuaweicloudOSS) ListParts(ctx context.Context, input *oss.ListPartsInput) (*oss.ListPartsOutput, error) {
 	client, err := h.getClient()
 	if err != nil {
 		return nil, err
@@ -692,7 +692,7 @@ func (h *HuaweiyunOSS) ListParts(ctx context.Context, input *oss.ListPartsInput)
 	return output, nil
 }
 
-func (h *HuaweiyunOSS) getClient() (*obs.ObsClient, error) {
+func (h *HuaweicloudOSS) getClient() (*obs.ObsClient, error) {
 	if h.client == nil {
 		return nil, utils.ErrNotInitClient
 	}
