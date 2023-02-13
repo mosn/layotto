@@ -1,4 +1,5 @@
 package oss
+
 /*
 * Copyright 2021 Layotto Authors
 *
@@ -15,10 +16,8 @@ package oss
 * limitations under the License.
  */
 
-const(
-	
+const (
 	DefaultConnectTimeout = 30
 
 	DefaultReadWriteTimeout = 60
-
 )
