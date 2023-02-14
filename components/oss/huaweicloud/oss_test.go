@@ -32,15 +32,15 @@ import (
 
 const (
 	config = `{
-			"endpoint": "your endpoint",
-			"accessKeyID": "your accessKeyID",
-			"accessKeySecret": "your accessKeySecret",
-			"region": "your region"
-		}`
-	bucket = "your bucket"
+		"endpoint": "your endpoint",
+		"accessKeyID": "your accessKeyID",
+		"accessKeySecret": "your accessKeySecret",
+		"region": "your region"
+	}`
+bucket = "your bucket"
 
-	// The AK cannot be escrowed at present, skip the checking logic when false
-	haveAK = false
+// The AK cannot be escrowed at present, skip the checking logic when false
+haveAK = false
 )
 
 var h *HuaweicloudOSS
@@ -85,9 +85,9 @@ func NotZero(t *testing.T, i interface{}, msgAndArgs ...interface{}) bool {
 	return true
 }
 
-func testRecover(){
+func testRecover() {
 	if !haveAK {
-		_  = recover()
+		_ = recover()
 	}
 }
 
@@ -191,7 +191,7 @@ func TestDeleteObjects(t *testing.T) {
 
 func TestListObjects(t *testing.T) {
 	defer testRecover()
-	input := &oss.ListObjectsInput{Bucket: "layotto"}
+	input := &oss.ListObjectsInput{Bucket: "layotto", MaxKeys: 100}
 	output, err := h.ListObjects(context.TODO(), input)
 	Nil(t, err)
 	NotNil(t, output)
@@ -422,13 +422,13 @@ func TestSignUrl(t *testing.T) {
 
 func TestAppendObject(t *testing.T) {
 	defer testRecover()
-	key := "append_object_test"
+	key := "append_object_test_2"
 
 	input := &oss.AppendObjectInput{
 		DataStream: strings.NewReader(" append part1"),
 		Bucket:     bucket,
 		Key:        key,
-		Position:   13,
+		// Position:   ,
 	}
 
 	output, err := h.AppendObject(context.TODO(), input)
