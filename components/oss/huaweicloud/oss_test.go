@@ -37,10 +37,10 @@ const (
 		"accessKeySecret": "your accessKeySecret",
 		"region": "your region"
 	}`
-bucket = "your bucket"
+	bucket = "your bucket"
 
-// The AK cannot be escrowed at present, skip the checking logic when false
-haveAK = false
+	// The AK cannot be escrowed at present, skip the checking logic when false
+	haveAK = false
 )
 
 var h *HuaweicloudOSS
