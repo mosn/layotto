@@ -39,7 +39,7 @@ const (
 		}`
 	bucket = "your bucket"
 
-	// 目前无法托管密钥，false 时跳过检查逻辑
+	// The AK cannot be escrowed at present, skip the checking logic when false
 	haveAK = false
 )
 
