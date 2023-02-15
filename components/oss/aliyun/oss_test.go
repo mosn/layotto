@@ -48,7 +48,7 @@ func TestInitAliyunOss(t *testing.T) {
 	assert.Equal(t, err, utils.ErrNotInitClient)
 	assert.Nil(t, client)
 	err = a.Init(context.TODO(), &l8oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte("hello")}})
-	assert.Equal(t, err, l8oss.ErrInvalid)
+	assert.Equal(t, l8oss.ErrInvalid, err)
 	err = a.Init(context.TODO(), &l8oss.Config{Metadata: map[string]json.RawMessage{oss.BasicConfiguration: []byte(confWithoutUidAndBucket)}})
 	assert.NotEqual(t, l8oss.ErrInvalid, err)
 	assert.NotNil(t, a.client)

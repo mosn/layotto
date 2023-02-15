@@ -364,7 +364,7 @@ func TestRestore(bucket, name string) {
 		return
 	}
 	c := s3.NewObjectStorageServiceClient(conn)
-	req := &s3.RestoreObjectInput{StoreName: storeName, Bucket: bucket, Key: name}
+	req := &s3.RestoreObjectInput{StoreName: storeName, Bucket: bucket, Key: name, RestoreRequest: &s3.RestoreRequest{Days: 1}}
 	resp, err := c.RestoreObject(context.Background(), req)
 	if err != nil {
 		fmt.Printf("RestoreObject fail, err: %+v \n", err)
