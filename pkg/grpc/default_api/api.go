@@ -62,9 +62,8 @@ var (
 )
 
 type API interface {
-	//User SDK  related
+	//Layotto Service methods
 	runtime.RuntimeServer
-
 	// GrpcAPI related
 	grpc_api.GrpcAPI
 }
