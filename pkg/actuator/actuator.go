@@ -41,9 +41,8 @@ func (act *Actuator) GetEndpoint(name string) (endpoint http.Endpoint, ok bool) 
 
 // AddEndpoint add an Endpoint to Actuator。
 func (act *Actuator) AddEndpoint(name string, ep http.Endpoint) {
-	_, ok := act.endpointRegistry[name]
-	if ok {
-		log.DefaultLogger.Warnf("Duplicate Endpoint name:  %v !", name)
+	if _, ok := act.endpointRegistry[name]; ok {
+		log.DefaultLogger.Warnf("Duplicate Endpoint name: %v !", name)
 	}
 	act.endpointRegistry[name] = ep
 }
