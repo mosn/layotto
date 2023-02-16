@@ -31,6 +31,8 @@ import (
 
 	aliyun_oss "mosn.io/layotto/components/oss/aliyun"
 
+	huaweicloud_oss "mosn.io/layotto/components/oss/huaweicloud"
+
 	ceph_oss "mosn.io/layotto/components/oss/ceph"
 
 	"mosn.io/layotto/components/file/aliyun"
@@ -413,6 +415,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			oss.NewFactory("aws.oss", aws_oss.NewAwsOss),
 			oss.NewFactory("aliyun.oss", aliyun_oss.NewAliyunOss),
 			oss.NewFactory("ceph", ceph_oss.NewCephOss),
+			oss.NewFactory("huaweicloud.oss", huaweicloud_oss.NewHuaweicloudOSS),
 		),
 
 		// Sequencer

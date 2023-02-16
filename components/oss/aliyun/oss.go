@@ -44,29 +44,24 @@ func NewAliyunOss() l8oss.Oss {
 }
 
 func (a *AliyunOSS) Init(ctx context.Context, config *l8oss.Config) error {
-	var connectTimeout, readWriteTimeout int64
+	connectTimeout, readWriteTimeout := l8oss.DefaultConnectTimeout, l8oss.DefaultReadWriteTimeout
 	a.basicConf = config.Metadata[l8oss.BasicConfiguration]
-	m := &utils.OssMetadata{}
-	err := json.Unmarshal(a.basicConf, &m)
-	if err != nil {
+	m := utils.OssMetadata{}
+	if err := json.Unmarshal(a.basicConf, &m); err != nil {
 		return l8oss.ErrInvalid
 	}
-	connectTimeout = 30
-	readWriteTimeout = 60
 	if t, ok := config.Metadata[connectTimeoutSec]; ok {
-		v, err := strconv.Atoi(string(t))
-		if err == nil {
-			connectTimeout = int64(v)
+		if v, err := strconv.Atoi(string(t)); err == nil {
+			connectTimeout = v
 		}
 	}
 	if t, ok := config.Metadata[readWriteTimeoutSec]; ok {
-		v, err := strconv.Atoi(string(t))
-		if err == nil {
-			readWriteTimeout = int64(v)
+		if v, err := strconv.Atoi(string(t)); err == nil {
+			readWriteTimeout = v
 		}
 	}
 
-	client, err := oss.New(m.Endpoint, m.AccessKeyID, m.AccessKeySecret, oss.Timeout(connectTimeout, readWriteTimeout))
+	client, err := oss.New(m.Endpoint, m.AccessKeyID, m.AccessKeySecret, oss.Timeout(int64(connectTimeout), int64(readWriteTimeout)))
 	if err != nil {
 		return err
 	}
