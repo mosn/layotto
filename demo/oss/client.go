@@ -110,30 +110,48 @@ func TestPutObject(bucket, fileName string, value string) {
 	}
 }
 
+// TestListObjects connects to a gRPC service and lists objects in a bucket
+// under a specified store, by iterating through the objects in the bucket
+// using markers.
 func TestListObjects(bucket string) {
+	// Connect to the gRPC service.
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
+
+	// Create a new ObjectStorageServiceClient.
 	c := s3.NewObjectStorageServiceClient(conn)
+
+	// Initialize the marker to start at the beginning of the list.
 	marker := ""
+
+	// Iterate through the objects in the bucket using markers.
 	for {
+		// Create a new ListObjectsInput request with the store name, bucket name, max keys, and marker.
 		req := &s3.ListObjectsInput{StoreName: storeName, Bucket: bucket, MaxKeys: 2, Marker: marker}
+
+		// Send the ListObjects request to the service and get the response.
 		resp, err := c.ListObjects(context.Background(), req)
 		if err != nil {
 			fmt.Printf("list file fail, err: %+v", err)
 			return
 		}
+
+		// Set the marker to the value of NextMarker in the response.
 		marker = resp.NextMarker
+
+		// If the response is not truncated, print the objects in the bucket and return.
 		if !resp.IsTruncated {
 			fmt.Printf("files under bucket is: %+v, %+v \n", resp.Contents, marker)
 			fmt.Printf("finish list \n")
 			return
 		}
+
+		// If the response is truncated, print the objects in the bucket and continue iterating.
 		fmt.Printf("files under bucket is: %+v, %+v \n", resp.Contents, marker)
 	}
-
 }
 
 func TestDeleteObject(bucket, fileName string) {
