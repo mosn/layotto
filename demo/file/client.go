@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"log"
 	"os"
-
-	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"google.golang.org/grpc/codes"
 
