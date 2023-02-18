@@ -32,20 +32,32 @@ const (
 	storeName = "oss_demo"
 )
 
+// TestGetObjectInput retrieves an object from an S3-compatible object storage service.
+// Parameters:
+// - bucket: the name of the bucket to which the object belongs.
+// - fileName: the name of the object to retrieve
 func TestGetObjectInput(bucket, fileName string) {
+	// Connect to the object store.
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
-		fmt.Printf("conn build failed,err:%+v", err)
+		fmt.Printf("failed to establish connection: %+v", err)
 		return
 	}
 
+	// Create a client for the object store.
 	c := s3.NewObjectStorageServiceClient(conn)
+
+	// Create a request to get an object from the specified bucket.
 	req := &s3.GetObjectInput{StoreName: storeName, Bucket: bucket, Key: fileName}
+
+	// Retrieve the object using the client and the request.
 	cli, err := c.GetObject(context.Background(), req)
 	if err != nil {
-		fmt.Printf("get file error: %+v", err)
+		fmt.Printf("failed to retrieve object: %+v", err)
 		return
 	}
+
+	// Read the object data into a byte array.
 	pic := make([]byte, 0)
 	for {
 		resp, err := cli.Recv()
@@ -57,24 +69,41 @@ func TestGetObjectInput(bucket, fileName string) {
 		}
 		pic = append(pic, resp.Body...)
 	}
+
+	// Convert and print the byte array as a string.
 	fmt.Println(string(pic))
 }
 
+// TestPutObject puts an object into an S3 bucket with the given filename and value.
 func TestPutObject(bucket, fileName string, value string) {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
+
+	// Check if there's an error in connecting to the server
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
+
+	// Create an S3 object storage service client
 	c := s3.NewObjectStorageServiceClient(conn)
+
+	// Create a PutObjectInput object with the given parameters
 	req := &s3.PutObjectInput{StoreName: storeName, Bucket: bucket, Key: fileName}
+
+	// Send a stream of PutObject requests to the server
 	stream, err := c.PutObject(context.TODO())
 	if err != nil {
 		fmt.Printf("put file failed:%+v", err)
 		return
 	}
+
+	// Set the body of the request to the value provided
 	req.Body = []byte(value)
+
+	// Send the request to the server
 	stream.Send(req)
+
+	// Close the stream and wait for the response
 	_, err = stream.CloseAndRecv()
 	if err != nil {
 		fmt.Printf("cannot receive response: %+v", err)
