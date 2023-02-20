@@ -18,8 +18,9 @@ package oss
 
 import (
 	"context"
-	"mosn.io/layotto/components/pkg/info"
 	"testing"
+
+	"mosn.io/layotto/components/pkg/info"
 )
 
 type mockOss struct{}
