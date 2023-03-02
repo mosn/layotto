@@ -64,5 +64,5 @@ func (r *registry) Create(compType string) (Oss, error) {
 		r.info.LoadComponent(ServiceName, compType)
 		return f(), nil
 	}
-	return nil, fmt.Errorf("service component %s is not regsitered", compType)
+	return nil, fmt.Errorf("service component %s is not registered", compType)
 }
