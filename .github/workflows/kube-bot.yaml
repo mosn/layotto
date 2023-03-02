@@ -1,4 +1,4 @@
-name: Kube Prow Bot
+name: Layotto Env Pipeline 🌊
 on:
   issue_comment:
     types:
