@@ -21,6 +21,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/consul/api v1.3.0
+	github.com/huaweicloud/huaweicloud-sdk-go-obs v3.22.11+incompatible
 	github.com/jarcoal/httpmock v1.2.0
 	github.com/jinzhu/copier v0.3.6-0.20220506024824-3e39b055319a
 	github.com/minio/minio-go/v7 v7.0.15
@@ -110,7 +111,6 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/serf v0.8.2 // indirect
-	github.com/huaweicloud/huaweicloud-sdk-go-obs v3.22.11+incompatible // indirect
 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
 	github.com/jcmturner/gofork v1.0.0 // indirect
