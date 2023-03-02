@@ -6,7 +6,7 @@ on:
 
 jobs:
   stale:
-    name: "🍀 Update Stale Status"
+    name: "Update Stale Status"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/stale@v4
