@@ -6,7 +6,7 @@ on:
 
 jobs:
   analyse:
-    name: 🍀 CodeQL
+    name: CodeQL
     runs-on: ubuntu-latest
 
     steps:
