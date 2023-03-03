@@ -157,6 +157,7 @@ jobs:
           AUTHOR: ${{ github.event.pull_request.user.login }}
           MESSAGE: ${{ github.event.review.body }}
           ISSUE_NUMBER: ${{ github.event.pull_request.number }}
+          PR_STATE: ${{ github.event.review.state }}
           AUTHOR_ASSOCIATION: ${{ github.event.comment.author_association }}
           ISSUE_KIND: pr
           TYPE: comment
