@@ -19,6 +19,9 @@ on:
     types:
       - opened
 
+  schedule:
+    - cron: '*/5 * * * *'
+
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_target
   pull_request_target:
     types:
@@ -176,3 +179,9 @@ jobs:
           AUTHOR_ASSOCIATION: ${{ github.event.comment.author_association }}
           ISSUE_KIND: pr
           TYPE: comment
+
+      - name: Merge PR
+        uses: Xunzhuo/prowox@v1.0.0
+        if: ${{ github.event_name == 'schedule' }}
+        env:
+          TYPE: schedule
