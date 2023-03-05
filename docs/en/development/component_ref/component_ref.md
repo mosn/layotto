@@ -2,28 +2,28 @@
 
 ### Background
 
-When a component is initialized, it needs to refer to the ability of other components. For example, when the sequencer component is initialized, it needs to read the relevant configuration from the config component, so as to realize the reference between components.
+When a component starts, it may need to use another component's skill. For example, when the `sequencer` component `A` starts, it needs to read its settings from the `config` component `B`.
 
+To make this happen, layotto offers the "component reference" feature. This feature lets component A use the features of component B.
 ### Related Designs
 
-Currently, only two component types that need to be applied most are supported: ConfigStore and SecretStore, that is, configuration components and secret key components.
-Ref interface design, components need to implement this interface to achieve injection.
+Currently, other components can only reference two types of components: ConfigStore and SecretStore. These are used to get configuration and secret keys. 
+
+The "referenced" components must implement the interface :
 
 ```go
 type SetComponent interface {
-SetConfigStore(cs configstores.Store) (err error)
-SetSecretStore(ss secretstores.SecretStore) (err error)
+    SetConfigStore(cs configstores.Store) (err error)
+    SetSecretStore(ss secretstores.SecretStore) (err error)
 }
 ```
-
-The old components do not adapt to this interface. Users who have injection requirements can implement the injection by implementing the Ref interface.
 
 ### How to configure
 
 You can refer to the configuration file: `configs/config_ref_example.json`, configure the components to be used in the component configuration, and then inject them into the component when the component is initialized.
 
 ### How to use
-If we want to develop a helloword component, it needs to read the secret key from the secret store (for example, to obtain the key to connect to the database) and read the configuration from the config store (for example, to read the IP address of the database to connect to the database) when it starts, then how should we develop the helloword component?
+Suppose we are developing a helloword component, it needs to read the secret key from the secret store (for example, to obtain the key to connect to the database) and read the configuration from the config store (for example, to read the IP address of the database to connect to the database) when it starts, then how should we develop the helloword component?
 
 Take the `helloword` component as an example. First, the `helloword` component needs to implement the `SetConfigStore` and `SetSecretStore` interfaces. The interface implementation is the user's own logic, for example:
 
