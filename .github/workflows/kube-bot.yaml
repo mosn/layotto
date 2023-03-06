@@ -20,7 +20,9 @@ on:
       - opened
 
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 * * * *'
+
+  workflow_dispatch:
 
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_target
   pull_request_target:
@@ -182,6 +184,6 @@ jobs:
 
       - name: Merge PR
         uses: Xunzhuo/prowox@v1.0.0
-        if: ${{ github.event_name == 'schedule' }}
+        if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
         env:
           TYPE: schedule
