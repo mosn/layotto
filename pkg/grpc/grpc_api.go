@@ -17,6 +17,8 @@
 package grpc
 
 import (
+	"context"
+
 	"google.golang.org/grpc"
 )
 
@@ -24,7 +26,7 @@ import (
 type GrpcAPI interface {
 	// init this API before binding it to the grpc server.
 	// For example,you can call app to query their subscriptions.
-	Init(conn *grpc.ClientConn) error
+	Init(ctx context.Context, conn *grpc.ClientConn) error
 
 	// Bind this API to the grpc server
 	Register(rawGrpcServer *grpc.Server) error

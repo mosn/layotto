@@ -75,7 +75,7 @@ func TestNewDaprAPI_Alpha(t *testing.T) {
 			}
 			return &bindings.InvokeResponse{Data: []byte("ok")}, nil
 		}})
-	err := grpcAPI.Init(nil)
+	err := grpcAPI.Init(context.Background(), nil)
 	if err != nil {
 		t.Errorf("grpcAPI.Init error")
 		return

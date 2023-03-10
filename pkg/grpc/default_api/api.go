@@ -90,10 +90,10 @@ type api struct {
 	json jsoniter.API
 }
 
-func (a *api) Init(conn *grpc.ClientConn) error {
+func (a *api) Init(ctx context.Context, conn *grpc.ClientConn) error {
 	// 1. set connection
 	a.AppCallbackConn = conn
-	return a.startSubscribing()
+	return a.startSubscribing(ctx)
 }
 
 func (a *api) Register(rawGrpcServer *grpc.Server) error {

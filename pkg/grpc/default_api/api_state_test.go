@@ -70,7 +70,7 @@ func TestSaveState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().BulkSet(gomock.Any()).DoAndReturn(func(reqs []state.SetRequest) error {
+		mockStore.EXPECT().BulkSet(context.Background(), gomock.Any()).DoAndReturn(func(ctx context.Context, reqs []state.SetRequest) error {
 			assert.Equal(t, 1, len(reqs))
 			assert.Equal(t, "abc", reqs[0].Key)
 			assert.Equal(t, []byte("mock data"), reqs[0].Value)
@@ -93,7 +93,7 @@ func TestSaveState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().BulkSet(gomock.Any()).DoAndReturn(func(reqs []state.SetRequest) error {
+		mockStore.EXPECT().BulkSet(context.Background(), gomock.Any()).DoAndReturn(func(ctx context.Context, reqs []state.SetRequest) error {
 			assert.Equal(t, 1, len(reqs))
 			assert.Equal(t, "abc", reqs[0].Key)
 			assert.Equal(t, []byte("mock data"), reqs[0].Value)
@@ -122,7 +122,7 @@ func TestSaveState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().BulkSet(gomock.Any()).DoAndReturn(func(reqs []state.SetRequest) error {
+		mockStore.EXPECT().BulkSet(context.Background(), gomock.Any()).DoAndReturn(func(ctx context.Context, reqs []state.SetRequest) error {
 			assert.Equal(t, 1, len(reqs))
 			assert.Equal(t, "abc", reqs[0].Key)
 			assert.Equal(t, []byte("mock data"), reqs[0].Value)
@@ -152,7 +152,7 @@ func TestSaveState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().BulkSet(gomock.Any()).Return(fmt.Errorf("net error"))
+		mockStore.EXPECT().BulkSet(context.Background(), gomock.Any()).Return(fmt.Errorf("net error"))
 		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.SaveStateRequest{
 			StoreName: "mock",
@@ -172,7 +172,7 @@ func TestSaveState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().BulkSet(gomock.Any()).Return(state.NewETagError(state.ETagInvalid, nil))
+		mockStore.EXPECT().BulkSet(context.Background(), gomock.Any()).Return(state.NewETagError(state.ETagInvalid, nil))
 		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.SaveStateRequest{
 			StoreName: "mock",
@@ -192,7 +192,7 @@ func TestSaveState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().BulkSet(gomock.Any()).Return(state.NewETagError(state.ETagMismatch, nil))
+		mockStore.EXPECT().BulkSet(context.Background(), gomock.Any()).Return(state.NewETagError(state.ETagMismatch, nil))
 		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.SaveStateRequest{
 			StoreName: "mock",
@@ -226,7 +226,7 @@ func TestGetBulkState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().BulkGet(gomock.Any()).Return(false, nil, fmt.Errorf("net error"))
+		mockStore.EXPECT().BulkGet(context.Background(), gomock.Any()).Return(false, nil, fmt.Errorf("net error"))
 		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.GetBulkStateRequest{
 			StoreName: "mock",
@@ -247,7 +247,7 @@ func TestGetBulkState(t *testing.T) {
 				Metadata: nil,
 			},
 		}
-		mockStore.EXPECT().BulkGet(gomock.Any()).Return(true, compResp, nil)
+		mockStore.EXPECT().BulkGet(context.Background(), gomock.Any()).Return(true, compResp, nil)
 		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.GetBulkStateRequest{
 			StoreName: "mock",
@@ -272,9 +272,9 @@ func TestGetBulkState(t *testing.T) {
 			Data:     []byte("mock data2"),
 			Metadata: nil,
 		}
-		mockStore.EXPECT().BulkGet(gomock.Any()).Return(false, nil, nil)
-		mockStore.EXPECT().Get(gomock.Any()).Return(resp1, nil)
-		mockStore.EXPECT().Get(gomock.Any()).Return(resp2, nil)
+		mockStore.EXPECT().BulkGet(context.Background(), gomock.Any()).Return(false, nil, nil)
+		mockStore.EXPECT().Get(context.Background(), gomock.Any()).Return(resp1, nil)
+		mockStore.EXPECT().Get(context.Background(), gomock.Any()).Return(resp2, nil)
 		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.GetBulkStateRequest{
 			StoreName: "mock",
@@ -326,7 +326,7 @@ func TestGetState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().Get(gomock.Any()).Return(nil, fmt.Errorf("net error"))
+		mockStore.EXPECT().Get(context.Background(), gomock.Any()).Return(nil, fmt.Errorf("net error"))
 		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.GetStateRequest{
 			StoreName: "mock",
@@ -345,7 +345,7 @@ func TestGetState(t *testing.T) {
 			Data:     []byte("mock data"),
 			Metadata: nil,
 		}
-		mockStore.EXPECT().Get(gomock.Any()).Return(compResp, nil)
+		mockStore.EXPECT().Get(context.Background(), gomock.Any()).Return(compResp, nil)
 		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.GetStateRequest{
 			StoreName: "mock",
@@ -363,7 +363,7 @@ func TestDeleteState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().Delete(gomock.Any()).DoAndReturn(func(req *state.DeleteRequest) error {
+		mockStore.EXPECT().Delete(context.Background(), gomock.Any()).DoAndReturn(func(ctx context.Context, req *state.DeleteRequest) error {
 			assert.Equal(t, "abc", req.Key)
 			return nil
 		})
@@ -380,7 +380,7 @@ func TestDeleteState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().Delete(gomock.Any()).Return(fmt.Errorf("net error"))
+		mockStore.EXPECT().Delete(context.Background(), gomock.Any()).Return(fmt.Errorf("net error"))
 		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.DeleteStateRequest{
 			StoreName: "mock",
@@ -397,7 +397,7 @@ func TestDeleteBulkState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().BulkDelete(gomock.Any()).DoAndReturn(func(reqs []state.DeleteRequest) error {
+		mockStore.EXPECT().BulkDelete(context.Background(), gomock.Any()).DoAndReturn(func(ctx context.Context, reqs []state.DeleteRequest) error {
 			assert.Equal(t, "abc", reqs[0].Key)
 			return nil
 		})
@@ -418,7 +418,7 @@ func TestDeleteBulkState(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockStore := mock_state.NewMockStore(ctrl)
 		mockStore.EXPECT().Features().Return(nil)
-		mockStore.EXPECT().BulkDelete(gomock.Any()).Return(fmt.Errorf("net error"))
+		mockStore.EXPECT().BulkDelete(context.Background(), gomock.Any()).Return(fmt.Errorf("net error"))
 		api := NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.DeleteBulkStateRequest{
 			StoreName: "mock",
@@ -471,7 +471,7 @@ func TestExecuteStateTransaction(t *testing.T) {
 		mockStore.EXPECT().Features().Return([]state.Feature{state.FeatureTransactional})
 
 		mockTxStore := mock_state.NewMockTransactionalStore(gomock.NewController(t))
-		mockTxStore.EXPECT().Multi(gomock.Any()).DoAndReturn(func(req *state.TransactionalStateRequest) error {
+		mockTxStore.EXPECT().Multi(context.Background(), gomock.Any()).DoAndReturn(func(ctx context.Context, req *state.TransactionalStateRequest) error {
 			assert.Equal(t, 2, len(req.Operations))
 			assert.Equal(t, "mosn", req.Metadata["runtime"])
 			assert.Equal(t, state.Upsert, req.Operations[0].Operation)
@@ -519,7 +519,7 @@ func TestExecuteStateTransaction(t *testing.T) {
 		mockStore.EXPECT().Features().Return([]state.Feature{state.FeatureTransactional})
 
 		mockTxStore := mock_state.NewMockTransactionalStore(gomock.NewController(t))
-		mockTxStore.EXPECT().Multi(gomock.Any()).Return(fmt.Errorf("net error"))
+		mockTxStore.EXPECT().Multi(context.Background(), gomock.Any()).Return(fmt.Errorf("net error"))
 
 		store := &MockTxStore{
 			mockStore,

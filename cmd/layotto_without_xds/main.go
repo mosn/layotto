@@ -84,7 +84,7 @@ import (
 	pubsub_hazelcast "github.com/dapr/components-contrib/pubsub/hazelcast"
 	pubsub_inmemory "github.com/dapr/components-contrib/pubsub/in-memory"
 	pubsub_kafka "github.com/dapr/components-contrib/pubsub/kafka"
-	pubsub_mqtt "github.com/dapr/components-contrib/pubsub/mqtt"
+	pubsub_mqtt "github.com/dapr/components-contrib/pubsub/mqtt3"
 	"github.com/dapr/components-contrib/pubsub/natsstreaming"
 	pubsub_pulsar "github.com/dapr/components-contrib/pubsub/pulsar"
 	"github.com/dapr/components-contrib/pubsub/rabbitmq"
@@ -107,7 +107,6 @@ import (
 	state_cosmosdb "github.com/dapr/components-contrib/state/azure/cosmosdb"
 	state_azure_tablestorage "github.com/dapr/components-contrib/state/azure/tablestorage"
 	"github.com/dapr/components-contrib/state/cassandra"
-	"github.com/dapr/components-contrib/state/cloudstate"
 	"github.com/dapr/components-contrib/state/couchbase"
 	"github.com/dapr/components-contrib/state/gcp/firestore"
 	"github.com/dapr/components-contrib/state/hashicorp/consul"
@@ -361,9 +360,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_state.NewFactory("hazelcast", func() state.Store {
 				return hazelcast.NewHazelcastStore(loggerForDaprComp)
 			}),
-			runtime_state.NewFactory("cloudstate.crdt", func() state.Store {
-				return cloudstate.NewCRDT(loggerForDaprComp)
-			}),
 			runtime_state.NewFactory("couchbase", func() state.Store {
 				return couchbase.NewCouchbaseStateStore(loggerForDaprComp)
 			}),
@@ -373,7 +369,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_state.NewFactory("rethinkdb", func() state.Store {
 				return rethinkdb.NewRethinkDBStateStore(loggerForDaprComp)
 			}),
-			runtime_state.NewFactory("aws.dynamodb", state_dynamodb.NewDynamoDBStateStore),
+			runtime_state.NewFactory("aws.dynamodb", func() state.Store {
+				return state_dynamodb.NewDynamoDBStateStore(loggerForDaprComp)
+			}),
 			runtime_state.NewFactory("mysql", func() state.Store {
 				return state_mysql.NewMySQLStateStore(loggerForDaprComp)
 			}),

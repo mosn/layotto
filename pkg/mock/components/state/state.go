@@ -5,6 +5,7 @@
 package mock_state
 
 import (
+	context "context"
 	reflect "reflect"
 
 	state "github.com/dapr/components-contrib/state"
@@ -35,23 +36,23 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 }
 
 // BulkDelete mocks base method.
-func (m *MockStore) BulkDelete(arg0 []state.DeleteRequest) error {
+func (m *MockStore) BulkDelete(arg0 context.Context, arg1 []state.DeleteRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "BulkDelete", arg0)
+	ret := m.ctrl.Call(m, "BulkDelete", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // BulkDelete indicates an expected call of BulkDelete.
-func (mr *MockStoreMockRecorder) BulkDelete(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) BulkDelete(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkDelete", reflect.TypeOf((*MockStore)(nil).BulkDelete), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkDelete", reflect.TypeOf((*MockStore)(nil).BulkDelete), arg0, arg1)
 }
 
 // BulkGet mocks base method.
-func (m *MockStore) BulkGet(arg0 []state.GetRequest) (bool, []state.BulkGetResponse, error) {
+func (m *MockStore) BulkGet(arg0 context.Context, arg1 []state.GetRequest) (bool, []state.BulkGetResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "BulkGet", arg0)
+	ret := m.ctrl.Call(m, "BulkGet", arg0, arg1)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].([]state.BulkGetResponse)
 	ret2, _ := ret[2].(error)
@@ -59,45 +60,37 @@ func (m *MockStore) BulkGet(arg0 []state.GetRequest) (bool, []state.BulkGetRespo
 }
 
 // BulkGet indicates an expected call of BulkGet.
-func (mr *MockStoreMockRecorder) BulkGet(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) BulkGet(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkGet", reflect.TypeOf((*MockStore)(nil).BulkGet), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkGet", reflect.TypeOf((*MockStore)(nil).BulkGet), arg0, arg1)
 }
 
 // BulkSet mocks base method.
-func (m *MockStore) BulkSet(arg0 []state.SetRequest) error {
+func (m *MockStore) BulkSet(arg0 context.Context, arg1 []state.SetRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "BulkSet", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// BulkSet mocks base method.
-func (m *MockStore) Ping() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Ping")
+	ret := m.ctrl.Call(m, "BulkSet", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // BulkSet indicates an expected call of BulkSet.
-func (mr *MockStoreMockRecorder) BulkSet(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) BulkSet(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkSet", reflect.TypeOf((*MockStore)(nil).BulkSet), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkSet", reflect.TypeOf((*MockStore)(nil).BulkSet), arg0, arg1)
 }
 
 // Delete mocks base method.
-func (m *MockStore) Delete(arg0 *state.DeleteRequest) error {
+func (m *MockStore) Delete(arg0 context.Context, arg1 *state.DeleteRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", arg0)
+	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockStoreMockRecorder) Delete(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockStore)(nil).Delete), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockStore)(nil).Delete), arg0, arg1)
 }
 
 // Features mocks base method.
@@ -115,18 +108,32 @@ func (mr *MockStoreMockRecorder) Features() *gomock.Call {
 }
 
 // Get mocks base method.
-func (m *MockStore) Get(arg0 *state.GetRequest) (*state.GetResponse, error) {
+func (m *MockStore) Get(arg0 context.Context, arg1 *state.GetRequest) (*state.GetResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", arg0)
+	ret := m.ctrl.Call(m, "Get", arg0, arg1)
 	ret0, _ := ret[0].(*state.GetResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockStoreMockRecorder) Get(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockStore)(nil).Get), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockStore)(nil).Get), arg0, arg1)
+}
+
+// GetComponentMetadata mocks base method.
+func (m *MockStore) GetComponentMetadata() map[string]string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetComponentMetadata")
+	ret0, _ := ret[0].(map[string]string)
+	return ret0
+}
+
+// GetComponentMetadata indicates an expected call of GetComponentMetadata.
+func (mr *MockStoreMockRecorder) GetComponentMetadata() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetComponentMetadata", reflect.TypeOf((*MockStore)(nil).GetComponentMetadata))
 }
 
 // Init mocks base method.
@@ -144,17 +151,17 @@ func (mr *MockStoreMockRecorder) Init(arg0 interface{}) *gomock.Call {
 }
 
 // Set mocks base method.
-func (m *MockStore) Set(arg0 *state.SetRequest) error {
+func (m *MockStore) Set(arg0 context.Context, arg1 *state.SetRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Set", arg0)
+	ret := m.ctrl.Call(m, "Set", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Set indicates an expected call of Set.
-func (mr *MockStoreMockRecorder) Set(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) Set(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockStore)(nil).Set), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockStore)(nil).Set), arg0, arg1)
 }
 
 // MockTransactionalStore is a mock of TransactionalStore interface.
@@ -195,15 +202,15 @@ func (mr *MockTransactionalStoreMockRecorder) Init(arg0 interface{}) *gomock.Cal
 }
 
 // Multi mocks base method.
-func (m *MockTransactionalStore) Multi(arg0 *state.TransactionalStateRequest) error {
+func (m *MockTransactionalStore) Multi(arg0 context.Context, arg1 *state.TransactionalStateRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Multi", arg0)
+	ret := m.ctrl.Call(m, "Multi", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Multi indicates an expected call of Multi.
-func (mr *MockTransactionalStoreMockRecorder) Multi(arg0 interface{}) *gomock.Call {
+func (mr *MockTransactionalStoreMockRecorder) Multi(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Multi", reflect.TypeOf((*MockTransactionalStore)(nil).Multi), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Multi", reflect.TypeOf((*MockTransactionalStore)(nil).Multi), arg0, arg1)
 }

@@ -60,7 +60,7 @@ func NewS3Server(ac *grpc.ApplicationContext) grpc.GrpcAPI {
 	return s3Instance
 }
 
-func (s *S3Server) Init(conn *rawGRPC.ClientConn) error {
+func (s *S3Server) Init(ctx context.Context, conn *rawGRPC.ClientConn) error {
 	return nil
 }
 

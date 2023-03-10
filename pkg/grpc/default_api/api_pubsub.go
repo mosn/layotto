@@ -48,7 +48,7 @@ func (a *api) PublishEvent(ctx context.Context, in *runtimev1pb.PublishEventRequ
 	return a.daprAPI.PublishEvent(ctx, p)
 }
 
-func (a *api) startSubscribing() error {
+func (a *api) startSubscribing(ctx context.Context) error {
 	// 1. check if there is no need to do it
 	if len(a.pubSubs) == 0 {
 		return nil
@@ -64,14 +64,14 @@ func (a *api) startSubscribing() error {
 	}
 	// 3. loop subscribe
 	for name, pubsub := range a.pubSubs {
-		if err := a.beginPubSub(name, pubsub, topicRoutes); err != nil {
+		if err := a.beginPubSub(ctx, name, pubsub, topicRoutes); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (a *api) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[string]TopicSubscriptions) error {
+func (a *api) beginPubSub(ctx context.Context, pubsubName string, ps pubsub.PubSub, topicRoutes map[string]TopicSubscriptions) error {
 	// 1. call app to find topic topic2Details.
 	v, ok := topicRoutes[pubsubName]
 	if !ok {
@@ -82,7 +82,7 @@ func (a *api) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[s
 		// TODO limit topic scope
 		log.DefaultLogger.Debugf("[runtime][beginPubSub]subscribing to topic=%s on pubsub=%s", topic, pubsubName)
 		// ask component to subscribe
-		if err := ps.Subscribe(pubsub.SubscribeRequest{
+		if err := ps.Subscribe(ctx, pubsub.SubscribeRequest{
 			Topic:    topic,
 			Metadata: route.metadata,
 		}, func(ctx context.Context, msg *pubsub.NewMessage) error {

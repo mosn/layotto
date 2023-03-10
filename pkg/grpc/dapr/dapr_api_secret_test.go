@@ -119,7 +119,7 @@ func TestNewDaprAPI_GetSecretStores(t *testing.T) {
 	// Setup Dapr API server
 	grpcAPI := NewDaprAPI_Alpha(&grpc_api.ApplicationContext{
 		SecretStores: fakeStores})
-	err := grpcAPI.Init(nil)
+	err := grpcAPI.Init(context.Background(), nil)
 	if err != nil {
 		t.Errorf("grpcAPI.Init error")
 		return
@@ -192,7 +192,7 @@ func TestGetBulkSecret(t *testing.T) {
 	grpcAPI := NewDaprAPI_Alpha(&grpc_api.ApplicationContext{
 		SecretStores: fakeStores})
 	// Run test server
-	err := grpcAPI.Init(nil)
+	err := grpcAPI.Init(context.Background(), nil)
 	if err != nil {
 		t.Errorf("grpcAPI.Init error")
 		return

@@ -73,7 +73,7 @@ func TestPublishEvent(t *testing.T) {
 	t.Run("publish success", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockPubSub := mock_pubsub.NewMockPubSub(ctrl)
-		mockPubSub.EXPECT().Publish(gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Publish(context.Background(), gomock.Any()).Return(nil)
 		mockPubSub.EXPECT().Features().Return(nil)
 		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.PublishEventRequest{
@@ -87,7 +87,7 @@ func TestPublishEvent(t *testing.T) {
 	t.Run("publish net error", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockPubSub := mock_pubsub.NewMockPubSub(ctrl)
-		mockPubSub.EXPECT().Publish(gomock.Any()).Return(fmt.Errorf("net error"))
+		mockPubSub.EXPECT().Publish(context.Background(), gomock.Any()).Return(fmt.Errorf("net error"))
 		mockPubSub.EXPECT().Features().Return(nil)
 		api := NewAPI("", nil, nil, nil, map[string]pubsub.PubSub{"mock": mockPubSub}, nil, nil, nil, nil, nil, nil)
 		req := &runtimev1pb.PublishEventRequest{

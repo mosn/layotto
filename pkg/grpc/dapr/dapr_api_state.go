@@ -52,7 +52,7 @@ func (d *daprGrpcAPI) SaveState(ctx context.Context, in *dapr_v1pb.SaveStateRequ
 		reqs = append(reqs, *StateItem2SetRequest(s, key))
 	}
 	// 3. query
-	err = store.BulkSet(reqs)
+	err = store.BulkSet(ctx, reqs)
 	// 4. check result
 	if err != nil {
 		err = d.wrapDaprComponentError(err, messages.ErrStateSave, in.StoreName, err.Error())
@@ -83,7 +83,7 @@ func (d *daprGrpcAPI) GetState(ctx context.Context, request *dapr_v1pb.GetStateR
 		},
 	}
 	// 3. query
-	compResp, err := store.Get(req)
+	compResp, err := store.Get(ctx, req)
 	// 4. check result
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrStateGet, request.Key, request.StoreName, err.Error())
@@ -121,7 +121,7 @@ func (d *daprGrpcAPI) GetBulkState(ctx context.Context, request *dapr_v1pb.GetBu
 		reqs[i] = r
 	}
 	// 2.2. query
-	support, responses, err := store.BulkGet(reqs)
+	support, responses, err := store.BulkGet(ctx, reqs)
 	if err != nil {
 		return bulkResp, err
 	}
@@ -138,7 +138,7 @@ func (d *daprGrpcAPI) GetBulkState(ctx context.Context, request *dapr_v1pb.GetBu
 	pool := workerpool.New(int(request.Parallelism))
 	resultCh := make(chan *dapr_v1pb.BulkStateItem, n)
 	for i := 0; i < n; i++ {
-		pool.Submit(generateGetStateTask(store, &reqs[i], resultCh))
+		pool.Submit(generateGetStateTask(ctx, store, &reqs[i], resultCh))
 	}
 	pool.StopWait()
 	for {
@@ -182,7 +182,7 @@ func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *dapr_v1pb.Q
 	req.Metadata = request.GetMetadata()
 
 	// 4. delegate to the store
-	resp, err := querier.Query(&req)
+	resp, err := querier.Query(ctx, &req)
 	// 5. convert response
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrStateQuery, request.GetStoreName(), err.Error())
@@ -219,7 +219,7 @@ func (d *daprGrpcAPI) DeleteState(ctx context.Context, request *dapr_v1pb.Delete
 		return &empty.Empty{}, err
 	}
 	// 3. convert and send request
-	err = store.Delete(DeleteStateRequest2DeleteRequest(request, key))
+	err = store.Delete(ctx, DeleteStateRequest2DeleteRequest(request, key))
 	// 4. check result
 	if err != nil {
 		err = d.wrapDaprComponentError(err, messages.ErrStateDelete, request.Key, err.Error())
@@ -246,7 +246,7 @@ func (d *daprGrpcAPI) DeleteBulkState(ctx context.Context, request *dapr_v1pb.De
 		reqs = append(reqs, *StateItem2DeleteRequest(item, key))
 	}
 	// 3. send request
-	err = store.BulkDelete(reqs)
+	err = store.BulkDelete(ctx, reqs)
 	// 4. check result
 	if err != nil {
 		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteBulkState] error: %v", err)
@@ -310,7 +310,7 @@ func (d *daprGrpcAPI) ExecuteStateTransaction(ctx context.Context, request *dapr
 		operations = append(operations, operation)
 	}
 	// 4. submit transactional request
-	err := store.Multi(&state.TransactionalStateRequest{
+	err := store.Multi(ctx, &state.TransactionalStateRequest{
 		Operations: operations,
 		Metadata:   request.Metadata,
 	})
@@ -413,10 +413,10 @@ func (d *daprGrpcAPI) wrapDaprComponentError(err error, format string, args ...i
 	return status.Errorf(codes.Internal, format, args...)
 }
 
-func generateGetStateTask(store state.Store, req *state.GetRequest, resultCh chan *dapr_v1pb.BulkStateItem) func() {
+func generateGetStateTask(ctx context.Context, store state.Store, req *state.GetRequest, resultCh chan *dapr_v1pb.BulkStateItem) func() {
 	return func() {
 		// get
-		r, err := store.Get(req)
+		r, err := store.Get(ctx, req)
 		// convert
 		var item *dapr_v1pb.BulkStateItem
 		if err != nil {

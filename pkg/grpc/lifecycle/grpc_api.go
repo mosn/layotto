@@ -77,7 +77,7 @@ func invalidArgumentError(format string, a ...interface{}) error {
 	return err
 }
 
-func (s *server) Init(conn *rawGRPC.ClientConn) error {
+func (s *server) Init(ctx context.Context, conn *rawGRPC.ClientConn) error {
 	return nil
 }
 

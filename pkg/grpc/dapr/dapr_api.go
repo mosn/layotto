@@ -72,10 +72,10 @@ type daprGrpcAPI struct {
 	json jsoniter.API
 }
 
-func (d *daprGrpcAPI) Init(conn *grpc.ClientConn) error {
+func (d *daprGrpcAPI) Init(ctx context.Context, conn *grpc.ClientConn) error {
 	// 1. set connection
 	d.AppCallbackConn = conn
-	return d.startSubscribing()
+	return d.startSubscribing(ctx)
 }
 
 func (d *daprGrpcAPI) Register(rawGrpcServer *grpc.Server) error {

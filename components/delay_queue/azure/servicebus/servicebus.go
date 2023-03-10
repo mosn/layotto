@@ -10,6 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package servicebus
 
 import (
@@ -17,7 +18,7 @@ import (
 	"net/http"
 	"time"
 
-	azservicebus "github.com/dapr/components-contrib/pubsub/azure/servicebus"
+	azservicebus "github.com/dapr/components-contrib/pubsub/azure/servicebus/queues"
 
 	delay_queue "mosn.io/layotto/components/delay_queue"
 
@@ -32,7 +33,7 @@ type azureServiceBus struct {
 // NewAzureServiceBus returns a new Azure ServiceBus pub-sub implementation.
 func NewAzureServiceBus(logger logger.Logger) pubsub.PubSub {
 	return &azureServiceBus{
-		PubSub: azservicebus.NewAzureServiceBus(logger),
+		PubSub: azservicebus.NewAzureServiceBusQueues(logger),
 	}
 }
 
@@ -40,7 +41,7 @@ func (a *azureServiceBus) PublishDelayMessage(ctx context.Context, request *dela
 	// convert ScheduledEnqueueTimeUtc
 	nowUtc := time.Now().UTC()
 	enqueueTime := nowUtc.Add(time.Second * time.Duration(request.DelayInSeconds))
-	request.Metadata["metadata.ScheduledEnqueueTimeUtc"] = enqueueTime.Format(http.TimeFormat)
+	request.Metadata["ScheduledEnqueueTimeUtc"] = enqueueTime.Format(http.TimeFormat)
 
 	req := &pubsub.PublishRequest{
 		Data:       request.Data,
@@ -48,6 +49,6 @@ func (a *azureServiceBus) PublishDelayMessage(ctx context.Context, request *dela
 		Topic:      request.Topic,
 		Metadata:   request.Metadata,
 	}
-	err := a.Publish(req)
+	err := a.Publish(ctx, req)
 	return nil, err
 }

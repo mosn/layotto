@@ -86,7 +86,7 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 	return &pb.HelloReply{Message: message}, nil
 }
 
-func (s *server) Init(conn *rawGRPC.ClientConn) error {
+func (s *server) Init(ctx context.Context, conn *rawGRPC.ClientConn) error {
 	return nil
 }
 

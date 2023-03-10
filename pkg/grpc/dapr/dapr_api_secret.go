@@ -54,7 +54,7 @@ func (d *daprGrpcAPI) GetSecret(ctx context.Context, request *runtime.GetSecretR
 		Name:     request.Key,
 		Metadata: request.Metadata,
 	}
-	getResponse, err := d.secretStores[secretStoreName].GetSecret(req)
+	getResponse, err := d.secretStores[secretStoreName].GetSecret(ctx, req)
 	// 4. parse result
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrSecretGet, req.Name, secretStoreName, err.Error())
@@ -87,7 +87,7 @@ func (d *daprGrpcAPI) GetBulkSecret(ctx context.Context, in *runtime.GetBulkSecr
 	req := secretstores.BulkGetSecretRequest{
 		Metadata: in.Metadata,
 	}
-	getResponse, err := d.secretStores[secretStoreName].BulkGetSecret(req)
+	getResponse, err := d.secretStores[secretStoreName].BulkGetSecret(ctx, req)
 	// 3. parse result
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrBulkSecretGet, secretStoreName, err.Error())

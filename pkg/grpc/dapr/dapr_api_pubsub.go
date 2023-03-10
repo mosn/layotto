@@ -82,14 +82,14 @@ func (d *daprGrpcAPI) doPublishEvent(ctx context.Context, pubsubName string, top
 	var envelope map[string]interface{}
 	var err error
 	if contenttype.IsCloudEventContentType(contentType) {
-		envelope, err = pubsub.FromCloudEvent(data, topic, pubsubName, "")
+		envelope, err = pubsub.FromCloudEvent(data, topic, pubsubName, "", "")
 		if err != nil {
 			err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
 			return &emptypb.Empty{}, err
 		}
 	} else {
 		envelope = pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", topic, pubsubName,
-			contentType, data, "")
+			contentType, data, "", "")
 	}
 	features := component.Features()
 	pubsub.ApplyMetadata(envelope, features, metadata)
@@ -108,7 +108,7 @@ func (d *daprGrpcAPI) doPublishEvent(ctx context.Context, pubsubName string, top
 	}
 
 	// TODO limit topic scope
-	err = component.Publish(&req)
+	err = component.Publish(ctx, &req)
 	if err != nil {
 		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, topic, pubsubName, err.Error())
 		return &emptypb.Empty{}, nerr
@@ -116,7 +116,7 @@ func (d *daprGrpcAPI) doPublishEvent(ctx context.Context, pubsubName string, top
 	return &emptypb.Empty{}, nil
 }
 
-func (d *daprGrpcAPI) startSubscribing() error {
+func (d *daprGrpcAPI) startSubscribing(ctx context.Context) error {
 	// 1. check if there is no need to do it
 	if len(d.pubSubs) == 0 {
 		return nil
@@ -132,7 +132,7 @@ func (d *daprGrpcAPI) startSubscribing() error {
 	}
 	// 3. loop subscribe
 	for name, pubsub := range d.pubSubs {
-		if err := d.beginPubSub(name, pubsub, topicRoutes); err != nil {
+		if err := d.beginPubSub(ctx, name, pubsub, topicRoutes); err != nil {
 			return err
 		}
 	}
@@ -183,7 +183,7 @@ func (d *daprGrpcAPI) getInterestedTopics() (map[string]TopicSubscriptions, erro
 	return comp2Topic, nil
 }
 
-func (d *daprGrpcAPI) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[string]TopicSubscriptions) error {
+func (d *daprGrpcAPI) beginPubSub(ctx context.Context, pubsubName string, ps pubsub.PubSub, topicRoutes map[string]TopicSubscriptions) error {
 	// 1. call app to find topic topic2Details.
 	v, ok := topicRoutes[pubsubName]
 	if !ok {
@@ -194,7 +194,7 @@ func (d *daprGrpcAPI) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRout
 		// TODO limit topic scope
 		log.DefaultLogger.Debugf("[runtime][beginPubSub]subscribing to topic=%s on pubsub=%s", topic, pubsubName)
 		// ask component to subscribe
-		if err := ps.Subscribe(pubsub.SubscribeRequest{
+		if err := ps.Subscribe(ctx, pubsub.SubscribeRequest{
 			Topic:    topic,
 			Metadata: route.metadata,
 		}, func(ctx context.Context, msg *pubsub.NewMessage) error {

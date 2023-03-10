@@ -17,6 +17,7 @@
 package mock_state
 
 import (
+	"context"
 	"fmt"
 	"sync"
 
@@ -63,7 +64,7 @@ func (store *inMemoryStore) Features() []state.Feature {
 	return []state.Feature{state.FeatureETag, state.FeatureTransactional}
 }
 
-func (store *inMemoryStore) Delete(req *state.DeleteRequest) error {
+func (store *inMemoryStore) Delete(ctx context.Context, req *state.DeleteRequest) error {
 	store.lock.Lock()
 	defer store.lock.Unlock()
 	delete(store.items, req.Key)
@@ -71,12 +72,12 @@ func (store *inMemoryStore) Delete(req *state.DeleteRequest) error {
 	return nil
 }
 
-func (store *inMemoryStore) BulkDelete(req []state.DeleteRequest) error {
+func (store *inMemoryStore) BulkDelete(ctx context.Context, req []state.DeleteRequest) error {
 	if len(req) == 0 {
 		return nil
 	}
 	for _, dr := range req {
-		err := store.Delete(&dr)
+		err := store.Delete(ctx, &dr)
 		if err != nil {
 			store.log.Error(err)
 			return err
@@ -85,7 +86,7 @@ func (store *inMemoryStore) BulkDelete(req []state.DeleteRequest) error {
 	return nil
 }
 
-func (store *inMemoryStore) Get(req *state.GetRequest) (*state.GetResponse, error) {
+func (store *inMemoryStore) Get(ctx context.Context, req *state.GetRequest) (*state.GetResponse, error) {
 	store.lock.RLock()
 	defer store.lock.RUnlock()
 	item := store.items[req.Key]
@@ -100,10 +101,10 @@ func (store *inMemoryStore) Get(req *state.GetRequest) (*state.GetResponse, erro
 	}
 }
 
-func (store *inMemoryStore) BulkGet(req []state.GetRequest) (bool, []state.BulkGetResponse, error) {
+func (store *inMemoryStore) BulkGet(ctx context.Context, req []state.GetRequest) (bool, []state.BulkGetResponse, error) {
 	res := []state.BulkGetResponse{}
 	for _, oneRequest := range req {
-		oneResponse, err := store.Get(&state.GetRequest{
+		oneResponse, err := store.Get(ctx, &state.GetRequest{
 			Key:      oneRequest.Key,
 			Metadata: oneRequest.Metadata,
 			Options:  oneRequest.Options,
@@ -123,7 +124,7 @@ func (store *inMemoryStore) BulkGet(req []state.GetRequest) (bool, []state.BulkG
 	return true, res, nil
 }
 
-func (store *inMemoryStore) Set(req *state.SetRequest) error {
+func (store *inMemoryStore) Set(ctx context.Context, req *state.SetRequest) error {
 	b, _ := marshal(req.Value)
 	store.lock.Lock()
 	defer store.lock.Unlock()
@@ -132,9 +133,9 @@ func (store *inMemoryStore) Set(req *state.SetRequest) error {
 	return nil
 }
 
-func (store *inMemoryStore) BulkSet(req []state.SetRequest) error {
+func (store *inMemoryStore) BulkSet(ctx context.Context, req []state.SetRequest) error {
 	for _, r := range req {
-		err := store.Set(&r)
+		err := store.Set(ctx, &r)
 		if err != nil {
 			store.log.Error(err)
 			return err
@@ -180,6 +181,10 @@ func (store *inMemoryStore) Multi(request *state.TransactionalStateRequest) erro
 		}
 	}
 
+	return nil
+}
+
+func (store *inMemoryStore) GetComponentMetadata() map[string]string {
 	return nil
 }
 
