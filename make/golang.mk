@@ -28,7 +28,7 @@ ifeq ($(ROOT_PACKAGE),)
 	$(error the variable ROOT_PACKAGE must be set prior to including golang.mk)
 endif
 
-GOPATH := $(shell go env GOPATH)
+GOPATH := $(shell go env GOPATH | cut -d ':' -f 1)
 ifeq ($(origin GOBIN), undefined)
 	GOBIN := $(GOPATH)/bin
 endif
