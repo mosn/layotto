@@ -15,6 +15,10 @@ Layotto provides powerful commands, which makes contribution and local developme
 
 + Run `make license` to add licnese headers for all code files, with docker.
 
+> Notice: If you encounter the error "make[1]: *** No rule to make target 'all'. Stop.", it means that the Makefile cannot find this target.
+>
+> You should refer to the commands provided by `make help`. For example,  You can execute commands like `make lint` `make format` `make test` in place of `make all`, which you think should be used to checked codes locally.
+
 See below commands to know more details or excute `make help`:
 
 ```

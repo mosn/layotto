@@ -18,6 +18,10 @@ Layotto 提供了丰富的命令行工具，方便贡献者开发和测试 Layot
 
 + 执行 `make license` 使用 docker 容器为代码文件添加 license headers
 
+> 注意：使用时如遇到这个错误 "make[1]: *** No rule to make target 'all'.  Stop." ，说明 makefile 找不到对应的 target。
+> 
+> 这时你需要严格参考 `make help` 提供的指令，根据情况执行 `make lint` `make format` `make test` 等来替代 `make all`， 来达到本地检查代码的目的。
+
 具体细节可查看一下命令，或执行 `make help` 查看：
 
 ```
