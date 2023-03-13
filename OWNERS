@@ -1,0 +1,18 @@
+# See the OWNERS docs at https://go.k8s.io/owners
+
+maintainers:
+  - MoonShining
+  - wenxuwan
+  - seeflood
+  - zhenjunMa
+  - nejisama
+  - doujiang24
+  - ujjboy
+  - JervyShi
+
+approvers:
+  - Xunzhuo
+  - stulzq
+  - ZLBer
+  - rayowang
+  - LXPWing

@@ -24,23 +24,25 @@ const (
 )
 
 func TestGet(fileName string) {
-	// dial
+	// Dial to the gRPC server
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		panic(err)
 	}
 
-	// new client
+	// Create a new client
 	c := runtimev1pb.NewRuntimeClient(conn)
 
-	// getFile
+	// Make a request to get a file
 	req := &runtimev1pb.GetFileRequest{StoreName: storeName, Name: fileName}
 	cli, err := c.GetFile(context.Background(), req)
 	if err != nil {
 		fmt.Printf("get file error: %+v", err)
 		panic(err)
 	}
+
+	// Receive data from the server and store in pic
 	pic := make([]byte, 0)
 	for {
 		resp, err := cli.Recv()
@@ -53,19 +55,26 @@ func TestGet(fileName string) {
 		}
 		pic = append(pic, resp.Data...)
 	}
+
+	// Print the result of the GetFile request
 	fmt.Println("GetFile successfully. Result:")
 	fmt.Println(string(pic))
 }
 
 func TestPut(fileName string, value string) {
+	// Dial to the gRPC server
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		panic(err)
 	}
+
+	// Create metadata and a new client
 	meta := make(map[string]string)
 	meta["storageType"] = storageType
 	c := runtimev1pb.NewRuntimeClient(conn)
+
+	// Make a request to put a file
 	req := &runtimev1pb.PutFileRequest{StoreName: storeName, Name: fileName, Metadata: meta}
 	stream, err := c.PutFile(context.TODO())
 	if err != nil {
@@ -82,14 +91,19 @@ func TestPut(fileName string, value string) {
 }
 
 func TestList(bucketName string) {
+	// Dial to the gRPC server
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		panic(err)
 	}
+
+	// Create metadata and a new client
 	meta := make(map[string]string)
 	meta["storageType"] = storageType
 	c := runtimev1pb.NewRuntimeClient(conn)
+
+	// Make a request to list files
 	marker := ""
 	for {
 		req := &runtimev1pb.FileRequest{StoreName: storeName, Name: bucketName, Metadata: meta}
@@ -110,48 +124,79 @@ func TestList(bucketName string) {
 
 }
 
+// TestDel deletes a file with the given fileName from the server
 func TestDel(fileName string) {
+	// Dial a connection to the server
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		return
 	}
+
+	// Define metadata to be sent with the request
 	meta := make(map[string]string)
 	meta["storageType"] = storageType
+
+	// Create a new runtime client using the connection
 	c := runtimev1pb.NewRuntimeClient(conn)
+
+	// Create a file request with the given storeName, fileName and metadata
 	req := &runtimev1pb.FileRequest{StoreName: storeName, Name: fileName, Metadata: meta}
+
+	// Create a delete file request using the file request created above
 	listReq := &runtimev1pb.DelFileRequest{Request: req}
+
+	// Send the delete file request to the server and check for errors
 	_, err = c.DelFile(context.Background(), listReq)
 	if err != nil {
 		fmt.Printf("list file fail, err: %+v \n", err)
 		panic(err)
 	}
+
+	// If successful, print a message indicating success
 	fmt.Printf("delete file success \n")
 }
 
+// TestStat retrieves metadata for the file with the given fileName from the server
 func TestStat(fileName string) {
+	// Dial a connection to the server
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("conn build failed,err:%+v", err)
 		panic(err)
 	}
+
+	// Define metadata to be sent with the request
 	meta := make(map[string]string)
 	meta["storageType"] = storageType
+
+	// Create a new runtime client using the connection
 	c := runtimev1pb.NewRuntimeClient(conn)
+
+	// Create a file request with the given storeName, fileName and metadata
 	req := &runtimev1pb.FileRequest{StoreName: storeName, Name: fileName, Metadata: meta}
+
+	// Create a get file metadata request using the file request created above
 	statReq := &runtimev1pb.GetFileMetaRequest{Request: req}
+
+	// Send the get file metadata request to the server and check for errors
 	data, err := c.GetFileMeta(context.Background(), statReq)
-	//here use grpc error code check file exist or not.
+
+	// Check if the error returned is a "not found" error and print a message if so
 	if m, ok := status.FromError(err); ok {
 		if m.Code() == codes.NotFound {
 			fmt.Println("file not exist")
 			return
 		}
+
+		// If it's not a "not found" error and not nil, print an error message
 		if m != nil {
 			fmt.Printf("stat file fail,err:%+v \n", err)
 			return
 		}
 	}
+
+	// If successful, print metadata for the file
 	fmt.Printf("get meta data of file: size:%+v, modifyTime:%+v \n", data.Size, data.LastModified)
 	for k, v := range data.Response.Metadata {
 		fmt.Printf("metadata:key:%+v,value:%+v \n", k, v)
@@ -159,15 +204,18 @@ func TestStat(fileName string) {
 
 }
 
+// CreateBucket function creates a new bucket in the specified S3-compatible object storage service.
+// Parameters:
+//   - bn (string): the name of the new bucket to be created
 func CreateBucket(bn string) {
-
+	// Set the connection parameters for the S3-compatible object storage service.
 	ctx := context.Background()
 	endpoint := "127.0.0.1:9000"
 	accessKeyID := "layotto"
 	secretAccessKey := "layotto_secret"
 	useSSL := false
 
-	// Initialize minio client object.
+	// Initialize minio client object with the connection parameters.
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 		Secure: useSSL,
@@ -176,7 +224,7 @@ func CreateBucket(bn string) {
 		log.Fatalln(err)
 	}
 
-	// Make a new bucket called mymusic.
+	// Make a new bucket with the specified name and location.
 	bucketName := bn
 	location := "us-east-1"
 

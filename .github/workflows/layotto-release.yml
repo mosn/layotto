@@ -5,7 +5,7 @@ on:
 
 jobs:
   style-check:
-    name: "🌈 Go Style Check"
+    name: "Go Style Check"
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -20,7 +20,7 @@ jobs:
            make workspace
 
   resolve-modules:
-    name: "👀 Resolve Go Modules"
+    name: "Resolve Go Modules"
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -30,7 +30,7 @@ jobs:
       - id: set-matrix
         run: sh ./etc/script/resolve-modules.sh
   golangci-lint:
-    name: "👀 Go CI Linter"
+    name: "Go CI Linter"
     needs: [ style-check,resolve-modules ]
     runs-on: ubuntu-20.04
     strategy:
@@ -49,7 +49,7 @@ jobs:
           args: "--out-${NO_FUTURE}format colored-line-number"
 
   go-unit-test:
-    name: "👀 Go Unit Test"
+    name: "Go Unit Test"
     needs: [style-check]
     runs-on: ubuntu-20.04
     steps:
@@ -63,7 +63,7 @@ jobs:
       run: make test
 
   coverage:
-    name: "🤔 Coverage Analysis"
+    name: "Coverage Analysis"
     needs: [go-unit-test,golangci-lint,style-check]
     runs-on: ubuntu-latest
     steps:
@@ -75,7 +75,7 @@ jobs:
       run: bash <(curl -s https://codecov.io/bash)
 
   wasm-integrate:
-    name: "⚙️ Integrate with WASM"
+    name: "Integrate with WASM"
     needs: [coverage]
     runs-on: ubuntu-latest
     steps:
@@ -89,7 +89,7 @@ jobs:
         run:  make integrate-wasm
 
   runtime-integrate:
-    name: "⚙️ Integrate with Runtime"
+    name: "Integrate with Runtime"
     needs: [coverage]
     runs-on: ubuntu-latest
     steps:
@@ -103,7 +103,7 @@ jobs:
         run:  make integrate-runtime
 
   build-binary-darwin-amd64-artifact:
-    name:  "🧳 Darwin AMD64 Artifact"
+    name:  "Darwin AMD64 Artifact"
     needs: [runtime-integrate,wasm-integrate]
     runs-on: ubuntu-latest
     steps:
@@ -135,7 +135,7 @@ jobs:
 
 
   build-binary-darwin-arm64-artifact:
-    name:  "🧳 Darwin ARM64 Artifact"
+    name:  "Darwin ARM64 Artifact"
     needs: [runtime-integrate,wasm-integrate]
     runs-on: ubuntu-latest
     steps:
@@ -166,7 +166,7 @@ jobs:
           tag: ${{ github.ref }}
 
   build-binary-linux-amd64-artifact:
-    name:  "🧳 Linux AMD64 Artifact"
+    name:  "Linux AMD64 Artifact"
     needs: [runtime-integrate,wasm-integrate]
     runs-on: ubuntu-latest
     steps:
@@ -197,7 +197,7 @@ jobs:
           tag: ${{ github.ref }}
 
   build-binary-linux-arm64-artifact:
-    name:  "🧳 Linux ARM64 Artifact"
+    name:  "Linux ARM64 Artifact"
     needs: [runtime-integrate,wasm-integrate]
     runs-on: ubuntu-latest
     steps:
@@ -228,7 +228,7 @@ jobs:
           tag: ${{ github.ref }}
 
   build-wasm-binary-linux-amd64-artifact:
-    name:  "🧳 Linux AMD64 WASM Artifact"
+    name:  "Linux AMD64 WASM Artifact"
     needs: [wasm-integrate]
     runs-on: ubuntu-latest
     steps:
@@ -260,7 +260,7 @@ jobs:
       #     tag: ${{ github.ref }}
 
   build-push-wasm-image:
-    name:  "🎉 Linux AMD64 WASM Image"
+    name:  "Linux AMD64 WASM Image"
     needs: [build-wasm-binary-linux-amd64-artifact,build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
     runs-on: ubuntu-latest
     steps:
@@ -284,7 +284,7 @@ jobs:
       #     make wasm.image.push 
 
   build-push-linux-amd64-image:
-    name: "🎉 Linux AMD64 Image"
+    name: "Linux AMD64 Image"
     needs: [build-wasm-binary-linux-amd64-artifact,build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
     runs-on: ubuntu-latest
     steps:
@@ -307,7 +307,7 @@ jobs:
           make image.push.linux_amd64.layotto 
 
   build-push-linux-arm64-image:
-    name: "🎉 Linux ARMD64 Image"
+    name: "Linux ARMD64 Image"
     needs: [build-wasm-binary-linux-amd64-artifact,build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
     runs-on: ubuntu-latest
     steps:

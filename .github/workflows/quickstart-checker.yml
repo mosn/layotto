@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: "🍀 Quickstart Validation"
+    name: "Quickstart Validation"
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.x
