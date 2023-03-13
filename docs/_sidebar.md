@@ -92,6 +92,7 @@
   - [Pub/Sub API and compability with dapr component](en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
   - [RPC design doc](en/design/rpc/rpc-design-doc.md)
   - [Distributed lock API design](en/design/lock/lock-api-design.md)
+  - [Sequencer API design](en/design/sequencer/design.md)
   - [FaaS design](en/design/faas/faas-poc-design.md)
 - Contributing
   - [Document Contribution Guide](en/development/contributing-doc.md)

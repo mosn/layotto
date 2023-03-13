@@ -1,144 +1,128 @@
-# Sequencer API设计文档
-本文档讨论"生成分布式唯一(自增)id"的API
+# Sequencer API Design Document
 
-## 1. 需求
-### 1.1. 生成全局唯一id
+This document discusses the API for generating distributed unique (incremental) IDs.
 
-Q: 什么时候需要生成全局唯一id?
+## 1. Requirements
+### 1.1. Generating globally unique IDs
 
-A: db不帮你自动生成的时候。比如：
-- db做了分库分表，没帮你自动生成id，你又需要一个全局唯一的业务id
-- 没走db，比如请求到了后端要生成一个traceId
+Q: When do we need to generate globally unique IDs?
 
-### 1.2. 对该id有递增的需求。具体来说有很多种：
-- 不需要递增。这种情况UUID能解决，虽然缺点是比较长。**本API暂时不考虑这种情况**
-- “趋势递增”。不追求一定递增，大部分情况在递增就行。
+A: When the database does not automatically generate them. For example:
+- When the database is sharded, and it does not generate IDs automatically, and you need a globally unique business ID.
+- When there is no database involved, such as when you need to generate a trace ID in the backend.
 
+### 1.2. The IDs should have an incremental requirement. Specifically, there are many types of requirements:
+- No incremental requirement. UUID can solve this problem, although it is relatively long. **This API does not currently consider this situation.**
+- "Trend incremental". There is no strict requirement for incremental values, but in most cases, they should be incremental.
 
-Q: 什么场景需要趋势递增？
+Q: When do we need trend incremental IDs?
 
-1. 对b+树类的db(例如MYSQL)来说,趋势递增的主键能更好的利用缓存（cache friendly）。
+1. For databases like B+ trees (such as MYSQL), trend incremental primary keys can make better use of caches (cache-friendly).
 
-2. 拿来排序查最新数据。比如需求是查最新的100条消息，开发者不想新增个时间戳字段、建索引，如果id本身是递增的，那么查最新的100条消息时直接按id排序即可：
+2. Used for sorting and querying the latest data. For example, if you need to query the latest 100 messages, and the developer does not want to add a timestamp field or create an index, if the IDs themselves are incremental, you can simply sort by ID when querying the latest 100 messages:
 
 ```
 select * from message order by message-id limit 100
 ```
 
-这在使用nosql的时候很常见，因为nosql在时间戳字段上加索引很难
+This is common when using NoSQL, because it is difficult to add an index to a timestamp field.
 
-- sharding内单调递增。比如[Tidb的自增id](https://docs.pingcap.com/zh/tidb/stable/auto-increment) 能保证单台服务器上生成的id递增，没法保证全局（在多台服务器上）单调递增
+- Monotonically increasing within a sharding. For example, [Tidb's auto-increment ID](https://docs.pingcap.com/zh/tidb/stable/auto-increment) can guarantee that the IDs generated on a single server are monotonically increasing, but it cannot guarantee that they are monotonically increasing globally (on multiple servers).
 
-- 全局单调递增
+- Globally monotonically increasing
 
-希望生成的id一定递增，没有任何倒退的情况。
+The generated IDs should be strictly incremental, with no backward movement.
 
+### 1.3. There may be a need for custom ID schemas
+For example, the ID format may need to be "the first 8 digits are the UID, and the last 8 digits are the incremental ID".
 
-### 1.3. 可能会有自定义id schema的需求
-比如要求id的格式为"前8位是uid，后8位是自增id"这样的需求
+### 1.4. There may be information security-related requirements
+If the ID is consecutive, malicious users can easily scrape data by directly downloading the specified URL in order. If it is an order number, it is even more dangerous as competitors can directly know the user's daily order volume. Therefore, in some application scenarios, IDs need to be irregular and non-sequential.
 
-### 1.4. 可能有信息安全相关需求
-如果ID是连续的，恶意用户的扒取工作就非常容易做了，直接按照顺序下载指定URL即可；
-
-如果是订单号就更危险了，竞对可以直接知道用户一天的单量。所以在一些应用场景下，会需要ID无规则、不规则。
-
-## 2. 产品调研
-| **系统** | **能否保证生成的id唯一** | **趋势递增** | **严格递增** |  **可用性** | **信息安全**
+## 2. Product Research
+| **System** | **Can it guarantee unique ID generation?** | **Trend Increment** | **Strict Increment** | **Availability** | **Information Security**
 | --- | --- | --- | --- |  --- |  --- |
-| 单机redis | yes.[需要特殊配置redis服务器，把两种落盘策略都打开、每次写操作都写磁盘](https://redis.io/topics/persistence) ，避免丢数据  | yes | yes.前提是宕机重启不丢数据 | 有单点故障风险  |
-| redis 主从复制+sentinel | no.复制是异步的，即使用Wait命令等待同步复制还是可能在fo后丢数据,见[文档](https://redis.io/topics/replication) | yes | 取决于会不会丢数据 |   |
-| redis cluster | 同上 | yes | 同上 |   |
-| snowflake | no.(时钟回拨等情况可能导致id重复；需要依赖外部存储；或者声明必须关闭NTP或使用防止回拨的可靠NTP) | yes | no |   | good |
-| Leaf snowflake | yes | yes | no |     | good |
-| Leaf segment | yes | yes | no |     |
-| Leaf segment只部署一台Leaf服务器 | yes | yes | yes | 有单点故障风险  |
-| zookeeper | yes | yes | yes |  |
-| etcd | yes | yes | yes |  |
-| mysql单库单表 | yes | yes | yes | 有单点故障风险 |
+| Standalone Redis | Yes. [Special Redis server configuration is required, with both persistence strategies enabled and each write operation written to disk](https://redis.io/topics/persistence) to avoid data loss | Yes | Yes. Provided that no data is lost during server restart | There is a risk of single point of failure |
+| Redis Master-Slave Replication + Sentinel | No. Replication is asynchronous, even with Wait command to wait for synchronization, data loss may still occur after failover, see [documentation](https://redis.io/topics/replication) | Yes | Depends on whether data is lost |   |
+| Redis Cluster | Same as above | Yes | Same as above |   |
+| Snowflake | No. (ID duplication may occur in case of clock backtracking; external storage is required; or declare the need to turn off NTP or use reliable NTP to prevent backtracking) | Yes | No |   | Good |
+| Leaf Snowflake | Yes | Yes | No |     | Good |
+| Leaf Segment | Yes | Yes | No |     |
+| Deploy only one Leaf server for Leaf Segment | Yes | Yes | Yes | There is a risk of single point of failure |
+| ZooKeeper | Yes | Yes | Yes |  |
+| etcd | Yes | Yes | Yes |  |
+| MySQL Single Database Single Table | Yes | Yes | Yes | There is a risk of single point of failure |
 
-
-## 3. grpc API设计
-### 3.1. proto定义
+## 3. grpc API Design
+### 3.1. Proto Definition
 
 ```protobuf
 // Sequencer API
-rpc GetNextId(GetNextIdRequest )returns (GetNextIdResponse) {}
-
+rpc GetNextId(GetNextIdRequest) returns (GetNextIdResponse) {}
 
 message GetNextIdRequest {
-  string store_name = 1;
-  // key is the identifier of a sequencer.
-  string key = 2;
-  
-  SequencerOptions options = 3;
-  // The metadata which will be sent to the component.
-  map<string, string> metadata = 4;
+  string store_name = 1; // The name of the store
+  string key = 2; // The identifier of a sequencer
+
+  SequencerOptions options = 3; // Configures the requirements for incremental and uniqueness guarantee
+  map<string, string> metadata = 4; // The metadata which will be sent to the component
 }
 
 // SequencerOptions configures requirements for incremental and uniqueness guarantee
-message SequencerOptions {  
+message SequencerOptions {
   enum AutoIncrement {
     // WEAK means a "best effort" incrementing service.But there is no strict guarantee   
     WEAK = 0;
     // STRONG means a strict guarantee of global monotonically increasing
     STRONG = 1;
   }
-  
-//  enum Uniqueness{
-//    // WEAK means a "best effort" unqueness guarantee.
-//    // But it might duplicate in some corner cases.
-//    WEAK = 0;
-//    // STRONG means a strict guarantee of global uniqueness
-//    STRONG = 1;
-//  }
 
-  AutoIncrement increment = 1;
-//  Uniqueness uniqueness=2;
+  AutoIncrement increment = 1; // Declares the user's requirement for incrementality
 }
 
-message GetNextIdResponse{
-  int64 next_id=1;
+message GetNextIdResponse {
+  int64 next_id = 1; // The next id generated by the sequencer
 }
 ```
 
-解释：
+Explanation:
 
-其实就一个GetNextId接口，需要传key作为命名空间（比如传某个订单表表名，"order_table"），sequencer保证生成的id在该命名空间内唯一、递增。
+There is only one interface, GetNextId, which requires the key as a namespace (e.g. the name of an order table, "order_table"). The sequencer ensures that the generated ids are unique and incremental within that namespace.
 
-SequencerOptions.AutoIncrement用于声明用户对递增性的需求，是趋势递增(WEAK)还是要求严格全局递增(STRONG)
+SequencerOptions.AutoIncrement is used to declare the user's requirement for incrementality, whether it is weakly incremental (WEAK) or requires strict global incrementality (STRONG).
 
-**Q: 是否由Layotto帮用户按需拼id？**
+Q: Will Layotto help users to customize and splice ID on demand?
 
-A: API和Layotto运行时不管这事，由sdk或者用户自己处理，或者某个特殊组件想实现这个feature也可以。
+A: The Layotto API and runtime will not handle this. It's up to the SDK or the user to handle it, or a special component can implement this feature.
 
-**Q: 返回类型是string还是int64**
+Q: Should the return type be a string or int64?
 
-如果返回string，假如用户用了某个返回int64的实现，在用户代码中把返回的string转成了int64,那他迁移到别的组件，这个转换过程可能报错
+If the return type is a string, and the user uses an implementation that returns int64, the conversion process from string to int64 in the user's code may cause errors when migrating to other components.
 
-如果返回int64，组件就没法帮用户做一些定制拼id的事情了
+If the return type is int64, the component cannot help the user with some customized ID splicing.
 
-为了可移植性，选择int64。拼id的事情在sdk里做
+For portability, int64 is chosen. The splicing of IDs is done in the SDK.
 
-**Q: int64溢出问题怎么处理?**
+Q: How to handle int64 overflow?
 
-暂不考虑
+Not considering it at the moment.
 
-### 3.2. 关于唯一性的争议
-API中原先定义了用户传参SequencerOptions.Uniqueness枚举值 ,其中WEAK代表"尽量保证全局唯一，但是极小概率可能重复"，要求业务代码如果拿到id去写库时，做好id重复、重试的心理准备；而STRONG代表严格全局唯一，用户代码不考虑id重复、重试之类的事情。
+### 3.2. Controversy over uniqueness
+The SequencerOptions.Uniqueness enumeration was originally defined in the API, where WEAK represents "try to ensure global uniqueness, but there is a small probability of duplication," requiring the business code to be prepared for ID duplication and retries if the ID is written to the database. STRONG represents strict global uniqueness, and the user code does not consider ID duplication and retry issues.
 
-- 定义这个枚举值的原因（好处）
+- The reason for defining this enumeration (benefits)
 
-如果要保证严格唯一，组件实现起来会比较重。比如单机redis常用的落盘策略就不行，可能导致宕机重启之后丢数据、生成一个重复id；比如直接在sidecar里写一个snowflake算法就不行，因为可能会有时钟回拨导致id重复的问题（NTP时钟同步、闰秒等情况都有可能导致时钟回拨）。[Leaf的snowflake实现](https://tech.meituan.com/2017/04/21/mt-leaf.html) 依赖zookeeper判断时钟回拨；
+If strict uniqueness is required, the component implementation will be heavier. For example, the disk write strategy commonly used in single-machine Redis is not feasible and may cause data loss and duplicate ID generation after a crash and restart. For example, directly writing a snowflake algorithm in the sidecar is not feasible because there may be clock rollback issues (NTP clock synchronization, leap seconds, etc.).
 
-- 定义这个枚举值的缺点
+- The disadvantages of defining this enumeration
 
-给用户带来更多理解成本
+Brings more understanding costs to the user.
 
-- 结论
+- Conclusion
 
-存在争议，本期先不添加该枚举值。默认返回的结果一定能保证全局唯一(STRONG)。
+There is controversy, and this enumeration is not added in this issue. The default result must ensure global uniqueness (STRONG).
 
-## 4. 组件API
+## 4. Component API
 
 ```go
 package sequencer
@@ -199,37 +183,37 @@ type Configuration struct {
 }
 ```
 
-**Q: BiggerThan字段是啥?**
+**Q: What is the BiggerThan field?**
 
-要求组件生成的所有id都得比"biggerThan"大。
+The requirement is that all IDs generated by the component must be greater than "BiggerThan".
 
-设计这个配置项是为了方便用户做移植。比如系统原先使用mysql做发号服务，id已经生成到了1000，后来迁移到PostgreSQL上，需要配置biggerThan为1000，这样PostgreSQL组件在初始化的时候会进行设置、强制id在1000以上,或者发现id没法满足要求、直接启动时报错。
+This configuration option is designed to facilitate portability for users. For example, if the system originally used MySQL for ID generation and the IDs have already been generated up to 1000, and later migrated to PostgreSQL, the BiggerThan field needs to be configured as 1000. This way, when the PostgreSQL component is initialized, it will be set to force IDs to be above 1000, or if the IDs cannot meet the requirements, an error will be reported when starting up.
 
-**Q: BiggerThan为啥是个map?**
+**Q: Why is BiggerThan a map?**
 
-因为每个key可能有自己的biggerThan.
+Because each key may have its own BiggerThan value.
 
-比如原先app1做了分库分表、用某种发号服务来生成订单表和商品表的id，订单表id达到了1000，商品表id达到2000.
+For example, if app1 originally did sharding and used a certain ID generation service to generate IDs for the order table and the product table, the order table ID reached 1000 and the product table ID reached 2000.
 
-后来app1想换个存储做sequencer，那么他要声明订单表id在1000以上，商品表id在2000以上。
+Later, app1 wants to switch to a different storage for the sequencer, so they need to declare that the order table ID is above 1000 and the product table ID is above 2000.
 
-另一个例子是[Leaf的设计](https://tech.meituan.com/2017/04/21/mt-leaf.htm) ，也是每个biz_tag对应一个max_id（Leaf的max_id就是我们的biggerThan)
+Another example is the design of Leaf, where each biz_tag corresponds to a max_id (which is equivalent to our BiggerThan).
 
 ![leaf_max_id.png](../../../img/sequencer/design/leaf_max_id.png)
 
-**Q: 要不要在runtime层实现缓存?**
+**Q: Should caching be implemented at the runtime layer?**
 
-如果runtime做缓存，需要组件实现方法：
+If caching is done at the runtime layer, the component needs to implement the following method:
 
 ```go
 GetSegment(*GetSegmentRequest) (support bool, result *GetSegmentResponse, err error)
 ```
 
-可以先定义接口，组件先不实现，以后有性能需求再实现
+The interface can be defined first, and the component can implement it later when there is a performance requirement.
 
-## 参考资料
-[设计分布式唯一id生成](https://www.jianshu.com/p/fb9478687e55)
+## References
+[Designing Distributed Unique ID Generation](https://www.jianshu.com/p/fb9478687e55)
 
-[架构 细聊分布式ID生成方法](https://www.w3cschool.cn/architectroad/architectroad-distributed-id.html)
+[Discussing Distributed ID Generation Methods](https://www.w3cschool.cn/architectroad/architectroad-distributed-id.html)
 
-[Leaf——美团点评分布式ID生成系统](https://tech.meituan.com/2017/04/21/mt-leaf.html)
+[Leaf - Meituan-Dianping's Distributed ID Generation System](https://tech.meituan.com/2017/04/21/mt-leaf.html)
