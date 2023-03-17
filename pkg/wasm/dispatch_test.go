@@ -96,3 +96,56 @@ func TestRouter_RegisterRoute3(t *testing.T) {
 		t.Errorf("Invalid group count or number of plugins")
 	}
 }
+
+// TestRegisterRoute adds a new route and checks if it exists in the map
+func TestRegisterRoute(t *testing.T) {
+	route := &Router{routes: make(map[string]*Group)}
+	plugin := &WasmPlugin{pluginName: "test"}
+	route.RegisterRoute("test", plugin)
+	_, ok := route.routes["test"]
+	if !ok {
+		t.Errorf("Expected route with id: test to exist")
+	}
+}
+
+// TestRemoveRoute adds a new route, removes it and checks if it does not exist in the map
+func TestRemoveRoute(t *testing.T) {
+	route := &Router{routes: make(map[string]*Group)}
+	plugin := &WasmPlugin{pluginName: "test"}
+	route.RegisterRoute("test", plugin)
+	route.RemoveRoute("test")
+	_, ok := route.routes["test"]
+	if ok {
+		t.Errorf("Expected route with id: test to be removed")
+	}
+}
+
+// TestGetRandomPluginByID adds a new route with a plugin, retrieves a random plugin and checks if it is in the group
+func TestGetRandomPluginByID(t *testing.T) {
+	route := &Router{routes: make(map[string]*Group)}
+	plugin := &WasmPlugin{pluginName: "test"}
+	route.RegisterRoute("test", plugin)
+	randPlugin, err := route.GetRandomPluginByID("test")
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	var found bool
+	for _, p := range route.routes["test"].plugins {
+		if p == randPlugin {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Errorf("Expected random plugin to be in the group")
+	}
+}
+
+// TestGetRandomPluginByIDInvalidID checks if an error is returned for an invalid id
+func TestGetRandomPluginByIDInvalidID(t *testing.T) {
+	route := &Router{routes: make(map[string]*Group)}
+	_, err := route.GetRandomPluginByID("test")
+	if err == nil {
+		t.Errorf("Expected an error for an invalid id")
+	}
+}
