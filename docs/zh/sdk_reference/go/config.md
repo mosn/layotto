@@ -1,0 +1,9 @@
+# Configuration
+
+
+
+## GetConfiguration
+
+```go
+```
+
