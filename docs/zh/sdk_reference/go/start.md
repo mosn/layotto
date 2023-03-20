@@ -89,7 +89,7 @@ NewClientWithConnection(conn *grpc.ClientConn) Client
 
 
 
-**简单体验一下这个 Demo。**
+**简单体验一下这个 Demo**
 
 ```shell
 ## 在项目根目录下按序执行
@@ -269,6 +269,7 @@ layotto start -c config.json
 ```
 
 配置文件相关参数，只填写了必要的字段。
+
 ```json
 "sequencer": {
     "sequencer-demo": {
@@ -406,7 +407,7 @@ type Client interface {
 > 如果文档还未更新，可以自行阅读 `sdk/go-sdk` 中的源码，欢迎提出错误贡献 sdk 使用文档。
 >
 
-#### runtimeAPI
+### runtimeAPI
 
 - [hello](zh/sdk_reference/go/hello.md)  
 - [Invoke](zh/sdk_reference/go/invoke.md)
@@ -419,7 +420,7 @@ type Client interface {
 
 
 
-#### extension
+### extension
 
 > 目前该部分 go-sdk 仅支持了使用 grpc 接口的方式调用，还未实现封装，可以参考 [GRPC API 文档](zh/api_reference/README.md) 或参考对应的源代码 [`spec/proto/extension`](https://github.com/mosn/layotto/tree/main/spec/proto/extension/v1) 或 [`demo`](https://github.com/mosn/layotto/tree/main/demo) 中的相应使用案例。
 > 

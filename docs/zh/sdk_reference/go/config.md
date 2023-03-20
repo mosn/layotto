@@ -1,9 +1,2 @@
 # Configuration
 
-
-
-## GetConfiguration
-
-```go
-```
-
