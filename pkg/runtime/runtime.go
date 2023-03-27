@@ -699,7 +699,7 @@ func (m *MosnRuntime) SetCustomComponent(kind string, name string, component cus
 
 func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.ComponentFactory) error {
 	log.DefaultLogger.Infof("[runtime] start initializing custom components")
-	// loop configured all types of components.
+	// loop all configured custom components.
 	for kind, name2Config := range m.runtimeConfig.CustomComponent {
 		factorys, ok := kind2factorys[kind]
 		if !ok || len(factorys) == 0 {
