@@ -699,29 +699,16 @@ func (m *MosnRuntime) SetCustomComponent(kind string, name string, component cus
 
 func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.ComponentFactory) error {
 	log.DefaultLogger.Infof("[runtime] start initializing custom components")
-	// 1. validation
-	if len(kind2factorys) == 0 {
-		log.DefaultLogger.Infof("[runtime] no custom component factorys compiled")
-		return nil
-	}
-	if len(m.runtimeConfig.CustomComponent) == 0 {
-		log.DefaultLogger.Infof("[runtime] no custom components in configuration")
-		return nil
-	}
-	// 2. loop registering all types of components.
-	for kind, factorys := range kind2factorys {
-		// 2.0. check empty
-		if len(factorys) == 0 {
+	// loop all configured custom components.
+	for kind, name2Config := range m.runtimeConfig.CustomComponent {
+		factorys, ok := kind2factorys[kind]
+		if !ok || len(factorys) == 0 {
+			log.DefaultLogger.Errorf("[runtime] Your required component kind %s is not supported.", kind)
 			continue
 		}
-		name2Config, ok := m.runtimeConfig.CustomComponent[kind]
-		if !ok {
-			log.DefaultLogger.Errorf("[runtime] Your required component kind %s is not supported. Please check your configuration", kind)
-			continue
-		}
-		// 2.1. register all the factorys
+		// register all the factorys
 		m.customComponentRegistry.Register(kind, factorys...)
-		// 2.2. loop initializing component instances
+		// loop initializing component instances
 		for name, config := range name2Config {
 			// create the component
 			comp, err := m.customComponentRegistry.Create(kind, config.Type)
@@ -746,7 +733,9 @@ func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Co
 			m.SetCustomComponent(kind, name, comp)
 			m.storeDynamicComponent(fmt.Sprintf("%s.%s", lifecycle.KindCustom, kind), name, comp)
 		}
+
 	}
+
 	return nil
 }
 
