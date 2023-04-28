@@ -67,10 +67,10 @@ func (o *OpenGenerator) GenerateNewContext(ctx context.Context, span api.Span) c
 	newMd := o.md.Copy()
 	newMd[strings.ToLower(sofa.TRACER_ID_KEY)] = []string{span.TraceId()}
 	newMd[strings.ToLower(sofa.RPC_ID_KEY)] = []string{span.SpanId()}
-	if v, ok := md[strings.ToLower(sofa.APP_NAME_KEY)]; ok && len(v) > 0 {
+	if v, ok := o.md[strings.ToLower(sofa.APP_NAME_KEY)]; ok && len(v) > 0 {
 		span.SetTag(trace.LAYOTTO_APP_NAME, v[0])
 	}
-	if v, ok := md[strings.ToLower(sofa.SOFA_TRACE_BAGGAGE_DATA)]; ok && len(v) > 0 {
+	if v, ok := o.md[strings.ToLower(sofa.SOFA_TRACE_BAGGAGE_DATA)]; ok && len(v) > 0 {
 		span.SetTag(trace.LAYOTTO_ATTRS_CONTENT, v[0])
 	}
 	ctx = metadata.NewIncomingContext(ctx, newMd)
