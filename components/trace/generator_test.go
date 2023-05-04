@@ -24,6 +24,7 @@ import (
 type MockGenerator struct {
 }
 
+func (m *MockGenerator) Init(ctx context.Context) {}
 func (m *MockGenerator) GetTraceId(ctx context.Context) string {
 	return "mock"
 }
