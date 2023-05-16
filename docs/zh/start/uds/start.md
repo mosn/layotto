@@ -75,7 +75,7 @@ go build -o layotto
 
 ### step 2. 启动测试demo
 
-Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/uds/client.go)
+Layotto提供了通过uds 调用gRPC 接口的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/uds/client.go)
 
 ```shell
 cd ${project_path}/demo/uds/
