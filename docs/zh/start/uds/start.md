@@ -1,12 +1,12 @@
-# Layotto 支持UNIX通信
+# Layotto 支持UDS通信
 
 ## 快速开始
 
-Layotto提供了基于UNIX通信的能力，相对于TCP方式来说，UNIX方式具有更好的性能。
+Layotto提供了基于UDS通信的能力，相对于TCP方式来说，UDS方式具有更好的性能。
 
 ### step 1.  启动layotto
 
-layotto提供了支持UNIX通信的配置文件`configs/config_uds.json`，配置文件内容如下所示:
+layotto提供了支持UDS通信的配置文件`configs/config_uds.json`，配置文件内容如下所示:
 
 ```json
 {
@@ -75,7 +75,7 @@ go build -o layotto
 
 ### step 2. 启动测试demo
 
-Layotto提供了通过uds 调用gRPC 接口的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/uds/client.go)
+Layotto提供了通过uds调用gRPC接口的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/uds/client.go)
 
 ```shell
 cd ${project_path}/demo/uds/
