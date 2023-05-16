@@ -28,57 +28,6 @@
                           "hello": "greeting"
                         }
                       },
-                      "state": {
-                        "state_demo": {
-                          "type": "in-memory",
-                          "metadata": {
-                          }
-                        }
-                      },
-                      "lock": {
-                        "lock_demo": {
-                          "type": "in-memory",
-                          "metadata": {
-                          }
-                        }
-                      },
-                      "pub_subs": {
-                        "pub_subs_demo": {
-                          "type": "in-memory",
-                          "metadata": {
-                            "consumerID": "1"
-                          }
-                        }
-                      },
-                      "sequencer": {
-                        "sequencer_demo": {
-                          "type": "in-memory",
-                          "metadata": {}
-                        }
-                      },
-                      "secret_store": {
-                        "secret_demo": {
-                          "type": "local.env",
-                          "metadata": {
-                          }
-                        }
-                      },
-                      "bindings": {
-                        "bindings_demo": {
-                          "type": "http",
-                          "metadata": {
-                            "url": "https://mosn.io/layotto"
-                          }
-                        }
-                      },
-                      "custom_component": {
-                        "helloworld": {
-                          "demo": {
-                            "type": "in-memory",
-                            "metadata": {}
-                          }
-                        }
-                      },
                       "app": {
                         "app_id": "app1",
                         "grpc_callback_port": 9999
