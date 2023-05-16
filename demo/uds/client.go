@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"net"
 
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"google.golang.org/grpc"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
