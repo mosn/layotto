@@ -78,7 +78,7 @@ go build -o layotto
 Layotto提供了访问文件的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/uds/client.go)
 
 ```shell
-cd ${project_path}/demo/oss/
+cd ${project_path}/demo/uds/
 go build client.go
 
 # 通过uds访问layotto的hellos组件
