@@ -1,0 +1,41 @@
+{
+  "servers": [
+    {
+      "default_log_path": "stdout",
+      "default_log_level": "DEBUG",
+      "routers": [
+        {
+          "router_config_name": "actuator_dont_need_router"
+        }
+      ],
+      "listeners": [
+        {
+          "name": "grpc",
+          "address": "/tmp/client-proxy.sock",
+          "bind_port": true,
+          "network": "unix",
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "hellos": {
+                        "helloworld": {
+                          "type": "helloworld",
+                          "hello": "greeting"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
