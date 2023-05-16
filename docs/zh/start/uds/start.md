@@ -51,6 +51,7 @@ layotto提供了支持UNIX通信的配置文件`configs/config_uds.json`，配�
   ]
 }
 ```
+
 与TCP配置相比主要有两个不同，network的类型从tcp变为unix，address从ip地址变为unix套接字文件。
 
 配置好后，切换目录:
