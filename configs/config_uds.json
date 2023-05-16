@@ -1,0 +1,183 @@
+{
+  "servers": [
+    {
+      "default_log_path": "stdout",
+      "default_log_level": "DEBUG",
+      "routers": [
+        {
+          "router_config_name": "actuator_dont_need_router"
+        }
+      ],
+      "listeners": [
+        {
+          "name": "grpc",
+          "address": "/tmp/client-proxy.sock",
+          "bind_port": true,
+          "network": "unix",
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "hellos": {
+                        "helloworld": {
+                          "type": "helloworld",
+                          "hello": "greeting"
+                        }
+                      },
+                      "state": {
+                        "state_demo": {
+                          "type": "in-memory",
+                          "metadata": {
+                          }
+                        }
+                      },
+                      "lock": {
+                        "lock_demo": {
+                          "type": "in-memory",
+                          "metadata": {
+                          }
+                        }
+                      },
+                      "pub_subs": {
+                        "pub_subs_demo": {
+                          "type": "in-memory",
+                          "metadata": {
+                            "consumerID": "1"
+                          }
+                        }
+                      },
+                      "sequencer": {
+                        "sequencer_demo": {
+                          "type": "in-memory",
+                          "metadata": {}
+                        }
+                      },
+                      "secret_store": {
+                        "secret_demo": {
+                          "type": "local.env",
+                          "metadata": {
+                          }
+                        }
+                      },
+                      "bindings": {
+                        "bindings_demo": {
+                          "type": "http",
+                          "metadata": {
+                            "url": "https://mosn.io/layotto"
+                          }
+                        }
+                      },
+                      "custom_component": {
+                        "helloworld": {
+                          "demo": {
+                            "type": "in-memory",
+                            "metadata": {}
+                          }
+                        }
+                      },
+                      "app": {
+                        "app_id": "app1",
+                        "grpc_callback_port": 9999
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "actuator",
+          "address": "127.0.0.1:34999",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "proxy",
+                  "config": {
+                    "downstream_protocol": "Http1",
+                    "upstream_protocol": "Http1",
+                    "router_config_name": "actuator_dont_need_router"
+                  }
+                }
+              ]
+            }
+          ],
+          "stream_filters": [
+            {
+              "type": "actuator_filter"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "tracing": {
+    "enable": true,
+    "driver": "SOFATracer",
+    "config": {
+      "generator": "mosntracing",
+      "exporter": [
+        "stdout"
+      ]
+    }
+  },
+  "metrics": {
+    "sinks": [
+      {
+        "type": "prometheus",
+        "config": {
+          "port": 34903
+        }
+      }
+    ]
+  },
+  "dynamic_resources": {
+    "lds_config": {
+      "ads": {},
+      "initial_fetch_timeout": "0s",
+      "resource_api_version": "V3"
+    },
+    "cds_config": {
+      "ads": {},
+      "initial_fetch_timeout": "0s",
+      "resource_api_version": "V3"
+    },
+    "ads_config": {
+      "api_type": "GRPC",
+      "set_node_on_first_message_only": true,
+      "transport_api_version": "V3",
+      "grpc_services": [{
+        "envoy_grpc": {
+          "cluster_name": "xds-grpc"
+        }
+      }]
+    }
+  },
+  "static_resources": {
+    "clusters": [{
+      "name": "xds-grpc",
+      "type": "STATIC",
+      "connect_timeout": "1s",
+      "lb_policy": "ROUND_ROBIN",
+      "load_assignment": {
+        "cluster_name": "xds-grpc",
+        "endpoints": [{
+          "lb_endpoints": [{
+            "endpoint": {
+              "address": {
+                "socket_address": {"address": "127.0.0.1", "port_value": 30681}
+              }
+            }
+          }
+          ]
+        }]
+      }
+    }]
+  }
+}
