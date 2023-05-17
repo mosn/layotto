@@ -18,6 +18,7 @@
     - 使用File API
         - [基于Minio](zh/start/file/minio.md)
     - [使用 OSS API](zh/start/oss/oss.md)
+    - [使用UDS通信](zh/start/uds/start.md)
     <!--quickstart_generator-->
     - [(建设中)使用 sms API](zh/start/sms/start) 
     - [(建设中)使用 cryption API](zh/start/cryption/start) 
