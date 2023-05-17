@@ -11,8 +11,8 @@ GO_VERSION=${1:-"default"}
 
 # By default,we test these docs with golang 1.18
 quickstarts_in_default="docs/en/start/configuration/start.md
-docs/zh/start/lifecycle/start.md
-docs/en/start/lifecycle/start.md
+  docs/zh/start/lifecycle/start.md
+  docs/en/start/lifecycle/start.md
   docs/zh/start/configuration/start.md
   docs/en/start/state/start.md
   docs/zh/start/state/start.md
@@ -43,6 +43,7 @@ docs/en/start/lifecycle/start.md
   docs/zh/start/secret/start.md
   docs/en/start/secret/secret_ref.md
   docs/zh/start/secret/secret_ref.md
+  docs/zh/start/uds/start.md
 "
 
 # In advance mod, we test these docs with golang 1.17
