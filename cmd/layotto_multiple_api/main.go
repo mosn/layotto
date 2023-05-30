@@ -18,6 +18,7 @@ package main
 
 import (
 	"encoding/json"
+	"mosn.io/layotto/components/configstores/nacos"
 	_ "net/http/pprof"
 	"os"
 	"strconv"
@@ -288,6 +289,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
+			configstores.NewStoreFactory("nacos", nacos.NewStore),
 		),
 
 		// RPC
