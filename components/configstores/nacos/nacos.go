@@ -1,0 +1,313 @@
+package nacos
+
+import (
+	"context"
+	"errors"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients/config_client"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/logger"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
+	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/configstores/apollo"
+	"mosn.io/pkg/log"
+	"strconv"
+	"strings"
+	"time"
+)
+
+type NacosConfigStore struct {
+	client      config_client.IConfigClient
+	appName     string
+	logDir      string
+	cacheDir    string
+	addresses   []string
+	namespaceId string
+}
+
+func NewStore() configstores.Store {
+	return &NacosConfigStore{}
+}
+
+// Init SetConfig the configuration store.
+func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
+	// 1.parse the config
+	if config == nil {
+		return errors.New("configuration illegal:no config data")
+	}
+
+	// the nacos's addresses, required
+	if len(config.Address) == 0 {
+		return errConfigMissingField("address")
+	}
+
+	// the application's name, required
+	n.appName = config.Metadata["app_name"]
+	if n.appName == "" {
+		return errConfigMissingField("app_name")
+	}
+
+	// the timeout of connect to nacos, not required
+	timeout := defaultTimeout
+	if config.TimeOut != "" {
+		timeout, err = strconv.Atoi(config.TimeOut)
+		if err != nil {
+			log.DefaultLogger.Errorf("wrong configuration for time out configuration: %+v, set default value(10s)", config.TimeOut)
+			timeout = defaultTimeout
+		}
+	}
+	timeoutMs := uint64(timeout) * uint64(time.Second/time.Millisecond)
+
+	// the namespace of config, not required
+	n.namespaceId = config.Metadata["namespace_id"]
+	if n.namespaceId == "" {
+		n.namespaceId = defaultNamespaceId
+	}
+
+	// 2.create ServerConfigs
+	serverConfigs := make([]constant.ServerConfig, 0, len(config.Address))
+	for _, v := range config.Address {
+		// split the addresses to ip and port
+		splitAddr := strings.Split(v, ":")
+		if len(splitAddr) != 2 {
+			return errors.New("configuration illegal: addresses is not in the format of ip:port")
+		}
+
+		ip := splitAddr[0]
+		port, err := strconv.Atoi(splitAddr[1])
+		if err != nil {
+			return errors.New("configuration illegal: can't convert port form string to int type")
+		}
+		sc := *constant.NewServerConfig(ip, uint64(port))
+		serverConfigs = append(serverConfigs, sc)
+		n.addresses = append(n.addresses, v)
+	}
+
+	// 3.create client config
+	// TODO: acm mode
+	clientConfig := *constant.NewClientConfig(
+		constant.WithTimeoutMs(timeoutMs),
+		constant.WithNamespaceId(n.namespaceId),
+		constant.WithNotLoadCacheAtStart(true),
+		constant.WithLogDir(defaultLogDir),
+		constant.WithCacheDir(defaultCacheDir),
+		constant.WithLogLevel(defaultLogLevel),
+	)
+
+	// 4.create config client
+	client, err := clients.NewConfigClient(
+		vo.NacosClientParam{
+			ClientConfig:  &clientConfig,
+			ServerConfigs: serverConfigs,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	// 5.set default nacos go-sdk default log
+	defaultLogger := apollo.NewDefaultLogger(log.DefaultLogger)
+	logger.SetLogger(defaultLogger)
+	n.client = client
+
+	return nil
+}
+
+// Get gets configuration from configuration store.
+func (n *NacosConfigStore) Get(ctx context.Context, request *configstores.GetRequest) ([]*configstores.ConfigurationItem, error) {
+	// todo: pagenation
+	// use the configuration's app_name instead of the app_id in request
+	// 0. check if illegal
+	if request.Group == "" && len(request.Keys) > 0 {
+		request.Group = defaultGroup
+	}
+
+	// 1. app level
+	if request.Group == "" {
+		return n.getAllWithAppId(ctx)
+	}
+
+	// 2.group level
+	if len(request.Keys) == 0 {
+		return n.getAllWithGroup(ctx, request.Group)
+	}
+
+	// 3.key level
+	// todo: haven't support tag and label
+	return n.getAllWithKeys(ctx, request.Group, request.Keys)
+}
+
+func (n *NacosConfigStore) getAllWithAppId(ctx context.Context) ([]*configstores.ConfigurationItem, error) {
+	values, err := n.client.SearchConfig(vo.SearchConfigParam{
+		Search:  "accurate",
+		AppName: n.appName,
+	})
+	if err != nil {
+		log.DefaultLogger.Errorf("fail get all app_id key-value,err: %+v", err)
+		return nil, err
+	}
+
+	res := make([]*configstores.ConfigurationItem, 0, len(values.PageItems))
+	for _, v := range values.PageItems {
+		config := &configstores.ConfigurationItem{
+			Content: v.Content,
+			Key:     v.DataId,
+			Group:   v.Group,
+		}
+		res = append(res, config)
+	}
+
+	return res, nil
+}
+
+func (n *NacosConfigStore) getAllWithGroup(ctx context.Context, group string) ([]*configstores.ConfigurationItem, error) {
+	values, err := n.client.SearchConfig(vo.SearchConfigParam{
+		Search:  "accurate",
+		AppName: n.appName,
+		Group:   group,
+	})
+	if err != nil {
+		log.DefaultLogger.Errorf("fail get all group key-value,err: %+v", err)
+		return nil, err
+	}
+
+	res := make([]*configstores.ConfigurationItem, 0, len(values.PageItems))
+	for _, v := range values.PageItems {
+		config := &configstores.ConfigurationItem{
+			Content: v.Content,
+			Key:     v.DataId,
+			Group:   v.Group,
+		}
+		res = append(res, config)
+	}
+
+	return res, nil
+}
+
+func (n *NacosConfigStore) getAllWithKeys(ctx context.Context, group string, keys []string) ([]*configstores.ConfigurationItem, error) {
+	res := make([]*configstores.ConfigurationItem, 0, len(keys))
+	// todo: make more goroutine to search the configurations.
+	for _, key := range keys {
+		value, err := n.client.GetConfig(vo.ConfigParam{
+			DataId:  key,
+			Group:   group,
+			AppName: n.appName,
+		})
+		if err != nil {
+			log.DefaultLogger.Errorf("fail get key-value,err: %+v", err)
+			return nil, err
+		}
+		config := &configstores.ConfigurationItem{
+			Content: value,
+			Key:     key,
+			Group:   group,
+		}
+
+		res = append(res, config)
+	}
+
+	return res, nil
+}
+
+func (n *NacosConfigStore) Set(ctx context.Context, request *configstores.SetRequest) error {
+	if request.AppId == "" {
+		return errParamsMissingField("AppId")
+	}
+
+	if len(request.Items) == 0 {
+		return errParamsMissingField("Items")
+	}
+
+	for _, configItem := range request.Items {
+		if configItem.Group == "" {
+			return errParamsMissingField("Group")
+		}
+		_, err := n.client.PublishConfig(vo.ConfigParam{
+			DataId:  configItem.Key,
+			Group:   configItem.Group,
+			AppName: request.AppId,
+			Content: configItem.Content,
+		})
+		if err != nil {
+			log.DefaultLogger.Errorf("set key[%+v] failed with error: %+v", configItem.Key, err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (n NacosConfigStore) Delete(ctx context.Context, request *configstores.DeleteRequest) error {
+	if request.AppId == "" {
+		return errParamsMissingField("AppId")
+	}
+
+	if request.Group == "" {
+		return errParamsMissingField("Group")
+	}
+
+	if len(request.Keys) == 0 {
+		return errParamsMissingField("Keys")
+	}
+
+	for _, key := range request.Keys {
+		_, err := n.client.DeleteConfig(vo.ConfigParam{
+			DataId:  key,
+			Group:   request.Group,
+			AppName: request.AppId,
+		})
+		if err != nil {
+			log.DefaultLogger.Errorf("delete key[%+v] failed with error: %+v", key, err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (n *NacosConfigStore) Subscribe(req *configstores.SubscribeReq, resps chan *configstores.SubscribeResp) error {
+	if req.Group == "" && len(req.Keys) > 0 {
+		req.Group = defaultGroup
+	}
+
+	// 1. api level
+	if req.Group == "" {
+		return n.subscribeAllWithAppID(resps)
+	}
+
+	// 2. group level
+	if len(req.Keys) > 0 {
+		return n.subscribeAllWithGroup(req.Group, resps)
+	}
+
+	// 3. key level
+	return n.subscribeAllWithKeys(req.Group, req.Keys, resps)
+}
+
+func (n *NacosConfigStore) subscribeAllWithAppID(resps chan *configstores.SubscribeResp) error {
+	// get all configuration in this app id
+
+	// listen on it
+
+	return nil
+}
+
+func (n *NacosConfigStore) subscribeAllWithGroup(group string, resps chan *configstores.SubscribeResp) error {
+	return nil
+}
+
+func (n *NacosConfigStore) subscribeAllWithKeys(group string, keys []string, resps chan *configstores.SubscribeResp) error {
+	return nil
+}
+
+func (n *NacosConfigStore) StopSubscribe() {
+
+}
+
+func (n NacosConfigStore) GetDefaultGroup() string {
+	return defaultGroup
+}
+
+func (n NacosConfigStore) GetDefaultLabel() string {
+	return defaultLabel
+}
