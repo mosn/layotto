@@ -84,7 +84,7 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 	if err := client.Ping(e.ctx, nil); err != nil {
 		return err
 	}
-
+	e.client = client
 	// Connections Collection
 	e.collection, err = utils.SetCollection(e.client, e.factory, e.metadata)
 	if err != nil {
