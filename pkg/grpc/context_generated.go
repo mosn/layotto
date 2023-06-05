@@ -57,12 +57,8 @@ type ApplicationContext struct {
 	DynamicComponents     map[lifecycle.ComponentKey]common.DynamicComponent
 	CustomComponent       map[string]map[string]custom.Component
 	CryptionService       map[string]cryption.CryptionService
-
-	EmailService map[string]email.EmailService
-
-	PhoneCallService map[string]phone.PhoneCallService
-
-	SmsService map[string]sms.SmsService
-
-	Extends map[string]json.RawMessage
+	EmailService          map[string]email.EmailService
+	PhoneCallService      map[string]phone.PhoneCallService
+	SmsService            map[string]sms.SmsService
+	Extends               map[string]json.RawMessage
 }
