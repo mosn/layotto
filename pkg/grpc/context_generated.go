@@ -16,6 +16,8 @@
 package grpc
 
 import (
+	"encoding/json"
+
 	bindings "github.com/dapr/components-contrib/bindings"
 	pubsub "github.com/dapr/components-contrib/pubsub"
 	secretstores "github.com/dapr/components-contrib/secretstores"
@@ -61,4 +63,6 @@ type ApplicationContext struct {
 	PhoneCallService map[string]phone.PhoneCallService
 
 	SmsService map[string]sms.SmsService
+
+	Extends map[string]json.RawMessage
 }
