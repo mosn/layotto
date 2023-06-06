@@ -9,7 +9,6 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/common/logger"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"mosn.io/layotto/components/configstores"
-	"mosn.io/layotto/components/configstores/apollo"
 	"mosn.io/pkg/log"
 	"strconv"
 	"strings"
@@ -18,15 +17,19 @@ import (
 
 type NacosConfigStore struct {
 	client      config_client.IConfigClient
+	storeName   string
 	appName     string
 	logDir      string
 	cacheDir    string
 	addresses   []string
 	namespaceId string
+	listener    *subscriberHolder
 }
 
 func NewStore() configstores.Store {
-	return &NacosConfigStore{}
+	return &NacosConfigStore{
+		listener: newSubscriberHolder(),
+	}
 }
 
 // Init SetConfig the configuration store.
@@ -34,6 +37,12 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	// 1.parse the config
 	if config == nil {
 		return errors.New("configuration illegal:no config data")
+	}
+
+	// store name, required
+	n.storeName = config.StoreName
+	if n.storeName == "" {
+		return errConfigMissingField("store_mame")
 	}
 
 	// the nacos's addresses, required
@@ -84,7 +93,7 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	}
 
 	// 3.create client config
-	// TODO: acm mode
+	// TODO: support acm mode
 	clientConfig := *constant.NewClientConfig(
 		constant.WithTimeoutMs(timeoutMs),
 		constant.WithNamespaceId(n.namespaceId),
@@ -106,7 +115,7 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	}
 
 	// 5.set default nacos go-sdk default log
-	defaultLogger := apollo.NewDefaultLogger(log.DefaultLogger)
+	defaultLogger := NewDefaultLogger(log.DefaultLogger)
 	logger.SetLogger(defaultLogger)
 	n.client = client
 
@@ -265,43 +274,85 @@ func (n NacosConfigStore) Delete(ctx context.Context, request *configstores.Dele
 	return nil
 }
 
-func (n *NacosConfigStore) Subscribe(req *configstores.SubscribeReq, resps chan *configstores.SubscribeResp) error {
-	if req.Group == "" && len(req.Keys) > 0 {
-		req.Group = defaultGroup
+func (n *NacosConfigStore) Subscribe(request *configstores.SubscribeReq, ch chan *configstores.SubscribeResp) error {
+	if request.Group == "" && len(request.Keys) > 0 {
+		request.Group = defaultGroup
 	}
 
-	// 1. api level
-	if req.Group == "" {
-		return n.subscribeAllWithAppID(resps)
+	ctx := context.Background()
+	var err error
+	var items []*configstores.ConfigurationItem
+
+	if request.Group == "" { // 1.app level
+		items, err = n.getAllWithAppId(ctx)
+	} else if len(request.Keys) == 0 { // 2.group level
+		items, err = n.getAllWithGroup(ctx, request.Group)
+	} else { // 3.key level
+		items, err = n.getAllWithKeys(ctx, request.Group, request.Keys)
 	}
 
-	// 2. group level
-	if len(req.Keys) > 0 {
-		return n.subscribeAllWithGroup(req.Group, resps)
+	if err != nil {
+		return err
 	}
 
-	// 3. key level
-	return n.subscribeAllWithKeys(req.Group, req.Keys, resps)
-}
-
-func (n *NacosConfigStore) subscribeAllWithAppID(resps chan *configstores.SubscribeResp) error {
-	// get all configuration in this app id
-
-	// listen on it
+	for _, item := range items {
+		// todo: use errgroup to deal with it concurrently.
+		if err := n.subscribeKey(item, ch); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
 
-func (n *NacosConfigStore) subscribeAllWithGroup(group string, resps chan *configstores.SubscribeResp) error {
-	return nil
-}
+func (n *NacosConfigStore) subscribeKey(item *configstores.ConfigurationItem, ch chan *configstores.SubscribeResp) error {
+	err := n.client.ListenConfig(vo.ConfigParam{
+		DataId:  item.Key,
+		Group:   item.Group,
+		AppName: n.appName,
+		OnChange: func(namespace, group, dataId, data string) {
+			// package the listening data.
+			resp := &configstores.SubscribeResp{
+				StoreName: n.storeName,
+				AppId:     n.appName,
+				Items: []*configstores.ConfigurationItem{
+					{
+						Key:     dataId,
+						Content: data,
+						Group:   group,
+					},
+				},
+			}
 
-func (n *NacosConfigStore) subscribeAllWithKeys(group string, keys []string, resps chan *configstores.SubscribeResp) error {
+			ch <- resp
+		},
+	})
+
+	if err != nil {
+		return err
+	}
+
+	n.listener.AddSubscriberKey(subscriberKey{key: item.Key, group: item.Group})
 	return nil
 }
 
 func (n *NacosConfigStore) StopSubscribe() {
+	// stop listening all subscribed configs
+	keys := n.listener.GetSubscriberKey()
+	for _, key := range keys {
+		err := n.client.CancelListenConfig(vo.ConfigParam{
+			DataId:  key.key,
+			Group:   key.group,
+			AppName: n.appName,
+		})
 
+		if err != nil {
+			log.DefaultLogger.Errorf("nacos StopSubscribe key %s-%s-%s failed", n.appName, key.group, key.key)
+			return
+		}
+
+		n.listener.RemoveSubscriberKey(key)
+	}
 }
 
 func (n NacosConfigStore) GetDefaultGroup() string {
