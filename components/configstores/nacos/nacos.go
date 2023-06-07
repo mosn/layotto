@@ -246,7 +246,7 @@ func (n *NacosConfigStore) Set(ctx context.Context, request *configstores.SetReq
 	return nil
 }
 
-func (n NacosConfigStore) Delete(ctx context.Context, request *configstores.DeleteRequest) error {
+func (n *NacosConfigStore) Delete(ctx context.Context, request *configstores.DeleteRequest) error {
 	if request.AppId == "" {
 		return errParamsMissingField("AppId")
 	}
@@ -269,6 +269,12 @@ func (n NacosConfigStore) Delete(ctx context.Context, request *configstores.Dele
 			log.DefaultLogger.Errorf("delete key[%+v] failed with error: %+v", key, err)
 			return err
 		}
+
+		// remove the config change listening
+		n.listener.RemoveSubscriberKey(subscriberKey{
+			group: request.Group,
+			key:   key,
+		})
 	}
 
 	return nil
