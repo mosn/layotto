@@ -18,7 +18,6 @@ package main
 
 import (
 	"encoding/json"
-	"mosn.io/layotto/components/configstores/nacos"
 	_ "net/http/pprof"
 	"os"
 	"strconv"
@@ -64,6 +63,7 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/configstores/etcdv3"
+	"mosn.io/layotto/components/configstores/nacos"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/runtime/bindings"

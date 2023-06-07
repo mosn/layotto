@@ -18,7 +18,6 @@ package main
 
 import (
 	"encoding/json"
-	"mosn.io/layotto/components/configstores/nacos"
 	_ "net/http/pprof"
 	"os"
 	"strconv"
@@ -86,6 +85,7 @@ import (
 	// Configuration
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/configstores/apollo"
+	"mosn.io/layotto/components/configstores/nacos"
 
 	// Pub/Sub
 	dapr_comp_pubsub "github.com/dapr/components-contrib/pubsub"
