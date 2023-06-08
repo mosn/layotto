@@ -23,15 +23,28 @@ const (
 	defaultTimeout     = 10 // second
 )
 
+// map keys
+const (
+	namespaceIdKey = "namespace_id"
+	appNameKey     = "app_name"
+)
+
 type NacosMetadata struct {
-	AppName string
+	AppName     string
+	NameSpaceId string
 }
 
 func ParseNacosMetadata(properties map[string]string) (*NacosMetadata, error) {
 	config := &NacosMetadata{}
-	config.AppName = properties["app_name"]
+	config.AppName = properties[appNameKey]
 	if config.AppName == "" {
-		return nil, errConfigMissingField("app_name")
+		return nil, errConfigMissingField(appNameKey)
+	}
+
+	// the namespace of config, not required
+	config.NameSpaceId = properties[namespaceIdKey]
+	if config.NameSpaceId == "" {
+		config.NameSpaceId = defaultNamespaceId
 	}
 
 	return config, nil

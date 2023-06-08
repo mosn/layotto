@@ -19,7 +19,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
-	"github.com/nacos-group/nacos-sdk-go/v2/common/logger"
+	nacoslog "github.com/nacos-group/nacos-sdk-go/v2/common/logger"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/pkg/log"
@@ -69,6 +69,7 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 		return err
 	}
 	n.appName = metadata.AppName
+	n.namespaceId = metadata.NameSpaceId
 
 	// the timeout of connect to nacos, not required
 	timeout := defaultTimeout
@@ -80,12 +81,6 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 		}
 	}
 	timeoutMs := uint64(timeout) * uint64(time.Second/time.Millisecond)
-
-	// the namespace of config, not required
-	n.namespaceId = config.Metadata["namespace_id"]
-	if n.namespaceId == "" {
-		n.namespaceId = defaultNamespaceId
-	}
 
 	// 2.create ServerConfigs
 	serverConfigs := make([]constant.ServerConfig, 0, len(config.Address))
@@ -118,6 +113,8 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	)
 
 	// 4.create config client
+	// it only creates a client instance but not connect to nacos.
+	// so if the address is wrong, the client instance will still be created successfully.
 	client, err := clients.NewConfigClient(
 		vo.NacosClientParam{
 			ClientConfig:  &clientConfig,
@@ -130,7 +127,7 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 
 	// 5.set default nacos go-sdk default log
 	defaultLogger := NewDefaultLogger(log.DefaultLogger)
-	logger.SetLogger(defaultLogger)
+	nacoslog.SetLogger(defaultLogger)
 	n.client = client
 
 	return nil
