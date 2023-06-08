@@ -63,11 +63,12 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 		return errConfigMissingField("address")
 	}
 
-	// the application's name, required
-	n.appName = config.Metadata["app_name"]
-	if n.appName == "" {
-		return errConfigMissingField("app_name")
+	// parse config metadata
+	metadata, err := ParseNacosMetadata(config.Metadata)
+	if err != nil {
+		return err
 	}
+	n.appName = metadata.AppName
 
 	// the timeout of connect to nacos, not required
 	timeout := defaultTimeout

@@ -13,12 +13,21 @@
 
 package nacos
 
-const (
-	defaultNamespaceId = "" // if this is not set, then nacos will use the default namespaceId.
-	defaultGroup       = "default"
-	defaultLabel       = "default"
-	defaultLogDir      = "/tmp/layotto/nacos/log"
-	defaultCacheDir    = "/tmp/layotto/nacos/cache"
-	defaultLogLevel    = "debug"
-	defaultTimeout     = 10 // second
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
+
+func TestParseNacosMetadata(t *testing.T) {
+	properties := make(map[string]string)
+	// without app_name
+	_, err := ParseNacosMetadata(properties)
+	assert.Error(t, err)
+
+	// success
+	appName := "app"
+	properties["app_name"] = appName
+	metadata, err := ParseNacosMetadata(properties)
+	assert.Nil(t, err)
+	assert.EqualValues(t, appName, metadata.AppName)
+}
