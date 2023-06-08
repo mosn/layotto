@@ -245,13 +245,13 @@ func (n *NacosConfigStore) Set(ctx context.Context, request *configstores.SetReq
 		if configItem.Group == "" {
 			return errParamsMissingField("Group")
 		}
-		_, err := n.client.PublishConfig(vo.ConfigParam{
+		ok, err := n.client.PublishConfig(vo.ConfigParam{
 			DataId:  configItem.Key,
 			Group:   configItem.Group,
 			AppName: request.AppId,
 			Content: configItem.Content,
 		})
-		if err != nil {
+		if err != nil || !ok {
 			log.DefaultLogger.Errorf("set key[%+v] failed with error: %+v", configItem.Key, err)
 			return err
 		}
@@ -274,12 +274,12 @@ func (n *NacosConfigStore) Delete(ctx context.Context, request *configstores.Del
 	}
 
 	for _, key := range request.Keys {
-		_, err := n.client.DeleteConfig(vo.ConfigParam{
+		ok, err := n.client.DeleteConfig(vo.ConfigParam{
 			DataId:  key,
 			Group:   request.Group,
 			AppName: request.AppId,
 		})
-		if err != nil {
+		if err != nil || !ok {
 			log.DefaultLogger.Errorf("delete key[%+v] failed with error: %+v", key, err)
 			return err
 		}
