@@ -217,6 +217,13 @@ func (n *NacosConfigStore) getAllWithKeys(ctx context.Context, group string, key
 			log.DefaultLogger.Errorf("fail get key-value,err: %+v", err)
 			return nil, err
 		}
+
+		// config is not exist
+		// nacos dose not support an empty content.
+		if value == "" {
+			continue
+		}
+
 		config := &configstores.ConfigurationItem{
 			Content: value,
 			Key:     key,
@@ -248,6 +255,8 @@ func (n *NacosConfigStore) Set(ctx context.Context, request *configstores.SetReq
 			AppName: request.AppId,
 			Content: configItem.Content,
 		})
+
+		// If the config does not exist, deleting the config will not result in an error.
 		if err != nil || !ok {
 			log.DefaultLogger.Errorf("set key[%+v] failed with error: %+v", configItem.Key, err)
 			return err
