@@ -25,6 +25,7 @@ import (
 	"mosn.io/pkg/log"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -291,6 +292,7 @@ func (n *NacosConfigStore) Delete(ctx context.Context, request *configstores.Del
 		}
 
 		// remove the config change listening
+		// todo: close listening channel
 		n.listener.RemoveSubscriberKey(subscriberKey{
 			group: request.Group,
 			key:   key,
@@ -333,25 +335,10 @@ func (n *NacosConfigStore) Subscribe(request *configstores.SubscribeReq, ch chan
 
 func (n *NacosConfigStore) subscribeKey(item *configstores.ConfigurationItem, ch chan *configstores.SubscribeResp) error {
 	err := n.client.ListenConfig(vo.ConfigParam{
-		DataId:  item.Key,
-		Group:   item.Group,
-		AppName: n.appName,
-		OnChange: func(namespace, group, dataId, data string) {
-			// package the listening data.
-			resp := &configstores.SubscribeResp{
-				StoreName: n.storeName,
-				AppId:     n.appName,
-				Items: []*configstores.ConfigurationItem{
-					{
-						Key:     dataId,
-						Content: data,
-						Group:   group,
-					},
-				},
-			}
-
-			ch <- resp
-		},
+		DataId:   item.Key,
+		Group:    item.Group,
+		AppName:  n.appName,
+		OnChange: defaultSubscribeOnChange(n.storeName, n.appName, ch),
 	})
 
 	if err != nil {
@@ -360,6 +347,35 @@ func (n *NacosConfigStore) subscribeKey(item *configstores.ConfigurationItem, ch
 
 	n.listener.AddSubscriberKey(subscriberKey{key: item.Key, group: item.Group})
 	return nil
+}
+
+var defaultSubscribeOnChange = subscribeOnChange
+var mu sync.Mutex
+
+// this design is used to test Subscribe.
+func setSubscribeOnChange(fn func(storeName, appName string, ch chan *configstores.SubscribeResp) func(namespace, group, dataId, data string)) {
+	mu.Lock()
+	defer mu.Unlock()
+	defaultSubscribeOnChange = fn
+}
+
+func subscribeOnChange(storeName, appName string, ch chan *configstores.SubscribeResp) func(namespace, group, dataId, data string) {
+	return func(namespace, group, dataId, data string) {
+		// package the listening data.
+		resp := &configstores.SubscribeResp{
+			StoreName: storeName,
+			AppId:     appName,
+			Items: []*configstores.ConfigurationItem{
+				{
+					Key:     dataId,
+					Content: data,
+					Group:   group,
+				},
+			},
+		}
+
+		ch <- resp
+	}
 }
 
 func (n *NacosConfigStore) StopSubscribe() {
