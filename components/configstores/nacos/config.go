@@ -35,6 +35,10 @@ type NacosMetadata struct {
 }
 
 func ParseNacosMetadata(properties map[string]string) (*NacosMetadata, error) {
+	if properties == nil {
+		return nil, errConfigMissingField("metadata")
+	}
+
 	config := &NacosMetadata{}
 	config.AppName = properties[appNameKey]
 	if config.AppName == "" {

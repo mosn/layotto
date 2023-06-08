@@ -59,7 +59,7 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	}
 
 	// the nacos's addresses, required
-	if len(config.Address) == 0 {
+	if config.Address == nil || len(config.Address) == 0 {
 		return errConfigMissingField("address")
 	}
 

@@ -19,9 +19,13 @@ import (
 )
 
 func TestParseNacosMetadata(t *testing.T) {
+	// without metadata
+	_, err := ParseNacosMetadata(nil)
+	assert.Error(t, err)
+
 	properties := make(map[string]string)
 	// without app_name
-	_, err := ParseNacosMetadata(properties)
+	_, err = ParseNacosMetadata(properties)
 	assert.Error(t, err)
 
 	// success
