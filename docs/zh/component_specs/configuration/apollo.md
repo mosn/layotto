@@ -17,7 +17,7 @@
 | metadata.open_api_user | Y | 访问apollo open-api的用户 |
 
 ## 怎么启动Apollo
-使用项目中的demo无需自己部署apollo服务器。demo会使用apollo官方 提供的演示环境http://106.54.227.205/
+使用项目中的demo无需自己部署apollo服务器。demo会使用apollo官方 提供的演示环境http://81.68.181.139
 
 如果您想自己部署apollo，可以参考[apollo 官方文档](https://www.apolloconfig.com/#/zh/deployment/quick-start)
 
