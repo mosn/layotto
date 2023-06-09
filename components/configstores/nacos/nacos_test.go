@@ -15,12 +15,14 @@ package nacos
 
 import (
 	"context"
+	"fmt"
 	"github.com/golang/mock/gomock"
 	"github.com/nacos-group/nacos-sdk-go/v2/model"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/pkg/mock"
+	"sync"
 	"testing"
 )
 
@@ -387,11 +389,33 @@ func TestNacosConfigStore_StopSubscribe(t *testing.T) {
 	assert.EqualValues(t, 0, len(store.listener.keyMap))
 }
 
-func TestNacosConfigStore_Subscribe(t *testing.T) {
-	// todo: I am not sure how to test listening config changes.
-	// We may change the Onchange function in nacos.go/subscribeKey to option mode.
-	// In this case, we can replace our own callback function.
+// 由于vo.ConfigParam中存在函数指针的影响，所以自定义方法去进行 matcher 比较
+func EqConfigParam(param vo.ConfigParam) gomock.Matcher {
+	return &configParamMatcher{expected: param}
+}
 
+type configParamMatcher struct {
+	expected vo.ConfigParam
+}
+
+func (c *configParamMatcher) Matches(x interface{}) bool {
+	v, ok := x.(vo.ConfigParam)
+	if !ok {
+		return false
+	}
+
+	if v.DataId != c.expected.DataId || v.Group != c.expected.Group || v.AppName != c.expected.AppName {
+		return false
+	}
+
+	return true
+}
+
+func (c *configParamMatcher) String() string {
+	return fmt.Sprintf("is equal to %v", c.expected)
+}
+
+func TestNacosConfigStore_Subscribe(t *testing.T) {
 	// Only support get configs from the app_id has been set in store.
 	t.Run("test subscribe with other app id", func(t *testing.T) {
 		mockClient := getMockNacosClient(t)
@@ -409,17 +433,16 @@ func TestNacosConfigStore_Subscribe(t *testing.T) {
 			AppName: appName, //  app name that stored in the store instance
 		})).Return(content, nil)
 
-		mockClient.EXPECT().ListenConfig(gomock.Any()).Return(nil)
+		mockClient.EXPECT().ListenConfig(EqConfigParam(vo.ConfigParam{
+			DataId:   params.Keys[0],
+			Group:    params.Group,
+			AppName:  appName, //  app name that stored in the store instance
+			OnChange: nil,     // Ignore the impact of the OnChange function
+		})).Return(nil)
 		store := setup(t, mockClient)
 		err := store.Subscribe(params, ch)
 		assert.Nil(t, err)
 	})
-	//mockClient.EXPECT().ListenConfig(gomock.Eq(vo.ConfigParam{
-	//	DataId:   params.Keys[0],
-	//	Group:    params.Group,
-	//	AppName:  appName, //  app name that stored in the store instance
-	//	OnChange: defaultSubscribeOnChange(storeName, appName, ch),
-	//})).Return(nil)
 
 	t.Run("test success with key level", func(t *testing.T) {
 		mockClient := getMockNacosClient(t)
@@ -437,7 +460,12 @@ func TestNacosConfigStore_Subscribe(t *testing.T) {
 			AppName: appName, //  app name that stored in the store instance
 		})).Return(content, nil)
 
-		mockClient.EXPECT().ListenConfig(gomock.Any()).Return(nil)
+		mockClient.EXPECT().ListenConfig(EqConfigParam(vo.ConfigParam{
+			DataId:   params.Keys[0],
+			Group:    params.Group,
+			AppName:  appName, //  app name that stored in the store instance
+			OnChange: nil,     // Ignore the impact of the OnChange function
+		})).Return(nil)
 		store := setup(t, mockClient)
 		err := store.Subscribe(params, ch)
 		assert.Nil(t, err)
@@ -466,7 +494,12 @@ func TestNacosConfigStore_Subscribe(t *testing.T) {
 		}, nil)
 
 		ch := make(chan *configstores.SubscribeResp)
-		mockClient.EXPECT().ListenConfig(gomock.Any()).Return(nil)
+		mockClient.EXPECT().ListenConfig(EqConfigParam(vo.ConfigParam{
+			DataId:   "data_id",
+			Group:    "group",
+			AppName:  appName, //  app name that stored in the store instance
+			OnChange: nil,     // Ignore the impact of the OnChange function
+		})).Return(nil)
 		store := setup(t, mockClient)
 		err := store.Subscribe(params, ch)
 		assert.Nil(t, err)
@@ -496,7 +529,12 @@ func TestNacosConfigStore_Subscribe(t *testing.T) {
 		}, nil)
 
 		ch := make(chan *configstores.SubscribeResp)
-		mockClient.EXPECT().ListenConfig(gomock.Any()).Return(nil)
+		mockClient.EXPECT().ListenConfig(EqConfigParam(vo.ConfigParam{
+			DataId:   "data_id",
+			Group:    params.Group,
+			AppName:  appName, //  app name that stored in the store instance
+			OnChange: nil,     // Ignore the impact of the OnChange function
+		})).Return(nil)
 		store := setup(t, mockClient)
 		err := store.Subscribe(params, ch)
 		assert.Nil(t, err)
@@ -518,10 +556,53 @@ func TestNacosConfigStore_Subscribe(t *testing.T) {
 			AppName: appName, //  app name that stored in the store instance
 		})).Return(content, nil)
 
-		mockClient.EXPECT().ListenConfig(gomock.Any()).Return(nil)
+		mockClient.EXPECT().ListenConfig(EqConfigParam(vo.ConfigParam{
+			DataId:   params.Keys[0],
+			Group:    defaultGroup,
+			AppName:  appName, //  app name that stored in the store instance
+			OnChange: nil,     // Ignore the impact of the OnChange function
+		})).Return(nil)
 		store := setup(t, mockClient)
 		err := store.Subscribe(params, ch)
 		assert.Nil(t, err)
+	})
+
+	t.Run("test default subscribe", func(t *testing.T) {
+		store := setup(t, nil)
+		ch := make(chan *configstores.SubscribeResp, 2)
+		fn := store.subscribeOnChange(ch)
+		expected := &configstores.SubscribeResp{
+			StoreName: store.storeName,
+			AppId:     store.appName,
+			Items: []*configstores.ConfigurationItem{
+				{
+					Key:     "data_id",
+					Content: "content",
+					Group:   "group",
+				},
+			},
+		}
+
+		var wg sync.WaitGroup
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			i := 0
+			for v := range ch {
+				i++
+				assert.EqualValues(t, expected, v)
+			}
+			assert.EqualValues(t, i, 3)
+		}()
+		fn(store.namespaceId, "group", "data_id", "content")
+		fn(store.namespaceId, "group", "data_id", "content")
+		fn(store.namespaceId, "group", "data_id", "content")
+		close(ch)
+		wg.Wait()
+	})
+
+	t.Run("test ", func(t *testing.T) {
+
 	})
 }
 
