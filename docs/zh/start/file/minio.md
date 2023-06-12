@@ -21,8 +21,7 @@ docker-compose up -d
 > [!TIP|label: 不适合 Windows 用户]
 > Layotto 在 Windows 下会编译失败。建议 Windows 用户使用 docker-compose 部署
 #### step 1.1. 启动 MinIO 服务
-
-您可以使用 Docker 启动本地MinIO服务, 参考[官方文档]https://www.minio.org.cn/docs/minio/container/index.html
+您可以使用 Docker 启动本地MinIO服务, 参考[官方文档](https://min.io/docs/minio/container/index.html)
 
 ```shell
 docker run -d -p 9000:9000 -p 9090:9090 --name minio \
