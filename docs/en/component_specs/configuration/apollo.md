@@ -17,7 +17,7 @@ Example: configs/config_apollo.json
 | metadata.open_api_user | Y | User accessing apollo open-api |
 
 ## How to start Apollo
-There is no need to deploy the apollo server yourself to use the demo in the project. The demo will use the demo environment provided by apollo http://106.54.227.205/
+There is no need to deploy the apollo server yourself to use the demo in the project. The demo will use the demo environment provided by apollo http://81.68.181.139
 
 If you want to deploy apollo yourself, you can refer to [apollo official document](https://www.apolloconfig.com/#/zh/deployment/quick-start)
 
