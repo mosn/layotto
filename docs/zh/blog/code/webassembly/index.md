@@ -620,5 +620,6 @@ Layotto WebAssemly 虽然涉及较多 WASM 相关的基础知识，但通过示�
 - [1] [WebAssembly 在 MOSN 中的实践](https://mosn.io/blog/posts/mosn-wasm-framework/)
 - [2] [feature: WASM plugin framework](https://github.com/mosn/mosn/pull/1589)
 - [3] [WebAssembly for Proxies (ABI Spec)](https://github.com/proxy-wasm/spec)
-- [4] [Layotto源码解析——处理RPC请求](https://mosn.io/layotto/#/zh/blog/code/layotto-rpc/index)
-- [5] [云原生运行时的下一个五年](https://www.sofastack.tech/blog/the-next-five-years-of-cloud-native-runtime/)
+- [4] [Proxy WebAssembly Architecture](https://techhenzy.com/proxy-webassembly-architecture/)
+- [5] [Layotto源码解析——处理RPC请求](https://mosn.io/layotto/#/zh/blog/code/layotto-rpc/index)
+- [6] [云原生运行时的下一个五年](https://www.sofastack.tech/blog/the-next-five-years-of-cloud-native-runtime/)

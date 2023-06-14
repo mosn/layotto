@@ -16,6 +16,9 @@
       "pattern": "^https://docs.buf.build/"
     },
     {
+      "pattern":"^https://techhenzy.com/proxy-webassembly-architecture/"
+    },
+    {
       "pattern": "^#"
     }
   ],
