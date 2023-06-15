@@ -15,6 +15,7 @@ package nacos
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"testing"
@@ -66,47 +67,61 @@ func setup(t *testing.T, client Client) *ConfigStore {
 }
 
 func TestNacosConfigStore_Delete(t *testing.T) {
-	mockClient := getMockNacosClient(t)
-	mockClient.EXPECT().DeleteConfig(gomock.Any()).Return(true, nil)
-
-	store := setup(t, mockClient)
-	params := &configstores.DeleteRequest{
-		Group: "group",
-		Keys:  []string{"key"},
-		AppId: "test-delete-app",
-	}
-
 	t.Run("delete success", func(t *testing.T) {
+		params := &configstores.DeleteRequest{
+			Group: "group",
+			Keys:  []string{"key"},
+			AppId: "test-delete-app",
+		}
+
+		mockClient := getMockNacosClient(t)
+		mockClient.EXPECT().DeleteConfig(gomock.Eq(vo.ConfigParam{
+			DataId:  params.Keys[0],
+			Group:   params.Group,
+			AppName: params.AppId,
+		})).Return(true, nil)
+		store := setup(t, mockClient)
 		err := store.Delete(context.Background(), params)
 		assert.Nil(t, err)
 	})
 
 	t.Run("delete without app_id", func(t *testing.T) {
-		row := params.AppId
-		params.AppId = ""
+		params := &configstores.DeleteRequest{
+			Group: "group",
+			Keys:  []string{"key"},
+			AppId: "",
+		}
+
+		store := setup(t, nil)
 		err := store.Delete(context.Background(), params)
 		assert.Error(t, err)
-		params.AppId = row
 	})
 
 	t.Run("delete without group", func(t *testing.T) {
-		row := params.Group
-		params.Group = ""
+		params := &configstores.DeleteRequest{
+			Group: "",
+			Keys:  []string{"key"},
+			AppId: "test-delete-app",
+		}
+		store := setup(t, nil)
 		err := store.Delete(context.Background(), params)
 		assert.Error(t, err)
-		params.Group = row
 	})
 
 	t.Run("delete with empty keys", func(t *testing.T) {
-		row := params.Keys
-		params.Keys = []string{}
+		params := &configstores.DeleteRequest{
+			Group: "",
+			Keys:  []string{"key"},
+			AppId: "test-delete-app",
+		}
+		store := setup(t, nil)
 		err := store.Delete(context.Background(), params)
 		assert.Error(t, err)
-		params.Keys = row
 	})
 }
 
 func TestNacosConfigStore_Get(t *testing.T) {
+	const content = "content"
 	// Only support get configs from the app_id has been set in store.
 	t.Run("test get with other app id", func(t *testing.T) {
 		mockClient := getMockNacosClient(t)
@@ -116,7 +131,6 @@ func TestNacosConfigStore_Get(t *testing.T) {
 			Keys:  []string{"test-get-key1"},
 		}
 
-		content := "content"
 		mockClient.EXPECT().GetConfig(gomock.Eq(vo.ConfigParam{
 			DataId:  params.Keys[0],
 			Group:   params.Group,
@@ -125,18 +139,24 @@ func TestNacosConfigStore_Get(t *testing.T) {
 		store := setup(t, mockClient)
 		get, err := store.Get(context.Background(), params)
 		assert.Nil(t, err)
-		assert.EqualValues(t, content, get[0].Content)
+		expect := []*configstores.ConfigurationItem{
+			{
+				Key:     params.Keys[0],
+				Group:   params.Group,
+				Content: content,
+			},
+		}
+		assert.EqualValues(t, expect, get)
 	})
 
 	t.Run("test success with key level", func(t *testing.T) {
 		mockClient := getMockNacosClient(t)
 		params := &configstores.GetRequest{
-			AppId: appName, // different from app stored in the nacos instance
+			// without app, use the app_id set in configstore instance
 			Group: "test-get-group",
 			Keys:  []string{"test-get-key1"},
 		}
 
-		content := "content"
 		mockClient.EXPECT().GetConfig(gomock.Eq(vo.ConfigParam{
 			DataId:  params.Keys[0],
 			Group:   params.Group,
@@ -145,7 +165,14 @@ func TestNacosConfigStore_Get(t *testing.T) {
 		store := setup(t, mockClient)
 		get, err := store.Get(context.Background(), params)
 		assert.Nil(t, err)
-		assert.EqualValues(t, content, get[0].Content)
+		expect := []*configstores.ConfigurationItem{
+			{
+				Key:     params.Keys[0],
+				Group:   params.Group,
+				Content: content,
+			},
+		}
+		assert.EqualValues(t, expect, get)
 	})
 
 	t.Run("test success with app level", func(t *testing.T) {
@@ -154,15 +181,20 @@ func TestNacosConfigStore_Get(t *testing.T) {
 			AppId: appName, // different from app stored in the nacos instance
 		}
 
-		content := "content"
 		mockClient.EXPECT().SearchConfig(gomock.Eq(vo.SearchConfigParam{
 			Search:  "accurate",
 			AppName: appName, //  app name that stored in the store instance
 		})).Return(&model.ConfigPage{
 			PageItems: []model.ConfigItem{
 				{
-					DataId:  "data_id",
-					Group:   "group",
+					DataId:  "key1",
+					Group:   "group1",
+					Appname: appName,
+					Content: content,
+				},
+				{
+					DataId:  "key2",
+					Group:   "group2",
 					Appname: appName,
 					Content: content,
 				},
@@ -171,20 +203,29 @@ func TestNacosConfigStore_Get(t *testing.T) {
 		store := setup(t, mockClient)
 		get, err := store.Get(context.Background(), params)
 		assert.Nil(t, err)
-		assert.EqualValues(t, content, get[0].Content)
-		assert.EqualValues(t, "group", get[0].Group)
-		assert.EqualValues(t, "data_id", get[0].Key)
+		expect := []*configstores.ConfigurationItem{
+			{
+				Key:     "key1",
+				Group:   "group1",
+				Content: content,
+			},
+			{
+				Key:     "key2",
+				Group:   "group2",
+				Content: content,
+			},
+		}
+		assert.EqualValues(t, expect, get)
 	})
 
 	t.Run("test success with group level", func(t *testing.T) {
 		mockClient := getMockNacosClient(t)
 		params := &configstores.GetRequest{
-			AppId: appName, // different from app stored in the nacos instance
+			AppId: appName,
 			Group: "test-get-group",
-			//Keys:  []string{"test-get-key1"}, // without keys
+			// without keys
 		}
 
-		content := "content"
 		mockClient.EXPECT().SearchConfig(gomock.Eq(vo.SearchConfigParam{
 			Search:  "accurate",
 			AppName: appName, //  app name that stored in the store instance
@@ -192,7 +233,13 @@ func TestNacosConfigStore_Get(t *testing.T) {
 		})).Return(&model.ConfigPage{
 			PageItems: []model.ConfigItem{
 				{
-					DataId:  "data_id",
+					DataId:  "key1",
+					Group:   params.Group,
+					Appname: appName,
+					Content: content,
+				},
+				{
+					DataId:  "key2",
 					Group:   params.Group,
 					Appname: appName,
 					Content: content,
@@ -202,20 +249,29 @@ func TestNacosConfigStore_Get(t *testing.T) {
 		store := setup(t, mockClient)
 		get, err := store.Get(context.Background(), params)
 		assert.Nil(t, err)
-		assert.EqualValues(t, content, get[0].Content)
-		assert.EqualValues(t, params.Group, get[0].Group)
-		assert.EqualValues(t, "data_id", get[0].Key)
+		expect := []*configstores.ConfigurationItem{
+			{
+				Key:     "key1",
+				Group:   params.Group,
+				Content: content,
+			},
+			{
+				Key:     "key2",
+				Group:   params.Group,
+				Content: content,
+			},
+		}
+		assert.EqualValues(t, expect, get)
 	})
 
 	t.Run("test success with illegal params", func(t *testing.T) {
 		mockClient := getMockNacosClient(t)
 		params := &configstores.GetRequest{
-			AppId: appName, // different from app stored in the nacos instance
-			//Group: "test-get-group", // without group
+			AppId: appName,
+			// without group
 			Keys: []string{"test-get-key1"},
 		}
 
-		content := "content"
 		mockClient.EXPECT().GetConfig(gomock.Eq(vo.ConfigParam{
 			DataId:  params.Keys[0],
 			Group:   defaultGroup, // use default group
@@ -224,7 +280,14 @@ func TestNacosConfigStore_Get(t *testing.T) {
 		store := setup(t, mockClient)
 		get, err := store.Get(context.Background(), params)
 		assert.Nil(t, err)
-		assert.EqualValues(t, content, get[0].Content)
+		expect := []*configstores.ConfigurationItem{
+			{
+				Key:     params.Keys[0],
+				Group:   defaultGroup,
+				Content: content,
+			},
+		}
+		assert.EqualValues(t, expect, get)
 	})
 }
 
@@ -249,18 +312,17 @@ func TestNacosConfigStore_Init(t *testing.T) {
 		timeout   = "10" // seconds
 	)
 
-	store := NewStore()
-	// test success without all params
-	config := &configstores.StoreConfig{}
-	config.Metadata = map[string]string{
-		namespaceIdKey: namespace,
-		appNameKey:     appName,
-	}
-	config.StoreName = storeName
-	config.Address = []string{address}
-	config.TimeOut = timeout
-
 	t.Run("test success", func(t *testing.T) {
+		store := NewStore()
+		config := &configstores.StoreConfig{
+			Metadata: map[string]string{
+				namespaceIdKey: namespace,
+				appNameKey:     appName,
+			},
+			StoreName: storeName,
+			Address:   []string{address},
+			TimeOut:   timeout,
+		}
 		err := store.Init(config)
 		assert.Nil(t, err)
 		// check config params
@@ -273,100 +335,147 @@ func TestNacosConfigStore_Init(t *testing.T) {
 	t.Run("test without config", func(t *testing.T) {
 		store := NewStore()
 		err := store.Init(nil)
-		assert.Error(t, err)
+		assert.EqualError(t, errors.New("configuration illegal:no config data"), err.Error())
 	})
 
 	t.Run("test without store name", func(t *testing.T) {
 		store := NewStore()
-		row := config.StoreName
-		config.StoreName = ""
+		config := &configstores.StoreConfig{
+			Metadata: map[string]string{
+				namespaceIdKey: namespace,
+				appNameKey:     appName,
+			},
+			Address: []string{address},
+			TimeOut: timeout,
+		}
 		err := store.Init(config)
-		assert.Error(t, err)
-		config.StoreName = row
+		assert.EqualError(t, errConfigMissingField("store_mame"), err.Error())
 	})
 
-	t.Run("test address", func(t *testing.T) {
+	t.Run("test empty address", func(t *testing.T) {
 		store := NewStore()
-		row := config.Address
+		config := &configstores.StoreConfig{
+			Metadata: map[string]string{
+				namespaceIdKey: namespace,
+				appNameKey:     appName,
+			},
+			StoreName: storeName,
+			Address:   []string{},
+			TimeOut:   timeout,
+		}
+		err := store.Init(config)
+		assert.EqualError(t, errConfigMissingField("address"), err.Error())
+	})
 
-		// with nil address
-		config.Address = nil
+	t.Run("test with acm mode", func(t *testing.T) {
+		store := NewStore()
+		config := &configstores.StoreConfig{
+			Metadata: map[string]string{
+				appNameKey:  appName,
+				endPointKey: "end_point",
+			},
+			StoreName: storeName,
+			Address:   []string{},
+			TimeOut:   timeout,
+		}
+		err := store.Init(config)
+		assert.Nil(t, err)
+	})
+
+	t.Run("test wrong address", func(t *testing.T) {
+		store := NewStore()
+		config := &configstores.StoreConfig{
+			Metadata: map[string]string{
+				namespaceIdKey: namespace,
+				appNameKey:     appName,
+			},
+			StoreName: storeName,
+			Address:   []string{"123123"},
+			TimeOut:   timeout,
+		}
 		err := store.Init(config)
 		assert.Error(t, err)
-
-		// with empty address
-		config.Address = []string{}
-		err = store.Init(config)
-		assert.Error(t, err)
-
-		// with wrong address (address haven't port)
-		config.Address = []string{"127.0.0.1"}
-		err = store.Init(config)
-		assert.Error(t, err)
-
-		config.Address = row
 	})
 
 	t.Run("test metadata", func(t *testing.T) {
 		store := NewStore()
-		// test without metadata (the app name required has be tested in config_test.go)
-		row := config.Metadata
-		config.Metadata = nil
+		config := &configstores.StoreConfig{
+			Address: []string{"123123"},
+			TimeOut: timeout,
+		}
 		err := store.Init(config)
 		assert.Error(t, err)
-		config.Metadata = row
 	})
 }
 
 func TestNacosConfigStore_Set(t *testing.T) {
-	mockClient := getMockNacosClient(t)
-	mockClient.EXPECT().PublishConfig(gomock.Any()).Return(true, nil)
-
-	store := setup(t, mockClient)
-	params := &configstores.SetRequest{
-		AppId: "test-set-app",
-		Items: []*configstores.ConfigurationItem{
-			{
-				Group:   "test-set-group",
-				Content: "content",
-				Key:     "test-set-key",
-			},
-		},
-	}
-
 	t.Run("set success", func(t *testing.T) {
+		params := &configstores.SetRequest{
+			AppId: "test-set-app",
+			Items: []*configstores.ConfigurationItem{
+				{
+					Group:   "test-set-group",
+					Content: "content",
+					Key:     "test-set-key",
+				},
+			},
+		}
+		mockClient := getMockNacosClient(t)
+		mockClient.EXPECT().PublishConfig(gomock.Eq(vo.ConfigParam{
+			DataId:  params.Items[0].Key,
+			Group:   params.Items[0].Group,
+			Content: params.Items[0].Content,
+			AppName: params.AppId,
+		})).Return(true, nil)
+		store := setup(t, mockClient)
 		err := store.Set(context.Background(), params)
 		assert.Nil(t, err)
 	})
 
 	t.Run("set without app_id", func(t *testing.T) {
-		row := params.AppId
-		params.AppId = ""
+		store := setup(t, nil)
+		params := &configstores.SetRequest{
+			//without AppId
+			Items: []*configstores.ConfigurationItem{
+				{
+					Group:   "test-set-group",
+					Content: "content",
+					Key:     "test-set-key",
+				},
+			},
+		}
 		err := store.Set(context.Background(), params)
-		assert.Error(t, err)
-		params.AppId = row
+		assert.EqualError(t, errParamsMissingField("AppId"), err.Error())
 	})
 
 	t.Run("set with empty items", func(t *testing.T) {
-		row := params.Items
-		params.Items = nil
+		store := setup(t, nil)
+		params := &configstores.SetRequest{
+			AppId: "test-set-app",
+			Items: []*configstores.ConfigurationItem{},
+		}
 		err := store.Set(context.Background(), params)
-		assert.Error(t, err)
-		params.Items = row
+		assert.EqualError(t, errParamsMissingField("Items"), err.Error())
 	})
 
 	t.Run("set without group", func(t *testing.T) {
-		row := params.Items[0].Group
-		params.Items[0].Group = ""
+		store := setup(t, nil)
+		params := &configstores.SetRequest{
+			AppId: "test-set-app",
+			Items: []*configstores.ConfigurationItem{
+				{
+					// without group
+					Content: "content",
+					Key:     "test-set-key",
+				},
+			},
+		}
 		err := store.Set(context.Background(), params)
-		assert.Error(t, err)
-		params.Items[0].Group = row
+		assert.EqualError(t, errParamsMissingField("Group"), err.Error())
 	})
 }
 
 func TestNacosConfigStore_StopSubscribe(t *testing.T) {
-	// todo test channel closed.
-
 	req := &configstores.SubscribeReq{
 		AppId: appName,
 		Group: "test-stop-subscribe-group",
@@ -445,107 +554,13 @@ func TestNacosConfigStore_Subscribe(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("test success with key level", func(t *testing.T) {
-		mockClient := getMockNacosClient(t)
-		params := &configstores.SubscribeReq{
-			AppId: "test-app1", // different from app stored in the nacos instance
-			Group: "test-get-group",
-			Keys:  []string{"test-get-key1"},
-		}
-
-		ch := make(chan *configstores.SubscribeResp)
-		content := "content"
-		mockClient.EXPECT().GetConfig(gomock.Eq(vo.ConfigParam{
-			DataId:  params.Keys[0],
-			Group:   params.Group,
-			AppName: appName, //  app name that stored in the store instance
-		})).Return(content, nil)
-
-		mockClient.EXPECT().ListenConfig(EqConfigParam(vo.ConfigParam{
-			DataId:   params.Keys[0],
-			Group:    params.Group,
-			AppName:  appName, //  app name that stored in the store instance
-			OnChange: nil,     // Ignore the impact of the OnChange function
-		})).Return(nil)
-		store := setup(t, mockClient)
-		err := store.Subscribe(params, ch)
-		assert.Nil(t, err)
-	})
-
-	t.Run("test success with app level", func(t *testing.T) {
-		mockClient := getMockNacosClient(t)
-		params := &configstores.SubscribeReq{
-			AppId: appName, // different from app stored in the nacos instance
-			//Group: "test-get-group", // without group
-			//Keys:  []string{"test-get-key1"}, // without keys
-		}
-
-		mockClient.EXPECT().SearchConfig(gomock.Eq(vo.SearchConfigParam{
-			Search:  "accurate",
-			AppName: appName, //  app name that stored in the store instance
-		})).Return(&model.ConfigPage{
-			PageItems: []model.ConfigItem{
-				{
-					DataId:  "data_id",
-					Group:   "group",
-					Appname: appName,
-					Content: "content",
-				},
-			},
-		}, nil)
-
-		ch := make(chan *configstores.SubscribeResp)
-		mockClient.EXPECT().ListenConfig(EqConfigParam(vo.ConfigParam{
-			DataId:   "data_id",
-			Group:    "group",
-			AppName:  appName, //  app name that stored in the store instance
-			OnChange: nil,     // Ignore the impact of the OnChange function
-		})).Return(nil)
-		store := setup(t, mockClient)
-		err := store.Subscribe(params, ch)
-		assert.Nil(t, err)
-	})
-
-	t.Run("test success with group level", func(t *testing.T) {
-		mockClient := getMockNacosClient(t)
-		params := &configstores.SubscribeReq{
-			AppId: appName, // different from app stored in the nacos instance
-			Group: "test-get-group",
-			//Keys:  []string{"test-get-key1"}, // without keys
-		}
-
-		mockClient.EXPECT().SearchConfig(gomock.Eq(vo.SearchConfigParam{
-			Search:  "accurate",
-			AppName: appName, //  app name that stored in the store instance
-			Group:   params.Group,
-		})).Return(&model.ConfigPage{
-			PageItems: []model.ConfigItem{
-				{
-					DataId:  "data_id",
-					Group:   params.Group,
-					Appname: appName,
-					Content: "content",
-				},
-			},
-		}, nil)
-
-		ch := make(chan *configstores.SubscribeResp)
-		mockClient.EXPECT().ListenConfig(EqConfigParam(vo.ConfigParam{
-			DataId:   "data_id",
-			Group:    params.Group,
-			AppName:  appName, //  app name that stored in the store instance
-			OnChange: nil,     // Ignore the impact of the OnChange function
-		})).Return(nil)
-		store := setup(t, mockClient)
-		err := store.Subscribe(params, ch)
-		assert.Nil(t, err)
-	})
+	// Testing on other levels completed in Get
 
 	t.Run("test success with illegal params", func(t *testing.T) {
 		mockClient := getMockNacosClient(t)
 		params := &configstores.SubscribeReq{
-			AppId: appName, // different from app stored in the nacos instance
-			//Group: "test-get-group", // without group
+			AppId: appName,
+			// without group
 			Keys: []string{"test-get- key1"},
 		}
 
@@ -568,7 +583,7 @@ func TestNacosConfigStore_Subscribe(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("test default subscribe", func(t *testing.T) {
+	t.Run("test onchange function", func(t *testing.T) {
 		store := setup(t, nil)
 		ch := make(chan *configstores.SubscribeResp, 2)
 		fn := store.subscribeOnChange(ch)
