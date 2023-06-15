@@ -24,6 +24,7 @@ type subscriberHolder struct {
 type subscriberKey struct {
 	group string
 	key   string
+	label string
 }
 
 func newSubscriberHolder() *subscriberHolder {

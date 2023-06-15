@@ -16,14 +16,16 @@ package nacos
 import (
 	"context"
 	"fmt"
+	"sync"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/nacos-group/nacos-sdk-go/v2/model"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"github.com/stretchr/testify/assert"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/pkg/mock"
-	"sync"
-	"testing"
 )
 
 const (
@@ -37,7 +39,7 @@ func getMockNacosClient(t *testing.T) *mock.MockNacosConfigClient {
 	return mock.NewMockNacosConfigClient(ctrl)
 }
 
-func setup(t *testing.T, client NacosConfigClient) *NacosConfigStore {
+func setup(t *testing.T, client Client) *ConfigStore {
 	t.Helper()
 	store := NewStore()
 	// with default namespace and timeout
@@ -55,7 +57,7 @@ func setup(t *testing.T, client NacosConfigClient) *NacosConfigStore {
 		return nil
 	}
 
-	nacosStore := store.(*NacosConfigStore)
+	nacosStore := store.(*ConfigStore)
 	if client != nil {
 		nacosStore.client = client
 	}
@@ -262,9 +264,8 @@ func TestNacosConfigStore_Init(t *testing.T) {
 		err := store.Init(config)
 		assert.Nil(t, err)
 		// check config params
-		nacosStore := store.(*NacosConfigStore)
+		nacosStore := store.(*ConfigStore)
 		assert.EqualValues(t, config.Metadata[namespaceIdKey], nacosStore.namespaceId)
-		assert.EqualValues(t, config.Address, nacosStore.addresses)
 		assert.EqualValues(t, config.Metadata[appNameKey], nacosStore.appName)
 		assert.EqualValues(t, config.StoreName, nacosStore.storeName)
 	})
@@ -599,10 +600,6 @@ func TestNacosConfigStore_Subscribe(t *testing.T) {
 		fn(store.namespaceId, "group", "data_id", "content")
 		close(ch)
 		wg.Wait()
-	})
-
-	t.Run("test ", func(t *testing.T) {
-
 	})
 }
 

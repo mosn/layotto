@@ -18,7 +18,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 )
 
-type NacosConfigClient interface {
+type Client interface {
 	// GetConfig use to get config from nacos server
 	// dataId  require
 	// group   require

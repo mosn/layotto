@@ -13,22 +13,12 @@
 
 package nacos
 
-import (
-	"errors"
-	"fmt"
+const (
+	defaultNamespaceId = "" // if this is not set, then nacos will use the default namespaceId.
+	defaultGroup       = "default"
+	defaultLabel       = "default"
+	defaultLogDir      = "/tmp/layotto/nacos/log"
+	defaultCacheDir    = "/tmp/layotto/nacos/cache"
+	defaultLogLevel    = "debug"
+	defaultTimeout     = 10 // second
 )
-
-var (
-	// IllegalParam
-	// This error is usually caused by the logic of the parameters,
-	// such as filling in parameters with illegal characters
-	IllegalParam = errors.New("illegal parameter")
-)
-
-func errConfigMissingField(field string) error {
-	return fmt.Errorf("configuration illegal:no %s", field)
-}
-
-func errParamsMissingField(field string) error {
-	return fmt.Errorf("params illegal:no %s", field)
-}

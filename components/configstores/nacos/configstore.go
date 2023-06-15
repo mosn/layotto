@@ -16,38 +16,36 @@ package nacos
 import (
 	"context"
 	"errors"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	nacoslog "github.com/nacos-group/nacos-sdk-go/v2/common/logger"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
-	"mosn.io/layotto/components/configstores"
 	"mosn.io/pkg/log"
-	"strconv"
-	"strings"
-	"time"
+
+	"mosn.io/layotto/components/configstores"
 )
 
-type NacosConfigStore struct {
+type ConfigStore struct {
 	client      config_client.IConfigClient
 	storeName   string
 	appName     string
-	logDir      string
-	cacheDir    string
-	addresses   []string
 	namespaceId string
 	listener    *subscriberHolder
 }
 
 func NewStore() configstores.Store {
-	return &NacosConfigStore{
+	return &ConfigStore{
 		listener: newSubscriberHolder(),
 	}
 }
 
 // Init SetConfig the configuration store.
-func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
-	// 1.parse the config
+func (n *ConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	if config == nil {
 		return errors.New("configuration illegal:no config data")
 	}
@@ -58,16 +56,17 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 		return errConfigMissingField("store_mame")
 	}
 
-	// the nacos's addresses, required
-	if config.Address == nil || len(config.Address) == 0 {
-		return errConfigMissingField("address")
-	}
-
 	// parse config metadata
 	metadata, err := ParseNacosMetadata(config.Metadata)
 	if err != nil {
 		return err
 	}
+
+	// the nacos's addresses, required if not using acm mode.
+	if len(config.Address) == 0 && metadata.OpenKMS == false {
+		return errConfigMissingField("address")
+	}
+
 	n.appName = metadata.AppName
 	n.namespaceId = metadata.NameSpaceId
 
@@ -82,37 +81,62 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	}
 	timeoutMs := uint64(timeout) * uint64(time.Second/time.Millisecond)
 
-	// 2.create ServerConfigs
-	serverConfigs := make([]constant.ServerConfig, 0, len(config.Address))
-	for _, v := range config.Address {
+	// choose different mode to connect to the nacos server.
+	var client config_client.IConfigClient
+	if metadata.OpenKMS {
+		client, err = n.initWithACM(timeoutMs, metadata)
+	} else {
+		client, err = n.init(config.Address, timeoutMs, metadata)
+	}
+	if err != nil {
+		return err
+	}
+
+	// set default nacos go-sdk default log
+	defaultLogger := NewDefaultLogger(log.DefaultLogger)
+	nacoslog.SetLogger(defaultLogger)
+	n.client = client
+
+	// set default subscribe function
+	setupSubscribeFunc(n.subscribeOnChange)
+
+	return nil
+}
+
+// Connect to self built nacos services
+func (n *ConfigStore) init(address []string, timeoutMs uint64, metadata *Metadata) (config_client.IConfigClient, error) {
+	// 1.create ServerConfigs
+	serverConfigs := make([]constant.ServerConfig, 0, len(address))
+	for _, v := range address {
 		// split the addresses to ip and port
 		splitAddr := strings.Split(v, ":")
 		if len(splitAddr) != 2 {
-			return errors.New("configuration illegal: addresses is not in the format of ip:port")
+			return nil, errors.New("configuration illegal: addresses is not in the format of ip:port")
 		}
 
 		ip := splitAddr[0]
 		port, err := strconv.Atoi(splitAddr[1])
 		if err != nil {
-			return errors.New("configuration illegal: can't convert port form string to int type")
+			return nil, errors.New("configuration illegal: can't convert port form string to int type")
 		}
+		// default use http schema and use nacos as the context
 		sc := *constant.NewServerConfig(ip, uint64(port))
 		serverConfigs = append(serverConfigs, sc)
-		n.addresses = append(n.addresses, v)
 	}
 
-	// 3.create client config
-	// TODO: support acm mode
+	// 2.create client config
 	clientConfig := *constant.NewClientConfig(
 		constant.WithTimeoutMs(timeoutMs),
-		constant.WithNamespaceId(n.namespaceId),
+		constant.WithNamespaceId(metadata.NameSpaceId),
+		constant.WithUsername(metadata.Username),
+		constant.WithPassword(metadata.Password),
 		constant.WithNotLoadCacheAtStart(true),
 		constant.WithLogDir(defaultLogDir),
 		constant.WithCacheDir(defaultCacheDir),
 		constant.WithLogLevel(defaultLogLevel),
 	)
 
-	// 4.create config client
+	// 3.create config client
 	// it only creates a client instance but not connect to nacos.
 	// so if the address is wrong, the client instance will still be created successfully.
 	client, err := clients.NewConfigClient(
@@ -122,22 +146,42 @@ func (n *NacosConfigStore) Init(config *configstores.StoreConfig) (err error) {
 		},
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// 5.set default nacos go-sdk default log
-	defaultLogger := NewDefaultLogger(log.DefaultLogger)
-	nacoslog.SetLogger(defaultLogger)
-	n.client = client
+	return client, nil
+}
 
-	// 6.set default subscribe function
-	setupSubscribeFunc(n.subscribeOnChange)
+// Connect to the nacos service provided by Alibaba Cloud
+func (n *ConfigStore) initWithACM(timeoutMs uint64, metadata *Metadata) (config_client.IConfigClient, error) {
+	cc := constant.ClientConfig{
+		Endpoint:            metadata.Endpoint,
+		NamespaceId:         metadata.NameSpaceId,
+		RegionId:            metadata.RegionId,
+		AccessKey:           metadata.AccessKey,
+		SecretKey:           metadata.SecretKey,
+		OpenKMS:             true,
+		TimeoutMs:           timeoutMs,
+		NotLoadCacheAtStart: true,
+		LogDir:              defaultLogDir,
+		CacheDir:            defaultCacheDir,
+		LogLevel:            defaultLogLevel,
+	}
 
-	return nil
+	// a more graceful way to create config client
+	client, err := clients.CreateConfigClient(map[string]interface{}{
+		"clientConfig": cc,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return client, nil
 }
 
 // Get gets configuration from configuration store.
-func (n *NacosConfigStore) Get(ctx context.Context, request *configstores.GetRequest) ([]*configstores.ConfigurationItem, error) {
+func (n *ConfigStore) Get(ctx context.Context, request *configstores.GetRequest) ([]*configstores.ConfigurationItem, error) {
 	// todo: pagenation
 	// use the configuration's app_name instead of the app_id in request
 	// 0. check if illegal
@@ -156,11 +200,10 @@ func (n *NacosConfigStore) Get(ctx context.Context, request *configstores.GetReq
 	}
 
 	// 3.key level
-	// todo: haven't support tag and label
 	return n.getAllWithKeys(ctx, request.Group, request.Keys)
 }
 
-func (n *NacosConfigStore) getAllWithAppId(ctx context.Context) ([]*configstores.ConfigurationItem, error) {
+func (n *ConfigStore) getAllWithAppId(ctx context.Context) ([]*configstores.ConfigurationItem, error) {
 	values, err := n.client.SearchConfig(vo.SearchConfigParam{
 		Search:  "accurate",
 		AppName: n.appName,
@@ -183,7 +226,7 @@ func (n *NacosConfigStore) getAllWithAppId(ctx context.Context) ([]*configstores
 	return res, nil
 }
 
-func (n *NacosConfigStore) getAllWithGroup(ctx context.Context, group string) ([]*configstores.ConfigurationItem, error) {
+func (n *ConfigStore) getAllWithGroup(ctx context.Context, group string) ([]*configstores.ConfigurationItem, error) {
 	values, err := n.client.SearchConfig(vo.SearchConfigParam{
 		Search:  "accurate",
 		AppName: n.appName,
@@ -207,7 +250,7 @@ func (n *NacosConfigStore) getAllWithGroup(ctx context.Context, group string) ([
 	return res, nil
 }
 
-func (n *NacosConfigStore) getAllWithKeys(ctx context.Context, group string, keys []string) ([]*configstores.ConfigurationItem, error) {
+func (n *ConfigStore) getAllWithKeys(ctx context.Context, group string, keys []string) ([]*configstores.ConfigurationItem, error) {
 	res := make([]*configstores.ConfigurationItem, 0, len(keys))
 	// todo: make more goroutine to search the configurations.
 	for _, key := range keys {
@@ -222,7 +265,7 @@ func (n *NacosConfigStore) getAllWithKeys(ctx context.Context, group string, key
 		}
 
 		// config is not exist
-		// nacos dose not support an empty content.
+		// nacos does not support an empty content.
 		if value == "" {
 			continue
 		}
@@ -239,7 +282,7 @@ func (n *NacosConfigStore) getAllWithKeys(ctx context.Context, group string, key
 	return res, nil
 }
 
-func (n *NacosConfigStore) Set(ctx context.Context, request *configstores.SetRequest) error {
+func (n *ConfigStore) Set(ctx context.Context, request *configstores.SetRequest) error {
 	if request.AppId == "" {
 		return errParamsMissingField("AppId")
 	}
@@ -260,16 +303,19 @@ func (n *NacosConfigStore) Set(ctx context.Context, request *configstores.SetReq
 		})
 
 		// If the config does not exist, deleting the config will not result in an error.
-		if err != nil || !ok {
+		if err != nil {
 			log.DefaultLogger.Errorf("set key[%+v] failed with error: %+v", configItem.Key, err)
 			return err
+		}
+		if !ok {
+			return IllegalParam
 		}
 	}
 
 	return nil
 }
 
-func (n *NacosConfigStore) Delete(ctx context.Context, request *configstores.DeleteRequest) error {
+func (n *ConfigStore) Delete(ctx context.Context, request *configstores.DeleteRequest) error {
 	if request.AppId == "" {
 		return errParamsMissingField("AppId")
 	}
@@ -288,13 +334,15 @@ func (n *NacosConfigStore) Delete(ctx context.Context, request *configstores.Del
 			Group:   request.Group,
 			AppName: request.AppId,
 		})
-		if err != nil || !ok {
+		if err != nil {
 			log.DefaultLogger.Errorf("delete key[%+v] failed with error: %+v", key, err)
 			return err
 		}
+		if !ok {
+			return IllegalParam
+		}
 
 		// remove the config change listening
-		// todo: close listening channel
 		n.listener.RemoveSubscriberKey(subscriberKey{
 			group: request.Group,
 			key:   key,
@@ -304,23 +352,21 @@ func (n *NacosConfigStore) Delete(ctx context.Context, request *configstores.Del
 	return nil
 }
 
-func (n *NacosConfigStore) Subscribe(request *configstores.SubscribeReq, ch chan *configstores.SubscribeResp) error {
+func (n *ConfigStore) Subscribe(request *configstores.SubscribeReq, ch chan *configstores.SubscribeResp) error {
 	if request.Group == "" && len(request.Keys) > 0 {
 		request.Group = defaultGroup
 	}
 
 	ctx := context.Background()
-	var err error
-	var items []*configstores.ConfigurationItem
-
-	if request.Group == "" { // 1.app level
-		items, err = n.getAllWithAppId(ctx)
-	} else if len(request.Keys) == 0 { // 2.group level
-		items, err = n.getAllWithGroup(ctx, request.Group)
-	} else { // 3.key level
-		items, err = n.getAllWithKeys(ctx, request.Group, request.Keys)
+	req := &configstores.GetRequest{
+		AppId:    request.AppId,
+		Group:    request.Group,
+		Label:    request.Label,
+		Keys:     request.Keys,
+		Metadata: request.Metadata,
 	}
 
+	items, err := n.Get(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -335,7 +381,7 @@ func (n *NacosConfigStore) Subscribe(request *configstores.SubscribeReq, ch chan
 	return nil
 }
 
-func (n *NacosConfigStore) subscribeKey(item *configstores.ConfigurationItem, ch chan *configstores.SubscribeResp) error {
+func (n *ConfigStore) subscribeKey(item *configstores.ConfigurationItem, ch chan *configstores.SubscribeResp) error {
 	err := n.client.ListenConfig(vo.ConfigParam{
 		DataId:   item.Key,
 		Group:    item.Group,
@@ -362,7 +408,7 @@ func setupSubscribeFunc(fn SubscribeFunc) {
 	subscribeFunc = fn
 }
 
-func (n *NacosConfigStore) subscribeOnChange(ch chan *configstores.SubscribeResp) OnChangeFunc {
+func (n *ConfigStore) subscribeOnChange(ch chan *configstores.SubscribeResp) OnChangeFunc {
 	return func(namespace, group, dataId, data string) {
 		// package the listening data.
 		resp := &configstores.SubscribeResp{
@@ -381,7 +427,7 @@ func (n *NacosConfigStore) subscribeOnChange(ch chan *configstores.SubscribeResp
 	}
 }
 
-func (n *NacosConfigStore) StopSubscribe() {
+func (n *ConfigStore) StopSubscribe() {
 	// stop listening all subscribed configs
 	keys := n.listener.GetSubscriberKey()
 	for _, key := range keys {
@@ -400,10 +446,10 @@ func (n *NacosConfigStore) StopSubscribe() {
 	}
 }
 
-func (n NacosConfigStore) GetDefaultGroup() string {
+func (n ConfigStore) GetDefaultGroup() string {
 	return defaultGroup
 }
 
-func (n NacosConfigStore) GetDefaultLabel() string {
+func (n ConfigStore) GetDefaultLabel() string {
 	return defaultLabel
 }
