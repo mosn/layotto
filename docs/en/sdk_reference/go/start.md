@@ -12,8 +12,7 @@ go build -o layotto
 export PATH=$PATH:$(pwd)/layotto
 
 # 2.Run layotto according to the configuration file
-cd ../../configs
-layotto start -c config_hello.json
+layotto start -c ../../configs/config_hello.json
 
 # 3.Start another terminal and launch the go sdk client program
 cd demo/hello/common
@@ -65,7 +64,7 @@ func main() {
 
 ### Configuration files
 
-Start Layotto and test the HelloWorld program above by using the simplest configuration file Store the startup configuration file in `configs/config_Hello.json`, the content is as follows:
+Start Layotto and test the HelloWorld program above by using the simplest configuration file, the content is as follows:
 
 > For a more detailed introduction to configuration files, please refer to [configuration](en/configuration/overview.md).
 
@@ -264,7 +263,7 @@ You can view the proto files in [`spec/proto/runtime`](https://github.com/mosn/l
 The complete code reference is `demo/file/local/client.go`, and the content is as follows:
 
 ```go
-// create grpc connection，packaged as a runtimeclient
+// create grpc connection, packaged as a runtimeclient
 func main() {
 	// conn to layotto grpc server with row grpc client
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
