@@ -63,7 +63,7 @@ func (n *ConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	}
 
 	// the nacos's addresses, required if not using acm mode.
-	if len(config.Address) == 0 && metadata.OpenKMS == false {
+	if len(config.Address) == 0 && !metadata.OpenKMS {
 		return errConfigMissingField("address")
 	}
 
@@ -182,31 +182,65 @@ func (n *ConfigStore) initWithACM(timeoutMs uint64, metadata *Metadata) (config_
 
 // Get gets configuration from configuration store.
 func (n *ConfigStore) Get(ctx context.Context, request *configstores.GetRequest) ([]*configstores.ConfigurationItem, error) {
-	// todo: pagenation
 	// use the configuration's app_name instead of the app_id in request
 	// 0. check if illegal
 	if request.Group == "" && len(request.Keys) > 0 {
 		request.Group = defaultGroup
 	}
 
-	// 1. app level
+	// 1. get pagination information
+	pagination := n.getPagination(request.Metadata)
+
+	// 2. app level
 	if request.Group == "" {
-		return n.getAllWithAppId(ctx)
+		return n.getAllWithAppId(ctx, pagination)
 	}
 
-	// 2.group level
+	// 3.group level
 	if len(request.Keys) == 0 {
-		return n.getAllWithGroup(ctx, request.Group)
+		return n.getAllWithGroup(ctx, request.Group, pagination)
 	}
 
-	// 3.key level
+	// 4.key level
 	return n.getAllWithKeys(ctx, request.Group, request.Keys)
 }
 
-func (n *ConfigStore) getAllWithAppId(ctx context.Context) ([]*configstores.ConfigurationItem, error) {
+const (
+	PageNo   = "PageNo"
+	PageSize = "PageSize"
+)
+
+type Pagination struct {
+	PageNo   int
+	PageSize int
+}
+
+func (n *ConfigStore) getPagination(metadata map[string]string) *Pagination {
+	res := &Pagination{}
+	if v, ok := metadata[PageNo]; ok {
+		pageNo, err := strconv.Atoi(v)
+		if err != nil {
+			return &Pagination{0, 0}
+		}
+		res.PageNo = pageNo
+	}
+	if v, ok := metadata[PageSize]; ok {
+		pageSize, err := strconv.Atoi(v)
+		if err != nil {
+			return &Pagination{0, 0}
+		}
+		res.PageSize = pageSize
+	}
+
+	return res
+}
+
+func (n *ConfigStore) getAllWithAppId(ctx context.Context, pagination *Pagination) ([]*configstores.ConfigurationItem, error) {
 	values, err := n.client.SearchConfig(vo.SearchConfigParam{
-		Search:  "accurate",
-		AppName: n.appName,
+		Search:   "accurate",
+		AppName:  n.appName,
+		PageNo:   pagination.PageNo,
+		PageSize: pagination.PageSize,
 	})
 	if err != nil {
 		log.DefaultLogger.Errorf("fail get all app_id key-value,err: %+v", err)
@@ -226,11 +260,13 @@ func (n *ConfigStore) getAllWithAppId(ctx context.Context) ([]*configstores.Conf
 	return res, nil
 }
 
-func (n *ConfigStore) getAllWithGroup(ctx context.Context, group string) ([]*configstores.ConfigurationItem, error) {
+func (n *ConfigStore) getAllWithGroup(ctx context.Context, group string, pagination *Pagination) ([]*configstores.ConfigurationItem, error) {
 	values, err := n.client.SearchConfig(vo.SearchConfigParam{
-		Search:  "accurate",
-		AppName: n.appName,
-		Group:   group,
+		Search:   "accurate",
+		AppName:  n.appName,
+		Group:    group,
+		PageNo:   pagination.PageNo,
+		PageSize: pagination.PageSize,
 	})
 	if err != nil {
 		log.DefaultLogger.Errorf("fail get all group key-value,err: %+v", err)

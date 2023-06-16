@@ -289,6 +289,104 @@ func TestNacosConfigStore_Get(t *testing.T) {
 		}
 		assert.EqualValues(t, expect, get)
 	})
+
+	t.Run("test get with pagination", func(t *testing.T) {
+		mockClient := getMockNacosClient(t)
+		params := &configstores.GetRequest{
+			AppId: appName, // different from app stored in the nacos instance
+			Metadata: map[string]string{
+				PageNo:   "10",
+				PageSize: "2",
+			},
+		}
+
+		mockClient.EXPECT().SearchConfig(gomock.Eq(vo.SearchConfigParam{
+			Search:   "accurate",
+			AppName:  appName, //  app name that stored in the store instance
+			PageNo:   10,
+			PageSize: 2,
+		})).Return(&model.ConfigPage{
+			PageItems: []model.ConfigItem{
+				{
+					DataId:  "key1",
+					Group:   "group1",
+					Appname: appName,
+					Content: content,
+				},
+				{
+					DataId:  "key2",
+					Group:   "group2",
+					Appname: appName,
+					Content: content,
+				},
+			},
+		}, nil)
+		store := setup(t, mockClient)
+		get, err := store.Get(context.Background(), params)
+		assert.Nil(t, err)
+		expect := []*configstores.ConfigurationItem{
+			{
+				Key:     "key1",
+				Group:   "group1",
+				Content: content,
+			},
+			{
+				Key:     "key2",
+				Group:   "group2",
+				Content: content,
+			},
+		}
+		assert.EqualValues(t, expect, get)
+	})
+
+	t.Run("test get with wrong pagination", func(t *testing.T) {
+		mockClient := getMockNacosClient(t)
+		params := &configstores.GetRequest{
+			AppId: appName, // different from app stored in the nacos instance
+			Metadata: map[string]string{
+				PageNo:   "10a",
+				PageSize: "2",
+			},
+		}
+
+		mockClient.EXPECT().SearchConfig(gomock.Eq(vo.SearchConfigParam{
+			Search:   "accurate",
+			AppName:  appName, //  app name that stored in the store instance
+			PageNo:   0,
+			PageSize: 0,
+		})).Return(&model.ConfigPage{
+			PageItems: []model.ConfigItem{
+				{
+					DataId:  "key1",
+					Group:   "group1",
+					Appname: appName,
+					Content: content,
+				},
+				{
+					DataId:  "key2",
+					Group:   "group2",
+					Appname: appName,
+					Content: content,
+				},
+			},
+		}, nil)
+		store := setup(t, mockClient)
+		get, err := store.Get(context.Background(), params)
+		assert.Nil(t, err)
+		expect := []*configstores.ConfigurationItem{
+			{
+				Key:     "key1",
+				Group:   "group1",
+				Content: content,
+			},
+			{
+				Key:     "key2",
+				Group:   "group2",
+				Content: content,
+			},
+		}
+		assert.EqualValues(t, expect, get)
+	})
 }
 
 func TestNacosConfigStore_GetDefaultGroup(t *testing.T) {
