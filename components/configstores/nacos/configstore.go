@@ -18,6 +18,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
@@ -35,13 +36,11 @@ type ConfigStore struct {
 	storeName   string
 	appName     string
 	namespaceId string
-	listener    *subscriberHolder
+	listener    sync.Map
 }
 
 func NewStore() configstores.Store {
-	return &ConfigStore{
-		listener: newSubscriberHolder(),
-	}
+	return &ConfigStore{}
 }
 
 // Init SetConfig the configuration store.
@@ -379,7 +378,7 @@ func (n *ConfigStore) Delete(ctx context.Context, request *configstores.DeleteRe
 		}
 
 		// remove the config change listening
-		n.listener.RemoveSubscriberKey(subscriberKey{
+		n.listener.Delete(subscriberKey{
 			group: request.Group,
 			key:   key,
 		})
@@ -417,6 +416,11 @@ func (n *ConfigStore) Subscribe(request *configstores.SubscribeReq, ch chan *con
 	return nil
 }
 
+type subscriberKey struct {
+	group string
+	key   string
+}
+
 func (n *ConfigStore) subscribeKey(item *configstores.ConfigurationItem, ch chan *configstores.SubscribeResp) error {
 	err := n.client.ListenConfig(vo.ConfigParam{
 		DataId:   item.Key,
@@ -429,7 +433,7 @@ func (n *ConfigStore) subscribeKey(item *configstores.ConfigurationItem, ch chan
 		return err
 	}
 
-	n.listener.AddSubscriberKey(subscriberKey{key: item.Key, group: item.Group})
+	n.listener.Store(subscriberKey{key: item.Key, group: item.Group}, struct{}{})
 	return nil
 }
 
@@ -465,27 +469,26 @@ func (n *ConfigStore) subscribeOnChange(ch chan *configstores.SubscribeResp) OnC
 
 func (n *ConfigStore) StopSubscribe() {
 	// stop listening all subscribed configs
-	keys := n.listener.GetSubscriberKey()
-	for _, key := range keys {
-		err := n.client.CancelListenConfig(vo.ConfigParam{
-			DataId:  key.key,
-			Group:   key.group,
+	n.listener.Range(func(key, value any) bool {
+		subscribe := key.(subscriberKey)
+		if err := n.client.CancelListenConfig(vo.ConfigParam{
+			DataId:  subscribe.key,
+			Group:   subscribe.group,
 			AppName: n.appName,
-		})
-
-		if err != nil {
-			log.DefaultLogger.Errorf("nacos StopSubscribe key %s-%s-%s failed", n.appName, key.group, key.key)
-			return
+		}); err != nil {
+			log.DefaultLogger.Errorf("nacos StopSubscribe key %s-%s-%s failed", n.appName, subscribe.group, subscribe.key)
+			return false
 		}
 
-		n.listener.RemoveSubscriberKey(key)
-	}
+		n.listener.Delete(subscribe)
+		return true
+	})
 }
 
-func (n ConfigStore) GetDefaultGroup() string {
+func (n *ConfigStore) GetDefaultGroup() string {
 	return defaultGroup
 }
 
-func (n ConfigStore) GetDefaultLabel() string {
+func (n *ConfigStore) GetDefaultLabel() string {
 	return defaultLabel
 }

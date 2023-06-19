@@ -590,11 +590,21 @@ func TestNacosConfigStore_StopSubscribe(t *testing.T) {
 
 	err := store.Subscribe(req, ch)
 	assert.Nil(t, err)
-	assert.EqualValues(t, len(req.Keys), len(store.listener.keyMap))
+	length := 0
+	store.listener.Range(func(key, value any) bool {
+		length++
+		return true
+	})
+	assert.EqualValues(t, len(req.Keys), length)
 
 	// stop all listening
 	store.StopSubscribe()
-	assert.EqualValues(t, 0, len(store.listener.keyMap))
+	length = 0
+	store.listener.Range(func(key, value any) bool {
+		length++
+		return true
+	})
+	assert.EqualValues(t, 0, length)
 }
 
 // 由于vo.ConfigParam中存在函数指针的影响，所以自定义方法去进行 matcher 比较
