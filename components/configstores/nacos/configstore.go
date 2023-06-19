@@ -95,10 +95,6 @@ func (n *ConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	defaultLogger := NewDefaultLogger(log.DefaultLogger)
 	nacoslog.SetLogger(defaultLogger)
 	n.client = client
-
-	// set default subscribe function
-	setupSubscribeFunc(n.subscribeOnChange)
-
 	return nil
 }
 
@@ -426,7 +422,7 @@ func (n *ConfigStore) subscribeKey(item *configstores.ConfigurationItem, ch chan
 		DataId:   item.Key,
 		Group:    item.Group,
 		AppName:  n.appName,
-		OnChange: subscribeFunc(ch),
+		OnChange: n.subscribeOnChange(ch),
 	})
 
 	if err != nil {
@@ -438,15 +434,6 @@ func (n *ConfigStore) subscribeKey(item *configstores.ConfigurationItem, ch chan
 }
 
 type OnChangeFunc func(namespace, group, dataId, data string)
-type SubscribeFunc func(ch chan *configstores.SubscribeResp) OnChangeFunc
-
-var subscribeFunc SubscribeFunc
-
-// This function is only used for testing purposes and is not concurrency safe.
-// So if you need to use this function to change the default Onchange function, you should deal with the concurrence problem.
-func setupSubscribeFunc(fn SubscribeFunc) {
-	subscribeFunc = fn
-}
 
 func (n *ConfigStore) subscribeOnChange(ch chan *configstores.SubscribeResp) OnChangeFunc {
 	return func(namespace, group, dataId, data string) {
