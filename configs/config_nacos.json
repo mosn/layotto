@@ -45,7 +45,7 @@
                           ],
                           "metadata": {
                             "cache_dir": "./nacos/cache",
-                            "log_dir": "./nacos/log",
+                            "log_dir": "./nacos/logs",
                             "log_level": "debug"
                           }
                         }

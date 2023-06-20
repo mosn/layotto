@@ -16,6 +16,7 @@ package nacos
 import (
 	"context"
 	"errors"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -24,6 +25,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
+	nacoslog "github.com/nacos-group/nacos-sdk-go/v2/common/logger"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"mosn.io/pkg/log"
 
@@ -94,7 +96,8 @@ func (n *ConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	}
 
 	n.client = client
-	return nil
+	// replace nacos sdk log
+	return n.setupLogger(metadata)
 }
 
 // Connect to self built nacos services
@@ -125,9 +128,7 @@ func (n *ConfigStore) init(address []string, timeoutMs uint64, metadata *Metadat
 		constant.WithUsername(metadata.Username),
 		constant.WithPassword(metadata.Password),
 		constant.WithNotLoadCacheAtStart(true),
-		constant.WithLogDir(metadata.LogDir),
 		constant.WithCacheDir(metadata.CacheDir),
-		constant.WithLogLevel(metadata.LogLevel),
 	)
 
 	// 3.create config client
@@ -157,9 +158,7 @@ func (n *ConfigStore) initWithACM(timeoutMs uint64, metadata *Metadata) (config_
 		OpenKMS:             true,
 		TimeoutMs:           timeoutMs,
 		NotLoadCacheAtStart: true,
-		LogDir:              metadata.LogDir,
 		CacheDir:            metadata.CacheDir,
-		LogLevel:            metadata.LogLevel,
 	}
 
 	// a more graceful way to create config client
@@ -172,6 +171,35 @@ func (n *ConfigStore) initWithACM(timeoutMs uint64, metadata *Metadata) (config_
 	}
 
 	return client, nil
+}
+
+func (n *ConfigStore) setupLogger(metadata *Metadata) error {
+	roller := log.DefaultRoller()
+	logFilePath := filepath.Join(metadata.LogDir, defaultLogFileName)
+	logger, err := log.GetOrCreateLogger(logFilePath, roller)
+	if err != nil {
+		return err
+	}
+
+	errLogger := &log.SimpleErrorLog{
+		Logger: logger,
+	}
+
+	switch metadata.LogLevel {
+	case DEBUG:
+		errLogger.Level = log.DEBUG
+	case INFO:
+		errLogger.Level = log.INFO
+	case WARN:
+		errLogger.Level = log.WARN
+	case ERROR:
+		errLogger.Level = log.ERROR
+	default:
+		return errors.New("unknown log level")
+	}
+
+	nacoslog.SetLogger(NewDefaultLogger(errLogger))
+	return nil
 }
 
 // Get gets configuration from configuration store.

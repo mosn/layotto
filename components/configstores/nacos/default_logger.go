@@ -20,6 +20,13 @@ import (
 	"mosn.io/pkg/log"
 )
 
+const (
+	DEBUG = "debug"
+	INFO  = "info"
+	WARN  = "warn"
+	ERROR = "error"
+)
+
 // An adapter to implement log.LoggerInterface in agollo package.
 type DefaultLogger struct {
 	logger log.ErrorLogger
@@ -31,19 +38,19 @@ func NewDefaultLogger(logger log.ErrorLogger) *DefaultLogger {
 	}
 }
 func (d *DefaultLogger) Debugf(format string, params ...interface{}) {
-	d.logger.Debugf(format, params)
+	d.logger.Debugf(format, params...)
 }
 
 func (d *DefaultLogger) Infof(format string, params ...interface{}) {
-	d.logger.Infof(format, params)
+	d.logger.Infof(format, params...)
 }
 
 func (d *DefaultLogger) Warnf(format string, params ...interface{}) {
-	d.logger.Warnf(format, params)
+	d.logger.Warnf(format, params...)
 }
 
 func (d *DefaultLogger) Errorf(format string, params ...interface{}) {
-	d.logger.Errorf(format, params)
+	d.logger.Errorf(format, params...)
 }
 
 func (d *DefaultLogger) Debug(v ...interface{}) {

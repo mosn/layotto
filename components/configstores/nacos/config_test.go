@@ -27,13 +27,13 @@ func TestParseNacosMetadata(t *testing.T) {
 	properties := make(map[string]string)
 
 	// success
-	metadata, err := ParseNacosMetadata(properties)
+	_, err = ParseNacosMetadata(properties)
 	assert.Nil(t, err)
 
 	// test set namespace
 	namespaceId := "namespace"
 	properties[namespaceIdKey] = namespaceId
-	metadata, err = ParseNacosMetadata(properties)
+	metadata, err := ParseNacosMetadata(properties)
 	assert.Nil(t, err)
 	assert.Equal(t, namespaceId, metadata.NameSpaceId)
 }

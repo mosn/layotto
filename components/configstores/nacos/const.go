@@ -17,7 +17,8 @@ const (
 	defaultNamespaceId = "" // if this is not set, then nacos will use the default namespaceId.
 	defaultGroup       = "default"
 	defaultLabel       = "default"
-	defaultLogDir      = "/tmp/layotto/nacos/log"
+	defaultLogDir      = "/tmp/layotto/nacos/logs"
+	defaultLogFileName = "nacos-sdk-log"
 	defaultCacheDir    = "/tmp/layotto/nacos/cache"
 	defaultLogLevel    = "debug"
 	defaultTimeout     = 10 // second
