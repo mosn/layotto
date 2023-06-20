@@ -33,7 +33,7 @@ import (
 type ConfigStore struct {
 	client      config_client.IConfigClient
 	storeName   string
-	appName     string
+	appId       string
 	namespaceId string
 	listener    sync.Map
 }
@@ -54,6 +54,11 @@ func (n *ConfigStore) Init(config *configstores.StoreConfig) (err error) {
 		return errConfigMissingField("store_mame")
 	}
 
+	n.appId = config.AppId
+	if n.appId == "" {
+		return errConfigMissingField("app_id")
+	}
+
 	// parse config metadata
 	metadata, err := ParseNacosMetadata(config.Metadata)
 	if err != nil {
@@ -65,9 +70,7 @@ func (n *ConfigStore) Init(config *configstores.StoreConfig) (err error) {
 		return errConfigMissingField("address")
 	}
 
-	n.appName = metadata.AppName
 	n.namespaceId = metadata.NameSpaceId
-
 	// the timeout of connect to nacos, not required
 	timeout := defaultTimeout
 	if config.TimeOut != "" {
@@ -90,9 +93,6 @@ func (n *ConfigStore) Init(config *configstores.StoreConfig) (err error) {
 		return err
 	}
 
-	// set default nacos go-sdk default log
-	//defaultLogger := NewDefaultLogger(log.DefaultLogger)
-	//nacoslog.SetLogger(defaultLogger)
 	n.client = client
 	return nil
 }
@@ -232,7 +232,7 @@ func (n *ConfigStore) getPagination(metadata map[string]string) *Pagination {
 func (n *ConfigStore) getAllWithAppId(ctx context.Context, pagination *Pagination) ([]*configstores.ConfigurationItem, error) {
 	values, err := n.client.SearchConfig(vo.SearchConfigParam{
 		Search:   "accurate",
-		AppName:  n.appName,
+		AppName:  n.appId,
 		PageNo:   pagination.PageNo,
 		PageSize: pagination.PageSize,
 	})
@@ -257,7 +257,7 @@ func (n *ConfigStore) getAllWithAppId(ctx context.Context, pagination *Paginatio
 func (n *ConfigStore) getAllWithGroup(ctx context.Context, group string, pagination *Pagination) ([]*configstores.ConfigurationItem, error) {
 	values, err := n.client.SearchConfig(vo.SearchConfigParam{
 		Search:   "accurate",
-		AppName:  n.appName,
+		AppName:  n.appId,
 		Group:    group,
 		PageNo:   pagination.PageNo,
 		PageSize: pagination.PageSize,
@@ -287,7 +287,7 @@ func (n *ConfigStore) getAllWithKeys(ctx context.Context, group string, keys []s
 		value, err := n.client.GetConfig(vo.ConfigParam{
 			DataId:  key,
 			Group:   group,
-			AppName: n.appName,
+			AppName: n.appId,
 		})
 		if err != nil {
 			log.DefaultLogger.Errorf("fail get key-value,err: %+v", err)
@@ -420,7 +420,7 @@ func (n *ConfigStore) subscribeKey(item *configstores.ConfigurationItem, ch chan
 	err := n.client.ListenConfig(vo.ConfigParam{
 		DataId:   item.Key,
 		Group:    item.Group,
-		AppName:  n.appName,
+		AppName:  n.appId,
 		OnChange: n.subscribeOnChange(ch),
 	})
 
@@ -439,7 +439,7 @@ func (n *ConfigStore) subscribeOnChange(ch chan *configstores.SubscribeResp) OnC
 		// package the listening data.
 		resp := &configstores.SubscribeResp{
 			StoreName: n.storeName,
-			AppId:     n.appName,
+			AppId:     n.appId,
 			Items: []*configstores.ConfigurationItem{
 				{
 					Key:     dataId,
@@ -460,9 +460,9 @@ func (n *ConfigStore) StopSubscribe() {
 		if err := n.client.CancelListenConfig(vo.ConfigParam{
 			DataId:  subscribe.key,
 			Group:   subscribe.group,
-			AppName: n.appName,
+			AppName: n.appId,
 		}); err != nil {
-			log.DefaultLogger.Errorf("nacos StopSubscribe key %s-%s-%s failed", n.appName, subscribe.group, subscribe.key)
+			log.DefaultLogger.Errorf("nacos StopSubscribe key %s-%s-%s failed", n.appId, subscribe.group, subscribe.key)
 			return false
 		}
 

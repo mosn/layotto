@@ -47,9 +47,8 @@ func setup(t *testing.T, client Client) *ConfigStore {
 	config := &configstores.StoreConfig{
 		StoreName: storeName,
 		Address:   []string{address},
-		Metadata: map[string]string{
-			appNameKey: appName,
-		},
+		AppId:     appName,
+		Metadata:  map[string]string{},
 	}
 
 	err := store.Init(config)
@@ -413,9 +412,9 @@ func TestNacosConfigStore_Init(t *testing.T) {
 	t.Run("test success", func(t *testing.T) {
 		store := NewStore()
 		config := &configstores.StoreConfig{
+			AppId: appName,
 			Metadata: map[string]string{
 				namespaceIdKey: namespace,
-				appNameKey:     appName,
 			},
 			StoreName: storeName,
 			Address:   []string{address},
@@ -426,7 +425,7 @@ func TestNacosConfigStore_Init(t *testing.T) {
 		// check config params
 		nacosStore := store.(*ConfigStore)
 		assert.EqualValues(t, config.Metadata[namespaceIdKey], nacosStore.namespaceId)
-		assert.EqualValues(t, config.Metadata[appNameKey], nacosStore.appName)
+		assert.EqualValues(t, config.AppId, nacosStore.appId)
 		assert.EqualValues(t, config.StoreName, nacosStore.storeName)
 	})
 
@@ -439,9 +438,9 @@ func TestNacosConfigStore_Init(t *testing.T) {
 	t.Run("test without store name", func(t *testing.T) {
 		store := NewStore()
 		config := &configstores.StoreConfig{
+			AppId: appName,
 			Metadata: map[string]string{
 				namespaceIdKey: namespace,
-				appNameKey:     appName,
 			},
 			Address: []string{address},
 			TimeOut: timeout,
@@ -453,9 +452,9 @@ func TestNacosConfigStore_Init(t *testing.T) {
 	t.Run("test empty address", func(t *testing.T) {
 		store := NewStore()
 		config := &configstores.StoreConfig{
+			AppId: appName,
 			Metadata: map[string]string{
 				namespaceIdKey: namespace,
-				appNameKey:     appName,
 			},
 			StoreName: storeName,
 			Address:   []string{},
@@ -468,8 +467,8 @@ func TestNacosConfigStore_Init(t *testing.T) {
 	t.Run("test with acm mode", func(t *testing.T) {
 		store := NewStore()
 		config := &configstores.StoreConfig{
+			AppId: appName,
 			Metadata: map[string]string{
-				appNameKey:  appName,
 				endPointKey: "end_point",
 			},
 			StoreName: storeName,
@@ -483,9 +482,9 @@ func TestNacosConfigStore_Init(t *testing.T) {
 	t.Run("test wrong address", func(t *testing.T) {
 		store := NewStore()
 		config := &configstores.StoreConfig{
+			AppId: appName,
 			Metadata: map[string]string{
 				namespaceIdKey: namespace,
-				appNameKey:     appName,
 			},
 			StoreName: storeName,
 			Address:   []string{"123123"},
@@ -697,7 +696,7 @@ func TestNacosConfigStore_Subscribe(t *testing.T) {
 		fn := store.subscribeOnChange(ch)
 		expected := &configstores.SubscribeResp{
 			StoreName: store.storeName,
-			AppId:     store.appName,
+			AppId:     store.appId,
 			Items: []*configstores.ConfigurationItem{
 				{
 					Key:     "data_id",

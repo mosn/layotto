@@ -16,7 +16,6 @@ package nacos
 // map keys
 const (
 	namespaceIdKey = "namespace_id"
-	appNameKey     = "app_name"
 	userNameKey    = "username"
 	passwordKey    = "password"
 	endPointKey    = "end_point"
@@ -29,7 +28,6 @@ const (
 )
 
 type Metadata struct {
-	AppName     string
 	NameSpaceId string
 	Username    string
 	Password    string
@@ -51,10 +49,6 @@ func ParseNacosMetadata(properties map[string]string) (*Metadata, error) {
 	}
 
 	config := &Metadata{}
-	config.AppName = properties[appNameKey]
-	if config.AppName == "" {
-		return nil, errConfigMissingField(appNameKey)
-	}
 
 	// the namespace of config, not required
 	config.NameSpaceId = properties[namespaceIdKey]

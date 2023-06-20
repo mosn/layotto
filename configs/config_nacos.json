@@ -28,6 +28,9 @@
                   "config": {
                     "server_name": "runtime",
                     "grpc_config": {
+                      "app": {
+                        "app_id": "testApplication_yang"
+                      },
                       "hellos": {
                         "helloworld": {
                           "type": "helloworld",
@@ -41,7 +44,9 @@
                             "127.0.0.1:8848"
                           ],
                           "metadata": {
-                            "app_name": "testApplication_yang"
+                            "cache_dir": "./nacos/cache",
+                            "log_dir": "./nacos/log",
+                            "log_level": "debug"
                           }
                         }
                       }

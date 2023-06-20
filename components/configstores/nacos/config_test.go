@@ -25,16 +25,10 @@ func TestParseNacosMetadata(t *testing.T) {
 	assert.Error(t, err)
 
 	properties := make(map[string]string)
-	// without app_name
-	_, err = ParseNacosMetadata(properties)
-	assert.Error(t, err)
 
 	// success
-	appName := "app"
-	properties[appNameKey] = appName
 	metadata, err := ParseNacosMetadata(properties)
 	assert.Nil(t, err)
-	assert.EqualValues(t, appName, metadata.AppName)
 
 	// test set namespace
 	namespaceId := "namespace"
