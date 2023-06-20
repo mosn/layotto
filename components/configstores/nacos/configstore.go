@@ -24,7 +24,6 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
-	nacoslog "github.com/nacos-group/nacos-sdk-go/v2/common/logger"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"mosn.io/pkg/log"
 
@@ -75,7 +74,7 @@ func (n *ConfigStore) Init(config *configstores.StoreConfig) (err error) {
 		timeout, err = strconv.Atoi(config.TimeOut)
 		if err != nil {
 			log.DefaultLogger.Errorf("wrong configuration for time out configuration: %+v, set default value(10s)", config.TimeOut)
-			timeout = defaultTimeout
+			return err
 		}
 	}
 	timeoutMs := uint64(timeout) * uint64(time.Second/time.Millisecond)
@@ -92,8 +91,8 @@ func (n *ConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	}
 
 	// set default nacos go-sdk default log
-	defaultLogger := NewDefaultLogger(log.DefaultLogger)
-	nacoslog.SetLogger(defaultLogger)
+	//defaultLogger := NewDefaultLogger(log.DefaultLogger)
+	//nacoslog.SetLogger(defaultLogger)
 	n.client = client
 	return nil
 }
@@ -126,9 +125,9 @@ func (n *ConfigStore) init(address []string, timeoutMs uint64, metadata *Metadat
 		constant.WithUsername(metadata.Username),
 		constant.WithPassword(metadata.Password),
 		constant.WithNotLoadCacheAtStart(true),
-		constant.WithLogDir(defaultLogDir),
-		constant.WithCacheDir(defaultCacheDir),
-		constant.WithLogLevel(defaultLogLevel),
+		constant.WithLogDir(metadata.LogDir),
+		constant.WithCacheDir(metadata.CacheDir),
+		constant.WithLogLevel(metadata.LogLevel),
 	)
 
 	// 3.create config client
@@ -158,14 +157,14 @@ func (n *ConfigStore) initWithACM(timeoutMs uint64, metadata *Metadata) (config_
 		OpenKMS:             true,
 		TimeoutMs:           timeoutMs,
 		NotLoadCacheAtStart: true,
-		LogDir:              defaultLogDir,
-		CacheDir:            defaultCacheDir,
-		LogLevel:            defaultLogLevel,
+		LogDir:              metadata.LogDir,
+		CacheDir:            metadata.CacheDir,
+		LogLevel:            metadata.LogLevel,
 	}
 
 	// a more graceful way to create config client
 	client, err := clients.CreateConfigClient(map[string]interface{}{
-		"clientConfig": cc,
+		constant.KEY_CLIENT_CONFIG: cc,
 	})
 
 	if err != nil {

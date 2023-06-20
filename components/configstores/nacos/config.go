@@ -23,6 +23,9 @@ const (
 	regionIdKey    = "region_id"
 	accessKey      = "access_key"
 	secretKey      = "secret_key"
+	logDirKey      = "log_dir"
+	cacheDirKey    = "cache_dir"
+	logLevelKey    = "log_level" // support debug, info, warn, error
 )
 
 type Metadata struct {
@@ -36,6 +39,10 @@ type Metadata struct {
 	AccessKey string
 	SecretKey string
 	OpenKMS   bool
+	// log & cache files
+	LogDir   string
+	CacheDir string
+	LogLevel string
 }
 
 func ParseNacosMetadata(properties map[string]string) (*Metadata, error) {
@@ -82,6 +89,22 @@ func ParseNacosMetadata(properties map[string]string) (*Metadata, error) {
 	if v, ok := properties[secretKey]; ok && v != "" {
 		config.SecretKey = v
 		config.OpenKMS = true
+	}
+
+	// log & cache files
+	config.LogDir = properties[logDirKey]
+	if config.LogDir == "" {
+		config.LogDir = defaultLogDir
+	}
+
+	config.LogLevel = properties[logLevelKey]
+	if config.LogLevel == "" {
+		config.LogLevel = defaultLogLevel
+	}
+
+	config.CacheDir = properties[cacheDirKey]
+	if config.CacheDir == "" {
+		config.CacheDir = defaultCacheDir
 	}
 
 	return config, nil
