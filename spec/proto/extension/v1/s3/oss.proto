@@ -1483,8 +1483,6 @@ message SignURLInput{
 message SignURLOutput{
     // Object signed url
     string signed_url = 1;
-    // The metadata returned from OSS.
-    map<string, string> metadata = 2;
 }
 
 // UpdateBandwidthRateLimitInput
