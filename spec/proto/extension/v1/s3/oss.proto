@@ -291,6 +291,8 @@ message PutObjectOutput{
     string request_charged = 4;
     // Version of the object.
     string version_id = 5;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 6;
 }
 
 // DeleteObjectInput
@@ -320,6 +322,8 @@ message DeleteObjectOutput{
     // Returns the version ID of the delete marker created as a result of the DELETE
     // operation.
     string version_id = 3;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 4;
 }
 
 // PutObjectTaggingInput
@@ -453,6 +457,8 @@ message CopyObjectOutput{
     string version_id = 2;
     // If the object expiration is configured, the response includes this header.
     string expiration = 3;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 4;
 }
 
 // Delete
@@ -506,6 +512,8 @@ message DeletedObject{
 message DeleteObjectsOutput{
     // DeletedObject
     repeated DeletedObject deleted = 1;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 2;
 }
 
 // ListObjectsInput
@@ -571,6 +579,8 @@ message ListObjectsOutput{
     string next_marker = 9;
     // Keys that begin with the indicated prefix.
     string prefix = 10;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 11;
 }
 
 // Owner
@@ -621,6 +631,8 @@ message GetObjectCannedAclOutput{
     // If present, indicates that the requester was successfully charged for the
     // request.
     string request_charged = 3;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 4;
 }
 
 // PutObjectCannedAclInput
@@ -643,6 +655,8 @@ message PutObjectCannedAclInput{
 message PutObjectCannedAclOutput{
     // Request charged
     string request_charged = 1;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 2;
 }
 
 // GlacierJobParameters
@@ -803,6 +817,8 @@ message RestoreObjectOutput{
     // Indicates the path in the provided S3 output location where Select results will
     // be restored to.
     string restore_output_path = 2;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 3;
 }
 
 // CreateMultipartUploadInput
@@ -927,6 +943,8 @@ message CreateMultipartUploadOutput{
     string server_side_encryption = 11;
     // ID for the initiated multipart upload.
     string upload_id = 12;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 13;
 }
 
 // UploadPartInput
@@ -986,6 +1004,8 @@ message UploadPartOutput{
     // The server-side encryption algorithm used when storing this object in Amazon S3
     // (for example, AES256, aws:kms).
     string server_side_encryption = 7;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 8;
 }
 
 // UploadPartCopyInput
@@ -1047,6 +1067,8 @@ message UploadPartCopyOutput{
     // The server-side encryption algorithm used when storing this object in Amazon S3
     // (for example, AES256, aws:kms).
     string server_side_encryption = 8;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 9;
 }
 
 // CompletedPart
@@ -1116,6 +1138,8 @@ message CompleteMultipartUploadOutput{
     // Version ID of the newly created object, in case the bucket has versioning turned
     // on.
     string version_id = 10;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 11;
 }
 
 // AbortMultipartUploadInput
@@ -1141,6 +1165,8 @@ message AbortMultipartUploadInput{
 message AbortMultipartUploadOutput{
     // If present, indicates that the requester was successfully charged for the request.
     string request_charged = 1;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 2;
 }
 
 // ListMultipartUploadsInput
@@ -1248,6 +1274,8 @@ message ListMultipartUploadsOutput{
     // Container for elements related to a particular multipart upload. A response can
     // contain zero or more Upload elements.
     repeated MultipartUpload uploads = 12;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 13;
 }
 
 // ListObjectVersionsInput
@@ -1357,6 +1385,8 @@ message ListObjectVersionsOutput{
     string version_id_marker = 12;
     // Container for version information.
     repeated ObjectVersion versions = 13;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 14;
 }
 
 // HeadObjectInput
@@ -1429,6 +1459,8 @@ message IsObjectExistInput{
 message IsObjectExistOutput{
     // Object exist or not
     bool file_exist = 1;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 2;
 }
 
 // SignURLInput
@@ -1451,6 +1483,8 @@ message SignURLInput{
 message SignURLOutput{
     // Object signed url
     string signed_url = 1;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 2;
 }
 
 // UpdateBandwidthRateLimitInput
@@ -1506,6 +1540,8 @@ message AppendObjectInput{
 message AppendObjectOutput{
     // Next append position
     int64 append_position = 1;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 2;
 }
 
 // ListPartsInput
@@ -1566,4 +1602,6 @@ message ListPartsOutput{
     // Container for elements related to a particular part. A response can contain zero
     // or more Part elements.
     repeated Part parts = 7;
+    // The metadata returned from s3 service.
+    map<string, string> metadata = 8;
 }
