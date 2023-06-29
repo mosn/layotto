@@ -41,7 +41,7 @@ func TestNewDefaultLogger(t *testing.T) {
 	logger.Debug("test Debug")
 	logger.Info("test Info")
 	logger.Warn("test Warn")
-	logger.Error("test Debug")
+	logger.Error("test Error")
 	logger.Debug()
 	logger.Info()
 	logger.Warn()

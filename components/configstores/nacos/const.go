@@ -18,7 +18,7 @@ const (
 	defaultGroup       = "default"
 	defaultLabel       = "default"
 	defaultLogDir      = "/tmp/layotto/nacos/logs"
-	defaultLogFileName = "nacos-sdk-log"
+	defaultLogFileName = "nacos-sdk.log"
 	defaultCacheDir    = "/tmp/layotto/nacos/cache"
 	defaultLogLevel    = "debug"
 	defaultTimeout     = 10 // second
