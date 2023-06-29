@@ -75,6 +75,7 @@
       - Configuration
         - [Etcd](en/component_specs/configuration/etcd.md)
         - [Apollo](en/component_specs/configuration/apollo.md)
+        - [Nacos](en/component_specs/configuration/nacos.md)
       - File
         - [OSS](en/component_specs/file/oss.md)
       - [Sequencer](en/component_specs/sequencer/common.md)
