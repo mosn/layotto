@@ -43,6 +43,8 @@ ifeq (${BINS},)
   $(error Could not determine BINS, set ROOT_DIR or run in source dir)
 endif
 
+UNITTEST_OUT := $(OUTPUT_DIR)/unittest.out
+
 ##@ Golang Development
 
 # ==============================================================================
@@ -135,15 +137,24 @@ go.lint: go.lint.verify
 	@golangci-lint run -v
 
 .PHONY: go.test
-go.test:
-	@echo "===========> Run unit test in diagnostics"
-	$(GO) test -count=1 -timeout=10m -short -v `go list ./diagnostics/...`
-	@echo "===========> Run unit test in sdk/go-sdk"
-	@cd sdk/go-sdk && $(GO) test -count=1 -timeout=10m -short -v `go list ./... | grep -v runtime`
-	@echo "===========> Run unit test in components"
-	@cd components/ && $(GO) test -count=1 -timeout=10m -short -v `go list ./...`
-	@echo "===========> Run unit test in pkg"
-	$(GO) test -count=1 -timeout=10m -short -v `go list ./pkg/...`
+go.unittest:
+	@echo "===========> Run unit test in diagnostics" > $(UNITTEST_OUT) && \
+	$(GO) test -count=1 -timeout=10m -short -v `go list ./diagnostics/...` >> $(UNITTEST_OUT) && \
+	echo "===========> Run unit test in sdk/go-sdk" >> $(UNITTEST_OUT) && \
+	cd sdk/go-sdk && $(GO) test -count=1 -timeout=10m -short -v `go list ./... | grep -v runtime` >> $(UNITTEST_OUT) && \
+	echo "===========> Run unit test in components" >> $(UNITTEST_OUT) && \
+	cd ../../components && $(GO) test -count=1 -timeout=10m -short -v `go list ./...` >> $(UNITTEST_OUT) && \
+	echo "===========> Run unit test in pkg" >> $(UNITTEST_OUT) && \
+	cd .. && $(GO) test -count=1 -timeout=10m -short -v `go list ./pkg/...` >> $(UNITTEST_OUT) || true
+
+go.test: go.unittest
+	@cat $(UNITTEST_OUT)
+	@if grep -q "FAIL" $(UNITTEST_OUT); then \
+    		grep "FAIL" $(UNITTEST_OUT); \
+    		rm -f $(UNITTEST_OUT); \
+    		exit 1; \
+	fi;
+	@rm -f $(UNITTEST_OUT)
 
 .PHONY: go.style
 go.style:  
