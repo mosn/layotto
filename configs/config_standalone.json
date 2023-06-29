@@ -55,6 +55,12 @@
                           "metadata": {}
                         }
                       },
+                      "file": {
+                        "file_demo": {
+                          "type": "local",
+                          "metadata": {}
+                        }
+                      },
                       "secret_store": {
                         "secret_demo": {
                           "type": "local.file",
