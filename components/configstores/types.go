@@ -20,6 +20,7 @@ package configstores
 type StoreConfig struct {
 	Type      string            `json:"type"`
 	StoreName string            `json:"store_name"`
+	AppId     string            `json:"app_id"`
 	Address   []string          `json:"address"`
 	TimeOut   string            `json:"timeout"`
 	Metadata  map[string]string `json:"metadata"`
