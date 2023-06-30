@@ -4,6 +4,7 @@
     - 使用Configuration API
         - [使用Apollo配置中心](zh/start/configuration/start-apollo.md)
         - [使用Etcd配置中心](zh/start/configuration/start.md)
+        - [使用Nacos配置中心](zh/start/configuration/start-nacos.md)
     - 发布、订阅消息
         - [使用Pub/Sub API](zh/start/pubsub/start.md)
         - [(建设中) 使用 DelayQueue API](zh/start/delay_queue/start)

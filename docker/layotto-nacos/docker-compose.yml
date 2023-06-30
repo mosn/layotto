@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  layotto:
+    image: layotto/layotto:latest
+    container_name: layotto
+    command:
+      - 'start'
+    volumes:
+      - ./config_nacos.json:/runtime/configs/config.json
+    ports:
+      - 34904:34904
+      - 34903:34903
+      - 34902:34902
+      - 34999:34999
+    depends_on:
+      - nacos
+      - mysql
+  nacos:
+    image: nacos/nacos-server:latest
+    container_name: nacos-standalone-mysql
+    env_file:
+      - ./nacos-standlone-mysql.env
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    depends_on:
+      mysql:
+        condition: service_healthy
+  mysql:
+    container_name: mysql
+    image: example/mysql:8.0.30
+    env_file:
+      - ./mysql.env
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
+
+

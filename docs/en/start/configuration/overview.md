@@ -22,3 +22,4 @@ This is like the difference between the configuration center and the database, b
 ## Quick start
 - [Use Apollo as Configuration Center](en/start/configuration/start-apollo.md)
 - [Use Etcd as Configuration Center](en/start/configuration/start.md)
+- [Use Nacos as Configuration Center](en/start/configuration/start-nacos.md)
