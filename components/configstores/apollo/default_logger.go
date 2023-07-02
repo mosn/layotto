@@ -31,53 +31,33 @@ func NewDefaultLogger(logger log.ErrorLogger) *DefaultLogger {
 	}
 }
 func (d *DefaultLogger) Debugf(format string, params ...interface{}) {
-	d.logger.Debugf(format, params)
+	d.logger.Debugf(format, params...)
 }
 
 func (d *DefaultLogger) Infof(format string, params ...interface{}) {
-	d.logger.Infof(format, params)
+	d.logger.Infof(format, params...)
 }
 
 func (d *DefaultLogger) Warnf(format string, params ...interface{}) {
-	d.logger.Warnf(format, params)
+	d.logger.Warnf(format, params...)
 }
 
 func (d *DefaultLogger) Errorf(format string, params ...interface{}) {
-	d.logger.Errorf(format, params)
+	d.logger.Errorf(format, params...)
 }
 
 func (d *DefaultLogger) Debug(v ...interface{}) {
-	if len(v) == 0 {
-		return
-	}
-	format := buildForamat(v)
-	d.logger.Debugf(format, v)
-}
-
-func buildForamat(v []interface{}) string {
-	return "%v"
+	d.logger.Debugf("%v", v)
 }
 
 func (d *DefaultLogger) Info(v ...interface{}) {
-	if len(v) == 0 {
-		return
-	}
-	format := buildForamat(v)
-	d.logger.Infof(format, v)
+	d.logger.Infof("%v", v)
 }
 
 func (d *DefaultLogger) Warn(v ...interface{}) {
-	if len(v) == 0 {
-		return
-	}
-	format := buildForamat(v)
-	d.logger.Warnf(format, v)
+	d.logger.Warnf("%v", v)
 }
 
 func (d *DefaultLogger) Error(v ...interface{}) {
-	if len(v) == 0 {
-		return
-	}
-	format := buildForamat(v)
-	d.logger.Errorf(format, v)
+	d.logger.Errorf("%v", v)
 }
