@@ -6,9 +6,9 @@
 
 ## 第一步：启动 Nacos 和 Layotto
 
-### **使用 Docker Compose**
+### 方式一：通过Docker Compose方式启动
 
-你可以使用 docker-compose 来快速启动 layotto 和 nacos。
+你可以使用 [docker-compose](https://docs.docker.com/compose/) 来快速启动 layotto 和 nacos。
 
 ```shell
 cd docker/layotto-nacos
@@ -16,7 +16,7 @@ cd docker/layotto-nacos
 docker-compose up -d
 ```
 
-### **本地编译**
+### 方式二：通过本地编译启动
 
 您可以使用 [nacos 官网文档](https://nacos.io/zh-cn/docs/quick-start-docker.html) 提供的方式启动 nacos，然后本地编译、运行 Layotto。
 

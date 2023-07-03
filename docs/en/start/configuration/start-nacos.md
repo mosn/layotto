@@ -7,10 +7,10 @@ The architecture of this example is shown in the figure below. The processes sta
 ![](../../../img/configuration/nacos/layotto-nacos-configstore-component.png)
 
 [Then config file](https://github.com/mosn/layotto/blob/main/configs/config_nacos.json) claims `nacos` in the `config_store` section, but users can change it to other configuration center they want (currently only support nacos and nacos).
-## step 1. Deploy  Nacos and Layotto
+## Deploy  Nacos and Layotto
 <!-- tabs:start -->
-### **With Docker Compose**
-You can start nacos and Layotto with docker-compose
+### Method 1: Start through Docker Compose
+You can start nacos and Layotto with [docker-compose](https://docs.docker.com/compose/)
 
 ```bash
 cd docker/layotto-nacos
@@ -18,7 +18,7 @@ cd docker/layotto-nacos
 docker-compose up -d
 ```
 
-### **Compile locally (not for Windows)**
+### Method 2: Start through local compilation
 
 You can start Nacos using the methods provided in the [Nacos official documentation](https://nacos.io/zh-cn/docs/quick-start-docker.html) and then compile and run Layotto locally.
 
@@ -26,7 +26,7 @@ You can start Nacos using the methods provided in the [Nacos official documentat
 > Layotto fails to compile under Windows. Windows users are recommended to deploy using docker-compose
 
 
-## step 2. Start client APP
+## Start client APP
 
 ```shell
  cd ${project_path}/demo/configuration/common
