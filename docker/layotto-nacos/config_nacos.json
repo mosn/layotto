@@ -1,0 +1,51 @@
+{
+  "servers": [
+    {
+      "default_log_path": "stdout",
+      "default_log_level": "DEBUG",
+      "listeners": [
+        {
+          "name": "grpc",
+          "address": "0.0.0.0:34904",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "app": {
+                        "app_id": "testApplication_yang"
+                      },
+                      "hellos": {
+                        "helloworld": {
+                          "type": "helloworld",
+                          "hello": "greeting"
+                        }
+                      },
+                      "config_store": {
+                        "config_demo": {
+                          "type": "nacos",
+                          "address": [
+                            "nacos:8848"
+                          ],
+                          "metadata": {
+                            "cache_dir": "./nacos/cache",
+                            "log_dir": "./nacos/logs",
+                            "log_level": "debug"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

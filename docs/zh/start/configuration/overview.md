@@ -21,3 +21,4 @@ A: Configuration会有一些特殊的能力，比如sidecar做配置缓存，比
 ## 快速入门
 - [使用Apollo配置中心](zh/start/configuration/start-apollo.md)
 - [使用Etcd配置中心](zh/start/configuration/start.md)
+- [使用nacos配置中心](zh/start/confguration/start-nacos.md)
