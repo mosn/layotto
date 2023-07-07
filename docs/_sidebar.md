@@ -4,6 +4,7 @@
   - Use Configuration API
     - [Use Apollo as configuration center](en/start/configuration/start-apollo.md)
     - [Use Etcd as configuration center](en/start/configuration/start.md)
+    - [Use Nacos as configuration center](en/start/configuration/start-nacos.md)
   - Publish or subscribe messages
     - [Use Pub/Sub API](en/start/pubsub/start.md)
     - [(Under construction) Use DelayQueue API](en/start/delay_queue/start)
@@ -75,6 +76,7 @@
       - Configuration
         - [Etcd](en/component_specs/configuration/etcd.md)
         - [Apollo](en/component_specs/configuration/apollo.md)
+        - [Nacos](en/component_specs/configuration/nacos.md)
       - File
         - [OSS](en/component_specs/file/oss.md)
       - [Sequencer](en/component_specs/sequencer/common.md)

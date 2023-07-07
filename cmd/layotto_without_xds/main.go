@@ -63,6 +63,7 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/configstores/etcdv3"
+	"mosn.io/layotto/components/configstores/nacos"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/runtime/bindings"
@@ -261,6 +262,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
+			configstores.NewStoreFactory("nacos", nacos.NewStore),
 		),
 
 		// RPC

@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package apollo
+package nacos
 
 import (
 	"mosn.io/pkg/log"
+)
+
+const (
+	DEBUG = "debug"
+	INFO  = "info"
+	WARN  = "warn"
+	ERROR = "error"
 )
 
 // An adapter to implement log.LoggerInterface in agollo package.

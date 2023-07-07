@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package apollo
+package nacos
 
 import (
 	"testing"
