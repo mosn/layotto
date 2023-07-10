@@ -43,11 +43,11 @@ func (k *cy) Init(ctx context.Context, conf *cryption.Config) error {
 	secret := conf.Metadata[ClientSecret]
 	endpoint := conf.Metadata[EndPoint]
 	config := &openapi.Config{
-		// 必填，您的 AccessKey ID
+		// your AccessKey ID
 		AccessKeyId: tea.String(accessKey),
-		// 必填，您的 AccessKey Secret
+		// your AccessKey Secret
 		AccessKeySecret: tea.String(secret),
-		// Endpoint 请参考 https://api.aliyun.com/product/Kms
+		// Endpoint refer: https://api.aliyun.com/product/Kms
 		Endpoint: tea.String(endpoint),
 	}
 
@@ -66,10 +66,12 @@ func (k *cy) Decrypt(ctx context.Context, request *cryption.DecryptRequest) (*cr
 	}
 	decryptResp, err := k.client.Decrypt(decryptRequest)
 	if err != nil {
-		log.DefaultLogger.Errorf("failed decrypt, err: %+v", err)
-		return nil, fmt.Errorf("fail decrypt with error: %+v", err)
+		log.DefaultLogger.Errorf("fail decrypt data, err: %+v", err)
+		return nil, fmt.Errorf("fail decrypt data with error: %+v", err)
 	}
-	resp := &cryption.DecryptResponse{KeyId: *decryptResp.Body.KeyId, KeyVersionId: *decryptResp.Body.KeyVersionId, PlainText: []byte(*decryptResp.Body.Plaintext)}
+	resp := &cryption.DecryptResponse{KeyId: *decryptResp.Body.KeyId, KeyVersionId: *decryptResp.Body.KeyVersionId,
+		RequestId: *decryptResp.Body.RequestId,
+		PlainText: []byte(*decryptResp.Body.Plaintext)}
 	return resp, nil
 }
 
@@ -80,11 +82,12 @@ func (k *cy) Encrypt(ctx context.Context, request *cryption.EncryptRequest) (*cr
 	}
 
 	encryptResp, err := k.client.Encrypt(encryptRequest)
-
 	if err != nil {
-		log.DefaultLogger.Errorf("fail encrypt, err: %+v", err)
-		return nil, fmt.Errorf("fail encrypt with error: %+v", err)
+		log.DefaultLogger.Errorf("fail encrypt data, err: %+v", err)
+		return nil, fmt.Errorf("fail encrypt data with error: %+v", err)
 	}
-	resp := &cryption.EncryptResponse{CipherText: []byte(*encryptResp.Body.CiphertextBlob)}
+	resp := &cryption.EncryptResponse{KeyId: *encryptResp.Body.KeyId, KeyVersionId: *encryptResp.Body.KeyVersionId,
+		RequestId:  *encryptResp.Body.RequestId,
+		CipherText: []byte(*encryptResp.Body.CiphertextBlob)}
 	return resp, nil
 }
