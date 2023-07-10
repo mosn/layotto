@@ -6,11 +6,13 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.3.0
+	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/minio/minio-go/v7 v7.0.15
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
+	github.com/smartystreets/assertions v1.1.0 // indirect
 	github.com/smartystreets/goconvey v1.6.6 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect

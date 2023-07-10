@@ -63,9 +63,20 @@ require (
 	github.com/a8m/documentdb v1.3.1-0.20211026005403-13c3593b3c3a // indirect
 	github.com/aerospike/aerospike-client-go v4.5.0+incompatible // indirect
 	github.com/alibaba/sentinel-golang v1.0.3 // indirect
+	github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.4 // indirect
+	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.4 // indirect
+	github.com/alibabacloud-go/debug v0.0.0-20190504072949-9472017b5c68 // indirect
+	github.com/alibabacloud-go/endpoint-util v1.1.0 // indirect
+	github.com/alibabacloud-go/kms-20160120/v3 v3.0.2 // indirect
+	github.com/alibabacloud-go/openapi-util v0.1.0 // indirect
+	github.com/alibabacloud-go/tea v1.1.19 // indirect
+	github.com/alibabacloud-go/tea-utils v1.4.4 // indirect
+	github.com/alibabacloud-go/tea-utils/v2 v2.0.1 // indirect
+	github.com/alibabacloud-go/tea-xml v1.1.2 // indirect
 	github.com/alicebob/gopher-json v0.0.0-20200520072559-a9ecdc9d1d3a // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1704 // indirect
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.0+incompatible // indirect
+	github.com/aliyun/credentials-go v1.1.2 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/antlr/antlr4 v0.0.0-20200503195918-621b933c7a7f // indirect
 	github.com/apache/dubbo-go-hessian2 v1.10.2 // indirect
@@ -101,6 +112,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.1.1 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/clbanning/mxj/v2 v2.5.5 // indirect
 	github.com/cncf/udpa/go v0.0.0-20210930031921-04548b0d99d4 // indirect
 	github.com/cncf/xds/go v0.0.0-20220520190051-1e77728a1eaa // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
@@ -234,6 +246,7 @@ require (
 	github.com/stretchr/objx v0.4.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.33 // indirect
+	github.com/tjfoc/gmsm v1.3.2 // indirect
 	github.com/tklauser/go-sysconf v0.3.6 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect
 	github.com/trainyao/go-maglev v0.0.0-20200611125015-4c1ae64d96a8 // indirect
@@ -262,12 +275,12 @@ require (
 	golang.org/x/crypto v0.3.0 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
-	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c // indirect
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
-	golang.org/x/sys v0.2.0 // indirect
-	golang.org/x/term v0.2.0 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/term v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect
 	golang.org/x/tools v0.1.12 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
