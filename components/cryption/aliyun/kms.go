@@ -28,7 +28,7 @@ import (
 
 type cy struct {
 	client *kms20160120.Client
-	keyId  string
+	keyID  string
 }
 
 /*
@@ -39,16 +39,16 @@ func NewCryption() cryption.CryptionService {
 }
 
 func (k *cy) Init(ctx context.Context, conf *cryption.Config) error {
-	accessKey := conf.Metadata[ClientKey]
-	secret := conf.Metadata[ClientSecret]
-	endpoint := conf.Metadata[EndPoint]
+	accessKey := conf.Metadata[cryption.ClientKey]
+	secret := conf.Metadata[cryption.ClientSecret]
+	region := conf.Metadata[cryption.Region]
 	config := &openapi.Config{
 		// your AccessKey ID
 		AccessKeyId: tea.String(accessKey),
 		// your AccessKey Secret
 		AccessKeySecret: tea.String(secret),
 		// Endpoint refer: https://api.aliyun.com/product/Kms
-		Endpoint: tea.String(endpoint),
+		RegionId: tea.String(region),
 	}
 
 	client, err := kms20160120.NewClient(config)
@@ -56,7 +56,7 @@ func (k *cy) Init(ctx context.Context, conf *cryption.Config) error {
 		return err
 	}
 	k.client = client
-	k.keyId = conf.Metadata[KeyID]
+	k.keyID = conf.Metadata[cryption.KeyID]
 	return nil
 }
 
@@ -77,7 +77,7 @@ func (k *cy) Decrypt(ctx context.Context, request *cryption.DecryptRequest) (*cr
 
 func (k *cy) Encrypt(ctx context.Context, request *cryption.EncryptRequest) (*cryption.EncryptResponse, error) {
 	encryptRequest := &kms20160120.EncryptRequest{
-		KeyId:     tea.String(k.keyId),
+		KeyId:     tea.String(k.keyID),
 		Plaintext: tea.String(string(request.PlainText)),
 	}
 

@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"mosn.io/layotto/components/cryption"
-	"mosn.io/layotto/components/cryption/aliyun"
 
 	"mosn.io/layotto/pkg/grpc/lifecycle"
 
@@ -40,6 +39,8 @@ import (
 
 	"mosn.io/mosn/pkg/istio"
 
+	aliyun_cryption "mosn.io/layotto/components/cryption/aliyun"
+	aws_cryption "mosn.io/layotto/components/cryption/aws"
 	aliyun_file "mosn.io/layotto/components/file/aliyun"
 
 	"github.com/dapr/components-contrib/secretstores"
@@ -306,7 +307,10 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			oss.NewFactory("huaweicloud.oss", huaweicloud_oss.NewHuaweicloudOSS),
 		),
 		// Cryption
-		runtime.WithCryptionServiceFactory(cryption.NewFactory("aliyun.kms", aliyun.NewCryption)),
+		runtime.WithCryptionServiceFactory(
+			cryption.NewFactory("aliyun.kms", aliyun_cryption.NewCryption),
+			cryption.NewFactory("aws.kms", aws_cryption.NewCryption),
+		),
 		// PubSub
 		runtime.WithPubSubFactory(
 			pubsub.NewFactory("redis", func() dapr_comp_pubsub.PubSub {

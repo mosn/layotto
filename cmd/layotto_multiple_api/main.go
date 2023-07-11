@@ -23,6 +23,10 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/cryption"
+	aliyun_cryption "mosn.io/layotto/components/cryption/aliyun"
+	aws_cryption "mosn.io/layotto/components/cryption/aws"
+
 	"mosn.io/layotto/pkg/grpc/lifecycle"
 
 	huaweicloud_oss "mosn.io/layotto/components/oss/huaweicloud"
@@ -414,6 +418,11 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_state.NewFactory("mysql", func() state.Store {
 				return state_mysql.NewMySQLStateStore(loggerForDaprComp)
 			}),
+		),
+		// Cryption
+		runtime.WithCryptionServiceFactory(
+			cryption.NewFactory("aliyun.kms", aliyun_cryption.NewCryption),
+			cryption.NewFactory("aws.kms", aws_cryption.NewCryption),
 		),
 		// Lock
 		runtime.WithLockFactory(
