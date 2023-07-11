@@ -13,27 +13,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package aliyun
+package aws
 
 import (
 	"context"
 	"fmt"
 
-	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
-	kms20160120 "github.com/alibabacloud-go/kms-20160120/v3/client"
-	"github.com/alibabacloud-go/tea/tea"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/kms"
 	"mosn.io/layotto/components/cryption"
 	"mosn.io/pkg/log"
 )
 
 type cy struct {
-	client *kms20160120.Client
+	client *kms.KMS
 	keyID  string
 }
 
-/*
-refer: https://help.aliyun.com/document_detail/611325.html
-*/
 func NewCryption() cryption.CryptionService {
 	return &cy{}
 }
@@ -42,43 +40,36 @@ func (k *cy) Init(ctx context.Context, conf *cryption.Config) error {
 	accessKey := conf.Metadata[cryption.ClientKey]
 	secret := conf.Metadata[cryption.ClientSecret]
 	region := conf.Metadata[cryption.Region]
-	config := &openapi.Config{
-		// your AccessKey ID
-		AccessKeyId: tea.String(accessKey),
-		// your AccessKey Secret
-		AccessKeySecret: tea.String(secret),
-		// Endpoint refer: https://api.aliyun.com/product/Kms
-		RegionId: tea.String(region),
-	}
+	keyID := conf.Metadata[cryption.KeyID]
+	staticCredentials := credentials.NewStaticCredentials(accessKey, secret, "")
 
-	client, err := kms20160120.NewClient(config)
-	if err != nil {
-		return err
+	awsConf := &aws.Config{
+		Region:      aws.String(region),
+		Credentials: staticCredentials,
 	}
+	client := kms.New(session.New(), awsConf)
 	k.client = client
-	k.keyID = conf.Metadata[cryption.KeyID]
+	k.keyID = keyID
 	return nil
 }
 
 func (k *cy) Decrypt(ctx context.Context, request *cryption.DecryptRequest) (*cryption.DecryptResponse, error) {
-	decryptRequest := &kms20160120.DecryptRequest{
-		CiphertextBlob: tea.String(string(request.CipherText)),
+	decryptRequest := &kms.DecryptInput{
+		CiphertextBlob: request.CipherText,
 	}
 	decryptResp, err := k.client.Decrypt(decryptRequest)
 	if err != nil {
 		log.DefaultLogger.Errorf("fail decrypt data, err: %+v", err)
 		return nil, fmt.Errorf("fail decrypt data with error: %+v", err)
 	}
-	resp := &cryption.DecryptResponse{KeyId: *decryptResp.Body.KeyId, KeyVersionId: *decryptResp.Body.KeyVersionId,
-		RequestId: *decryptResp.Body.RequestId,
-		PlainText: []byte(*decryptResp.Body.Plaintext)}
+	resp := &cryption.DecryptResponse{KeyId: *decryptResp.KeyId, PlainText: decryptResp.Plaintext}
 	return resp, nil
 }
 
 func (k *cy) Encrypt(ctx context.Context, request *cryption.EncryptRequest) (*cryption.EncryptResponse, error) {
-	encryptRequest := &kms20160120.EncryptRequest{
-		KeyId:     tea.String(k.keyID),
-		Plaintext: tea.String(string(request.PlainText)),
+	encryptRequest := &kms.EncryptInput{
+		KeyId:     aws.String(k.keyID),
+		Plaintext: request.PlainText,
 	}
 
 	encryptResp, err := k.client.Encrypt(encryptRequest)
@@ -86,8 +77,6 @@ func (k *cy) Encrypt(ctx context.Context, request *cryption.EncryptRequest) (*cr
 		log.DefaultLogger.Errorf("fail encrypt data, err: %+v", err)
 		return nil, fmt.Errorf("fail encrypt data with error: %+v", err)
 	}
-	resp := &cryption.EncryptResponse{KeyId: *encryptResp.Body.KeyId, KeyVersionId: *encryptResp.Body.KeyVersionId,
-		RequestId:  *encryptResp.Body.RequestId,
-		CipherText: []byte(*encryptResp.Body.CiphertextBlob)}
+	resp := &cryption.EncryptResponse{KeyId: *encryptResp.KeyId, CipherText: encryptResp.CiphertextBlob}
 	return resp, nil
 }

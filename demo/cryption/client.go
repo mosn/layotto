@@ -72,13 +72,14 @@ func TestDecrypt(data []byte) []byte {
 		fmt.Printf("failed to Decrypt: %+v", err)
 		return nil
 	}
-	fmt.Printf("Decrypt response: %+v", resp)
 	return resp.PlainText
 }
 
 func main() {
 	encyptContent := TestEncrypt()
-	fmt.Printf("加密后的数据为: %+v \n", string(encyptContent))
+	fmt.Printf("加密后的数据为: \n")
+	fmt.Println(string(encyptContent))
 	decryptContent := TestDecrypt(encyptContent)
-	fmt.Printf("解密后的数据为: %+v \n", string(decryptContent))
+	fmt.Printf("解密后的数据为: \n")
+	fmt.Println(string(decryptContent))
 }

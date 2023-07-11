@@ -11,6 +11,7 @@ require (
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.0+incompatible
 	github.com/apache/dubbo-go-hessian2 v1.10.2
 	github.com/apolloconfig/agollo/v4 v4.2.0
+	github.com/aws/aws-sdk-go v1.36.30
 	github.com/aws/aws-sdk-go-v2 v1.16.4
 	github.com/aws/aws-sdk-go-v2/config v1.15.9
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.4
