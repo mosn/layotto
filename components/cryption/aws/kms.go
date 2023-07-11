@@ -19,7 +19,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
+
+	awssdk "github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kms"
@@ -43,8 +45,8 @@ func (k *cy) Init(ctx context.Context, conf *cryption.Config) error {
 	keyID := conf.Metadata[cryption.KeyID]
 	staticCredentials := credentials.NewStaticCredentials(accessKey, secret, "")
 
-	awsConf := &aws.Config{
-		Region:      aws.String(region),
+	awsConf := &awssdk.Config{
+		Region:      awssdk.String(region),
 		Credentials: staticCredentials,
 	}
 	client := kms.New(session.New(), awsConf)
