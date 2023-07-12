@@ -22,7 +22,7 @@
                           "metadata": {
                             "accessKeyID": "xxxxxxxxxx",
                             "accessKeySecret": "xxxxxxxxxx",
-                            "endpoint": "xxxxxxxxxx",
+                            "region": "xxxxxxxxxx",
                             "KeyID": "xxxxxxxxxx"
                           }
                         }

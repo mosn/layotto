@@ -67,8 +67,13 @@ func (k *cy) Decrypt(ctx context.Context, request *cryption.DecryptRequest) (*cr
 }
 
 func (k *cy) Encrypt(ctx context.Context, request *cryption.EncryptRequest) (*cryption.EncryptResponse, error) {
+	// if keyId specified, use request KeyId
+	keyId := k.keyID
+	if request.KeyId != "" {
+		keyId = request.KeyId
+	}
 	encryptRequest := &kms.EncryptInput{
-		KeyId:     aws.String(k.keyID),
+		KeyId:     aws.String(keyId),
 		Plaintext: request.PlainText,
 	}
 
