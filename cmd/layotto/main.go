@@ -25,6 +25,8 @@ import (
 
 	"mosn.io/layotto/components/cryption"
 
+	"mosn.io/layotto/components/email"
+
 	"mosn.io/layotto/pkg/grpc/lifecycle"
 
 	"mosn.io/layotto/components/oss"
@@ -42,6 +44,8 @@ import (
 	aliyun_cryption "mosn.io/layotto/components/cryption/aliyun"
 	aws_cryption "mosn.io/layotto/components/cryption/aws"
 	aliyun_file "mosn.io/layotto/components/file/aliyun"
+
+	aliyun_email "mosn.io/layotto/components/email/aliyun"
 
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
@@ -310,6 +314,11 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithCryptionServiceFactory(
 			cryption.NewFactory("aliyun.kms", aliyun_cryption.NewCryption),
 			cryption.NewFactory("aws.kms", aws_cryption.NewCryption),
+		),
+
+		// Email
+		runtime.WithEmailServiceFactory(
+			email.NewFactory("aliyun.email", aliyun_email.NewAliyunEmail),
 		),
 		// PubSub
 		runtime.WithPubSubFactory(
