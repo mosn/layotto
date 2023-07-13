@@ -19,6 +19,7 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"google.golang.org/grpc"
 	"mosn.io/layotto/spec/proto/extension/v1/email"
 )

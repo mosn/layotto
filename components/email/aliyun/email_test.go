@@ -18,9 +18,10 @@ package aliyun
 
 import (
 	"context"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"mosn.io/layotto/components/email"
-	"testing"
 )
 
 func TestInit(t *testing.T) {
