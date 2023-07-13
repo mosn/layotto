@@ -51,7 +51,7 @@ func TestEncrypt() []byte {
 func TestDecrypt(data []byte) []byte {
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
-		fmt.Printf("failed to Decrypt data: %+v", err)
+		fmt.Printf("failed to establish connection: %+v", err)
 		return nil
 	}
 
