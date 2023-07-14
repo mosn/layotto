@@ -33,6 +33,8 @@ type EncryptResponse struct {
 	KeyId string `json:"key_id,omitempty"`
 	// The version of the key
 	KeyVersionId string `json:"key_version_id,omitempty"`
+	// The request id of Encrypt
+	RequestId string `json:"request_id,omitempty"`
 }
 
 // DecryptRequest is the request of the `Decrypt` method.
@@ -51,4 +53,6 @@ type DecryptResponse struct {
 	KeyId string `json:"key_id,omitempty"`
 	// The version of the key
 	KeyVersionId string `json:"key_version_id,omitempty"`
+	// The request id of Decrypt
+	RequestId string `json:"request_id,omitempty"`
 }

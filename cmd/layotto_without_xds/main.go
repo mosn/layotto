@@ -23,6 +23,10 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/cryption"
+	aliyun_cryption "mosn.io/layotto/components/cryption/aliyun"
+	aws_cryption "mosn.io/layotto/components/cryption/aws"
+
 	"mosn.io/layotto/pkg/grpc/lifecycle"
 
 	"mosn.io/layotto/components/oss"
@@ -419,7 +423,11 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			oss.NewFactory("ceph", ceph_oss.NewCephOss),
 			oss.NewFactory("huaweicloud.oss", huaweicloud_oss.NewHuaweicloudOSS),
 		),
-
+		// Cryption
+		runtime.WithCryptionServiceFactory(
+			cryption.NewFactory("aliyun.kms", aliyun_cryption.NewCryption),
+			cryption.NewFactory("aws.kms", aws_cryption.NewCryption),
+		),
 		// Sequencer
 		runtime.WithSequencerFactory(
 			runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
