@@ -20,6 +20,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"mosn.io/layotto/pkg/runtime/pluggable"
+	"runtime"
 	"strings"
 	"time"
 
@@ -237,6 +239,25 @@ func (m *MosnRuntime) storeDynamicComponent(kind string, name string, store inte
 		Kind: kind,
 		Name: name,
 	}] = lifecycle.ConcurrentDynamicComponent(comp)
+}
+
+func (m *MosnRuntime) registerPluggableComponents() error {
+	// 1. discovery pluggable components from different system
+	if runtime.GOOS == "windows" {
+		log.DefaultLogger.Infof("pluggable component haven't support windows system")
+		return nil
+	}
+
+	// Unix-like systems, such as linux and mac, naturally support unix sockets
+	discover, err := pluggable.Discover()
+	if err != nil {
+		return err
+	}
+
+	// 2. register pluggable component
+	m.helloRegistry.Register(discover.Hellos...)
+
+	return nil
 }
 
 func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
@@ -675,6 +696,11 @@ func (m *MosnRuntime) AppendInitRuntimeStage(f initRuntimeStage) {
 
 func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	st := time.Now()
+	// discovery and register pluggable component
+	if err := m.registerPluggableComponents(); err != nil {
+		return err
+	}
+
 	// check default handler
 	if len(m.initRuntimeStages) == 0 {
 		m.initRuntimeStages = append(m.initRuntimeStages, DefaultInitRuntimeStage)
