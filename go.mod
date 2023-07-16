@@ -15,6 +15,7 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
+	github.com/jhump/protoreflect v1.15.1
 	github.com/jinzhu/copier v0.3.6-0.20220506024824-3e39b055319a
 	github.com/json-iterator/go v1.1.12
 	github.com/opentracing/opentracing-go v1.2.0
@@ -22,13 +23,13 @@ require (
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.40.0
 	google.golang.org/grpc v1.48.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
-	google.golang.org/protobuf v1.28.1
+	google.golang.org/protobuf v1.28.2-0.20230222093303-bc1253ad3743
 	mosn.io/api v1.5.0
 	mosn.io/layotto/components v0.0.0-20220413092851-55c58dbb1a23
 	mosn.io/layotto/spec v0.0.0-20220413092851-55c58dbb1a23
@@ -105,6 +106,7 @@ require (
 	github.com/aws/smithy-go v1.11.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b // indirect
+	github.com/bufbuild/protocompile v0.4.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/bytecodealliance/wasmtime-go v0.40.0 // indirect
 	github.com/c2h5oh/datasize v0.0.0-20171227191756-4eba002a5eae // indirect
@@ -156,7 +158,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/cel-go v0.5.1 // indirect
-	github.com/google/go-cmp v0.5.7 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
@@ -243,7 +245,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.1 // indirect
 	github.com/streadway/amqp v1.0.0 // indirect
-	github.com/stretchr/objx v0.4.0 // indirect
+	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.33 // indirect
 	github.com/tjfoc/gmsm v1.3.2 // indirect
