@@ -27,12 +27,6 @@ import (
 	"mosn.io/layotto/components/email"
 )
 
-var (
-	accessKeyIDKey     = "accessKeyID"
-	accessKeySecretKey = "accessKeySecret"
-	endpointKey        = "endpoint"
-)
-
 type AliyunEmail struct {
 	client *dm20151123.Client
 }
@@ -44,12 +38,12 @@ func NewAliyunEmail() email.EmailService {
 var _ email.EmailService = (*AliyunEmail)(nil)
 
 func (a *AliyunEmail) Init(ctx context.Context, conf *email.Config) error {
-	accesskey := conf.Metadata[accessKeyIDKey]
-	accessKeySecret := conf.Metadata[accessKeySecretKey]
-	endpoint := conf.Metadata[endpointKey]
+	accessKeyID := conf.Metadata[email.ClientKey]
+	accessKeySecret := conf.Metadata[email.ClientSecret]
+	endpoint := conf.Metadata[email.Endpoint]
 	config := &openapi.Config{
 		// accessKey ID
-		AccessKeyId: tea.String(accesskey),
+		AccessKeyId: tea.String(accessKeyID),
 		// accessKey Secret
 		AccessKeySecret: tea.String(accessKeySecret),
 		// endpoint, ref https://api.aliyun.com/product/Dm

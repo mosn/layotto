@@ -29,9 +29,9 @@ func TestInit(t *testing.T) {
 	a := &AliyunEmail{}
 	conf := &email.Config{
 		Metadata: map[string]string{
-			accessKeyIDKey:     "aki",
-			accessKeySecretKey: "aks",
-			endpointKey:        "endpoint",
+			email.ClientKey:    "aki",
+			email.ClientSecret: "aks",
+			email.Endpoint:     "endpoint",
 		},
 	}
 	err := a.Init(context.TODO(), conf)
@@ -42,9 +42,9 @@ func TestSendEmail(t *testing.T) {
 	a := &AliyunEmail{}
 	conf := &email.Config{
 		Metadata: map[string]string{
-			accessKeyIDKey:     "aki",
-			accessKeySecretKey: "aks",
-			endpointKey:        "endpoint",
+			email.ClientKey:    "aki",
+			email.ClientSecret: "aks",
+			email.Endpoint:     "endpoint",
 		},
 	}
 	err := a.Init(context.TODO(), conf)
@@ -66,9 +66,9 @@ func TestSendEmailWithTemplate(t *testing.T) {
 	a := &AliyunEmail{}
 	conf := &email.Config{
 		Metadata: map[string]string{
-			accessKeyIDKey:     "aki",
-			accessKeySecretKey: "aks",
-			endpointKey:        "endpoint",
+			email.ClientKey:    "aki",
+			email.ClientSecret: "aks",
+			email.Endpoint:     "endpoint",
 		},
 	}
 	err := a.Init(context.TODO(), conf)

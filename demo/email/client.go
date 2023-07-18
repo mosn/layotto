@@ -30,14 +30,14 @@ const (
 )
 
 func TestSendEmail() {
-	// Connect to the object store.
+	// Establish a connection.
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("failed to establish connection: %+v", err)
 		return
 	}
 
-	// Create a client for the object store.
+	// Create a client for the email service.
 	c := email.NewEmailServiceClient(conn)
 
 	// Create a request to send a common email to specified addresses.
@@ -57,14 +57,14 @@ func TestSendEmail() {
 }
 
 func TestSendEmailWithTemplate() {
-	// Connect to the object store.
+	// Establish a connection.
 	conn, err := grpc.Dial("127.0.0.1:34904", grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("failed to establish connection: %+v", err)
 		return
 	}
 
-	// Create a client for the object store.
+	// Create a client for the email service.
 	c := email.NewEmailServiceClient(conn)
 
 	// Create a request to send an email with template to specified receivers_name.
