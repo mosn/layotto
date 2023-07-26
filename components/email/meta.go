@@ -19,5 +19,5 @@ package email
 const (
 	ClientKey    = "accessKeyID"
 	ClientSecret = "accessKeySecret"
-	Endpoint     = "region"
+	Endpoint     = "endpoint"
 )
