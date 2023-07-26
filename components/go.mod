@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.4
+	github.com/alibabacloud-go/dm-20151123/v2 v2.0.1
 	github.com/alibabacloud-go/kms-20160120/v3 v3.0.2
 	github.com/alibabacloud-go/tea v1.1.19
 	github.com/alicebob/miniredis/v2 v2.16.0
