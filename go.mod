@@ -31,7 +31,7 @@ require (
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
 	google.golang.org/protobuf v1.28.2-0.20230222093303-bc1253ad3743
 	mosn.io/api v1.5.0
-	mosn.io/layotto/components v0.0.0-20220413092851-55c58dbb1a23
+	mosn.io/layotto/components v0.0.0-20230712052228-c940b7f1367d
 	mosn.io/layotto/spec v0.0.0-20220413092851-55c58dbb1a23
 	mosn.io/mosn v1.5.1-0.20230529091910-7d48a20e544b
 	mosn.io/pkg v1.5.1-0.20230525074748-e3528eae50d9
@@ -67,6 +67,7 @@ require (
 	github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.4 // indirect
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.4 // indirect
 	github.com/alibabacloud-go/debug v0.0.0-20190504072949-9472017b5c68 // indirect
+	github.com/alibabacloud-go/dm-20151123/v2 v2.0.1 // indirect
 	github.com/alibabacloud-go/endpoint-util v1.1.0 // indirect
 	github.com/alibabacloud-go/kms-20160120/v3 v3.0.2 // indirect
 	github.com/alibabacloud-go/openapi-util v0.1.0 // indirect
