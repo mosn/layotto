@@ -65,7 +65,6 @@ func NewSpan(ctx context.Context, startTime time.Time, config map[string]interfa
 		log.DefaultLogger.Errorf("not support trace type: %+v", generatorName)
 		return nil
 	}
-	ge.Init(ctx)
 	// use generator to extract the span/trace/parentSpan IDs
 	spanId := ge.GetSpanId(ctx)
 	traceId := ge.GetTraceId(ctx)
@@ -85,7 +84,6 @@ func GetNewContext(ctx context.Context, span api.Span) context.Context {
 	if ge == nil {
 		return ctx
 	}
-	ge.Init(ctx)
 	newCtx := ge.GenerateNewContext(ctx, span)
 	return newCtx
 }
