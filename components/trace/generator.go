@@ -29,7 +29,6 @@ var (
 
 // Generator  is used to get or generate traceId/spanId/context
 type Generator interface {
-	Init(ctx context.Context)
 	GetTraceId(ctx context.Context) string
 	GetSpanId(ctx context.Context) string
 	GenerateNewContext(ctx context.Context, span api.Span) context.Context
