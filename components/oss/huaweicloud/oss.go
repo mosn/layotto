@@ -81,7 +81,7 @@ func (h *HuaweicloudOSS) GetObject(ctx context.Context, input *oss.GetObjectInpu
 	}
 
 	output := &oss.GetObjectOutput{}
-	if err = copier.CopyWithOption(output, obsOutput, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+	if err = copier.CopyWithOption(output, obsOutput, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeValueToInt64}}); err != nil {
 		return nil, err
 	}
 	output.DataStream = obsOutput.Body
@@ -179,7 +179,7 @@ func (h *HuaweicloudOSS) CopyObject(ctx context.Context, input *oss.CopyObjectIn
 	}
 
 	output := &oss.CopyObjectOutput{}
-	if err = copier.CopyWithOption(output, obsOutput, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+	if err = copier.CopyWithOption(output, obsOutput, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeValueToInt64}}); err != nil {
 		return nil, err
 	}
 
@@ -250,7 +250,7 @@ func (h *HuaweicloudOSS) ListObjects(ctx context.Context, input *oss.ListObjects
 	contents := make([]*oss.Object, 0, len(obsOutput.Contents))
 	for _, v := range obsOutput.Contents {
 		content := &oss.Object{}
-		if err = copier.CopyWithOption(content, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+		if err = copier.CopyWithOption(content, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeValueToInt64}}); err != nil {
 			return nil, err
 		}
 		owner := &oss.Owner{}
@@ -386,7 +386,7 @@ func (h *HuaweicloudOSS) UploadPartCopy(ctx context.Context, input *oss.UploadPa
 
 	output := &oss.UploadPartCopyOutput{}
 	partResult := &oss.CopyPartResult{}
-	if err = copier.CopyWithOption(partResult, obsOutput, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+	if err = copier.CopyWithOption(partResult, obsOutput, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeValueToInt64}}); err != nil {
 		return nil, err
 	}
 	output.CopyPartResult = partResult
@@ -455,7 +455,7 @@ func (h *HuaweicloudOSS) ListMultipartUploads(ctx context.Context, input *oss.Li
 	uploads := make([]*oss.MultipartUpload, 0, len(obsOutput.Uploads))
 	for _, v := range obsOutput.Uploads {
 		upload := &oss.MultipartUpload{}
-		if err = copier.CopyWithOption(upload, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+		if err = copier.CopyWithOption(upload, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeValueToInt64}}); err != nil {
 			return nil, err
 		}
 		initiator := &oss.Initiator{}
@@ -501,7 +501,7 @@ func (h *HuaweicloudOSS) ListObjectVersions(ctx context.Context, input *oss.List
 	deleteMarkers := make([]*oss.DeleteMarkerEntry, 0, len(obsOutput.DeleteMarkers))
 	for _, v := range obsOutput.DeleteMarkers {
 		entry := &oss.DeleteMarkerEntry{}
-		if err = copier.CopyWithOption(entry, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+		if err = copier.CopyWithOption(entry, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeValueToInt64}}); err != nil {
 			return nil, err
 		}
 		deleteMarkers = append(deleteMarkers, entry)
@@ -510,7 +510,7 @@ func (h *HuaweicloudOSS) ListObjectVersions(ctx context.Context, input *oss.List
 	versions := make([]*oss.ObjectVersion, 0, len(obsOutput.Versions))
 	for _, v := range obsOutput.Versions {
 		version := &oss.ObjectVersion{}
-		if err = copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}}); err != nil {
+		if err = copier.CopyWithOption(version, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeValueToInt64}}); err != nil {
 			return nil, err
 		}
 		owner := &oss.Owner{}

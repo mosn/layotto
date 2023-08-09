@@ -93,7 +93,7 @@ type GetObjectOutput struct {
 	ContentRange       string            `json:"content_range,omitempty"`
 	ContentType        string            `json:"content_type,omitempty"`
 	DeleteMarker       bool              `json:"delete_marker,omitempty"`
-	Etag               string            `json:"etag,omitempty"`
+	ETag               string            `json:"etag,omitempty"`
 	Expiration         string            `json:"expiration,omitempty"`
 	Expires            string            `json:"expires,omitempty"`
 	LastModified       int64             `json:"last_modified,omitempty"`

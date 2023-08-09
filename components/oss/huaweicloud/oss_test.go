@@ -23,6 +23,11 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/huaweicloud/huaweicloud-sdk-go-obs/obs"
+
+	"github.com/jinzhu/copier"
 
 	"github.com/stretchr/testify/assert"
 
@@ -121,6 +126,14 @@ func TestGetObject(t *testing.T) {
 	Nil(t, err)
 	content := string(body)
 	println(content)
+
+	out := &obs.GetObjectOutput{}
+	out.GetObjectMetadataOutput = obs.GetObjectMetadataOutput{ETag: "a213asdasdasdasd123"}
+
+	wanted := &oss.GetObjectOutput{}
+	err = copier.CopyWithOption(wanted, out, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeToInt64}})
+	assert.Nil(t, err)
+	assert.Equal(t, out.ETag, wanted.ETag)
 }
 
 func TestPutObject(t *testing.T) {
@@ -195,6 +208,11 @@ func TestListObjects(t *testing.T) {
 	output, err := h.ListObjects(context.TODO(), input)
 	Nil(t, err)
 	NotNil(t, output)
+	content := &oss.Object{}
+	v := obs.Content{LastModified: time.Now()}
+	err = copier.CopyWithOption(content, v, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.TimeValueToInt64}})
+	assert.Nil(t, err)
+	assert.NotEqual(t, 0, content.LastModified)
 }
 
 func TestPutObjectCannedAcl(t *testing.T) {
