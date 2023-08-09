@@ -71,7 +71,7 @@ func TestGetObject(t *testing.T) {
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
 	iobuf := buffer.NewIoBufferBytes([]byte("hello"))
 	dataStream := &MockDataStream{iobuf}
-	output := &l8s3.GetObjectOutput{Etag: "tag"}
+	output := &l8s3.GetObjectOutput{ETag: "tag"}
 	output.DataStream = dataStream
 	mockServer.EXPECT().Context().Return(ctx)
 	mockossServer.EXPECT().GetObject(ctx, &l8s3.GetObjectInput{Bucket: "layotto", Key: "object"}).Return(output, nil)
