@@ -233,6 +233,7 @@ func (x *SendSmsWithTemplateResponse) GetResults() []*SendStatus {
 	return nil
 }
 
+// Status contains more information about the response
 type SendStatus struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

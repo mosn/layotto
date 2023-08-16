@@ -60,6 +60,7 @@ message SendSmsWithTemplateResponse {
 
 }
 
+// Status contains more information about the response
 message SendStatus {
 
   // "OK" represents success.
