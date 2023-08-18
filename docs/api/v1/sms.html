@@ -192,7 +192,11 @@
                 </li>
               
                 <li>
-                  <a href="#spec.proto.extension.v1.sms.SendSmsWithTemplateResponse.MetadataEntry"><span class="badge">M</span>SendSmsWithTemplateResponse.MetadataEntry</a>
+                  <a href="#spec.proto.extension.v1.sms.SendStatus"><span class="badge">M</span>SendStatus</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.extension.v1.sms.SendStatus.MetadataEntry"><span class="badge">M</span>SendStatus.MetadataEntry</a>
                 </li>
               
                 <li>
@@ -340,7 +344,7 @@
         
       
         <h3 id="spec.proto.extension.v1.sms.SendSmsWithTemplateResponse">SendSmsWithTemplateResponse</h3>
-        <p>SendSmsResponse is the reponse of the `SendSms` method.</p>
+        <p>SendSmsResponse is the response of the `SendSms` method.</p>
 
         
           <table class="field-table">
@@ -355,6 +359,30 @@
                   <td></td>
                   <td><p>The unique requestId. </p></td>
                 </tr>
+              
+                <tr>
+                  <td>results</td>
+                  <td><a href="#spec.proto.extension.v1.sms.SendStatus">SendStatus</a></td>
+                  <td>repeated</td>
+                  <td><p>The status set of SMS </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.extension.v1.sms.SendStatus">SendStatus</h3>
+        <p>Status contains more information about the response</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
               
                 <tr>
                   <td>code</td>
@@ -372,9 +400,11 @@
               
                 <tr>
                   <td>metadata</td>
-                  <td><a href="#spec.proto.extension.v1.sms.SendSmsWithTemplateResponse.MetadataEntry">SendSmsWithTemplateResponse.MetadataEntry</a></td>
+                  <td><a href="#spec.proto.extension.v1.sms.SendStatus.MetadataEntry">SendStatus.MetadataEntry</a></td>
                   <td>repeated</td>
-                  <td><p>The metadata returned from SMS service. </p></td>
+                  <td><p>The send status metadata returned from SMS service.
+Includes `PhoneNumber`.
+`PhoneNumber`, is the phone number SMS send to. Supported by tencentcloud. </p></td>
                 </tr>
               
             </tbody>
@@ -384,7 +414,7 @@
 
         
       
-        <h3 id="spec.proto.extension.v1.sms.SendSmsWithTemplateResponse.MetadataEntry">SendSmsWithTemplateResponse.MetadataEntry</h3>
+        <h3 id="spec.proto.extension.v1.sms.SendStatus.MetadataEntry">SendStatus.MetadataEntry</h3>
         <p></p>
 
         
