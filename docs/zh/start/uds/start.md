@@ -73,7 +73,11 @@ go build -o layotto
 ./layotto start -c ../../configs/config_uds.json
 ```
 
-### step 2. 启动测试demo
+### step 2. 运行客户端程序，调用Layotto进行增删改查
+<!-- tabs:start -->
+#### **Go**
+
+构建、运行 go 语言 demo:
 
 Layotto提供了通过UDS调用gRPC接口的示例 [demo](https://github.com/mosn/layotto/blob/main/demo/uds/client.go)
 
@@ -84,4 +88,41 @@ go build client.go
 # 通过UDS访问layotto的hellos组件
 ./client 
 ```
+
+#### **Java**
+
+构建、运行 java 语言 demo:
+
+Layotto java-sdk已经支持通过UDS调用gRPC接口
+
+```shell @if.not.exist java-sdk
+git clone https://github.com/layotto/java-sdk
+```
+
+切换目录:
+
+```shell
+cd java-sdk
+```
+
+构建:
+
+```shell @if.not.exist examples-uds/target/examples-uds-jar-with-dependencies.jar
+# build example jar
+mvn -f examples-uds/pom.xml clean package
+```
+
+运行:
+
+```
+java -jar examples-uds/target/examples-uds-jar-with-dependencies.jar
+```
+
+打印出以下信息说明运行成功:
+
+```bash
+greeting, helloworld
+```
+
+<!-- tabs:end -->
 
