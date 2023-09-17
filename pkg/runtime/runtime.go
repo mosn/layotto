@@ -100,7 +100,7 @@ type MosnRuntime struct {
 	extensionComponents
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
-	// extends
+	// extend
 	errInt            ErrInterceptor
 	started           bool
 	initRuntimeStages []initRuntimeStage
@@ -675,6 +675,12 @@ func (m *MosnRuntime) AppendInitRuntimeStage(f initRuntimeStage) {
 
 func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	st := time.Now()
+
+	// register component component
+	if err := m.RegisterPluggableComponent(); err != nil {
+		return err
+	}
+
 	// check default handler
 	if len(m.initRuntimeStages) == 0 {
 		m.initRuntimeStages = append(m.initRuntimeStages, DefaultInitRuntimeStage)

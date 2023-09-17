@@ -17,6 +17,7 @@
 package common
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -42,4 +43,13 @@ func TestGetFileSize(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestRemoveExt(t *testing.T) {
+	t.Run("remove ext should remove file extension when it has one", func(t *testing.T) {
+		assert.Equal(t, RemoveExt("a.sock"), "a")
+	})
+	t.Run("remove ext should not change file name when it has no extension", func(t *testing.T) {
+		assert.Equal(t, RemoveExt("a"), "a")
+	})
 }
