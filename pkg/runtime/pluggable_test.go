@@ -1,3 +1,16 @@
+// Copyright 2021 Layotto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package runtime
 
 import (
@@ -8,20 +21,28 @@ import (
 	"net"
 	"os"
 	"runtime"
-	"sync/atomic"
+	"sync"
 	"testing"
 )
 
 type fakeReflectService struct {
-	listServicesCalled atomic.Int64
+	callRW             sync.RWMutex
+	listServicesCalled int64
 	listServicesResp   []string
 	listServicesErr    error
 	onResetCalled      func()
 }
 
 func (f *fakeReflectService) ListServices() ([]string, error) {
-	f.listServicesCalled.Add(1)
+	f.callRW.Lock()
+	defer f.callRW.Unlock()
+	f.listServicesCalled++
 	return f.listServicesResp, f.listServicesErr
+}
+func (f *fakeReflectService) listServiceCalledFn() int64 {
+	f.callRW.RLock()
+	defer f.callRW.RUnlock()
+	return f.listServicesCalled
 }
 
 func (f *fakeReflectService) Reset() {
@@ -115,7 +136,7 @@ func Test_serviceDiscovery(t *testing.T) {
 			return nil, nil, errors.New("fake-err")
 		})
 		assert.NotNil(t, err)
-		assert.Equal(t, int64(0), reflectService.listServicesCalled.Load())
+		assert.Equal(t, int64(0), reflectService.listServiceCalledFn())
 	})
 	t.Run("serviceDiscovery should return an error when list services return an error", func(t *testing.T) {
 		const fakeSocketFolder = "/tmp/test"
@@ -137,7 +158,7 @@ func Test_serviceDiscovery(t *testing.T) {
 			return reflectService, func() {}, nil
 		})
 		assert.NotNil(t, err)
-		assert.Equal(t, int64(1), reflectService.listServicesCalled.Load())
+		assert.Equal(t, int64(1), reflectService.listServiceCalledFn())
 	})
 	t.Run("serviceDiscovery should return all services list", func(t *testing.T) {
 		const fakeSocketFolder = "/tmp/test"
@@ -166,7 +187,7 @@ func Test_serviceDiscovery(t *testing.T) {
 		})
 		require.NoError(t, err)
 		assert.Len(t, services, len(svcList))
-		assert.Equal(t, int64(1), reflectService.listServicesCalled.Load())
+		assert.Equal(t, int64(1), reflectService.listServiceCalledFn())
 	})
 }
 
