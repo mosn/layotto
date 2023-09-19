@@ -57,6 +57,7 @@ import (
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/grpc"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
+	"mosn.io/layotto/pkg/runtime/pluggable"
 	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
@@ -676,8 +677,8 @@ func (m *MosnRuntime) AppendInitRuntimeStage(f initRuntimeStage) {
 func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	st := time.Now()
 
-	// register component component
-	if err := m.RegisterPluggableComponent(); err != nil {
+	// register pluggable component
+	if err := m.registerPluggableComponent(); err != nil {
 		return err
 	}
 
@@ -694,6 +695,16 @@ func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	}
 
 	log.DefaultLogger.Infof("[runtime] initRuntime stages cost: %v", time.Since(st))
+	return nil
+}
+
+func (m *MosnRuntime) registerPluggableComponent() error {
+	discover, err := pluggable.Discover()
+	if err != nil {
+		return err
+	}
+	m.helloRegistry.Register(discover.Hellos...)
+
 	return nil
 }
 

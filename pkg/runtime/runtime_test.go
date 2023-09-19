@@ -22,6 +22,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"runtime"
 	"testing"
 
 	aws2 "mosn.io/layotto/components/oss/aws"
@@ -131,7 +132,7 @@ func TestMosnRuntime_Run(t *testing.T) {
 		assert.NotNil(t, server)
 		rt.Stop()
 	})
-	t.Run("run succesfully with initRuntimeStage", func(t *testing.T) {
+	t.Run("run successfully with initRuntimeStage", func(t *testing.T) {
 		runtimeConfig := &MosnRuntimeConfig{}
 		rt := NewMosnRuntime(runtimeConfig)
 		etcdCustomComponent := mock_component.NewCustomComponentMock()
@@ -241,7 +242,10 @@ func TestMosnRuntime_Run(t *testing.T) {
 		// 4. assert
 		assert.NotNil(t, err)
 		assert.True(t, err == errExpected)
+	})
 
+	t.Run("register pluggable component", func(t *testing.T) {
+		// todo
 	})
 }
 
@@ -268,6 +272,18 @@ func TestMosnRuntime_initAppCallbackConnection(t *testing.T) {
 		err = m.initAppCallbackConnection()
 		// assert
 		assert.Nil(t, err)
+	})
+}
+
+func TestMosnRuntime_registerPluggableComponent(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		return
+	}
+
+	t.Run("register hello service success", func(t *testing.T) {
+		// todo
+		// 1. start grpc service which implements hello service
+		// 2. register hello service into mosnRuntime
 	})
 }
 

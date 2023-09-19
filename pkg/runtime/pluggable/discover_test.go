@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package runtime
+package pluggable
 
 import (
 	"errors"
@@ -21,10 +21,10 @@ import (
 	"sync"
 	"testing"
 
+	grpcdial "mosn.io/layotto/pkg/grpc"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	grpcdial "mosn.io/layotto/pkg/grpc"
 )
 
 type fakeReflectService struct {
@@ -61,10 +61,6 @@ func (f *fakeGrpcCloser) Close() error {
 	return nil
 }
 
-func newMosnRuntime() *MosnRuntime {
-	return NewMosnRuntime(&MosnRuntimeConfig{})
-}
-
 func TestGetSocketFolderPath(t *testing.T) {
 	t.Run("get socket folder should use default when env var is not set", func(t *testing.T) {
 		assert.Equal(t, GetSocketFolderPath(), defaultSocketFolder)
@@ -76,16 +72,16 @@ func TestGetSocketFolderPath(t *testing.T) {
 	})
 }
 
-func TestMosnRuntime_Callback(t *testing.T) {
-	m := newMosnRuntime()
+func Test_Callback(t *testing.T) {
 	t.Run("callback should be called when service ref is registered", func(t *testing.T) {
 		const fakeComponentName, fakeServiceName = "fake-comp", "fake-svc"
 		called := 0
-		AddServiceDiscoveryCallback(fakeServiceName, func(name string, _ grpcdial.GRPCConnectionDialer, m *MosnRuntime) {
+		f := NewDefaultDiscoverFactory()
+		AddServiceDiscoveryCallback(fakeServiceName, func(name string, _ grpcdial.GRPCConnectionDialer, f *DiscoverFactory) {
 			called++
 			assert.Equal(t, name, fakeComponentName)
 		})
-		m.callback([]pluggableComponentService{{protoRef: fakeServiceName, componentName: fakeComponentName}})
+		callback([]grpcService{{protoRef: fakeServiceName, componentName: fakeComponentName}}, f)
 		assert.Equal(t, 1, called)
 	})
 }
@@ -95,7 +91,7 @@ func Test_serviceDiscovery(t *testing.T) {
 		return
 	}
 	t.Run("add service callback should add a new entry when called", func(t *testing.T) {
-		AddServiceDiscoveryCallback("fake", func(string, grpcdial.GRPCConnectionDialer, *MosnRuntime) {})
+		AddServiceDiscoveryCallback("fake", func(string, grpcdial.GRPCConnectionDialer, *DiscoverFactory) {})
 		assert.NotEmpty(t, onServiceDiscovered)
 	})
 	t.Run("serviceDiscovery should return empty services if directory not exists", func(t *testing.T) {

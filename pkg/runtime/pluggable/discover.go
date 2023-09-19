@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package runtime
+package pluggable
 
 import (
 	"context"
@@ -20,6 +20,8 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"mosn.io/layotto/components/hello"
+
 	"mosn.io/layotto/pkg/common"
 	grpcdial "mosn.io/layotto/pkg/grpc"
 
@@ -27,6 +29,10 @@ import (
 	"google.golang.org/grpc"
 	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
 )
+
+func init() {
+	onServiceDiscovered = make(map[string]CallbackFunc)
+}
 
 const (
 	// the default folder to store pluggable component socket files.
@@ -41,7 +47,49 @@ var (
 	onServiceDiscovered map[string]CallbackFunc
 )
 
-type CallbackFunc func(compType string, dialer grpcdial.GRPCConnectionDialer, m *MosnRuntime)
+type CallbackFunc func(compType string, dialer grpcdial.GRPCConnectionDialer, m *DiscoverFactory)
+
+type DiscoverFactory struct {
+	Hellos []*hello.HelloFactory
+}
+
+// GetSocketFolderPath gets the path of folder storing pluggable component socket files.
+func GetSocketFolderPath() string {
+	if v, ok := os.LookupEnv(SocketFolderEnvVar); ok {
+		return v
+	}
+	return defaultSocketFolder
+}
+
+// AddServiceDiscoveryCallback register callback function, not concurrent secure
+func AddServiceDiscoveryCallback(serviceName string, callback CallbackFunc) {
+	onServiceDiscovered[serviceName] = callback
+}
+
+func NewDefaultDiscoverFactory() *DiscoverFactory {
+	factory := new(DiscoverFactory)
+	factory.Hellos = make([]*hello.HelloFactory, 0)
+	return factory
+}
+
+func Discover() (*DiscoverFactory, error) {
+	// At present, layotto only support register component from unix domain socket connection,
+	// and not compatible with windows.
+	if runtime.GOOS == "windows" {
+		return nil, errors.New("windows haven't support register pluggable component")
+	}
+
+	// 1. discover pluggable component
+	factory := NewDefaultDiscoverFactory()
+	serviceList, err := discover()
+	if err != nil {
+		return nil, err
+	}
+
+	// 2. callback to register factory into MosnRuntime
+	callback(serviceList, factory)
+	return factory, nil
+}
 
 // get service form socket files.
 type reflectServiceClient interface {
@@ -49,7 +97,7 @@ type reflectServiceClient interface {
 	Reset()
 }
 
-type pluggableComponentService struct {
+type grpcService struct {
 	// protoRef is the proto service name
 	protoRef string
 	// componentName is the component name that implements such service.
@@ -63,47 +111,10 @@ type grpcConnectionCloser interface {
 	Close() error
 }
 
-func init() {
-	onServiceDiscovered = make(map[string]CallbackFunc)
-}
-
-// AddServiceDiscoveryCallback register callback function, not concurrent secure
-func AddServiceDiscoveryCallback(serviceName string, callback CallbackFunc) {
-	onServiceDiscovered[serviceName] = callback
-}
-
-// GetSocketFolderPath gets the path of folder storing pluggable component socket files.
-func GetSocketFolderPath() string {
-	if v, ok := os.LookupEnv(SocketFolderEnvVar); ok {
-		return v
-	}
-	return defaultSocketFolder
-}
-
-// RegisterPluggableComponent discovers pluggable component and registers their factory into MosnRuntime
-func (m *MosnRuntime) RegisterPluggableComponent() error {
-
-	// At present, layotto only support register component from unix domain socket connection,
-	// and not compatible with windows.
-	if runtime.GOOS == "windows" {
-		return errors.New("windows haven't support register pluggable component")
-	}
-
-	// 1. discover pluggable component
-	services, err := m.discover()
-	if err != nil {
-		return err
-	}
-
-	// 2. callback to register factory into MosnRuntime
-	m.callback(services)
-	return nil
-}
-
-// discover use grpc reflect to get services information.
-func (m *MosnRuntime) discover() ([]pluggableComponentService, error) {
+// discover use grpc reflect to get services' information.
+func discover() ([]grpcService, error) {
 	ctx := context.TODO()
-	services, err := serviceDiscovery(func(socket string) (client reflectServiceClient, closer func(), err error) {
+	serviceList, err := serviceDiscovery(func(socket string) (client reflectServiceClient, closer func(), err error) {
 		conn, err := grpcdial.SocketDial(
 			ctx,
 			socket,
@@ -120,7 +131,7 @@ func (m *MosnRuntime) discover() ([]pluggableComponentService, error) {
 		return nil, err
 	}
 
-	return services, nil
+	return serviceList, nil
 }
 
 // reflectServiceConnectionCloser is used for cleanup the stream created to be used for the reflection service.
@@ -132,14 +143,14 @@ func reflectServiceConnectionCloser(conn grpcConnectionCloser, client reflectSer
 }
 
 // discover service socket files and get service information from factory factor function.
-func serviceDiscovery(reflectClientFactory func(socket string) (client reflectServiceClient, cleanup func(), err error)) ([]pluggableComponentService, error) {
-	services := make([]pluggableComponentService, 0)
+func serviceDiscovery(reflectClientFactory func(socket string) (client reflectServiceClient, cleanup func(), err error)) ([]grpcService, error) {
+	res := make([]grpcService, 0)
 
 	// 1. get socket folder files
 	path := GetSocketFolderPath()
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
-		return services, nil
+		return res, nil
 	}
 	if err != nil {
 		return nil, err
@@ -178,25 +189,25 @@ func serviceDiscovery(reflectClientFactory func(socket string) (client reflectSe
 			return nil, err
 		}
 
-		for _, service := range serviceList {
-			services = append(services, pluggableComponentService{
-				protoRef:      service,
+		for _, s := range serviceList {
+			res = append(res, grpcService{
+				protoRef:      s,
 				dialer:        grpcdial.SocketDialer(socket, grpc.WithBlock(), grpc.FailOnNonTempDialError(true)),
 				componentName: common.RemoveExt(f.Name()),
 			})
 		}
 	}
-	return services, nil
+	return res, nil
 }
 
 // callback use callback function to register pluggable component factories into MosnRuntime
-func (m *MosnRuntime) callback(services []pluggableComponentService) {
+func callback(services []grpcService, factory *DiscoverFactory) {
 	for _, service := range services {
 		callback, ok := onServiceDiscovered[service.protoRef]
 		if !ok {
 			continue
 		}
 
-		callback(service.componentName, service.dialer, m)
+		callback(service.componentName, service.dialer, factory)
 	}
 }
