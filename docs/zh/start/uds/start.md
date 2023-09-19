@@ -73,7 +73,7 @@ go build -o layotto
 ./layotto start -c ../../configs/config_uds.json
 ```
 
-### step 2. 运行客户端程序，调用Layotto进行增删改查
+### step 2. 启动测试demo
 <!-- tabs:start -->
 #### **Go**
 
