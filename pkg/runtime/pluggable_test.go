@@ -15,14 +15,16 @@ package runtime
 
 import (
 	"errors"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	grpcdial "mosn.io/layotto/pkg/grpc"
 	"net"
 	"os"
 	"runtime"
 	"sync"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	grpcdial "mosn.io/layotto/pkg/grpc"
 )
 
 type fakeReflectService struct {
@@ -83,7 +85,7 @@ func TestMosnRuntime_Callback(t *testing.T) {
 			called++
 			assert.Equal(t, name, fakeComponentName)
 		})
-		m.Callback([]pluggableComponentService{{protoRef: fakeServiceName, componentName: fakeComponentName}})
+		m.callback([]pluggableComponentService{{protoRef: fakeServiceName, componentName: fakeComponentName}})
 		assert.Equal(t, 1, called)
 	})
 }
@@ -193,11 +195,11 @@ func Test_serviceDiscovery(t *testing.T) {
 
 func TestConnectionCloser(t *testing.T) {
 	t.Run("connection closer should call grpc close and client reset", func(t *testing.T) {
-		const close, reset = "close", "reset"
+		const closed, reset = "closed", "reset"
 		callOrder := []string{}
 		fakeCloser := &fakeGrpcCloser{
 			onCloseCalled: func() {
-				callOrder = append(callOrder, close)
+				callOrder = append(callOrder, closed)
 			},
 		}
 		fakeService := &fakeReflectService{
@@ -208,6 +210,6 @@ func TestConnectionCloser(t *testing.T) {
 		closer := reflectServiceConnectionCloser(fakeCloser, fakeService)
 		closer()
 		assert.Len(t, callOrder, 2)
-		assert.Equal(t, callOrder, []string{reset, close})
+		assert.Equal(t, callOrder, []string{reset, closed})
 	})
 }

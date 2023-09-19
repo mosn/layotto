@@ -90,18 +90,18 @@ func (m *MosnRuntime) RegisterPluggableComponent() error {
 	}
 
 	// 1. discover pluggable component
-	services, err := m.Discover()
+	services, err := m.discover()
 	if err != nil {
 		return err
 	}
 
 	// 2. callback to register factory into MosnRuntime
-	m.Callback(services)
+	m.callback(services)
 	return nil
 }
 
-// Discover use grpc reflect to get services information.
-func (m *MosnRuntime) Discover() ([]pluggableComponentService, error) {
+// discover use grpc reflect to get services information.
+func (m *MosnRuntime) discover() ([]pluggableComponentService, error) {
 	ctx := context.TODO()
 	services, err := serviceDiscovery(func(socket string) (client reflectServiceClient, closer func(), err error) {
 		conn, err := grpcdial.SocketDial(
@@ -189,8 +189,8 @@ func serviceDiscovery(reflectClientFactory func(socket string) (client reflectSe
 	return services, nil
 }
 
-// Callback use callback function to register pluggable component factories into MosnRuntime
-func (m *MosnRuntime) Callback(services []pluggableComponentService) {
+// callback use callback function to register pluggable component factories into MosnRuntime
+func (m *MosnRuntime) callback(services []pluggableComponentService) {
 	for _, service := range services {
 		callback, ok := onServiceDiscovered[service.protoRef]
 		if !ok {
