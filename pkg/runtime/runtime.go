@@ -701,7 +701,7 @@ func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 func (m *MosnRuntime) registerPluggableComponent() error {
 	discover, err := pluggable.Discover()
 	if err != nil {
-		return err
+		log.DefaultLogger.Errorf("discover pluggable component encounters an error, err=%v", err)
 	}
 	m.helloRegistry.Register(discover.Hellos...)
 

@@ -15,19 +15,15 @@ package pluggable
 
 import (
 	"context"
-	"errors"
 	"os"
 	"path/filepath"
-	"runtime"
-
-	"mosn.io/layotto/components/hello"
-
-	"mosn.io/layotto/pkg/common"
-	grpcdial "mosn.io/layotto/pkg/grpc"
 
 	"github.com/jhump/protoreflect/grpcreflect"
 	"google.golang.org/grpc"
 	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
+
+	"mosn.io/layotto/components/hello"
+	"mosn.io/layotto/pkg/common"
 )
 
 func init() {
@@ -47,7 +43,7 @@ var (
 	onServiceDiscovered map[string]CallbackFunc
 )
 
-type CallbackFunc func(compType string, dialer grpcdial.GRPCConnectionDialer, m *DiscoverFactory)
+type CallbackFunc func(compType string, dialer GRPCConnectionDialer, m *DiscoverFactory)
 
 type DiscoverFactory struct {
 	Hellos []*hello.HelloFactory
@@ -72,13 +68,10 @@ func NewDefaultDiscoverFactory() *DiscoverFactory {
 	return factory
 }
 
+// Discover discovers pluggable component.
+// At present, layotto only support register component from unix domain socket connection,
+// and not compatible with windows.
 func Discover() (*DiscoverFactory, error) {
-	// At present, layotto only support register component from unix domain socket connection,
-	// and not compatible with windows.
-	if runtime.GOOS == "windows" {
-		return nil, errors.New("windows haven't support register pluggable component")
-	}
-
 	// 1. discover pluggable component
 	factory := NewDefaultDiscoverFactory()
 	serviceList, err := discover()
@@ -103,7 +96,7 @@ type grpcService struct {
 	// componentName is the component name that implements such service.
 	componentName string
 	// dialer is the used grpc connectiondialer.
-	dialer grpcdial.GRPCConnectionDialer
+	dialer GRPCConnectionDialer
 }
 
 type grpcConnectionCloser interface {
@@ -115,7 +108,7 @@ type grpcConnectionCloser interface {
 func discover() ([]grpcService, error) {
 	ctx := context.TODO()
 	serviceList, err := serviceDiscovery(func(socket string) (client reflectServiceClient, closer func(), err error) {
-		conn, err := grpcdial.SocketDial(
+		conn, err := SocketDial(
 			ctx,
 			socket,
 			grpc.WithBlock(),
@@ -192,7 +185,7 @@ func serviceDiscovery(reflectClientFactory func(socket string) (client reflectSe
 		for _, s := range serviceList {
 			res = append(res, grpcService{
 				protoRef:      s,
-				dialer:        grpcdial.SocketDialer(socket, grpc.WithBlock(), grpc.FailOnNonTempDialError(true)),
+				dialer:        socketDialer(socket, grpc.WithBlock(), grpc.FailOnNonTempDialError(true)),
 				componentName: common.RemoveExt(f.Name()),
 			})
 		}

@@ -17,11 +17,8 @@ import (
 	"errors"
 	"net"
 	"os"
-	"runtime"
 	"sync"
 	"testing"
-
-	grpcdial "mosn.io/layotto/pkg/grpc"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -77,7 +74,7 @@ func Test_Callback(t *testing.T) {
 		const fakeComponentName, fakeServiceName = "fake-comp", "fake-svc"
 		called := 0
 		f := NewDefaultDiscoverFactory()
-		AddServiceDiscoveryCallback(fakeServiceName, func(name string, _ grpcdial.GRPCConnectionDialer, f *DiscoverFactory) {
+		AddServiceDiscoveryCallback(fakeServiceName, func(name string, _ GRPCConnectionDialer, f *DiscoverFactory) {
 			called++
 			assert.Equal(t, name, fakeComponentName)
 		})
@@ -87,11 +84,8 @@ func Test_Callback(t *testing.T) {
 }
 
 func Test_serviceDiscovery(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		return
-	}
 	t.Run("add service callback should add a new entry when called", func(t *testing.T) {
-		AddServiceDiscoveryCallback("fake", func(string, grpcdial.GRPCConnectionDialer, *DiscoverFactory) {})
+		AddServiceDiscoveryCallback("fake", func(string, GRPCConnectionDialer, *DiscoverFactory) {})
 		assert.NotEmpty(t, onServiceDiscovered)
 	})
 	t.Run("serviceDiscovery should return empty services if directory not exists", func(t *testing.T) {
