@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: layotto-sidecar-injector
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: layotto-sidecar-injector
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: layotto-sidecar-injector
+  template:
+    metadata:
+      labels:
+        app: layotto-sidecar-injector
+    spec:
+      containers:
+        - name: layotto-sidecar-injector
+          image: "{{ .Values.registry }}/{{ .Values.injectorImage.name }}"
+          imagePullPolicy: {{ .Values.injectorImage.pullPolicy }}
+          command:
+            - "/injector"
+          env:
+            - name: TLS_CERT_FILE
+              value: /layotto/cert/tls.crt
+            - name: TLS_KEY_FILE
+              value: /layotto/cert/tls.key
+            - name: SIDECAR_IMAGE
+              value: "{{ .Values.registry }}/{{ .Values.image.name }}"
+            - name: SIDECAR_IMAGE_PULL_POLICY
+              value: "{{ .Values.sidecarImagePullPolicy }}"
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          ports:
+            - name: https
+              containerPort: 8443
+              protocol: TCP
+          volumeMounts:
+            - name: cert
+              mountPath: /layotto/cert
+              readOnly: true
+      volumes:
+        - name: cert
+          secret:
+            secretName: layotto-sidecar-injector-cert
+          

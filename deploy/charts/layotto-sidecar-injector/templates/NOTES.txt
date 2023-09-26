@@ -1,0 +1,4 @@
+Layotto sidecar injector
+
+For more information on running Layotto, visit:
+https://mosn.io/layotto/#/en/README
