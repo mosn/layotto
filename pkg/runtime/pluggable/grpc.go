@@ -24,6 +24,13 @@ import (
 
 type GRPCConnectionDialer func(ctx context.Context, name string, opts ...grpc.DialOption) (*grpc.ClientConn, error)
 
+// WithOptions returns a new connection dialer that adds the new options to it.
+func (g GRPCConnectionDialer) WithOptions(newOpts ...grpc.DialOption) GRPCConnectionDialer {
+	return func(ctx context.Context, name string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
+		return g(ctx, name, append(opts, newOpts...)...)
+	}
+}
+
 // metadataInstanceID is used to differentiate between multiples instance of the same component.
 const metadataInstanceID = "x-component-instance"
 
@@ -43,8 +50,8 @@ func instanceIDStreamInterceptor(instanceID string) grpc.StreamClientInterceptor
 	}
 }
 
-// socketDialer creates a dialer for the given socket.
-func socketDialer(socket string, additionalOpts ...grpc.DialOption) GRPCConnectionDialer {
+// SocketDialer creates a dialer for the given socket.
+func SocketDialer(socket string, additionalOpts ...grpc.DialOption) GRPCConnectionDialer {
 	return func(ctx context.Context, name string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
 		additionalOpts = append(additionalOpts, grpc.WithStreamInterceptor(instanceIDStreamInterceptor(name)), grpc.WithUnaryInterceptor(instanceIDUnaryInterceptor(name)))
 		return SocketDial(ctx, socket, append(additionalOpts, opts...)...)

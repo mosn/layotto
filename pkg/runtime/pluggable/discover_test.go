@@ -17,6 +17,7 @@ import (
 	"errors"
 	"net"
 	"os"
+	"runtime"
 	"sync"
 	"testing"
 
@@ -84,6 +85,9 @@ func Test_Callback(t *testing.T) {
 }
 
 func Test_serviceDiscovery(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		return
+	}
 	t.Run("add service callback should add a new entry when called", func(t *testing.T) {
 		AddServiceDiscoveryCallback("fake", func(string, GRPCConnectionDialer, *DiscoverFactory) {})
 		assert.NotEmpty(t, onServiceDiscovered)
@@ -186,7 +190,7 @@ func Test_serviceDiscovery(t *testing.T) {
 func TestConnectionCloser(t *testing.T) {
 	t.Run("connection closer should call grpc close and client reset", func(t *testing.T) {
 		const closed, reset = "closed", "reset"
-		callOrder := []string{}
+		var callOrder []string
 		fakeCloser := &fakeGrpcCloser{
 			onCloseCalled: func() {
 				callOrder = append(callOrder, closed)

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package spec.proto.pluggable.v1.common;
+option go_package = "mosn.io/layotto/spec/proto/pluggable/v1/common;common";
+option java_outer_classname = "PluggableComponentCommonProto";
+option java_package = "spec.proto.pluggable.v1.common";
+
+
+message Config {
+  repeated SecretRefConfig secret_ref = 1;
+  ComponentRefConfig component_ref = 2;
+}
+
+message SecretRefConfig {
+  string store_name = 1;
+  string key = 2;
+  string sub_key = 3;
+  string inject_as = 4;
+}
+
+message ComponentRefConfig {
+  string secret_store = 1;
+  string config_store = 2;
+}

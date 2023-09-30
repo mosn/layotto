@@ -22,8 +22,19 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"os"
+	"path/filepath"
 	"runtime"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+	"go.uber.org/atomic"
+	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/types/known/emptypb"
+
+	"mosn.io/layotto/pkg/runtime/pluggable"
+	"mosn.io/layotto/spec/proto/extension/v1/cryption"
+	helloproto "mosn.io/layotto/spec/proto/pluggable/v1/hello"
 
 	aws2 "mosn.io/layotto/components/oss/aws"
 
@@ -69,6 +80,10 @@ import (
 	mpubsub "mosn.io/layotto/pkg/runtime/pubsub"
 	mstate "mosn.io/layotto/pkg/runtime/state"
 )
+
+func init() {
+	fmt.Println("hello ......")
+}
 
 func TestNewMosnRuntime(t *testing.T) {
 	runtimeConfig := &MosnRuntimeConfig{}
@@ -118,8 +133,22 @@ func (m *mockGrpcAPI) sayGoodBye() string {
 	return m.comp.sayGoodBye()
 }
 
+type mockGRPCHello struct {
+	initCalled atomic.Int32
+	helloproto.UnimplementedHelloServer
+}
+
+func (m *mockGRPCHello) Init(ctx context.Context, config *helloproto.HelloConfig) (*emptypb.Empty, error) {
+	m.initCalled.Add(1)
+	return &emptypb.Empty{}, nil
+}
+
+func (m *mockGRPCHello) SayHello(ctx context.Context, request *helloproto.HelloRequest) (*helloproto.HelloResponse, error) {
+	return nil, nil
+}
+
 func TestMosnRuntime_Run(t *testing.T) {
-	t.Run("run succ", func(t *testing.T) {
+	t.Run("run success", func(t *testing.T) {
 		runtimeConfig := &MosnRuntimeConfig{}
 		rt := NewMosnRuntime(runtimeConfig)
 		server, err := rt.Run(
@@ -245,7 +274,60 @@ func TestMosnRuntime_Run(t *testing.T) {
 	})
 
 	t.Run("register pluggable component", func(t *testing.T) {
-		// todo
+		if runtime.GOOS == "windows" {
+			return
+		}
+		// start grpc server with mock hello service
+		const mockType = "hello-mock"
+		path := pluggable.GetSocketFolderPath()
+		_, err := os.Stat(path)
+		if os.IsNotExist(err) {
+			err := os.MkdirAll(path, os.ModePerm)
+			require.NoError(t, err)
+		} else {
+			require.NoError(t, err)
+		}
+
+		socket := filepath.Join(path, fmt.Sprintf("%s.sock", mockType))
+		lis, err := net.Listen("unix", socket)
+		require.NoError(t, err)
+		defer os.Remove(socket)
+		defer lis.Close()
+
+		s := rawGRPC.NewServer()
+		mock := &mockGRPCHello{}
+		reflection.Register(s)
+		helloproto.RegisterHelloServer(s, mock)
+		go func() {
+			if serveErr := s.Serve(lis); serveErr != nil && !errors.Is(serveErr, net.ErrClosed) {
+				panic(serveErr)
+			}
+		}()
+
+		// register hello service
+		cfg := &MosnRuntimeConfig{
+			HelloServiceManagement: map[string]hello.HelloConfig{
+				"demo": {
+					Type:        mockType,
+					HelloString: "hello",
+					Metadata: map[string]string{
+						"name": "layotto",
+					},
+				},
+			},
+		}
+		rt := NewMosnRuntime(cfg)
+		_, err = rt.Run(
+			// register your grpc API here
+			WithGrpcAPI(
+				default_api.NewGrpcAPI,
+			),
+		)
+		assert.Nil(t, err)
+		assert.Equal(t, int32(1), mock.initCalled.Load())
+	})
+	t.Run("", func(t *testing.T) {
+		t.Log(cryption.CryptionService_ServiceDesc.ServiceName)
 	})
 }
 
@@ -272,18 +354,6 @@ func TestMosnRuntime_initAppCallbackConnection(t *testing.T) {
 		err = m.initAppCallbackConnection()
 		// assert
 		assert.Nil(t, err)
-	})
-}
-
-func TestMosnRuntime_registerPluggableComponent(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		return
-	}
-
-	t.Run("register hello service success", func(t *testing.T) {
-		// todo
-		// 1. start grpc service which implements hello service
-		// 2. register hello service into mosnRuntime
 	})
 }
 

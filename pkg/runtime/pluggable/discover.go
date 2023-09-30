@@ -18,9 +18,10 @@ import (
 	"os"
 	"path/filepath"
 
+	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
+
 	"github.com/jhump/protoreflect/grpcreflect"
 	"google.golang.org/grpc"
-	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
 
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/pkg/common"
@@ -76,7 +77,7 @@ func Discover() (*DiscoverFactory, error) {
 	factory := NewDefaultDiscoverFactory()
 	serviceList, err := discover()
 	if err != nil {
-		return nil, err
+		return factory, err
 	}
 
 	// 2. callback to register factory into MosnRuntime
@@ -117,7 +118,7 @@ func discover() ([]grpcService, error) {
 			return nil, nil, err
 		}
 
-		client = grpcreflect.NewClient(ctx, reflectpb.NewServerReflectionClient(conn))
+		client = grpcreflect.NewClientV1Alpha(ctx, reflectpb.NewServerReflectionClient(conn))
 		return client, reflectServiceConnectionCloser(conn, client), nil
 	})
 	if err != nil {
@@ -185,7 +186,7 @@ func serviceDiscovery(reflectClientFactory func(socket string) (client reflectSe
 		for _, s := range serviceList {
 			res = append(res, grpcService{
 				protoRef:      s,
-				dialer:        socketDialer(socket, grpc.WithBlock(), grpc.FailOnNonTempDialError(true)),
+				dialer:        SocketDialer(socket, grpc.WithBlock(), grpc.FailOnNonTempDialError(true)),
 				componentName: common.RemoveExt(f.Name()),
 			})
 		}

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package spec.proto.pluggable.v1.hello;
+option go_package = "mosn.io/layotto/spec/proto/pluggable/v1/hello;hello";
+option java_outer_classname = "PluggableComponentHelloProto";
+option java_package = "spec.proto.pluggable.v1.hello";
+
+import "google/protobuf/empty.proto";
+import "spec/proto/pluggable/v1/common/common.proto";
+
+service Hello {
+  rpc Init(HelloConfig)returns(google.protobuf.Empty);
+  rpc SayHello(HelloRequest)returns(HelloResponse);
+}
+
+message HelloConfig {
+  common.Config config = 1;
+  string type = 2;
+  string hello_string = 3;
+  map<string, string> metadata = 4;
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloResponse {
+  string hello_string = 1;
+}

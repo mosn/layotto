@@ -61,6 +61,9 @@ import (
 	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
+
+	// register hello pluggable component service
+	_ "mosn.io/layotto/pkg/runtime/pluggable/hello"
 )
 
 type MosnRuntime struct {
