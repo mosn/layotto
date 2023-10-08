@@ -24,7 +24,3 @@ spec:
         - name: layotto-config-vol
           configMap:
             name: layotto-config
-
-
-
-

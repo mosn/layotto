@@ -15,4 +15,3 @@ injectorImage:
 webhookFailurePolicy: Ignore
 sidecarImagePullPolicy: IfNotPresent
 injectorImagePullPolicy: IfNotPresent
-

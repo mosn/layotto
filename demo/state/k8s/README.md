@@ -57,4 +57,3 @@ If the following information is printed, the demo succeeded:
 
 ![pods.jpg](images/pods.jpg)
 ![log.jpg](images/log.jpg)
-

@@ -2,6 +2,7 @@ package main
 
 import (
 	log "github.com/sirupsen/logrus"
+
 	"mosn.io/layotto/pkg/injector/service"
 )
 
