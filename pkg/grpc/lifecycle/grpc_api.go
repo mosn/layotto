@@ -27,12 +27,11 @@ import (
 	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/pkg/runtime/lifecycle"
 
-	"mosn.io/layotto/pkg/grpc"
 	grpc_api "mosn.io/layotto/pkg/grpc"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
-func NewLifecycleAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
+func NewLifecycleAPI(ac *grpc_api.ApplicationContext) grpc_api.GrpcAPI {
 	return &server{
 		components: ac.DynamicComponents,
 	}

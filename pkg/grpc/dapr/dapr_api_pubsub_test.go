@@ -28,7 +28,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc"
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	"mosn.io/pkg/log"
@@ -117,14 +116,14 @@ func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
 		mockAppCallbackServer.EXPECT().OnTopicEvent(gomock.Any(), gomock.Any()).Return(subResp, nil)
 
 		lis := bufconn.Listen(1024 * 1024)
-		s := grpc.NewServer()
+		s := rawGRPC.NewServer()
 		dapr_v1pb.RegisterAppCallbackServer(s, mockAppCallbackServer)
 		go func() {
 			s.Serve(lis)
 		}()
 
 		// init callback client
-		callbackClient, err := grpc.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
+		callbackClient, err := rawGRPC.DialContext(context.Background(), "bufnet", rawGRPC.WithInsecure(), rawGRPC.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
 			return lis.Dial()
 		}))
 		assert.Nil(t, err)
@@ -192,23 +191,23 @@ func TestMosnRuntime_publishMessageGRPC(t *testing.T) {
 type mockClient struct {
 }
 
-func (m *mockClient) OnInvoke(ctx context.Context, in *dapr_common_v1pb.InvokeRequest, opts ...grpc.CallOption) (*dapr_common_v1pb.InvokeResponse, error) {
+func (m *mockClient) OnInvoke(ctx context.Context, in *dapr_common_v1pb.InvokeRequest, opts ...rawGRPC.CallOption) (*dapr_common_v1pb.InvokeResponse, error) {
 	return nil, nil
 }
 
-func (m *mockClient) ListInputBindings(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*dapr_v1pb.ListInputBindingsResponse, error) {
+func (m *mockClient) ListInputBindings(ctx context.Context, in *empty.Empty, opts ...rawGRPC.CallOption) (*dapr_v1pb.ListInputBindingsResponse, error) {
 	return nil, nil
 }
 
-func (m *mockClient) OnBindingEvent(ctx context.Context, in *dapr_v1pb.BindingEventRequest, opts ...grpc.CallOption) (*dapr_v1pb.BindingEventResponse, error) {
+func (m *mockClient) OnBindingEvent(ctx context.Context, in *dapr_v1pb.BindingEventRequest, opts ...rawGRPC.CallOption) (*dapr_v1pb.BindingEventResponse, error) {
 	return nil, nil
 }
 
-func (m *mockClient) ListTopicSubscriptions(arg0 context.Context, arg1 *empty.Empty, opts ...grpc.CallOption) (*dapr_v1pb.ListTopicSubscriptionsResponse, error) {
+func (m *mockClient) ListTopicSubscriptions(arg0 context.Context, arg1 *empty.Empty, opts ...rawGRPC.CallOption) (*dapr_v1pb.ListTopicSubscriptionsResponse, error) {
 	return nil, nil
 }
 
-func (m *mockClient) OnTopicEvent(ctx context.Context, in *dapr_v1pb.TopicEventRequest, opts ...grpc.CallOption) (*dapr_v1pb.TopicEventResponse, error) {
+func (m *mockClient) OnTopicEvent(ctx context.Context, in *dapr_v1pb.TopicEventRequest, opts ...rawGRPC.CallOption) (*dapr_v1pb.TopicEventResponse, error) {
 	return nil, nil
 }
 

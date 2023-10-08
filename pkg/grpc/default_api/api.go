@@ -40,7 +40,6 @@ import (
 	"mosn.io/layotto/pkg/grpc/dapr"
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
-	"mosn.io/layotto/spec/proto/runtime/v1"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
@@ -63,7 +62,7 @@ var (
 
 type API interface {
 	//Layotto Service methods
-	runtime.RuntimeServer
+	runtimev1pb.RuntimeServer
 	// GrpcAPI related
 	grpc_api.GrpcAPI
 }

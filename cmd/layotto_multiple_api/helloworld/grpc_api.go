@@ -26,7 +26,6 @@ import (
 
 	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
 	"mosn.io/layotto/components/lock"
-	"mosn.io/layotto/pkg/grpc"
 	grpc_api "mosn.io/layotto/pkg/grpc"
 )
 
@@ -35,7 +34,7 @@ const kind = "helloworld"
 // This demo will always use this component name.
 const componentName = "demo"
 
-func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc.GrpcAPI {
+func NewHelloWorldAPI(ac *grpc_api.ApplicationContext) grpc_api.GrpcAPI {
 	// 1. convert custom components
 	name2component := make(map[string]component.HelloWorld)
 	if len(ac.CustomComponent) != 0 {

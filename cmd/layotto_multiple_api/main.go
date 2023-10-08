@@ -166,7 +166,6 @@ import (
 
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
-	_ "mosn.io/mosn/pkg/filter/network/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
 	_ "mosn.io/mosn/pkg/filter/network/proxy"
 	_ "mosn.io/mosn/pkg/filter/stream/flowcontrol"
