@@ -1,5 +1,0 @@
-apiVersion: v2
-appVersion: "0.5.0"
-description: A Helm chart for Layotto Kubernetes
-name: layotto-sidecar-injector
-version: 0.5.0

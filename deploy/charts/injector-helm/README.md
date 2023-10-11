@@ -1,35 +1,33 @@
 # Introduction
 
-This chart deploys the Layotto sidecar injector component on a Kubernetes cluster using the Helm package manager.
+This chart deploys the Layotto injector component on a Kubernetes cluster using the Helm package manager.
 
 ## Prerequisites
 
 - Helm 3
 - Kubernetes cluster
 
-## Installing the Chart
+## Source Code
+- https://github.com/mosn/layotto
+
+## Install the Chart
 
 Ensure Helm is initialized in your Kubernetes cluster.
 
 For more details on initializing Helm, [read the Helm docs](https://helm.sh/docs/)
 
-1. Add xiaoxiang10086.github.io as an helm repo
-
+You can choose install the helm chart from DockerHub.
 ```
-helm repo add layotto https://xiaoxiang10086.github.io/layotto-helm-charts/
-helm repo update
+helm install injector oci://docker.io/layotto/injector-helm --version v0.5.0 -n layotto-system --create-namespace --wait
 ```
-
-2. Install the Layotto chart on your cluster in the Layotto-system namespace:
-
+You can also install from the source code:
 ```
-helm install layotto layotto/layotto-sidecar-injector --namespace layotto-system --wait
+make helm-install VERSION="v0.5.0"
 ```
-
 
 ## Verify installation
 
-Once the chart is installed, verify the Layotto sidecar injector component pods are running in the layotto-system namespace:
+Once the chart is installed, verify the Layotto sidecar injector pod is running in the layotto-system namespace:
 
 ```
 kubectl get pods --namespace layotto-system
@@ -40,7 +38,7 @@ kubectl get pods --namespace layotto-system
 To uninstall/delete the layotto release:
 
 ```
-helm uninstall layotto -n layotto-system
+helm uninstall injector -n layotto-system
 ```
 
 ## Configuration

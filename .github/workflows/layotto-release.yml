@@ -305,9 +305,15 @@ jobs:
       - name: Push Image to DockerHub
         run: |
           make image.push.linux_amd64.layotto 
+      - name: Build layotto/injector:latest Image
+        run: |
+          make image.build.linux_amd64.injector VERSION=latest
+      - name: Push layotto/injector:latest Image to DockerHub
+        run: |
+          make image.push.linux_amd64.injector VERSION=latest
 
   build-push-linux-arm64-image:
-    name: "Linux ARMD64 Image"
+    name: "Linux ARM64 Image"
     needs: [build-wasm-binary-linux-amd64-artifact,build-binary-linux-arm64-artifact,build-binary-linux-amd64-artifact,build-binary-darwin-amd64-artifact,build-binary-darwin-arm64-artifact]
     runs-on: ubuntu-latest
     steps:
@@ -328,3 +334,22 @@ jobs:
       - name: Push Image to DockerHub
         run: |
           make image.push.linux_arm64.layotto 
+      - name: Build layotto/injector:latest Image
+        run: |
+          make image.build.linux_arm64.injector VERSION=latest
+      - name: Push layotto/injector:latest Image to DockerHub
+        run: |
+          make image.push.linux_arm64.injector VERSION=latest
+
+  package-push-injector-helm-chart:
+    name: "Layotto Injector Helm Chart"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Package and Push Injector Latest Helm Chart
+        run: |
+          CHART_VERSION=v0.0.0-latest APP_VERSION=latest make helm-package helm-push

@@ -5,20 +5,15 @@ This Layotto state SDK client demo requires you to have the following installed 
 - A Kubernetes cluster, such as [Minikube](https://minikube.sigs.k8s.io/docs/start/), [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/)
 - [Helm v3](https://helm.sh/docs/intro/install/)
 
-# Step 1 - Setup Layotto sidecar injector and Redis on your Kubernetes cluster
+# Step 1 - Setup Layotto sidecar injector on your Kubernetes cluster
 1. Use Kind to quickly build a local Kubernetes cluster
 ```
 kind create cluster --name layotto-cluster
 kubectl config use-context kind-layotto-cluster
 ```
-2. Add xiaoxiang10086.github.io as an helm repo
+2. Install the layotto sidecar injector chart on your cluster in the layotto-system namespace
 ```
-helm repo add layotto https://xiaoxiang10086.github.io/layotto-helm-charts/
-helm repo update
-```
-3. Install the Layotto chart on your cluster in the Layotto-system namespace
-```
-helm install layotto layotto/layotto-sidecar-injector --namespace layotto-system --wait
+helm install injector oci://docker.io/layotto/injector-helm --version v0.5.0 -n layotto-system --create-namespace --wait
 ```
 
 # Step 2 - Use Helm to deploy Redis on your Kubernetes cluster

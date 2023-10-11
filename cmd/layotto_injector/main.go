@@ -19,5 +19,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error running layotto-injector: %v", err)
 	}
-	log.Info("Layotto sidecar layotto-injector shut down gracefully")
+	log.Info("Layotto sidecar injector shutdown gracefully")
 }

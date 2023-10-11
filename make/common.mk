@@ -79,6 +79,9 @@ endif
 ifeq ($(origin K8S_DIR),undefined)
 K8S_DIR := $(DEPLOY_DIR)/k8s
 endif
+ifeq ($(origin CHART_DIR),undefined)
+CHART_DIR := $(DEPLOY_DIR)/charts
+endif
 
 # set the version number. you should not need to do this
 # for the majority of scenarios.
@@ -130,6 +133,7 @@ include make/golang.mk
 include make/image.mk
 include make/proto.mk
 include make/deploy.mk
+include make/helm.mk
 include make/wasm.mk
 include make/ci.mk
 include make/help.mk

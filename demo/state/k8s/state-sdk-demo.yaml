@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: layotto-state-sdk-demo
-          image: docker.io/wyx20000905/layotto-state-sdk-demo
+          image: docker.io/layotto/state-sdk-demo
       volumes:
         - name: layotto-config-vol
           configMap:

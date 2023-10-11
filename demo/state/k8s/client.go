@@ -20,6 +20,8 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"math"
+	"time"
 
 	client "mosn.io/layotto/sdk/go-sdk/client"
 )
@@ -71,6 +73,9 @@ func main() {
 	// delete state
 	testDelete(ctx, cli, storeName, key1, keyTostate[key1].Etag)
 	testDelete(ctx, cli, storeName, key2, keyTostate[key2].Etag)
+
+	// prevent program exit
+	time.Sleep(time.Duration(math.MaxInt))
 }
 
 func testGetBulkState(ctx context.Context, cli client.Client, store string, key1 string, key2 string) map[string]*client.BulkStateItem {
