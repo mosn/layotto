@@ -21,7 +21,7 @@ const (
 	serviceName = "sms"
 )
 
-type Sms interface {
+type SmsService interface {
 	Init(context.Context, *Config) error
 
 	SendSmsWithTemplate(context.Context, *SendSmsWithTemplateRequest) (*SendSmsWithTemplateResponse, error)

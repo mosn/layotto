@@ -21,15 +21,15 @@ import (
 
 type Registry interface {
 	Register(fs ...*Factory)
-	Create(compType string) (Sms, error)
+	Create(compType string) (SmsService, error)
 }
 
 type Factory struct {
 	CompType      string
-	FactoryMethod func() Sms
+	FactoryMethod func() SmsService
 }
 
-func NewFactory(compType string, f func() Sms) *Factory {
+func NewFactory(compType string, f func() SmsService) *Factory {
 	return &Factory{
 		CompType:      compType,
 		FactoryMethod: f,
@@ -37,14 +37,14 @@ func NewFactory(compType string, f func() Sms) *Factory {
 }
 
 type registry struct {
-	stores map[string]func() Sms
+	stores map[string]func() SmsService
 	info   *info.RuntimeInfo
 }
 
 func NewRegistry(info *info.RuntimeInfo) Registry {
 	info.AddService(serviceName)
 	return &registry{
-		stores: make(map[string]func() Sms),
+		stores: make(map[string]func() SmsService),
 		info:   info,
 	}
 }
@@ -56,7 +56,7 @@ func (r *registry) Register(fs ...*Factory) {
 	}
 }
 
-func (r *registry) Create(compType string) (Sms, error) {
+func (r *registry) Create(compType string) (SmsService, error) {
 	if f, ok := r.stores[compType]; ok {
 		r.info.LoadComponent(serviceName, compType)
 		return f(), nil

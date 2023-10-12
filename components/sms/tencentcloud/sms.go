@@ -145,7 +145,7 @@ type Sms struct {
 }
 
 // NewSms create empty sms client for tencentcloud
-func NewSms() sms.Sms {
+func NewSms() sms.SmsService {
 	return &Sms{}
 }
 
