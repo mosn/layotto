@@ -246,6 +246,8 @@ require (
 	github.com/streadway/amqp v1.0.0 // indirect
 	github.com/stretchr/objx v0.4.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.759 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.759 // indirect
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.33 // indirect
 	github.com/tjfoc/gmsm v1.3.2 // indirect
 	github.com/tklauser/go-sysconf v0.3.6 // indirect
