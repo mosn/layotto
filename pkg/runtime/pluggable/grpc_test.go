@@ -25,7 +25,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/connectivity"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -45,19 +44,12 @@ func TestSocketDialer(t *testing.T) {
 	const (
 		fakeSvcName    = "layotto.service.fake"
 		fakeMethodName = "MyMethod"
-		componentName  = "my-fake-component"
 	)
 
 	handlerCalled := 0
 	fakeSvc := &fakeSvc{
 		onHandlerCalled: func(ctx context.Context) {
 			handlerCalled++
-			// test grpc middleware with instance_id
-			md, ok := metadata.FromIncomingContext(ctx)
-			assert.True(t, ok)
-			v := md.Get(metadataInstanceID)
-			require.NotEmpty(t, v)
-			assert.Equal(t, componentName, v[0])
 		},
 	}
 
@@ -87,7 +79,7 @@ func TestSocketDialer(t *testing.T) {
 	}()
 
 	dialer := SocketDialer(socket)
-	conn, err := dialer(context.TODO(), componentName)
+	conn, err := dialer(context.TODO())
 	assert.NoError(t, err)
 	defer conn.Close()
 

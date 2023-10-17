@@ -47,7 +47,7 @@ func NewGRPCHello(dialer pluggable.GRPCConnectionDialer) hello.HelloService {
 func (g *grpcHello) Init(config *hello.HelloConfig) error {
 	// 1.dial grpc server
 	ctx := context.TODO()
-	conn, err := g.dialer(ctx, config.Type)
+	conn, err := g.dialer(ctx)
 	if err != nil {
 		return fmt.Errorf("dial hello pluggable component: %w", err)
 	}

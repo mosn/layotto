@@ -99,7 +99,7 @@ func TestGRPCHelloComponent(t *testing.T) {
 		serverFor1 := pluggable.TestServerFor(helloproto.RegisterHelloServer, func(cc grpc.ClientConnInterface) *grpcHello {
 			client := helloproto.NewHelloClient(cc)
 			hello := &grpcHello{}
-			hello.dialer = func(ctx context.Context, name string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
+			hello.dialer = func(ctx context.Context, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
 				return nil, errors.New("dial failed")
 			}
 			hello.client = client
