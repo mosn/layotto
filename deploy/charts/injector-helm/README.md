@@ -45,12 +45,12 @@ helm uninstall injector -n layotto-system
 The following tables list the configurable parameters of the chart and their default values.
 
 
-| **Parameter**                                      | **Description**                                              | **Default**           |
-| -------------------------------------------------- | ------------------------------------------------------------ | --------------------- |
+| **Parameter**                                      | **Description**                                              | **Default**         |
+| -------------------------------------------------- | ------------------------------------------------------------ |---------------------|
 | `registry`                | Docker image registry                                        | `docker.io/layotto` |
-| `image.name`              | Docker image name for Layotto runtime sidecar to inject into an application | `layotto`             |
-| `sidecarImagePullPolicy`  | Layotto sidecar image pull policy                            | `IfNotPresent`        |
-| `replicaCount`            | Number of replicas                                           | `1`                   |
-| `injectorImage.name`      | Docker image name for sidecar injector component             | `injector`    |
-| `injectorImagePullPolicy` | Layotto sidecar injector image pull policy                   | `IfNotPresent`        |
-| `webhookFailurePolicy`    | Failure policy for the sidecar injector                      | `Ignore`              |
+| `image.name`              | Docker image name for Layotto runtime sidecar to inject into an application | `layotto`           |
+| `sidecarImagePullPolicy`  | Layotto sidecar image pull policy                            | `IfNotPresent`      |
+| `replicaCount`            | Number of replicas                                           | `1`                 |
+| `injectorImage.name`      | Docker image name for sidecar injector component             | `layotto_injector`  |
+| `injectorImagePullPolicy` | Layotto sidecar injector image pull policy                   | `IfNotPresent`      |
+| `webhookFailurePolicy`    | Failure policy for the sidecar injector                      | `Ignore`            |

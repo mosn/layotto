@@ -10,7 +10,7 @@ image:
   name: layotto
 
 injectorImage:
-  name: injector
+  name: layotto_injector
 
 webhookFailurePolicy: Ignore
 sidecarImagePullPolicy: IfNotPresent
