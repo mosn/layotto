@@ -4,9 +4,6 @@
 
 let's take the example of implementing the hello component in Go
 
-在 `layotto/spec/proto/pluggable` 中找到对应组件的 proto 文件，生成对应实现语言的 grpc 文件。
-go 语言的 pb 文件已经生成并放在了 `spec/proto/pluggable/v1` 下，用户在使用时直接引用即可。
-
 Find the proto file for the corresponding component in `layotto/spec/proto/pluggable` and generate the grpc files for the corresponding implementation language.
 
 The pb files for the Go language have already been generated and are located in `spec/proto/pluggable/v1`. Users can directly reference them when using.
