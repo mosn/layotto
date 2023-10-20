@@ -35,6 +35,7 @@ message SendSmsWithTemplateRequest {
 
   // The metadata which will be sent to SMS components.
   map<string, string> metadata = 6;
+
 }
 
 // Sms template
@@ -48,17 +49,29 @@ message Template{
 
 }
 
-// SendSmsResponse is the reponse of the `SendSms` method.
+// SendSmsResponse is the response of the `SendSms` method.
 message SendSmsWithTemplateResponse {
+
   // The unique requestId.
   string request_id = 1;
 
+  // The status set of SMS
+  repeated SendStatus results = 2;
+
+}
+
+// Status contains more information about the response
+message SendStatus {
+
   // "OK" represents success.
-  string code = 2;
+  string code = 1;
 
   // The error message.
-  string message = 3;
+  string message = 2;
 
-  // The metadata returned from SMS service.
-  map<string, string> metadata = 4;
+  // The send status metadata returned from SMS service.
+  // Includes `PhoneNumber`.
+  // `PhoneNumber`, is the phone number SMS send to. Supported by tencentcloud.
+  map<string, string> metadata = 3;
+
 }
