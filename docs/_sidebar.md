@@ -51,6 +51,8 @@
     - [Pub/Sub API](en/building_blocks/pubsub/reference.md)
     - [RPC API](en/building_blocks/rpc/reference.md)    
     - [Configuration API](en/building_blocks/configuration/reference.md)
+    - Scalability
+      - [Pluggable component](en/design/pluggable/usage.md)
   - [API reference](en/api_reference/README)
   - SDK reference
     - [java sdk](https://github.com/layotto/java-sdk)
