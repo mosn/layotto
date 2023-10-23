@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: layotto-state-sdk-demo
+  labels:
+    app: layotto-state-sdk-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: layotto-state-sdk-demo
+  template:
+    metadata:
+      labels:
+        app: layotto-state-sdk-demo
+      annotations:
+        layotto/sidecar-inject: "true"
+        layotto/config-volume: "layotto-config-vol"
+    spec:
+      containers:
+        - name: layotto-state-sdk-demo
+          image: docker.io/layotto/state-sdk-demo
+      volumes:
+        - name: layotto-config-vol
+          configMap:
+            name: layotto-config

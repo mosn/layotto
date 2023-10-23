@@ -9,6 +9,7 @@ require (
 	github.com/dapr/components-contrib v1.5.2
 	github.com/dapr/kit v0.0.2-0.20210614175626-b9074b64d233
 	github.com/envoyproxy/go-control-plane v0.10.2-0.20220325020618-49ff273808a1
+	github.com/evanphx/json-patch/v5 v5.7.0
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gammazero/workerpool v1.1.2
 	github.com/golang/mock v1.6.0
@@ -17,11 +18,13 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/jinzhu/copier v0.3.6-0.20220506024824-3e39b055319a
 	github.com/json-iterator/go v1.1.12
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/openzipkin/zipkin-go v0.2.2
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
+	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.8.0
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/urfave/cli v1.22.1
@@ -29,6 +32,8 @@ require (
 	google.golang.org/grpc v1.48.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
 	google.golang.org/protobuf v1.28.1
+	k8s.io/api v0.20.2
+	k8s.io/apimachinery v0.20.2
 	mosn.io/api v1.5.0
 	mosn.io/layotto/components v0.0.0-20230712052228-c940b7f1367d
 	mosn.io/layotto/spec v0.0.0-20220413092851-55c58dbb1a23
@@ -236,7 +241,6 @@ require (
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/shirou/gopsutil/v3 v3.21.6 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
-	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
@@ -305,8 +309,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	istio.io/api v0.0.0-20211103171850-665ed2b92d52 // indirect
 	istio.io/gogo-genproto v0.0.0-20210113155706-4daf5697332f // indirect
-	k8s.io/api v0.20.2 // indirect
-	k8s.io/apimachinery v0.20.2 // indirect
 	k8s.io/client-go v0.20.0 // indirect
 	k8s.io/klog/v2 v2.4.0 // indirect
 	k8s.io/utils v0.0.0-20201110183641-67b214c5f920 // indirect
