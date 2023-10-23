@@ -2,7 +2,10 @@ module client
 
 go 1.18
 
-require mosn.io/layotto/sdk/go-sdk v0.0.0-20230920030758-dbf443e27376
+require (
+	github.com/avast/retry-go v3.0.0+incompatible
+	mosn.io/layotto/sdk/go-sdk v0.0.0-20230920030758-dbf443e27376
+)
 
 require (
 	github.com/golang/protobuf v1.5.0 // indirect

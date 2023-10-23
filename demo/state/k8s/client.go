@@ -23,6 +23,8 @@ import (
 	"math"
 	"time"
 
+	"github.com/avast/retry-go"
+
 	client "mosn.io/layotto/sdk/go-sdk/client"
 )
 
@@ -134,7 +136,13 @@ func testGet(ctx context.Context, cli client.Client, store string, key string) {
 }
 
 func testSave(ctx context.Context, cli client.Client, store string, key string, value []byte) {
-	if err := cli.SaveState(ctx, store, key, value); err != nil {
+	err := retry.Do(func() error {
+		return cli.SaveState(ctx, store, key, value)
+	},
+		retry.Attempts(3),
+		retry.Delay(time.Second),
+	)
+	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("SaveState succeeded.key:%v , value: %v \n", key, string(value))
