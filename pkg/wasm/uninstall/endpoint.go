@@ -21,6 +21,7 @@ import (
 	"errors"
 
 	"mosn.io/layotto/pkg/wasm"
+	wasm2 "mosn.io/mosn/pkg/wasm"
 
 	"mosn.io/pkg/log"
 
@@ -52,7 +53,7 @@ func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[s
 	}
 
 	factory := wasm.GetFactory()
-	err = factory.UnInstall(conf["name"].(string))
+	err = factory.UnInstall(conf["name"].(string), wasm2.GetWasmManager())
 	if err != nil {
 		log.DefaultLogger.Errorf("[wasm][uninstall] %v", err)
 		return map[string]interface{}{"error": err.Error()}, err

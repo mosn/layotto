@@ -70,7 +70,8 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory config not a map, configID: %s", configID)
 			return nil, errors.New("config not a map")
 		}
-		err := factory.Install(conf)
+		manager := wasm.GetWasmManager()
+		err := factory.Install(conf, manager)
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory install error: %v", err)
 			return nil, err
@@ -98,7 +99,7 @@ func (f *FilterConfigFactory) IsRegister(id string) bool {
 	return err == nil && plugin != nil
 }
 
-func (f *FilterConfigFactory) Install(conf map[string]interface{}) error {
+func (f *FilterConfigFactory) Install(conf map[string]interface{}, manager types.WasmManager) error {
 	config, err := parseFilterConfigItem(conf)
 	if err != nil {
 		return err
@@ -111,7 +112,7 @@ func (f *FilterConfigFactory) Install(conf map[string]interface{}) error {
 			VmConfig:    config.VmConfig,
 			InstanceNum: config.InstanceNum,
 		}
-		err = wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
+		err = manager.AddOrUpdateWasm(v2Config)
 		if err != nil {
 			config.PluginName = pluginName
 			addWatchFile(config, f)
@@ -122,7 +123,7 @@ func (f *FilterConfigFactory) Install(conf map[string]interface{}) error {
 		pluginName = config.FromWasmPlugin
 	}
 	config.PluginName = pluginName
-	pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginName)
+	pw := manager.GetWasmPluginWrapperByName(pluginName)
 	if pw == nil {
 		return errors.New("plugin not found")
 	}
@@ -141,7 +142,7 @@ func (f *FilterConfigFactory) Install(conf map[string]interface{}) error {
 	return nil
 }
 
-func (f *FilterConfigFactory) UpdateInstanceNum(id string, instanceNum int) error {
+func (f *FilterConfigFactory) UpdateInstanceNum(id string, instanceNum int, manager types.WasmManager) error {
 	wasmPlugin, _ := f.router.GetRandomPluginByID(id)
 	if wasmPlugin == nil {
 		log.DefaultLogger.Errorf("[proxywasm][factory] GetRandomPluginByID id not registered, id: %s", id)
@@ -169,11 +170,11 @@ func (f *FilterConfigFactory) UpdateInstanceNum(id string, instanceNum int) erro
 		VmConfig:    config.VmConfig,
 		InstanceNum: config.InstanceNum,
 	}
-	err := wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
+	err := manager.AddOrUpdateWasm(v2Config)
 	if err != nil {
 		return err
 	}
-	pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(config.PluginName)
+	pw := manager.GetWasmPluginWrapperByName(config.PluginName)
 	if pw == nil {
 		return errors.New("plugin not found")
 	}
@@ -187,13 +188,13 @@ func (f *FilterConfigFactory) UpdateInstanceNum(id string, instanceNum int) erro
 	return nil
 }
 
-func (f *FilterConfigFactory) UnInstall(id string) error {
+func (f *FilterConfigFactory) UnInstall(id string, manager types.WasmManager) error {
 	wasmPlugin, _ := f.router.GetRandomPluginByID(id)
 	if wasmPlugin == nil {
 		log.DefaultLogger.Errorf("[proxywasm][factory] GetRandomPluginByID id not registered, id: %s", id)
 		return errors.New(id + " is not registered")
 	}
-	err := wasm.GetWasmManager().UninstallWasmPluginByName(wasmPlugin.pluginName)
+	err := manager.UninstallWasmPluginByName(wasmPlugin.pluginName)
 	if err != nil {
 		return err
 	}
@@ -214,7 +215,7 @@ func (f *FilterConfigFactory) UnInstall(id string) error {
 	return nil
 }
 
-// Get RootContext's ID
+// GetRootContextID Get RootContext's ID
 func (f *FilterConfigFactory) GetRootContextID() int32 {
 	return f.RootContextID
 }
@@ -223,7 +224,7 @@ func (f *FilterConfigFactory) GetRootContextID() int32 {
 // for `pw.RegisterPluginHandler(factory)`
 var _ types.WasmPluginHandler = &FilterConfigFactory{}
 
-// update config of FilterConfigFactory
+// OnConfigUpdate Update config of FilterConfigFactory
 func (f *FilterConfigFactory) OnConfigUpdate(config v2.WasmPluginConfig) {
 	for _, plugin := range f.config {
 		if plugin.PluginName == config.PluginName {
@@ -233,7 +234,7 @@ func (f *FilterConfigFactory) OnConfigUpdate(config v2.WasmPluginConfig) {
 	}
 }
 
-// Execute the plugin of FilterConfigFactory
+// OnPluginStart Execute the plugin of FilterConfigFactory
 func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 	plugin.Exec(func(instance types.WasmInstance) bool {
 		wasmPlugin, ok := f.plugins[plugin.PluginName()]
@@ -292,5 +293,5 @@ func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 	})
 }
 
-// Destroy the plugin of FilterConfigFactory
+// OnPluginDestroy Destroy the plugin of FilterConfigFactory
 func (f *FilterConfigFactory) OnPluginDestroy(types.WasmPlugin) {}

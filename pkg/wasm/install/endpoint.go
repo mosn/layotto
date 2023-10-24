@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 
+	wasm2 "mosn.io/mosn/pkg/wasm"
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/pkg/filter/stream/common/http"
@@ -58,7 +59,8 @@ func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[s
 		return map[string]interface{}{"error": errorMessage}, errors.New(errorMessage)
 	}
 
-	err = factory.Install(conf)
+	manager := wasm2.GetWasmManager()
+	err = factory.Install(conf, manager)
 	if err != nil {
 		log.DefaultLogger.Errorf("[wasm][install] %v", err)
 		return map[string]interface{}{"error": err.Error()}, err
