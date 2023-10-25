@@ -12,11 +12,13 @@ go run .
 ```
 
 打印如下结果表示服务启动成功
+
 ```shell
 start grpc server
 ```
 
 若出现以下错误，代表 sock 文件已经存在，可能是上次启动服务时强制关闭导致的，使用 `rm /tmp/runtime/component-sockets/hello-grpc-demo.sock` 删除后重新启动即可。
+
 ```shell
 panic: listen unix /tmp/runtime/component-sockets/hello-grpc-demo.sock: bind: address already in use
 
@@ -52,6 +54,7 @@ go run . -s helloworld
 ```
 
 程序输出以下结果表示可插拔组件注册运行成功
+
 ```shell
 runtime client initializing for: 127.0.0.1:34904
 hello
