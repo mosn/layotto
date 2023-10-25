@@ -17,19 +17,16 @@ import (
 	"context"
 	"fmt"
 
-	"mosn.io/layotto/components/hello"
-	"mosn.io/layotto/pkg/runtime/pluggable"
-	"mosn.io/layotto/pkg/runtime/pluggable/common"
+	"mosn.io/layotto/components/pluggable"
 	helloproto "mosn.io/layotto/spec/proto/pluggable/v1/hello"
 )
 
 func init() {
-	// spec.proto.pluggable.v1.hello.Hello
-	pluggable.AddServiceDiscoveryCallback(helloproto.Hello_ServiceDesc.ServiceName, func(compType string, dialer pluggable.GRPCConnectionDialer, f *pluggable.DiscoverFactory) {
-		factory := hello.NewHelloFactory(compType, func() hello.HelloService {
+	// spec.proto.pluggable.v1.Hello
+	pluggable.AddServiceDiscoveryCallback(helloproto.Hello_ServiceDesc.ServiceName, func(compType string, dialer pluggable.GRPCConnectionDialer) interface{} {
+		return NewHelloFactory(compType, func() HelloService {
 			return NewGRPCHello(dialer)
 		})
-		f.Hellos = append(f.Hellos, factory)
 	})
 }
 
@@ -38,13 +35,13 @@ type grpcHello struct {
 	client helloproto.HelloClient
 }
 
-func NewGRPCHello(dialer pluggable.GRPCConnectionDialer) hello.HelloService {
+func NewGRPCHello(dialer pluggable.GRPCConnectionDialer) HelloService {
 	return &grpcHello{dialer: dialer}
 }
 
 // todo 优雅关闭时关闭 conn
 
-func (g *grpcHello) Init(config *hello.HelloConfig) error {
+func (g *grpcHello) Init(config *HelloConfig) error {
 	// 1.dial grpc server
 	ctx := context.TODO()
 	conn, err := g.dialer(ctx)
@@ -55,7 +52,7 @@ func (g *grpcHello) Init(config *hello.HelloConfig) error {
 	// 2.init pluggable component
 	g.client = helloproto.NewHelloClient(conn)
 	if _, err := g.client.Init(ctx, &helloproto.HelloConfig{
-		Config:      common.ToProtoConfig(config.Config),
+		Config:      pluggable.ToProtoConfig(config.Config),
 		Type:        config.Type,
 		HelloString: config.HelloString,
 		Metadata:    config.Metadata,
@@ -66,7 +63,7 @@ func (g *grpcHello) Init(config *hello.HelloConfig) error {
 	return nil
 }
 
-func (g *grpcHello) Hello(ctx context.Context, request *hello.HelloRequest) (*hello.HelloResponse, error) {
+func (g *grpcHello) Hello(ctx context.Context, request *HelloRequest) (*HelloResponse, error) {
 	resp, err := g.client.SayHello(ctx, &helloproto.HelloRequest{
 		Name: request.Name,
 	})
@@ -74,7 +71,7 @@ func (g *grpcHello) Hello(ctx context.Context, request *hello.HelloRequest) (*he
 		return nil, err
 	}
 
-	res := &hello.HelloResponse{
+	res := &HelloResponse{
 		HelloString: resp.GetHelloString(),
 	}
 	return res, nil

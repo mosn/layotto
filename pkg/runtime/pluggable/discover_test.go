@@ -21,6 +21,8 @@ import (
 	"sync"
 	"testing"
 
+	"mosn.io/layotto/components/pluggable"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -74,12 +76,12 @@ func Test_Callback(t *testing.T) {
 	t.Run("callback should be called when service ref is registered", func(t *testing.T) {
 		const fakeComponentName, fakeServiceName = "fake-comp", "fake-svc"
 		called := 0
-		f := NewDefaultDiscoverFactory()
-		AddServiceDiscoveryCallback(fakeServiceName, func(name string, _ GRPCConnectionDialer, f *DiscoverFactory) {
+		pluggable.AddServiceDiscoveryCallback(fakeServiceName, func(name string, _ pluggable.GRPCConnectionDialer) interface{} {
 			called++
 			assert.Equal(t, name, fakeComponentName)
+			return nil
 		})
-		callback([]grpcService{{protoRef: fakeServiceName, componentName: fakeComponentName}}, f)
+		callback([]grpcService{{protoRef: fakeServiceName, componentName: fakeComponentName}})
 		assert.Equal(t, 1, called)
 	})
 }
@@ -88,10 +90,6 @@ func Test_serviceDiscovery(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		return
 	}
-	t.Run("add service callback should add a new entry when called", func(t *testing.T) {
-		AddServiceDiscoveryCallback("fake", func(string, GRPCConnectionDialer, *DiscoverFactory) {})
-		assert.NotEmpty(t, onServiceDiscovered)
-	})
 	t.Run("serviceDiscovery should return empty services if directory not exists", func(t *testing.T) {
 		services, err := serviceDiscovery(func(string) (reflectServiceClient, func(), error) {
 			return &fakeReflectService{}, func() {}, nil

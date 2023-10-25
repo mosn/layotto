@@ -33,7 +33,6 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"mosn.io/layotto/pkg/runtime/pluggable"
-	"mosn.io/layotto/spec/proto/extension/v1/cryption"
 	helloproto "mosn.io/layotto/spec/proto/pluggable/v1/hello"
 
 	aws2 "mosn.io/layotto/components/oss/aws"
@@ -325,9 +324,6 @@ func TestMosnRuntime_Run(t *testing.T) {
 		)
 		assert.Nil(t, err)
 		assert.Equal(t, int32(1), mock.initCalled.Load())
-	})
-	t.Run("", func(t *testing.T) {
-		t.Log(cryption.CryptionService_ServiceDesc.ServiceName)
 	})
 }
 

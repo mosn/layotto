@@ -25,8 +25,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"mosn.io/layotto/components/hello"
-	"mosn.io/layotto/pkg/runtime/pluggable"
+	"mosn.io/layotto/components/pluggable"
 	helloproto "mosn.io/layotto/spec/proto/pluggable/v1/hello"
 )
 
@@ -69,7 +68,7 @@ func TestGRPCHelloComponent(t *testing.T) {
 		return hello
 	})
 
-	socketServerFor := pluggable.TestSocketServerFor(helloproto.RegisterHelloServer, func(dialer pluggable.GRPCConnectionDialer) hello.HelloService {
+	socketServerFor := pluggable.TestSocketServerFor(helloproto.RegisterHelloServer, func(dialer pluggable.GRPCConnectionDialer) HelloService {
 		return NewGRPCHello(dialer)
 	})
 
@@ -87,7 +86,7 @@ func TestGRPCHelloComponent(t *testing.T) {
 		client, cleanup, err := socketServerFor(srv)
 		require.NoError(t, err)
 		defer cleanup()
-		config := &hello.HelloConfig{
+		config := &HelloConfig{
 			Type: mockType,
 		}
 		err = client.Init(config)
@@ -113,7 +112,7 @@ func TestGRPCHelloComponent(t *testing.T) {
 		client, cleanup, err := serverFor1(server)
 		require.NoError(t, err)
 		defer cleanup()
-		err = client.Init(&hello.HelloConfig{})
+		err = client.Init(&HelloConfig{})
 		assert.NotNil(t, err)
 		assert.Equal(t, int32(0), server.initCalled.Load())
 	})
@@ -129,7 +128,7 @@ func TestGRPCHelloComponent(t *testing.T) {
 		client, cleanup, err := socketServerFor(srv)
 		require.NoError(t, err)
 		defer cleanup()
-		err = client.Init(&hello.HelloConfig{})
+		err = client.Init(&HelloConfig{})
 		assert.NotNil(t, err)
 		assert.Equal(t, int32(1), srv.initCalled.Load())
 	})
@@ -149,10 +148,10 @@ func TestGRPCHelloComponent(t *testing.T) {
 		client, cleanup, err := serverFor(server)
 		require.NoError(t, err)
 		defer cleanup()
-		response, err := client.Hello(context.TODO(), &hello.HelloRequest{Name: fakeName})
+		response, err := client.Hello(context.TODO(), &HelloRequest{Name: fakeName})
 		assert.Equal(t, int32(1), server.sayHelloCalled.Load())
 		assert.NoError(t, err)
-		assert.Equal(t, response, &hello.HelloResponse{HelloString: helloString})
+		assert.Equal(t, response, &HelloResponse{HelloString: helloString})
 	})
 
 	t.Run("Hello should return an err when grpc method returns it", func(t *testing.T) {
@@ -167,9 +166,9 @@ func TestGRPCHelloComponent(t *testing.T) {
 		client, cleanup, err := serverFor(server)
 		require.NoError(t, err)
 		defer cleanup()
-		response, err := client.Hello(context.TODO(), &hello.HelloRequest{Name: fakeName})
+		response, err := client.Hello(context.TODO(), &HelloRequest{Name: fakeName})
 		assert.Equal(t, int32(1), server.sayHelloCalled.Load())
 		assert.NotNil(t, err)
-		assert.Equal(t, response, (*hello.HelloResponse)(nil))
+		assert.Equal(t, response, (*HelloResponse)(nil))
 	})
 }

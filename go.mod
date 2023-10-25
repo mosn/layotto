@@ -38,7 +38,7 @@ require (
 	k8s.io/apimachinery v0.20.2
 	mosn.io/api v1.5.0
 	mosn.io/layotto/components v0.0.0-20230712052228-c940b7f1367d
-	mosn.io/layotto/spec v0.0.0-20220413092851-55c58dbb1a23
+	mosn.io/layotto/spec v0.0.0-20231023045845-48ec2bc7eab8
 	mosn.io/mosn v1.5.1-0.20230529091910-7d48a20e544b
 	mosn.io/pkg v1.5.1-0.20230525074748-e3528eae50d9
 	mosn.io/proxy-wasm-go-host v0.2.1-0.20230303015731-d5007ceaba4f
