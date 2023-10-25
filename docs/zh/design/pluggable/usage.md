@@ -1,99 +1,62 @@
-# pluggable component 使用文档
+# Pluggable Component 使用文档
 
-## 编写组件
+该示例展示了如何通过 Layotto 提供的可插拔组件能力，用户实现并注册自己的组件。并通过 Layotto sdk 调用，来验证自己组件编写的正确性。
 
-下面以 go 实现 hello 组件为例
+## step1.编写并运行可插拔组件
 
-在 `layotto/spec/proto/pluggable` 中找到对应组件的 proto 文件，生成对应实现语言的 grpc 文件。
+接下来，运行已经编写好的代码
+
+```shell
+cd demo/pluggable/hello
+go run .
+```
+
+打印如下结果表示服务启动成功
+```shell
+start grpc server
+```
+
+若出现以下错误，代表 sock 文件已经存在，可能是上次启动服务时强制关闭导致的，使用 `rm /tmp/runtime/component-sockets/hello-grpc-demo.sock` 删除后重新启动即可。
+```shell
+panic: listen unix /tmp/runtime/component-sockets/hello-grpc-demo.sock: bind: address already in use
+
+goroutine 1 [running]:
+main.main()
+        /home/cyb/project/ospp/layotto/demo/pluggable/hello/main.go:49 +0x236
+exit status 2
+```
+
+> 1. 以 go 实现 hello 组件为例，在 `layotto/spec/proto/pluggable` 中找到对应组件的 proto 文件，生成对应实现语言的 grpc 文件。
 go 语言的 pb 文件已经生成并放在了 `spec/proto/pluggable/v1` 下，用户在使用时直接引用即可。
+> 2. 组件除了需要实现 protobuf 文件中定义的接口外，还需要使用 socket 方式启动文件并将 sock 文件存放在 `/tmp/runtime/component-sockets` 默认路径下，
+也可以通过环境变量 `LAYOTTO_COMPONENTS_SOCKETS_FOLDER` 修改 sock 存储路径位置。
+> 3. 除此之外，用户还需要注册 reflection 服务到 grpc server 中，用于 layotto 服务发现时获取该 grpc 服务具体实现接口的 spec。 具体代码可以参考 `demo/pluggable/hello/main.go`
 
-```go
-package main
+## step2. 启动 Layotto
 
-import (
-	"context"
-	"errors"
-	"fmt"
-	"github.com/golang/protobuf/ptypes/empty"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
-	pb "mosn.io/layotto/spec/proto/pluggable/v1/hello"
-	"net"
-	"os"
-)
-
-const (
-	AuthToken      = "123456" // token 校验
-	TokenConfigKey = "token"
-	SocketFilePath = "/tmp/runtime/component-sockets/hello-grpc-demo.sock"
-)
-
-type HelloService struct {
-	pb.UnimplementedHelloServer
-	hello string
-	token string
-}
-
-func (h *HelloService) Init(ctx context.Context, config *pb.HelloConfig) (*empty.Empty, error) {
-	h.hello = config.GetHelloString()
-	h.token = config.Metadata[TokenConfigKey]
-	if h.token != AuthToken {
-		return nil, errors.New("auth failed")
-	}
-
-	return nil, nil
-}
-
-func (h *HelloService) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloResponse, error) {
-	res := &pb.HelloResponse{
-		HelloString: h.hello,
-	}
-	return res, nil
-}
-
-func main() {
-	listen, err := net.Listen("unix", SocketFilePath)
-	if err != nil {
-		panic(err)
-	}
-	defer os.RemoveAll(SocketFilePath)
-
-	server := grpc.NewServer()
-	srv := &HelloService{}
-	pb.RegisterHelloServer(server, srv)
-	reflection.Register(server)
-
-	fmt.Println("start grpc server")
-	if err := server.Serve(listen); err != nil && !errors.Is(err, net.ErrClosed) {
-		fmt.Println(err)
-	}
-}
+```shell
+cd cmd/layotto
+go build -o layotto .
+./layotto start -c ../../configs/config_hello_component.json
 ```
 
-1. 实现对应组件 proto 文件的 grpc 服务。
-2. 启动 socket 服务，sock 文件需放置在 `/tmp/runtime/component-sockets` 下，也可以使用 `LAYOTTO_COMPONENTS_SOCKETS_FOLDER` 环境变量进行设置。
-3. 注册 grpc 服务，除了注册 hello 服务外，还需要注册 reflection 服务。该服务用于 layotto 服务发现时，获取该 socket 服务具体实现了哪些 proto 文件定义的服务。
-4. 启动服务
+> 配置文件中填写组件的 type 为 `hello-grpc-demo`，由 socket 文件的前缀名决定。 配置项与注册普通 hello 组件一致。提供 metadata 项，便于用户设置自定义配置需求。
 
-## 注册组件
+## step3. 组件校验
 
-填写配置文件，在对应组件下添加相关配置项，以上述的 hello 组件为例。
+基于现有的组件测试代码，来测试用户实现的可插拔组件的正确性。
 
-```json
-"grpc_config": {
-  "hellos": {
-    "helloworld": {
-      "type": "hello-grpc-demo",
-      "hello": "hello",
-      "metadata": {
-        "token": "123456"
-      }
-    }
-  }
-}
+```shell
+cd demo/hello/common
+go run . -s helloworld
 ```
 
-组件的 type 为 `hello-grpc-demo`，由 socket 文件的前缀名决定。
+程序输出以下结果表示可插拔组件注册运行成功
+```shell
+runtime client initializing for: 127.0.0.1:34904
+hello
+```
 
-配置项与注册普通 hello 组件一致。提供 metadata 项，便于用户设置自定义配置需求。
+## 了解 Layotto 可插拔组件的实现原理
 
+如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[可插拔组件的设计文档](zh/design/pluggable/design.md)
