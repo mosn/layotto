@@ -16,6 +16,7 @@ package hello
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"mosn.io/layotto/components/pluggable"
 	helloproto "mosn.io/layotto/spec/proto/pluggable/v1/hello"
@@ -43,7 +44,8 @@ func NewGRPCHello(dialer pluggable.GRPCConnectionDialer) HelloService {
 
 func (g *grpcHello) Init(config *HelloConfig) error {
 	// 1.dial grpc server
-	ctx := context.TODO()
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
+	defer cancel()
 	conn, err := g.dialer(ctx)
 	if err != nil {
 		return fmt.Errorf("dial hello pluggable component: %w", err)

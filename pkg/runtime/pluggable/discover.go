@@ -17,6 +17,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"time"
 
 	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
 
@@ -80,12 +81,13 @@ type grpcConnectionCloser interface {
 
 // discover use grpc reflect to get services' information.
 func discover() ([]grpcService, error) {
-	ctx := context.TODO()
+	// set grpc connection timeout to prevent block
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
+	defer cancel()
 	serviceList, err := serviceDiscovery(func(socket string) (client reflectServiceClient, closer func(), err error) {
 		conn, err := pluggable.SocketDial(
 			ctx,
 			socket,
-			grpc.WithBlock(), // 超时设置
 		)
 		if err != nil {
 			return nil, nil, err
@@ -159,7 +161,7 @@ func serviceDiscovery(reflectClientFactory func(socket string) (client reflectSe
 		for _, s := range serviceList {
 			res = append(res, grpcService{
 				protoRef:      s,
-				dialer:        pluggable.SocketDialer(socket, grpc.WithBlock(), grpc.FailOnNonTempDialError(true)),
+				dialer:        pluggable.SocketDialer(socket, grpc.FailOnNonTempDialError(true)),
 				componentName: common.RemoveExt(f.Name()),
 			})
 		}
