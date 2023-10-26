@@ -46,7 +46,7 @@ func GetSocketFolderPath() string {
 // Discover discovers pluggable component.
 // At present, layotto only support register component from unix domain socket connection,
 // and not compatible with windows.
-func Discover() ([]interface{}, error) {
+func Discover() ([]pluggable.Component, error) {
 	// 1. discover pluggable component
 	serviceList, err := discover()
 	if err != nil {
@@ -85,7 +85,7 @@ func discover() ([]grpcService, error) {
 		conn, err := pluggable.SocketDial(
 			ctx,
 			socket,
-			grpc.WithBlock(),
+			grpc.WithBlock(), // 超时设置
 		)
 		if err != nil {
 			return nil, nil, err
@@ -168,8 +168,8 @@ func serviceDiscovery(reflectClientFactory func(socket string) (client reflectSe
 }
 
 // callback use callback function to register pluggable component factories into MosnRuntime
-func callback(services []grpcService) []interface{} {
-	res := make([]interface{}, 0, len(services))
+func callback(services []grpcService) []pluggable.Component {
+	res := make([]pluggable.Component, 0, len(services))
 	mapper := pluggable.GetServiceDiscoveryMapper()
 	for _, service := range services {
 		fn, ok := mapper[service.protoRef]

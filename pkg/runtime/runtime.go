@@ -23,6 +23,8 @@ import (
 	"strings"
 	"time"
 
+	"google.golang.org/grpc/credentials/insecure"
+
 	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/pkg/runtime/lifecycle"
 
@@ -591,7 +593,7 @@ func (m *MosnRuntime) initAppCallbackConnection() error {
 	port := m.runtimeConfig.AppManagement.GrpcCallbackPort
 	address := fmt.Sprintf("%v:%v", host, port)
 	opts := []rawGRPC.DialOption{
-		rawGRPC.WithInsecure(),
+		rawGRPC.WithTransportCredentials(insecure.NewCredentials()),
 	}
 	// dial
 	ctx, cancel := context.WithTimeout(context.Background(), dialTimeout)
@@ -683,9 +685,7 @@ func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	st := time.Now()
 
 	// register pluggable component
-	if err := m.registerPluggableComponent(); err != nil {
-		return err
-	}
+	m.registerPluggableComponent()
 
 	// check default handler
 	if len(m.initRuntimeStages) == 0 {
@@ -703,10 +703,11 @@ func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	return nil
 }
 
-func (m *MosnRuntime) registerPluggableComponent() error {
+func (m *MosnRuntime) registerPluggableComponent() {
 	list, err := pluggable.Discover()
 	if err != nil {
-		return fmt.Errorf("discover pluggable component: %w", err)
+		log.DefaultLogger.Errorf("[runtime] discover pluggable components failed: %v", err)
+		return
 	}
 
 	for _, v := range list {
@@ -740,8 +741,6 @@ func (m *MosnRuntime) registerPluggableComponent() error {
 			log.DefaultLogger.Warnf("[runtime]unknown pluggable component factory type %v", t)
 		}
 	}
-
-	return nil
 }
 
 func (m *MosnRuntime) SetCustomComponent(kind string, name string, component custom.Component) {

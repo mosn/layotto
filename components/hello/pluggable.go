@@ -23,7 +23,7 @@ import (
 
 func init() {
 	// spec.proto.pluggable.v1.Hello
-	pluggable.AddServiceDiscoveryCallback(helloproto.Hello_ServiceDesc.ServiceName, func(compType string, dialer pluggable.GRPCConnectionDialer) interface{} {
+	pluggable.AddServiceDiscoveryCallback(helloproto.Hello_ServiceDesc.ServiceName, func(compType string, dialer pluggable.GRPCConnectionDialer) pluggable.Component {
 		return NewHelloFactory(compType, func() HelloService {
 			return NewGRPCHello(dialer)
 		})

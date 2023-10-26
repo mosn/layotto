@@ -22,7 +22,9 @@ var (
 	onServiceDiscovered map[string]CallbackFunc
 )
 
-type CallbackFunc func(compType string, dialer GRPCConnectionDialer) interface{}
+type Component interface{}
+
+type CallbackFunc func(compType string, dialer GRPCConnectionDialer) Component
 
 // AddServiceDiscoveryCallback register callback function, not concurrent secure
 func AddServiceDiscoveryCallback(serviceName string, callback CallbackFunc) {

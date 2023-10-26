@@ -17,17 +17,6 @@ go run .
 start grpc server
 ```
 
-若出现以下错误，代表 sock 文件已经存在，可能是上次启动服务时强制关闭导致的，使用 `rm /tmp/runtime/component-sockets/hello-grpc-demo.sock` 删除后重新启动即可。
-
-```shell
-panic: listen unix /tmp/runtime/component-sockets/hello-grpc-demo.sock: bind: address already in use
-
-goroutine 1 [running]:
-main.main()
-        /home/cyb/project/ospp/layotto/demo/pluggable/hello/main.go:49 +0x236
-exit status 2
-```
-
 > 1. 以 go 实现 hello 组件为例，在 `layotto/spec/proto/pluggable` 中找到对应组件的 proto 文件，生成对应实现语言的 grpc 文件。
 go 语言的 pb 文件已经生成并放在了 `spec/proto/pluggable/v1` 下，用户在使用时直接引用即可。
 > 2. 组件除了需要实现 protobuf 文件中定义的接口外，还需要使用 socket 方式启动文件并将 sock 文件存放在 `/tmp/runtime/component-sockets` 默认路径下，

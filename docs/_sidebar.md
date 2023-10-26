@@ -97,6 +97,7 @@
   - [RPC design doc](en/design/rpc/rpc-design-doc.md)
   - [Distributed lock API design](en/design/lock/lock-api-design.md)
   - [FaaS design](en/design/faas/faas-poc-design.md)
+  - [Pluggable Component design doc](en/design/pluggable/design.md)
 - Contributing
   - [Document Contribution Guide](en/development/contributing-doc.md)
   - [Automate testing of Quickstart documentation with tools](en/development/test-quickstart.md)

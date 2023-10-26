@@ -1,100 +1,57 @@
-# pluggable Component Usage Guide
+# Pluggable Component Usage Guide
 
-## Complete component
+This example demonstrates how users can implement and register their own components through the pluggable component capabilities provided by Layotto.
+And verify the correctness of your component writing through Layotto SDK calls.
 
-let's take the example of implementing the hello component in Go
+## step1.Write and run pluggable components
 
-Find the proto file for the corresponding component in `layotto/spec/proto/pluggable` and generate the grpc files for the corresponding implementation language.
+Next, run the already written code
 
-The pb files for the Go language have already been generated and are located in `spec/proto/pluggable/v1`. Users can directly reference them when using.
-
-```go
-package main
-
-import (
-	"context"
-	"errors"
-	"fmt"
-	"github.com/golang/protobuf/ptypes/empty"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
-	pb "mosn.io/layotto/spec/proto/pluggable/v1/hello"
-	"net"
-	"os"
-)
-
-const (
-	AuthToken      = "123456"  
-	TokenConfigKey = "token"
-	SocketFilePath = "/tmp/runtime/component-sockets/hello-grpc-demo.sock"
-)
-
-type HelloService struct {
-	pb.UnimplementedHelloServer
-	hello string
-	token string
-}
-
-func (h *HelloService) Init(ctx context.Context, config *pb.HelloConfig) (*empty.Empty, error) {
-	h.hello = config.GetHelloString()
-	h.token = config.Metadata[TokenConfigKey]
-	if h.token != AuthToken {
-		return nil, errors.New("auth failed")
-	}
-
-	return nil, nil
-}
-
-func (h *HelloService) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloResponse, error) {
-	res := &pb.HelloResponse{
-		HelloString: h.hello,
-	}
-	return res, nil
-}
-
-func main() {
-	listen, err := net.Listen("unix", SocketFilePath)
-	if err != nil {
-		panic(err)
-	}
-	defer os.RemoveAll(SocketFilePath)
-
-	server := grpc.NewServer()
-	srv := &HelloService{}
-	pb.RegisterHelloServer(server, srv)
-	reflection.Register(server)
-
-	fmt.Println("start grpc server")
-	if err := server.Serve(listen); err != nil && !errors.Is(err, net.ErrClosed) {
-		fmt.Println(err)
-	}
-}
+```shell
+cd demo/pluggable/hello
+go run .
 ```
 
-1. Implement the gRPC service for the corresponding component's proto file.
-2. Start the socket service. The sock file should be placed under `/tmp/runtime/component-sockets`, or you can also set the `LAYOTTO_COMPONENTS_SOCKETS_FOLDER` environment variable for configuration.
-3. Register the gRPC service. In addition to registering the "hello" service, it is also necessary to register the reflection service. This service is used for Layotto service discovery to determine which services defined in the proto files are implemented by this socket service. 。
-5. Start service and wait for layotto registering it.
+Printing the following result indicates successful service startup
 
-## Component Register
-
-Fill in the configuration file and add the relevant configuration items under the corresponding component. Taking the "hello" component mentioned above as an example.
-
-```json
-"grpc_config": {
-  "hellos": {
-    "helloworld": {
-      "type": "hello-grpc-demo",
-      "hello": "hello",
-      "metadata": {
-        "token": "123456"
-      }
-    }
-  }
-}
+```shell
+start grpc server
 ```
 
-The component's type is `hello-grpc-demo`, determined by the prefix name of the socket file.
+>1. Taking the go implementation of the `hello` component as an example, find the corresponding component's proto file in `layotto/spec/proto/pluggable` and generate the corresponding implementation language's grpc file.
+The Go language's pb file has been generated and placed under `spec/proto/pluggable/v1`, and users can directly reference it when using it.
+>2. In addition to implementing the interfaces defined in the protobuf file, the component also needs to use socket mode to start the file and store the socket file in the default path of `/tmp/runtime/component-sockets`,
+You can also use the environment variable `LAYOTTO_COMPONENTS_SOCKETS_FOLDER` modify the sock storage path location.
+>3. In addition, users also need to register the reflection service in the GRPC server, which is used to obtain the specific implementation interface spec of the GRPC service during layotto service discovery. For specific code, please refer to `demo/pluggable/hello/main.go`
 
-The configuration items are the same as registering a regular "hello" component. Provide the `metadata` field to allow users to set custom configuration requirements.
+## step2. Launch Layotto
 
+```shell
+cd cmd/layotto
+go build -o layotto .
+./layotto start -c ../../configs/config_hello_component.json
+```
+
+> The type of the component filled in the configuration file is `hello-grpc-demo`, which is determined by the prefix name of the socket file. 
+> The configuration items are consistent with registering regular hello components.
+> Provide metadata items for users to set custom configuration requirements.
+
+## step3. Component verification
+
+Based on existing component testing code, test the correctness of user implemented pluggable components.
+
+```shell
+cd demo/hello/common
+go run . -s helloworld
+```
+
+The program outputs the following results to indicate successful registration and operation of pluggable components.
+
+```shell
+runtime client initializing for: 127.0.0.1:34904
+hello
+```
+
+## Understand the implementation principle of Layotto pluggable components
+
+If you are interested in the implementation principles or want to extend some functions, you can read the [Design Document for Pluggable Components](en/design/pluggable/design.md)

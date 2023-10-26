@@ -21,7 +21,7 @@ import (
 
 func Test_onServiceDiscovered(t *testing.T) {
 	t.Run("add service callback should add a new entry when called", func(t *testing.T) {
-		AddServiceDiscoveryCallback("fake", func(string, GRPCConnectionDialer) interface{} {
+		AddServiceDiscoveryCallback("fake", func(string, GRPCConnectionDialer) Component {
 			return nil
 		})
 		assert.NotEmpty(t, onServiceDiscovered)

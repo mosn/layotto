@@ -76,7 +76,7 @@ func Test_Callback(t *testing.T) {
 	t.Run("callback should be called when service ref is registered", func(t *testing.T) {
 		const fakeComponentName, fakeServiceName = "fake-comp", "fake-svc"
 		called := 0
-		pluggable.AddServiceDiscoveryCallback(fakeServiceName, func(name string, _ pluggable.GRPCConnectionDialer) interface{} {
+		pluggable.AddServiceDiscoveryCallback(fakeServiceName, func(name string, _ pluggable.GRPCConnectionDialer) pluggable.Component {
 			called++
 			assert.Equal(t, name, fakeComponentName)
 			return nil

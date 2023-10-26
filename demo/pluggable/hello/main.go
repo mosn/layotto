@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
@@ -44,6 +45,7 @@ func (h *HelloService) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.
 }
 
 func main() {
+	checkSocketDir()
 	listen, err := net.Listen("unix", SocketFilePath)
 	if err != nil {
 		panic(err)
@@ -58,5 +60,23 @@ func main() {
 	fmt.Println("start grpc server")
 	if err := server.Serve(listen); err != nil && !errors.Is(err, net.ErrClosed) {
 		fmt.Println(err)
+	}
+}
+
+func checkSocketDir() {
+	if _, err := os.Stat(SocketFilePath); os.IsNotExist(err) {
+		// 创建Socket文件
+		err = os.MkdirAll(filepath.Dir(SocketFilePath), 0755)
+		if err != nil {
+			fmt.Println("Failed to create directory:", err)
+			os.Exit(1)
+		}
+	}
+	if _, err := os.Stat(SocketFilePath); err == nil {
+		err = os.Remove(SocketFilePath)
+		if err != nil {
+			fmt.Println("Failed to remove socket file:", err)
+			os.Exit(1)
+		}
 	}
 }
