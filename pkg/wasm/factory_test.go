@@ -18,10 +18,14 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	mock_wasm "mosn.io/layotto/pkg/mock/wasm"
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/mock"
+	"mosn.io/mosn/pkg/types"
 	"mosn.io/mosn/pkg/wasm"
+	"mosn.io/mosn/pkg/wasm/abi"
 )
 
 var (
@@ -59,8 +63,8 @@ func mockConfig(cfgStr string) map[string]interface{} {
 	return cfg
 }
 
-func mockWasmVmConfig(path string) *v2.WasmVmConfig {
-	return &v2.WasmVmConfig{
+func mockWasmVmConfig(path string) v2.WasmVmConfig {
+	return v2.WasmVmConfig{
 		Engine: "wasmtime",
 		Path:   path,
 	}
@@ -70,7 +74,7 @@ func mockWasmConfig(pluginName string, instanceNum int) v2.WasmPluginConfig {
 	vmConfig := mockWasmVmConfig("no_file")
 	return v2.WasmPluginConfig{
 		PluginName:  pluginName,
-		VmConfig:    vmConfig,
+		VmConfig:    &vmConfig,
 		InstanceNum: instanceNum,
 	}
 }
@@ -284,6 +288,8 @@ func TestFilterConfigFactory_Install1(t *testing.T) {
 }
 
 func TestFilterConfigFactory_OnConfigUpdate(t *testing.T) {
+	vmConfig := mockWasmVmConfig("no_file")
+
 	type fields struct {
 		LayottoHandler LayottoHandler
 		config         []*filterConfigItem
@@ -322,7 +328,7 @@ func TestFilterConfigFactory_OnConfigUpdate(t *testing.T) {
 				LayottoHandler: LayottoHandler{},
 				config: []*filterConfigItem{
 					{
-						VmConfig:      mockWasmVmConfig("nofile"),
+						VmConfig:      &vmConfig,
 						InstanceNum:   2,
 						RootContextID: 1,
 						PluginName:    "function_1",
@@ -367,10 +373,27 @@ func TestFilterConfigFactory_OnPluginDestroy(t *testing.T) {
 	f.OnPluginDestroy(nil)
 }
 
-// TODO: find a way to test this function
 func TestFilterConfigFactory_OnPluginStart(t *testing.T) {
 	ctrl := prepare(t)
 	defer reset(ctrl)
+
+	commonMockFunc := func(ctrl *gomock.Controller, instance *mock.MockWasmInstance) *mock.MockWasmPlugin {
+		plugin := mock.NewMockWasmPlugin(ctrl)
+		plugin.EXPECT().Exec(gomock.Any()).Times(1).
+			Do(func(lambda func(instance types.WasmInstance) bool) {
+				lambda(instance)
+			})
+		return plugin
+	}
+
+	mockAbiFunc := func(ctrl *gomock.Controller, instance *mock.MockWasmInstance) *mock.MockABI {
+		a := mock.NewMockABI(ctrl)
+		abiFactory := func(instance types.WasmInstance) types.ABI {
+			return a
+		}
+		abi.RegisterABI(AbiV2, abiFactory)
+		return a
+	}
 
 	type fields struct {
 		LayottoHandler LayottoHandler
@@ -382,10 +405,10 @@ func TestFilterConfigFactory_OnPluginStart(t *testing.T) {
 	tests := []struct {
 		name         string
 		fields       fields
-		mockAndCheck func(ctrl *gomock.Controller) *mock.MockWasmPlugin
+		mockAndCheck func(ctrl *gomock.Controller, plugin *mock.MockWasmPlugin, instance *mock.MockWasmInstance, f *FilterConfigFactory)
 	}{
 		{
-			name: "normal",
+			name: "f.plugins empty",
 			fields: fields{
 				LayottoHandler: LayottoHandler{},
 				config:         []*filterConfigItem{},
@@ -393,12 +416,68 @@ func TestFilterConfigFactory_OnPluginStart(t *testing.T) {
 				plugins:        map[string]*WasmPlugin{},
 				router:         &Router{routes: map[string]*Group{}},
 			},
-			mockAndCheck: func(ctrl *gomock.Controller) *mock.MockWasmPlugin {
-				plugin := mock.NewMockWasmPlugin(ctrl)
-				plugin.EXPECT().Exec(gomock.Any()).Times(1)
-				return plugin
+			mockAndCheck: func(ctrl *gomock.Controller, plugin *mock.MockWasmPlugin, instance *mock.MockWasmInstance, f *FilterConfigFactory) {
+				plugin.EXPECT().PluginName().Return("not_exist").Times(2)
 			},
 		},
+		{
+			name: "exports.ProxyGetID error",
+			fields: fields{
+				LayottoHandler: LayottoHandler{},
+				config:         []*filterConfigItem{},
+				RootContextID:  1,
+				plugins: map[string]*WasmPlugin{
+					"plugin_1": mockLayottoWasmPlugin("plugin_1", 2, mock.NewMockWasmPlugin(ctrl)),
+				},
+				router: &Router{routes: map[string]*Group{}},
+			},
+			mockAndCheck: func(ctrl *gomock.Controller, plugin *mock.MockWasmPlugin, instance *mock.MockWasmInstance, f *FilterConfigFactory) {
+				a := mockAbiFunc(ctrl, instance)
+				exports := mock_wasm.NewMockExports(ctrl)
+				module := mock.NewMockWasmModule(ctrl)
+				gomock.InOrder(
+					plugin.EXPECT().PluginName().Return("plugin_1").Times(1),
+					instance.EXPECT().GetModule().Return(module).Times(1),
+					module.EXPECT().GetABINameList().Return([]string{AbiV2}).Times(1),
+					a.EXPECT().SetABIImports(gomock.Any()).Times(1),
+					a.EXPECT().GetABIExports().Return(exports).Times(1),
+					instance.EXPECT().Lock(gomock.Any()).Times(1),
+					exports.EXPECT().ProxyGetID().Return("", errors.New("exports.ProxyGetID error!")).Times(1),
+					plugin.EXPECT().PluginName().Return("plugin_1").Times(1),
+					instance.EXPECT().Unlock().Times(1),
+				)
+			},
+		},
+		{
+			name: "exports.ProxyOnContextCreate error",
+			fields: fields{
+				LayottoHandler: LayottoHandler{},
+				config:         []*filterConfigItem{},
+				RootContextID:  1,
+				plugins: map[string]*WasmPlugin{
+					"plugin_1": mockLayottoWasmPlugin("plugin_1", 2, mock.NewMockWasmPlugin(ctrl)),
+				},
+				router: &Router{routes: map[string]*Group{}},
+			},
+			mockAndCheck: func(ctrl *gomock.Controller, plugin *mock.MockWasmPlugin, instance *mock.MockWasmInstance, f *FilterConfigFactory) {
+				a := mockAbiFunc(ctrl, instance)
+				exports := mock_wasm.NewMockExports(ctrl)
+				module := mock.NewMockWasmModule(ctrl)
+				gomock.InOrder(
+					plugin.EXPECT().PluginName().Return("plugin_1").Times(1),
+					instance.EXPECT().GetModule().Return(module).Times(1),
+					module.EXPECT().GetABINameList().Return([]string{AbiV2}).Times(1),
+					a.EXPECT().SetABIImports(gomock.Any()).Times(1),
+					a.EXPECT().GetABIExports().Return(exports).Times(1),
+					instance.EXPECT().Lock(gomock.Any()).Times(1),
+					exports.EXPECT().ProxyGetID().Return("id_1", nil).Times(1),
+					exports.EXPECT().ProxyOnContextCreate(f.RootContextID, int32(0)).
+						Return(errors.New("exports.ProxyOnContextCreate error!")).Times(1),
+					instance.EXPECT().Unlock().Times(1),
+				)
+			},
+		},
+		// TODO: Identify the reason why plugin.GetVmConfig() cannot be mocked
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -410,7 +489,9 @@ func TestFilterConfigFactory_OnPluginStart(t *testing.T) {
 				router:         tt.fields.router,
 			}
 
-			plugin := tt.mockAndCheck(ctrl)
+			instance := mock.NewMockWasmInstance(ctrl)
+			plugin := commonMockFunc(ctrl, instance)
+			tt.mockAndCheck(ctrl, plugin, instance, f)
 			f.OnPluginStart(plugin)
 		})
 	}
