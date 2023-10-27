@@ -442,7 +442,7 @@ func TestFilterConfigFactory_OnPluginStart(t *testing.T) {
 					a.EXPECT().SetABIImports(gomock.Any()).Times(1),
 					a.EXPECT().GetABIExports().Return(exports).Times(1),
 					instance.EXPECT().Lock(gomock.Any()).Times(1),
-					exports.EXPECT().ProxyGetID().Return("", errors.New("exports.ProxyGetID error!")).Times(1),
+					exports.EXPECT().ProxyGetID().Return("", errors.New("exports.ProxyGetID error")).Times(1),
 					plugin.EXPECT().PluginName().Return("plugin_1").Times(1),
 					instance.EXPECT().Unlock().Times(1),
 				)
@@ -472,7 +472,7 @@ func TestFilterConfigFactory_OnPluginStart(t *testing.T) {
 					instance.EXPECT().Lock(gomock.Any()).Times(1),
 					exports.EXPECT().ProxyGetID().Return("id_1", nil).Times(1),
 					exports.EXPECT().ProxyOnContextCreate(f.RootContextID, int32(0)).
-						Return(errors.New("exports.ProxyOnContextCreate error!")).Times(1),
+						Return(errors.New("exports.ProxyOnContextCreate error")).Times(1),
 					instance.EXPECT().Unlock().Times(1),
 				)
 			},

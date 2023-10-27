@@ -18,7 +18,6 @@ package wasm
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -80,7 +79,7 @@ func TestFilter_Append(t *testing.T) {
 			}
 
 			tt.mockAndCheck(t, f, ctrl)
-			assert.Equal(t, api.StreamFilterContinue, f.Append(nil, nil, nil, nil))
+			assert.Equal(t, api.StreamFilterContinue, f.Append(context.Background(), nil, nil, nil))
 		})
 	}
 }
@@ -727,7 +726,7 @@ func TestFilter_releaseUsedInstance(t *testing.T) {
 			}
 
 			tt.mockAndCheck(ctrl, f)
-			tt.wantErr(t, f.releaseUsedInstance(), fmt.Sprintf("releaseUsedInstance()"))
+			tt.wantErr(t, f.releaseUsedInstance(), "releaseUsedInstance()")
 		})
 	}
 }
