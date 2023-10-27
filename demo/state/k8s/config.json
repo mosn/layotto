@@ -1,0 +1,105 @@
+{
+  "servers": [
+    {
+      "default_log_path": "stdout",
+      "default_log_level": "DEBUG",
+      "routers": [
+        {
+          "router_config_name": "actuator_dont_need_router"
+        }
+      ],
+      "listeners": [
+        {
+          "name": "grpc",
+          "address": "0.0.0.0:34904",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "grpc",
+                  "config": {
+                    "server_name": "runtime",
+                    "grpc_config": {
+                      "hellos": {
+                        "helloworld": {
+                          "type": "helloworld",
+                          "hello": "greeting"
+                        }
+                      },
+                      "state": {
+                        "state_demo": {
+                          "type": "redis",
+                          "metadata": {
+                            "redisHost": "redis-master.default.svc.cluster.local:6379",
+                            "redisPassword": ""
+                          }
+                        }
+                      },
+                      "sequencer": {
+                        "sequencer_demo": {
+                          "type": "redis",
+                          "metadata": {
+                            "redisHost": "redis-master.default.svc.cluster.local:6379",
+                            "redisPassword": ""
+                          }
+                        }
+                      },
+                      "lock": {
+                        "lock_demo": {
+                          "type": "redis",
+                          "metadata": {
+                            "redisHost": "redis-master.default.svc.cluster.local:6379",
+                            "redisPassword": ""
+                          }
+                        }
+                      },
+                      "pub_subs": {
+                        "pub_subs_demo": {
+                          "type": "redis",
+                          "metadata": {
+                            "redisHost": "redis-master.default.svc.cluster.local:6379",
+                            "redisPassword": ""
+                          }
+                        }
+                      },
+                      "app": {
+                        "app_id": "app1",
+                        "grpc_callback_port": 9999,
+                        "grpc_callback_host": "host.docker.internal"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "actuator",
+          "address": "0.0.0.0:34999",
+          "bind_port": true,
+          "filter_chains": [
+            {
+              "filters": [
+                {
+                  "type": "proxy",
+                  "config": {
+                    "downstream_protocol": "Http1",
+                    "upstream_protocol": "Http1",
+                    "router_config_name": "actuator_dont_need_router"
+                  }
+                }
+              ]
+            }
+          ],
+          "stream_filters": [
+            {
+              "type": "actuator_filter"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -17,7 +17,9 @@
 package common
 
 import (
+	"io/fs"
 	"os"
+	"path/filepath"
 )
 
 func GetFileSize(f string) int64 {
@@ -27,4 +29,14 @@ func GetFileSize(f string) int64 {
 	}
 
 	return -1
+}
+
+// IsSocket returns if the given file is a unix socket.
+func IsSocket(f fs.FileInfo) bool {
+	return f.Mode()&fs.ModeSocket != 0
+}
+
+// RemoveExt removes file extension
+func RemoveExt(fileName string) string {
+	return fileName[:len(fileName)-len(filepath.Ext(fileName))]
 }
