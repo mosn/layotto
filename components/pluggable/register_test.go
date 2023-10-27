@@ -10,20 +10,25 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package secretstores
+
+package pluggable
 
 import (
-	"github.com/dapr/components-contrib/secretstores"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-type Factory struct {
-	CompType      string
-	FactoryMethod func() secretstores.SecretStore
-}
+func Test_onServiceDiscovered(t *testing.T) {
+	t.Run("add service callback should add a new entry when called", func(t *testing.T) {
+		AddServiceDiscoveryCallback("fake", func(string, GRPCConnectionDialer) Component {
+			return nil
+		})
+		assert.NotEmpty(t, onServiceDiscovered)
+		mapper := GetServiceDiscoveryMapper()
+		assert.NotEmpty(t, mapper)
 
-func NewFactory(compType string, f func() secretstores.SecretStore) *Factory {
-	return &Factory{
-		CompType:      compType,
-		FactoryMethod: f,
-	}
+		v := mapper["fake"]
+		assert.NotNil(t, v)
+	})
 }

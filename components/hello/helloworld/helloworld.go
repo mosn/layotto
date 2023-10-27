@@ -63,12 +63,12 @@ func (hw *HelloWorld) Init(config *hello.HelloConfig) error {
 	return nil
 }
 
-func (hw *HelloWorld) Hello(ctx context.Context, req *hello.HelloRequest) (*hello.HelloReponse, error) {
+func (hw *HelloWorld) Hello(ctx context.Context, req *hello.HelloRequest) (*hello.HelloResponse, error) {
 	greetings, _ := hw.Say.Load().(string)
 	if req.Name != "" {
 		greetings = greetings + ", " + req.Name
 	}
-	return &hello.HelloReponse{
+	return &hello.HelloResponse{
 		HelloString: greetings,
 	}, nil
 }

@@ -68,7 +68,7 @@ func TestSayHello(t *testing.T) {
 		api := &api{hellos: map[string]hello.HelloService{
 			"mock": mockHello,
 		}}
-		mockHello.EXPECT().Hello(gomock.Any()).Return(&hello.HelloReponse{
+		mockHello.EXPECT().Hello(gomock.Any()).Return(&hello.HelloResponse{
 			HelloString: "mock hello",
 		}, nil).Times(1)
 		resp, err := api.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{

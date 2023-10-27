@@ -16,6 +16,7 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
+	github.com/jhump/protoreflect v1.14.1
 	github.com/jinzhu/copier v0.3.6-0.20220506024824-3e39b055319a
 	github.com/json-iterator/go v1.1.12
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -29,6 +30,7 @@ require (
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.40.0
+	go.uber.org/atomic v1.8.0
 	google.golang.org/grpc v1.48.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
 	google.golang.org/protobuf v1.28.1
@@ -36,7 +38,7 @@ require (
 	k8s.io/apimachinery v0.20.2
 	mosn.io/api v1.5.0
 	mosn.io/layotto/components v0.0.0-20230712052228-c940b7f1367d
-	mosn.io/layotto/spec v0.0.0-20220413092851-55c58dbb1a23
+	mosn.io/layotto/spec v0.0.0-20231023045845-48ec2bc7eab8
 	mosn.io/mosn v1.5.1-0.20230529091910-7d48a20e544b
 	mosn.io/pkg v1.5.1-0.20230525074748-e3528eae50d9
 	mosn.io/proxy-wasm-go-host v0.2.1-0.20230303015731-d5007ceaba4f
@@ -273,7 +275,6 @@ require (
 	go.opentelemetry.io/otel v0.20.0 // indirect
 	go.opentelemetry.io/otel/metric v0.20.0 // indirect
 	go.opentelemetry.io/otel/trace v0.20.0 // indirect
-	go.uber.org/atomic v1.8.0 // indirect
 	go.uber.org/automaxprocs v1.4.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect
