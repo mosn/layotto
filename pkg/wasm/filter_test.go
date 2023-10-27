@@ -19,7 +19,6 @@ package wasm
 import (
 	"context"
 	"fmt"
-	"sync"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -30,10 +29,12 @@ import (
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/mock"
 	"mosn.io/mosn/pkg/types"
+	"mosn.io/mosn/pkg/wasm/abi"
 	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/header"
 	"mosn.io/proxy-wasm-go-host/proxywasm/common"
+	v1 "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 )
 
 func TestMapEncodeAndDecode(t *testing.T) {
@@ -226,22 +227,20 @@ func TestFilterGetMethods(t *testing.T) {
 }
 
 func TestFilter_OnReceive(t *testing.T) {
+	ctrl := prepare(t)
+	defer reset(ctrl)
+
+	mockAbiFunc := func(ctrl *gomock.Controller, instance *mock.MockWasmInstance) *mock.MockABI {
+		a := mock.NewMockABI(ctrl)
+		abiFactory := func(instance types.WasmInstance) types.ABI {
+			return a
+		}
+		abi.RegisterABI(AbiV2, abiFactory)
+		return a
+	}
+
 	type fields struct {
-		LayottoHandler        LayottoHandler
-		ctx                   context.Context
-		factory               *FilterConfigFactory
-		router                *Router
-		plugins               map[string]*WasmPlugin
-		contextID             int32
-		pluginUsed            *WasmPlugin
-		instance              types.WasmInstance
-		abi                   types.ABI
-		exports               Exports
-		receiverFilterHandler api.StreamReceiverFilterHandler
-		senderFilterHandler   api.StreamSenderFilterHandler
-		destroyOnce           sync.Once
-		requestBuffer         api.IoBuffer
-		responseBuffer        api.IoBuffer
+		router *Router
 	}
 	type args struct {
 		ctx      context.Context
@@ -250,32 +249,306 @@ func TestFilter_OnReceive(t *testing.T) {
 		trailers api.HeaderMap
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   api.StreamFilterStatus
+		name         string
+		fields       fields
+		args         args
+		mockAndCheck func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap)
+		want         api.StreamFilterStatus
 	}{
-		// TODO: Add test cases.
+		{
+			name: "get id fail",
+			fields: fields{
+				router: &Router{
+					routes: map[string]*Group{
+						"id_1": {
+							count: 1,
+							plugins: []*WasmPlugin{
+								mockLayottoWasmPlugin("function_1", 1, mock.NewMockWasmPlugin(ctrl)),
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				ctx:     context.Background(),
+				headers: mock.NewMockHeaderMap(ctrl),
+			},
+			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
+				headers.(*mock.MockHeaderMap).EXPECT().Get("id").Return("", false).Times(1)
+			},
+			want: api.StreamFilterStop,
+		},
+		{
+			name: "f.router.GetRandomPluginByID error",
+			fields: fields{
+				router: &Router{
+					routes: map[string]*Group{},
+				},
+			},
+			args: args{
+				ctx:     context.Background(),
+				headers: mock.NewMockHeaderMap(ctrl),
+			},
+			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
+				headers.(*mock.MockHeaderMap).EXPECT().Get("id").Return("id_1", true).Times(1)
+			},
+			want: api.StreamFilterStop,
+		},
+		{
+			name: "pluginABI is nil",
+			fields: fields{
+				router: &Router{
+					routes: map[string]*Group{
+						"id_1": {
+							count: 1,
+							plugins: []*WasmPlugin{
+								mockLayottoWasmPlugin("function_1", 1, mock.NewMockWasmPlugin(ctrl)),
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				ctx:     context.Background(),
+				headers: mock.NewMockHeaderMap(ctrl),
+			},
+			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
+				gomock.InOrder(
+					headers.(*mock.MockHeaderMap).EXPECT().Get("id").Return("id_1", true).Times(1),
+					plugin.(*mock.MockWasmPlugin).EXPECT().GetInstance().Return(nil).Times(1),
+					plugin.(*mock.MockWasmPlugin).EXPECT().ReleaseInstance(gomock.Any()).Times(1),
+				)
+			},
+			want: api.StreamFilterStop,
+		},
+		{
+			name: "exports.ProxyOnContextCreate error",
+			fields: fields{
+				router: &Router{
+					routes: map[string]*Group{
+						"id_1": {
+							count: 1,
+							plugins: []*WasmPlugin{
+								mockLayottoWasmPlugin("function_1", 1, mock.NewMockWasmPlugin(ctrl)),
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				ctx:     context.Background(),
+				headers: mock.NewMockHeaderMap(ctrl),
+			},
+			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
+				instance := mock.NewMockWasmInstance(ctrl)
+				a := mockAbiFunc(ctrl, instance)
+				exports := mock_wasm.NewMockExports(ctrl)
+				module := mock.NewMockWasmModule(ctrl)
+
+				gomock.InOrder(
+					headers.(*mock.MockHeaderMap).EXPECT().Get("id").Return("id_1", true).Times(1),
+					plugin.(*mock.MockWasmPlugin).EXPECT().GetInstance().Return(instance).Times(1),
+					instance.EXPECT().GetModule().Return(module).Times(1),
+					module.EXPECT().GetABINameList().Return([]string{AbiV2}).Times(1),
+					a.EXPECT().SetABIImports(gomock.Any()).Times(1),
+					a.EXPECT().GetABIExports().Return(exports),
+					instance.EXPECT().Lock(a).Times(1),
+					exports.EXPECT().ProxyOnContextCreate(gomock.Any(), gomock.Any()).
+						Return(errors.New("exports.ProxyOnContextCreate error")).Times(1),
+					instance.EXPECT().Unlock().Times(1),
+				)
+			},
+			want: api.StreamFilterStop,
+		},
+		{
+			name: "exports.ProxyOnRequestHeaders result is not ActionContinue",
+			fields: fields{
+				router: &Router{
+					routes: map[string]*Group{
+						"id_1": {
+							count: 1,
+							plugins: []*WasmPlugin{
+								mockLayottoWasmPlugin("function_1", 1, mock.NewMockWasmPlugin(ctrl)),
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				ctx:     context.Background(),
+				headers: mock.NewMockHeaderMap(ctrl),
+			},
+			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
+				instance := mock.NewMockWasmInstance(ctrl)
+				a := mockAbiFunc(ctrl, instance)
+				exports := mock_wasm.NewMockExports(ctrl)
+				module := mock.NewMockWasmModule(ctrl)
+
+				gomock.InOrder(
+					headers.(*mock.MockHeaderMap).EXPECT().Get("id").Return("id_1", true).Times(1),
+					plugin.(*mock.MockWasmPlugin).EXPECT().GetInstance().Return(instance).Times(1),
+					instance.EXPECT().GetModule().Return(module).Times(1),
+					module.EXPECT().GetABINameList().Return([]string{AbiV2}).Times(1),
+					a.EXPECT().SetABIImports(gomock.Any()).Times(1),
+					a.EXPECT().GetABIExports().Return(exports),
+					instance.EXPECT().Lock(a).Times(1),
+					exports.EXPECT().ProxyOnContextCreate(gomock.Any(), gomock.Any()).Return(nil).Times(1),
+					headers.(*mock.MockHeaderMap).EXPECT().Range(gomock.Any()).Times(1),
+					exports.EXPECT().ProxyOnRequestHeaders(gomock.Any(), gomock.Any(), gomock.Any()).
+						Return(v1.ActionPause, nil).Times(1),
+					instance.EXPECT().Unlock().Times(1),
+				)
+			},
+			want: api.StreamFilterStop,
+		},
+		{
+			name: "exports.ProxyOnRequestBody result is not ActionContinue",
+			fields: fields{
+				router: &Router{
+					routes: map[string]*Group{
+						"id_1": {
+							count: 1,
+							plugins: []*WasmPlugin{
+								mockLayottoWasmPlugin("function_1", 1, mock.NewMockWasmPlugin(ctrl)),
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				ctx:     context.Background(),
+				headers: mock.NewMockHeaderMap(ctrl),
+				buf:     buffer.NewIoBufferString("test"),
+			},
+			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
+				instance := mock.NewMockWasmInstance(ctrl)
+				a := mockAbiFunc(ctrl, instance)
+				exports := mock_wasm.NewMockExports(ctrl)
+				module := mock.NewMockWasmModule(ctrl)
+
+				gomock.InOrder(
+					headers.(*mock.MockHeaderMap).EXPECT().Get("id").Return("id_1", true).Times(1),
+					plugin.(*mock.MockWasmPlugin).EXPECT().GetInstance().Return(instance).Times(1),
+					instance.EXPECT().GetModule().Return(module).Times(1),
+					module.EXPECT().GetABINameList().Return([]string{AbiV2}).Times(1),
+					a.EXPECT().SetABIImports(gomock.Any()).Times(1),
+					a.EXPECT().GetABIExports().Return(exports),
+					instance.EXPECT().Lock(a).Times(1),
+					exports.EXPECT().ProxyOnContextCreate(gomock.Any(), gomock.Any()).Return(nil).Times(1),
+					headers.(*mock.MockHeaderMap).EXPECT().Range(gomock.Any()).Times(1),
+					exports.EXPECT().ProxyOnRequestHeaders(gomock.Any(), gomock.Any(), gomock.Any()).Return(v1.ActionContinue, nil).Times(1),
+					exports.EXPECT().ProxyOnRequestBody(gomock.Any(), gomock.Any(), gomock.Any()).
+						Return(v1.ActionPause, nil).Times(1),
+					instance.EXPECT().Unlock().Times(1),
+				)
+			},
+			want: api.StreamFilterStop,
+		},
+		{
+			name: "exports.ProxyOnRequestTrailers result is not ActionContinue",
+			fields: fields{
+				router: &Router{
+					routes: map[string]*Group{
+						"id_1": {
+							count: 1,
+							plugins: []*WasmPlugin{
+								mockLayottoWasmPlugin("function_1", 1, mock.NewMockWasmPlugin(ctrl)),
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				ctx:      context.Background(),
+				headers:  mock.NewMockHeaderMap(ctrl),
+				buf:      buffer.NewIoBufferString("test"),
+				trailers: mock.NewMockHeaderMap(ctrl),
+			},
+			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
+				instance := mock.NewMockWasmInstance(ctrl)
+				a := mockAbiFunc(ctrl, instance)
+				exports := mock_wasm.NewMockExports(ctrl)
+				module := mock.NewMockWasmModule(ctrl)
+
+				gomock.InOrder(
+					headers.(*mock.MockHeaderMap).EXPECT().Get("id").Return("id_1", true).Times(1),
+					plugin.(*mock.MockWasmPlugin).EXPECT().GetInstance().Return(instance).Times(1),
+					instance.EXPECT().GetModule().Return(module).Times(1),
+					module.EXPECT().GetABINameList().Return([]string{AbiV2}).Times(1),
+					a.EXPECT().SetABIImports(gomock.Any()).Times(1),
+					a.EXPECT().GetABIExports().Return(exports),
+					instance.EXPECT().Lock(a).Times(1),
+					exports.EXPECT().ProxyOnContextCreate(gomock.Any(), gomock.Any()).Return(nil).Times(1),
+					headers.(*mock.MockHeaderMap).EXPECT().Range(gomock.Any()).Times(1),
+					exports.EXPECT().ProxyOnRequestHeaders(gomock.Any(), gomock.Any(), gomock.Any()).Return(v1.ActionContinue, nil).Times(1),
+					exports.EXPECT().ProxyOnRequestBody(gomock.Any(), gomock.Any(), gomock.Any()).Return(v1.ActionContinue, nil).Times(1),
+					trailers.(*mock.MockHeaderMap).EXPECT().Range(gomock.Any()).Times(1),
+					exports.EXPECT().ProxyOnRequestTrailers(gomock.Any(), gomock.Any()).
+						Return(v1.ActionPause, nil).Times(1),
+					instance.EXPECT().Unlock().Times(1),
+				)
+			},
+			want: api.StreamFilterStop,
+		},
+		{
+			name: "normal",
+			fields: fields{
+				router: &Router{
+					routes: map[string]*Group{
+						"id_1": {
+							count: 1,
+							plugins: []*WasmPlugin{
+								mockLayottoWasmPlugin("function_1", 1, mock.NewMockWasmPlugin(ctrl)),
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				ctx:      context.Background(),
+				headers:  mock.NewMockHeaderMap(ctrl),
+				buf:      buffer.NewIoBufferString("test"),
+				trailers: mock.NewMockHeaderMap(ctrl),
+			},
+			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
+				instance := mock.NewMockWasmInstance(ctrl)
+				a := mockAbiFunc(ctrl, instance)
+				exports := mock_wasm.NewMockExports(ctrl)
+				module := mock.NewMockWasmModule(ctrl)
+
+				gomock.InOrder(
+					headers.(*mock.MockHeaderMap).EXPECT().Get("id").Return("id_1", true).Times(1),
+					plugin.(*mock.MockWasmPlugin).EXPECT().GetInstance().Return(instance).Times(1),
+					instance.EXPECT().GetModule().Return(module).Times(1),
+					module.EXPECT().GetABINameList().Return([]string{AbiV2}).Times(1),
+					a.EXPECT().SetABIImports(gomock.Any()).Times(1),
+					a.EXPECT().GetABIExports().Return(exports),
+					instance.EXPECT().Lock(a).Times(1),
+					exports.EXPECT().ProxyOnContextCreate(gomock.Any(), gomock.Any()).Return(nil).Times(1),
+					headers.(*mock.MockHeaderMap).EXPECT().Range(gomock.Any()).Times(1),
+					exports.EXPECT().ProxyOnRequestHeaders(gomock.Any(), gomock.Any(), gomock.Any()).Return(v1.ActionContinue, nil).Times(1),
+					exports.EXPECT().ProxyOnRequestBody(gomock.Any(), gomock.Any(), gomock.Any()).Return(v1.ActionContinue, nil).Times(1),
+					trailers.(*mock.MockHeaderMap).EXPECT().Range(gomock.Any()).Times(1),
+					exports.EXPECT().ProxyOnRequestTrailers(gomock.Any(), gomock.Any()).Return(v1.ActionContinue, nil).Times(1),
+					instance.EXPECT().Unlock().Times(1),
+				)
+			},
+			want: api.StreamFilterContinue,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Filter{
-				LayottoHandler:        tt.fields.LayottoHandler,
-				ctx:                   tt.fields.ctx,
-				factory:               tt.fields.factory,
-				router:                tt.fields.router,
-				plugins:               tt.fields.plugins,
-				contextID:             tt.fields.contextID,
-				pluginUsed:            tt.fields.pluginUsed,
-				instance:              tt.fields.instance,
-				abi:                   tt.fields.abi,
-				exports:               tt.fields.exports,
-				receiverFilterHandler: tt.fields.receiverFilterHandler,
-				senderFilterHandler:   tt.fields.senderFilterHandler,
-				destroyOnce:           tt.fields.destroyOnce,
-				requestBuffer:         tt.fields.requestBuffer,
-				responseBuffer:        tt.fields.responseBuffer,
+				router: tt.fields.router,
 			}
+
+			layottoPlugin, _ := f.router.GetRandomPluginByID("id_1")
+			var plugin types.WasmPlugin
+			if layottoPlugin != nil {
+				plugin = layottoPlugin.plugin
+			}
+			tt.mockAndCheck(tt.args.headers, plugin, f, tt.args.trailers)
+
 			assert.Equalf(t, tt.want, f.OnReceive(tt.args.ctx, tt.args.headers, tt.args.buf, tt.args.trailers), "OnReceive(%v, %v, %v, %v)", tt.args.ctx, tt.args.headers, tt.args.buf, tt.args.trailers)
 		})
 	}
