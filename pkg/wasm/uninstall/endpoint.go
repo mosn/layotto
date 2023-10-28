@@ -20,13 +20,12 @@ import (
 	"context"
 	"errors"
 
-	"mosn.io/layotto/pkg/wasm"
 	"mosn.io/layotto/pkg/filter/stream/common/http"
-	
+	"mosn.io/layotto/pkg/wasm"
+
 	wasm2 "mosn.io/mosn/pkg/wasm"
 
 	"mosn.io/pkg/log"
-
 )
 
 func init() {

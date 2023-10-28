@@ -20,9 +20,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
-	
+
 	mock_wasm "mosn.io/layotto/pkg/mock/wasm"
-	
+
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/mock"
 	"mosn.io/mosn/pkg/types"
