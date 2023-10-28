@@ -24,7 +24,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"mosn.io/api"
-	mock_wasm "mosn.io/layotto/pkg/mock/wasm"
+	mockwasm "mosn.io/layotto/pkg/mock/wasm"
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/mock"
 	"mosn.io/mosn/pkg/types"
@@ -341,7 +341,7 @@ func TestFilter_OnReceive(t *testing.T) {
 			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
 				instance := mock.NewMockWasmInstance(ctrl)
 				a := mockAbiFunc(ctrl, instance)
-				exports := mock_wasm.NewMockExports(ctrl)
+				exports := mockwasm.NewMockExports(ctrl)
 				module := mock.NewMockWasmModule(ctrl)
 
 				gomock.InOrder(
@@ -380,7 +380,7 @@ func TestFilter_OnReceive(t *testing.T) {
 			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
 				instance := mock.NewMockWasmInstance(ctrl)
 				a := mockAbiFunc(ctrl, instance)
-				exports := mock_wasm.NewMockExports(ctrl)
+				exports := mockwasm.NewMockExports(ctrl)
 				module := mock.NewMockWasmModule(ctrl)
 
 				gomock.InOrder(
@@ -422,7 +422,7 @@ func TestFilter_OnReceive(t *testing.T) {
 			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
 				instance := mock.NewMockWasmInstance(ctrl)
 				a := mockAbiFunc(ctrl, instance)
-				exports := mock_wasm.NewMockExports(ctrl)
+				exports := mockwasm.NewMockExports(ctrl)
 				module := mock.NewMockWasmModule(ctrl)
 
 				gomock.InOrder(
@@ -466,7 +466,7 @@ func TestFilter_OnReceive(t *testing.T) {
 			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
 				instance := mock.NewMockWasmInstance(ctrl)
 				a := mockAbiFunc(ctrl, instance)
-				exports := mock_wasm.NewMockExports(ctrl)
+				exports := mockwasm.NewMockExports(ctrl)
 				module := mock.NewMockWasmModule(ctrl)
 
 				gomock.InOrder(
@@ -512,7 +512,7 @@ func TestFilter_OnReceive(t *testing.T) {
 			mockAndCheck: func(headers api.HeaderMap, plugin types.WasmPlugin, f *Filter, trailers api.HeaderMap) {
 				instance := mock.NewMockWasmInstance(ctrl)
 				a := mockAbiFunc(ctrl, instance)
-				exports := mock_wasm.NewMockExports(ctrl)
+				exports := mockwasm.NewMockExports(ctrl)
 				module := mock.NewMockWasmModule(ctrl)
 
 				gomock.InOrder(
@@ -661,14 +661,14 @@ func TestFilter_releaseUsedInstance(t *testing.T) {
 				),
 				instance:  mock.NewMockWasmInstance(ctrl),
 				abi:       mock.NewMockABI(ctrl),
-				exports:   mock_wasm.NewMockExports(ctrl),
+				exports:   mockwasm.NewMockExports(ctrl),
 				contextID: 1,
 			},
 			wantErr: assert.Error,
 			mockAndCheck: func(ctrl *gomock.Controller, f *Filter) {
 				gomock.InOrder(
 					f.instance.(*mock.MockWasmInstance).EXPECT().Lock(f.abi).Times(1),
-					f.exports.(*mock_wasm.MockExports).EXPECT().ProxyOnDone(f.contextID).Return(int32(0), errors.New("error")).Times(1),
+					f.exports.(*mockwasm.MockExports).EXPECT().ProxyOnDone(f.contextID).Return(int32(0), errors.New("error")).Times(1),
 				)
 			},
 		},
@@ -680,15 +680,15 @@ func TestFilter_releaseUsedInstance(t *testing.T) {
 				),
 				instance:  mock.NewMockWasmInstance(ctrl),
 				abi:       mock.NewMockABI(ctrl),
-				exports:   mock_wasm.NewMockExports(ctrl),
+				exports:   mockwasm.NewMockExports(ctrl),
 				contextID: 1,
 			},
 			wantErr: assert.Error,
 			mockAndCheck: func(ctrl *gomock.Controller, f *Filter) {
 				gomock.InOrder(
 					f.instance.(*mock.MockWasmInstance).EXPECT().Lock(f.abi).Times(1),
-					f.exports.(*mock_wasm.MockExports).EXPECT().ProxyOnDone(f.contextID).Return(int32(0), nil).Times(1),
-					f.exports.(*mock_wasm.MockExports).EXPECT().ProxyOnDelete(f.contextID).Return(errors.New("error")).Times(1),
+					f.exports.(*mockwasm.MockExports).EXPECT().ProxyOnDone(f.contextID).Return(int32(0), nil).Times(1),
+					f.exports.(*mockwasm.MockExports).EXPECT().ProxyOnDelete(f.contextID).Return(errors.New("error")).Times(1),
 				)
 			},
 		},
@@ -700,15 +700,15 @@ func TestFilter_releaseUsedInstance(t *testing.T) {
 				),
 				instance:  mock.NewMockWasmInstance(ctrl),
 				abi:       mock.NewMockABI(ctrl),
-				exports:   mock_wasm.NewMockExports(ctrl),
+				exports:   mockwasm.NewMockExports(ctrl),
 				contextID: 1,
 			},
 			wantErr: assert.NoError,
 			mockAndCheck: func(ctrl *gomock.Controller, f *Filter) {
 				gomock.InOrder(
 					f.instance.(*mock.MockWasmInstance).EXPECT().Lock(f.abi).Times(1),
-					f.exports.(*mock_wasm.MockExports).EXPECT().ProxyOnDone(f.contextID).Return(int32(0), nil).Times(1),
-					f.exports.(*mock_wasm.MockExports).EXPECT().ProxyOnDelete(f.contextID).Return(nil).Times(1),
+					f.exports.(*mockwasm.MockExports).EXPECT().ProxyOnDone(f.contextID).Return(int32(0), nil).Times(1),
+					f.exports.(*mockwasm.MockExports).EXPECT().ProxyOnDelete(f.contextID).Return(nil).Times(1),
 					f.instance.(*mock.MockWasmInstance).EXPECT().Unlock().Times(1),
 					f.pluginUsed.plugin.(*mock.MockWasmPlugin).EXPECT().ReleaseInstance(f.instance).Times(1),
 				)

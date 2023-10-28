@@ -21,7 +21,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 
-	mock_wasm "mosn.io/layotto/pkg/mock/wasm"
+	mockwasm "mosn.io/layotto/pkg/mock/wasm"
 
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/mock"
@@ -435,7 +435,7 @@ func TestFilterConfigFactory_OnPluginStart(t *testing.T) {
 			},
 			mockAndCheck: func(ctrl *gomock.Controller, plugin *mock.MockWasmPlugin, instance *mock.MockWasmInstance, f *FilterConfigFactory) {
 				a := mockAbiFunc(ctrl, instance)
-				exports := mock_wasm.NewMockExports(ctrl)
+				exports := mockwasm.NewMockExports(ctrl)
 				module := mock.NewMockWasmModule(ctrl)
 				gomock.InOrder(
 					plugin.EXPECT().PluginName().Return("plugin_1").Times(1),
@@ -463,7 +463,7 @@ func TestFilterConfigFactory_OnPluginStart(t *testing.T) {
 			},
 			mockAndCheck: func(ctrl *gomock.Controller, plugin *mock.MockWasmPlugin, instance *mock.MockWasmInstance, f *FilterConfigFactory) {
 				a := mockAbiFunc(ctrl, instance)
-				exports := mock_wasm.NewMockExports(ctrl)
+				exports := mockwasm.NewMockExports(ctrl)
 				module := mock.NewMockWasmModule(ctrl)
 				gomock.InOrder(
 					plugin.EXPECT().PluginName().Return("plugin_1").Times(1),
