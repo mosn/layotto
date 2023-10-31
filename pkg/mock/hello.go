@@ -51,10 +51,10 @@ func (mr *MockHelloServiceMockRecorder) Init(arg0 interface{}) *gomock.Call {
 }
 
 // Hello mocks base method.
-func (m *MockHelloService) Hello(ctx context.Context, arg0 *hello.HelloRequest) (*hello.HelloReponse, error) {
+func (m *MockHelloService) Hello(ctx context.Context, arg0 *hello.HelloRequest) (*hello.HelloResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Hello", arg0)
-	ret0, _ := ret[0].(*hello.HelloReponse)
+	ret0, _ := ret[0].(*hello.HelloResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

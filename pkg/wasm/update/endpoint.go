@@ -20,11 +20,12 @@ import (
 	"context"
 	"errors"
 
+	"mosn.io/layotto/pkg/filter/stream/common/http"
 	"mosn.io/layotto/pkg/wasm"
 
-	"mosn.io/pkg/log"
+	wasm2 "mosn.io/mosn/pkg/wasm"
 
-	"mosn.io/layotto/pkg/filter/stream/common/http"
+	"mosn.io/pkg/log"
 )
 
 func init() {
@@ -66,7 +67,7 @@ func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[s
 
 	id := (conf["name"]).(string)
 	factory := wasm.GetFactory()
-	err = factory.UpdateInstanceNum(id, instanceNum)
+	err = factory.UpdateInstanceNum(id, instanceNum, wasm2.GetWasmManager())
 	if err != nil {
 		log.DefaultLogger.Errorf("[wasm][update] %v", err)
 		return map[string]interface{}{"error": err.Error()}, err
