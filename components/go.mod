@@ -46,7 +46,9 @@ require (
 	go.mongodb.org/mongo-driver v1.8.0
 	go.uber.org/atomic v1.8.0
 	google.golang.org/grpc v1.48.0
+	google.golang.org/protobuf v1.27.1
 	mosn.io/api v1.3.0
+	mosn.io/layotto/spec v0.0.0-20231023045845-48ec2bc7eab8
 	mosn.io/mosn v1.3.0
 	mosn.io/pkg v1.3.0
 )
@@ -210,7 +212,6 @@ require (
 	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect
 	golang.org/x/tools v0.1.12 // indirect
 	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -221,3 +222,5 @@ require (
 )
 
 replace github.com/klauspost/compress => github.com/klauspost/compress v1.13.1
+
+replace mosn.io/layotto/spec => ../spec

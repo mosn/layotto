@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package spec.proto.pluggable.v1.hello;
+option go_package = "mosn.io/layotto/spec/proto/pluggable/v1/hello;hello";
+option java_outer_classname = "PluggableComponentHelloProto";
+option java_package = "spec.proto.pluggable.v1.hello";
+
+import "google/protobuf/empty.proto";
+import "spec/proto/pluggable/v1/common/common.proto";
+
+// Hello service, users can implement this interface to create hello pluggable component.
+service Hello {
+
+   // Init is used to call during hello service initialization, passing some configuration parameters
+  rpc Init(HelloConfig)returns(google.protobuf.Empty);
+
+  // Sayhello is a simple pingpong method, just like build-in component hello's SayHello method
+  rpc SayHello(HelloRequest)returns(HelloResponse);
+}
+
+// HelloConfig, hello component initialization configuration
+message HelloConfig {
+
+  // The common config used for each component.
+  common.Config config = 1;
+
+  // The type of hello component that user register in config file.
+  string type = 2;
+
+  // String used for the SayHello method, optional
+  string hello_string = 3;
+
+  // Used to provide customizable initialization parameters for pluggable components
+  map<string, string> metadata = 4;
+}
+
+// HelloRequest is the request of `SayHello`
+message HelloRequest {
+
+  // The name for `SayHello` method
+  string name = 1;
+}
+
+// HelloResponse is the response of `SayHello`
+message HelloResponse {
+
+  // The response for `SayHello` method
+  string hello_string = 1;
+}

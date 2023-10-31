@@ -44,11 +44,12 @@ func (route *Router) RegisterRoute(id string, plugin *WasmPlugin) {
 	}
 }
 
+// RemoveRoute remove group by id
 func (route *Router) RemoveRoute(id string) {
 	delete(route.routes, id)
 }
 
-// Get random plugin with rand id
+// GetRandomPluginByID Get random plugin with rand id
 func (route *Router) GetRandomPluginByID(id string) (*WasmPlugin, error) {
 	group, ok := route.routes[id]
 	if !ok {
