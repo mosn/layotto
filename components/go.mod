@@ -34,6 +34,8 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/qiniu/go-sdk/v7 v7.11.1
 	github.com/stretchr/testify v1.8.0
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.759
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.759
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.33
 	github.com/valyala/fasthttp v1.40.0
 	go.beyondstorage.io/services/hdfs v0.3.0

@@ -23,9 +23,12 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/sms"
+
 	"mosn.io/layotto/components/cryption"
 	aliyun_cryption "mosn.io/layotto/components/cryption/aliyun"
 	aws_cryption "mosn.io/layotto/components/cryption/aws"
+	tencentcloud_sms "mosn.io/layotto/components/sms/tencentcloud"
 
 	"mosn.io/layotto/pkg/grpc/lifecycle"
 
@@ -423,6 +426,10 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithCryptionServiceFactory(
 			cryption.NewFactory("aliyun.kms", aliyun_cryption.NewCryption),
 			cryption.NewFactory("aws.kms", aws_cryption.NewCryption),
+		),
+		// Sms
+		runtime.WithSmsServiceFactory(
+			sms.NewFactory("tencentcloud.sms", tencentcloud_sms.NewSms),
 		),
 		// Lock
 		runtime.WithLockFactory(
