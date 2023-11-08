@@ -23,6 +23,8 @@ import (
 	"strings"
 	"time"
 
+	"google.golang.org/grpc/credentials/insecure"
+
 	"mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/pkg/runtime/lifecycle"
 
@@ -56,9 +58,15 @@ import (
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/grpc"
+	clock "mosn.io/layotto/pkg/runtime/lock"
 	runtime_lock "mosn.io/layotto/pkg/runtime/lock"
+	"mosn.io/layotto/pkg/runtime/pluggable"
+	cpubsub "mosn.io/layotto/pkg/runtime/pubsub"
 	runtime_pubsub "mosn.io/layotto/pkg/runtime/pubsub"
+	csecretsotres "mosn.io/layotto/pkg/runtime/secretstores"
+	csequencer "mosn.io/layotto/pkg/runtime/sequencer"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
+	cstate "mosn.io/layotto/pkg/runtime/state"
 	runtime_state "mosn.io/layotto/pkg/runtime/state"
 )
 
@@ -100,7 +108,7 @@ type MosnRuntime struct {
 	extensionComponents
 	// app callback
 	AppCallbackConn *rawGRPC.ClientConn
-	// extends
+	// extend
 	errInt            ErrInterceptor
 	started           bool
 	initRuntimeStages []initRuntimeStage
@@ -468,7 +476,7 @@ func (m *MosnRuntime) initOss(factorys ...*oss.Factory) error {
 	return nil
 }
 
-func (m *MosnRuntime) initFiles(files ...*file.FileFactory) error {
+func (m *MosnRuntime) initFiles(files ...*file.Factory) error {
 	log.DefaultLogger.Infof("[runtime] init file service")
 
 	// register all files store services implementation
@@ -585,7 +593,7 @@ func (m *MosnRuntime) initAppCallbackConnection() error {
 	port := m.runtimeConfig.AppManagement.GrpcCallbackPort
 	address := fmt.Sprintf("%v:%v", host, port)
 	opts := []rawGRPC.DialOption{
-		rawGRPC.WithInsecure(),
+		rawGRPC.WithTransportCredentials(insecure.NewCredentials()),
 	}
 	// dial
 	ctx, cancel := context.WithTimeout(context.Background(), dialTimeout)
@@ -636,7 +644,7 @@ func (m *MosnRuntime) initInputBinding(factorys ...*mbindings.InputBindingFactor
 	return nil
 }
 
-func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.SecretStoresFactory) error {
+func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.Factory) error {
 	log.DefaultLogger.Infof("[runtime] start initializing SecretStores components")
 	// 1. register all factory methods.
 	m.secretStoresRegistry.Register(factorys...)
@@ -675,6 +683,10 @@ func (m *MosnRuntime) AppendInitRuntimeStage(f initRuntimeStage) {
 
 func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	st := time.Now()
+
+	// register pluggable component
+	m.registerPluggableComponent()
+
 	// check default handler
 	if len(m.initRuntimeStages) == 0 {
 		m.initRuntimeStages = append(m.initRuntimeStages, DefaultInitRuntimeStage)
@@ -691,6 +703,46 @@ func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 	return nil
 }
 
+func (m *MosnRuntime) registerPluggableComponent() {
+	list, err := pluggable.Discover()
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] discover pluggable components failed: %v", err)
+		return
+	}
+
+	for _, v := range list {
+		switch t := v.(type) {
+		case *hello.HelloFactory:
+			m.helloRegistry.Register(v.(*hello.HelloFactory))
+		case *configstores.StoreFactory:
+			m.configStoreRegistry.Register(v.(*configstores.StoreFactory))
+		case *rpc.Factory:
+			m.rpcRegistry.Register(v.(*rpc.Factory))
+		case *cpubsub.Factory:
+			m.pubSubRegistry.Register(v.(*cpubsub.Factory))
+		case *cstate.Factory:
+			m.stateRegistry.Register(v.(*cstate.Factory))
+		case *clock.Factory:
+			m.lockRegistry.Register(v.(*clock.Factory))
+		case *csequencer.Factory:
+			m.sequencerRegistry.Register(v.(*csequencer.Factory))
+		case *file.Factory:
+			m.fileRegistry.Register(v.(*file.Factory))
+		case *oss.Factory:
+			m.ossRegistry.Register(v.(*oss.Factory))
+		case *mbindings.OutputBindingFactory:
+			m.bindingsRegistry.RegisterOutputBinding(v.(*mbindings.OutputBindingFactory))
+		case *mbindings.InputBindingFactory:
+			m.bindingsRegistry.RegisterInputBinding(v.(*mbindings.InputBindingFactory))
+		case *csecretsotres.Factory:
+			m.secretStoresRegistry.Register(v.(*csecretsotres.Factory))
+		// todo custom
+		default:
+			log.DefaultLogger.Warnf("[runtime]unknown pluggable component factory type %v", t)
+		}
+	}
+}
+
 func (m *MosnRuntime) SetCustomComponent(kind string, name string, component custom.Component) {
 	if _, ok := m.customComponent[kind]; !ok {
 		m.customComponent[kind] = make(map[string]custom.Component)
@@ -698,7 +750,7 @@ func (m *MosnRuntime) SetCustomComponent(kind string, name string, component cus
 	m.customComponent[kind][name] = component
 }
 
-func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.ComponentFactory) error {
+func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Factory) error {
 	log.DefaultLogger.Infof("[runtime] start initializing custom components")
 	// loop all configured custom components.
 	for kind, name2Config := range m.runtimeConfig.CustomComponent {
@@ -734,7 +786,6 @@ func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Co
 			m.SetCustomComponent(kind, name, comp)
 			m.storeDynamicComponent(fmt.Sprintf("%s.%s", lifecycle.KindCustom, kind), name, comp)
 		}
-
 	}
 
 	return nil

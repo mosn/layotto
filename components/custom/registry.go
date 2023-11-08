@@ -19,17 +19,17 @@ import (
 )
 
 type Registry interface {
-	Register(kind string, factorys ...*ComponentFactory)
+	Register(kind string, factories ...*Factory)
 	Create(kind, compType string) (Component, error)
 }
 
-type ComponentFactory struct {
+type Factory struct {
 	Type          string
 	FactoryMethod func() Component
 }
 
-func NewComponentFactory(compType string, f func() Component) *ComponentFactory {
-	return &ComponentFactory{
+func NewComponentFactory(compType string, f func() Component) *Factory {
+	return &Factory{
 		Type:          compType,
 		FactoryMethod: f,
 	}
@@ -47,7 +47,7 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 	}
 }
 
-func (r *componentRegistry) Register(kind string, fs ...*ComponentFactory) {
+func (r *componentRegistry) Register(kind string, fs ...*Factory) {
 	if len(fs) == 0 {
 		return
 	}

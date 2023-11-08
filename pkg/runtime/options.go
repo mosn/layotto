@@ -41,7 +41,7 @@ type services struct {
 	hellos        []*hello.HelloFactory
 	configStores  []*configstores.StoreFactory
 	rpcs          []*rpc.Factory
-	files         []*file.FileFactory
+	files         []*file.Factory
 	oss           []*oss.Factory
 	pubSubs       []*pubsub.Factory
 	states        []*state.Factory
@@ -49,10 +49,10 @@ type services struct {
 	sequencers    []*runtime_sequencer.Factory
 	outputBinding []*mbindings.OutputBindingFactory
 	inputBinding  []*mbindings.InputBindingFactory
-	secretStores  []*msecretstores.SecretStoresFactory
+	secretStores  []*msecretstores.Factory
 	// Custom components.
 	// The key is component kind
-	custom map[string][]*custom.ComponentFactory
+	custom map[string][]*custom.Factory
 	extensionComponentFactorys
 }
 
@@ -70,7 +70,7 @@ type runtimeOptions struct {
 func newRuntimeOptions() *runtimeOptions {
 	return &runtimeOptions{
 		services: services{
-			custom: make(map[string][]*custom.ComponentFactory),
+			custom: make(map[string][]*custom.Factory),
 		},
 	}
 }
@@ -106,7 +106,7 @@ func WithErrInterceptor(i ErrInterceptor) Option {
 	}
 }
 
-func WithCustomComponentFactory(kind string, factorys ...*custom.ComponentFactory) Option {
+func WithCustomComponentFactory(kind string, factorys ...*custom.Factory) Option {
 	return func(o *runtimeOptions) {
 		if len(factorys) == 0 {
 			return
@@ -139,7 +139,7 @@ func WithOssFactory(oss ...*oss.Factory) Option {
 	}
 }
 
-func WithFileFactory(files ...*file.FileFactory) Option {
+func WithFileFactory(files ...*file.Factory) Option {
 	return func(o *runtimeOptions) {
 		o.services.files = append(o.services.files, files...)
 	}
@@ -183,7 +183,7 @@ func WithSequencerFactory(factorys ...*runtime_sequencer.Factory) Option {
 	}
 }
 
-func WithSecretStoresFactory(factorys ...*msecretstores.SecretStoresFactory) Option {
+func WithSecretStoresFactory(factorys ...*msecretstores.Factory) Option {
 	return func(o *runtimeOptions) {
 		o.services.secretStores = append(o.services.secretStores, factorys...)
 	}

@@ -28,7 +28,7 @@ const ServiceName = "secretStore"
 type (
 	// Registry is used to get registered secret store implementations.
 	Registry interface {
-		Register(ss ...*SecretStoresFactory)
+		Register(ss ...*Factory)
 		Create(compType string) (secretstores.SecretStore, error)
 	}
 
@@ -48,7 +48,7 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 }
 
 // Register adds one or many new secret stores to the registry.
-func (s *secretStoreRegistry) Register(ss ...*SecretStoresFactory) {
+func (s *secretStoreRegistry) Register(ss ...*Factory) {
 	for _, component := range ss {
 		s.secretStores[component.CompType] = component.FactoryMethod
 		s.info.RegisterComponent(ServiceName, component.CompType)

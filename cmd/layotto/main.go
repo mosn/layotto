@@ -23,6 +23,8 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/sms"
+
 	"mosn.io/layotto/components/cryption"
 
 	"mosn.io/layotto/components/email"
@@ -46,6 +48,7 @@ import (
 	aliyun_file "mosn.io/layotto/components/file/aliyun"
 
 	aliyun_email "mosn.io/layotto/components/email/aliyun"
+	tencentcloud_sms "mosn.io/layotto/components/sms/tencentcloud"
 
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
@@ -318,6 +321,10 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// Email
 		runtime.WithEmailServiceFactory(
 			email.NewFactory("aliyun.email", aliyun_email.NewAliyunEmail),
+		),
+		// Sms
+		runtime.WithSmsServiceFactory(
+			sms.NewFactory("tencentcloud.sms", tencentcloud_sms.NewSms),
 		),
 		// PubSub
 		runtime.WithPubSubFactory(

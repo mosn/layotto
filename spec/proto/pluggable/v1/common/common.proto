@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package spec.proto.pluggable.v1.common;
+option go_package = "mosn.io/layotto/spec/proto/pluggable/v1/common;common";
+option java_outer_classname = "PluggableComponentCommonProto";
+option java_package = "spec.proto.pluggable.v1.common";
+
+// Config is a basic config, used for each component
+message Config {
+
+  // The secret config for component
+  repeated SecretRefConfig secret_ref = 1;
+
+  // The config store for component
+  ComponentRefConfig component_ref = 2;
+}
+
+// SecretRefConfig stores the secret config
+message SecretRefConfig {
+
+  // secret component name, such as : local.file
+  string store_name = 1;
+
+  // The key in the secret component
+  string key = 2;
+
+  // The sub key in the secret component
+  string sub_key = 3;
+
+  // The key need to inject into metadata
+  string inject_as = 4;
+}
+
+// ComponentRefConfig used to set config stores
+message ComponentRefConfig {
+
+  // The secret store for component
+  string secret_store = 1;
+
+  // The config store for component
+  string config_store = 2;
+}
