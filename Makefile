@@ -16,7 +16,7 @@
 # Supported Targets: (Run `make help` to see more information)
 # ====================================================================================================
 
-# This file is a wrapper around `make` so that we can force on the
+# This file is a wrapper around `make` so that we can force on  the
 # --warn-undefined-variables flag.  Sure, you can set
 # `MAKEFLAGS += --warn-undefined-variables` from inside of a Makefile,
 # but then it won't turn on until the second phase (recipe execution),
