@@ -113,7 +113,7 @@ func (e *MongoLock) LockKeepAlive(ctx context.Context, request *lock.LockKeepAli
 	return nil, nil
 }
 
-func (e *MongoLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
+func (e *MongoLock) TryLock(ctx context.Context, req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	var err error
 	// create mongo session
 	e.session, err = e.client.StartSession()
@@ -171,7 +171,7 @@ func (e *MongoLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, er
 	}, nil
 }
 
-func (e *MongoLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
+func (e *MongoLock) Unlock(ctx context.Context, req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	var err error
 	// create mongo session
 	e.session, err = e.client.StartSession()

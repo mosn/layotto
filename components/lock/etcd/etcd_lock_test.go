@@ -123,7 +123,7 @@ func TestEtcdLock_TryLock(t *testing.T) {
 	assert.NoError(t, err)
 
 	ownerId1 := uuid.New().String()
-	resp, err = comp.TryLock(&lock.TryLockRequest{
+	resp, err = comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resourceId,
 		LockOwner:  ownerId1,
 		Expire:     10,
@@ -132,7 +132,7 @@ func TestEtcdLock_TryLock(t *testing.T) {
 	assert.Equal(t, true, resp.Success)
 
 	//repeat
-	resp, err = comp.TryLock(&lock.TryLockRequest{
+	resp, err = comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resourceId,
 		LockOwner:  ownerId1,
 		Expire:     10,
@@ -146,7 +146,7 @@ func TestEtcdLock_TryLock(t *testing.T) {
 	go func() {
 		//another owner
 		ownerId2 := uuid.New().String()
-		resp, err = comp.TryLock(&lock.TryLockRequest{
+		resp, err = comp.TryLock(context.TODO(), &lock.TryLockRequest{
 			ResourceId: resourceId,
 			LockOwner:  ownerId2,
 			Expire:     10,
@@ -159,7 +159,7 @@ func TestEtcdLock_TryLock(t *testing.T) {
 	wg.Wait()
 
 	//another resource
-	resp, err = comp.TryLock(&lock.TryLockRequest{
+	resp, err = comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resourceId2,
 		LockOwner:  ownerId1,
 		Expire:     10,
@@ -194,7 +194,7 @@ func TestEtcdLock_UnLock(t *testing.T) {
 	assert.NoError(t, err)
 
 	ownerId1 := uuid.New().String()
-	lockresp, err = comp.TryLock(&lock.TryLockRequest{
+	lockresp, err = comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resourceId3,
 		LockOwner:  ownerId1,
 		Expire:     10,
@@ -203,7 +203,7 @@ func TestEtcdLock_UnLock(t *testing.T) {
 	assert.Equal(t, true, lockresp.Success)
 
 	//error ownerid
-	resp, err = comp.Unlock(&lock.UnlockRequest{
+	resp, err = comp.Unlock(context.TODO(), &lock.UnlockRequest{
 		ResourceId: resourceId3,
 		LockOwner:  uuid.New().String(),
 	})
@@ -211,7 +211,7 @@ func TestEtcdLock_UnLock(t *testing.T) {
 	assert.Equal(t, lock.LOCK_BELONG_TO_OTHERS, resp.Status)
 
 	//error resourceid
-	resp, err = comp.Unlock(&lock.UnlockRequest{
+	resp, err = comp.Unlock(context.TODO(), &lock.UnlockRequest{
 		ResourceId: resourceId4,
 		LockOwner:  ownerId1,
 	})
@@ -219,7 +219,7 @@ func TestEtcdLock_UnLock(t *testing.T) {
 	assert.Equal(t, lock.LOCK_UNEXIST, resp.Status)
 
 	//success
-	resp, err = comp.Unlock(&lock.UnlockRequest{
+	resp, err = comp.Unlock(context.TODO(), &lock.UnlockRequest{
 		ResourceId: resourceId3,
 		LockOwner:  ownerId1,
 	})
