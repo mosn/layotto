@@ -9,7 +9,6 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-
 	lock "mosn.io/layotto/components/lock"
 )
 
@@ -82,29 +81,29 @@ func (mr *MockLockStoreMockRecorder) LockKeepAlive(arg0, arg1 interface{}) *gomo
 // TryLock mocks base method.
 func (m *MockLockStore) TryLock(ctx context.Context, req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "TryLock", req)
+	ret := m.ctrl.Call(m, "TryLock", ctx, req)
 	ret0, _ := ret[0].(*lock.TryLockResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // TryLock indicates an expected call of TryLock.
-func (mr *MockLockStoreMockRecorder) TryLock(req interface{}) *gomock.Call {
+func (mr *MockLockStoreMockRecorder) TryLock(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TryLock", reflect.TypeOf((*MockLockStore)(nil).TryLock), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TryLock", reflect.TypeOf((*MockLockStore)(nil).TryLock), ctx, req)
 }
 
 // Unlock mocks base method.
 func (m *MockLockStore) Unlock(ctx context.Context, req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Unlock", req)
+	ret := m.ctrl.Call(m, "Unlock", ctx, req)
 	ret0, _ := ret[0].(*lock.UnlockResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Unlock indicates an expected call of Unlock.
-func (mr *MockLockStoreMockRecorder) Unlock(req interface{}) *gomock.Call {
+func (mr *MockLockStoreMockRecorder) Unlock(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unlock", reflect.TypeOf((*MockLockStore)(nil).Unlock), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unlock", reflect.TypeOf((*MockLockStore)(nil).Unlock), ctx, req)
 }
