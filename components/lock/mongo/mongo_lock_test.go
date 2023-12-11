@@ -87,7 +87,7 @@ func TestMongoLock_TryLock(t *testing.T) {
 	comp.client = &mockMongoClient
 
 	ownerId1 := uuid.New().String()
-	resp, err = comp.TryLock(&lock.TryLockRequest{
+	resp, err = comp.TryLock(ctx, &lock.TryLockRequest{
 		ResourceId: resourceId,
 		LockOwner:  ownerId1,
 		Expire:     10,
@@ -95,7 +95,7 @@ func TestMongoLock_TryLock(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, true, resp.Success)
 
-	resp, err = comp.TryLock(&lock.TryLockRequest{
+	resp, err = comp.TryLock(ctx, &lock.TryLockRequest{
 		ResourceId: resourceId,
 		LockOwner:  ownerId1,
 		Expire:     10,
@@ -108,7 +108,7 @@ func TestMongoLock_TryLock(t *testing.T) {
 
 	go func() {
 		ownerId2 := uuid.New().String()
-		resp, err = comp.TryLock(&lock.TryLockRequest{
+		resp, err = comp.TryLock(ctx, &lock.TryLockRequest{
 			ResourceId: resourceId,
 			LockOwner:  ownerId2,
 			Expire:     10,
@@ -121,7 +121,7 @@ func TestMongoLock_TryLock(t *testing.T) {
 	wg.Wait()
 
 	//another resource
-	resp, err = comp.TryLock(&lock.TryLockRequest{
+	resp, err = comp.TryLock(ctx, &lock.TryLockRequest{
 		ResourceId: resourceId2,
 		LockOwner:  ownerId1,
 		Expire:     10,
@@ -163,7 +163,7 @@ func TestMongoLock_Unlock(t *testing.T) {
 	comp.client = &mockMongoClient
 
 	ownerId1 := uuid.New().String()
-	lockresp, err = comp.TryLock(&lock.TryLockRequest{
+	lockresp, err = comp.TryLock(ctx, &lock.TryLockRequest{
 		ResourceId: resourceId3,
 		LockOwner:  ownerId1,
 		Expire:     10,
@@ -172,7 +172,7 @@ func TestMongoLock_Unlock(t *testing.T) {
 	assert.Equal(t, true, lockresp.Success)
 
 	//error resourceid
-	resp, err = comp.Unlock(&lock.UnlockRequest{
+	resp, err = comp.Unlock(nil, &lock.UnlockRequest{
 		ResourceId: resourceId4,
 		LockOwner:  ownerId1,
 	})
@@ -180,7 +180,7 @@ func TestMongoLock_Unlock(t *testing.T) {
 	assert.Equal(t, lock.LOCK_UNEXIST, resp.Status)
 
 	//success
-	resp, err = comp.Unlock(&lock.UnlockRequest{
+	resp, err = comp.Unlock(nil, &lock.UnlockRequest{
 		ResourceId: resourceId3,
 		LockOwner:  ownerId1,
 	})

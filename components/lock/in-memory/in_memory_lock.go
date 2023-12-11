@@ -66,7 +66,7 @@ func (s *InMemoryLock) Features() []lock.Feature {
 }
 
 // Try to add a lock. Currently this is a non-reentrant lock
-func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
+func (s *InMemoryLock) TryLock(ctx context.Context, req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	s.data.Lock()
 	defer s.data.Unlock()
 	// 1. Find the memoryLock for this resourceId
@@ -109,7 +109,7 @@ func (s *InMemoryLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse,
 	}, nil
 }
 
-func (s *InMemoryLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
+func (s *InMemoryLock) Unlock(ctx context.Context, req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	s.data.Lock()
 	defer s.data.Unlock()
 	// 1. Find the memoryLock for this resourceId

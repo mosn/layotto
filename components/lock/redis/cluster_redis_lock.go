@@ -86,7 +86,7 @@ func (c *ClusterRedisLock) LockKeepAlive(ctx context.Context, request *lock.Lock
 	return nil, nil
 }
 
-func (c *ClusterRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
+func (c *ClusterRedisLock) TryLock(ctx context.Context, req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	//try to get lock on all redis nodes
 	intervalStart := utils.GetMiliTimestamp(time.Now().UnixNano())
 	//intervalLimit must be 1/10 of expire time to make sure time of lock far less than expire time
@@ -154,7 +154,7 @@ func (c *ClusterRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockRespo
 	}, err
 }
 
-func (c *ClusterRedisLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
+func (c *ClusterRedisLock) Unlock(ctx context.Context, req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	wg := sync.WaitGroup{}
 	//err means there were some internal errors,then the status must be INTERNAL_ERROR
 	//the LOCK_UNEXIST and LOCK_BELONG_TO_OTHERS status codes can be ignore

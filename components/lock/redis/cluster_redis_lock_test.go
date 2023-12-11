@@ -101,7 +101,7 @@ func TestClusterRedisLock_TryLock(t *testing.T) {
 	assert.NoError(t, err)
 	// 1. client1 trylock
 	ownerId1 := uuid.New().String()
-	resp, err := comp.TryLock(&lock.TryLockRequest{
+	resp, err := comp.TryLock(ctx, &lock.TryLockRequest{
 		ResourceId: cResourceId,
 		LockOwner:  ownerId1,
 		Expire:     10,
@@ -113,7 +113,7 @@ func TestClusterRedisLock_TryLock(t *testing.T) {
 	//	2. Client2 tryLock fail
 	go func() {
 		owner2 := uuid.New().String()
-		resp2, err2 := comp.TryLock(&lock.TryLockRequest{
+		resp2, err2 := comp.TryLock(ctx, &lock.TryLockRequest{
 			ResourceId: cResourceId,
 			LockOwner:  owner2,
 			Expire:     10,
@@ -124,7 +124,7 @@ func TestClusterRedisLock_TryLock(t *testing.T) {
 	}()
 	wg.Wait()
 	// 3. client 1 unlock
-	unlockResp, err := comp.Unlock(&lock.UnlockRequest{
+	unlockResp, err := comp.Unlock(nil, &lock.UnlockRequest{
 		ResourceId: cResourceId,
 		LockOwner:  ownerId1,
 	})
@@ -134,7 +134,7 @@ func TestClusterRedisLock_TryLock(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		owner2 := uuid.New().String()
-		resp2, err2 := comp.TryLock(&lock.TryLockRequest{
+		resp2, err2 := comp.TryLock(ctx, &lock.TryLockRequest{
 			ResourceId: cResourceId,
 			LockOwner:  owner2,
 			Expire:     10,
@@ -142,7 +142,7 @@ func TestClusterRedisLock_TryLock(t *testing.T) {
 		assert.NoError(t, err2)
 		assert.True(t, resp2.Success, "client2 failed to get lock?!")
 		// 5. client2 unlock
-		unlockResp, err := comp.Unlock(&lock.UnlockRequest{
+		unlockResp, err := comp.Unlock(nil, &lock.UnlockRequest{
 			ResourceId: cResourceId,
 			LockOwner:  owner2,
 		})

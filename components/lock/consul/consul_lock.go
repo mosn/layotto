@@ -78,7 +78,7 @@ func getTTL(expire int32) string {
 	return strconv.Itoa(int(expire)) + "s"
 }
 
-func (c *ConsulLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
+func (c *ConsulLock) TryLock(ctx context.Context, req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 
 	// create a session TTL
 	session, _, err := c.sessionFactory.Create(&api.SessionEntry{
@@ -112,7 +112,7 @@ func (c *ConsulLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, e
 		Success: false,
 	}, nil
 }
-func (c *ConsulLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
+func (c *ConsulLock) Unlock(ctx context.Context, req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 
 	session, ok := c.sMap.Load(req.LockOwner + "-" + req.ResourceId)
 

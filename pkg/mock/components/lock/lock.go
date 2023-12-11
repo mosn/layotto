@@ -80,7 +80,7 @@ func (mr *MockLockStoreMockRecorder) LockKeepAlive(arg0, arg1 interface{}) *gomo
 }
 
 // TryLock mocks base method.
-func (m *MockLockStore) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
+func (m *MockLockStore) TryLock(ctx context.Context, req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TryLock", req)
 	ret0, _ := ret[0].(*lock.TryLockResponse)
@@ -95,7 +95,7 @@ func (mr *MockLockStoreMockRecorder) TryLock(req interface{}) *gomock.Call {
 }
 
 // Unlock mocks base method.
-func (m *MockLockStore) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
+func (m *MockLockStore) Unlock(ctx context.Context, req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Unlock", req)
 	ret0, _ := ret[0].(*lock.UnlockResponse)
