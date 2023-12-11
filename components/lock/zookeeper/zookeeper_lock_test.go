@@ -71,14 +71,14 @@ func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
 	comp.unlockConn = unlockConn
 	comp.factory = factory
 
-	tryLock, err := comp.TryLock(ctx, &lock.TryLockRequest{
+	tryLock, err := comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerA,
 		Expire:     expireTime,
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, tryLock.Success, true)
-	unlock, _ := comp.Unlock(nil, &lock.UnlockRequest{
+	unlock, _ := comp.Unlock(context.TODO(), &lock.UnlockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerA,
 	})
@@ -105,14 +105,14 @@ func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
 	comp.unlockConn = unlockConn
 	comp.factory = factory
 
-	tryLock, err := comp.TryLock(ctx, &lock.TryLockRequest{
+	tryLock, err := comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerA,
 		Expire:     expireTime,
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, tryLock.Success, true)
-	unlock, err := comp.Unlock(nil, &lock.UnlockRequest{
+	unlock, err := comp.Unlock(context.TODO(), &lock.UnlockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerB,
 	})
@@ -149,7 +149,7 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 	comp.factory = factory
 
 	//A lock
-	tryLock, err := comp.TryLock(ctx, &lock.TryLockRequest{
+	tryLock, err := comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerA,
 		Expire:     expireTime,
@@ -157,7 +157,7 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, true, tryLock.Success)
 	//B lock
-	tryLock, err = comp.TryLock(ctx, &lock.TryLockRequest{
+	tryLock, err = comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerB,
 		Expire:     expireTime,
@@ -165,7 +165,7 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, false, tryLock.Success)
 	//A unlock
-	unlock, _ := comp.Unlock(nil, &lock.UnlockRequest{
+	unlock, _ := comp.Unlock(context.TODO(), &lock.UnlockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerA,
 	})
@@ -173,7 +173,7 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 	assert.Equal(t, lock.SUCCESS, unlock.Status)
 
 	//B lock
-	tryLock, err = comp.TryLock(ctx, &lock.TryLockRequest{
+	tryLock, err = comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerB,
 		Expire:     expireTime,
@@ -182,7 +182,7 @@ func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 	assert.Equal(t, true, tryLock.Success)
 
 	//B unlock
-	unlock, _ = comp.Unlock(nil, &lock.UnlockRequest{
+	unlock, _ = comp.Unlock(context.TODO(), &lock.UnlockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerB,
 	})
