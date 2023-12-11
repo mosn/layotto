@@ -84,7 +84,7 @@ func (p *ZookeeperLock) LockKeepAlive(ctx context.Context, request *lock.LockKee
 }
 
 // TryLock Node tries to acquire a zookeeper lock
-func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
+func (p *ZookeeperLock) TryLock(ctx context.Context, req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 
 	conn, err := p.factory.NewConnection(time.Duration(req.Expire)*time.Second, p.metadata)
 	if err != nil {
@@ -118,7 +118,7 @@ func (p *ZookeeperLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse
 }
 
 // Unlock Node tries to release a zookeeper lock
-func (p *ZookeeperLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
+func (p *ZookeeperLock) Unlock(ctx context.Context, req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 
 	conn := p.unlockConn
 

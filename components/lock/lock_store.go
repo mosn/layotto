@@ -20,9 +20,9 @@ type LockStore interface {
 	// Get lock's features
 	Features() []Feature
 	// Node tries to acquire a lock
-	TryLock(req *TryLockRequest) (*TryLockResponse, error)
+	TryLock(ctx context.Context, req *TryLockRequest) (*TryLockResponse, error)
 	// Node tries to release a lock
-	Unlock(req *UnlockRequest) (*UnlockResponse, error)
+	Unlock(ctx context.Context, req *UnlockRequest) (*UnlockResponse, error)
 	// Node tries to renewal lease
 	LockKeepAlive(context.Context, *LockKeepAliveRequest) (*LockKeepAliveResponse, error)
 }
