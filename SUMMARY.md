@@ -10,7 +10,9 @@
 * [CONTRIBUTING](CONTRIBUTING.md)
 
 * [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md)
+
 * [_navbar.md](./docs/_navbar.md)
+
 * [_sidebar.md](./docs/_sidebar.md)
     * [docs.README.md](./docs/en/README.md)
         * [start.md](./docs/en/start/actuator/start.md)
