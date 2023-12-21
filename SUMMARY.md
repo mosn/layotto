@@ -1,20 +1,15 @@
 # SUMMARY
 
 
--[README](README.md)
+* [README](README.md)
 
--[RELEASING](RELEASING.md)
+* [RELEASING](RELEASING.md)
 
--[LEGAL](LEGAL.md)
+* [LEGAL](LEGAL.md)
 
--[CONTRIBUTING](CONTRIBUTING.md)
+* [CONTRIBUTING](CONTRIBUTING.md)
 
--[CODE_OF_CONDUCT](CODE_OF_CONDUCT.md)
-
-
-
-# docs ....
-
+* [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md)
 * [_navbar.md](./docs/_navbar.md)
 * [_sidebar.md](./docs/_sidebar.md)
     * [docs.README.md](./docs/en/README.md)
