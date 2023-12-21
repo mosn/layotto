@@ -7,7 +7,7 @@
 - [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md)
 - [_navbar](docs/_navbar.md)
 - [_sidebar](docs/_sidebar.md)
-  - [docs.README](docs/en/README.md)
+  - [docsREADME](docs/en/README.md)
     - [start](docs/en/start/actuator/start.md)
     - [generate](docs/en/start/api_plugin/generate.md)
     - [helloworld](docs/en/start/api_plugin/helloworld.md)
