@@ -268,8 +268,6 @@
           - [usage.md](docs/zh/design/pluggable/usage.md)
         - [pubsub]()
           - [pubsub-api-and-compability-with-dapr-component.md](docs/zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
-        - [rpc]()
-          - [rpc设计文档.md](docs/zh/design/rpc/rpc设计文档.md)
         - [sequencer]()
           - [design.md](docs/zh/design/sequencer/design.md)
       - [development]()
