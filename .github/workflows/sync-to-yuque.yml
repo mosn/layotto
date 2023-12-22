@@ -29,6 +29,5 @@ jobs:
                 "gitDocRoot": "/",
                 "gitDocToc": "SUMMARY.md",
                 "gitBranch": "main",
-                "slugGenMode", "DIRS_FILENAME"
               }
             }'
