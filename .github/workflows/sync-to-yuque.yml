@@ -28,7 +28,6 @@ jobs:
                 "gitRepo": "https://github.com/${{ github.repository }}",
                 "gitDocRoot": "/",
                 "gitDocToc": "SUMMARY.md",
-                "gitBranch": "main",
-                "slugGenMode","DIRS_FILENAME"
+                "gitBranch": "main"
               }
             }'
