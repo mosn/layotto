@@ -104,7 +104,6 @@
   - [gRPC框架设计文档](docs/zh/design/actuator/grpc-design-doc.md)
   - [Configuration API with Apollo](docs/zh/design/configuration/configuration-api-with-apollo.md)
   - [Pub/Sub API以及与dapr component的兼容性](docs/zh/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
-  - [RPC设计文档](docs/zh/design/rpc/rpc设计文档.md)
   - [分布式锁API设计文档](docs/zh/design/lock/lock-api-design.md)
   - [Sequencer API设计文档](docs/zh/design/sequencer/design.md)
   - [File API设计文档](docs/zh/design/file/file-design.md)
