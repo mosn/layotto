@@ -109,7 +109,6 @@
   - [Sequencer API设计文档](docs/zh/design/sequencer/design.md)
   - [File API设计文档](docs/zh/design/file/file-design.md)
   - [FaaS 设计文档](docs/zh/design/faas/faas-poc-design.md)
-  - [API插件](docs/zh/design/api_plugin/design.md)
   - [支持Dapr API](docs/zh/design/api_plugin/dapr_api.md)
   - [OSS API设计文档](docs/zh/design/oss/design.md)
   - [pluggable component 设计文档](docs/zh/design/pluggable/design.md)
