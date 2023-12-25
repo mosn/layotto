@@ -27,7 +27,7 @@ jobs:
                 "yuqueToken":"GMxMZw92ioczAGOCTueGOHSJOo6pr6tGTP3TgXLf",
                 "gitRepo": "https://github.com/${{ github.repository }}",
                 "gitDocRoot": "/",
-                "gitDocToc": "SUMMARY.md",
+                "gitDocToc": "/docs/SUMMARY.md",
                 "gitBranch": "main"
               }
             }'
