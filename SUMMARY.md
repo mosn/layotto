@@ -1,5 +1,5 @@
 - [首页](docs/zh/README.md)
-- [快速开始](/docs/zh/start/)
+- [快速开始]()
   - [使用State API](docs/zh/start/state/start.md)
   - 使用Configuration API
     - [使用Apollo配置中心](docs/zh/start/configuration/start-apollo.md)
@@ -46,7 +46,7 @@
   - [将业务逻辑通过 WASM 下沉进sidecar](docs/zh/start/wasm/start.md)
   - [基于 WASM 跟 Runtime 实现的 Faas 模型](docs/zh/start/faas/start.md)
 - [线上实验室](docs/zh/start/lab.md)
-- [用户手册](docs/zh/building_blocks/)
+- [用户手册]()
   - 功能介绍
     - [File API](docs/zh/building_blocks/file/file.md)
     - [Actuator API](docs/zh/building_blocks/actuator/actuator.md)
@@ -66,7 +66,7 @@
     - [js sdk](https://github.com/layotto/js-sdk)
     - [go sdk](docs/zh/sdk_reference/go/start.md)
 - 运维手册
-  - [如何配置 Layotto](docs/zh/configuration/)
+  - [如何配置 Layotto]()
     - [Layotto 配置文件介绍](docs/zh/configuration/overview.md)
     - [组件配置说明](docs/zh/component_specs/overview.md)
       - [State](docs/zh/component_specs/state/common.md)
@@ -96,7 +96,7 @@
         - [Snowflake](docs/zh/component_specs/sequencer/snowflake.md)
       - [Secret Store](docs/zh/component_specs/secret/common.md)
       - [自定义组件](docs/zh/component_specs/custom/common.md)
-  - [如何部署、升级 Layotto](docs/zh/operation/)
+  - [如何部署、升级 Layotto](docs/zh/operation/README.md)
   - [如何本地开发、本地调试](docs/zh/operation/local.md)
 - 设计文档
   - [动态配置下发、组件热重载](docs/zh/design/lifecycle/apply_configuration.md)
