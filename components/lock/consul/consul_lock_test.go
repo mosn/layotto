@@ -75,7 +75,7 @@ func TestConsulLock_TryLock(t *testing.T) {
 	kv.EXPECT().Release(&api.KVPair{Key: resouseId, Value: []byte(lockOwerA), Session: "session1"}, nil).
 		Return(true, nil, nil).Times(1)
 
-	tryLock, err := comp.TryLock(&lock.TryLockRequest{
+	tryLock, err := comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerA,
 		Expire:     expireTime,
@@ -84,7 +84,7 @@ func TestConsulLock_TryLock(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, true, tryLock.Success)
 
-	unlock, err := comp.Unlock(&lock.UnlockRequest{
+	unlock, err := comp.Unlock(context.TODO(), &lock.UnlockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerA,
 	})
@@ -121,7 +121,7 @@ func TestConsulLock_ALock_BLock(t *testing.T) {
 	kv.EXPECT().Acquire(&api.KVPair{Key: resouseId, Value: []byte(lockOwerB), Session: "session2"}, nil).
 		Return(false, nil, nil).Times(1)
 
-	tryLock, _ := comp.TryLock(&lock.TryLockRequest{
+	tryLock, _ := comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerA,
 		Expire:     expireTime,
@@ -130,7 +130,7 @@ func TestConsulLock_ALock_BLock(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, true, tryLock.Success)
 
-	bLock, _ := comp.TryLock(&lock.TryLockRequest{
+	bLock, _ := comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerB,
 		Expire:     expireTime,
@@ -166,7 +166,7 @@ func TestConsulLock_ALock_BUnlock(t *testing.T) {
 	kv.EXPECT().Release(&api.KVPair{Key: resouseId, Value: []byte(lockOwerA), Session: "session1"}, nil).
 		Return(true, nil, nil).Times(1)
 
-	tryLock, _ := comp.TryLock(&lock.TryLockRequest{
+	tryLock, _ := comp.TryLock(context.TODO(), &lock.TryLockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerA,
 		Expire:     expireTime,
@@ -175,7 +175,7 @@ func TestConsulLock_ALock_BUnlock(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, true, tryLock.Success)
 
-	unlock, _ := comp.Unlock(&lock.UnlockRequest{
+	unlock, _ := comp.Unlock(context.TODO(), &lock.UnlockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerB,
 	})
@@ -183,7 +183,7 @@ func TestConsulLock_ALock_BUnlock(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, lock.LOCK_UNEXIST, unlock.Status)
 
-	unlock2, err := comp.Unlock(&lock.UnlockRequest{
+	unlock2, err := comp.Unlock(context.TODO(), &lock.UnlockRequest{
 		ResourceId: resouseId,
 		LockOwner:  lockOwerA,
 	})

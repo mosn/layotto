@@ -23,6 +23,13 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/sms"
+
+	"mosn.io/layotto/components/cryption"
+	aliyun_cryption "mosn.io/layotto/components/cryption/aliyun"
+	aws_cryption "mosn.io/layotto/components/cryption/aws"
+	tencentcloud_sms "mosn.io/layotto/components/sms/tencentcloud"
+
 	"mosn.io/layotto/pkg/grpc/lifecycle"
 
 	huaweicloud_oss "mosn.io/layotto/components/oss/huaweicloud"
@@ -85,6 +92,7 @@ import (
 	// Configuration
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/configstores/apollo"
+	"mosn.io/layotto/components/configstores/nacos"
 
 	// Pub/Sub
 	dapr_comp_pubsub "github.com/dapr/components-contrib/pubsub"
@@ -288,6 +296,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
+			configstores.NewStoreFactory("nacos", nacos.NewStore),
 		),
 
 		// RPC
@@ -412,6 +421,15 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_state.NewFactory("mysql", func() state.Store {
 				return state_mysql.NewMySQLStateStore(loggerForDaprComp)
 			}),
+		),
+		// Cryption
+		runtime.WithCryptionServiceFactory(
+			cryption.NewFactory("aliyun.kms", aliyun_cryption.NewCryption),
+			cryption.NewFactory("aws.kms", aws_cryption.NewCryption),
+		),
+		// Sms
+		runtime.WithSmsServiceFactory(
+			sms.NewFactory("tencentcloud.sms", tencentcloud_sms.NewSms),
 		),
 		// Lock
 		runtime.WithLockFactory(

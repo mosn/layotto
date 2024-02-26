@@ -23,17 +23,17 @@ import (
 )
 
 type Registry interface {
-	Register(fs ...*FileFactory)
+	Register(fs ...*Factory)
 	Create(compType string) (File, error)
 }
 
-type FileFactory struct {
+type Factory struct {
 	CompType      string
 	FactoryMethod func() File
 }
 
-func NewFileFactory(CompType string, f func() File) *FileFactory {
-	return &FileFactory{
+func NewFileFactory(CompType string, f func() File) *Factory {
+	return &Factory{
 		CompType:      CompType,
 		FactoryMethod: f,
 	}
@@ -52,7 +52,7 @@ func NewRegistry(info *info.RuntimeInfo) Registry {
 	}
 }
 
-func (r *FileStoreRegistry) Register(fs ...*FileFactory) {
+func (r *FileStoreRegistry) Register(fs ...*Factory) {
 	for _, f := range fs {
 		r.files[f.CompType] = f.FactoryMethod
 		r.info.RegisterComponent(ServiceName, f.CompType)

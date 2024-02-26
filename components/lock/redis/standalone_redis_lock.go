@@ -76,7 +76,7 @@ func (p *StandaloneRedisLock) LockKeepAlive(ctx context.Context, request *lock.L
 }
 
 // Node tries to acquire a redis lock
-func (p *StandaloneRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
+func (p *StandaloneRedisLock) TryLock(ctx context.Context, req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	// 1.Setting redis expiration time
 	nx := p.client.SetNX(p.ctx, req.ResourceId, req.LockOwner, time.Second*time.Duration(req.Expire))
 	if nx == nil {
@@ -96,7 +96,7 @@ func (p *StandaloneRedisLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockRe
 const unlockScript = "local v = redis.call(\"get\",KEYS[1]); if v==false then return -1 end; if v~=ARGV[1] then return -2 else return redis.call(\"del\",KEYS[1]) end"
 
 // Node tries to release a redis lock
-func (p *StandaloneRedisLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
+func (p *StandaloneRedisLock) Unlock(ctx context.Context, req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	// 1. delegate to client.eval lua script
 	eval := p.client.Eval(p.ctx, unlockScript, []string{req.ResourceId}, req.LockOwner)
 	// 2. check error

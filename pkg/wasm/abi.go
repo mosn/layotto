@@ -35,7 +35,7 @@ func abiImplFactory(instance types.WasmInstance) types.ABI {
 	return abi
 }
 
-// easy for extension
+// AbiV2Impl easy for extension
 type AbiV2Impl struct {
 	v1.ABIContext
 }
@@ -45,17 +45,17 @@ var (
 	_ Exports          = &AbiV2Impl{}
 )
 
-// Get abi name
+// Name Get abi name
 func (a *AbiV2Impl) Name() string {
 	return AbiV2
 }
 
-// Get abi
+// GetABIExports Get abi
 func (a *AbiV2Impl) GetABIExports() interface{} {
 	return a
 }
 
-// Get id
+// ProxyGetID Get id
 func (a *AbiV2Impl) ProxyGetID() (string, error) {
 	// store the funcName and common.WasmFunction, then return the common.WasmFunction
 	ff, err := a.Instance.GetExportsFunc("proxy_get_id")

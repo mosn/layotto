@@ -45,11 +45,12 @@ $(BOLD_COLOR)Options$(NO_COLOR):
                $(GREEN_COLOR)* make deploy-k8s NAMESPACE="layotto"$(NO_COLOR)
                $(GREEN_COLOR)* make undeploy-k8s NAMESPACE="default"$(NO_COLOR)
   $(BLUE_COLOR)VERSION$(NO_COLOR)    The image tag version to build. Default is the latest release tag.
-               This option is available when using: make image/image-multiarch/push/push-multiarch
+               This option is available when using: make image/image-multiarch/push/push-multiarch/helm-package/helm-push
                Examples: 
                $(GREEN_COLOR)* make image VERSION="latest"$(NO_COLOR)
                $(GREEN_COLOR)* make image-multiarch VERSION="v1.0.0"$(NO_COLOR)
                $(GREEN_COLOR)* make push-multiarch VERSION="v2.0.0"$(NO_COLOR)
+               $(GREEN_COLOR)* make helm-push VERSION="v0.5.0"$(NO_COLOR)
   $(BLUE_COLOR)REGISTRY_PREFIX$(NO_COLOR)    The docker image registry repo name to push. Default is `layotto`.
                This option is available when using: make push/push-multiarch
                Examples: 

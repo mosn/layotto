@@ -8,7 +8,7 @@
 
 ## 第一步：部署apollo配置中心（可选）
 
-您可以跳过这一步，使用本demo无需自己部署apollo服务器。本demo会使用[apollo官方](https://github.com/apolloconfig/apollo) 提供的演示环境http://106.54.227.205/
+您可以跳过这一步，使用本demo无需自己部署apollo服务器。本demo会使用[apollo官方](https://github.com/apolloconfig/apollo) 提供的演示环境http://81.68.181.139
 
 如果您自己部署了apollo，可以修改Layotto的[config文件](https://github.com/mosn/layotto/blob/main/configs/config_apollo.json) ，将apollo服务器地址改成您自己的。
 

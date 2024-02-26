@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"runtime/debug"
 	"sync"
 
 	"mosn.io/layotto/spec/proto/extension/v1/s3"
@@ -101,6 +102,9 @@ func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.ObjectStorageServ
 		buf = make([]byte, 102400)
 	}
 	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("GetObject occur panic, stack info: %+v", string(debug.Stack()))
+		}
 		result.DataStream.Close()
 		*buffsPtr = buf
 		bytesPool.Put(buffsPtr)
@@ -162,6 +166,11 @@ func (r *putObjectStreamReader) Read(p []byte) (int, error) {
 }
 
 func (s *S3Server) PutObject(stream s3.ObjectStorageService_PutObjectServer) error {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("PutObject occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	req, err := stream.Recv()
 	if err != nil {
 		//if client send eof error directly, return nil
@@ -195,6 +204,11 @@ func (s *S3Server) PutObject(stream s3.ObjectStorageService_PutObjectServer) err
 }
 
 func (s *S3Server) DeleteObject(ctx context.Context, req *s3.DeleteObjectInput) (*s3.DeleteObjectOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("DeleteObject occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -215,6 +229,11 @@ func (s *S3Server) DeleteObject(ctx context.Context, req *s3.DeleteObjectInput) 
 	return output, nil
 }
 func (s *S3Server) PutObjectTagging(ctx context.Context, req *s3.PutObjectTaggingInput) (*s3.PutObjectTaggingOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("PutObjectTagging occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -236,6 +255,11 @@ func (s *S3Server) PutObjectTagging(ctx context.Context, req *s3.PutObjectTaggin
 	return output, nil
 }
 func (s *S3Server) DeleteObjectTagging(ctx context.Context, req *s3.DeleteObjectTaggingInput) (*s3.DeleteObjectTaggingOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("DeleteObjectTagging occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -256,6 +280,11 @@ func (s *S3Server) DeleteObjectTagging(ctx context.Context, req *s3.DeleteObject
 	return output, nil
 }
 func (s *S3Server) GetObjectTagging(ctx context.Context, req *s3.GetObjectTaggingInput) (*s3.GetObjectTaggingOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("GetObjectTagging occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -276,6 +305,11 @@ func (s *S3Server) GetObjectTagging(ctx context.Context, req *s3.GetObjectTaggin
 	return output, nil
 }
 func (s *S3Server) CopyObject(ctx context.Context, req *s3.CopyObjectInput) (*s3.CopyObjectOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("CopyObject occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -297,6 +331,11 @@ func (s *S3Server) CopyObject(ctx context.Context, req *s3.CopyObjectInput) (*s3
 
 }
 func (s *S3Server) DeleteObjects(ctx context.Context, req *s3.DeleteObjectsInput) (*s3.DeleteObjectsOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("DeleteObjects occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -318,6 +357,11 @@ func (s *S3Server) DeleteObjects(ctx context.Context, req *s3.DeleteObjectsInput
 
 }
 func (s *S3Server) ListObjects(ctx context.Context, req *s3.ListObjectsInput) (*s3.ListObjectsOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("ListObjects occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -339,6 +383,11 @@ func (s *S3Server) ListObjects(ctx context.Context, req *s3.ListObjectsInput) (*
 
 }
 func (s *S3Server) GetObjectCannedAcl(ctx context.Context, req *s3.GetObjectCannedAclInput) (*s3.GetObjectCannedAclOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("GetObjectCannedAcl occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -360,6 +409,11 @@ func (s *S3Server) GetObjectCannedAcl(ctx context.Context, req *s3.GetObjectCann
 
 }
 func (s *S3Server) PutObjectCannedAcl(ctx context.Context, req *s3.PutObjectCannedAclInput) (*s3.PutObjectCannedAclOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("PutObjectCannedAcl occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -381,6 +435,11 @@ func (s *S3Server) PutObjectCannedAcl(ctx context.Context, req *s3.PutObjectCann
 
 }
 func (s *S3Server) RestoreObject(ctx context.Context, req *s3.RestoreObjectInput) (*s3.RestoreObjectOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("RestoreObject occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -402,6 +461,11 @@ func (s *S3Server) RestoreObject(ctx context.Context, req *s3.RestoreObjectInput
 
 }
 func (s *S3Server) CreateMultipartUpload(ctx context.Context, req *s3.CreateMultipartUploadInput) (*s3.CreateMultipartUploadOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("CreateMultipartUpload occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -456,6 +520,11 @@ func (r *uploadPartStreamReader) Read(p []byte) (int, error) {
 }
 
 func (s *S3Server) UploadPart(stream s3.ObjectStorageService_UploadPartServer) error {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("UploadPart occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	req, err := stream.Recv()
 	if err != nil {
 		//if client send eof error directly, return nil
@@ -489,6 +558,11 @@ func (s *S3Server) UploadPart(stream s3.ObjectStorageService_UploadPartServer) e
 
 }
 func (s *S3Server) UploadPartCopy(ctx context.Context, req *s3.UploadPartCopyInput) (*s3.UploadPartCopyOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("UploadPartCopy occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -510,6 +584,11 @@ func (s *S3Server) UploadPartCopy(ctx context.Context, req *s3.UploadPartCopyInp
 
 }
 func (s *S3Server) CompleteMultipartUpload(ctx context.Context, req *s3.CompleteMultipartUploadInput) (*s3.CompleteMultipartUploadOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("CompleteMultipartUpload occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -531,6 +610,11 @@ func (s *S3Server) CompleteMultipartUpload(ctx context.Context, req *s3.Complete
 
 }
 func (s *S3Server) AbortMultipartUpload(ctx context.Context, req *s3.AbortMultipartUploadInput) (*s3.AbortMultipartUploadOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("AbortMultipartUpload occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -552,6 +636,11 @@ func (s *S3Server) AbortMultipartUpload(ctx context.Context, req *s3.AbortMultip
 
 }
 func (s *S3Server) ListMultipartUploads(ctx context.Context, req *s3.ListMultipartUploadsInput) (*s3.ListMultipartUploadsOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("ListMultipartUploads occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -572,6 +661,11 @@ func (s *S3Server) ListMultipartUploads(ctx context.Context, req *s3.ListMultipa
 	return output, nil
 }
 func (s *S3Server) ListObjectVersions(ctx context.Context, req *s3.ListObjectVersionsInput) (*s3.ListObjectVersionsOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("ListObjectVersions occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -594,6 +688,11 @@ func (s *S3Server) ListObjectVersions(ctx context.Context, req *s3.ListObjectVer
 }
 
 func (s *S3Server) HeadObject(ctx context.Context, req *s3.HeadObjectInput) (*s3.HeadObjectOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("HeadObject occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -616,6 +715,11 @@ func (s *S3Server) HeadObject(ctx context.Context, req *s3.HeadObjectInput) (*s3
 }
 
 func (s *S3Server) IsObjectExist(ctx context.Context, req *s3.IsObjectExistInput) (*s3.IsObjectExistOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("IsObjectExist occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -634,6 +738,11 @@ func (s *S3Server) IsObjectExist(ctx context.Context, req *s3.IsObjectExistInput
 }
 
 func (s *S3Server) SignURL(ctx context.Context, req *s3.SignURLInput) (*s3.SignURLOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("SignURL occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -652,6 +761,11 @@ func (s *S3Server) SignURL(ctx context.Context, req *s3.SignURLInput) (*s3.SignU
 }
 
 func (s *S3Server) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("UpdateDownloadBandwidthRateLimit occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -667,6 +781,11 @@ func (s *S3Server) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *s3
 }
 
 func (s *S3Server) UpdateUploadBandwidthRateLimit(ctx context.Context, req *s3.UpdateBandwidthRateLimitInput) (*emptypb.Empty, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("UpdateUploadBandwidthRateLimit occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}
@@ -714,6 +833,11 @@ func (r *appendObjectStreamReader) Read(p []byte) (int, error) {
 }
 
 func (s *S3Server) AppendObject(stream s3.ObjectStorageService_AppendObjectServer) error {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("AppendObject occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	req, err := stream.Recv()
 	if err != nil {
 		//if client send eof error directly, return nil
@@ -745,6 +869,11 @@ func (s *S3Server) AppendObject(stream s3.ObjectStorageService_AppendObjectServe
 }
 
 func (s *S3Server) ListParts(ctx context.Context, req *s3.ListPartsInput) (*s3.ListPartsOutput, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.DefaultLogger.Errorf("ListParts occur panic, stack info: %+v", string(debug.Stack()))
+		}
+	}()
 	if s.ossInstance[req.StoreName] == nil {
 		return nil, status.Errorf(codes.InvalidArgument, NotSupportStoreName, req.StoreName)
 	}

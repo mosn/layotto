@@ -93,7 +93,7 @@ type GetObjectOutput struct {
 	ContentRange       string            `json:"content_range,omitempty"`
 	ContentType        string            `json:"content_type,omitempty"`
 	DeleteMarker       bool              `json:"delete_marker,omitempty"`
-	Etag               string            `json:"etag,omitempty"`
+	ETag               string            `json:"etag,omitempty"`
 	Expiration         string            `json:"expiration,omitempty"`
 	Expires            string            `json:"expires,omitempty"`
 	LastModified       int64             `json:"last_modified,omitempty"`
@@ -123,8 +123,9 @@ type PutObjectInput struct {
 }
 
 type PutObjectOutput struct {
-	BucketKeyEnabled bool   `json:"bucket_key_enabled,omitempty"`
-	ETag             string `json:"etag,omitempty"`
+	BucketKeyEnabled bool              `json:"bucket_key_enabled,omitempty"`
+	ETag             string            `json:"etag,omitempty"`
+	Metadata         map[string]string `json:"metadata,omitempty"`
 }
 
 type DeleteObjectInput struct {
@@ -134,9 +135,10 @@ type DeleteObjectInput struct {
 	VersionId    string `json:"version_id,omitempty"`
 }
 type DeleteObjectOutput struct {
-	DeleteMarker   bool   `json:"delete_marker,omitempty"`
-	RequestCharged string `json:"request_charged,omitempty"`
-	VersionId      string `json:"version_id,omitempty"`
+	DeleteMarker   bool              `json:"delete_marker,omitempty"`
+	RequestCharged string            `json:"request_charged,omitempty"`
+	VersionId      string            `json:"version_id,omitempty"`
+	Metadata       map[string]string `json:"metadata,omitempty"`
 }
 
 type PutObjectTaggingInput struct {
@@ -190,6 +192,7 @@ type CopyObjectInput struct {
 }
 type CopyObjectOutput struct {
 	CopyObjectResult *CopyObjectResult `json:"copy_object_result,omitempty"`
+	Metadata         map[string]string `json:"metadata,omitempty"`
 }
 type CopyObjectResult struct {
 	ETag         string `json:"etag,omitempty"`
@@ -210,7 +213,8 @@ type ObjectIdentifier struct {
 }
 
 type DeleteObjectsOutput struct {
-	Deleted []*DeletedObject `json:"deleted,omitempty"`
+	Deleted  []*DeletedObject  `json:"deleted,omitempty"`
+	Metadata map[string]string `json:"metadata,omitempty"`
 }
 
 type DeletedObject struct {
@@ -231,16 +235,17 @@ type ListObjectsInput struct {
 	RequestPayer        string `json:"request_payer,omitempty"`
 }
 type ListObjectsOutput struct {
-	CommonPrefixes []string  `json:"common_prefixes,omitempty"`
-	Contents       []*Object `json:"contents,omitempty"`
-	Delimiter      string    `json:"delimiter,omitempty"`
-	EncodingType   string    `json:"encoding_type,omitempty"`
-	IsTruncated    bool      `json:"is_truncated,omitempty"`
-	Marker         string    `json:"marker,omitempty"`
-	MaxKeys        int32     `json:"max_keys,omitempty"`
-	Name           string    `json:"name,omitempty"`
-	NextMarker     string    `json:"next_marker,omitempty"`
-	Prefix         string    `json:"prefix,omitempty"`
+	CommonPrefixes []string          `json:"common_prefixes,omitempty"`
+	Contents       []*Object         `json:"contents,omitempty"`
+	Delimiter      string            `json:"delimiter,omitempty"`
+	EncodingType   string            `json:"encoding_type,omitempty"`
+	IsTruncated    bool              `json:"is_truncated,omitempty"`
+	Marker         string            `json:"marker,omitempty"`
+	MaxKeys        int32             `json:"max_keys,omitempty"`
+	Name           string            `json:"name,omitempty"`
+	NextMarker     string            `json:"next_marker,omitempty"`
+	Prefix         string            `json:"prefix,omitempty"`
+	Metadata       map[string]string `json:"metadata,omitempty"`
 }
 type Object struct {
 	ETag         string `json:"etag,omitempty"`
@@ -261,9 +266,10 @@ type GetObjectCannedAclInput struct {
 	VersionId string `json:"version_id,omitempty"`
 }
 type GetObjectCannedAclOutput struct {
-	CannedAcl      string `json:"canned_acl,omitempty"`
-	Owner          *Owner `json:"owner,omitempty"`
-	RequestCharged string `json:"request_charged,omitempty"`
+	CannedAcl      string            `json:"canned_acl,omitempty"`
+	Owner          *Owner            `json:"owner,omitempty"`
+	RequestCharged string            `json:"request_charged,omitempty"`
+	Metadata       map[string]string `json:"metadata,omitempty"`
 }
 
 type PutObjectCannedAclInput struct {
@@ -273,7 +279,8 @@ type PutObjectCannedAclInput struct {
 	VersionId string `json:"version_id,omitempty"`
 }
 type PutObjectCannedAclOutput struct {
-	RequestCharged string `json:"request_charged,omitempty"`
+	RequestCharged string            `json:"request_charged,omitempty"`
+	Metadata       map[string]string `json:"metadata,omitempty"`
 }
 
 type GlacierJobParameters struct {
@@ -367,18 +374,19 @@ type CreateMultipartUploadInput struct {
 	WebsiteRedirectLocation   string            `json:"website_redirect_location,omitempty"`
 }
 type CreateMultipartUploadOutput struct {
-	Bucket                  string `json:"bucket,omitempty"`
-	Key                     string `json:"key,omitempty"`
-	AbortDate               int64  `json:"abort_date,omitempty"`
-	AbortRuleId             string `json:"abort_rule_id,omitempty"`
-	BucketKeyEnabled        bool   `json:"bucket_key_enabled,omitempty"`
-	RequestCharged          string `json:"request_charged,omitempty"`
-	SSECustomerAlgorithm    string `json:"sse_customer_algorithm,omitempty"`
-	SSECustomerKeyMD5       string `json:"sse_customer_key_md5,omitempty"`
-	SSEKMSEncryptionContext string `json:"sse_kms_encryption_context,omitempty"`
-	SSEKMSKeyId             string `json:"sse_kms_key_id,omitempty"`
-	ServerSideEncryption    string `json:"server_side_encryption,omitempty"`
-	UploadId                string `json:"upload_id,omitempty"`
+	Bucket                  string            `json:"bucket,omitempty"`
+	Key                     string            `json:"key,omitempty"`
+	AbortDate               int64             `json:"abort_date,omitempty"`
+	AbortRuleId             string            `json:"abort_rule_id,omitempty"`
+	BucketKeyEnabled        bool              `json:"bucket_key_enabled,omitempty"`
+	RequestCharged          string            `json:"request_charged,omitempty"`
+	SSECustomerAlgorithm    string            `json:"sse_customer_algorithm,omitempty"`
+	SSECustomerKeyMD5       string            `json:"sse_customer_key_md5,omitempty"`
+	SSEKMSEncryptionContext string            `json:"sse_kms_encryption_context,omitempty"`
+	SSEKMSKeyId             string            `json:"sse_kms_key_id,omitempty"`
+	ServerSideEncryption    string            `json:"server_side_encryption,omitempty"`
+	UploadId                string            `json:"upload_id,omitempty"`
+	Metadata                map[string]string `json:"metadata,omitempty"`
 }
 
 type UploadPartInput struct {
@@ -397,13 +405,14 @@ type UploadPartInput struct {
 	UploadId             string `json:"upload_id,omitempty"`
 }
 type UploadPartOutput struct {
-	BucketKeyEnabled     bool   `json:"bucket_key_enabled,omitempty"`
-	ETag                 string `json:"etag,omitempty"`
-	RequestCharged       string `json:"request_charged,omitempty"`
-	SSECustomerAlgorithm string `json:"sse_customer_algorithm,omitempty"`
-	SSECustomerKeyMD5    string `json:"sse_customer_key_md5,omitempty"`
-	SSEKMSKeyId          string `json:"sse_kms_key_id,omitempty"`
-	ServerSideEncryption string `json:"server_side_encryption,omitempty"`
+	BucketKeyEnabled     bool              `json:"bucket_key_enabled,omitempty"`
+	ETag                 string            `json:"etag,omitempty"`
+	RequestCharged       string            `json:"request_charged,omitempty"`
+	SSECustomerAlgorithm string            `json:"sse_customer_algorithm,omitempty"`
+	SSECustomerKeyMD5    string            `json:"sse_customer_key_md5,omitempty"`
+	SSEKMSKeyId          string            `json:"sse_kms_key_id,omitempty"`
+	ServerSideEncryption string            `json:"server_side_encryption,omitempty"`
+	Metadata             map[string]string `json:"metadata,omitempty"`
 }
 
 type UploadPartCopyInput struct {
@@ -416,14 +425,15 @@ type UploadPartCopyInput struct {
 	PartSize      int64       `json:"part_size,omitempty"`
 }
 type UploadPartCopyOutput struct {
-	BucketKeyEnabled     bool            `json:"bucket_key_enabled,omitempty"`
-	CopyPartResult       *CopyPartResult `json:"copy_part_result,omitempty"`
-	CopySourceVersionId  string          `json:"copy_source_version_id,omitempty"`
-	RequestCharged       string          `json:"request_charged,omitempty"`
-	SSECustomerAlgorithm string          `json:"sse_customer_algorithm,omitempty"`
-	SSECustomerKeyMD5    string          `json:"sse_customer_key_md5,omitempty"`
-	SSEKMSKeyId          string          `json:"sse_kms_key_id,omitempty"`
-	ServerSideEncryption string          `json:"server_side_encryption,omitempty"`
+	BucketKeyEnabled     bool              `json:"bucket_key_enabled,omitempty"`
+	CopyPartResult       *CopyPartResult   `json:"copy_part_result,omitempty"`
+	CopySourceVersionId  string            `json:"copy_source_version_id,omitempty"`
+	RequestCharged       string            `json:"request_charged,omitempty"`
+	SSECustomerAlgorithm string            `json:"sse_customer_algorithm,omitempty"`
+	SSECustomerKeyMD5    string            `json:"sse_customer_key_md5,omitempty"`
+	SSEKMSKeyId          string            `json:"sse_kms_key_id,omitempty"`
+	ServerSideEncryption string            `json:"server_side_encryption,omitempty"`
+	Metadata             map[string]string `json:"metadata,omitempty"`
 }
 type CopyPartResult struct {
 	ETag         string `json:"etag,omitempty"`
@@ -446,16 +456,17 @@ type CompletedPart struct {
 	PartNumber int32  `json:"part_number,omitempty"`
 }
 type CompleteMultipartUploadOutput struct {
-	Bucket               string `json:"bucket,omitempty"`
-	Key                  string `json:"key,omitempty"`
-	BucketKeyEnabled     bool   `json:"bucket_key_enabled,omitempty"`
-	ETag                 string `json:"etag,omitempty"`
-	Expiration           string `json:"expiration,omitempty"`
-	Location             string `json:"location,omitempty"`
-	RequestCharged       string `json:"request_charged,omitempty"`
-	SSEKMSKeyId          string `json:"sse_kms_keyId,omitempty"`
-	ServerSideEncryption string `json:"server_side_encryption,omitempty"`
-	VersionId            string `json:"version_id,omitempty"`
+	Bucket               string            `json:"bucket,omitempty"`
+	Key                  string            `json:"key,omitempty"`
+	BucketKeyEnabled     bool              `json:"bucket_key_enabled,omitempty"`
+	ETag                 string            `json:"etag,omitempty"`
+	Expiration           string            `json:"expiration,omitempty"`
+	Location             string            `json:"location,omitempty"`
+	RequestCharged       string            `json:"request_charged,omitempty"`
+	SSEKMSKeyId          string            `json:"sse_kms_keyId,omitempty"`
+	ServerSideEncryption string            `json:"server_side_encryption,omitempty"`
+	VersionId            string            `json:"version_id,omitempty"`
+	Metadata             map[string]string `json:"metadata,omitempty"`
 }
 
 type AbortMultipartUploadInput struct {
@@ -466,7 +477,8 @@ type AbortMultipartUploadInput struct {
 	UploadId            string `json:"upload_id,omitempty"`
 }
 type AbortMultipartUploadOutput struct {
-	RequestCharged string `json:"request_charged,omitempty"`
+	RequestCharged string            `json:"request_charged,omitempty"`
+	Metadata       map[string]string `json:"metadata,omitempty"`
 }
 
 type ListMultipartUploadsInput struct {
@@ -492,6 +504,7 @@ type ListMultipartUploadsOutput struct {
 	Prefix             string             `json:"prefix,omitempty"`
 	UploadIDMarker     string             `json:"upload_id_marker,omitempty"`
 	Uploads            []*MultipartUpload `json:"uploads,omitempty"`
+	Metadata           map[string]string  `json:"metadata,omitempty"`
 }
 type MultipartUpload struct {
 	Initiated    int64      `json:"initiated,omitempty"`
@@ -530,6 +543,7 @@ type ListObjectVersionsOutput struct {
 	Prefix              string               `json:"prefix,omitempty"`
 	VersionIdMarker     string               `json:"version_id_marker,omitempty"`
 	Versions            []*ObjectVersion     `json:"versions,omitempty"`
+	Metadata            map[string]string    `json:"metadata,omitempty"`
 }
 type DeleteMarkerEntry struct {
 	IsLatest     bool   `json:"is_latest,omitempty"`
@@ -576,7 +590,8 @@ type IsObjectExistInput struct {
 	Key    string `json:"key,omitempty"`
 }
 type IsObjectExistOutput struct {
-	FileExist bool `json:"file_exist,omitempty"`
+	FileExist bool              `json:"file_exist,omitempty"`
+	Metadata  map[string]string `json:"metadata,omitempty"`
 }
 
 type SignURLInput struct {
@@ -613,7 +628,8 @@ type AppendObjectInput struct {
 	Tags                 map[string]string `json:"tags,omitempty"`
 }
 type AppendObjectOutput struct {
-	AppendPosition int64 `json:"append_position,omitempty"`
+	AppendPosition int64             `json:"append_position,omitempty"`
+	Metadata       map[string]string `json:"metadata,omitempty"`
 }
 
 type ListPartsInput struct {
@@ -626,13 +642,14 @@ type ListPartsInput struct {
 	UploadId            string `json:"upload_id,omitempty"`
 }
 type ListPartsOutput struct {
-	Bucket               string  `json:"bucket,omitempty"`
-	Key                  string  `json:"key,omitempty"`
-	UploadId             string  `json:"upload_id,omitempty"`
-	NextPartNumberMarker string  `json:"next_part_number_marker,omitempty"`
-	MaxParts             int64   `json:"max_parts,omitempty"`
-	IsTruncated          bool    `json:"is_truncated,omitempty"`
-	Parts                []*Part `json:"parts,omitempty"`
+	Bucket               string            `json:"bucket,omitempty"`
+	Key                  string            `json:"key,omitempty"`
+	UploadId             string            `json:"upload_id,omitempty"`
+	NextPartNumberMarker string            `json:"next_part_number_marker,omitempty"`
+	MaxParts             int64             `json:"max_parts,omitempty"`
+	IsTruncated          bool              `json:"is_truncated,omitempty"`
+	Parts                []*Part           `json:"parts,omitempty"`
+	Metadata             map[string]string `json:"metadata,omitempty"`
 }
 
 type Part struct {

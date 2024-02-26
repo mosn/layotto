@@ -4,6 +4,7 @@
     - 使用Configuration API
         - [使用Apollo配置中心](zh/start/configuration/start-apollo.md)
         - [使用Etcd配置中心](zh/start/configuration/start.md)
+        - [使用Nacos配置中心](zh/start/configuration/start-nacos.md)
     - 发布、订阅消息
         - [使用Pub/Sub API](zh/start/pubsub/start.md)
         - [(建设中) 使用 DelayQueue API](zh/start/delay_queue/start)
@@ -18,6 +19,7 @@
     - 使用File API
         - [基于Minio](zh/start/file/minio.md)
     - [使用 OSS API](zh/start/oss/oss.md)
+    - [使用UDS通信](zh/start/uds/start.md)
     <!--quickstart_generator-->
     - [(建设中)使用 sms API](zh/start/sms/start) 
     - [(建设中)使用 cryption API](zh/start/cryption/start) 
@@ -56,6 +58,7 @@
         - [Configuration API](zh/building_blocks/configuration/reference.md)
         - 可扩展性
             - [API插件](zh/design/api_plugin/design.md)
+            - [pluggable component 组件](zh/design/pluggable/usage.md)
     - [gRPC API 接口文档](zh/api_reference/README.md)
     - SDK文档
         - [java sdk](https://github.com/layotto/java-sdk)
@@ -81,6 +84,7 @@
             - Configuration
                 - [Etcd](zh/component_specs/configuration/etcd.md)
                 - [Apollo](zh/component_specs/configuration/apollo.md)
+                - [Nacos](zh/component_specs/configuration/nacos.md)
             - [File](zh/component_specs/file/common.md)
                 - [OSS](zh/component_specs/file/oss.md)
             - [Sequencer](zh/component_specs/sequencer/common.md)
@@ -108,6 +112,7 @@
     - [API插件](zh/design/api_plugin/design.md)
     - [支持Dapr API](zh/design/api_plugin/dapr_api.md)
     - [OSS API设计文档](zh/design/oss/design.md)
+    - [pluggable component 设计文档](zh/design/pluggable/design.md)
 - 贡献指南
     - [Layotto 贡献指南](zh/development/CONTRIBUTING.md)
     - [新手攻略：从零开始成为 Layotto 贡献者](zh/development/start-from-zero.md)

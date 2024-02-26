@@ -23,6 +23,12 @@ import (
 	"strconv"
 	"time"
 
+	"mosn.io/layotto/components/sms"
+
+	"mosn.io/layotto/components/cryption"
+
+	"mosn.io/layotto/components/email"
+
 	"mosn.io/layotto/pkg/grpc/lifecycle"
 
 	"mosn.io/layotto/components/oss"
@@ -37,7 +43,12 @@ import (
 
 	"mosn.io/mosn/pkg/istio"
 
+	aliyun_cryption "mosn.io/layotto/components/cryption/aliyun"
+	aws_cryption "mosn.io/layotto/components/cryption/aws"
 	aliyun_file "mosn.io/layotto/components/file/aliyun"
+
+	aliyun_email "mosn.io/layotto/components/email/aliyun"
+	tencentcloud_sms "mosn.io/layotto/components/sms/tencentcloud"
 
 	"github.com/dapr/components-contrib/secretstores"
 	"github.com/dapr/components-contrib/secretstores/aws/parameterstore"
@@ -65,6 +76,7 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/configstores/etcdv3"
+	"mosn.io/layotto/components/configstores/nacos"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/runtime/bindings"
@@ -278,6 +290,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		runtime.WithConfigStoresFactory(
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
+			configstores.NewStoreFactory("nacos", nacos.NewStore),
 		),
 
 		// RPC
@@ -299,6 +312,20 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			oss.NewFactory("aliyun.oss", aliyun_oss.NewAliyunOss),
 			oss.NewFactory("ceph", ceph_oss.NewCephOss),
 			oss.NewFactory("huaweicloud.oss", huaweicloud_oss.NewHuaweicloudOSS),
+		),
+		// Cryption
+		runtime.WithCryptionServiceFactory(
+			cryption.NewFactory("aliyun.kms", aliyun_cryption.NewCryption),
+			cryption.NewFactory("aws.kms", aws_cryption.NewCryption),
+		),
+
+		// Email
+		runtime.WithEmailServiceFactory(
+			email.NewFactory("aliyun.email", aliyun_email.NewAliyunEmail),
+		),
+		// Sms
+		runtime.WithSmsServiceFactory(
+			sms.NewFactory("tencentcloud.sms", tencentcloud_sms.NewSms),
 		),
 		// PubSub
 		runtime.WithPubSubFactory(

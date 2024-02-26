@@ -37,7 +37,7 @@ type LayottoHandler struct {
 
 var _ proxywasm.ImportsHandler = &LayottoHandler{}
 
-// Obtains the state for a specific key
+// GetState Obtains the state for a specific key
 func (d *LayottoHandler) GetState(storeName string, key string) (string, proxywasm.WasmResult) {
 	req := &runtimev1pb.GetStateRequest{
 		StoreName: storeName,
@@ -50,7 +50,7 @@ func (d *LayottoHandler) GetState(storeName string, key string) (string, proxywa
 	return string(resp.Data), proxywasm.WasmResultOk
 }
 
-// Do rpc calls
+// InvokeService Do rpc calls
 func (d *LayottoHandler) InvokeService(id string, method string, param string) (string, proxywasm.WasmResult) {
 	req := &runtimev1pb.InvokeServiceRequest{
 		Id: id,
@@ -66,7 +66,7 @@ func (d *LayottoHandler) InvokeService(id string, method string, param string) (
 	return string(resp.Data.Value), proxywasm.WasmResultOk
 }
 
-// Get the IoBuffer of LayottoHandler
+// GetFuncCallData Get the IoBuffer of LayottoHandler
 func (d *LayottoHandler) GetFuncCallData() common.IoBuffer {
 	if d.IoBuffer == nil {
 		d.IoBuffer = common.NewIoBufferBytes(make([]byte, 0))

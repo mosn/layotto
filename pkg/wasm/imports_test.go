@@ -23,6 +23,8 @@ import (
 	"github.com/dapr/components-contrib/state"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"mosn.io/mosn/pkg/wasm/abi/proxywasm010"
+	"mosn.io/proxy-wasm-go-host/proxywasm/common"
 	proxywasm "mosn.io/proxy-wasm-go-host/proxywasm/v1"
 
 	"mosn.io/layotto/components/rpc"
@@ -80,4 +82,42 @@ func TestInvokeService(t *testing.T) {
 		assert.Equal(t, proxywasm.WasmResultOk, ok)
 		assert.Equal(t, "100", result)
 	})
+}
+
+func TestLayottoHandler_GetFuncCallData(t *testing.T) {
+	type fields struct {
+		DefaultImportsHandler proxywasm010.DefaultImportsHandler
+		IoBuffer              common.IoBuffer
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   common.IoBuffer
+	}{
+		{
+			name: "buffer is nil",
+			fields: fields{
+				DefaultImportsHandler: proxywasm010.DefaultImportsHandler{},
+				IoBuffer:              nil,
+			},
+			want: common.NewIoBufferBytes(make([]byte, 0)),
+		},
+		{
+			name: "buffer is not nil",
+			fields: fields{
+				DefaultImportsHandler: proxywasm010.DefaultImportsHandler{},
+				IoBuffer:              common.NewIoBufferBytes(make([]byte, 0)),
+			},
+			want: common.NewIoBufferBytes(make([]byte, 0)),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := &LayottoHandler{
+				DefaultImportsHandler: tt.fields.DefaultImportsHandler,
+				IoBuffer:              tt.fields.IoBuffer,
+			}
+			assert.Equalf(t, tt.want, d.GetFuncCallData(), "GetFuncCallData()")
+		})
+	}
 }

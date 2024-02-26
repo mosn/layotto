@@ -46,6 +46,14 @@ var (
 			return s.Unix(), nil
 		},
 	}
+	TimeValueToInt64 = copier.TypeConverter{
+		SrcType: time.Time{},
+		DstType: int64(0),
+		Fn: func(src interface{}) (interface{}, error) {
+			s, _ := src.(time.Time)
+			return s.Unix(), nil
+		},
+	}
 )
 
 func GetGetObjectOutput(ob *s3.GetObjectOutput) (*GetObjectOutput, error) {

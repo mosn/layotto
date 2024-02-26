@@ -4,6 +4,7 @@
   - Use Configuration API
     - [Use Apollo as configuration center](en/start/configuration/start-apollo.md)
     - [Use Etcd as configuration center](en/start/configuration/start.md)
+    - [Use Nacos as configuration center](en/start/configuration/start-nacos.md)
   - Publish or subscribe messages
     - [Use Pub/Sub API](en/start/pubsub/start.md)
     - [(Under construction) Use DelayQueue API](en/start/delay_queue/start)
@@ -50,6 +51,8 @@
     - [Pub/Sub API](en/building_blocks/pubsub/reference.md)
     - [RPC API](en/building_blocks/rpc/reference.md)    
     - [Configuration API](en/building_blocks/configuration/reference.md)
+    - Scalability
+      - [Pluggable component](en/design/pluggable/usage.md)
   - [API reference](en/api_reference/README)
   - SDK reference
     - [java sdk](https://github.com/layotto/java-sdk)
@@ -75,6 +78,7 @@
       - Configuration
         - [Etcd](en/component_specs/configuration/etcd.md)
         - [Apollo](en/component_specs/configuration/apollo.md)
+        - [Nacos](en/component_specs/configuration/nacos.md)
       - File
         - [OSS](en/component_specs/file/oss.md)
       - [Sequencer](en/component_specs/sequencer/common.md)
@@ -93,6 +97,7 @@
   - [RPC design doc](en/design/rpc/rpc-design-doc.md)
   - [Distributed lock API design](en/design/lock/lock-api-design.md)
   - [FaaS design](en/design/faas/faas-poc-design.md)
+  - [Pluggable Component design doc](en/design/pluggable/design.md)
 - Contributing
   - [Document Contribution Guide](en/development/contributing-doc.md)
   - [Automate testing of Quickstart documentation with tools](en/development/test-quickstart.md)

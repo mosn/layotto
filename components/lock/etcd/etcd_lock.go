@@ -77,7 +77,7 @@ func (e *EtcdLock) Features() []lock.Feature {
 }
 
 // Node tries to acquire a etcd lock
-func (e *EtcdLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
+func (e *EtcdLock) TryLock(ctx context.Context, req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 	var leaseId clientv3.LeaseID
 	//1.Create new lease
 	lease := clientv3.NewLease(e.client)
@@ -108,7 +108,7 @@ func (e *EtcdLock) TryLock(req *lock.TryLockRequest) (*lock.TryLockResponse, err
 }
 
 // Node tries to release a etcd lock
-func (e *EtcdLock) Unlock(req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
+func (e *EtcdLock) Unlock(ctx context.Context, req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 	key := e.getKey(req.ResourceId)
 
 	// 1.Create new KV

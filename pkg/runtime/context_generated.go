@@ -36,11 +36,9 @@ func newApplicationContext(m *MosnRuntime) *grpc.ApplicationContext {
 		DynamicComponents:     m.dynamicComponents,
 		CustomComponent:       m.customComponent,
 		CryptionService:       m.cryptionService,
-
-		EmailService: m.emailService,
-
-		PhoneCallService: m.phoneCallService,
-
-		SmsService: m.smsService,
+		EmailService:          m.emailService,
+		PhoneCallService:      m.phoneCallService,
+		SmsService:            m.smsService,
+		Extends:               m.runtimeConfig.Extends,
 	}
 }

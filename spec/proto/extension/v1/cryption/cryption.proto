@@ -41,6 +41,9 @@ message EncryptResponse {
 
   // The version of the key
   string key_version_id = 3;
+
+  // The request id of Encrypt
+  string request_id = 4;
 }
 
 // DecryptRequest is the request of the `Decrypt` method.
@@ -66,4 +69,6 @@ message DecryptResponse {
   // The version of the key
   string key_version_id = 3;
 
+  // The request id of Decrypt
+  string request_id = 4;
 }
