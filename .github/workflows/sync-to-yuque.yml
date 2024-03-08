@@ -13,6 +13,13 @@ jobs:
     steps:
       - name: Checkout Git Repo
         uses: actions/checkout@v2
+
+        
+      - name: Login to Aliyun Container Registry
+        run: docker login --username=$OSC_USER --password=$OSC_PWD oscollege-registry.cn-hangzhou.cr.aliyuncs.com
+        env:
+          OSC_USER: ${{ secrets.OSC_USER }}
+          OSC_PWD: ${{ secrets.OSC_PWD }}
     
       
       - name: Sync Git Repo to Yuque
