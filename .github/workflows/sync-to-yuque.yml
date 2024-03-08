@@ -16,7 +16,7 @@ jobs:
     
       
       - name: Sync Git Repo to Yuque
-        uses: scollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque@latest
+        uses: oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque@latest
         with:
           yuqueNamespace: "eg6z1a/eygxho"
           yuqueSite: "https://mosn-layotto.yuque.com/"
