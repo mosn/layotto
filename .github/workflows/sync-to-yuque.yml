@@ -16,7 +16,7 @@ jobs:
     
       
       - name: Sync Git Repo to Yuque
-        run: docker run -itd --name oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque@latest
+        run: docker run -itd --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
         env:
           yuqueNamespace: "eg6z1a/eygxho"
           yuqueSite: "https://mosn-layotto.yuque.com/"
