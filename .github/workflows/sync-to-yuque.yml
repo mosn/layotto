@@ -1,5 +1,4 @@
 name: Sync with Yuque
-
 on:
   push:
     branches:
@@ -7,29 +6,21 @@ on:
   pull_request:
     branches:
       - main
-
 jobs:
   sync:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Git Repo
         uses: actions/checkout@v2
-
       - name: Login to Aliyun Container Registry
         run: docker login --username ${{ secrets.OSC_USER }} --password ${{ secrets.OSC_PWD }} oscollege-registry.cn-hangzhou.cr.aliyuncs.com
-
       - name: Start Docker container
         run: docker run -itd -p 8777:8777 --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
-
       - name: Wait for container to start
         run: docker ps -a
-
-      - name: Check port availability
-        run: nc -z -w 2 localhost 8777
-
-      - name: Sync Git Repo to Yuque
+      - name: Check port availability and sync Git Repo to Yuque
         run: |
+          nc -z -w 2 localhost 8777
           api_url="http://localhost:8777/v1/rest/sync"
           yuque_namespace="eg6z1a/eygxho"
           yuque_site="https://mosn-layotto.yuque.com/"
@@ -39,7 +30,7 @@ jobs:
           git_doc_toc="/docs/SUMMARY.md"
           git_branch="main"
           is_github="true"
-          curl -X POST -H "Content-Type: application/json" -d '{
+          curl -v ${{ github.server_url }}:${{ github.server_port }} -X POST -H "Content-Type: application/json" -d '{
             "inputs": {
               "yuqueNamespace": "'"$yuque_namespace"'",
               "yuqueSite": "'"$yuque_site"'",
