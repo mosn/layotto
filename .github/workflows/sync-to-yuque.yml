@@ -30,7 +30,6 @@ jobs:
 
       - name: Sync Git Repo to Yuque
         run: |
-          commit_id=$(git rev-parse HEAD)
           api_url="http://localhost:8080/v1/rest/sync"
           yuque_namespace="eg6z1a/eygxho"
           yuque_site="https://mosn-layotto.yuque.com/"
