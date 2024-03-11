@@ -21,24 +21,18 @@ jobs:
       - name: Check port availability and sync Git Repo to Yuque
         run: |
           nc -z -w 2 localhost 8777
-          api_url="http://localhost:8777/v1/rest/sync"
-          yuque_namespace="eg6z1a/eygxho"
-          yuque_site="https://mosn-layotto.yuque.com/"
-          yuque_token="GMxMZw92ioczAGOCTueGOHSJOo6pr6tGTP3TgXLf"
-          git_repo="https://github.com/${{ github.repository }}"
-          git_doc_root="/"
-          git_doc_toc="/docs/SUMMARY.md"
-          git_branch="main"
-          is_github="true"
-          curl -v ${{ github.server_url }}:${{ github.server_port }} -X POST -H "Content-Type: application/json" -d '{
-            "inputs": {
-              "yuqueNamespace": "'"$yuque_namespace"'",
-              "yuqueSite": "'"$yuque_site"'",
-              "yuqueToken": "'"$yuque_token"'",
-              "gitRepo": "'"$git_repo"'",
-              "gitDocRoot": "'"$git_doc_root"'",
-              "gitDocToc": "'"$git_doc_toc"'",
-              "gitBranch": "'"$git_branch"'",
-              "isGitHub": "'"$is_github"'"
-            }
-          }' $api_url
+          curl --location 'http://localhost:8777/v1/rest/sync' \
+          --header 'Content-Type: application/json' \
+          --data '{
+              "inputs": {
+                  "yuqueNamespace": "eg6z1a/qpbul9",
+                  "yuqueSite": "https://mosn-layotto.yuque.com/",
+                  "yuqueToken":"TOdAggX2qQA20byXdw1qmfiJ2INwgATyf0uCUUM9",
+                  "gitRepo": "https://github.com/${{ github.repository }}",
+                  "gitDocRoot": "/",
+                  "gitDocToc": "SUMMARY.md",
+                  "gitBranch": "main",
+                  "isGitHub" : "true"
+          
+              }
+          }'
