@@ -17,7 +17,9 @@ jobs:
       - name: Start Docker container
         run: docker run -itd -p 8777:8777 --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
       - name: Wait for container to start
-        run: docker ps -a
+        run: docker ps
+      - name: docker exec
+        run: docker exec -it git-to-yuque bash
       - name: Print Docker logs
         run: docker logs git-to-yuque
       - name: Check port availability and sync Git Repo to Yuque
