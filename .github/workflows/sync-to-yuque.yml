@@ -20,7 +20,7 @@ jobs:
         run: docker login --username ${{ secrets.OSC_USER }} --password ${{ secrets.OSC_PWD }} oscollege-registry.cn-hangzhou.cr.aliyuncs.com
 
       - name: Start Docker container
-        run: docker run -itd --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
+        run: docker run -itd -p 8777:8777 --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
 
       - name: Wait for container to start
         run: sleep 10
@@ -29,7 +29,7 @@ jobs:
         run: |
           commit_id=$(git rev-parse HEAD)
           api_url="http://localhost:8777/v1/rest/sync"
-          yuque_namespace="eg6z1a/fofdsy"
+          yuque_namespace="eg6z1a/eygxho"
           yuque_site="https://mosn-layotto.yuque.com/"
           yuque_token="GMxMZw92ioczAGOCTueGOHSJOo6pr6tGTP3TgXLf"
           git_repo="https://github.com/${{ github.repository }}"
