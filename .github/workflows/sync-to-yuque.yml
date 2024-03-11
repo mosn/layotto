@@ -23,7 +23,7 @@ jobs:
         run: docker run -itd -p 8777:8777 --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
 
       - name: Wait for container to start
-        run: sleep 10
+        run: sleep 30
 
       - name: Sync Git Repo to Yuque
         run: |
