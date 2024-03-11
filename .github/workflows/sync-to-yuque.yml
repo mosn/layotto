@@ -20,19 +20,18 @@ jobs:
         run: docker login --username ${{ secrets.OSC_USER }} --password ${{ secrets.OSC_PWD }} oscollege-registry.cn-hangzhou.cr.aliyuncs.com
 
       - name: Start Docker container
-        run: docker run -itd -p 8777:8777 --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
+        run: docker run -itd -p 8080:8777 --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
 
       - name: Wait for container to start
         run: sleep 40
-        
+
       - name: Check port availability
-        run: |
-          nc -zv localhost 8777        
+        run: nc -zv localhost 8080
 
       - name: Sync Git Repo to Yuque
         run: |
           commit_id=$(git rev-parse HEAD)
-          api_url="http://localhost:8777/v1/rest/sync"
+          api_url="http://localhost:8080/v1/rest/sync"
           yuque_namespace="eg6z1a/eygxho"
           yuque_site="https://mosn-layotto.yuque.com/"
           yuque_token="GMxMZw92ioczAGOCTueGOHSJOo6pr6tGTP3TgXLf"
@@ -40,7 +39,6 @@ jobs:
           git_doc_root="/"
           git_doc_toc="/docs/SUMMARY.md"
           git_branch="main"
-
           curl -X POST -H "Content-Type: application/json" -d '{
             "inputs": {
               "yuqueNamespace": "'"$yuque_namespace"'",
@@ -52,4 +50,3 @@ jobs:
               "gitBranch": "'"$git_branch"'"
             }
           }' $api_url
-
