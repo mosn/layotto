@@ -19,7 +19,7 @@ jobs:
       - name: Wait for container to start
         run: docker ps
       - name: docker exec
-        run: docker exec -it git-to-yuque bash
+        run: docker exec -t git-to-yuque bash
       - name: Print Docker logs
         run: docker logs git-to-yuque
       - name: Check port availability and sync Git Repo to Yuque
