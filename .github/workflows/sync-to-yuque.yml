@@ -38,6 +38,7 @@ jobs:
           git_doc_root="/"
           git_doc_toc="/docs/SUMMARY.md"
           git_branch="main"
+          is_github="true"
           curl -X POST -H "Content-Type: application/json" -d '{
             "inputs": {
               "yuqueNamespace": "'"$yuque_namespace"'",
@@ -46,6 +47,7 @@ jobs:
               "gitRepo": "'"$git_repo"'",
               "gitDocRoot": "'"$git_doc_root"'",
               "gitDocToc": "'"$git_doc_toc"'",
-              "gitBranch": "'"$git_branch"'"
+              "gitBranch": "'"$git_branch"'",
+              "isGitHub": "'"$is_github"'"
             }
           }' $api_url
