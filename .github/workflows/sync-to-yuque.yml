@@ -24,6 +24,10 @@ jobs:
 
       - name: Wait for container to start
         run: sleep 40
+        
+      - name: Check port availability
+        run: |
+          nc -zv localhost 8777        
 
       - name: Sync Git Repo to Yuque
         run: |
