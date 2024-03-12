@@ -18,11 +18,13 @@ jobs:
 
       - name: Start Docker container
         run: |
-          docker run -itd -p 8080:8777 --name git-to-yuque -t oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
+          docker run -it -p 8080:8777 --name git-to-yuque -t oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
       - name: Wait for container to start
         run: sleep 10 
       - name: View container status
         run: docker ps
+      - name: View logs
+        run: docker exec git-to-yuque tail -100f /var/log/sofadoc.log
       - name: Check port availability and sync Git Repo to Yuque
         run: |
           curl --location --request POST 'http://localhost:8080/v1/rest/sync' \
