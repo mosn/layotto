@@ -18,11 +18,11 @@ jobs:
         run: |
           docker run -itd -p 8080:8777 --name git-to-yuque -t oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
       - name: Wait for container to start
-        run: sleep 10 
+        run: sleep 20 
       - name: docker status
         run: docker ps
       - name: docker exec
-        run: docker exec -it git-to-yuque bash
+        run: docker exec -i git-to-yuque bash
       - name: java
         run: java -jar git-to-yuque.jar
       - name: Check port availability and sync Git Repo to Yuque
