@@ -15,15 +15,17 @@ jobs:
       - name: Login to Aliyun Container Registry
         run: docker login --username ${{ secrets.OSC_USER }} --password ${{ secrets.OSC_PWD }} oscollege-registry.cn-hangzhou.cr.aliyuncs.com
       - name: Start Docker container
-        run: docker run -itd -p 8080:8777 --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
-      - name: cpu
-        run: lscpu
+        run: |
+          docker run -itd -p 8080:8777 --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
+          docker exec git-to-yuque bash 
+          java -jar git-to-yuque.jar
       - name: Wait for container to start
         run: docker ps
       - name: Print Docker logs
         run: docker logs git-to-yuque
       - name: Print 
-        run: telnet localhost 8080
+        run: |
+          docker exec git-to-yuque bash -c "telnet localhost 8080"
       - name: Check port availability and sync Git Repo to Yuque
         run: |
           curl --location 'http://localhost:8080/v1/rest/sync' \
@@ -38,6 +40,5 @@ jobs:
                   "gitDocToc": "SUMMARY.md",
                   "gitBranch": "main",
                   "isGitHub" : "true"
-          
               }
           }'
