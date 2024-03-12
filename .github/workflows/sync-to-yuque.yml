@@ -37,3 +37,5 @@ jobs:
                       "gitBranch": "main",
                       "isGitHub": "true"
                   }'
+      - name: View logs
+        run: docker exec git-to-yuque tail -100f /var/log/sofadoc.log
