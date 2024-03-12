@@ -20,13 +20,12 @@ jobs:
         run: |
           docker run -itd -p 8080:8777 --name git-to-yuque -t oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
       - name: Wait for container to start
-        run: sleep 20 
-      - name: docker status
+        run: sleep 10 
+      - name: View container status
         run: docker ps
       - name: Check port availability and sync Git Repo to Yuque
         run: |
-          docker exec git-to-yuque java -jar git-to-yuque.jar \
-              && curl --location --request POST 'http://localhost:8080/v1/rest/sync' \
+          curl --location --request POST 'http://localhost:8080/v1/rest/sync' \
                   --header 'Content-Type: application/json' \
                   --data-raw '{
                       "yuqueNamespace": "eg6z1a/qpbul9",
