@@ -25,14 +25,14 @@ jobs:
         run: docker ps
       - name: Check port availability and sync Git Repo to Yuque
         run: |
-          curl --location 'http://localhost:8777/v1/rest/sync' \
+          curl --location 'http://localhost:8080/v1/rest/sync' \
           --header 'Content-Type: application/json' \
           --data '{
               "inputs": {
-                  "yuqueNamespace": "eg6z1a/qpbul9",
+                  "yuqueNamespace": "eg6z1a/eygxho",
                   "yuqueSite": "https://mosn-layotto.yuque.com/",
                   "yuqueToken":"TOdAggX2qQA20byXdw1qmfiJ2INwgATyf0uCUUM9",
-                  "gitRepo": "https://github.com/Duan-0916/alipay-test.git",
+                  "gitRepo": "https://github.com/${{ github.repository }}",
                   "gitDocRoot": "/",
                   "gitDocToc": "SUMMARY.md",
                   "gitBranch": "main",
