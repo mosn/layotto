@@ -20,7 +20,8 @@ jobs:
         run: docker ps
       - name: Print Docker logs
         run: docker logs git-to-yuque
-             ping localhost:8777
+      - name: Print 
+        run: telnet localhost 8777
       - name: Check port availability and sync Git Repo to Yuque
         run: |
           curl --location 'http://localhost:8777/v1/rest/sync' \
