@@ -23,22 +23,18 @@ jobs:
         run: sleep 20 
       - name: docker status
         run: docker ps
-      - name: docker exec
-        run: docker exec git-to-yuque java -jar git-to-yuque.jar
-
       - name: Check port availability and sync Git Repo to Yuque
         run: |
-          curl --location 'http://localhost:8080/v1/rest/sync' \
-              "inputs": {
-                  "yuqueNamespace": "eg6z1a/qpbul9",
-                  "yuqueSite": "https://mosn-layotto.yuque.com/",
-                  "yuqueToken":"TOdAggX2qQA20byXdw1qmfiJ2INwgATyf0uCUUM9",
-                  "yuqueToken": "TOdAggX2qQA20byXdw1qmfiJ2INwgATyf0uCUUM9",
-                  "gitRepo": "https://github.com/${{ github.repository }}",
-                  "gitDocRoot": "/",
-                  "gitDocToc": "SUMMARY.md",
-                  "gitBranch": "main",
-                  "isGitHub" : "true"
-                  "isGitHub": "true"
-              }
-          }'
+          docker exec git-to-yuque java -jar git-to-yuque.jar \
+              && curl --location --request POST 'http://localhost:8080/v1/rest/sync' \
+                  --header 'Content-Type: application/json' \
+                  --data-raw '{
+                      "yuqueNamespace": "eg6z1a/qpbul9",
+                      "yuqueSite": "https://mosn-layotto.yuque.com/",
+                      "yuqueToken": "TOdAggX2qQA20byXdw1qmfiJ2INwgATyf0uCUUM9",
+                      "gitRepo": "https://github.com/${{ github.repository }}",
+                      "gitDocRoot": "/",
+                      "gitDocToc": "SUMMARY.md",
+                      "gitBranch": "main",
+                      "isGitHub": true
+                  }'
