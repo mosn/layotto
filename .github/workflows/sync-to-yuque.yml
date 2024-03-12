@@ -16,7 +16,7 @@ jobs:
 
       - name: Start Docker container
         run: |
-          docker run -itd -p 8080:8777 --name git-to-yuque --platform linux/amd64 -t reg.docker.alibaba-inc.com/aci-images/karrior-entrypoint:223530635_nydus_v2
+          docker run -itd -p 8080:8777 --name git-to-yuque  --network=host -t reg.docker.alibaba-inc.com/aci-images/karrior-entrypoint:223530635_nydus_v2
 
       - name: Wait for container to start
         run: sleep 20
