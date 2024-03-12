@@ -15,16 +15,16 @@ jobs:
       - name: Login to Aliyun Container Registry
         run: docker login --username ${{ secrets.OSC_USER }} --password ${{ secrets.OSC_PWD }} oscollege-registry.cn-hangzhou.cr.aliyuncs.com
       - name: Start Docker container
-        run: docker run -itd -p 8777:8777 --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
+        run: docker run -itd -p 8080:8777 --name git-to-yuque oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
       - name: Wait for container to start
         run: docker ps
       - name: Print Docker logs
         run: docker logs git-to-yuque
       - name: Print 
-        run: telnet localhost 8777
+        run: telnet localhost 8080
       - name: Check port availability and sync Git Repo to Yuque
         run: |
-          curl --location 'http://localhost:8777/v1/rest/sync' \
+          curl --location 'http://localhost:8080/v1/rest/sync' \
           --header 'Content-Type: application/json' \
           --data '{
               "inputs": {
