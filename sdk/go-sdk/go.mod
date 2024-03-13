@@ -8,7 +8,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0
 	google.golang.org/grpc v1.37.0
-	google.golang.org/protobuf v1.26.0-rc.1
+	google.golang.org/protobuf v1.33.0
 	mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3
 )
 
