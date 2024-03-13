@@ -46,7 +46,7 @@ require (
 	go.mongodb.org/mongo-driver v1.8.0
 	go.uber.org/atomic v1.8.0
 	google.golang.org/grpc v1.48.0
-	google.golang.org/protobuf v1.27.1
+	google.golang.org/protobuf v1.33.0
 	mosn.io/api v1.3.0
 	mosn.io/layotto/spec v0.0.0-20231023045845-48ec2bc7eab8
 	mosn.io/mosn v1.3.0
