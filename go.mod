@@ -33,7 +33,7 @@ require (
 	go.uber.org/atomic v1.8.0
 	google.golang.org/grpc v1.48.0
 	google.golang.org/grpc/examples v0.0.0-20210818220435-8ab16ef276a3
-	google.golang.org/protobuf v1.28.1
+	google.golang.org/protobuf v1.33.0
 	k8s.io/api v0.20.2
 	k8s.io/apimachinery v0.20.2
 	mosn.io/api v1.5.0
