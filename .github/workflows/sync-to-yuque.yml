@@ -10,44 +10,44 @@ on:
 jobs:
   sync:
     runs-on:  ubuntu-latest
-    steps:
-      - uses: 15669072513/gitdoc-sync-docker@main
-        with:
-          osc_user: ${{ secrets.OSC_USER }} 
-          osc_pwd: ${{ secrets.OSC_PWD }}  
-          yuqueNamespace: g6z1a/eygxho
-          yuqueSite: https://mosn-layotto.yuque.com/
-          yuqueToken: TOdAggX2qQA20byXdw1qmfiJ2INwgATyf0uCUUM9
-          gitRepo: https://github.com/${{ github.repository }}.git
-          gitBranch: main
-          gitDocToc: /docs/SUMMARY.md
     # steps:
-    #   - name: Checkout Git Repo
-    #     uses: actions/checkout@v2
-    #   - name: Login to Aliyun Container Registry
-    #     run: docker login --username ${{ secrets.OSC_USER }} --password ${{ secrets.OSC_PWD }} oscollege-registry.cn-hangzhou.cr.aliyuncs.com
+    #   - uses: 15669072513/gitdoc-sync-docker@main
+    #     with:
+    #       osc_user: ${{ secrets.OSC_USER }} 
+    #       osc_pwd: ${{ secrets.OSC_PWD }}  
+    #       yuqueNamespace: g6z1a/eygxho
+    #       yuqueSite: https://mosn-layotto.yuque.com/
+    #       yuqueToken: TOdAggX2qQA20byXdw1qmfiJ2INwgATyf0uCUUM9
+    #       gitRepo: https://github.com/${{ github.repository }}.git
+    #       gitBranch: main
+    #       gitDocToc: /docs/SUMMARY.md
+    steps:
+      - name: Checkout Git Repo
+        uses: actions/checkout@v2
+      - name: Login to Aliyun Container Registry
+        run: docker login --username ${{ secrets.OSC_USER }} --password ${{ secrets.OSC_PWD }} oscollege-registry.cn-hangzhou.cr.aliyuncs.com
 
-    #   - name: Start Docker container
-    #     run: |
-    #       docker run -itd -p 8080:8777 --name git-to-yuque -t oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
-    #   - name: Wait for container to start
-    #     run: sleep 10 
-    #   - name: View container status
-    #     run: docker ps
-    #   - name: Check port availability and sync Git Repo to Yuque
-    #     run: |
-    #       curl --location 'http://localhost:8080/v1/rest/sync' \
-    #       --header 'Content-Type: application/json' \
-    #       --data '{
-    #           "inputs": {
-    #               "yuqueNamespace": "eg6z1a/eygxho",
-    #               "yuqueSite": "https://mosn-layotto.yuque.com/",
-    #               "yuqueToken":"TOdAggX2qQA20byXdw1qmfiJ2INwgATyf0uCUUM9",
-    #               "gitRepo": "https://github.com/${{ github.repository }}.git",
-    #               "gitDocRoot": "/",
-    #               "gitDocToc": "/docs/SUMMARY.md",
-    #               "gitBranch": "main",
-    #               "isGitHub" : "true"
+      - name: Start Docker container
+        run: |
+          docker run -itd -p 8080:8777 --name git-to-yuque -t oscollege-registry.cn-hangzhou.cr.aliyuncs.com/oscollege/git-to-yuque:latest
+      - name: Wait for container to start
+        run: sleep 10 
+      - name: View container status
+        run: docker ps
+      - name: Check port availability and sync Git Repo to Yuque
+        run: |
+          curl --location 'http://localhost:8080/v1/rest/sync' \
+          --header 'Content-Type: application/json' \
+          --data '{
+              "inputs": {
+                  "yuqueNamespace": "eg6z1a/eygxho",
+                  "yuqueSite": "https://mosn-layotto.yuque.com/",
+                  "yuqueToken":"TOdAggX2qQA20byXdw1qmfiJ2INwgATyf0uCUUM9",
+                  "gitRepo": "https://github.com/${{ github.repository }}.git",
+                  "gitDocRoot": "/",
+                  "gitDocToc": "/docs/SUMMARY.md",
+                  "gitBranch": "main",
+                  "isGitHub" : "true"
           
-    #           }
-    #       }'
+              }
+          }'
