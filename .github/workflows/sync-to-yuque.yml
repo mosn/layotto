@@ -13,6 +13,7 @@ jobs:
     steps:
       - uses: 15669072513/gitdoc-sync-docker@main
         with:
+          osc_user: ${{ secrets.OSC_USER }} 
           osc_pwd: ${{ secrets.OSC_PWD }}  
           yuqueNamespace: g6z1a/eygxho
           yuqueSite: https://mosn-layotto.yuque.com/
