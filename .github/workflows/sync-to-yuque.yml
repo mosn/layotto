@@ -18,7 +18,6 @@ jobs:
           yuqueSite: https://mosn-layotto.yuque.com/
           yuqueToken: TOdAggX2qQA20byXdw1qmfiJ2INwgATyf0uCUUM9
           gitRepo: https://github.com/${{ github.repository }}.git
-          gitDocRoot: /
           gitBranch: main
           gitDocToc: /docs/SUMMARY.md
     # steps:
