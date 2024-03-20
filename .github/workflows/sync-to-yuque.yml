@@ -21,8 +21,8 @@ jobs:
           gitRepo: https://github.com/${{ github.repository }}.git
           gitBranch: main
           gitDocToc: /docs/SUMMARY.md
-    # steps:
-    #   - name: Checkout Git Repo
+    # steps: 
+    #   - name: Checkout Git Repo11
     #     uses: actions/checkout@v2
     #   - name: Login to Aliyun Container Registry
     #     run: docker login --username ${{ secrets.OSC_USER }} --password ${{ secrets.OSC_PWD }} oscollege-registry.cn-hangzhou.cr.aliyuncs.com
