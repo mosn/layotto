@@ -21,6 +21,7 @@ jobs:
           gitRepo: https://github.com/${{ github.repository }}.git
           gitBranch: main
           gitDocToc: /docs/SUMMARY.md
+          gitToken: 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
     # steps: 
     #   - name: Checkout Git Repo1
     #     uses: actions/checkout@v2
