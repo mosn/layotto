@@ -11,7 +11,7 @@ jobs:
   sync:
     runs-on:  ubuntu-latest
     steps:
-      - uses: Duan-0916/gitdoc-sync-docker@main
+      - uses: 15669072513/gitdoc-sync-docker@main
         with:
           osc_user: ${{ secrets.OSC_USER }} 
           osc_pwd: ${{ secrets.OSC_PWD }}  
