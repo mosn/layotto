@@ -97,7 +97,7 @@ func TestGetPatch(t *testing.T) {
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
 		}
-		if patch == nil || len(patch) == 0 {
+		if len(patch) == 0 {
 			t.Errorf("Expected patch, got nil or empty")
 		}
 	})
