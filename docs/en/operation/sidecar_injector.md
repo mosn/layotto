@@ -10,11 +10,14 @@ This Layotto state SDK client demo requires you to have the following installed 
 
 ## Step 1 - Setup Layotto sidecar injector on your Kubernetes cluster
 1. Use Kind to quickly build a local Kubernetes cluster
+
 ```
 kind create cluster --name layotto-cluster
 kubectl config use-context kind-layotto-cluster
 ```
+
 2. Install the layotto sidecar injector chart on your cluster in the layotto-system namespace
+
 ```
 helm install injector oci://docker.io/layotto/injector-helm --version v0.5.0 -n layotto-system --create-namespace --wait
 ```
@@ -33,10 +36,13 @@ helm install redis bitnami/redis --set image.tag=6.2 --set auth.enabled=false
 
 ## Step 3 - Deploy the layotto state client with the Layotto sidecar
 1. Create a ConfigMap named `layotto-config` and populate its data from the `config.json` file
+
 ```
 kubectl create configmap layotto-config --from-file=./config.json
 ```
+
 2. Deploy Layotto state SDK client App
+
 ```
 kubectl apply -f ./state-sdk-demo.yaml
 ```
