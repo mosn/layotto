@@ -90,6 +90,7 @@
         - [Snowflake](en/component_specs/sequencer/snowflake.md)
       - [Secret Store](en/component_specs/secret/common.md)
   - [How to deploy and upgrade Layotto](en/operation/)
+  - [Layotto sidecar injector](en/operation/sidecar_injector.md)
 - Design documents
   - [Actuator design doc](en/design/actuator/actuator-design-doc.md)
   - [Configuration API with Apollo](en/design/configuration/configuration-api-with-apollo.md)
