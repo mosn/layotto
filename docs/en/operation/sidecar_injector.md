@@ -1,5 +1,5 @@
 # Layotto sidecar injector
-Sidecar injector can inject the Layotto sidecar to your pods automatically.  
+Sidecar injector can inject the Layotto sidecar to your pods automatically.
 
 ## Prerequisites
 This Layotto state SDK client demo requires you to have the following installed on your machine:
@@ -7,6 +7,8 @@ This Layotto state SDK client demo requires you to have the following installed 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 - A Kubernetes cluster, such as [Minikube](https://minikube.sigs.k8s.io/docs/start/), [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/)
 - [Helm v3](https://helm.sh/docs/intro/install/)
+
+Remember to change your current directory to `${project_path}/demo/state/k8s`.
 
 ## Step 1 - Setup Layotto sidecar injector on your Kubernetes cluster
 1. Use Kind to quickly build a local Kubernetes cluster
