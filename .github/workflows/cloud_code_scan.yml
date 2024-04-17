@@ -21,4 +21,4 @@ jobs:
           parent_uid: ${{ secrets.ALI_PID }}
           private_key: ${{ secrets.ALI_PK }}
           scan_type: sca
-          tips: '可以加入钉钉群：31912621  来申请查看权限'
+          tips: '可以加入钉钉群：31912621   来申请查看权限'
