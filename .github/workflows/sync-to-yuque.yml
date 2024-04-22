@@ -17,4 +17,4 @@ jobs:
         with:
           yuqueNamespace: "eeg6z1a/tfxaz1"
           yuqueSite: "https://mosn-layotto.yuque.com"
-          yuqueToken: ${{ secrets.YUQUE_TOKEN }}
+          yuqueToken: "GMxMZw92ioczAGOCTueGOHSJOo6pr6tGTP3TgXLf"
