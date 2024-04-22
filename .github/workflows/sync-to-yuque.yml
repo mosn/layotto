@@ -1,0 +1,20 @@
+name: Sync with Yuque
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+jobs:
+  sync:
+    runs-on:  ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.base.ref == 'main')
+    steps:
+      - uses: Duan-0916/gitdoc-sync-docker@main
+        with:
+          yuqueNamespace: "eeg6z1a/tfxaz1"
+          yuqueSite: "https://mosn-layotto.yuque.com"
+          yuqueToken: ${{ secrets.YUQUE_TOKEN }}
