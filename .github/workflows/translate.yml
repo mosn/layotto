@@ -1,53 +1,53 @@
-name: 'issue-translator'
-on:
-  issue_comment:
-    types: [created]
-  issues:
-    types: [opened]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: usthe/issues-translate-action@v2.7
-        with:
-          IS_MODIFY_TITLE: false
-          # not require, default false, . Decide whether to modify the issue title
-          # if true, the robot account @Issues-translate-bot must have modification permissions, invite @Issues-translate-bot to your project or use your custom bot.
-          CUSTOM_BOT_NOTE: Bot detected the issue body's language is not English, translate it automatically. 👯👭🏻🧑‍🤝‍🧑👫🧑🏿‍🤝‍🧑🏻👩🏾‍🤝‍👨🏿👬🏿
-          # not require. Customize the translation robot prefix message.
-
-#name: translator
+#name: 'issue-translator'
 #on:
-#  issues:
-#    types: [opened, edited]
 #  issue_comment:
-#    types: [created, edited]
-#  discussion:
-#    types: [created, edited]
-#  discussion_comment:
-#    types: [created, edited]
-#  pull_request_target:
-#    types: [opened, edited]
-#  pull_request_review_comment:
-#    types: [created, edited]
+#    types: [created]
+#  issues:
+#    types: [opened]
 #
 #jobs:
-#  translate:
-#    permissions:
-#      issues: write
-#      discussions: write
-#      pull-requests: write
+#  build:
 #    runs-on: ubuntu-latest
 #    steps:
-#      - uses: actions/checkout@v3
-#      - uses: lizheming/github-translate-action
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+#      - uses: usthe/issues-translate-action@v2.7
 #        with:
-#          IS_MODIFY_TITLE: true
-#          APPEND_TRANSLATION: true
-#
+#          IS_MODIFY_TITLE: false
+#          # not require, default false, . Decide whether to modify the issue title
+#          # if true, the robot account @Issues-translate-bot must have modification permissions, invite @Issues-translate-bot to your project or use your custom bot.
+#          CUSTOM_BOT_NOTE: Bot detected the issue body's language is not English, translate it automatically. 👯👭🏻🧑‍🤝‍🧑👫🧑🏿‍🤝‍🧑🏻👩🏾‍🤝‍👨🏿👬🏿
+#          # not require. Customize the translation robot prefix message.
+
+name: translator
+on:
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created, edited]
+  discussion:
+    types: [created, edited]
+  discussion_comment:
+    types: [created, edited]
+  pull_request_target:
+    types: [opened, edited]
+  pull_request_review_comment:
+    types: [created, edited]
+
+jobs:
+  translate:
+    permissions:
+      issues: write
+      discussions: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: lizheming/github-translate-action
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          IS_MODIFY_TITLE: false
+          APPEND_TRANSLATION: true
+
 #
 ##name: translate
 ##on:
