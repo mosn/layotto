@@ -1,30 +1,62 @@
-name: translate
+name: 'translator'
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created, edited]
+  discussion:
+    types: [created, edited]
+  discussion_comment:
+    types: [created, edited]
+  pull_request_target:
+    types: [opened, edited]
+  pull_request_review_comment:
+    types: [created, edited]
+
 jobs:
-  synchronize-with-crowdin:
+  translate:
+    permissions:
+      issues: write
+      discussions: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: crowdin action
-        uses: crowdin/github-action@v1
-        with:
-          upload_sources: true
-          upload_translations: false
-          download_translations: true
-          localization_branch_name: l10n_crowdin_translations
-          create_pull_request: true
-          pull_request_title: 'New Crowdin Translations'
-          pull_request_body: 'New Crowdin translations by [Crowdin GH Action](https://github.com/crowdin/github-action)'
-          pull_request_base_branch_name: 'main'
+      - uses: actions/checkout@v3
+      - uses: lizheming/github-translate-action
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          CROWDIN_PROJECT_ID: ${{ secrets.PID }}
-          CROWDIN_PERSONAL_TOKEN: ${{ secrets.PTOKEN }}
+        with:
+          IS_MODIFY_TITLE: true
+          APPEND_TRANSLATION: true
+
+
+#name: translate
+#on:
+#  push:
+#    branches:
+#      - main
+#  pull_request:
+#    branches:
+#      - main
+#jobs:
+#  synchronize-with-crowdin:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: crowdin action
+#        uses: crowdin/github-action@v1
+#        with:
+#          upload_sources: true
+#          upload_translations: false
+#          download_translations: true
+#          localization_branch_name: l10n_crowdin_translations
+#          create_pull_request: true
+#          pull_request_title: 'New Crowdin Translations'
+#          pull_request_body: 'New Crowdin translations by [Crowdin GH Action](https://github.com/crowdin/github-action)'
+#          pull_request_base_branch_name: 'main'
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+#          CROWDIN_PROJECT_ID: ${{ secrets.PID }}
+#          CROWDIN_PERSONAL_TOKEN: ${{ secrets.PTOKEN }}
