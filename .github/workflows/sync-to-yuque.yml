@@ -15,6 +15,6 @@ jobs:
     steps:
       - uses: Duan-0916/gitdoc-sync-docker@main
         with:
-          yuqueNamespace: "mllcg2/yrcky3"
+          yuqueNamespace: "eg6z1a/tfxaz1"
           yuqueSite: "https://mosn-layotto.yuque.com"
           yuqueToken: ${{ secrets.YUQUE_TOKEN }}
