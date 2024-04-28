@@ -19,6 +19,9 @@
       "pattern":"^https://techhenzy.com/proxy-webassembly-architecture/"
     },
     {
+      "pattern":"^https://www.sofastack.tech/blog/the-next-five-years-of-cloud-native-runtime/"
+    },
+    {
       "pattern": "^#"
     }
   ],

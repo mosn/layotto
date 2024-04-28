@@ -128,7 +128,7 @@ func TestTryLock(t *testing.T) {
 
 	t.Run("normal", func(t *testing.T) {
 		mockLockStore := mock_lock.NewMockLockStore(gomock.NewController(t))
-		mockLockStore.EXPECT().TryLock(context.TODO(), gomock.Any()).DoAndReturn(func(ctx context.Context, req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
+		mockLockStore.EXPECT().TryLock(context.Background(), gomock.Any()).DoAndReturn(func(ctx context.Context, req *lock.TryLockRequest) (*lock.TryLockResponse, error) {
 			assert.Equal(t, "lock|||resource", req.ResourceId)
 			assert.Equal(t, "owner", req.LockOwner)
 			assert.Equal(t, int32(1), req.Expire)
