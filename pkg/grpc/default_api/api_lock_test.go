@@ -195,7 +195,7 @@ func TestUnlock(t *testing.T) {
 
 	t.Run("normal", func(t *testing.T) {
 		mockLockStore := mock_lock.NewMockLockStore(gomock.NewController(t))
-		mockLockStore.EXPECT().Unlock(context.TODO(), gomock.Any()).DoAndReturn(func(ctx context.Context, req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
+		mockLockStore.EXPECT().Unlock(context.Background(), gomock.Any()).DoAndReturn(func(ctx context.Context, req *lock.UnlockRequest) (*lock.UnlockResponse, error) {
 			assert.Equal(t, "lock|||resource", req.ResourceId)
 			assert.Equal(t, "owner", req.LockOwner)
 			return &lock.UnlockResponse{
