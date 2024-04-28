@@ -27,12 +27,15 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
+// handleRequest processes the incoming HTTP request for the injector.
 func (i *injector) handleRequest(w http.ResponseWriter, r *http.Request) {
+	// 1. Validate the incoming request.
 	if err := validateRequest(r); err != nil {
 		log.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	// 2. Read and deserialize the request body.
 	body, err := readRequestBody(r)
 	if err != nil {
 		log.Error(err.Error())
@@ -40,34 +43,41 @@ func (i *injector) handleRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Initialize variables for patch operations and success flag.
 	var patchOps jsonpatch.Patch
 	patchedSuccessfully := false
 
+	// Decode the request body into an AdmissionReview object.
 	ar := admissionv1.AdmissionReview{}
 	_, gvk, err := i.deserializer.Decode(body, nil, &ar)
 	if err != nil {
 		log.Errorf("Can't decode body: %v", err)
 	} else {
+		// 3. Attempt to get patch operations for the pod.
 		patchOps, err = i.getPodPatchOperations(r.Context(), &ar)
 		if err == nil {
 			patchedSuccessfully = true
 		}
 	}
 
+	// 4. Prepare the admission response.
 	var admissionResponse *admissionv1.AdmissionResponse
 	if err != nil {
 		admissionResponse = errorToAdmissionResponse(err)
 		log.Errorf("Sidecar layotto-injector failed to inject. Error: %s", err)
 	} else if len(patchOps) == 0 {
+		// Allow the request without modifications if no patch operations were found.
 		admissionResponse = &admissionv1.AdmissionResponse{
 			Allowed: true,
 		}
 	} else {
+		// Marshal the patch operations into bytes.
 		var patchBytes []byte
 		patchBytes, err = json.Marshal(patchOps)
 		if err != nil {
 			admissionResponse = errorToAdmissionResponse(err)
 		} else {
+			// Create a successful response with the patch operations.
 			admissionResponse = &admissionv1.AdmissionResponse{
 				Allowed: true,
 				Patch:   patchBytes,
@@ -79,20 +89,24 @@ func (i *injector) handleRequest(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// 5. Prepare the final AdmissionReview response.
 	admissionReview := admissionv1.AdmissionReview{
 		Response: admissionResponse,
 	}
 	if admissionResponse != nil && ar.Request != nil {
+		// Set the UID and GVK based on the original request.
 		admissionReview.Response.UID = ar.Request.UID
 		admissionReview.SetGroupVersionKind(*gvk)
 	}
 
+	// 6. Marshal the AdmissionReview into bytes for the response.
 	respBytes, err := json.Marshal(admissionReview)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Errorf("Sidecar layotto-injector failed to inject. Can't serialize response: %s", err)
 		return
 	}
+	// 7. Set the content type of the response and write the response bytes.
 	w.Header().Set("Content-Type", runtime.ContentTypeJSON)
 	_, err = w.Write(respBytes)
 	if err != nil {
