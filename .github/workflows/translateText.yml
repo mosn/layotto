@@ -11,9 +11,9 @@ jobs:
   sync:
     runs-on:  ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
+      # - uses: actions/checkout@v2
+      #   with:
+      #     submodules: true
       - uses: 15669072513/translateText@main
         with:
           fromDir: ./docs/zh/
