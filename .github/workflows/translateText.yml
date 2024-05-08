@@ -11,7 +11,7 @@ jobs:
   sync:
     runs-on:  ubuntu-latest
     steps:
-      - uses: 15669072513/translateText@re
+      - uses: 15669072513/translateText@main
         with:
           fromDir: ./layotto/docs/zh/
           toDir: ./layotto/docs/en/
