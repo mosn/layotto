@@ -11,8 +11,11 @@ jobs:
   sync:
     runs-on:  ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
       - uses: 15669072513/translateText@main
         with:
-          fromDir: ./layotto/docs/zh/
-          toDir: ./layotto/docs/en/
+          fromDir: ./docs/zh/
+          toDir: ./docs/en/
           to: en
