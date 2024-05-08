@@ -1,29 +1,19 @@
-name: translator
+name: Sync with Yuque
 on:
-  issues:
-    types: [opened, edited]
-  issue_comment:
-    types: [created, edited]
-  discussion:
-    types: [created, edited]
-  discussion_comment:
-    types: [created, edited]
-  pull_request_target:
-    types: [opened, edited]
-  pull_request_review_comment:
-    types: [created, edited]
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  translate:
-    permissions:
-      issues: write
-      discussions: write
-      pull-requests: write
-    runs-on: ubuntu-latest
+  sync:
+    runs-on:  ubuntu-latest
     steps:
-      - uses: lizheming/github-translate-action@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      - uses: 15669072513/translateTxt@main
         with:
-          IS_MODIFY_TITLE: false
-          APPEND_TRANSLATION: true
+          fromDir: ./layotto/docs/zh/
+          toDir: ./layotto/docs/en/
+          to: en
+
