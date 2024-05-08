@@ -1,0 +1,18 @@
+name: translateTxt
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on:  ubuntu-latest
+    steps:
+      - uses: 15669072513/translateTxt@main
+        with:
+          fromDir: ./layotto/docs/zh/
+          toDir: ./layotto/docs/en/
+          to: en
