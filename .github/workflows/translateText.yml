@@ -16,6 +16,6 @@ jobs:
       #     submodules: true
       - uses: 15669072513/translateText@main
         with:
-          fromDir: ./docs/zh/
-          toDir: ./docs/en/
+          fromDir: ./layotto/docs/zh/
+          toDir: ./layotto/docs/en/
           to: en
