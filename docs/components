@@ -1,6 +1,0 @@
-<html>
-  <head>
-    <meta name="go-import" content="mosn.io/layotto git https://github.com/mosn/layotto">
-    <meta name="go-source" content="mosn.io/layotto https://github.com/mosn/layotto https://github.com/mosn/layotto/tree/main{/dir} https://github.com/mosn/layotto/blob/main{/dir}/{file}#L{line}">
-  </head>
-</html>
