@@ -1,0 +1,46 @@
+version: 2.1
+
+jobs:
+  test:
+    machine: true  # 使用 machine 执行器
+    steps:
+      - checkout
+
+      - run:
+          name: Install psmisc (for killall command)
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y psmisc
+
+      # CircleCI 配置中的恢复缓存步骤
+      - restore_cache:
+          keys:
+            - go-mod-v1-{{ checksum "go.sum" }}
+            - go-mod-v1-
+
+      # 安装依赖项
+      - run:
+          name: Install dependencies
+          command: |
+            go mod download
+
+      # 保存缓存步骤
+      - save_cache:
+          paths:
+            - "~/go/pkg/mod"
+          key: go-mod-v1-{{ checksum "go.sum" }}
+
+      # 测试步骤
+      - run:
+          name: Test quickstart in Golang 1.18.5
+          command: make quickstart
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only:
+                - main
