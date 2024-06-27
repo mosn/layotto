@@ -1,10 +1,10 @@
 {
   "index_name": "layotto",
   "start_urls": [
-    "https://mosn.github.io/layotto/docs",
-    "https://mosn.github.io/layotto/blog",
-    "https://mosn.github.io/layotto/en-US/docs",
-    "https://mosn.github.io/layotto/en-US/blog"
+    "https://15669072513.github.io/layotto/docs",
+    "https://15669072513.github.io/layotto/blog",
+    "https://15669072513.github.io/layotto/en-US/docs",
+    "https://15669072513.github.io/layotto/en-US/blog"
   ],
   "stop_urls": [
     "/tests"
