@@ -1,6 +1,6 @@
 # FaaS 快速开始
 
-## 一、功能介绍
+### 一、功能介绍
 
 Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function之间互相调用以及访问基础设施，如Redis。
 

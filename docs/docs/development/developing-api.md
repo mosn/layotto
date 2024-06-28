@@ -9,9 +9,9 @@
 
 A: 目前缺少使用文档，用户不好用，例如：
 
-![img_1.png]((/img/development/api/img_1.png)
+![img_1.png](/img/development/api/img_1.png)
 
-![img_2.png]((/img/development/api/img_2.png)
+![img_2.png](/img/development/api/img_2.png)
 
 代码缺少注释，感兴趣的贡献者看不懂，例如 https://github.com/mosn/layotto/issues/112
 
@@ -45,8 +45,8 @@ A: **本规范只限制“新增Layotto API的pr需要有哪些东西”（比�
 提案需要包含以下内容：
 
 - 需求分析
-  - 为什么要做这个API
-  - 定义需求的边界，哪些feature支持，哪些不支持
+    - 为什么要做这个API
+    - 定义需求的边界，哪些feature支持，哪些不支持
 - 市面上产品调研
 - grpc/http API设计
 - 组件API设计
@@ -79,7 +79,7 @@ A: **本规范只限制“新增Layotto API的pr需要有哪些东西”（比�
 
 正例：[Dapr pub-sub quickstart](https://github.com/dapr/quickstarts/tree/v1.0.0/pub-sub) 在操作之前贴图解释下要做什么事情
 
-![img.png]((/img/development/api/img.png)
+![img.png](/img/development/api/img.png)
 
 反例：文档只写了操作步骤1234，用户看不懂操作这些想干啥
 
@@ -103,7 +103,7 @@ A: **本规范只限制“新增Layotto API的pr需要有哪些东西”（比�
 ##### how.怎么用这个API
 - 接口列表。例如：
 
-![img_4.png]((/img/development/api/img_4.png)
+![img_4.png](/img/development/api/img_4.png)
 
 列出来有哪些接口，一方面省的用户自己去翻proto、不知道哪些是相关API,一方面避免用户产生"这项目连接口文档都没有？！"的反感
 - 关于接口的出入参：拿proto注释当接口文档  
@@ -202,7 +202,7 @@ message StateOptions {
 
 ```protobuf
 	//StopSubscribe stop subs
-        StopSubscribe()
+    StopSubscribe()
 ```
 
 ## 三、提交pull request
