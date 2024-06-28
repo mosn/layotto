@@ -30,7 +30,7 @@ jobs:
           SSH_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         with:
           source-directory: 'docs/build'
-          destination-github-username: '15669072513'
-          destination-repository-name: 'mosn.github.io'
+          destination-github-username: 'layotto'
+          destination-repository-name: 'layotto.github.io'
           target-branch: master
           target-directory: 'layotto'
