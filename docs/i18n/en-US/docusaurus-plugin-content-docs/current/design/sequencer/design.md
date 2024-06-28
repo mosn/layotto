@@ -221,7 +221,7 @@ The app1 then wants to replace the store as a sequence, then he would like to st
 
 Another example is[Leaf的设计](https://tech.meituan.com/2017/04/21/mt-leaf.htm) and one max_id per biz_tag (Leaf's max_id is our biggerThan)
 
-![leaf_max_id.png](../(/img/sequencer/design/leaf_max_id.png)
+![leaf_max_id.png](/img/sequencer/design/leaf_max_id.png)
 
 **Q: Do not cache at runtime layer?**
 

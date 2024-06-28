@@ -62,7 +62,7 @@ Specifically, MOSN adds a listener, writing a new stream_filter, which is respon
 
 The Endpoint concept is abstracted within the actuator, and when a new request arrives on the server, the Actuator will commission the corresponding endpoint.Endpoint supports the extension and injection of actuator：
 
-![img.png](../(/img/actuator/abstract.png)
+![img.png](/img/actuator/abstract.png)
 
 ## Http API Design
 
@@ -183,13 +183,13 @@ Don't force for now
 
 ## Data model for configuration of data
 
-![img.png](../(/img/actuator/actuator_config.png)
+![img.png](/img/actuator/actuator_config.png)
 
 Add a listener to handle actuator,stream_filters adding actuator_filter, to handle actuators' requests (see below)
 
 ## Internal structure and request processing process
 
-![img.png](../(/img/actuator/actuator_process.png)
+![img.png](/img/actuator/actuator_process.png)
 
 Explanation：
 
@@ -270,22 +270,22 @@ info.Endpoint request for distribution to info.Contributor implementation
 
 - SetsStarted
 
-![img.png](../(/img/actuator/set_started.png)
+![img.png](/img/actuator/set_started.png)
 
 - SetUnhealth burial point
 
 Startup failed:
 
-![img.png](../(/img/actuator/img.png)
+![img.png](/img/actuator/img.png)
 
 On Stop's：
 
-![img.png](../(/img/actuator/img_1.png)
+![img.png](/img/actuator/img_1.png)
 
 ### Apollo components
 
 init:
 
-![img_2.png](../(/img/actuator/img_2.png)
+![img_2.png](/img/actuator/img_2.png)
 
 There is no place where the burial is required, because the runtime_startup indicator can also report unhealth if the initialization connection fails.

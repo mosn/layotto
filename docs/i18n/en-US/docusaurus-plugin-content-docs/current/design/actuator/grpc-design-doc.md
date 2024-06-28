@@ -17,7 +17,7 @@ MOSN is able to provide a GRPC Server based on the go grpc server framework. Com
 
 Split NetworkFilter Mechanisms & Processes
 
-![networkfilter.png](../(/img/actuator/networkfilter.jpg)
+![networkfilter.png](/img/actuator/networkfilter.jpg)
 
 - When configuring the resolution, complete the start of the gRPC Server and start providing the service with the Listener listener listener for MOSN
 - A connection to a NetworkFilter object
@@ -30,7 +30,7 @@ Split NetworkFilter Mechanisms & Processes
   - Transmit the packed Conn to the encapsulated Listener, triggering Listener.Accept
   - Send read data in OnData to encapsulated Conns, Trigger Conn.Read
 
-![networkfilter-grpc.png](../(/img/actuator/networkfilter-grpc.jpg)
+![networkfilter-grpc.png](/img/actuator/networkfilter-grpc.jpg)
 
 - gRPC Server implementation
   - In implementing the gRPC Server using the official gRPC framework, the developer needs to generate a .pb.go file based on proto file, and a set of interfaces that meet the performance defined in the interface to register (Register) into the gRPC Server framework

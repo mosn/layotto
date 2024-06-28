@@ -12,13 +12,13 @@
 
 ## 数据流架构
 
-![](../(/img/pluggable/layotto_datatflow.png)
+![](/img/pluggable/layotto_datatflow.png)
 
 这是当前用户调用 sdk 开始的数据流向。虚线部分是与 pluggable component 主要参与的数据流。
 
 ### 组件发现
 
-![](../(/img/pluggable/layotto.png)
+![](/img/pluggable/layotto.png)
 
 如上图所示，用户自定义组件启动 socket 服务，并将 socket 文件放到指定目录中。 layotto 启动时，会读取该目录中的所有 socket 文件（跳过文件夹），并建立 socket 连接。
 

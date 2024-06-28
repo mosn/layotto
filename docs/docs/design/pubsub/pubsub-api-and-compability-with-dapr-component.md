@@ -12,13 +12,13 @@ Dapr的组件库可以直接复用；下文讨论sdk和proto是否复用、怎�
 ### 面临的问题
 
 1. dapr的sdk写死了调用接口的包名，名字里有dapr
-   ![img.png](../(/img/mq/design/img.png)
+   ![img.png](/img/mq/design/img.png)
 2. 我们会有差异化的需求，比如新字段、新API，如果直接使用 dapr.proto会不灵活
 
 ### 方案
 
 #### 不复用sdk和proto；把proto文件剥离，路径中立
-![img_1.png](../(/img/mq/design/img_1.png)
+![img_1.png](/img/mq/design/img_1.png)
 
 我们自己先定义个api-spec.proto，这个proto是dapr API的超集，并且路径名中立、没有layotto字样，基于这个proto自己开发个中立的RuntimeAPI sdk。
 
@@ -28,7 +28,7 @@ Dapr的组件库可以直接复用；下文讨论sdk和proto是否复用、怎�
 
 如果不好推的话，短期我们可以先在中立sdk里写个dapr适配器，用我们的sdk既能调dapr又能用layotto：
 
-![img_2.png](../(/img/mq/design/img_2.png)
+![img_2.png](/img/mq/design/img_2.png)
 
 优点：
 
@@ -49,7 +49,7 @@ Dapr的组件库可以直接复用；下文讨论sdk和proto是否复用、怎�
 
 #### A. 只要API做变更、和Dapr不一样，就新开个方法名
 
-![img_3.png](../(/img/mq/design/img_3.png)
+![img_3.png](/img/mq/design/img_3.png)
 
 新开方法名后，新老方法都得支持。**比如v1版是Dapr API版，v2版是扩展版本**
 
@@ -143,7 +143,7 @@ sidecar启动时调用app，一次性获取订阅关系。因此对启动顺序�
 一期先只支持开接口callback的形式，后续再优化加上声明式配置
 
 ## 2.3. Config Design
-![img.png](../(/img/mq/design/config.png)
+![img.png](/img/mq/design/config.png)
 
 现在的app相关配置是放组件里的，后面要提出来、重构下Configuration API等代码（见下）。
 
@@ -173,7 +173,7 @@ Service Mesh时代的Control Plane只服务RPC，但Runtime API时代，组件�
 1. 不好做集群配置下发
 1. 没法做组件权限管控配置(比如Dapr能限制app-id1只能访问topic_id1）
 
-![img_4.png](../(/img/mq/design/img_4.png)
+![img_4.png](/img/mq/design/img_4.png)
 
 需要重构下原先组件逻辑
 

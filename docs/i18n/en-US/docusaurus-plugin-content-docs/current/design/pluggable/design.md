@@ -12,13 +12,13 @@ Being highly unfriendly to multilingual users, Layotto therefore needs to provid
 
 ## Stream Architecture
 
-![](../(/img/plugble/layotto_dataflow.png)
+![](/img/pluggable/layotto_datatflow.png)
 
 This is the current user's stream of data starting with sdk.The dotted section is the main data flow involved with pluggable components.
 
 ### Component Found
 
-![](../(/img/pluggable/layotto.png)
+![](/img/pluggable/layotto.png)
 
 As shown in the graph above, the user-defined component starts the socket service and places the socket file in the specified directory. When layotto starts, all socket files in this directory are read (skipped folder) and socket connected.
 

@@ -17,7 +17,7 @@ MOSN 基于 go grpc server 框架提供一个 GRPC Server 的能力，相比于�
 
 首先梳理一下 NetworkFilter 机制与处理流程
 
-![networkfilter.png](../(/img/actuator/networkfilter.jpg)
+![networkfilter.png](/img/actuator/networkfilter.jpg)
 
 + 在配置解析时，完成 gRPC Server 的启动，随着 MOSN 的 Listener 监听开始提供服务
 + 一个连接对应一个 NetworkFilter 对象
@@ -30,7 +30,7 @@ MOSN 基于 go grpc server 框架提供一个 GRPC Server 的能力，相比于�
   + 在 OnNewConnection 中将封装的 Conn 传递给封装的 Listener，触发 Listener.Accept
   + 在 OnData 中将读取到的数据传递给封装的 Conn，触发 Conn.Read
 
-![networkfilter-grpc.png](../(/img/actuator/networkfilter-grpc.jpg)
+![networkfilter-grpc.png](/img/actuator/networkfilter-grpc.jpg)
 
 + gRPC Server 的实现
   + 在使用官方 gRPC 框架实现 gRPC Server 的时候，开发者需要基于 proto 文件生成一个.pb.go 文件，同时需要实现一组接口满足 proto 中定义的接口实现，将其注册（Register）到 gRPC Server 框架中

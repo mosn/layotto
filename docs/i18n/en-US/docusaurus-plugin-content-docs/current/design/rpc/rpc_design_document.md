@@ -14,7 +14,7 @@ In order to decouple with pb definition, a layer of RFC core abstraction has bee
 
 Since Mosn already has full RPC capacity support, layotto provides only a very light RPC framework
 
-![img.png](../(/img/rpc/rpc-layer.png)
+![img.png](/img/rpc/rpc-layer.png)
 
 ### Mosn Integration
 

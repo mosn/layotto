@@ -16,14 +16,14 @@ Dapr component libraries can be reused directly; below discuss whether sdk and p
 ### Problems encountered
 
 1. dapr sdk wrote the pack name in which the call interface was called, with dapr
-   ![img.png](../(/img/mq/design/img.png)
+   ![img.png](/img/mq/design/img.png)
 2. We will have differentiated needs, such as new fields, new APIs, if directly using dapr.proto will not be flexible
 
 ### Programmes
 
 #### No longer using sdk and proto; detach proto file, neutral path
 
-![img_1.png](../(/img/mq/design/img_1.png)
+![img_1.png](/img/mq/design/img_1.png)
 
 We first define an api-spec.proto, a superset of dapr API, with a neutral path name without layotto, based on this proto itself develop a neutral RuntimeAPI sdk.
 
@@ -33,7 +33,7 @@ If proto changes in the promotion process does not matter anything, Layotto draw
 
 If not, we can write a dapr adapter first in a neutral sdk, using our sdk to both adjust the dapr and layotto：
 
-![img_2.png](../(/img/mq/design/img_2.png)
+![img_2.png](/img/mq/design/img_2.png)
 
 Advantages：
 
@@ -55,7 +55,7 @@ Some of the following ideas：
 
 #### New method name as long as the API changes different from Dapr
 
-![img_3.png](../(/img/mq/design/img_3.png)
+![img_3.png](/img/mq/design/img_3.png)
 
 New and old methods are supported when new methods are opened.**For example, version v1 is Dapr API and version v2 is extended**
 
@@ -152,7 +152,7 @@ First issue only supports the format of the interface callback and then optimize
 
 ## Config Design
 
-![img.png](../(/img/mq/design/config.png)
+![img.png](/img/mq/design/config.png)
 
 The relevant configuration of the app is in the loaded, and the code you want to reconfigure the configuration API, etc. (see below).
 
@@ -183,7 +183,7 @@ Component configuration and app profile (callback port,app-id) are placed togeth
 1. Not good at making cluster configuration leader
 2. Component control configuration is not available (e.g. Dapr can limit app-id1 access only to topic_id1)
 
-![img_4.png](../(/img/mq/design/img_4.png)
+![img_4.png](/img/mq/design/img_4.png)
 
 Need to reconstruct the original component logic
 

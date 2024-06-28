@@ -2,7 +2,7 @@
 
 ## Structure design
 
-![img.png](../(/img/faas/faas-design.jpg)
+![img.png](/img/faas/faas-design.jpg)
 
 In the package FaaS, the following two issues were resolved mainly by the following question：
 

@@ -2,7 +2,7 @@
 
 ## 一、架构设计
 
-![img.png](../(/img/faas/faas-design.jpg)
+![img.png](/img/faas/faas-design.jpg)
 
 整套FaaS的方案中，主要解决了以下两个问题：
 1. 编译产生的 wasm 文件跟镜像之间的关系是什么？

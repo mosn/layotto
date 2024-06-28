@@ -215,7 +215,7 @@ type Configuration struct {
 
 另一个例子是[Leaf的设计](https://tech.meituan.com/2017/04/21/mt-leaf.htm) ，也是每个biz_tag对应一个max_id（Leaf的max_id就是我们的biggerThan)
 
-![leaf_max_id.png](../(/img/sequencer/design/leaf_max_id.png)
+![leaf_max_id.png](/img/sequencer/design/leaf_max_id.png)
 
 **Q: 要不要在runtime层实现缓存?**
 
