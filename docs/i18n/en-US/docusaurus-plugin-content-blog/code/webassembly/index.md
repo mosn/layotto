@@ -1,634 +1,269 @@
-# Layotto Source Parsing — WebAssembly
-
-> This paper mainly analyses the relevant implementation and application of Layotto Middle WASM.
->
-> by：[王志龙](https://github.com/rayowang) | 18 May 2022
-
-- [概述](#overview)
-- [源码分析](#source analysis)
-  - [框架INIT](#Frame INIT)
-  - [工作流程](#workflow)
-  - [FaaS模式](#FaaS mode)
-- [总结](#summary)
-
-## General description
-
-WebAssemly Abbreviations WASM, a portable, small and loaded binary format operating in sandboxing implementation environment, was originally designed to achieve high-performance applications in web browsers, benefiting from its good segregation and security, multilingual support, cool-start fast flexibility and agility and application to embed other applications for better expansion, and obviously we can embed it into Layotto.Layotto supports loading compiled WASM files and interacting with the Target WASM API via proxy_abi_version_0_2_0;
-other Layotto also supports loading and running WASM carrier functions and supports interfaces between Function and access to infrastructure; and Layotto communities are also exploring the compilation of components into WASM modules to increase segregation between modules.本文以 Layotto 官方 [quickstart](https://mosn.io/layotto/#/zh/start/wasm/start) 即访问redis相关示例为例来分析 Layotto 中 WebAssemly 相关的实现和应用。
-
-## Source analysis
-
-Note：is based on commit hash：f1cf350a52b5a1a0b3788a31681007a056e332ef
-
-### Frame INIT
-
-As the bottom layer of Layotto is Mosn, the WASM extension framework is also the WASM extension framework that reuses Mosn, as shown in figure 1 Layotto & Mosn WASM framework [1].
-
-![mosn\_wasm\_ext\_framework\_module](https://gw.alipaayobjects.com/md/rms_5891a1/afts/img/A*jz4BSJmVQ3gAAAAAAAAAAAAAAAAAAARQAQAQAQ)
-
-<center>Figure 1 Layotto & Mosn WASM framework </center>
-
-Among them, Manager is responsible for managing and dynamically updating WASM plugins;VM for managing WASM virtual machines, modules and instances;ABI serves as the application binary interface to provide an external interface [2].
-
-Here a brief review of the following concepts：\
-[Proxy-Wasm](https://github.com/proxy-waste) ：WebAssembly for Proxies (ABI specification) is an unrelated ABI standard that defines how proxy and WASM modules interact [3] in functions and callbacks.
-[proxy-wasm-go-sdk](https://github.com/tetratelabs/proxy-wasm-go-sdk) ：defines the interface of function access to system resources and infrastructure services based on [proxy-wasm/spec](https://github.com/proxy-wasm/speci) which brings together the Runtime API to increase access to infrastructure.\
-[proxy-wasm-go-host](https://github.com/mosn/proxy-waste-go-host) WebAssembly for Proxies (GoLang host implementation)：Proxy-Wasm golang implementation to implement Runtime ABI logic in Layotto.\
-VM：Virtual Machine 虚拟机，Runtime类型有：wasmtime、Wasmer、V8、 Lucet、WAMR、wasm3，本文例子中使用 wasmer
-
-1, see first the configuration of stream filter in [quickstart例子](https://mosn.io/layotto/#/start/waste/start) as follows, two WASM plugins can be seen, using waste VM to start a separate instance with configuration： below
-
-```json
- "stream_filters": [
-            LO
-              "type": "Layotto",
-              "config": API
-                "Function1": LOs
-                  "name": "function1", // Plugin name
-                  "instance_num": 1, // Number of sandbox instances
-                  "vm_config": LO
-                    "engine": "waste", // Virtual Machine Type Runtime Type
-                    "path": "demo/faas/code/golang/client/function_1. asm" /waste file path
-                  }
-                },
-                "Function2": LO
-                  "name": "function2", // Plugin name
-                  "instance_num": 1, // Number of sandbox instances
-                  "vm_config": LO
-                    "engine": "waste", // Virtual Machine Type Runtime Type
-                    "path": "demo/faas/code/golang/server/function_2. asm" /wasm file path
-                  }
-                }
-              }
-            }
-]
-```
-
-The primary logic in the configuration above is to receive HTTP requests, then call function2 through ABI, and return function2 as detailed below in code：
-
-```go
-func (Ctx *pHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.Action Led
-	/1. get request body
-	body, err := proxywasm. etHttpRequestBody(0, bodySize)
-	if err != nil L/
-		proxywasm.LogErrorf("GetHttpRequestBody failed: %v", err)
-		return types. ctionPause
-	}
-
-	/2. parse request param
-	bookName, err := getQueryParam(string(body), "name")
-	if err != nil Led
-		proxywasm. ogErrorf("param not found: %v", err)
-		returns types. ctionPause
-	}
-
-	/3. Request function2 through ABI
-	inventories, err := proxywasm. nvokeService("id_2", "", bookName)
-	if err != nil LO
-		proxywasm.Logrorf("invoke service failed: %v", err)
-		return types. ctionPause
-	}
-
-	/4. return result
-	proxywasm. ppendHttpResponseBody([]byte ("There are " + inventories + " inventories for " + bookName + ".")
-	return types.ActionContinue
-}
-```
-
-Function2 Primary logic is to receive HTTP requests, then call redisis through ABI and return to redis, as shown below in code：
-
-```go
-func (Ctx *pHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.Action 6
-	//1. get requested body
-	body, err := proxywasm.GetHttpRequestBody(0, bodySize)
-	if err != nil Led
-		proxywasm. ogErrorf("GetHttpRequestBody failed: %v", err)
-		returns types.ActionPause
-	}
-	bookName:= string(body)
-
-	/ 2. get request state from redis by specific key through ABI
-	inventories, err := proxywastem. etState("redis", bookName)
-	if err != nil LO
-		proxywasm.LogErrorf("GetState failed: %v", err)
-		returns types. ctionPause
-	}
-
-	/ 3. return result
-	proxywasm.AppendHttpResponseBody([]byte(inventories))
-	return types.ActionContinue
-}
-```
-
-2. The Manager component of the Frame 1 WASM is initialized at Mosn filter Init stage as shown below in code：
-
-```go
-// Create a proxy factory for WasmFilter
-func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilterChainFactory, error) {
-	factory := &FilterConfigFactory{
-		config:        make([]*filterConfigItem, 0, len(confs)),
-		RootContextID: 1,
-		plugins:       make(map[string]*WasmPlugin),
-		router:        &Router{routes: make(map[string]*Group)},
-	}
-
-	for configID, confIf := range confs {
-		conf, ok := confIf.(map[string]interface{})
-		if !ok {
-			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory config not a map, configID: %s", configID)
-			return nil, errors.New("config not a map")
-		}
-		// 解析 wasm filter 配置
-		config, err := parseFilterConfigItem(conf)
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to parse config, configID: %s, err: %v", configID, err)
-			return nil, err
-		}
-
-		var pluginName string
-		if config.FromWasmPlugin == "" {
-			pluginName = utils.GenerateUUID()
-            
-			// 根据 stream filter 的配置初始化 WASM 插件配置，VmConfig 即 vm_config，InstanceNum 即 instance_num
-			v2Config := v2.WasmPluginConfig{
-				PluginName:  pluginName,
-				VmConfig:    config.VmConfig,
-				InstanceNum: config.InstanceNum,
-			}
-            
-			// WasmManager 实例通过管理 PluginWrapper 对象对所有插件的配置进行统一管理，提供增删查改能力。下接3
-			err = wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
-			if err != nil {
-				config.PluginName = pluginName
-				addWatchFile(config, factory)
-				continue
-			}
-
-			addWatchFile(config, factory)
-		} else {
-			pluginName = config.FromWasmPlugin
-		}
-		config.PluginName = pluginName
-
-		// PluginWrapper 在上面的 AddOrUpdateWasm 中对插件及配置进行封装完成初始化，这里根据插件名从 sync.Map 拿出，以管理并注册 PluginHandler
-		pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginName)
-		if pw == nil {
-			return nil, errors.New("plugin not found")
-		}
-
-		config.VmConfig = pw.GetConfig().VmConfig
-		factory.config = append(factory.config, config)
-
-		wasmPlugin := &WasmPlugin{
-			pluginName:    config.PluginName,
-			plugin:        pw.GetPlugin(),
-			rootContextID: config.RootContextID,
-			config:        config,
-		}
-		factory.plugins[config.PluginName] = wasmPlugin
-		// 注册 PluginHandler，以对插件的生命周期提供扩展回调能力，例如插件启动 OnPluginStart、更新 OnConfigUpdate。下接4
-		pw.RegisterPluginHandler(factory)
-	}
-
-	return factory, nil
-}
-```
-
-3 Corresponding to Figure 1 WASM frame, NewWasmPlugin, for creating initialization of the WASM plugin, where VM, Module and Instance refer to virtual machines, modules and instances in WASM, as shown below in code：
-
-```go
-func NewWasmPlugin(wasmConfig v2.WasmPluginConfig) (types.WasmPlugin, error) {
-	// check instance num
-	instanceNum := wasmConfig.InstanceNum
-	if instanceNum <= 0 {
-		instanceNum = runtime.NumCPU()
-	}
-
-	wasmConfig.InstanceNum = instanceNum
-
-	// 根据配置获取 wasmer 编译和执行引擎
-	vm := GetWasmEngine(wasmConfig.VmConfig.Engine)
-	if vm == nil {
-		log.DefaultLogger.Errorf("[wasm][plugin] NewWasmPlugin fail to get wasm engine: %v", wasmConfig.VmConfig.Engine)
-		return nil, ErrEngineNotFound
-	}
-
-	// load wasm bytes
-	var wasmBytes []byte
-	if wasmConfig.VmConfig.Path != "" {
-		wasmBytes = loadWasmBytesFromPath(wasmConfig.VmConfig.Path)
-	} else {
-		wasmBytes = loadWasmBytesFromUrl(wasmConfig.VmConfig.Url)
-	}
-
-	if len(wasmBytes) == 0 {
-		log.DefaultLogger.Errorf("[wasm][plugin] NewWasmPlugin fail to load wasm bytes, config: %v", wasmConfig)
-		return nil, ErrWasmBytesLoad
-	}
-
-	md5Bytes := md5.Sum(wasmBytes)
-	newMd5 := hex.EncodeToString(md5Bytes[:])
-	if wasmConfig.VmConfig.Md5 == "" {
-		wasmConfig.VmConfig.Md5 = newMd5
-	} else if newMd5 != wasmConfig.VmConfig.Md5 {
-		log.DefaultLogger.Errorf("[wasm][plugin] NewWasmPlugin the hash(MD5) of wasm bytes is incorrect, config: %v, real hash: %s",
-			wasmConfig, newMd5)
-		return nil, ErrWasmBytesIncorrect
-	}
-
-	// 创建 WASM 模块，WASM 模块是已被编译的无状态二进制代码
-	module := vm.NewModule(wasmBytes)
-	if module == nil {
-		log.DefaultLogger.Errorf("[wasm][plugin] NewWasmPlugin fail to create module, config: %v", wasmConfig)
-		return nil, ErrModuleCreate
-	}
-
-	plugin := &wasmPluginImpl{
-		config:    wasmConfig,
-		vm:        vm,
-		wasmBytes: wasmBytes,
-		module:    module,
-	}
-
-	plugin.SetCpuLimit(wasmConfig.VmConfig.Cpu)
-	plugin.SetMemLimit(wasmConfig.VmConfig.Mem)
-
-	// 创建包含模块和运行时状态的实例，值得关注的是，这里最终会调用 proxywasm.RegisterImports 注册用户实现的 Imports 函数，比如示例中的 proxy_invoke_service 和 proxy_get_state
-actual := plugin.EnsureInstanceNum(wasmConfig.InstanceNum)
-	if actual == 0 {
-		log.DefaultLogger.Errorf("[wasm][plugin] NewWasmPlugin fail to ensure instance num, want: %v got 0", instanceNum)
-		return nil, ErrInstanceCreate
-	}
-
-	return plugin, nil
-}
-```
-
-Corresponding to ABI components in Figure 1 WASM frames, the OnPluginStart method calls proxy-wasm-go-host corresponding to ABI Exports and Imports etc.
-
-```go
-// Execute the plugin of FilterConfigFactory
-func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
-	plugin.Exec(func(instance types.WasmInstance) bool {
-		wasmPlugin, ok := f.plugins[plugin.PluginName()]
-		if !ok {
-			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get wasm plugin, PluginName: %s",
-				plugin.PluginName())
-			return true
-		}
-        
-		// 获取 proxy_abi_version_0_2_0 版本的与 WASM 交互的 API
-		a := abi.GetABI(instance, AbiV2)
-		a.SetABIImports(f)
-		exports := a.GetABIExports().(Exports)
-		f.LayottoHandler.Instance = instance
-
-		instance.Lock(a)
-		defer instance.Unlock()
-
-		// 使用 exports 函数 proxy_get_id（对应到 WASM 插件中 GetID 函数）获取 WASM 的 ID
-		id, err := exports.ProxyGetID()
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get wasm id, PluginName: %s, err: %v",
-				plugin.PluginName(), err)
-			return true
-		}
-		// 把ID 和 对应的插件注册到路由中，即可通过 http Header 中的键值对进行路由，比如 'id:id_1' 就会根据 id_1 路由到上面的 Function1 
-		f.router.RegisterRoute(id, wasmPlugin)
-
-		// 当第一个插件使用给定的根 ID 加载时通过 proxy_on_context_create 创建根上下文，并在虚拟机的整个生命周期中持续存在，直到 proxy_on_delete 删除 
-		// 值得注意的是这里说的第一个插件指的是多个松散绑定的插件(通过 SDK 使用 Root ID 对 Root Context 访问）在同一已配置虚拟机内共享数据的使用场景 [4]
-		err = exports.ProxyOnContextCreate(f.RootContextID, 0)
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][factory] OnPluginStart fail to create root context id, err: %v", err)
-			return true
-		}
-
-		vmConfigSize := 0
-		if vmConfigBytes := wasmPlugin.GetVmConfig(); vmConfigBytes != nil {
-			vmConfigSize = vmConfigBytes.Len()
-		}
-
-		// VM 伴随启动的插件启动时调用
-		_, err = exports.ProxyOnVmStart(f.RootContextID, int32(vmConfigSize))
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][factory] OnPluginStart fail to create root context id, err: %v", err)
-			return true
-		}
-
-		pluginConfigSize := 0
-		if pluginConfigBytes := wasmPlugin.GetPluginConfig(); pluginConfigBytes != nil {
-			pluginConfigSize = pluginConfigBytes.Len()
-		}
-
-		// 当插件加载或重新加载其配置时调用
-		_, err = exports.ProxyOnConfigure(f.RootContextID, int32(pluginConfigSize))
-		if err != nil {
-			log.DefaultLogger.Errorf("[proxywasm][factory] OnPluginStart fail to create root context id, err: %v", err)
-			return true
-		}
-
-		return true
-	})
-}
-```
-
-### Workflow
-
-The workflow for Layotto Middle WASM is broadly as shown in figure 2 Layotto & Mosn WASM workflow, where the configuration is largely covered by the initial elements above, with a focus on the request processing.
-![mosn\_wasm\_ext\_framework\_workflow](https://gw.alipaayobjects.com/md/rms_5891a1/afts/img/A*XTDeRq0alYsAAAAAAAAAAAAAAAAAAAAARQAQAQ)
-
-<center>Figure 2 Layotto & Mosn WAS Workflow </center>
-
-1、由 Layotto 底层 Mosn 收到请求，经过 workpool 调度，在 proxy downstream 中按照配置依次执行 StreamFilterChain 到 Wasm StreamFilter 的 OnReceive 方法，具体逻辑详见如下代码：
-
-```go
-func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
-	// 获取 WASM 插件的 id
-	id, ok := headers.Get("id")
-	if !ok {
-		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders no id in headers")
-		return api.StreamFilterStop
-	}
-    
-	// 从 router 中根据 id 获取对应的 WASM 插件
-	wasmPlugin, err := f.router.GetRandomPluginByID(id)
-	if err != nil {
-		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders id, err: %v", err)
-		return api.StreamFilterStop
-	}
-	f.pluginUsed = wasmPlugin
-
-	plugin := wasmPlugin.plugin
-	// 获取 WasmInstance 实例
-	instance := plugin.GetInstance()
-	f.instance = instance
-	f.LayottoHandler.Instance = instance
-
-	// ABI 包含 导出(Exports)和导入(Imports)两个部分，用户通过这它们与 WASM 扩展插件进行交互
-	pluginABI := abi.GetABI(instance, AbiV2)
-	if pluginABI == nil {
-		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive fail to get instance abi")
-		plugin.ReleaseInstance(instance)
-		return api.StreamFilterStop
-	}
-	// 设置导入 Imports 部分，导入部分由用户提供，虚拟机的执行需要依赖宿主机 Layotto 提供的部分能力，例如获取请求信息，这些能力通过导入部分由用户提供，并由 WASM 扩展调用
-	pluginABI.SetABIImports(f)
-
-	// 导出 Exports 部分由 WASM 插件提供，用户可直接调用——唤醒 WASM 虚拟机，并在虚拟机中执行对应的 WASM 插件代码
-	exports := pluginABI.GetABIExports().(Exports)
-	f.exports = exports
-	
-	instance.Lock(pluginABI)
-	defer instance.Unlock()
-	
-	// 根据 rootContextID 和 contextID 创建当前插件上下文
-	err = exports.ProxyOnContextCreate(f.contextID, wasmPlugin.rootContextID)
-	if err != nil {
-		log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to create context id: %v, rootContextID: %v, err: %v",
-			f.contextID, wasmPlugin.rootContextID, err)
-		return api.StreamFilterStop
-	}
-
-	endOfStream := 1
-	if (buf != nil && buf.Len() > 0) || trailers != nil {
-		endOfStream = 0
-	}
-
-	// 调用 proxy-wasm-go-host，编码请求头为规范指定的格式
-	action, err := exports.ProxyOnRequestHeaders(f.contextID, int32(headerMapSize(headers)), int32(endOfStream))
-	if err != nil || action != proxywasm.ActionContinue {
-		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders err: %v", err)
-		return api.StreamFilterStop
-	}
-
-	endOfStream = 1
-	if trailers != nil {
-		endOfStream = 0
-	}
-
-	if buf == nil {
-		arg, _ := variable.GetString(ctx, types.VarHttpRequestArg)
-		f.requestBuffer = buffer.NewIoBufferString(arg)
-	} else {
-		f.requestBuffer = buf
-	}
-
-	if f.requestBuffer != nil && f.requestBuffer.Len() > 0 {
-		// 调用 proxy-wasm-go-host，编码请求体为规范指定的格式
-		action, err = exports.ProxyOnRequestBody(f.contextID, int32(f.requestBuffer.Len()), int32(endOfStream))
-		if err != nil || action != proxywasm.ActionContinue {
-			log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestBody err: %v", err)
-			return api.StreamFilterStop
-		}
-	}
-
-	if trailers != nil {
-        // 调用 proxy-wasm-go-host，编码请求尾为规范指定的格式
-		action, err = exports.ProxyOnRequestTrailers(f.contextID, int32(headerMapSize(trailers)))
-		if err != nil || action != proxywasm.ActionContinue {
-			log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestTrailers err: %v", err)
-			return api.StreamFilterStop
-		}
-	}
-
-	return api.StreamFilterContinue
-}
-```
-
-2, proxy-wasm-go-host encode Mosn requests for triplets into the specified format and call Proxy-Wasm ABI equivalent interface in Proxy_on_request_headers and call the WASMER virtual machine to pass the request information to the WASM plugin.
-
-```go
-func (a *ABIContext) CallWasmFunction (functionName string, args ..interface{}) (interface{}, Action, error) um
-	ff, err := a.Instance. eExportsFunc(functionName)
-	if err != nil {
-		return nil, ActionContinue, err
-	}
-
-	// Call waste virtual machine (Github.com/wasmerio/wasmer-go/wasmer.(*Function).Call at function.go)
-	res, err := ff. all(args....)
-	if err != nil L/
-		a.Instance.HandleError(err)
-		return nil, ActionContinue, err
-	}
-
-	// if we have sync call, e. HttpCall, then unlocked the waste instance and wait until it resp
-	action := a.Imports.Wait()
-
-	return res, action, nil
-}
-```
-
-3、WASMER 虚拟机经过处理调用 WASM 插件的具体函数，比如例子中的 OnHttpRequestBody 函数
-// function, _:= instance.Exports.GetFunction("exported_function")
-// nativeFunction = function.Native()
-//_ = nativeFunction(1, 2, 3)
-// Native 会将 Function 转换为可以调用的原生 Go 函数
-
-```go
-func (self *Function) Native() NativeFunction {
-	...
-	self.lazyNative = func(receivedParameters ...interface{}) (interface{}, error) {
-		numberOfReceivedParameters := len(receivedParameters)
-		numberOfExpectedParameters := len(expectedParameters)
-		...
-		results := C.wasm_val_vec_t{}
-		C.wasm_val_vec_new_uninitialized(&results, C.size_t(len(ty.Results())))
-		defer C.wasm_val_vec_delete(&results)
-
-		arguments := C.wasm_val_vec_t{}
-		defer C.wasm_val_vec_delete(&arguments)
-
-		if numberOfReceivedParameters > 0 {
-			C.wasm_val_vec_new(&arguments, C.size_t(numberOfReceivedParameters), (*C.wasm_val_t)(unsafe.Pointer(&allArguments[0])))
-		}
-
-		// 调用 WASM 插件内函数
-		trap := C.wasm_func_call(self.inner(), &arguments, &results)
-
-		runtime.KeepAlive(arguments)
-		runtime.KeepAlive(results)
-		...
-	}
-
-	return self.lazyNative
-}
-```
-
-4, proxy-wasm-go-sdk converts the requested data from the normative format to a user-friendly format and then calls the user extension code.Proxy-wasm-go-sdk, based on proxy-waste/spec implementation, defines the interface between function access to system resources and infrastructure services, and builds on this integration of the Runtime API, adding ABI to infrastructure access.
-
-```go
-// function1主要逻辑就是接收 HTTP 请求，然后通过 ABI 调用 function2，并返回 function2 结果，具体代码如下所示
-func (ctx *httpHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.Action {
-	//1. get request body
-	body, err := proxywasm.GetHttpRequestBody(0, bodySize)
-	if err != nil {
-		proxywasm.LogErrorf("GetHttpRequestBody failed: %v", err)
-		return types.ActionPause
-	}
-
-	//2. parse request param
-	bookName, err := getQueryParam(string(body), "name")
-	if err != nil {
-		proxywasm.LogErrorf("param not found: %v", err)
-		return types.ActionPause
-	}
-
-	//3. request function2 through ABI
-	inventories, err := proxywasm.InvokeService("id_2", "", bookName)
-	if err != nil {
-		proxywasm.LogErrorf("invoke service failed: %v", err)
-		return types.ActionPause
-	}
-
-	//4. return result
-	proxywasm.AppendHttpResponseBody([]byte("There are " + inventories + " inventories for " + bookName + "."))
-	return types.ActionContinue
-}
-```
-
-5, WASM plugin is registered at RegisterFunc initialization. For example, Function1 RPC calls Proxy InvokeService,Function2 to get ProxyGetState specified in Redis as shown below in：
-
-Function1 Call Function2, Proxy InvokeService for Imports function proxy_invoke_service through the Proxy InvokeService
-
-```go
-func ProxyInvokeService(instance common). asmInstance, idPtr int32, idSize int32, methodPtr int32, methodPtr int32, paramPtr int32, resultPtr int32, resultSize int32) int32 56
-	id, err := instance. etMemory(uint64(idPtr), uint64(idSize))
-	if err != nil LO
-		returnWasmResultInvalidMemoryAcces.Int32()
-	}
-
-	method, err := instance. etMemory(uint64 (methodPtr), uint64 (methodSize))
-	if err != nil LO
-		returnWasmResultInvalidMemoryAccess. nt32()
-	}
-
-	param, err := instance.GetMemory(uint64 (paramPtr), uint64 (paramSize))
-	if err != nil Fe
-		returnn WasmResultInvalidMemoryAccess. nt32()
-	}
-
-	ctx:= getImportHandler(instance)
-    
-	// Laytto rpc calls
-	ret, res := ctx. nvokeService(string(id), string(param))
-	if res != WasmResultOk 6
-		return res.Int32()
-
-
-	return copyIntoInstance(instance, ret, resultPtr, resultSize).Int32()
-}
-```
-
-Function2 Get Redis via ProxyGetState to specify key Valye, ProxyGetState for Imports function proxy_get_state
-
-```go
-func ProxyGetState(instance common.WasmInstance, storeNamePtr int32, storeNameSize int32, keyPtr int32, valuePtr int32, valueSize int32) int32 Fe
-	storeName, err := instance. etMemory(uint64 (storeNamePtr), uint64 (storeNameSize))
-	if err != nil LO
-		returnWasmResultInvalidMemoryAccess.Int32()
-	}
-
-	key, err := instance. etMemory(uint64(keyPtr), uint64(keySize))
-	if err != nil LO
-		returnWasmResultInvalidMemoryAccess.Int32()
-	}
-
-	ctx := getImportHandler(instance)
-
-	ret, res := ctx. etState(string(storeName), string(key))
-	if res != WasmResultOk 6
-		return res.Int32()
-	}
-
-	return copyIntoInstance(instance, ret, valuePtr, valueSize). Int32()
-}
-```
-
-More than the Layotto rpc process is briefly described as the implementation of [5]by two virtual connections using the Dapr API and underneath Mosn, see previous order articles [Layotto source parsing — processing RPC requests] (https://mosn.io/layotto/#/blog/code/layotto-rpc/index), where data from Redis can be obtained directly from Dapr State code and is not developed here.
-
-### FaaS Mode
-
-Look back back to the WASM features：bytes code that match the machine code; guarantee good segregation and security in the sandbox; compile cross-platforms, easily distributed, and load running; have lightweight and multilingual flexibilities and seem naturally suitable for FaaS.
-
-So Layotto also explores support for WASM FaaS mode by loading and running WASM carrier functions and supporting interfaces and access to infrastructure between Function.Since the core logic of loading the WASM has not changed, except that there is a difference between usage and deployment methods and those described above, the Layotto load part of the ASM logic is not redundant.
-
-In addition to the Wasm-Proxy implementation, the core logic of the FaaS mode is to manage the \*.wasm package and Kubernetes excellent structuring capabilities by expanding Containerd to multiple-run plugins containerd-shim-layotto-v2 [6]and using this "piercing wire" ingenuity to use Docker mirror capability. Specific structures and workflows can be found in Figure 3 Layotto FaaS Workflow.
-
-![layotto_faas_workflow](https://gw.alipaayobjects.com/md/rms_5891a1/afts/img/A\*XWmNT6-7 FoEAAAAAAAAAAAAAAAAAAAAAARQAQAQ)
-
-<center>Figure 3 Layotto FaaS Workflow </center>
-
-Here a simple look at the master function of containerd-shim-layotto-v2. It can be seen that shim.Run runs the WASM as io.containerd.layotto.v2, and runtime_type of the containerd plugins.crimerd.runtimes corresponding to the plugin.When creating a Pod, you specify runtimeClassName: layotto in yaml speed, and eventually kubelet will load and run them when cric-plugin calls containerd-shim-layotto-v2 is running.
-
-```go
-func main() {
-	startLayotto()
-	// 解析输入参数，初始化运行时环境，调用 wasm.New 实例化 service 对象 
-	shim.Run("io.containerd.layotto.v2", wasm.New)
-}
-
-func startLayotto() {
-	conn, err := net.Dial("tcp", "localhost:2045")
-	if err == nil {
-		conn.Close()
-		return
-	}
-
-	cmd := exec.Command("layotto", "start", "-c", "/home/docker/config.json")
-	cmd.Start()
-}
-```
-
-## Summary
-
-Layotto WebAssemly involves more basic WASM knowledge, but it is understandable that the examples are shallow deeper and gradual.At the end of the spectrum, the ASM technology can be seen to have been applied to many fields such as Web-Front, Serverlessness, Game Scene, Edge Computing, Service Grids, or even to the Docker parent Solomon Hykes recently said: "If the WASM technology is available in 2008, I will not be able to do the Docker" (later added that：Docker will not be replaced and will walk side by side with WASM) The ASM seems to be becoming lighter and better performing cloud-origin technology and being applied to more areas after the VM and Container, while believing that there will be more use scenes and users in Mosn community push and in Layotto continue exploration, here Layotto WebAssemly relevant source code analysis has been completed. Given time and length, some more comprehensive and in-depth profiles have not been carried out, and if there are flaws, welcome fingers, contact：rayo. angzl@gmail.com.
-
-### References
-
-- [1] [WebAssembly practice in MOSN](https://mosn.io/blog/posts/mosn-waste-framework/)
-- [2] [feature: WASM plugin framework](https://github.com/mosn/mosn/pull/1589)
-- [3] [WebAssembly for Proxies (ABI Spec)](https://github.com/proxy-wasm/spec)
-- [4] [Proxy WebAssembly Architecture](https://techhenzy.com/proxy-webassembly-archive/)
-- [5] [Layotto source parse — processing RPC requests](https://mosn.io/layotto/#/blog/code/layotto-rpc/index)
-- [6] [云原生运行时的下一个五年](https://www.soft.tech/blog/the-next-fuve-years-of-cloud-native-runtime/)
+# MOSN subproject Layotto：opens the service grid + new chapter when app runs
+
+> Author profile：
+> Magnetic Army. Fancy is an ancient one, cultivating for many years in the infrastructure domain, with in-depth practical experience of Service Mosh, and currently responsible for the development of projects such as MOSN, Layotto and others in the middle group of ant groups.
+> Layotto official GitHub address: [https://github.com/mosn/layotto](https://github.com/mosn/layotto)
+
+Click on a link to view the live video：[https://www.bilibili.com/video/BV1hq4y1L7FY/](https://www.bilibili.com/video/BV1hq4y1L7FY/)
+
+Service Mesh is already very popular in the area of microservices, and a growing number of companies are starting to fall inside, and ants have been investing heavily in this direction from the very beginning of Service Mesh programme. So far, the internal Mesh programme has covered thousands of applications, hundreds of thousands of containers and has been tested many times, the decoupling of business coupling brought about by Service Mosh, smooth upgrades and other advantages have greatly increased iterative efficiency in intermediaries.
+
+We have encountered new problems after mass landings, and this paper focuses on a review of service Mesh's internal landings and on sharing solutions to new problems encountered after service Mesh landing.
+
+## Service Mesh Review and Summary
+
+### Instrument for standardized international reporting of military expenditures
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*p8tGTbpLRegAAAAAAAAAAAAAAAAAAAARQAQ)
+> Under the microservice architecture, infrastructure team typically provides a SDK that encapsulates the ability to govern the various services, while ensuring the proper functioning of the application, it is also clear that each infrastructure team iterates a new feature that requires the involvement of the business party to use it, especially in the bug version of the framework, often requiring a forceful upgrade of the business side, where every member of the infrastructure team has a deep sense of pain.
+
+The difficulties associated with upgrading are compounded by the very different versions of the SDK versions used by the application and the fact that the production environment runs in various versions of the SDK, which in turn makes it necessary to consider compatibility for the iterations of new functions as if they go ahead with the shacks, so that the maintenance of the code is very difficult and some ancestral logic becomes uncareful.
+
+The development pattern of the “heavy” SDKs makes the governance of the isomer language very weak and the cost of providing a functionally complete and continuously iterative SDK for all programming languages is imaginable.
+
+In 18 years, Service Mesh continued to explode in the country, a framework concept designed to decouple service governance capacity with business and allow them to interact through process-level communications.Under this architecture model, service governance capacity is isolated from the application and operated in independent processes, iterative upgrading is unrelated to business processes, which allows for rapid iterations of service governance capacity, and each version can be fully upgraded because of the low cost of upgrading, which has addressed the historical burden and the SDK “light” directly reduces the governance threshold for isomer languages and no longer suffers from the SDK that needs to develop the same service governance capability for each language.
+
+### Current status of service Mesh landings
+
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*rRG_TYlHMqYAAAAAAAAAAAAAARQnAQ)
+> 蚂蚁很快意识到了 Service Mesh 的价值，全力投入到这个方向，用 Go 语言开发了 MOSN 这样可以对标 envoy 的优秀数据面，全权负责服务路由，负载均衡，熔断限流等能力的建设，大大加快了公司内部落地 Service Mesh 的进度。
+
+Now that MOSN has overwritten thousands of apps and hundreds of thousands of containers inside ant ants, newly created apps have default access to MOSN to form closers.And MOSN handed over a satisfactory： in terms of resource occupancy and loss of performance that is of greatest concern to all.
+
+1. RT is less than 0.2 ms
+
+2. Increase CPU usage by 0% to 2%
+
+3. Memory consumption growth less than 15M
+
+The technical stack of the NodeJS, C+++ isomers is also continuously connected to MOSN due to the Service Mesh service management thresholds that lower the isomer language.
+
+After seeing the huge gains from RPC capacity Mih, internal ants also transformed MQ, Cache, Config and other middleware capabilities, sinking to MOSN, improving the iterative efficiency of the intermediate product as a whole.
+
+### C. New challenges
+
+1. Apply strong binding to infrastructure
+
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*nKxcTKLp4EoAAAAAAAAAAAAAARQnAQ)
+> A modern distributed application often relies on RPC, Cache, MQ, Config and other distributed capabilities to complete the processing of business logic.
+
+When RPC was initially seen, other capabilities were quickly sinking.Initially, they were developed in the most familiar way, leading to a lack of integrated planning management, as shown in the graph above, which relied on SDKs of a variety of infrastructure, and in which SDK interacted with MOSN in a unique way, often using private agreements provided by the original infrastructure, which led directly to a complex intermediate capability, but in essence the application was tied to the infrastructure, such as the need to upgrade the SDK from Redis to Memcache, which was more pronounced in the larger trend of the application cloud, assuming that if an application was to be deployed on the cloud, because the application relied on a variety of infrastructures, it would be necessary to move the entire infrastructure to the cloud before the application could be successfully deployed.
+So how to untie the application to the infrastructure so that it can be transplantable and that it can feel free to deploy across the platform is our first problem.
+
+2. Isomal language connectivity
+
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*oIdQQZmgtyUAAAAAAAAAAAAAARQnAQ)
+> It has been proved that Service Mesh does reduce the access threshold of heterogeneous languages, but after more and more basic capabilities sink to MOSN, we gradually realized that in order to allow applications to interact with MOSN, various SDKS need to develop communication protocols and serialization protocols. If you add in the need to provide the same functionality for a variety of heterogeneous languages, the difficulty of maintenance increases exponentially
+
+Service Mesh has made the SDK historic, but for the current scenario of programming languages and applications with strong infrastructural dependence, we find that the existing SDK is not thin enough, that the threshold for access to the isomer language is not low enough and that the threshold for further lowering the isomer language is the second problem we face.
+
+## Multi Runtime Theory Overview
+
+### A, what is Runtime?
+
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*hQT-Spc5rI4AAAAAAAAAAAAAARQnAQ)
+> In the early 20th century, Bilgin lbryam published a paper called
+> Multi-Runtime Microservices Architecture
+> This article discusses the shape of the next phase of microservices architecture.
+
+As shown in the graph above, the author abstracts the demand for distributed services and is divided into four chaos：
+
+1. Life Cycle (Lifecycle)
+   mainly refers to compilation, packing, deployment and so forth, and is largely contracted by docker and kubernetes in the broad cloud of origins.
+
+2. Network (Networking)
+   A reliable network is the basic guarantee of communication between microservices, and Service Mesh is trying to do so and the stability and usefulness of the current popular data face of MOSN and envoy have been fully tested.
+
+3. The status (State)
+   services that are required for distribution systems, workflow, distribution single, dispatching, power equivalent, state error restoration, caching, etc. can be uniformly classified as bottom status management.
+
+4. Binding (Binding)
+   requires not only communication with other systems but also integration of various external systems in distributed systems, and therefore has strong reliance on protocol conversion, multiple interactive models, error recovery processes, etc.
+
+After the need has been clarified, drawing on the ideas of Service Mesh, the author has summarized the evolution of the distributed services architecture as： below.
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*rwS2Q5yMp_sAAAAAAAAAAAAAAAAAAAAAAAAAAAARQAQ)
+> Phase I is to decouple infrastructure capabilities from the application and to convert them into an independent residecar model that runs with the application.
+
+The second stage is to unify the capabilities offered by the sidecar into a single settlement run from the development of the basic component to the development of the various distributive capabilities to the development of the various distributive capacities, completely block the details of the substrate and, as a result of the ability orientation of the API, the application no longer needs to rely on SDK from a wide range of infrastructures, except for the deployment of the APIs that provide the capabilities.
+
+The author's thinking is consistent with what we want to resolve, and we have decided to use the Runtime concept to solve the new problems that Service Mesh has encountered to date.
+
+### B, Service Mesh vs Runtime
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*srPVSYTEHc4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> In order to create a clearer understanding of Runtime, a summary of Service Mesh with regard to the positioning, interaction, communication protocols and capacity richness of the two concepts of Runtime is shown, as can be seen from Service Mosh, when Runtime provides a clearly defined and capable API, making the application more straightforward to interact with it.
+
+## MOSN sub-project Layotto
+
+### A, dapr research
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*Ab9HYIK7CQAAAAAAAAAAAAAAAAAAAAAAAAAAARQAQAQ)
+> dapr is a well-known Runtime product in the community and has a high level of activity, so we first looked at the dapr case, finding that the dapr has the following advantage of：
+
+1. A variety of distributive capabilities are provided, and the API is clearly defined and generally meets the general usage scenario.
+
+2. Different delivery components are provided for each capability, essentially covering commonly used intermediate products that can be freely chosen by users as needed.
+
+When considering how to set up a dapr within a company, we propose two options, such as the chart： above
+
+1. Replace：with the current MOSN and replace with the dapr. There are two problems with：
+
+Dapr does not currently have the full range of service governance capabilities included in Service Mesh although it provides many distributive capabilities.
+
+b. MOSN has fallen on a large scale within the company and has been tested on numerous occasions with the direct replacement of MOSN stability by a dapr.
+
+2. In：, add a dapr container that will be deployed with MOSN in two sidecar mode.This option also has two problems with：
+
+The introduction of a new sidecar will require consideration of upgrading, monitoring, infusion and so forth, and the cost of transport will soar.
+
+b. The increased maintenance of a container implies an additional risk of being hacked and this reduces the availability of the current system.
+
+Similarly, if you are currently using envoy as a data face, you will also face the above problems.
+We therefore wish to combine Runtime with Service Mesh and deploy through a full sidecar to maximize the use of existing MSh capabilities while ensuring stability and the constant cost of delivery.In addition, we hope that, in addition to being associated with MOSN, the capacity of the RPF will be combined in the future with envoy to solve the problems in more scenarios, in which Layotto was born.
+
+### Layout B & Layout
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*sdGoSYB_XFUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> As shown in the above chart, Layotto is above all over the infrastructure and provides a standard API for upper-tier applications with a uniform range of distributive capabilities.For Layotto applications, developers no longer need to care for differences in the implementation of substrate components, but just what competencies the app needs and then call on the adaptive API, which can be completely untied to the underlying infrastructure.
+
+For applications, interaction is divided into two blocks, one as a standard API for GRPC Clients calling Layotto and another as a GRPC Server to implement the Layotto callback and benefit from the gRPC excellent cross-language support capability, which no longer requires attention to communications, serialization, etc., and further reduces the threshold for the use of the technical stack of isomers.
+
+In addition to its application-oriented, Layotto also provides a unified interface to the platform that feeds the app along with the sidecar state of operation, facilitates SRE peer learning to understand the state of the app and make different initiatives for different states, taking into account existing platform integration with k8s and so we provide access to HTTP protocol.
+
+In addition to Layotto itself design, the project involves two standardized constructions, firstly to develop a set of terminological clocks; the application of a broad range of APIs is not an easy task. We have worked with the Ari and Dapr communities in the hope that the building of the Runtime API will be advanced, and secondly for the components of the capabilities already achieved in the dapr community, our principle is to reuse, redevelop and minimize wasting efforts over existing components and repeat rotations.
+
+In the end, Layotto is now built over MOSN, we would like Layotto to be able to run on envoy, so that you can increase Runtime capacity as long as you use Service Mesh, regardless of whether the data face is used by MOSN or envoy.
+
+### C, Layotto transplantation
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*2DrSQJ6GL8cAAAAAAAAAAAAAAAAAAAARQAQ)
+> As shown in the graph above, once the standardisation of the Runtime API is completed, access to Layotto applications is naturally portable, applications can be deployed on private clouds and various public clouds without any modification, and since standard API is used, applications can be freely switched between Layotto and dapr without any modification.
+
+### Meaning of name
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*CCckTZ_gRsMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> As can be seen from the above schematic chart, the Layotto project itself is intended to block the details of the infrastructure and to provide a variety of distributive capabilities to the upper level of application. This approach is as if it adds a layer of abstraction between the application and the infrastructure, so we draw on the OSI approach to defining a seven-tiered model of the network and want Layot to serve the eighth tier of the application, to be 8 in Italian, Layer otto is meant to simplify to become Layotto, along with Project Code L8, which is also the eighth tier and is the source of inspiration for
+
+An overview of the completion of the project is presented below, with details of the achievement of four of its main functions.
+
+### E. Configuration of original language
+
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*mfkRQZH3oNwAAAAAAAAAAAAAARQnAQ)
+> 首先是分布式系统中经常使用的配置功能，应用一般使用配置中心来做开关或者动态调整应用的运行状态。The implementation of the configuration module in Layotto consists of two parts. One is a reflection on how to define the API for this capability, and one is a specific implementation, each of which is seen below.
+
+It is not easy to define a configuration API that meets most of the actual production demands. Dapr currently lacks this capability, so we worked with Ali and the Dapr community to engage in intense discussions on how to define a version of a reasonable configuration API.
+
+As the outcome of the discussions has not yet been finalized, Layotto is therefore based on the first version of the draft we have submitted to the community, and a brief description of our draft is provided below.
+
+We first defined the basic element： for general configuration
+
+1. appId：indicates which app the configuration belongs to
+
+2. Key configured for key：
+
+3. Value of content：configuration
+
+4. group：configurations are configured. If an appId is too many configurations, we can group these configurations for maintenance.
+
+In addition, we added two advanced features to suit more complex configurations using Scene：
+
+1. label, used to label configurations, such as where the configuration belongs, and when conducting configuration queries, we'll use label + key to query configuration.
+
+2. tags, users give configuration additional information such as description, creator information, final modification time, etc. to facilitate configuration management, audits, etc.
+
+For the specific implementation of the configuration API as defined above, we currently support query, subscription, delete, create, and modify five kinds of actions in which subscriptions to configuration changes use the stream feature of GRPC and the components where the configuration capacity is implemented at the bottom, we have selected the domestically popular apollo and will add others later depending on demand.
+
+### F: Pub/Sub
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*YJs-R6WFhkgAAAAAAAAAAAAAAAAAAAAARQAQ)
+> for Pub/Sub capabilities, we have explored the current implementation of dapr and have found that we have largely met our needs, so we have directly reintroduced the Dapr API and components that have been suitably matched in Layotto, which has saved us a great deal of duplication and we would like to maintain a collaborative approach with the dapr community rather than repeat the rotation.
+
+Pub is an event interface provided by the App calls Layotto and the Sub function is one that implements ListTopicSubscriptions with OnTopicEvent in the form of a gRPC Server, one that tells Layotto apps that need to subscribe to which topics, and a callback event for Layotto receive a change in top.
+
+Dapr for the definition of Pub/Sub basically meets our needs, but there are still shortfalls in some scenarios, dapr uses CloudEvent standards, so the pub interface does not return value, which does not meet the need in our production scenes to require pub messages to return to the messageID that we have already submitted the needs to dapr communities, and we are waiting for feedback, taking into account mechanisms for community asynchronous collaboration, we may first increase the results and then explore with the community a better compatibility programme.
+
+### G and RPC original
+
+> ![](https://gw.alipaayobjects. om/mn/rms_1c90e8/afts/img/A\*i-JnSaeZbJ4AAAAAAAAAAAAAAAAAAARQAQ)
+> The capacity of RPC is not unfamiliar and may be the most basic needs under the microservice architecture, the definition of RPC interfaces, we also refer to the dapr community definition and therefore the interface definition is fully responsive to our needs and thus the interface definition is a direct reuse of dapr but the current RPC delivery programme provided by dapr is still weak, and MOSN is very mature over the years, This is a brave combination of Runtime with Service Mesh and MOSN itself as a component of our capacity to implement RPC and thereby Layotto submit to MOSN for actual data transfer upon receipt of RPC requests, The option could change routing rules through istio, downgraded flow and so on, which would amount to a direct replication of Service Mesh's capabilities. This would also indicate that Runtime is not about listing the Service Mesh, but rather a step forward on that basis.
+
+In terms of details, in order to better integrate with MOSN, we have added one Channel, default support for dubbo, bolt, HTTP three common RPC protocols to the RPC. If we still fail to meet the user scene, we have added Before/After filter to allow users to customize extensions and implement protocol conversions, etc.
+
+### H, Actuator
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*E_Q-T4d_bm4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> In actual production environments, in addition to the various distributive capabilities required for the application, we often need to understand the operational state of the application, based on this need, we abstract an actuator interface, and we currently do not have the capability to do so at the moment, dapr and so we are designed on the basis of internal demand scension scenarios to expose the full range of information on the application at the startup and running stages, etc.
+
+Layotto divides the exposure information into an individual：
+
+1. Health：This module determines whether the app is healthy, e.g. a strongly dependent component needs to be unhealthy if initialization fails, and we refer to k8s for the type of health check to：
+
+a. Readiness：indicates that the app is ready to start and can start processing requests.
+
+b. Liveness：indicates the state of life of the app, which needs to be cut if it does not exist.
+
+2. Info：This module is expected to expose some of the dependencies of the app, such as the service on which the app depends, the subscription configuration, etc. for troubleshooting issues.
+
+Health exposure health status is divided into the following Atlash：
+
+1. INIT：indicates that the app is still running. If the app returns this value during the release process, the PaaS platform should continue waiting for the app to be successfully started.
+
+2. UP：indicates that the app is starting up normally, and if the app returns this value, the PasS platform can start loading traffic.
+
+3. DOWN：indicates that the app failed to boot, meaning PaaS needs to stop publishing and notify the app owner if the app returns this value during the release process.
+
+The search for Layotto is now largely complete in the Runtime direction, and we have addressed the current problems of infrastructure binding and the high cost of isomer language access using a standard interactive protocol such as gRPC to define a clearly defined API.As the future API standardises the application of Layotto can be deployed on various privately owned and publicly owned clouds, on the one hand, and free switching between Layotto, dapr and more efficient research and development, on the other.
+
+Currently, Serverless fields are also flown and there is no single solution, so Layotto makes some attempts in Serverless directions, in addition to the input in the Runtime direction described above.
+
+## Exploring WebAssembly
+
+### Introduction to the Web Assembly
+
+> ![](https://gw.alipaayobjects.com/mn/rms_1c90e8/afts/img/A*-ACSpqbuJ0AAAAAAAAAAAAAAAAAAAARQAQ)
+> WebAssembly, abbreviated WASM, a collection of binary commands initially running on the browser to solve the JavaScript performance problems, but due to its good safety, isolation, and linguistic indifference, one quickly starts to get it to run outside the browser. With the advent of the WASI definition, only one WASM will be able to execute the WAS document anywhere.
+
+Since WebAssembly can run outside the browser, can we use it in Serverless fields?Some attempts had been made in that regard, but if such a solution were to be found to be a real one, it would be the first question of how to address the dependence of a functioning Web Assembly on infrastructure.
+
+### Principles of B and Web Assembly landing
+
+Currently MOSN runs on MOSN by integrating WASM Runtime to meet the need for custom extensions to MOSN.Layotto is also built over MOSN so we consider combining the two in order to implement the following graph：
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*U7UDRYyBOvIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> Developers can develop their code using a variety of preferred languages such as Go/C+/Rust and then run them over MOSN to produce WASM files and call Layotto provide standard API via local function when WASM style applications need to rely on various distribution capabilities in processing requests, thereby directly resolving the dependency of WASM patterns.
+
+Layotto now provides Go with the implementation of the Rust version of WASM, while supporting the demo tier function only, is enough for us to see the potential value of such a programme.
+
+In addition, the WASM community is still in its early stages and there are many places to be refined, and we have submitted some PRs to the community to build up the backbone of the WASM technology.
+
+### C. WebAssembly Landscape Outlook
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*NzwKRY2GZPcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAQAQ)
+> Although the use of WAS in Layotto is still in the experimental stage, we hope that it will eventually become a service unless it is developed through a variety of programming languages, as shown in the graph above, and then codify the WASM document, which will eventually run on Layotto+MOSN, while the application wiki management is governed by k8, docker, prometheus and others.
+
+## Community planning
+
+Finally, look at what Layotto does in the community.
+
+### A, Layotto vs Dapr
+
+> ![](https://gw.alipayobjects.com/ms_1c90e8/afts/img/A*OpQTRqoMpk0AAAAAAAAAAAAAAAAAAAAARQAQ)
+> Charted Layotto in contrast to the existing capabilities in Layotto, our development process at Layotto, always aim to achieve the goal of a common building, based on the principle of re-use, secondary development, and for the capacity being built or to be built in the future, we plan to give priority to Layotto and then to the community to merge into standard API, so that in the short term it is possible that the Layotto API will take precedence over the community, but will certainly be unified in the long term, given the mechanism for community asynchronous collaboration.
+
+### The APP
+
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*nKxcTKLp4EoAAAAAAAAAAAAAARQnAQ)
+> We have had extensive discussions in the community about how to define a standard API and how Layotto can run on envoy, and we will continue to do so.
+
+### C, Road map
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*UV3Q7S3LEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> Layotto currently support four major functionalities in support of RPC, Config, Pub/Sub, Actuator and is expected to devote attention to distribution locks and observations in September, and Layotto plugging in December, which it will be able to run on envoy, with the hope that further outputs will be produced for the WebCongress exploration.
+
+### Official open source
+
+> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*S6mdTqAapLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQAQ)
+> gave a detailed presentation of the Layotto project and most importantly the project is being officially opened today as a sub-project of MOSN and we have provided detailed documentation and demo examples to facilitate quick experience.
+
+The construction of the API standardization is a matter that needs to be promoted over the long term, while standardization means not meeting one or two scenarios, but the best possible fitness for most use scenarios, so we hope that more people can participate in the Layotto project, describe your use scenario, discuss the API definition options, come together to the community, ultimately reach the ultimate goal of Write once, Run any!

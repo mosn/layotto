@@ -2,10 +2,10 @@
 
 > This paper is based on the Dubbo Json RPC as an example of the Layotto RPC processing.
 >
-> by：[王志龙](https://github.com/rayowang) | 21April 2022
+> by：[Wang Zhilong](https://github.com/rayowang) | 21April 2022
 
-- [概述](#overview)
-- [源码分析](#source analysis)
+- [overview](#overview)
+- [source analysis](#source analysis)
   - [0x00 Layotto initialize RPC](#_0x00-layotto-initializ-rpc)
   - [0x01 Dubbo-go-sample client to request request] (#_0x01-dubbo-go-sample-client-request request)
   - [0x02 Mosn EventLoop Reader Processing Request Data](#_0x02-mosn-eventloop-read processing request)
@@ -17,7 +17,7 @@
   - [0x08 Layotto receive RPC responses and read Local Virtual Connections](#_0x08-layotto-receive-rpc-response and read -local-virtual connection)
   - [0x09 Grpc Sever processed data frames returned to client](#_0x09-grpc-sever processed frame returned to client)
   - [0x10 Dubbo-go-sample client receiving response](#_0x10-dubbo-go-sample-client-receiving response)
-- [总结](#summary)
+- [summary](#summary)
 
 ## General description
 
