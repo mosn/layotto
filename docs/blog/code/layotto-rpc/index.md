@@ -936,7 +936,9 @@ func (p *parser) recvMsg(maxReceiveMessageSize int) (pf payloadFormat, msg []byt
 
 最终收到返回数据：
 ```json
+
 {"jsonrpc":"2.0","id":9527,"result":{"id":"113","name":"Moorse","age":30,"time":703394193,"sex":"MAN"}}
+
 ```
 
 ## 总结

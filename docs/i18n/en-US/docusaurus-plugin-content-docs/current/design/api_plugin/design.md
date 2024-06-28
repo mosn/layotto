@@ -283,7 +283,7 @@ Look at this example, you might ask：these callbacks, constructions and calls?
 
 The hook above is used to customize the start logic for the user extension.Layotto reverses the above life-cycle hooks and constructions during startup.Call order roughly：
 
-`Layotto initialize all components` ---> Call `NewGrpcAPI` constructor ---> `GrpcAPI.Init` ---> ``Layotto create grpc server` ---> ``GrpcAPI.Register\`\`
+`Layotto initialize all components` ---> Call `NewGrpcAPI` constructor ---> `GrpcAPI.Init` ---> ``Layotto create grpc server` --->``GrpcAPI.Register\`\`
 
 Graph below：
 

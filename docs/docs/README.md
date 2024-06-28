@@ -178,6 +178,6 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 ## FAQ
 
-### 跟 dapr 有什么差异？
+## 跟 dapr 有什么差异？
 
 dapr 是一款优秀的 Runtime 产品，但它本身缺失了 Service Mesh 的能力，而这部分能力对于实际在生产环境落地是至关重要的，因此我们希望把 Runtime 跟 Service Mesh 两种能力结合在一起，满足更复杂的生产落地需求。
