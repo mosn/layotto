@@ -14,7 +14,7 @@ We have encountered new problems after mass landings, and this paper focuses on 
 
 ### Instrument for standardized international reporting of military expenditures
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*p8tGTbpLRegAAAAAAAAAAAAAAAAAAAARQAQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*p8tGTbpLRegAAAAAAAAAAAAAARQnAQ)
 > Under the microservice architecture, infrastructure team typically provides a SDK that encapsulates the ability to govern the various services, while ensuring the proper functioning of the application, it is also clear that each infrastructure team iterates a new feature that requires the involvement of the business party to use it, especially in the bug version of the framework, often requiring a forceful upgrade of the business side, where every member of the infrastructure team has a deep sense of pain.
 
 The difficulties associated with upgrading are compounded by the very different versions of the SDK versions used by the application and the fact that the production environment runs in various versions of the SDK, which in turn makes it necessary to consider compatibility for the iterations of new functions as if they go ahead with the shacks, so that the maintenance of the code is very difficult and some ancestral logic becomes uncareful.
@@ -82,7 +82,7 @@ As shown in the graph above, the author abstracts the demand for distributed ser
 
 After the need has been clarified, drawing on the ideas of Service Mesh, the author has summarized the evolution of the distributed services architecture as： below.
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*rwS2Q5yMp_sAAAAAAAAAAAAAAAAAAAAAAAAAAAARQAQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*rwS2Q5yMp_sAAAAAAAAAAAAAARQnAQ)
 > Phase I is to decouple infrastructure capabilities from the application and to convert them into an independent residecar model that runs with the application.
 
 The second stage is to unify the capabilities offered by the sidecar into a single settlement run from the development of the basic component to the development of the various distributive capabilities to the development of the various distributive capacities, completely block the details of the substrate and, as a result of the ability orientation of the API, the application no longer needs to rely on SDK from a wide range of infrastructures, except for the deployment of the APIs that provide the capabilities.
@@ -91,14 +91,14 @@ The author's thinking is consistent with what we want to resolve, and we have de
 
 ### B, Service Mesh vs Runtime
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*srPVSYTEHc4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*srPVSYTEHc4AAAAAAAAAAAAAARQnAQ)
 > In order to create a clearer understanding of Runtime, a summary of Service Mesh with regard to the positioning, interaction, communication protocols and capacity richness of the two concepts of Runtime is shown, as can be seen from Service Mosh, when Runtime provides a clearly defined and capable API, making the application more straightforward to interact with it.
 
 ## MOSN sub-project Layotto
 
 ### A, dapr research
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*Ab9HYIK7CQAAAAAAAAAAAAAAAAAAAAAAAAAAARQAQAQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*Ab9HSYIK7CQAAAAAAAAAAAAAARQnAQ)
 > dapr is a well-known Runtime product in the community and has a high level of activity, so we first looked at the dapr case, finding that the dapr has the following advantage of：
 
 1. A variety of distributive capabilities are provided, and the API is clearly defined and generally meets the general usage scenario.
@@ -124,7 +124,7 @@ We therefore wish to combine Runtime with Service Mesh and deploy through a full
 
 ### Layout B & Layout
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*sdGoSYB_XFUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*sdGoSYB_XFUAAAAAAAAAAAAAARQnAQ)
 > As shown in the above chart, Layotto is above all over the infrastructure and provides a standard API for upper-tier applications with a uniform range of distributive capabilities.For Layotto applications, developers no longer need to care for differences in the implementation of substrate components, but just what competencies the app needs and then call on the adaptive API, which can be completely untied to the underlying infrastructure.
 
 For applications, interaction is divided into two blocks, one as a standard API for GRPC Clients calling Layotto and another as a GRPC Server to implement the Layotto callback and benefit from the gRPC excellent cross-language support capability, which no longer requires attention to communications, serialization, etc., and further reduces the threshold for the use of the technical stack of isomers.
@@ -137,12 +137,12 @@ In the end, Layotto is now built over MOSN, we would like Layotto to be able to 
 
 ### C, Layotto transplantation
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*2DrSQJ6GL8cAAAAAAAAAAAAAAAAAAAARQAQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*2DrSQJ6GL8cAAAAAAAAAAAAAARQnAQ)
 > As shown in the graph above, once the standardisation of the Runtime API is completed, access to Layotto applications is naturally portable, applications can be deployed on private clouds and various public clouds without any modification, and since standard API is used, applications can be freely switched between Layotto and dapr without any modification.
 
 ### Meaning of name
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*CCckTZ_gRsMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*CCckTZ_gRsMAAAAAAAAAAAAAARQnAQ)
 > As can be seen from the above schematic chart, the Layotto project itself is intended to block the details of the infrastructure and to provide a variety of distributive capabilities to the upper level of application. This approach is as if it adds a layer of abstraction between the application and the infrastructure, so we draw on the OSI approach to defining a seven-tiered model of the network and want Layot to serve the eighth tier of the application, to be 8 in Italian, Layer otto is meant to simplify to become Layotto, along with Project Code L8, which is also the eighth tier and is the source of inspiration for
 
 An overview of the completion of the project is presented below, with details of the achievement of four of its main functions.
@@ -150,7 +150,7 @@ An overview of the completion of the project is presented below, with details of
 ### E. Configuration of original language
 
 > ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*mfkRQZH3oNwAAAAAAAAAAAAAARQnAQ)
-> 首先是分布式系统中经常使用的配置功能，应用一般使用配置中心来做开关或者动态调整应用的运行状态。The implementation of the configuration module in Layotto consists of two parts. One is a reflection on how to define the API for this capability, and one is a specific implementation, each of which is seen below.
+> First is the configuration function commonly used in distributed systems, applications generally use the configuration center to switch or dynamically adjust the running state of the application.The implementation of the configuration module in Layotto consists of two parts. One is a reflection on how to define the API for this capability, and one is a specific implementation, each of which is seen below.
 
 It is not easy to define a configuration API that meets most of the actual production demands. Dapr currently lacks this capability, so we worked with Ali and the Dapr community to engage in intense discussions on how to define a version of a reasonable configuration API.
 
@@ -176,7 +176,7 @@ For the specific implementation of the configuration API as defined above, we cu
 
 ### F: Pub/Sub
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*YJs-R6WFhkgAAAAAAAAAAAAAAAAAAAAARQAQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*YJs-R6WFhkgAAAAAAAAAAAAAARQnAQ)
 > for Pub/Sub capabilities, we have explored the current implementation of dapr and have found that we have largely met our needs, so we have directly reintroduced the Dapr API and components that have been suitably matched in Layotto, which has saved us a great deal of duplication and we would like to maintain a collaborative approach with the dapr community rather than repeat the rotation.
 
 Pub is an event interface provided by the App calls Layotto and the Sub function is one that implements ListTopicSubscriptions with OnTopicEvent in the form of a gRPC Server, one that tells Layotto apps that need to subscribe to which topics, and a callback event for Layotto receive a change in top.
@@ -185,14 +185,14 @@ Dapr for the definition of Pub/Sub basically meets our needs, but there are stil
 
 ### G and RPC original
 
-> ![](https://gw.alipaayobjects. om/mn/rms_1c90e8/afts/img/A\*i-JnSaeZbJ4AAAAAAAAAAAAAAAAAAARQAQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*i-JnSaeZbJ4AAAAAAAAAAAAAARQnAQ)
 > The capacity of RPC is not unfamiliar and may be the most basic needs under the microservice architecture, the definition of RPC interfaces, we also refer to the dapr community definition and therefore the interface definition is fully responsive to our needs and thus the interface definition is a direct reuse of dapr but the current RPC delivery programme provided by dapr is still weak, and MOSN is very mature over the years, This is a brave combination of Runtime with Service Mesh and MOSN itself as a component of our capacity to implement RPC and thereby Layotto submit to MOSN for actual data transfer upon receipt of RPC requests, The option could change routing rules through istio, downgraded flow and so on, which would amount to a direct replication of Service Mesh's capabilities. This would also indicate that Runtime is not about listing the Service Mesh, but rather a step forward on that basis.
 
 In terms of details, in order to better integrate with MOSN, we have added one Channel, default support for dubbo, bolt, HTTP three common RPC protocols to the RPC. If we still fail to meet the user scene, we have added Before/After filter to allow users to customize extensions and implement protocol conversions, etc.
 
 ### H, Actuator
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*E_Q-T4d_bm4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*E_Q-T4d_bm4AAAAAAAAAAAAAARQnAQ)
 > In actual production environments, in addition to the various distributive capabilities required for the application, we often need to understand the operational state of the application, based on this need, we abstract an actuator interface, and we currently do not have the capability to do so at the moment, dapr and so we are designed on the basis of internal demand scension scenarios to expose the full range of information on the application at the startup and running stages, etc.
 
 Layotto divides the exposure information into an individual：
@@ -221,7 +221,7 @@ Currently, Serverless fields are also flown and there is no single solution, so 
 
 ### Introduction to the Web Assembly
 
-> ![](https://gw.alipaayobjects.com/mn/rms_1c90e8/afts/img/A*-ACSpqbuJ0AAAAAAAAAAAAAAAAAAAARQAQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*-ACRSpqbuJ0AAAAAAAAAAAAAARQnAQ)
 > WebAssembly, abbreviated WASM, a collection of binary commands initially running on the browser to solve the JavaScript performance problems, but due to its good safety, isolation, and linguistic indifference, one quickly starts to get it to run outside the browser. With the advent of the WASI definition, only one WASM will be able to execute the WAS document anywhere.
 
 Since WebAssembly can run outside the browser, can we use it in Serverless fields?Some attempts had been made in that regard, but if such a solution were to be found to be a real one, it would be the first question of how to address the dependence of a functioning Web Assembly on infrastructure.
@@ -230,7 +230,7 @@ Since WebAssembly can run outside the browser, can we use it in Serverless field
 
 Currently MOSN runs on MOSN by integrating WASM Runtime to meet the need for custom extensions to MOSN.Layotto is also built over MOSN so we consider combining the two in order to implement the following graph：
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*U7UDRYyBOvIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*U7UDRYyBOvIAAAAAAAAAAAAAARQnAQ)
 > Developers can develop their code using a variety of preferred languages such as Go/C+/Rust and then run them over MOSN to produce WASM files and call Layotto provide standard API via local function when WASM style applications need to rely on various distribution capabilities in processing requests, thereby directly resolving the dependency of WASM patterns.
 
 Layotto now provides Go with the implementation of the Rust version of WASM, while supporting the demo tier function only, is enough for us to see the potential value of such a programme.
@@ -239,7 +239,7 @@ In addition, the WASM community is still in its early stages and there are many 
 
 ### C. WebAssembly Landscape Outlook
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*NzwKRY2GZPcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAQAQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*NzwKRY2GZPcAAAAAAAAAAAAAARQnAQ)
 > Although the use of WAS in Layotto is still in the experimental stage, we hope that it will eventually become a service unless it is developed through a variety of programming languages, as shown in the graph above, and then codify the WASM document, which will eventually run on Layotto+MOSN, while the application wiki management is governed by k8, docker, prometheus and others.
 
 ## Community planning
@@ -248,7 +248,7 @@ Finally, look at what Layotto does in the community.
 
 ### A, Layotto vs Dapr
 
-> ![](https://gw.alipayobjects.com/ms_1c90e8/afts/img/A*OpQTRqoMpk0AAAAAAAAAAAAAAAAAAAAARQAQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*OpQTRqoMpK0AAAAAAAAAAAAAARQnAQ)
 > Charted Layotto in contrast to the existing capabilities in Layotto, our development process at Layotto, always aim to achieve the goal of a common building, based on the principle of re-use, secondary development, and for the capacity being built or to be built in the future, we plan to give priority to Layotto and then to the community to merge into standard API, so that in the short term it is possible that the Layotto API will take precedence over the community, but will certainly be unified in the long term, given the mechanism for community asynchronous collaboration.
 
 ### The APP
@@ -258,12 +258,12 @@ Finally, look at what Layotto does in the community.
 
 ### C, Road map
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*UV3Q7S3LEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*iUV3Q7S3VLEAAAAAAAAAAAAAARQnAQ)
 > Layotto currently support four major functionalities in support of RPC, Config, Pub/Sub, Actuator and is expected to devote attention to distribution locks and observations in September, and Layotto plugging in December, which it will be able to run on envoy, with the hope that further outputs will be produced for the WebCongress exploration.
 
 ### Official open source
 
-> ![](https://gw.alipaayobjects.com/ms_1c90e8/afts/img/A*S6mdTqAapLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARQAQ)
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*S6mdTqAapLQAAAAAAAAAAAAAARQnAQ)
 > gave a detailed presentation of the Layotto project and most importantly the project is being officially opened today as a sub-project of MOSN and we have provided detailed documentation and demo examples to facilitate quick experience.
 
 The construction of the API standardization is a matter that needs to be promoted over the long term, while standardization means not meeting one or two scenarios, but the best possible fitness for most use scenarios, so we hope that more people can participate in the Layotto project, describe your use scenario, discuss the API definition options, come together to the community, ultimately reach the ultimate goal of Write once, Run any!

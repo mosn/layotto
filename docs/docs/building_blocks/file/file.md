@@ -9,11 +9,11 @@ File api 用于实现文件操作。应用程序可以通过该接口对文件�
 File api定义在 [runtime.proto](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) 。应用可以通过grpc调用
 对应的File api，实现文件的操作。
 
-该接口在使用前需要进行配置。不同的文件系统可能配置不同，用户可根据自己的文件系统进行配置。比如OSS详细配置项可参考 [OSS组件文档](docs/component_specs/file/oss.md)
+该接口在使用前需要进行配置。不同的文件系统可能配置不同，用户可根据自己的文件系统进行配置。比如OSS详细配置项可参考 [OSS组件文档](/docs/component_specs/file/oss.md)
 
 ### 例子
 
-当前提供了基于layotto访问aliyun oss文件系统的示例，具体可参照 [文件演示](/demo/file)
+当前提供了基于layotto访问aliyun oss文件系统的示例，具体可参照 [文件演示](../../../../demo/file)
 
 ## 接口定义
 
