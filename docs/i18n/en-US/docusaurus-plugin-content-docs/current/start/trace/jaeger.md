@@ -55,7 +55,7 @@ Run:
 
 ## Run Demo
 
-The corresponding call end code is in[client.go](https://github.com/mosn/layotto/bllob/main/demo/flowcontrol/client.go), which runs the Sayhello interface with layotto：
+The corresponding call end code is in[client.go](https://github.com/mosn/layotto/blob/main/demo/flowcontrol/client.go), which runs the Sayhello interface with layotto：
 
 Switch directory:
 

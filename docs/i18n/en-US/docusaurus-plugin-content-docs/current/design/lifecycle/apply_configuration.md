@@ -22,7 +22,7 @@
 
 ### Programming UI
 
-For example, the start configuration for state.redis now has the following (screenshot taken from [dapr documents](https://docs.dapr.io/reference/components-reference/support-state-stores/setup-redis/)
+For example, the start configuration for state.redis now has the following (screenshot taken from [dapr documents](https://docs.dapr.io/reference/components-reference/supported-state-stores/setup-redis/)
 ![image](https://user-images.githubusercontent.com/26001097/168946975-9804d792-8851-463f-80e-2231468f0aa.png)
 
 The status quo is that these configurations kv are initialized when the：redis component startup; all configurations are static configurations, only once, and no subsequent configuration changes are listened.
