@@ -151,7 +151,7 @@ as long as it can be done to remind users that the interface does not fit the po
 > [https://help.aliyun.com/document_detail/100676.html] (https://help.aliun.com/document_detail/100676.html) Aliyun object acl type\
 > [https://cloud.tencent.com/document/product/436/30752#E9.A2.84.E8.E7.E7.9A.84-acl] (https://cloud.tenent.com/document/product/436/30752#E9.A2.84.E.84.E.8.BE.7.9A.84-acl) Tencast cloud acltype\
 > [https://docs.aws.amazon.com/AmazonS3/useruide/acl-overview.html#CannedACL](https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL)\
-> [https://github.com/
+> [https://github.com/minio/minio/issues/8195](https://github.com/minio/minio/issues/8195)
 
 ### PutObjectCannedAcl
 
