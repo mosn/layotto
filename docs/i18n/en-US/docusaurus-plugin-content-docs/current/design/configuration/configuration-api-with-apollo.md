@@ -73,7 +73,7 @@ A: If this design is adopted, the historical legacy of the use of apollo will no
 
 ### Which Apollo SDK should I use?
 
-Currently using official maintenance[SDK](https://github.com/apolloconfig/agollo), other Apollo's third party SDK can be found from[链接](https://www.apollocfig.com/#/usage/third-party-sdks-user-guide).
+Currently using official maintenance[SDK](https://github.com/apolloconfig/agollo), other Apollo's third party SDK can be found from[链接](https://www.apolloconfig.com/#/usage/third-party-sdks-user-guide).
 
 Use some of this sdk's attention:
 
