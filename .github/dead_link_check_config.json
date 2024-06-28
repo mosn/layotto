@@ -26,10 +26,7 @@
     }
   ],
   "replacementPatterns": [
-    {
-      "pattern": "^/",
-      "replacement": "http://localhost:3000/#/"
-    },
+
     {
       "pattern": "/img",
       "replacement": "docs/static/img"
