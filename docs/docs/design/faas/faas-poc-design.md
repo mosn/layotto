@@ -1,7 +1,5 @@
 # FaaS设计文档
 
-## FaaS设计
-
 ### 一、架构设计
 
 ![img.png](../(/img/faas/faas-design.jpg)

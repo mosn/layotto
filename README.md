@@ -137,15 +137,15 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 As a programming enthusiast , have you ever felt that you want to participate in the development of an open source project, but don't know where to start?
 In order to help everyone better participate in open source projects, our community will regularly publish community tasks to help everyone learn by doing!
 
-[Document Contribution Guide](docs/en/development/contributing-doc.md)
+[Document Contribution Guide](docs/i18n/en-US/docusaurus-plugin-content-docs/current/development/contributing-doc.md)
 
-[Component Development Guide](docs/en/development/developing-component.md)
+[Component Development Guide](docs/i18n/en-US/docusaurus-plugin-content-docs/current/development/developing-component.md)
 
-[Layotto Github Workflows](docs/en/development/github-workflows.md)
+[Layotto Github Workflows](docs/i18n/en-US/docusaurus-plugin-content-docs/current/development/github-workflows.md)
 
-[Layotto Commands Guide](docs/en/development/commands.md)
+[Layotto Commands Guide](docs/i18n/en-US/docusaurus-plugin-content-docs/current/development/commands.md)
 
-[Layotto Contributor Guide](docs/en/development/CONTRIBUTING.md)
+[Layotto Contributor Guide](docs/i18n/en-US/docusaurus-plugin-content-docs/current/development/CONTRIBUTING.md)
 
 ## Contributors
 
@@ -157,17 +157,17 @@ Thank y'all!
 
 ## Design Documents
 
-[Actuator Design Doc](docs/en/design/actuator/actuator-design-doc.md)
+[Actuator Design Doc](docs/i18n/en-US/docusaurus-plugin-content-docs/current/design/actuator/actuator-design-doc.md)
 
-[Configuration API with Apollo](docs/en/design/configuration/configuration-api-with-apollo.md)
+[Configuration API with Apollo](docs/i18n/en-US/docusaurus-plugin-content-docs/current/design/configuration/configuration-api-with-apollo.md)
 
-[Pubsub API and Compability with Dapr Component](docs/en/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+[Pubsub API and Compability with Dapr Component](docs/i18n/en-US/docusaurus-plugin-content-docs/current/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
 
-[RPC Design Doc](docs/en/design/rpc/rpc-design-doc.md)
+[RPC Design Doc](docs/i18n/en-US/docusaurus-plugin-content-docs/current/design/rpc/rpc-design-doc.md)
 
-[Distributed Lock API Design](docs/en/design/lock/lock-api-design.md)
+[Distributed Lock API Design](docs/i18n/en-US/docusaurus-plugin-content-docs/current/design/lock/lock-api-design.md)
 
-[FaaS Design](docs/en/design/faas/faas-poc-design.md)
+[FaaS Design](docs/i18n/en-US/docusaurus-plugin-content-docs/current/design/faas/faas-poc-design.md)
 
 ## FAQ
 

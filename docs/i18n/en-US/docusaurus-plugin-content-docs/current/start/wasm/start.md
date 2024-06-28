@@ -1,5 +1,5 @@
 # Run business logic in Layotto using WASM
-## Run business logic in Layotto using WASM
+
 ### What is WASM on Layotto?
 The sidecar of service mesh and multi-runtime is a common infrastructure for the whole company, but in practice, the business system will also have its own SDK, and it will also have the difficulty of pushing users to upgrade the SDK and the problem of version fragmentation.
 

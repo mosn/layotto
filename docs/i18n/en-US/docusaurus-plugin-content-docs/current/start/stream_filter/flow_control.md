@@ -1,8 +1,6 @@
 [查看中文版本](docs/start/stream_filter/flow_control.md)
 
-# Method Level Flow Control
-
-## Flow Control
+## Method Level Flow Control
 
 ### Introduction
 

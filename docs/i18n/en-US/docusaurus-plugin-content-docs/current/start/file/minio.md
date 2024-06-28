@@ -131,4 +131,4 @@ Continue to experience other APIs with the navigation bar on the left!
 
 #### Learn how to implement File API
 
-If you are interested in implementing the rationale or want to expand some features, you can read the [File API design document](en/design/file/file-design.md)
+If you are interested in implementing the rationale or want to expand some features, you can read the [File API design document](../../design/file/file-design.md)

@@ -2,7 +2,7 @@
 # Layotto (L8): To be the next layer of OSI layer 7
 <img src="https://gw.alipayobjects.com/zos/bmw-prod/65518bfc-8ba5-4234-a5c5-2bc065e3a5f0.svg" height="120px"/>
 
-[![Layotto Env Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml)
+[![Layotto Env Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/proto-checker.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/proto-checker.yml)
 [![Layotto Dev Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml)
 
 [![GoDoc](https://godoc.org/mosn.io/layotto?status.svg)](https://godoc.org/mosn.io/layotto)

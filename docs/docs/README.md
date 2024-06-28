@@ -1,7 +1,8 @@
 # Layotto (L8): To be the next layer of OSI layer 7
 <img src="https://gw.alipayobjects.com/zos/bmw-prod/65518bfc-8ba5-4234-a5c5-2bc065e3a5f0.svg" height="120px"/>
 
-[![Layotto Env Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml)
+[//]: # ([![Layotto Env Pipeline 🌊]&#40;https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml/badge.svg&#41;]&#40;https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml&#41;)
+[![Layotto Env Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/proto-checker.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/proto-checker.yml)
 [![Layotto Dev Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml)
 
 [![GoDoc](https://godoc.org/mosn.io/layotto?status.svg)](https://godoc.org/mosn.io/layotto)
@@ -178,6 +179,6 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 ## FAQ
 
-## 跟 dapr 有什么差异？
+### 跟 dapr 有什么差异？
 
 dapr 是一款优秀的 Runtime 产品，但它本身缺失了 Service Mesh 的能力，而这部分能力对于实际在生产环境落地是至关重要的，因此我们希望把 Runtime 跟 Service Mesh 两种能力结合在一起，满足更复杂的生产落地需求。

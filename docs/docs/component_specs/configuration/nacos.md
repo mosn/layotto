@@ -27,7 +27,7 @@
 
 不过不是添加在 nacos configstore 组件的配置里，添加在而外的配置项中，方便其他需要使用 `app_id` 的组件复用。
 
-![img.png]((/img/configuration/nacos/img.png)
+![img.png](/img/configuration/nacos/img.png)
 
 ## 怎么启动 Nacos
 

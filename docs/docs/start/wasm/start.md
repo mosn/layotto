@@ -1,7 +1,4 @@
 # 将业务逻辑通过WASM下沉进sidecar
-
-## sidecar
-
 ### 功能介绍
 service mesh 和 multi-runtime 的 sidecar 是全公司通用的基础设施，但实践中,业务系统也会有自己的sdk，也会有推动用户升级难、版本碎片的问题.
 

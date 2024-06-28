@@ -34,7 +34,7 @@ Layotto 发布周期暂定为每季度发布一次。
                 + AMD64/X86 架构的镜像：`layotto/layotto:{tag}`
                 + ARM64 架构的镜像：`layotto/layotto.arm64:{tag}`
 
-![release.png]((/img/development/workflow/release.png)
+![release.png](/img/development/workflow/release.png)
 
 ### Step3: Draft a new release 并编写发布报告
 
@@ -42,14 +42,14 @@ Layotto 发布周期暂定为每季度发布一次。
 
 > 可以参考以前的 [发版报告](https://github.com/mosn/layotto/releases)
 
-![img_1.png]((/img/development/release/img_1.png) 
+![img_1.png](/img/development/release/img_1.png) 
 
 ### Step4: 上传多平台架构的 Binaries
 > 2022/05/04更新：这一步可以忽略。打 tag 发布后，Layotto 的 Release Pipeline 会自动上传二进制文件，无需手动上传。PR 见 https://github.com/mosn/layotto/pull/566
 
 > 如果没有自动上传，可以手动将 `步骤 2` 中构建的多平台 Artifacts 下载、上传
 
-![img.png]((/img/development/release/img.png)
+![img.png](/img/development/release/img.png)
 
 ### Step5: 确认发布
 
