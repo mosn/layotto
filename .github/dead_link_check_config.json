@@ -28,8 +28,16 @@
   "replacementPatterns": [
 
     {
-      "pattern": "/img",
-      "replacement": "docs/static/img"
+      "pattern": "/img/",
+      "replacement": "docs/static/img/"
+    },
+    {
+      "pattern": "/docs/",
+      "replacement": "docs/docs/"
+    },
+    {
+      "pattern": "docs/",
+      "replacement": "docs/docs/"
     },
     {
       "pattern": "^zh/",
