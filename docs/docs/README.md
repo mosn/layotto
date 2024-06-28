@@ -138,22 +138,22 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 ## 如何贡献
 
-[新手攻略：从零开始成为 Layotto 贡献者](development/start-from-zero)
+[新手攻略：从零开始成为 Layotto 贡献者](/docs/development/start-from-zero)
 
 [从哪下手？看看"新手任务"列表](https://github.com/mosn/layotto/issues/108#issuecomment-872779356)
 
 作为技术同学，你是否有过“想参与某个开源项目的开发、但是不知道从何下手”的感觉？
 为了帮助大家更好的参与开源项目，社区会定期发布适合新手的新手开发任务，帮助大家 learning by doing!
 
-[文档贡献指南](development/contributing-doc)
+[文档贡献指南](/docs/development/contributing-doc)
 
-[组件开发指南](development/developing-component)
+[组件开发指南](/docs/development/developing-component)
 
-[Layotto Github Workflow 指南](development/github-workflows)
+[Layotto Github Workflow 指南](/docs/development/github-workflows)
 
-[Layotto 命令行指南](development/commands)
+[Layotto 命令行指南](/docs/development/commands)
 
-[Layotto 贡献者指南](development/CONTRIBUTING)
+[Layotto 贡献者指南](/docs/development/CONTRIBUTING)
 
 ## 贡献者
 
@@ -165,17 +165,17 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 ## 设计文档
 
-[Actuator 设计文档](design/actuator/actuator-design-doc)
+[Actuator 设计文档)](/docs/design/actuator/actuator-design-doc)
 
-[Pubsub API 与 Dapr Component 的兼容性](design/pubsub/pubsub-api-and-compability-with-dapr-component)
+[Pubsub API 与 Dapr Component 的兼容性)](/docs/design/pubsub/pubsub-api-and-compability-with-dapr-component)
 
-[Configuration API with Apollo](design/configuration/configuration-api-with-apollo)
+[Configuration API with Apollo)](/docs/design/configuration/configuration-api-with-apollo)
 
-[RPC 设计文档](design/rpc/rpc_design_document)
+[RPC 设计文档)](/docs/design/rpc/rpc_design_document)
 
-[分布式锁 API 设计文档](design/lock/lock-api-design)
+[分布式锁 API 设计文档)](/docs/design/lock/lock-api-design)
 
-[FaaS 设计文档](design/faas/faas-poc-design)
+[FaaS 设计文档](/docs/design/faas/faas-poc-design)
 
 ## FAQ
 

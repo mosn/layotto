@@ -23,10 +23,10 @@ jobs:
       - name: Install markdown-link-check
         run: sudo npm install -g markdown-link-check@3
 
-      - name: Install and start docsify server
+      - name: Install and start docusaurus server
         run: |
-             sudo npm i docsify-cli -g
-             nohup docsify serve docs -p 3000 &
+             sudo npm install
+             sudo npm run build --config docs && npm run serve --config docs
 
       - name: Check dead links in all the .md files
         run: make deadlink  

@@ -26,18 +26,9 @@
     }
   ],
   "replacementPatterns": [
-
     {
-      "pattern": "/img/",
-      "replacement": "docs/static/img/"
-    },
-    {
-      "pattern": "/docs/",
-      "replacement": "docs/docs/"
-    },
-    {
-      "pattern": "docs/",
-      "replacement": "docs/docs/"
+      "pattern": "^/",
+      "replacement": "http://localhost:3000/"
     },
     {
       "pattern": "^zh/",
@@ -53,7 +44,7 @@
   "retryCount": 2,
   "fallbackRetryDelay": "10s",
   "aliveStatusCodes": [
-    200,  
+    200,
     401
   ]
 }
