@@ -5,10 +5,11 @@
 Normative： for new tasks (good first issue)
 
 1. In issue label, issues with "good first issue" labels are considered to be "tasks suitable to newcomers";
-   ![image](https://user-images.githubusercontent.com/26001097/173573038-07586e85-4f51-4a34-a594-532967265557b.png)
+   ![image](https://user-images.githubusercontent.com/26001097/173573038-07586e85-4f51-4a34-a594-53296726557b.png)
+
 
 2. If no assignee, represent 'ad litem'; if there is a assignnee representative' who already claims ':
-   ![image](https://user-images.githubusercontent.com/26001097/173572716-855917f7-daf6-49dc-101-447d4e0c053c.png)
+   ![image](https://user-images.githubusercontent.com/26001097/173572716-855917f7-daf6-49dc-b101-447d4e0c053c.png)
 
 3. For task classification:
    issue requires a label "kind/xxxx", where xx represents the task category.
@@ -16,7 +17,7 @@ Normative： for new tasks (good first issue)
 Like "kind/ci" for category "ci" ：
 ![image](https://user-images.githubusercontent.com/26001097/173573518-5e990bbd-712e-4675-980f-90cbdafff090.png)
 like "kind/demo" for category "demo" ：
-![image](https://user-images.githubusercontent.com/26001097/173573829-73791d39-0099-4e87-a90-67474a3e.png)
+![image](https://user-images.githubusercontent.com/26001097/173573829-73791d39-0099-4e87-aa90-67474a32773e.png)
 
 4. For task difficulty
    issue requires some labels for hardship, including "easy", "medium", "hard", as follows:
@@ -26,7 +27,7 @@ like "kind/demo" for category "demo" ：
 
    If the title of the issue is in Chinese, the name of the task will be in Chinese; if there are no Chinese names, an English name
    like：
-   ![image](https://user-images.githubusercontent.com/26001097/173575931-d8a0bec4-5468-4db3-917a-75879f65333ff.png)
+   ![image](https://user-images.githubusercontent.com/26001097/173575931-d8a0bec4-5468-4db3-917a-75879f6533ff.png)
 
 ## Events and Tasks Recommendations
 
