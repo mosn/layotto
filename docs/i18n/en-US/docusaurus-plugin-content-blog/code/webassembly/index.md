@@ -31,9 +31,9 @@ As the bottom layer of Layotto is Mosn, the WASM extension framework is also the
 Among them, Manager is responsible for managing and dynamically updating WASM plugins;VM for managing WASM virtual machines, modules and instances;ABI serves as the application binary interface to provide an external interface [2].
 
 Here a brief review of the following concepts：\
-[Proxy-Wasm](https://github.com/proxy-waste) ：WebAssembly for Proxies (ABI specification) is an unrelated ABI standard that defines how proxy and WASM modules interact [3] in functions and callbacks.
-[proxy-wasm-go-sdk](https://github.com/tetratelabs/proxy-wasm-go-sdk) ：defines the interface of function access to system resources and infrastructure services based on [proxy-wasm/spec](https://github.com/proxy-wasm/speci) which brings together the Runtime API to increase access to infrastructure.\
-[proxy-wasm-go-host](https://github.com/mosn/proxy-waste-go-host) WebAssembly for Proxies (GoLang host implementation)：Proxy-Wasm golang implementation to implement Runtime ABI logic in Layotto.\
+[Proxy-Wasm](https://github.com/proxy-wasm) ：WebAssembly for Proxies (ABI specification) is an unrelated ABI standard that defines how proxy and WASM modules interact [3] in functions and callbacks.
+[proxy-wasm-go-sdk](https://github.com/tetratelabs/proxy-wasm-go-sdk) ：defines the interface of function access to system resources and infrastructure services based on [proxy-wasm/spec](https://github.com/proxy-wasm/spec) which brings together the Runtime API to increase access to infrastructure.\
+[proxy-wasm-go-host](https://github.com/mosn/proxy-wasm-go-host) WebAssembly for Proxies (GoLang host implementation)：Proxy-Wasm golang implementation to implement Runtime ABI logic in Layotto.\
 VM: Virtual Machine Virtual machine. The Runtime types are wasmtime, wasmer, V8, Lucet, WAMR, and wasm3
 
 1, see first the configuration of stream filter in [quickstart例子](https://mosn.io/layotto/#/start/waste/start) as follows, two WASM plugins can be seen, using waste VM to start a separate instance with configuration： below
@@ -626,7 +626,7 @@ Layotto WebAssemly involves more basic WASM knowledge, but it is understandable 
 
 ### References
 
-- [1] [WebAssembly practice in MOSN](https://mosn.io/blog/posts/mosn-waste-framework/)
+- [1] [WebAssembly practice in MOSN](https://mosn.io/blog/posts/mosn-wasm-framework/)
 - [2] [feature: WASM plugin framework](https://github.com/mosn/mosn/pull/1589)
 - [3] [WebAssembly for Proxies (ABI Spec)](https://github.com/proxy-wasm/spec)
 - [4] [Proxy WebAssembly Architecture](https://techhenzy.com/proxy-webassembly-archive/)

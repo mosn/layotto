@@ -26,7 +26,7 @@ Positions are designed to provide services, resources and security for functions
 
 When officially supported containers are running, docker is one of the most scenic implementations currently used, and security containers such as kata and gvisor are also using the technology and Layotto builds on their thinking and integrates the function loading process into concrete implementation when the container is running.
 
-#### D,[Containerd-shim-layotto-v2](https://github.com/layotto/containerd-waste)
+#### D,[Containerd-shim-layotto-v2](https://github.com/layotto/containerd-wasm)
 
 Based on Containerd's V2 interface definition, the logic of the running of the container is customized, such as creating the container to perform the operation to allow Layotto load and run the wasm function.
 
@@ -38,7 +38,7 @@ The factual standard of the current container schedule, life-cycle management an
 
 #### A. [proxy-wasm-go-sdk](https://github.com/layotto/proxy-wasm-go-sdk)
 
-The interface of function access to system resources and infrastructure services is defined and implemented on a community-based basis [proxy-waste/spec] (https://github.com/proxy-waste/speci) that brings together the [Runtime API](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) and adds ABI to infrastructure visits.
+The interface of function access to system resources and infrastructure services is defined and implemented on a community-based basis [proxy-waste/spec] (https://github.com/proxy-wasm/spec) that brings together the [Runtime API](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) and adds ABI to infrastructure visits.
 
 #### B. [proxy-wasm-go-host](https://github.com/layotto/proxy-wasm-go-host)
 

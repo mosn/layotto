@@ -81,14 +81,14 @@ When users want to add an API, they can develop a package in their own project (
 
 How to add your own proto, add your own private API?
 
-An example is [the shellowold package provided in the project](https://github.com/mosn/layotto/tree/main/cmd/layotto_multiple_api/hellowld) which implements custom API, \`\`Sayhello\`
+An example is [the shellowold package provided in the project](https://github.com/mosn/layotto/tree/main/cmd/layotto_multiple_api/helloworld) which implements custom API, \`\`Sayhello\`
 
 Use this as an example to explain the steps to write an API plugin:
 
 #### step 0. Define your own proto file and compile a pb
 
 For example, users would like to add their own `Greeter` API, offering the `Sayhello` method, write a proto:
-(this example is my paste from [grpc official exams](https://github.com/grpc/grpc-go/blob/master/examples/hellotorld/helloorld/hellotorld.proto)
+(this example is my paste from [grpc official exams](https://github.com/grpc/grpc-go/blob/master/examples/helloworld/helloworld/helloworld.proto)
 
 ```protobuf
 syntax = "proto3";
@@ -230,7 +230,7 @@ See[自定义组件的配置文档](docs/component_species/custom/common)
 
 ##### View Example
 
-Look at a specific example, in [helloowold exams](https://github.com/mosn/layotto/lob/main/cmd/layotto_multiple_api/helloorld/grpc_api.go), `*server` implements `Init`
+Look at a specific example, in [helloowold exams](https://github.com/mosn/layotto/blob/main/cmd/layotto_multiple_api/helloworld/grpc_api.go), `*server` implements `Init`
 and `Register`:
 
 ```go
@@ -292,7 +292,7 @@ Graph below：
 #### step 3. Sign up your own API into Layotto
 
 After achieving your private API
-following the above steps, you can [register it in your main main in Layotto](https://github.com/mosn/layotto/bllob/5234a80cdc9798162d03546eb8e0ee163c0ad60/cmd/layotto_multiple_api/main.go#L203):
+following the above steps, you can [register it in your main main in Layotto](https://github.com/mosn/layotto/blob/5234a80cdc97798162d03546eb8e0ee163c0ad60/cmd/layotto_multiple_api/main.go#L203):
 
 ```go
 

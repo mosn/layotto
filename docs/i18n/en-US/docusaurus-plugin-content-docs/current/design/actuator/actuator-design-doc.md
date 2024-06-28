@@ -39,7 +39,7 @@ for reference [https://segmentfault.com/a/1190000017816452](https://segmentfault
 2. Integrated Monitoring System: Access to Prometheus+Grafana
 
 Similar to Spring Boot Actuator's access to Prometheus+Grafana
-reference[Spring-Boot-Metrics监控之Prometheus-Grafana](https://bigjar.github.io/2018/08/19/Spring-Boot-Metrics monitored by Prometheus-Grafana/)
+reference[Spring-Boot-Metrics监控之Prometheus-Grafana](https://bigjar.github.io/2018/08/19/Spring-Boot-Metrics监控之Prometheus-Grafana/)
 
 **Q: Do not control capabilities like "toggle the traffic of specific components inside Layotto"**
 

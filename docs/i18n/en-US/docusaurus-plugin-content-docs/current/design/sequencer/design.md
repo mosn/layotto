@@ -30,7 +30,7 @@ Select * from message order by message-id limit 100
 
 This is common when using nosql, because nosql has difficulty indexing the timestamp field
 
-- Increase in lone transfer in sharding.e.g.[Tidb的自增id](https://docs.pingcap.com/en/tidb/stable/auto-increment) ensures the ID increment generated on a single server and does not guarantee a global (multi-servers) one-tone.
+- Increase in lone transfer in sharding.e.g.[Tidb的自增id](https://docs.pingcap.com/zh/tidb/stable/auto-increment) ensures the ID increment generated on a single server and does not guarantee a global (multi-servers) one-tone.
 
 - Global monochrome
 
@@ -237,6 +237,6 @@ You can define interfaces first, components are not implemented first, and there
 
 [设计分布式唯一id生成](https://www.jianshu.com/p/fb9478687e55)
 
-[Architectural Chat ID generation](https://www.w3cschool.cn/archivectroad/archittracad-distributed-id.html)
+[Architectural Chat ID generation](https://www.w3cschool.cn/architectroad/architectroad-distributed-id.html)
 
 [Leaf - USG point ID generation system] (https://tech.meituan.com/2017/04/21/mt-leaf.html)
