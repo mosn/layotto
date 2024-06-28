@@ -200,7 +200,7 @@ Returns the metadata data of the object, which is the most basic ability of the 
 
 The interface is not clearly defined in s3, and users can determine whether an object exists by way of the http's standard error code returned by HeadObject, which is abstracted separately to make the interface more semicolon.
 
-> [http://biercoff.com/how-to-check-with-aws-cli-if-file-exiss-in-s3/](http://biercoff.com/how-to-check-with-aws-cli-if-file-exists-in-s3/)\
+> [http://biercoff.com/how-to-check-with-aws-cli-if-file-exiss-in-s3/](http://biercoff.com/how-to-check-with-aws-cli-file-exiss-in-s3)
 > [https://stackoverflow.com/questions/41871948/aws-s3-how-to-check-if-a-file-exiss-in-a-bucket-using-bash](https://stackoverflow.com/questions/41871948/aws-on-to-the-file-existing-bash)
 
 ### SignURL
