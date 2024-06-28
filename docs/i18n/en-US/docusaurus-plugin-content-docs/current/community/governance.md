@@ -140,8 +140,8 @@ Community-based meetings themselves
 ## References
 
 Apollo
-[https://github.com/apolloconfig/apollo/pul/3670](https://github.com/apollocfig/apollo/pul/3670)
-[https://github.com/apollocfig/apollo/issues/3684](https://github.com/apollocfig/apollo/issues/3684)
-[https://github.com/apollocfig/apollo/discussions/categories/announcements] (https://github.com/apollocfig/apolonfigure/documents)
+[https://github.com/apolloconfig/apollo/pul/3670](https://github.com/apolloconfig/apollo/pul/3670)
+[https://github.com/apolloconfig/apollo/issues/3684](https://github.com/apolloconfig/apollo/issues/3684)
+[https://github.com/apolloconfig/apollo/discussions/categories/announcements] (https://github.com/apolloconfig/apolonfigure/documents)
 
 Tidb's community-based organization [https://pingcap.com/blog-cn/tidb-community-upgrade/](https://pingcap.com/blog-cn/tidb-community-upgrade/)
