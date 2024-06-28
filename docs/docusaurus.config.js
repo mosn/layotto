@@ -8,7 +8,7 @@ const config = {
   favicon: 'https://gw.alipayobjects.com/zos/bmw-prod/65518bfc-8ba5-4234-a5c5-2bc065e3a5f0.svg',
 
   url: 'https://mosn.io',
-  baseUrl: '/layotto/',
+  baseUrl: '/',
 
   organizationName: 'mosn',
   projectName: 'layotto',

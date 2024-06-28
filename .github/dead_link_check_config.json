@@ -31,6 +31,10 @@
       "replacement": "http://localhost:3000/#/"
     },
     {
+      "pattern": "^/img",
+      "replacement": "docs/static/img"
+    },
+    {
       "pattern": "^zh/",
       "replacement": "http://localhost:3000/#/zh/"
     },
