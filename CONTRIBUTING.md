@@ -22,7 +22,7 @@ None of these is essential for a pull request, but they will all help.
 9. Make sure checks have been correctly passed, you can simply run `make check`
 10. Contribute a Pull Request  as the rule of Github Workflow, and you should follow the pull request's rules.
 
-> Layotto provides many useful commands to help you contribute easier, please check it [here](docs/en/development/commands.md)
+> Layotto provides many useful commands to help you contribute easier, please check it [here](docs/i18n/en-US/docusaurus-plugin-content-docs/current/development/commands.md)
 
 ## Version naming convention
 

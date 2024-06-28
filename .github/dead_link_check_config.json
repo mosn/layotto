@@ -28,7 +28,7 @@
   "replacementPatterns": [
     {
       "pattern": "^/",
-      "replacement": "http://localhost:3000/#/"
+      "replacement": "http://localhost:3000/"
     },
     {
       "pattern": "^zh/",
@@ -44,7 +44,7 @@
   "retryCount": 2,
   "fallbackRetryDelay": "10s",
   "aliveStatusCodes": [
-    200,  
+    200,
     401
   ]
 }
