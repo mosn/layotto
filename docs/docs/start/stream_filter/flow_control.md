@@ -1,6 +1,6 @@
 # 方法级别流量控制
 
-### 功能介绍
+## 功能介绍
 
 在[runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json) 中，有一段关于限流的配置如下：
 

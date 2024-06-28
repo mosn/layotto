@@ -1,6 +1,6 @@
 # RPC DESIGN
 
-### API
+## API
 runtime rpc API is same with Dapr.
 
 ### Core Abstraction

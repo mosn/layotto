@@ -1,6 +1,6 @@
 # FaaS Design Document
 
-### Structure design
+## Structure design
 
 ![img.png](../(/img/faas/faas-design.jpg)
 

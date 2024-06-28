@@ -94,7 +94,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 ### runtime analysis
 
-Look at the structure of runtime, the composition of the `runtime' at the aggregate level of the `：'
+Look at the structure of runtime, the composition of the `runtime' at the aggregate level of the`：'
 
 ```
 type MosnRuntime struct {

@@ -1,6 +1,6 @@
 # layotto component reference
 
-### Background
+## Background
 
 When a component starts, it may need to use another component's skill. For example, when the `sequencer` component `A` starts, it needs to read its settings from the `config` component `B`.
 
