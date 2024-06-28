@@ -45,7 +45,7 @@ After seeing the huge gains from RPC capacity Mih, internal ants also transforme
 1. Apply strong binding to infrastructure
 
 > ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*nKxcTKLp4EoAAAAAAAAAAAAAARQnAQ)
-> 一个现代分布式应用，往往会同时依赖 RPC、Cache、MQ、Config 等各种分布式能力来完成业务逻辑的处理。
+> A modern distributed application often relies on RPC, Cache, MQ, Config and other distributed capabilities to complete the processing of business logic.
 
 When RPC was initially seen, other capabilities were quickly sinking.Initially, they were developed in the most familiar way, leading to a lack of integrated planning management, as shown in the graph above, which relied on SDKs of a variety of infrastructure, and in which SDK interacted with MOSN in a unique way, often using private agreements provided by the original infrastructure, which led directly to a complex intermediate capability, but in essence the application was tied to the infrastructure, such as the need to upgrade the SDK from Redis to Memcache, which was more pronounced in the larger trend of the application cloud, assuming that if an application was to be deployed on the cloud, because the application relied on a variety of infrastructures, it would be necessary to move the entire infrastructure to the cloud before the application could be successfully deployed.
 So how to untie the application to the infrastructure so that it can be transplantable and that it can feel free to deploy across the platform is our first problem.
@@ -53,7 +53,7 @@ So how to untie the application to the infrastructure so that it can be transpla
 2. Isomal language connectivity
 
 > ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*oIdQQZmgtyUAAAAAAAAAAAAAARQnAQ)
-> 事实证明 Service Mesh 确实降低了异构语言的接入门槛，但在越来越多的基础能力下沉到 MOSN 以后，我们逐渐意识到为了让应用跟 MOSN 交互，各种 SDK 里都需要对通信协议，序列化协议进行开发，如果再加上需要对各种异构语言都提供相同的功能，那维护难度就会成倍上涨，
+> It has been proved that Service Mesh does reduce the access threshold of heterogeneous languages, but after more and more basic capabilities sink to MOSN, we gradually realized that in order to allow applications to interact with MOSN, various SDKS need to develop communication protocols and serialization protocols. If you add in the need to provide the same functionality for a variety of heterogeneous languages, the difficulty of maintenance increases exponentially
 
 Service Mesh has made the SDK historic, but for the current scenario of programming languages and applications with strong infrastructural dependence, we find that the existing SDK is not thin enough, that the threshold for access to the isomer language is not low enough and that the threshold for further lowering the isomer language is the second problem we face.
 
@@ -62,9 +62,9 @@ Service Mesh has made the SDK historic, but for the current scenario of programm
 ### A, what is Runtime?
 
 > ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*hQT-Spc5rI4AAAAAAAAAAAAAARQnAQ)
-> 20 年初的时候，Bilgin lbryam 发表了一篇名为
+> In the early 20th century, Bilgin lbryam published a paper called
 > Multi-Runtime Microservices Architecture
-> 的文章，里面对微服务架构下一阶段的形态进行了讨论。
+> This article discusses the shape of the next phase of microservices architecture.
 
 As shown in the graph above, the author abstracts the demand for distributed services and is divided into four chaos：
 
@@ -253,8 +253,8 @@ Finally, look at what Layotto does in the community.
 
 ### The APP
 
-> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*GAe8QqZ03eoAAAAAAAAAAAAAARQnAQ)
-> 关于如何定义一套标准的 API 以及如何让 Layotto 可以跑在 envoy 上等等事项，我们已经在各个社区进行了深入讨论，并且以后也还会继续推进。
+> ![](https://gw.alipayobjects.com/mdn/rms_1c90e8/afts/img/A*nKxcTKLp4EoAAAAAAAAAAAAAARQnAQ)
+> We have had extensive discussions in the community about how to define a standard API and how Layotto can run on envoy, and we will continue to do so.
 
 ### C, Road map
 

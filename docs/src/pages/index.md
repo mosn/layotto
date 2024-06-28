@@ -1,7 +1,7 @@
 # Layotto (L8): To be the next layer of OSI layer 7
 <img src="https://gw.alipayobjects.com/zos/bmw-prod/65518bfc-8ba5-4234-a5c5-2bc065e3a5f0.svg" height="120px"/>
 
-[![Layotto Env Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/quickstart-checker.yml)
+[![Layotto Env Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/proto-checker.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/proto-checker.yml)
 [![Layotto Dev Pipeline 🌊](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml/badge.svg)](https://github.com/mosn/layotto/actions/workflows/layotto-ci.yml)
 
 [![GoDoc](https://godoc.org/mosn.io/layotto?status.svg)](https://godoc.org/mosn.io/layotto)
@@ -164,17 +164,17 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 ## 设计文档
 
-[Actuator 设计文档](docs/design/actuator/actuator-design-doc)
+[Actuator 设计文档](/docs/design/actuator/actuator-design-doc)
 
-[Pubsub API 与 Dapr Component 的兼容性](docs/design/pubsub/pubsub-api-and-compability-with-dapr-component)
+[Pubsub API 与 Dapr Component 的兼容性](/docs/design/pubsub/pubsub-api-and-compability-with-dapr-component)
 
-[Configuration API with Apollo](docs/design/configuration/configuration-api-with-apollo)
+[Configuration API with Apollo](/docs/design/configuration/configuration-api-with-apollo)
 
-[RPC 设计文档](docs/design/rpc/rpc_design_document)
+[RPC 设计文档](/docs/design/rpc/rpc_design_document)
 
-[分布式锁 API 设计文档](docs/design/lock/lock-api-design)
+[分布式锁 API 设计文档](/docs/design/lock/lock-api-design)
 
-[FaaS 设计文档](docs/design/faas/faas-poc-design)
+[FaaS 设计文档](/docs/design/faas/faas-poc-design)
 
 ## FAQ
 

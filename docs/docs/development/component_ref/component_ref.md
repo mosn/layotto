@@ -7,12 +7,12 @@
 ###  相关设计
 
 目前只支持最需要被应用的两个组件类型:ConfigStore和SecretStore,即配置组件和秘钥组件。  
-Ref接口设计，组件需实现此接口才能实现注入。  
+Ref接口设计，组件需实现此接口才能实现注入。
 
 ```go
 type SetComponent interface {
-	SetConfigStore(cs configstores.Store) (err error)
-	SetSecretStore(ss secretstores.SecretStore) (err error)
+SetConfigStore(cs configstores.Store) (err error)
+SetSecretStore(ss secretstores.SecretStore) (err error)
 }
 ```
 
@@ -39,13 +39,13 @@ return nil
 }
 //fetch secret/config when component init
 func (hw *HelloWorld) Init(config *hello.HelloConfig) error {
-  hw.secretStore.GetSecret(secretstores.GetSecretRequest{
-     Name:     "dbPassword",
-  })
-  hw.config.Get(context.Background(),&configstores.GetRequest{
-     Keys:     []string{"dbAddress"},
-  })
-  return nil
+hw.secretStore.GetSecret(secretstores.GetSecretRequest{
+Name:     "dbPassword",
+})
+hw.config.Get(context.Background(),&configstores.GetRequest{
+Keys:     []string{"dbAddress"},
+})
+return nil
 }
 ```
 

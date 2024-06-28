@@ -9,9 +9,9 @@ in order to decoupling with pb definition，add independent RPC abstrations.
 - invoker： provide complete rpc ability，currently only Mosn invoker
 - callback：before/after filter，extend with custom logic(eg: protocol convertion)
 - channel：send request and receive response, talk to diffrent transport protocol（http、bolt...)
-  
+
 due to Mosn do all the dirty work, a lightweight framework is enough for layotto currently.
-  
+
 
 ![img.png](../../../img/rpc/rpc-layer.png)
 
@@ -48,9 +48,9 @@ In layotto, we design a convenient way to support xprotocols. The only task need
       "channel": [{
         "size": 16, // analogy to connection nums
         "protocol": "http", // communicate with mosn via this protocol
-        "listener": "egress_runtime_http" // mosn's protocol listener name
-      }]
-    }
-  }
-}
+                                               "listener": "egress_runtime_http" // mosn's protocol listener name
+                                               }]
+                                               }
+                                               }
+                                               }
 ```

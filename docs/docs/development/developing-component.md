@@ -10,7 +10,7 @@
 
 1. git clone下载代码到您喜欢的目录
 2. 使用Docker启动您需要的环境。比如您想用zookeeper开发分布式锁API，就需要本地用Docker启动一个zookeeper容器，用于本地测试。
-   
+
 如果您本地没有Docker也不用害怕，可以参照 [Docker Desktop教程](https://www.runoob.com/docker/windows-docker-install.html) 装一个Docker Desktop,Mac和Windows都可以，用起来特别简单。
 
 ## 二、开发组件和单元测试
@@ -29,7 +29,7 @@
 - 其他：Layotto的pkg/common目录下有一些工具类，以及mosn.io/pkg下也有很多工具类
 
 ### 2.2. 复制粘贴别的组件
-   
+
 简单起见，可以直接复制粘贴别的组件过来，修改开发。比如想用zookeeper实现分布式锁API的话，可以把redis组件复制粘贴过来改
 
 ### 2.3. 记得编写单元测试哦！
@@ -43,7 +43,7 @@
 
 一般是把所有网络调用的代码封装成一个interface，然后在ut中mock掉这个interface。以apollo配置中心的单元测试为例，见components/configstores/apollo/configstore.go 和 components/configstores/apollo/configstore_test.go ：
 
-首先，在configstore.go里，把所有调sdk、发起网络调用调apollo的地方给封装成一个interface 
+首先，在configstore.go里，把所有调sdk、发起网络调用调apollo的地方给封装成一个interface
 
 ![mock.png]((/img/development/component/mock.png)
 ![img_8.png]((/img/development/component/img_8.png)
@@ -129,7 +129,7 @@
 
 ![img_2.png]((/img/development/component/img_2.png)
 
-启动demo、调用Layotto，看看有没有报错。如果是通用客户端，可以在命令行命令里带上-s storeName传入storeName 
+启动demo、调用Layotto，看看有没有报错。如果是通用客户端，可以在命令行命令里带上-s storeName传入storeName
 
 ![img_5.png]((/img/development/component/img_5.png)
 

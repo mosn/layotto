@@ -2,7 +2,7 @@
 
 ## 配置项说明
 示例：configs/config_apollo.json
-![img.png]((/img/configuration/apollo/img.png)
+![img.png](/img/configuration/apollo/img.png)
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |

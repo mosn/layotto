@@ -2,19 +2,19 @@
 
 > This paper mainly analyses the relevant implementation and application of Layotto Middle WASM.
 >
-> by：[王志龙](https://github.com/rayowang) | 18 May 2022
+> by：[Wang Zhilong](https://github.com/rayowang) | 18 May 2022
 
-- [概述](#overview)
-- [源码分析](#source analysis)
-  - [框架INIT](#Frame INIT)
-  - [工作流程](#workflow)
-  - [FaaS模式](#FaaS mode)
-- [总结](#summary)
+- [overview](#overview)
+- [source analysis](#source analysis)
+  - [Frame INIT](#Frame INIT)
+  - [workflow](#workflow)
+  - [FaaSmode](#FaaS mode)
+- [summary](#summary)
 
 ## General description
 
 WebAssemly Abbreviations WASM, a portable, small and loaded binary format operating in sandboxing implementation environment, was originally designed to achieve high-performance applications in web browsers, benefiting from its good segregation and security, multilingual support, cool-start fast flexibility and agility and application to embed other applications for better expansion, and obviously we can embed it into Layotto.Layotto supports loading compiled WASM files and interacting with the Target WASM API via proxy_abi_version_0_2_0;
-other Layotto also supports loading and running WASM carrier functions and supports interfaces between Function and access to infrastructure; and Layotto communities are also exploring the compilation of components into WASM modules to increase segregation between modules.本文以 Layotto 官方 [quickstart](https://mosn.io/layotto/#/zh/start/wasm/start) 即访问redis相关示例为例来分析 Layotto 中 WebAssemly 相关的实现和应用。
+other Layotto also supports loading and running WASM carrier functions and supports interfaces between Function and access to infrastructure; and Layotto communities are also exploring the compilation of components into WASM modules to increase segregation between modules.This article uses the Layotto official [quickstart](https://mosn.io/layotto/#/zh/start/wasm/start) example of accessing redis as an example to analyze WebAssemly in Layotto Related implementation and application.
 
 ## Source analysis
 
@@ -24,7 +24,7 @@ Note：is based on commit hash：f1cf350a52b5a1a0b3788a31681007a056e332ef
 
 As the bottom layer of Layotto is Mosn, the WASM extension framework is also the WASM extension framework that reuses Mosn, as shown in figure 1 Layotto & Mosn WASM framework [1].
 
-![mosn\_wasm\_ext\_framework\_module](https://gw.alipaayobjects.com/md/rms_5891a1/afts/img/A*jz4BSJmVQ3gAAAAAAAAAAAAAAAAAAARQAQAQAQ)
+![mosn\_wasm\_ext\_framework\_module](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*jz4BSJmVQ3gAAAAAAAAAAAAAARQnAQ)
 
 <center>Figure 1 Layotto & Mosn WASM framework </center>
 
@@ -34,7 +34,7 @@ Here a brief review of the following concepts：\
 [Proxy-Wasm](https://github.com/proxy-waste) ：WebAssembly for Proxies (ABI specification) is an unrelated ABI standard that defines how proxy and WASM modules interact [3] in functions and callbacks.
 [proxy-wasm-go-sdk](https://github.com/tetratelabs/proxy-wasm-go-sdk) ：defines the interface of function access to system resources and infrastructure services based on [proxy-wasm/spec](https://github.com/proxy-wasm/speci) which brings together the Runtime API to increase access to infrastructure.\
 [proxy-wasm-go-host](https://github.com/mosn/proxy-waste-go-host) WebAssembly for Proxies (GoLang host implementation)：Proxy-Wasm golang implementation to implement Runtime ABI logic in Layotto.\
-VM：Virtual Machine 虚拟机，Runtime类型有：wasmtime、Wasmer、V8、 Lucet、WAMR、wasm3，本文例子中使用 wasmer
+VM: Virtual Machine Virtual machine. The Runtime types are wasmtime, wasmer, V8, Lucet, WAMR, and wasm3
 
 1, see first the configuration of stream filter in [quickstart例子](https://mosn.io/layotto/#/start/waste/start) as follows, two WASM plugins can be seen, using waste VM to start a separate instance with configuration： below
 
@@ -138,7 +138,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory config not a map, configID: %s", configID)
 			return nil, errors.New("config not a map")
 		}
-		// 解析 wasm filter 配置
+		// Parse the wasm filter configuration
 		config, err := parseFilterConfigItem(conf)
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to parse config, configID: %s, err: %v", configID, err)
@@ -149,14 +149,14 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 		if config.FromWasmPlugin == "" {
 			pluginName = utils.GenerateUUID()
             
-			// 根据 stream filter 的配置初始化 WASM 插件配置，VmConfig 即 vm_config，InstanceNum 即 instance_num
+			// The WASM plug-in configuration is initialized according to the stream filter configuration. VmConfig is vm_config, and InstanceNum is instance_num
 			v2Config := v2.WasmPluginConfig{
 				PluginName:  pluginName,
 				VmConfig:    config.VmConfig,
 				InstanceNum: config.InstanceNum,
 			}
             
-			// WasmManager 实例通过管理 PluginWrapper 对象对所有插件的配置进行统一管理，提供增删查改能力。下接3
+			// The WasmManager instance manages the configuration of all plug-ins in a unified manner by managing the PluginWrapper object, providing the ability to add, delete, check and modify. Continue 3
 			err = wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
 			if err != nil {
 				config.PluginName = pluginName
@@ -170,7 +170,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 		}
 		config.PluginName = pluginName
 
-		// PluginWrapper 在上面的 AddOrUpdateWasm 中对插件及配置进行封装完成初始化，这里根据插件名从 sync.Map 拿出，以管理并注册 PluginHandler
+		// PluginWrapper wraps the plug-in and configuration in AddOrUpdateWasm above to complete the initialization, which is pulled from sync.Map according to the plug-in name to manage and register the PluginHandler
 		pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginName)
 		if pw == nil {
 			return nil, errors.New("plugin not found")
@@ -186,7 +186,7 @@ func createProxyWasmFilterFactory(confs map[string]interface{}) (api.StreamFilte
 			config:        config,
 		}
 		factory.plugins[config.PluginName] = wasmPlugin
-		// 注册 PluginHandler，以对插件的生命周期提供扩展回调能力，例如插件启动 OnPluginStart、更新 OnConfigUpdate。下接4
+		// Register PluginHandler to provide extended callback capabilities for the plug-in's life cycle, such as the plug-in starting OnPluginStart and updating OnConfigUpdate. Continue 4
 		pw.RegisterPluginHandler(factory)
 	}
 
@@ -206,7 +206,7 @@ func NewWasmPlugin(wasmConfig v2.WasmPluginConfig) (types.WasmPlugin, error) {
 
 	wasmConfig.InstanceNum = instanceNum
 
-	// 根据配置获取 wasmer 编译和执行引擎
+	// Get the wasmer compilation and execution engine according to the configuration
 	vm := GetWasmEngine(wasmConfig.VmConfig.Engine)
 	if vm == nil {
 		log.DefaultLogger.Errorf("[wasm][plugin] NewWasmPlugin fail to get wasm engine: %v", wasmConfig.VmConfig.Engine)
@@ -236,7 +236,7 @@ func NewWasmPlugin(wasmConfig v2.WasmPluginConfig) (types.WasmPlugin, error) {
 		return nil, ErrWasmBytesIncorrect
 	}
 
-	// 创建 WASM 模块，WASM 模块是已被编译的无状态二进制代码
+	// Create the WASM module, which is the stateless binary code that has been compiled
 	module := vm.NewModule(wasmBytes)
 	if module == nil {
 		log.DefaultLogger.Errorf("[wasm][plugin] NewWasmPlugin fail to create module, config: %v", wasmConfig)
@@ -253,7 +253,7 @@ func NewWasmPlugin(wasmConfig v2.WasmPluginConfig) (types.WasmPlugin, error) {
 	plugin.SetCpuLimit(wasmConfig.VmConfig.Cpu)
 	plugin.SetMemLimit(wasmConfig.VmConfig.Mem)
 
-	// 创建包含模块和运行时状态的实例，值得关注的是，这里最终会调用 proxywasm.RegisterImports 注册用户实现的 Imports 函数，比如示例中的 proxy_invoke_service 和 proxy_get_state
+	// Contains module and runtime state to create instance, notable is that here will call proxywasm. RegisterImports registered users realize the Imports of function, Examples include proxy_invoke_service and proxy_get_state
 actual := plugin.EnsureInstanceNum(wasmConfig.InstanceNum)
 	if actual == 0 {
 		log.DefaultLogger.Errorf("[wasm][plugin] NewWasmPlugin fail to ensure instance num, want: %v got 0", instanceNum)
@@ -286,18 +286,18 @@ func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 		instance.Lock(a)
 		defer instance.Unlock()
 
-		// 使用 exports 函数 proxy_get_id（对应到 WASM 插件中 GetID 函数）获取 WASM 的 ID
+		// Use the exports function proxy_get_id (which corresponds to the GetID function in the WASM plug-in) to get the ID of WASM
 		id, err := exports.ProxyGetID()
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] createProxyWasmFilterFactory fail to get wasm id, PluginName: %s, err: %v",
 				plugin.PluginName(), err)
 			return true
 		}
-		// 把ID 和 对应的插件注册到路由中，即可通过 http Header 中的键值对进行路由，比如 'id:id_1' 就会根据 id_1 路由到上面的 Function1 
+		// If you register the ID and the corresponding plug-in in the route, the route can be performed using the key-value pair in the http Header. For example, 'id:id_1' is routed to Function1 based on id_1 
 		f.router.RegisterRoute(id, wasmPlugin)
 
-		// 当第一个插件使用给定的根 ID 加载时通过 proxy_on_context_create 创建根上下文，并在虚拟机的整个生命周期中持续存在，直到 proxy_on_delete 删除 
-		// 值得注意的是这里说的第一个插件指的是多个松散绑定的插件(通过 SDK 使用 Root ID 对 Root Context 访问）在同一已配置虚拟机内共享数据的使用场景 [4]
+		// The root context is created by proxy_on_context_create when the first plug-in is loaded with the given root ID and persists for the entire life of the virtual machine until proxy_on_delete is deleted
+               // It is worth noting that the first plug-in here refers to a use case where multiple loosely bound plug-ins (accessed via the SDK using the Root ID to the Root Context) share data within the same configured virtual machine [4]
 		err = exports.ProxyOnContextCreate(f.RootContextID, 0)
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] OnPluginStart fail to create root context id, err: %v", err)
@@ -309,7 +309,7 @@ func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 			vmConfigSize = vmConfigBytes.Len()
 		}
 
-		// VM 伴随启动的插件启动时调用
+		// VM is called when the plug-in is started with the startup
 		_, err = exports.ProxyOnVmStart(f.RootContextID, int32(vmConfigSize))
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] OnPluginStart fail to create root context id, err: %v", err)
@@ -321,7 +321,7 @@ func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 			pluginConfigSize = pluginConfigBytes.Len()
 		}
 
-		// 当插件加载或重新加载其配置时调用
+		// Called when the plug-in loads or reloads its configuration
 		_, err = exports.ProxyOnConfigure(f.RootContextID, int32(pluginConfigSize))
 		if err != nil {
 			log.DefaultLogger.Errorf("[proxywasm][factory] OnPluginStart fail to create root context id, err: %v", err)
@@ -340,18 +340,18 @@ The workflow for Layotto Middle WASM is broadly as shown in figure 2 Layotto & M
 
 <center>Figure 2 Layotto & Mosn WAS Workflow </center>
 
-1、由 Layotto 底层 Mosn 收到请求，经过 workpool 调度，在 proxy downstream 中按照配置依次执行 StreamFilterChain 到 Wasm StreamFilter 的 OnReceive 方法，具体逻辑详见如下代码：
+By Layotto underneath Mosn, as a workpool schedule, implement the OnReceive method of StreamFilterChain to Wasm StreamFilter in proxy downstream, as configured and detailed in code： below
 
 ```go
 func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffer.IoBuffer, trailers api.HeaderMap) api.StreamFilterStatus {
-	// 获取 WASM 插件的 id
+	// Gets the id of the WASM plug-in
 	id, ok := headers.Get("id")
 	if !ok {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders no id in headers")
 		return api.StreamFilterStop
 	}
     
-	// 从 router 中根据 id 获取对应的 WASM 插件
+	// Obtain the WASM plug-in from the router based on its id
 	wasmPlugin, err := f.router.GetRandomPluginByID(id)
 	if err != nil {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders id, err: %v", err)
@@ -360,29 +360,29 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 	f.pluginUsed = wasmPlugin
 
 	plugin := wasmPlugin.plugin
-	// 获取 WasmInstance 实例
+	// Obtain an instance of WasmInstance
 	instance := plugin.GetInstance()
 	f.instance = instance
 	f.LayottoHandler.Instance = instance
 
-	// ABI 包含 导出(Exports)和导入(Imports)两个部分，用户通过这它们与 WASM 扩展插件进行交互
+	// The ABI consists of Exports and Imports, through which users interact with the WASM extension
 	pluginABI := abi.GetABI(instance, AbiV2)
 	if pluginABI == nil {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive fail to get instance abi")
 		plugin.ReleaseInstance(instance)
 		return api.StreamFilterStop
 	}
-	// 设置导入 Imports 部分，导入部分由用户提供，虚拟机的执行需要依赖宿主机 Layotto 提供的部分能力，例如获取请求信息，这些能力通过导入部分由用户提供，并由 WASM 扩展调用
+	// Set the Imports section. The import section is provided by the user. The execution of the virtual machine depends on some of the capabilities provided by the host Layotto, such as obtaining request information, which are provided by the user through the import section and invoked by the WASM extension
 	pluginABI.SetABIImports(f)
 
-	// 导出 Exports 部分由 WASM 插件提供，用户可直接调用——唤醒 WASM 虚拟机，并在虚拟机中执行对应的 WASM 插件代码
+	// The Exports section is provided by the WASM plug-in and can be called directly by the user to wake up the WASM virtual machine and execute the corresponding WASM plug-in code in the virtual machine
 	exports := pluginABI.GetABIExports().(Exports)
 	f.exports = exports
 	
 	instance.Lock(pluginABI)
 	defer instance.Unlock()
 	
-	// 根据 rootContextID 和 contextID 创建当前插件上下文
+	// Create the current plug-in context according to rootContextID and contextID
 	err = exports.ProxyOnContextCreate(f.contextID, wasmPlugin.rootContextID)
 	if err != nil {
 		log.DefaultLogger.Errorf("[proxywasm][filter] NewFilter fail to create context id: %v, rootContextID: %v, err: %v",
@@ -395,7 +395,7 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 		endOfStream = 0
 	}
 
-	// 调用 proxy-wasm-go-host，编码请求头为规范指定的格式
+	// Call proxy-wasm-go-host, encoding the request header in the format specified by the specification
 	action, err := exports.ProxyOnRequestHeaders(f.contextID, int32(headerMapSize(headers)), int32(endOfStream))
 	if err != nil || action != proxywasm.ActionContinue {
 		log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestHeaders err: %v", err)
@@ -415,7 +415,7 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 	}
 
 	if f.requestBuffer != nil && f.requestBuffer.Len() > 0 {
-		// 调用 proxy-wasm-go-host，编码请求体为规范指定的格式
+		// Call proxy-wasm-go-host, encoding the request body in the format specified by the specification
 		action, err = exports.ProxyOnRequestBody(f.contextID, int32(f.requestBuffer.Len()), int32(endOfStream))
 		if err != nil || action != proxywasm.ActionContinue {
 			log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestBody err: %v", err)
@@ -424,7 +424,7 @@ func (f *Filter) OnReceive(ctx context.Context, headers api.HeaderMap, buf buffe
 	}
 
 	if trailers != nil {
-        // 调用 proxy-wasm-go-host，编码请求尾为规范指定的格式
+        // Call proxy-wasm-go-host, encoding the request tail in the format specified by the specification
 		action, err = exports.ProxyOnRequestTrailers(f.contextID, int32(headerMapSize(trailers)))
 		if err != nil || action != proxywasm.ActionContinue {
 			log.DefaultLogger.Errorf("[proxywasm][filter] OnReceive call ProxyOnRequestTrailers err: %v", err)
@@ -459,11 +459,11 @@ func (a *ABIContext) CallWasmFunction (functionName string, args ..interface{}) 
 }
 ```
 
-3、WASMER 虚拟机经过处理调用 WASM 插件的具体函数，比如例子中的 OnHttpRequestBody 函数
-// function, _:= instance.Exports.GetFunction("exported_function")
-// nativeFunction = function.Native()
-//_ = nativeFunction(1, 2, 3)
-// Native 会将 Function 转换为可以调用的原生 Go 函数
+3. The WASMER virtual machine is processed to call specific functions of the WASM plug-in, such as the OnHttpRequestBody function in the example
+   // function, _:= instance.Exports.GetFunction("exported_function")
+   // nativeFunction = function.Native()
+   //_ = nativeFunction(1, 2, 3)
+   // Native converts Function to a native Go function that can be called
 
 ```go
 func (self *Function) Native() NativeFunction {
@@ -483,7 +483,7 @@ func (self *Function) Native() NativeFunction {
 			C.wasm_val_vec_new(&arguments, C.size_t(numberOfReceivedParameters), (*C.wasm_val_t)(unsafe.Pointer(&allArguments[0])))
 		}
 
-		// 调用 WASM 插件内函数
+		// Call functions inside the WASM plug-in
 		trap := C.wasm_func_call(self.inner(), &arguments, &results)
 
 		runtime.KeepAlive(arguments)
@@ -498,7 +498,7 @@ func (self *Function) Native() NativeFunction {
 4, proxy-wasm-go-sdk converts the requested data from the normative format to a user-friendly format and then calls the user extension code.Proxy-wasm-go-sdk, based on proxy-waste/spec implementation, defines the interface between function access to system resources and infrastructure services, and builds on this integration of the Runtime API, adding ABI to infrastructure access.
 
 ```go
-// function1主要逻辑就是接收 HTTP 请求，然后通过 ABI 调用 function2，并返回 function2 结果，具体代码如下所示
+// function1The main logic is to receive the HTTP request, call function2 using the ABI, and return the function2 result. The code is as follows
 func (ctx *httpHeaders) OnHttpRequestBody(bodySize int, endOfStream bool) types.Action {
 	//1. get request body
 	body, err := proxywasm.GetHttpRequestBody(0, bodySize)
@@ -631,4 +631,4 @@ Layotto WebAssemly involves more basic WASM knowledge, but it is understandable 
 - [3] [WebAssembly for Proxies (ABI Spec)](https://github.com/proxy-wasm/spec)
 - [4] [Proxy WebAssembly Architecture](https://techhenzy.com/proxy-webassembly-archive/)
 - [5] [Layotto source parse — processing RPC requests](https://mosn.io/layotto/#/blog/code/layotto-rpc/index)
-- [6] [云原生运行时的下一个五年](https://www.soft.tech/blog/the-next-fuve-years-of-cloud-native-runtime/)
+- [6] [Cloud native runtime for the next five years](https://www.soft.tech/blog/the-next-fuve-years-of-cloud-native-runtime/)

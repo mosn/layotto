@@ -19,7 +19,7 @@ Layotto 0e97e97e970dc504e0298017bd956d2841c44c0810b (main)
 
 ## Source analysis
 
-### Code in： [tcpcopy代码](https://github.com/mosn/layotto/tree/main/pkg/filter/network/tcpcopy)
+### Code in： [tcpcopy CODE](https://github.com/mosn/layotto/tree/main/pkg/filter/network/tcpcopy)
 
 ### model.go analysis
 
@@ -48,7 +48,7 @@ Type DumpUpadDynamic Architect 6
 This is the dump persistent core processing class of tcpcopy
 
 ```go
-// 该方法在 tcpcopy.go 中 OnData 中调用
+// This method is called in OnData in tcpcopy.go
 func IsPersistence() bool {
 	// 判断 dump 开关是否开启
 	if !strategy.DumpSwitch {
@@ -58,7 +58,7 @@ func IsPersistence() bool {
 		return false
 	}
 
-	// 判断是否在采样窗口中
+	// Check whether it is in the sampling window
 	if atomic.LoadInt32(&strategy.DumpSampleFlag) == 0 {
 		if log.DefaultLogger.GetLogLevel() >= log.DEBUG {
 			log.DefaultLogger.Debugf("%s the dump sample flag is %d", model.LogDumpKey, strategy.DumpSampleFlag)
@@ -66,7 +66,7 @@ func IsPersistence() bool {
 		return false
 	}
 
-	// 判断是否 dump 功能停止（获取系统负载判断处理器和内存是否超过 tcpcopy 的阈值，如果超过则停止）
+	// Check whether the dump function is stopped. Obtain the system load and check whether the processor and memory exceeds the threshold of the tcpcopy. If yes, stop the dump function.
 	if !strategy.IsAvaliable() {
 		if log.DefaultLogger.GetLogLevel() >= log.DEBUG {
 			log.DefaultLogger.Debugf("%s the system usages are beyond max rate.", model.LogDumpKey)
@@ -77,21 +77,21 @@ func IsPersistence() bool {
 	return true
 }
 
-// 根据配置信息持久化数据
+// Persist data based on configuration information
 func persistence(config *model.DumpUploadDynamicConfig) {
-	// 1.持久化二进制数据
+	// 1.Persisting binary data
 	if config.Binary_flow_data != nil && config.Port != "" {
 		if GetTcpcopyLogger().GetLogLevel() >= log.INFO {
 			GetTcpcopyLogger().Infof("[%s][%s]% x", config.Unique_sample_window, config.Port, config.Binary_flow_data)
 		}
 	}
 	if config.Portrait_data != "" && config.BusinessType != "" {
-		// 2. 持久化用户定义的数据
+		// 2. Persisting Binary data Persisting user-defined data
 		if GetPortraitDataLogger().GetLogLevel() >= log.INFO {
 			GetPortraitDataLogger().Infof("[%s][%s][%s]%s", config.Unique_sample_window, config.BusinessType, config.Port, config.Portrait_data)
 		}
 
-		// 3. 增量持久化内存中的配置信息的变动内容
+		// 3. Changes in configuration information in incrementally persistent memory
 		buf, err := configmanager.DumpJSON()
 		if err != nil {
 			if log.DefaultLogger.GetLogLevel() >= log.DEBUG {
@@ -99,7 +99,7 @@ func persistence(config *model.DumpUploadDynamicConfig) {
 			}
 			return
 		}
-		// 3.1. 如果数据变化则 dump 
+		// 3.1. dump if the data changes
 		tmpMd5ValueOfMemDump := common.CalculateMd5ForBytes(buf)
 		memLogger := GetMemLogger()
 		if tmpMd5ValueOfMemDump != md5ValueOfMemDump ||

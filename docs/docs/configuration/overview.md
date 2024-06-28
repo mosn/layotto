@@ -3,7 +3,7 @@ Layotto 启动时需要读取一个 json 格式的配置文件。示例配置文
 
 目前，Layotto使用一个MOSN 4层filter与MOSN集成、跑在MOSN上，**所以Layotto用到的配置文件其实就是MOSN配置文件。**
 
-![img.png]((/img/configuration/layotto/img.png)
+![img.png](/img/configuration/layotto/img.png)
 
 如上图示例，大部分配置是MOSN的配置项，参考[MOSN的配置说明](https://mosn.io/docs/configuration/) ;
 

@@ -100,24 +100,26 @@ docker rm -f redis-test
 We can specify the WASM file to be loaded in `./demo/faas/config.json` config file:
 
 ```json
+
 "config": {
-  "function1": {
-    "name": "function1",
-    "instance_num": 1,
-    "vm_config": {
-      "engine": "wasmtime",
-      "path": "demo/faas/code/golang/client/function_1.wasm"
-    }
-  },
-  "function2": {
-    "name": "function2",
-    "instance_num": 1,
-    "vm_config": {
-      "engine": "wasmtime",
-      "path": "demo/faas/code/golang/server/function_2.wasm"
-    }
-  }
+"function1": {
+"name": "function1",
+"instance_num": 1,
+"vm_config": {
+"engine": "wasmtime",
+"path": "demo/faas/code/golang/client/function_1.wasm"
 }
+},
+"function2": {
+"name": "function2",
+"instance_num": 1,
+"vm_config": {
+"engine": "wasmtime",
+"path": "demo/faas/code/golang/server/function_2.wasm"
+}
+}
+}
+
 ```
 
 tip: we also support wasmer as the engine value in vm_config.

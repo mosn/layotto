@@ -7,7 +7,7 @@ When a component starts, it may need to use another component's skill. For examp
 To make this happen, layotto offers the "component reference" feature. This feature lets component A use the features of component B.
 ### Related Designs
 
-Currently, other components can only reference two types of components: ConfigStore and SecretStore. These are used to get configuration and secret keys. 
+Currently, other components can only reference two types of components: ConfigStore and SecretStore. These are used to get configuration and secret keys.
 
 The "referenced" components must implement the interface :
 

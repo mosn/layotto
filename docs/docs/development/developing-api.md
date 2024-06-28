@@ -46,10 +46,10 @@ A: **本规范只限制“新增Layotto API的pr需要有哪些东西”（比�
 
 - 需求分析
   - 为什么要做这个API
-  - 定义需求的边界，哪些feature支持，哪些不支持  
-- 市面上产品调研  
+  - 定义需求的边界，哪些feature支持，哪些不支持
+- 市面上产品调研
 - grpc/http API设计
-- 组件API设计  
+- 组件API设计
 - 解释你的设计
 
 一个优秀的提案示例：https://github.com/dapr/dapr/issues/2988
@@ -87,14 +87,14 @@ A: **本规范只限制“新增Layotto API的pr需要有哪些东西”（比�
 文档路径在"用户手册--接口文档"下，例如 State API的见 https://mosn.io/layotto/#/zh/api_reference/state/reference
 
 >调研发现Dapr的使用文档较多，比如光State API就有:
-> 
+>
 > https://docs.dapr.io/developing-applications/building-blocks/state-management/  
-> https://docs.dapr.io/reference/api/state_api/ 
-> 
+> https://docs.dapr.io/reference/api/state_api/
+>
 > https://docs.dapr.io/operations/components/setup-state-store/
-> 
+>
 > https://docs.dapr.io/reference/components-reference/supported-state-stores/
-> 
+>
 > 我们处于项目早期，可以轻一些
 
 需要有：
@@ -102,12 +102,12 @@ A: **本规范只限制“新增Layotto API的pr需要有哪些东西”（比�
 ##### when.什么场景适合用这个API
 ##### how.怎么用这个API
 - 接口列表。例如：
-  
+
 ![img_4.png]((/img/development/api/img_4.png)
-  
+
 列出来有哪些接口，一方面省的用户自己去翻proto、不知道哪些是相关API,一方面避免用户产生"这项目连接口文档都没有？！"的反感
 - 关于接口的出入参：拿proto注释当接口文档  
-考虑到接口文档用中英文写要写两份、时间长了还有可能和代码不一致，因此建议不写接口文档，直接把proto注释写的足够详细、当接口文档。例如：
+  考虑到接口文档用中英文写要写两份、时间长了还有可能和代码不一致，因此建议不写接口文档，直接把proto注释写的足够详细、当接口文档。例如：
 
 ```protobuf
 // GetStateRequest is the message to get key-value states from specific state store.
@@ -124,7 +124,7 @@ message GetStateRequest {
   // (optional) The metadata which will be sent to state store components.
   map<string, string> metadata = 4;
 }
-   
+
 // StateOptions configures concurrency and consistency for state operations
 message StateOptions {
   // Enum describing the supported concurrency for state.
@@ -162,7 +162,7 @@ message StateOptions {
 这就要求proto注释里写清楚：
 - 是必传参数还是可选参数；
 - 解释这个字段啥含义；光解释字面意思是不够的，要解释背后的使用机制，比如上面的consistency和concurrency要解释用户传了某个选项后，服务器能提供什么样的保证
-  
+
 （consistency和concurrency上面的注释其实是我把Dapr文档上的描述精简后粘过来的，省了写双语文档）
 - 注释讲不清楚的，在文档上解释
 
@@ -202,7 +202,7 @@ message StateOptions {
 
 ```protobuf
 	//StopSubscribe stop subs
-	StopSubscribe()
+        StopSubscribe()
 ```
 
 ## 三、提交pull request

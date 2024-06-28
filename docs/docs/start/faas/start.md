@@ -19,7 +19,7 @@ Layotto支持加载并运行以 wasm 为载体的 Function，并支持Function�
    按照官网操作即可。
 
 3. [virtualbox](https://www.oracle.com/virtualization/technologies/vm/virtualbox.html)
-   
+
    直接官网下载安装包安装即可，mac下也可以使用 [homebrew](https://brew.sh/) 进行安装。安装完以后如果启动失败，请参考[The host-only adapter we just created is not visible](https://github.com/kubernetes/minikube/issues/3614)
 
 
@@ -160,7 +160,7 @@ There are 100 inventories for book1.
 
 2.启动Layotto时，redis连接失败,打印 "occurs an error: redis store: error connecting to redis at"：
 
-   检查redis的配置，看是否redis配置错误造成的。
+检查redis的配置，看是否redis配置错误造成的。
 
 
 

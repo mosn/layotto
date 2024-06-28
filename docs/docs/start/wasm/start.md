@@ -101,22 +101,22 @@ docker rm -f redis-test
 
 ```json
 "config": {
-  "function1": {
-    "name": "function1",
-    "instance_num": 1,
-    "vm_config": {
-      "engine": "wasmtime",
-      "path": "demo/faas/code/golang/client/function_1.wasm"
-    }
-  },
-  "function2": {
-    "name": "function2",
-    "instance_num": 1,
-    "vm_config": {
-      "engine": "wasmtime",
-      "path": "demo/faas/code/golang/server/function_2.wasm"
-    }
-  }
+"function1": {
+"name": "function1",
+"instance_num": 1,
+"vm_config": {
+"engine": "wasmtime",
+"path": "demo/faas/code/golang/client/function_1.wasm"
+}
+},
+"function2": {
+"name": "function2",
+"instance_num": 1,
+"vm_config": {
+"engine": "wasmtime",
+"path": "demo/faas/code/golang/server/function_2.wasm"
+}
+}
 }
 ```
 
