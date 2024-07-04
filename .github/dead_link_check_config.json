@@ -28,7 +28,11 @@
   "replacementPatterns": [
     {
       "pattern": "^/",
-      "replacement": "docs/"
+      "replacement": "http://localhost:3000/"
+    },
+    {
+      "pattern": "^/img",
+      "replacement": "docs/static/img"
     }
   ],
   "timeout": "10s",

@@ -19,13 +19,17 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      - name: Install and start docusaurus server
+        run: |
+             sudo npm install
+             sudo npm run build --config docs && nohup npm run serve --config docs &
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           base-branch: main
           use-quiet-mode: 'yes'
           use-verbose-mode: 'yes'
           check-modified-files-only: 'yes'
-          config-file: '../dead_link_check_config.json'
+          config-file: '.github/dead_link_check_config.json'
           folder-path: 'docs/blog/,docs/docs/,docs/i18n/en-US/docusaurus-plugin-content-blog/,docs/i18n/en-US/docusaurus-plugin-content-docs/current/'
 
 #      - name: Install markdown-link-check
