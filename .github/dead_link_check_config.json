@@ -27,12 +27,12 @@
   ],
   "replacementPatterns": [
     {
-      "pattern": "^/",
-      "replacement": "http://localhost:3000/"
+      "pattern": "^/docs",
+      "replacement": "docs/docs/"
     },
     {
       "pattern": "^/img",
-      "replacement": "docs/static/img"
+      "replacement": "docs/static/img/"
     }
   ],
   "timeout": "10s",
