@@ -25,7 +25,7 @@ jobs:
           use-verbose-mode: 'yes'
           check-modified-files-only: 'yes'
           config-file: 'mlc_config.json'
-          folder-path: 'docs/blog/,docs/docs/,docs/i18n/docusaurus-plugin-content-blog/,docs/i18n/docusaurus-plugin-content-docs/'
+          folder-path: 'docs/blog/,docs/docs/,docs/i18n/en-US/docusaurus-plugin-content-blog/,docs/i18n/en-US/docusaurus-plugin-content-docs/'
 
 #      - name: Install markdown-link-check
 #        run: sudo npm install -g markdown-link-check
