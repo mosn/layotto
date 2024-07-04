@@ -28,11 +28,11 @@
   "replacementPatterns": [
     {
       "pattern": "^/docs",
-      "replacement": "docs/docs"
+      "replacement": "/docs/docs"
     },
     {
       "pattern": "^/img",
-      "replacement": "docs/static/img"
+      "replacement": "/docs/static/img"
     }
   ],
   "timeout": "10s",
