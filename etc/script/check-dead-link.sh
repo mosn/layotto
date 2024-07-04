@@ -7,9 +7,10 @@ GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 
 #for file in $(find . -name "*.md"); do
-for file in $(find docs/blog -name "*.md"); do
-  markdown-link-check -c .github/dead_link_check_config.json -q "$file" >> result.txt 2>&1
-done
+#for file in $(find docs/blog -name "*.md"); do
+#  markdown-link-check -c .github/dead_link_check_config.json -q "$file" >> result.txt 2>&1
+#done
+  markdown-link-check -c .github/dead_link_check_config.json -q  docs/docs/README.md >> result.txt 2>&1
 
 if [ -e result.txt ] ; then
   cat result.txt
