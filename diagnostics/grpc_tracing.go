@@ -2,6 +2,7 @@ package diagnostics
 
 import (
 	"context"
+	"mosn.io/pkg/variable"
 	"time"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -50,6 +51,7 @@ func StreamInterceptorFilter(srv interface{}, ss grpc.ServerStream, info *grpc.S
 	// get tracer
 	tracer := trace.Tracer(protocol.Layotto)
 	ctx := ss.Context()
+	ctx = variable.NewVariableContext(ctx)
 	// start a span
 	span := tracer.Start(ctx, &lgrpc.RequestInfo{
 		FullMethod: info.FullMethod,
