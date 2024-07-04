@@ -27,6 +27,5 @@ jobs:
         run: |
              sudo npm install
              sudo npm run build --config docs && npm run serve --config docs
-
       - name: Check dead links in all the .md files
         run: make deadlink  
