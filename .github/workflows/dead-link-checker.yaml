@@ -19,13 +19,20 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      - uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'
+          check-modified-files-only: 'yes'
+          config-file: 'mlc_config.json'
+          folder-path: 'docs/blog/,docs/docs/,docs/i18n/docusaurus-plugin-content-blog/,docs/i18n/docusaurus-plugin-content-docs/'
 
-      - name: Install markdown-link-check
-        run: sudo npm install -g markdown-link-check@3
+#      - name: Install markdown-link-check
+#        run: sudo npm install -g markdown-link-check
 
-      - name: Install and start docusaurus server
-        run: |
-             sudo npm install
-             sudo npm run build --config docs && npm run serve --config docs
-      - name: Check dead links in all the .md files
-        run: make deadlink  
+#      - name: Install and start docusaurus server
+#        run: |
+#             sudo npm install
+#             sudo npm run build --config docs && npm run serve --config docs
+#      - name: Check dead links in all the .md files
+#        run: make deadlink

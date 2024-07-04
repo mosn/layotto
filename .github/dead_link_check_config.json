@@ -28,15 +28,7 @@
   "replacementPatterns": [
     {
       "pattern": "^/",
-      "replacement": "http://localhost:3000/"
-    },
-    {
-      "pattern": "^zh/",
-      "replacement": "http://localhost:3000/#/zh/"
-    },
-    {
-      "pattern": "^en/",
-      "replacement": "http://localhost:3000/#/en/"
+      "replacement": "docs/"
     }
   ],
   "timeout": "10s",
