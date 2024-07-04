@@ -26,7 +26,7 @@ jobs:
           use-verbose-mode: 'yes'
           check-modified-files-only: 'yes'
           config-file: '../dead_link_check_config.json'
-          folder-path: 'docs/blog/,docs/docs/,docs/i18n/en-US/docusaurus-plugin-content-blog/,docs/i18n/en-US/docusaurus-plugin-content-docs/'
+          folder-path: 'docs/blog/,docs/docs/,docs/i18n/en-US/docusaurus-plugin-content-blog/,docs/i18n/en-US/docusaurus-plugin-content-docs/current/'
 
 #      - name: Install markdown-link-check
 #        run: sudo npm install -g markdown-link-check
