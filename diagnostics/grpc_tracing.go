@@ -2,13 +2,13 @@ package diagnostics
 
 import (
 	"context"
-	"mosn.io/pkg/variable"
 	"time"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 
 	"google.golang.org/grpc"
 	"mosn.io/mosn/pkg/trace"
+	"mosn.io/pkg/variable"
 
 	ltrace "mosn.io/layotto/components/trace"
 	lgrpc "mosn.io/layotto/diagnostics/grpc"
