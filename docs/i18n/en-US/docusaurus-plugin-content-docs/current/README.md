@@ -134,15 +134,15 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 As a programming enthusiast , have you ever felt that you want to participate in the development of an open source project, but don't know where to start?
 In order to help everyone better participate in open source projects, our community will regularly publish community tasks to help everyone learn by doing!
 
-[Document Contribution Guide](/docs/development/contributing-doc)
+[Document Contribution Guide](/docs/development/contributing-doc.md)
 
-[Component Development Guide](/docs/development/developing-component)
+[Component Development Guide](/docs/development/developing-component.md)
 
-[Layotto Github Workflows](/docs/development/github-workflows)
+[Layotto Github Workflows](/docs/development/github-workflows.md)
 
-[Layotto Commands Guide](/docs/development/commands)
+[Layotto Commands Guide](/docs/development/commands.md)
 
-[Layotto contributor guide](/docs/development/CONTRIBUTING)
+[Layotto contributor guide](/docs/development/CONTRIBUTING.md)
 
 ## Contributors
 
@@ -154,17 +154,17 @@ Thank y'all!
 
 ## Design Documents
 
-[Actuator Design Doc](design/actuator/actuator-design-doc)
+[Actuator Design Doc](design/actuator/actuator-design-doc.md)
 
-[Configuration API with Apollo](design/configuration/configuration-api-with-apollo)
+[Configuration API with Apollo](design/configuration/configuration-api-with-apollo.md)
 
-[Pubsub API and Compability with Dapr Component](design/pubsub/pubsub-api-and-compability-with-dapr-component)
+[Pubsub API and Compability with Dapr Component](design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
 
-[RPC Design Doc](design/rpc/rpc_design_document)
+[RPC Design Doc](design/rpc/rpc_design_document.md)
 
-[Distributed Lock API Design](design/lock/lock-api-design)
+[Distributed Lock API Design](design/lock/lock-api-design.md)
 
-[FaaS Design](design/faas/faas-poc-design)
+[FaaS Design](design/faas/faas-poc-design.md)
 
 ## FAQ
 

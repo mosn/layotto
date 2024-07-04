@@ -165,17 +165,17 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 
 ## 设计文档
 
-[Actuator 设计文档)](/docs/design/actuator/actuator-design-doc)
+[Actuator 设计文档](/docs/design/actuator/actuator-design-doc.md)
 
-[Pubsub API 与 Dapr Component 的兼容性)](/docs/design/pubsub/pubsub-api-and-compability-with-dapr-component)
+[Pubsub API 与 Dapr Component 的兼容性](/docs/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
 
-[Configuration API with Apollo)](/docs/design/configuration/configuration-api-with-apollo)
+[Configuration API with Apollo](/docs/design/configuration/configuration-api-with-apollo.md)
 
-[RPC 设计文档)](/docs/design/rpc/rpc_design_document)
+[RPC 设计文档](/docs/design/rpc/rpc_design_document.md)
 
-[分布式锁 API 设计文档)](/docs/design/lock/lock-api-design)
+[分布式锁 API 设计文档](/docs/design/lock/lock-api-design.md)
 
-[FaaS 设计文档](/docs/design/faas/faas-poc-design)
+[FaaS 设计文档](/docs/design/faas/faas-poc-design.md)
 
 ## FAQ
 
