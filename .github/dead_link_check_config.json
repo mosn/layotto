@@ -28,11 +28,11 @@
   "replacementPatterns": [
     {
       "pattern": "^/docs",
-      "replacement": "/docs/docs"
+      "replacement": "/github/workspace/docs/docs"
     },
     {
       "pattern": "^/img",
-      "replacement": "/docs/docs/static/img"
+      "replacement": "/github/workspace/docs/static/img"
     }
   ],
   "timeout": "10s",
