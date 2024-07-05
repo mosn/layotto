@@ -32,7 +32,7 @@
     },
     {
       "pattern": "^/img",
-      "replacement": "/docs/static/img"
+      "replacement": "/docs/docs/static/img"
     }
   ],
   "timeout": "10s",
