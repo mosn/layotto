@@ -1,6 +1,6 @@
 # Layotto Community Promotion Rules
 
-![](https://gw.alipaayobjects.com/mn/rms_95b965/afts/img/A*DpjGQQAAAAAAAAAAAAAAAAAAAAAAAAAAARQAQ)
+![](https://gw.alipayobjects.com/mdn/rms_95b965/afts/img/A*DpjGQqAcRyQAAAAAAAAAAAAAARQnAQ)
 
 ## Member States
 

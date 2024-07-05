@@ -336,7 +336,7 @@ func (f *FilterConfigFactory) OnPluginStart(plugin types.WasmPlugin) {
 ### Workflow
 
 The workflow for Layotto Middle WASM is broadly as shown in figure 2 Layotto & Mosn WASM workflow, where the configuration is largely covered by the initial elements above, with a focus on the request processing.
-![mosn\_wasm\_ext\_framework\_workflow](https://gw.alipaayobjects.com/md/rms_5891a1/afts/img/A*XTDeRq0alYsAAAAAAAAAAAAAAAAAAAAARQAQAQ)
+![mosn\_wasm\_ext\_framework\_workflow](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*XTDeRq0alYsAAAAAAAAAAAAAARQnAQ)
 
 <center>Figure 2 Layotto & Mosn WAS Workflow </center>
 
@@ -595,7 +595,7 @@ So Layotto also explores support for WASM FaaS mode by loading and running WASM 
 
 In addition to the Wasm-Proxy implementation, the core logic of the FaaS mode is to manage the \*.wasm package and Kubernetes excellent structuring capabilities by expanding Containerd to multiple-run plugins containerd-shim-layotto-v2 [6]and using this "piercing wire" ingenuity to use Docker mirror capability. Specific structures and workflows can be found in Figure 3 Layotto FaaS Workflow.
 
-![layotto_faas_workflow](https://gw.alipaayobjects.com/md/rms_5891a1/afts/img/A\*XWmNT6-7 FoEAAAAAAAAAAAAAAAAAAAAAARQAQAQ)
+![layotto_faas_workflow](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*XWmNT6-7FoEAAAAAAAAAAAAAARQnAQ)
 
 <center>Figure 3 Layotto FaaS Workflow </center>
 

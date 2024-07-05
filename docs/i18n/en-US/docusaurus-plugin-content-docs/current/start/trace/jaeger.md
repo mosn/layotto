@@ -77,7 +77,7 @@ Run:
 
 Visit http://localhost:16686
 
-![img.png](https://gw.alipaayobjects.com/mdn/rms_5891a1/afts/img/AA-f2LSLAR9YMAAAAAAAAAAAAAAAAAAAAAAAAAAARQAQAQ)
+![img.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*-f2LSLAR9YMAAAAAAAAAAAAAARQnAQ)
 
 ## Clean up resources
 

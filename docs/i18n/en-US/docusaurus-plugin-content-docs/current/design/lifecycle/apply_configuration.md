@@ -4,7 +4,7 @@
 
 - Now the producer user has a customized set of initialization configurations：with some configurations in the app, after app starts, sidecar, allowing sidecar to be initialized based on these configurations.Programmes are not common enough and are more common to do
 
-![image](https://user-images.githubusercontent.com/26001097/168947177-6a26397e-4648-47f0-a8df-e89285cd8f9.png)
+![image](https://user-images.githubusercontent.com/26001097/168947177-6a26397e-4648-47f0-a8df-e898285cd8f9.png)
 
 - Support "Dynamically Down Configuration".
   - One idea is to couple the configuration file and mirror to the container via disk.For example, Dapr config item is released into Configuration CRD, CRD changes will require the carrier to reboot the cluster via k8s scroll.
@@ -23,7 +23,7 @@
 ### Programming UI
 
 For example, the start configuration for state.redis now has the following (screenshot taken from [dapr documents](https://docs.dapr.io/reference/components-reference/supported-state-stores/setup-redis/)
-![image](https://user-images.githubusercontent.com/26001097/168946975-9804d792-8851-463f-80e-2231468f0aa.png)
+![image](https://user-images.githubusercontent.com/26001097/168946975-9804d792-8851-463f-80ee-26231468f0aa.png)
 
 The status quo is that these configurations kv are initialized when the：redis component startup; all configurations are static configurations, only once, and no subsequent configuration changes are listened.
 

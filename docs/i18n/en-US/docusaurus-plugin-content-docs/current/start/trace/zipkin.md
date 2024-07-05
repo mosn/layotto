@@ -84,7 +84,7 @@ Run:
 
 Visit：http://localhost:9411/zipkin/?serviceName=layotto&lookback=15m&endT=1655559536414&limit=10
 
-![](https://gw.alipaayobjects.com/ms_5891a1/afts/img/A*WodlQKsN5UcAAAAAAAAAAAAAAAAAAAAAAARQAQAQ)
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*WodlQKsN5UcAAAAAAAAAAAAAARQnAQ)
 
 ## Clean up resources
 

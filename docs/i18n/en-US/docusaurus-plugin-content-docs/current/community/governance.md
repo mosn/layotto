@@ -1,6 +1,6 @@
 # SOFAStack & MOSN Community Role Description v2.0
 
-![](https://gw.alipaayobjects.com/mn/rms_95b965/afts/img/A*DpjGQQAAAAAAAAAAAAAAAAAAAAAAAAAAARQAQ)
+![](https://gw.alipayobjects.com/mdn/rms_95b965/afts/img/A*DpjGQqAcRyQAAAAAAAAAAAAAARQnAQ)
 
 Layotto is a sub-project of the MOSN community. This paper presents proposal v2.0 on the role of the SOFAStack & MOSN community
 
@@ -110,7 +110,7 @@ b. Believing that setting a target for Reviewer is too odd for KPI to work with 
 
 #### Reviewer assigned githuborganization permissions
 
-![](https://user-images.githubusercontent.com/26001097/129857585-2f2dcda-4a5d-4f94-a36d-48e6a9f52e0e.png)
+![](https://user-images.githubusercontent.com/26001097/129857585-2f2ddcda-4a5d-4f94-a36d-48e6a9f52e0e.png)
 
 #### Purpose to add this role?
 
