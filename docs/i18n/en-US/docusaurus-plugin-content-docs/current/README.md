@@ -64,9 +64,9 @@ You can try the quickstart demos below to get started with Layotto. In addition,
 
 ### Service Mesh
 
-| feature | status |                      quick start                       | desc                       |
-| ------- | :----: | :----------------------------------------------------: | -------------------------- |
-| istio   |   ✅   | [demo](start/istio/) | As the data plane of istio |
+| feature | status |         quick start          | desc                       |
+| ------- | :----: |:----------------------------:| -------------------------- |
+| istio   |   ✅   | [demo](start/istio/start.md) | As the data plane of istio |
 
 ### Extendability
 
