@@ -21,7 +21,7 @@ Layotto 以开源的 [MOSN](https://github.com/mosn/mosn) 为底座，在提供�
 Layotto 希望可以把 [Multi-Runtime](https://www.infoq.com/articles/multi-runtime-microservice-architecture/) 跟 Service
 Mesh 两者的能力结合起来，无论你是使用 MOSN 还是 Envoy 或者其他产品作为 Service Mesh 的数据面，都可以在不增加新的 sidecar 的前提下，使用 Layotto 为这些数据面追加 Runtime 的能力。
 
-例如，通过为 MOSN 添加 Runtime 能力，一个 Layotto 进程可以[既作为 istio 的数据面](start/istio/start) 又提供各种 Runtime API（例如 Configuration API,Pub/Sub API 等）
+例如，通过为 MOSN 添加 Runtime 能力，一个 Layotto 进程可以[既作为 istio 的数据面](/docs/start/istio/start) 又提供各种 Runtime API（例如 Configuration API,Pub/Sub API 等）
 
 此外，随着探索实践，我们发现 sidecar 能做的事情远不止于此。 通过引入[WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) ,我们正在尝试将 Layotto 做成 FaaS (Function as a service) 的运行时容器 。
 
@@ -32,7 +32,7 @@ Mesh 两者的能力结合起来，无论你是使用 MOSN 还是 Envoy 或者�
 
 - 服务通信
 - 服务治理，例如流量的劫持和观测，服务限流等
-- [作为 istio 的数据面](start/istio/start)
+- [作为 istio 的数据面](/docs/start/istio/start)
 - 配置管理
 - 状态管理
 - 事件发布订阅
@@ -54,7 +54,7 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 ### Get started with Layotto
 
-您可以尝试以下 Quickstart demo，体验 Layotto 的功能；或者体验[线上实验室](start/lab)
+您可以尝试以下 Quickstart demo，体验 Layotto 的功能；或者体验[线上实验室](/docs/start/lab)
 
 ### API
 
@@ -132,7 +132,7 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 | 平台                                               | 联系方式                                                                                                                                           |
 | :------------------------------------------------- |:-----------------------------------------------------------------------------------------------------------------------------------------------|
 | 💬 [钉钉](https://www.dingtalk.com/zh) (用户群)     | 群号: 31912621 或者扫描下方二维码 <br/> <img src="https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*--KAT7yyxXoAAAAAAAAAAAAAARQnAQ" height="200px"/> |
-| 💬 [钉钉](https://www.dingtalk.com/zh) (社区会议群) | 群号：41585216  [Layotto 在每周五晚 8 点进行社区会议，欢迎所有人](community/meeting)                                                                        |
+| 💬 [钉钉](https://www.dingtalk.com/zh) (社区会议群) | 群号：41585216  [Layotto 在每周五晚 8 点进行社区会议，欢迎所有人](/docs/community/meeting)                                                                        |
 
 [comment]: <> (| 💬 [微信]&#40;https://www.wechat.com/&#41; | 扫描下方二维码添加好友，她会邀请您加入微信群 <br> <img src="../img/wechat-group.jpg" height="200px">)
 

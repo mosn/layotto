@@ -140,5 +140,5 @@
 
 可以参考 [lock API的redis组件说明(中文)](/docs/component_specs/lock/redis.md)
 和
-[lock API的redis组件说明(英文)](component_specs/lock/redis.md),同样可以复制粘贴改一改。
+[lock API的redis组件说明(英文)](/docs/component_specs/lock/redis.md),同样可以复制粘贴改一改。
 
