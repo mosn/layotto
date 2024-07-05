@@ -6,7 +6,7 @@ This proposal seeks to allow the open source Layotto to support both the Layotto
 
 1. At present, we try to ensure that the various fields in the Layotto API are defined in the same way as Dapr, but the real concern of the users is whether they can be reused.While we are trying to ensure consistency in the proto field, as long as sdk cannot be reused, we do not solve users' problems and increase maintenance costs for ourselves.
    e.g.：
-   ![image](https://user-images.githubusercontent.com/26001097/145837477-00fc5cd8-32eb-4ce9-bfb-6e590172fce8.png)
+   ![image](https://user-images.githubusercontent.com/26001097/145837477-00fc5cd8-32eb-4ce9-bbfb-6e590172fce8.png)
 
 So we want Layotto directly support the grpc API in Dapr (like a package, including package), which he can freely switch between with Dapr sdk without fear of being bound by the manufacturer.
 
