@@ -46,7 +46,7 @@ Layotto provides sdk in various languages. The sdk interacts with Layotto throug
 
 ### Get started with Layotto
 
-You can try the quickstart demos below to get started with Layotto. In addition, you can experience the [online laboratory](start/lab)
+You can try the quickstart demos below to get started with Layotto. In addition, you can experience the [online laboratory](start/lab.md)
 
 ### API
 

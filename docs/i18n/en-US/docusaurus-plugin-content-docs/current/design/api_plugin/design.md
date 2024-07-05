@@ -68,7 +68,7 @@ Based on this idea, we can design API plugins to support users extending their o
 
 ### Functional design
 
-![image](https://user-images.githubusercontent.com/26001097/131614952 - ccfc7d11-d376-41b0-b16c-2f17bfd2c9fc.png)
+![image](https://user-images.githubusercontent.com/26001097/131614952-ccfc7d11-d376-41b0-b16c-2f17bfd2c9fc.png)
 
 Layotto add a number of new extensions.
 
@@ -119,7 +119,7 @@ message Hello Reply to the LO
 
 Then compile it into the `.pb.go` file.
 
-[Bellowold example pack provided by the project] (https://github.com/mosn/layotto/tree/main/cmd/layotto_multiple_api/hellowld) steal a lazy, direct import of grpc officially compiled .pb.go
+[Bellowold example pack provided by the project] (https://github.com/mosn/layotto/tree/main/cmd/layotto_multiple_api/helloworld) steal a lazy, direct import of grpc officially compiled .pb.go
 file：
 
 <img src="https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*9VnARJimj90AAAAAAAAAAAAAARQnAQ" width="40%" height="40%" alt="score" align="center" />
@@ -226,7 +226,7 @@ Allows you to expand your own components, such as the `HelloWorld` component in 
 
 ##### How does：configure a custom component?
 
-See[自定义组件的配置文档](component_species/custom/common)
+See[自定义组件的配置文档](component_specs/custom/common.md)
 
 ##### View Example
 

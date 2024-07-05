@@ -16,7 +16,10 @@
       "pattern": "^https://docs.buf.build/"
     },
     {
-      "pattern":"^https://techhenzy.com/proxy-webassembly-architecture/"
+      "pattern":"^https://techhenzy.com/"
+    },
+    {
+      "pattern":"^https://www.soft.tech/blog/"
     },
     {
       "pattern":"^https://www.sofastack.tech/blog/the-next-five-years-of-cloud-native-runtime/"
@@ -37,7 +40,17 @@
     {
       "pattern": "^start/",
       "replacement": "/github/workspace/docs/i18n/en-US/docusaurus-plugin-content-docs/current/start/"
-    }
+    },
+    {
+      "pattern": "^community/",
+      "replacement": "/github/workspace/docs/i18n/en-US/docusaurus-plugin-content-docs/current/community/"
+    },
+    {
+      "pattern": "^component_specs/",
+      "replacement": "/github/workspace/docs/i18n/en-US/docusaurus-plugin-content-docs/current/component_specs/"
+    },
+
+
   ],
   "timeout": "10s",
   "retryOn429": true,
