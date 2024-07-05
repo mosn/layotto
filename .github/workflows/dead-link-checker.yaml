@@ -28,7 +28,7 @@ jobs:
           base-branch: main
           use-quiet-mode: 'yes'
           use-verbose-mode: 'yes'
-          check-modified-files-only: 'yes'
+#          check-modified-files-only: 'yes'
           config-file: '.github/dead_link_check_config.json'
           folder-path: 'docs/blog/,docs/docs/,docs/i18n/en-US/docusaurus-plugin-content-blog/,docs/i18n/en-US/docusaurus-plugin-content-docs/current/'
 
