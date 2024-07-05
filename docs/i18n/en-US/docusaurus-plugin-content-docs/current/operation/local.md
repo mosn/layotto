@@ -32,4 +32,4 @@ The local compilation will run Layotto.
 
 For example, when running Layotto with Goland IDE, the configuration is as follows:
 
-![](https://gw.alipaayobjects.com/md/rms_5891a1/afts/img/A*CHFYQK6kMEgAAAAAAAAAAAAAAAAAAARQAQAQ)
+![](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*CHFYQK6kMEgAAAAAAAAAAAAAARQnAQ)

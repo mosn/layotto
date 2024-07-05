@@ -46,7 +46,7 @@ User needs： in this case
 
 Refer to the OS Realm API for this year, we can design the Runtime API into multi-layer：
 
-![img.png](https://gw.alipaayobjects.com/mdn/rms_5891a1/afts/img/A*bWnHR7yhiF4AAAAAAAAAAAAAAAAAAAARQAQ)
+![img.png](https://gw.alipayobjects.com/mdn/rms_5891a1/afts/img/A*bWnHR7yhiF4AAAAAAAAAAAAAARQnAQ)
 
 ： for OS fields
 
