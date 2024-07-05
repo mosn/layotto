@@ -33,4 +33,3 @@ jobs:
           destination-github-username: 'layotto'
           destination-repository-name: 'layotto.github.io'
           target-branch: main
-          target-directory: 'layotto'
