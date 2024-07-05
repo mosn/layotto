@@ -25,6 +25,9 @@
       "pattern":"^https://www.sofastack.tech/blog/the-next-five-years-of-cloud-native-runtime/"
     },
     {
+      "pattern":"^https://github.com/mosn/layotto/blob/f70cdc6196963ad762cf809daf0579403c341def1/spec/proto/runtime/v1/runtime.proto"
+    },
+    {
       "pattern": "^#"
     }
   ],

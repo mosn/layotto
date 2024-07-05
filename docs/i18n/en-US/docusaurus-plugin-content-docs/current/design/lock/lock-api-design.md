@@ -268,10 +268,10 @@ There will be some arithmetic logic.You need to consider whether all locks can b
 
 [How to do distressed blocking](https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html)
 
-[The Chubby lock service for loosely-coupled distributed systems] (https://static.googleusercontent.com/media/research.google.com/zh-TW//archive/chubby-osdi06.pdf)
+[The Chubby lock service for loosely-coupled distributed systems](https://static.googleusercontent.com/media/research.google.com/zh-TW//archive/chubby-osdi06.pdf)
 
-[https://www.jianshu.com/p/6e72e3eee5623] (https://www.jianshu.com/p/6e72eee5623)
+[https://www.jianshu.com/p/6e72e3eee5623](https://www.jianshu.com/p/6e72eee5623)
 
-[http://zhangtielei.com/posts/blog-redlock-reasoning.html] (http://zhangtielei.com/posts/blog-redlock-reasoning.html)
+[http://zhangtielei.com/posts/blog-redlock-reasoning.html](http://zhangtielei.com/posts/blog-redlock-reasoning.html)
 
-[http://zhangtielei.com/posts/blog-redlock-reasoning-part2.html] (http://zhangtielei.com/posts/blog-redlock-reasoning-part2.html)
+[http://zhangtielei.com/posts/blog-redlock-reasoning-part2.html](http://zhangtielei.com/posts/blog-redlock-reasoning-part2.html)
