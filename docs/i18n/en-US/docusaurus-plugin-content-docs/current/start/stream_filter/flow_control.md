@@ -1,4 +1,4 @@
-[查看中文版本](/docs/start/stream_filter/flow_control.md)
+[查看中文版本](start/stream_filter/flow_control.md)
 
 ## Method Level Flow Control
 

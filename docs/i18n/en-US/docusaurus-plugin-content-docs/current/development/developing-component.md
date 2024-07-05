@@ -122,7 +122,7 @@ Note: If there are errors in the demo code that shouldn't be there , you can pan
 ```
 
 ### 4.3. Refer to the QuickStart documentation to start Layotto and Demo and see if any errors are reported
-For example, refer to the [QuickStart documentation of the Distributed Lock API](/docs/start/lock/start.md) , start your dependent environment (such as ZooKeeper), and start Layotto (remember to use the configuration file you just added!). And check for errors.
+For example, refer to the [QuickStart documentation of the Distributed Lock API](start/lock/start.md) , start your dependent environment (such as ZooKeeper), and start Layotto (remember to use the configuration file you just added!). And check for errors.
 
 Note: The following Error is ok, just ignore it
 
@@ -137,4 +137,4 @@ If there is no error when running, it means the test passed!
 ## 5、New component description documents
 When the above code work is completed , it is better to add the configuration documentation of the component, explaining what configuration items the component supports and how to start the environment that the component depends on (for example, how to start ZooKeeper with Docker).
 
-You can refer to the [Redis component description of the Lock API (Chinese)](/docs/component_specs/lock/redis.md) and [the Redis component description of the Lock API (English)](component_specs/lock/redis.md), also can copy and paste change.
+You can refer to the [Redis component description of the Lock API (Chinese)](component_specs/lock/redis.md) and [the Redis component description of the Lock API (English)](component_specs/lock/redis.md), also can copy and paste change.

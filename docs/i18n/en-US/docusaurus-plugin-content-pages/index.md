@@ -19,7 +19,7 @@ Layotto is built on the open source data plane [MOSN](https://github.com/mosn/mo
 
 Layotto aims to combine [Multi-Runtime](https://www.infoq.com/articles/multi-runtime-microservice-architecture/) with Service Mesh into one sidecar. No matter which product you are using as the Service Mesh data plane (e.g. MOSN,Envoy or any other product), you can always attach Layotto to it and add Multi-Runtime capabilities without adding new sidecars.
 
-For example, by adding Runtime capabilities to MOSN, a Layotto process can both [serve as the data plane of istio](start/istio/) and provide various Runtime APIs (such as Configuration API, Pub/Sub API, etc.)
+For example, by adding Runtime capabilities to MOSN, a Layotto process can both [serve as the data plane of istio](/docs/start/istio/) and provide various Runtime APIs (such as Configuration API, Pub/Sub API, etc.)
 
 In addition, we were surprised to find that a sidecar can do much more than that. We are trying to make Layotto even the runtime container of FaaS (Function as a service) with the magic power of [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) .
 
@@ -46,7 +46,7 @@ Layotto provides sdk in various languages. The sdk interacts with Layotto throug
 
 ### Get started with Layotto
 
-You can try the quickstart demos below to get started with Layotto. In addition, you can experience the [online laboratory](start/lab)
+You can try the quickstart demos below to get started with Layotto. In addition, you can experience the [online laboratory](/docs/start/lab)
 
 ### API
 
@@ -66,7 +66,7 @@ You can try the quickstart demos below to get started with Layotto. In addition,
 
 | feature | status |                      quick start                       | desc                       |
 | ------- | :----: | :----------------------------------------------------: | -------------------------- |
-| istio   |   ✅   | [demo](start/istio/) | As the data plane of istio |
+| istio   |   ✅   | [demo](/docs/start/istio/) | As the data plane of istio |
 
 ### Extendability
 

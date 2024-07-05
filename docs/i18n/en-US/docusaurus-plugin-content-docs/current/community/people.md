@@ -35,4 +35,4 @@ Thanks to all contributors!
 
 ## Promotion Rules
 
-See[Layotto社区晋升规则](/docs/community/promote.md)
+See[Layotto社区晋升规则](community/promote.md)

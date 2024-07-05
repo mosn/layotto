@@ -51,4 +51,4 @@ hello
 
 ## Learn how the Layotto Plug Components can be implemented
 
-If you are interested in implementing the rationale or want to expand some features, you can read[可插拔组件的设计文档](/docs/design/pluggable/design.md)
+If you are interested in implementing the rationale or want to expand some features, you can read[可插拔组件的设计文档](design/pluggable/design.md)

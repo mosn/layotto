@@ -33,6 +33,10 @@
     {
       "pattern": "^/img",
       "replacement": "/github/workspace/docs/static/img"
+    },
+    {
+      "pattern": "^start/",
+      "replacement": "/github/workspace/docs/i18n/en-US/docusaurus-plugin-content-docs/current/start/"
     }
   ],
   "timeout": "10s",

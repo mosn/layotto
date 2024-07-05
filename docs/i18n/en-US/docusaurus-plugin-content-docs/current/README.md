@@ -134,15 +134,15 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 As a programming enthusiast , have you ever felt that you want to participate in the development of an open source project, but don't know where to start?
 In order to help everyone better participate in open source projects, our community will regularly publish community tasks to help everyone learn by doing!
 
-[Document Contribution Guide](/docs/development/contributing-doc.md)
+[Document Contribution Guide](development/contributing-doc.md)
 
-[Component Development Guide](/docs/development/developing-component.md)
+[Component Development Guide](development/developing-component.md)
 
-[Layotto Github Workflows](/docs/development/github-workflows.md)
+[Layotto Github Workflows](development/github-workflows.md)
 
-[Layotto Commands Guide](/docs/development/commands.md)
+[Layotto Commands Guide](development/commands.md)
 
-[Layotto contributor guide](/docs/development/CONTRIBUTING.md)
+[Layotto contributor guide](development/CONTRIBUTING.md)
 
 ## Contributors
 

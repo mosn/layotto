@@ -147,7 +147,7 @@ Explore other Quickstarts through the navigation bar on the left.
 
 [API reference](https://mosn.io/layotto/api/v1/s3.html)
 
-[Design doc of ObjectStorageService API ](/docs/design/oss/design)
+[Design doc of ObjectStorageService API ](design/oss/design)
 
  <!-- end services -->
 
