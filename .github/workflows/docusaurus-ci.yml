@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+#    container: pandoc/latex  jj
+    steps:
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.20.3
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: darrenjennings/algolia-docsearch-action@master
+        with:
+          algolia_application_id: 'B0I4Q5CLN8'
+          algolia_api_key: '478d2fe7bdad5ff46b87f1e8e4662e81'
+          file: 'algolia-config.json'
+      - name: creates output
+        run:  npm install && npm run build --config docs
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          external_repository: layotto/layotto.github.io
+          publish_dir: docs/build
+          publish_branch: main
+#      - name: Pushes to another repository
+#        uses: cpina/github-action-push-to-another-repository@main
+#        env:
+#          SSH_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+#        with:
+#          source-directory: 'docs/build'
+#          destination-github-username: 'layotto'
+#          destination-repository-name: 'layotto.github.io'
+#          target-branch: main

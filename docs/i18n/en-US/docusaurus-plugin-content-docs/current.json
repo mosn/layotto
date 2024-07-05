@@ -1,0 +1,487 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+
+  "sidebar.mySidebar.category.快速开始": {
+    "message": "Quick Start",
+    "description": "The label for category 快速开始 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.使用Configuration API": {
+    "message": "Use Configuration API",
+    "description": "The label for category 使用Configuration API in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.API插件": {
+    "message": "API Plugin",
+    "description": "The label for category API插件 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.作为 Istio 的数据面": {
+    "message": "As the data plane for Istio",
+    "description": "The label for category 作为 Istio 的数据面 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.在四层网络进行流量干预": {
+    "message": "Performing traffic intervention at the four-layer network",
+    "description": "The label for category 在四层网络进行流量干预 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.在七层网络进行流量干预": {
+    "message": "Performing traffic intervention at the seven-layer network",
+    "description": "The label for category 在七层网络进行流量干预 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.可观测性": {
+    "message": "Observability",
+    "description": "The label for category 可观测性 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.用户手册": {
+    "message": "User Manual",
+    "description": "The label for category 用户手册 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.功能介绍": {
+    "message": "Feature Introduction",
+    "description": "The label for category 功能介绍 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.可扩展性": {
+    "message": "Scalability",
+    "description": "The label for category 可扩展性 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.运维手册": {
+    "message": "Operations Manual",
+    "description": "The label for category 运维手册 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.如何配置 Layotto": {
+    "message": "How To Config Layotto",
+    "description": "The label for category 如何配置 Layotto in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.组件配置说明": {
+    "message": "Component Config Instruction",
+    "description": "The label for category 组件配置说明 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.State": {
+    "message": "State",
+    "description": "The label for category State in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.Pub/Sub": {
+    "message": "Pub/Sub",
+    "description": "The label for category Pub/Sub in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.Distributed Lock": {
+    "message": "Distributed Lock",
+    "description": "The label for category Distributed Lock in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.Sequencer": {
+    "message": "Sequencer",
+    "description": "The label for category Sequencer in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.设计文档": {
+    "message": "Design Doc",
+    "description": "The label for category 设计文档 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.贡献指南": {
+    "message": "Contribute Guide",
+    "description": "The label for category 贡献指南 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.想要贡献文档?": {
+    "message": "Want to contribute doc?",
+    "description": "The label for category 想要贡献文档? in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.想要修改proto文件或API定义？": {
+    "message": "Want to modify proto files or API definitions?",
+    "description": "The label for category 想要修改proto文件或API定义？ in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.如何给 issue 打 label": {
+    "message": "How to label issue",
+    "description": "The label for category 如何给 issue 打 label in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.category.社区": {
+    "message": "Community",
+    "description": "The label for category 社区 in sidebar mySidebar"
+  },
+  "sidebar.mySidebar.link.java sdk": {
+    "message": "java sdk",
+    "description": "The label for link java sdk in sidebar mySidebar, linking to https://github.com/layotto/java-sdk"
+  },
+  "sidebar.mySidebar.link..net sdk": {
+    "message": ".net sdk",
+    "description": "The label for link .net sdk in sidebar mySidebar, linking to https://github.com/layotto/dotnet-sdk"
+  },
+  "sidebar.mySidebar.link.js sdk": {
+    "message": "js sdk",
+    "description": "The label for link js sdk in sidebar mySidebar, linking to https://github.com/layotto/js-sdk"
+  },
+  "sidebar.mySidebar.doc.首页": {
+    "message": "Home Page",
+    "description": "The label for the doc item 首页 in sidebar mySidebar, linking to the doc README"
+  },
+  "sidebar.mySidebar.doc.使用State API": {
+    "message": "使用State API",
+    "description": "The label for the doc item 使用State API in sidebar mySidebar, linking to the doc start/state/start"
+  },
+  "sidebar.mySidebar.doc.使用Apollo配置中心": {
+    "message": "使用Apollo配置中心",
+    "description": "The label for the doc item 使用Apollo配置中心 in sidebar mySidebar, linking to the doc start/configuration/start-apollo"
+  },
+  "sidebar.mySidebar.doc.使用Etcd配置中心": {
+    "message": "使用Etcd配置中心",
+    "description": "The label for the doc item 使用Etcd配置中心 in sidebar mySidebar, linking to the doc start/configuration/start"
+  },
+  "sidebar.mySidebar.doc.使用Nacos配置中心": {
+    "message": "使用Nacos配置中心",
+    "description": "The label for the doc item 使用Nacos配置中心 in sidebar mySidebar, linking to the doc start/configuration/start-nacos"
+  },
+  "sidebar.mySidebar.doc.发布、订阅消息": {
+    "message": "发布、订阅消息",
+    "description": "The label for the doc item 发布、订阅消息 in sidebar mySidebar, linking to the doc start/pubsub/start"
+  },
+  "sidebar.mySidebar.doc.(建设中) 使用 DelayQueue API": {
+    "message": "(建设中) 使用 DelayQueue API",
+    "description": "The label for the doc item (建设中) 使用 DelayQueue API in sidebar mySidebar, linking to the doc start/delay_queue/start"
+  },
+  "sidebar.mySidebar.doc.使用分布式锁 API": {
+    "message": "使用分布式锁 API",
+    "description": "The label for the doc item 使用分布式锁 API in sidebar mySidebar, linking to the doc start/lock/start"
+  },
+  "sidebar.mySidebar.doc.使用Sequencer API生成分布式自增id": {
+    "message": "使用Sequencer API生成分布式自增id",
+    "description": "The label for the doc item 使用Sequencer API生成分布式自增id in sidebar mySidebar, linking to the doc start/sequencer/start"
+  },
+  "sidebar.mySidebar.doc.使用 Secret API": {
+    "message": "使用 Secret API",
+    "description": "The label for the doc item 使用 Secret API in sidebar mySidebar, linking to the doc start/secret/start"
+  },
+  "sidebar.mySidebar.doc.进行RPC调用": {
+    "message": "进行RPC调用",
+    "description": "The label for the doc item 进行RPC调用 in sidebar mySidebar, linking to the doc start/rpc/helloworld"
+  },
+  "sidebar.mySidebar.doc.使用File API": {
+    "message": "使用File API",
+    "description": "The label for the doc item 使用File API in sidebar mySidebar, linking to the doc start/file/minio"
+  },
+  "sidebar.mySidebar.doc.使用 OSS API": {
+    "message": "使用 OSS API",
+    "description": "The label for the doc item 使用 OSS API in sidebar mySidebar, linking to the doc start/oss/oss"
+  },
+  "sidebar.mySidebar.doc.使用UDS通信": {
+    "message": "使用UDS通信",
+    "description": "The label for the doc item 使用UDS通信 in sidebar mySidebar, linking to the doc start/uds/start"
+  },
+  "sidebar.mySidebar.doc.(建设中)使用 sms API": {
+    "message": "(建设中)使用 sms API",
+    "description": "The label for the doc item (建设中)使用 sms API in sidebar mySidebar, linking to the doc start/sms/start"
+  },
+  "sidebar.mySidebar.doc.(建设中)使用 cryption API": {
+    "message": "(建设中)使用 cryption API",
+    "description": "The label for the doc item (建设中)使用 cryption API in sidebar mySidebar, linking to the doc start/cryption/start"
+  },
+  "sidebar.mySidebar.doc.(建设中)使用 phone API": {
+    "message": "(建设中)使用 phone API",
+    "description": "The label for the doc item (建设中)使用 phone API in sidebar mySidebar, linking to the doc start/phone/start"
+  },
+  "sidebar.mySidebar.doc.(建设中)使用 email API": {
+    "message": "(建设中)使用 email API",
+    "description": "The label for the doc item (建设中)使用 email API in sidebar mySidebar, linking to the doc start/email/start"
+  },
+  "sidebar.mySidebar.doc.使用 lifecycle API": {
+    "message": "使用 lifecycle API",
+    "description": "The label for the doc item 使用 lifecycle API in sidebar mySidebar, linking to the doc start/lifecycle/start"
+  },
+  "sidebar.mySidebar.doc.注册您自己的API": {
+    "message": "注册您自己的API",
+    "description": "The label for the doc item 注册您自己的API in sidebar mySidebar, linking to the doc start/api_plugin/helloworld"
+  },
+  "sidebar.mySidebar.doc.自动生成 API 插件": {
+    "message": "自动生成 API 插件",
+    "description": "The label for the doc item 自动生成 API 插件 in sidebar mySidebar, linking to the doc start/api_plugin/generate"
+  },
+  "sidebar.mySidebar.doc.集成 Istio 1.10.6 演示": {
+    "message": "集成 Istio 1.10.6 演示",
+    "description": "The label for the doc item 集成 Istio 1.10.6 演示 in sidebar mySidebar, linking to the doc start/istio/README"
+  },
+  "sidebar.mySidebar.doc.集成 Istio 1.5.x 演示": {
+    "message": "集成 Istio 1.5.x 演示",
+    "description": "The label for the doc item 集成 Istio 1.5.x 演示 in sidebar mySidebar, linking to the doc start/istio/start"
+  },
+  "sidebar.mySidebar.doc.Dump TCP 流量": {
+    "message": "Dump TCP 流量",
+    "description": "The label for the doc item Dump TCP 流量 in sidebar mySidebar, linking to the doc start/network_filter/tcpcopy"
+  },
+  "sidebar.mySidebar.doc.方法级别限流": {
+    "message": "方法级别限流",
+    "description": "The label for the doc item 方法级别限流 in sidebar mySidebar, linking to the doc start/stream_filter/flow_control"
+  },
+  "sidebar.mySidebar.doc.健康检查、查询运行时元数据": {
+    "message": "健康检查、查询运行时元数据",
+    "description": "The label for the doc item 健康检查、查询运行时元数据 in sidebar mySidebar, linking to the doc start/actuator/start"
+  },
+  "sidebar.mySidebar.doc.Trace, Metrics": {
+    "message": "Trace, Metrics",
+    "description": "The label for the doc item Trace, Metrics in sidebar mySidebar, linking to the doc start/trace/trace"
+  },
+  "sidebar.mySidebar.doc.Trace 接入 Skywalking": {
+    "message": "Trace 接入 Skywalking",
+    "description": "The label for the doc item Trace 接入 Skywalking in sidebar mySidebar, linking to the doc start/trace/skywalking"
+  },
+  "sidebar.mySidebar.doc.Trace 接入 Zipkin": {
+    "message": "Trace 接入 Zipkin",
+    "description": "The label for the doc item Trace 接入 Zipkin in sidebar mySidebar, linking to the doc start/trace/zipkin"
+  },
+  "sidebar.mySidebar.doc.Trace 接入 Jaeger": {
+    "message": "Trace 接入 Jaeger",
+    "description": "The label for the doc item Trace 接入 Jaeger in sidebar mySidebar, linking to the doc start/trace/jaeger"
+  },
+  "sidebar.mySidebar.doc.Metrics 接入 Prometheus": {
+    "message": "Metrics 接入 Prometheus",
+    "description": "The label for the doc item Metrics 接入 Prometheus in sidebar mySidebar, linking to the doc start/trace/prometheus"
+  },
+  "sidebar.mySidebar.doc.将业务逻辑通过 WASM 下沉进sidecar": {
+    "message": "将业务逻辑通过 WASM 下沉进sidecar",
+    "description": "The label for the doc item 将业务逻辑通过 WASM 下沉进sidecar in sidebar mySidebar, linking to the doc start/wasm/start"
+  },
+  "sidebar.mySidebar.doc.基于 WASM 跟 Runtime 实现的 Faas 模型": {
+    "message": "基于 WASM 跟 Runtime 实现的 Faas 模型",
+    "description": "The label for the doc item 基于 WASM 跟 Runtime 实现的 Faas 模型 in sidebar mySidebar, linking to the doc start/faas/start"
+  },
+  "sidebar.mySidebar.doc.线上实验室": {
+    "message": "Online Lab",
+    "description": "The label for the doc item 线上实验室 in sidebar mySidebar, linking to the doc start/lab"
+  },
+  "sidebar.mySidebar.doc.File API": {
+    "message": "File API",
+    "description": "The label for the doc item File API in sidebar mySidebar, linking to the doc building_blocks/file/file"
+  },
+  "sidebar.mySidebar.doc.Actuator API": {
+    "message": "Actuator API",
+    "description": "The label for the doc item Actuator API in sidebar mySidebar, linking to the doc building_blocks/actuator/actuator"
+  },
+  "sidebar.mySidebar.doc.State API": {
+    "message": "State API",
+    "description": "The label for the doc item State API in sidebar mySidebar, linking to the doc building_blocks/state/reference"
+  },
+  "sidebar.mySidebar.doc.Sequencer API": {
+    "message": "Sequencer API",
+    "description": "The label for the doc item Sequencer API in sidebar mySidebar, linking to the doc building_blocks/sequencer/reference"
+  },
+  "sidebar.mySidebar.doc.Distributed Lock API": {
+    "message": "Distributed Lock API",
+    "description": "The label for the doc item Distributed Lock API in sidebar mySidebar, linking to the doc building_blocks/lock/reference"
+  },
+  "sidebar.mySidebar.doc.Pub/Sub API": {
+    "message": "Pub/Sub API",
+    "description": "The label for the doc item Pub/Sub API in sidebar mySidebar, linking to the doc building_blocks/pubsub/reference"
+  },
+  "sidebar.mySidebar.doc.RPC API": {
+    "message": "RPC API",
+    "description": "The label for the doc item RPC API in sidebar mySidebar, linking to the doc building_blocks/rpc/reference"
+  },
+  "sidebar.mySidebar.doc.Configuration API": {
+    "message": "Configuration API",
+    "description": "The label for the doc item Configuration API in sidebar mySidebar, linking to the doc building_blocks/configuration/reference"
+  },
+  "sidebar.mySidebar.doc.API插件": {
+    "message": "API插件",
+    "description": "The label for the doc item API插件 in sidebar mySidebar, linking to the doc design/api_plugin/design"
+  },
+  "sidebar.mySidebar.doc.pluggable component 组件": {
+    "message": "pluggable component 组件",
+    "description": "The label for the doc item pluggable component 组件 in sidebar mySidebar, linking to the doc design/pluggable/usage"
+  },
+  "sidebar.mySidebar.doc.gRPC API 接口文档": {
+    "message": "gRPC API 接口文档",
+    "description": "The label for the doc item gRPC API 接口文档 in sidebar mySidebar, linking to the doc api_reference/README"
+  },
+  "sidebar.mySidebar.doc.go sdk": {
+    "message": "go sdk",
+    "description": "The label for the doc item go sdk in sidebar mySidebar, linking to the doc sdk_reference/go/start"
+  },
+  "sidebar.mySidebar.doc.Layotto 配置文件介绍": {
+    "message": "Layotto 配置文件介绍",
+    "description": "The label for the doc item Layotto 配置文件介绍 in sidebar mySidebar, linking to the doc configuration/overview"
+  },
+  "sidebar.mySidebar.doc.Redis": {
+    "message": "Redis",
+    "description": "The label for the doc item Redis in sidebar mySidebar, linking to the doc component_specs/sequencer/redis"
+  },
+  "sidebar.mySidebar.doc.其他组件": {
+    "message": "其他组件",
+    "description": "The label for the doc item 其他组件 in sidebar mySidebar, linking to the doc component_specs/pubsub/others"
+  },
+  "sidebar.mySidebar.doc.Etcd": {
+    "message": "Etcd",
+    "description": "The label for the doc item Etcd in sidebar mySidebar, linking to the doc component_specs/sequencer/etcd"
+  },
+  "sidebar.mySidebar.doc.Zookeeper": {
+    "message": "Zookeeper",
+    "description": "The label for the doc item Zookeeper in sidebar mySidebar, linking to the doc component_specs/sequencer/zookeeper"
+  },
+  "sidebar.mySidebar.doc.Consul": {
+    "message": "Consul",
+    "description": "The label for the doc item Consul in sidebar mySidebar, linking to the doc component_specs/lock/consul"
+  },
+  "sidebar.mySidebar.doc.MongoDB": {
+    "message": "MongoDB",
+    "description": "The label for the doc item MongoDB in sidebar mySidebar, linking to the doc component_specs/sequencer/mongo"
+  },
+  "sidebar.mySidebar.doc.Configuration": {
+    "message": "Configuration",
+    "description": "The label for the doc item Configuration in sidebar mySidebar, linking to the doc component_specs/configuration/etcd"
+  },
+  "sidebar.mySidebar.doc.File": {
+    "message": "File",
+    "description": "The label for the doc item File in sidebar mySidebar, linking to the doc component_specs/file/oss"
+  },
+  "sidebar.mySidebar.doc.Mysql": {
+    "message": "Mysql",
+    "description": "The label for the doc item Mysql in sidebar mySidebar, linking to the doc component_specs/sequencer/mysql"
+  },
+  "sidebar.mySidebar.doc.Snowflake": {
+    "message": "Snowflake",
+    "description": "The label for the doc item Snowflake in sidebar mySidebar, linking to the doc component_specs/sequencer/snowflake"
+  },
+  "sidebar.mySidebar.doc.Secret Store": {
+    "message": "Secret Store",
+    "description": "The label for the doc item Secret Store in sidebar mySidebar, linking to the doc component_specs/secret/common"
+  },
+  "sidebar.mySidebar.doc.自定义组件": {
+    "message": "自定义组件",
+    "description": "The label for the doc item 自定义组件 in sidebar mySidebar, linking to the doc component_specs/custom/common"
+  },
+  "sidebar.mySidebar.doc.如何部署、升级 Layotto": {
+    "message": "如何部署、升级 Layotto",
+    "description": "The label for the doc item 如何部署、升级 Layotto in sidebar mySidebar, linking to the doc operation/README"
+  },
+  "sidebar.mySidebar.doc.Layotto sidecar injector": {
+    "message": "Layotto sidecar injector",
+    "description": "The label for the doc item Layotto sidecar injector in sidebar mySidebar, linking to the doc operation/sidecar_injector"
+  },
+  "sidebar.mySidebar.doc.如何本地开发、本地调试": {
+    "message": "如何本地开发、本地调试",
+    "description": "The label for the doc item 如何本地开发、本地调试 in sidebar mySidebar, linking to the doc operation/local"
+  },
+  "sidebar.mySidebar.doc.动态配置下发、组件热重载": {
+    "message": "动态配置下发、组件热重载",
+    "description": "The label for the doc item 动态配置下发、组件热重载 in sidebar mySidebar, linking to the doc design/lifecycle/apply_configuration"
+  },
+  "sidebar.mySidebar.doc.Actuator设计文档": {
+    "message": "Actuator设计文档",
+    "description": "The label for the doc item Actuator设计文档 in sidebar mySidebar, linking to the doc design/actuator/actuator-design-doc"
+  },
+  "sidebar.mySidebar.doc.gRPC框架设计文档": {
+    "message": "gRPC框架设计文档",
+    "description": "The label for the doc item gRPC框架设计文档 in sidebar mySidebar, linking to the doc design/actuator/grpc-design-doc"
+  },
+  "sidebar.mySidebar.doc.Configuration API with Apollo": {
+    "message": "Configuration API with Apollo",
+    "description": "The label for the doc item Configuration API with Apollo in sidebar mySidebar, linking to the doc design/configuration/configuration-api-with-apollo"
+  },
+  "sidebar.mySidebar.doc.Pub/Sub API以及与dapr component的兼容性": {
+    "message": "Pub/Sub API以及与dapr component的兼容性",
+    "description": "The label for the doc item Pub/Sub API以及与dapr component的兼容性 in sidebar mySidebar, linking to the doc design/pubsub/pubsub-api-and-compability-with-dapr-component"
+  },
+  "sidebar.mySidebar.doc.RPC设计文档": {
+    "message": "RPC设计文档",
+    "description": "The label for the doc item RPC设计文档 in sidebar mySidebar, linking to the doc design/rpc/rpc_design_document"
+  },
+  "sidebar.mySidebar.doc.分布式锁API设计文档": {
+    "message": "分布式锁API设计文档",
+    "description": "The label for the doc item 分布式锁API设计文档 in sidebar mySidebar, linking to the doc design/lock/lock-api-design"
+  },
+  "sidebar.mySidebar.doc.Sequencer API设计文档": {
+    "message": "Sequencer API设计文档",
+    "description": "The label for the doc item Sequencer API设计文档 in sidebar mySidebar, linking to the doc design/sequencer/design"
+  },
+  "sidebar.mySidebar.doc.File API设计文档": {
+    "message": "File API设计文档",
+    "description": "The label for the doc item File API设计文档 in sidebar mySidebar, linking to the doc design/file/file-design"
+  },
+  "sidebar.mySidebar.doc.FaaS 设计文档": {
+    "message": "FaaS 设计文档",
+    "description": "The label for the doc item FaaS 设计文档 in sidebar mySidebar, linking to the doc design/faas/faas-poc-design"
+  },
+  "sidebar.mySidebar.doc.支持Dapr API": {
+    "message": "支持Dapr API",
+    "description": "The label for the doc item 支持Dapr API in sidebar mySidebar, linking to the doc design/api_plugin/dapr_api"
+  },
+  "sidebar.mySidebar.doc.OSS API设计文档": {
+    "message": "OSS API设计文档",
+    "description": "The label for the doc item OSS API设计文档 in sidebar mySidebar, linking to the doc design/oss/design"
+  },
+  "sidebar.mySidebar.doc.pluggable component 设计文档": {
+    "message": "pluggable component 设计文档",
+    "description": "The label for the doc item pluggable component 设计文档 in sidebar mySidebar, linking to the doc design/pluggable/design"
+  },
+  "sidebar.mySidebar.doc.Layotto 贡献指南": {
+    "message": "Layotto 贡献指南",
+    "description": "The label for the doc item Layotto 贡献指南 in sidebar mySidebar, linking to the doc development/CONTRIBUTING"
+  },
+  "sidebar.mySidebar.doc.新手攻略：从零开始成为 Layotto 贡献者": {
+    "message": "新手攻略：从零开始成为 Layotto 贡献者",
+    "description": "The label for the doc item 新手攻略：从零开始成为 Layotto 贡献者 in sidebar mySidebar, linking to the doc development/start-from-zero"
+  },
+  "sidebar.mySidebar.doc.文档贡献指南": {
+    "message": "文档贡献指南",
+    "description": "The label for the doc item 文档贡献指南 in sidebar mySidebar, linking to the doc development/contributing-doc"
+  },
+  "sidebar.mySidebar.doc.使用工具自动测试 Quickstart 文档": {
+    "message": "使用工具自动测试 Quickstart 文档",
+    "description": "The label for the doc item 使用工具自动测试 Quickstart 文档 in sidebar mySidebar, linking to the doc development/test-quickstart"
+  },
+  "sidebar.mySidebar.doc.想要开发新的组件?": {
+    "message": "想要开发新的组件?",
+    "description": "The label for the doc item 想要开发新的组件? in sidebar mySidebar, linking to the doc development/developing-component"
+  },
+  "sidebar.mySidebar.doc.组件引用开发指南": {
+    "message": "组件引用开发指南",
+    "description": "The label for the doc item 组件引用开发指南 in sidebar mySidebar, linking to the doc development/component_ref/component_ref"
+  },
+  "sidebar.mySidebar.doc.如何基于proto文件生成代码、接口文档": {
+    "message": "如何基于proto文件生成代码、接口文档",
+    "description": "The label for the doc item 如何基于proto文件生成代码、接口文档 in sidebar mySidebar, linking to the doc api_reference/how_to_generate_api_doc"
+  },
+  "sidebar.mySidebar.doc.proto文件注释规范": {
+    "message": "proto文件注释规范",
+    "description": "The label for the doc item proto文件注释规范 in sidebar mySidebar, linking to the doc api_reference/comment_spec_of_proto"
+  },
+  "sidebar.mySidebar.doc.新增API时的开发规范": {
+    "message": "新增API时的开发规范",
+    "description": "The label for the doc item 新增API时的开发规范 in sidebar mySidebar, linking to the doc development/developing-api"
+  },
+  "sidebar.mySidebar.doc.Layotto 四大 Github Workflows 说明": {
+    "message": "Layotto 四大 Github Workflows 说明",
+    "description": "The label for the doc item Layotto 四大 Github Workflows 说明 in sidebar mySidebar, linking to the doc development/github-workflows"
+  },
+  "sidebar.mySidebar.doc.Layotto 命令行工具指南": {
+    "message": "Layotto 命令行工具指南",
+    "description": "The label for the doc item Layotto 命令行工具指南 in sidebar mySidebar, linking to the doc development/commands"
+  },
+  "sidebar.mySidebar.doc.新手任务 (good first issue) 的 label 规范": {
+    "message": "新手任务 (good first issue) 的 label 规范",
+    "description": "The label for the doc item 新手任务 (good first issue) 的 label 规范 in sidebar mySidebar, linking to the doc development/label-spec"
+  },
+  "sidebar.mySidebar.doc.发布手册": {
+    "message": "发布手册",
+    "description": "The label for the doc item 发布手册 in sidebar mySidebar, linking to the doc development/release-guide"
+  },
+  "sidebar.mySidebar.doc.待解决的问题": {
+    "message": "待解决的问题",
+    "description": "The label for the doc item 待解决的问题 in sidebar mySidebar, linking to the doc development/problems-to-solve"
+  },
+  "sidebar.mySidebar.doc.社区会议": {
+    "message": "社区会议",
+    "description": "The label for the doc item 社区会议 in sidebar mySidebar, linking to the doc community/meeting"
+  },
+  "sidebar.mySidebar.doc.SOFAStack & MOSN 社区角色说明": {
+    "message": "SOFAStack & MOSN 社区角色说明",
+    "description": "The label for the doc item SOFAStack & MOSN 社区角色说明 in sidebar mySidebar, linking to the doc community/governance"
+  },
+  "sidebar.mySidebar.doc.Layotto社区晋升规则": {
+    "message": "Layotto社区晋升规则",
+    "description": "The label for the doc item Layotto社区晋升规则 in sidebar mySidebar, linking to the doc community/promote"
+  },
+  "sidebar.mySidebar.doc.Layotto社区成员": {
+    "message": "Layotto社区成员",
+    "description": "The label for the doc item Layotto社区成员 in sidebar mySidebar, linking to the doc community/people"
+  },
+  "sidebar.mySidebar.doc.视频合集": {
+    "message": "Video Compilation",
+    "description": "The label for the doc item 视频合集 in sidebar mySidebar, linking to the doc video/README"
+  }
+}
