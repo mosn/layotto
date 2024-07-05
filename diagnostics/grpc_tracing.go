@@ -8,6 +8,7 @@ import (
 
 	"google.golang.org/grpc"
 	"mosn.io/mosn/pkg/trace"
+	"mosn.io/pkg/variable"
 
 	ltrace "mosn.io/layotto/components/trace"
 	lgrpc "mosn.io/layotto/diagnostics/grpc"
@@ -50,6 +51,7 @@ func StreamInterceptorFilter(srv interface{}, ss grpc.ServerStream, info *grpc.S
 	// get tracer
 	tracer := trace.Tracer(protocol.Layotto)
 	ctx := ss.Context()
+	ctx = variable.NewVariableContext(ctx)
 	// start a span
 	span := tracer.Start(ctx, &lgrpc.RequestInfo{
 		FullMethod: info.FullMethod,
