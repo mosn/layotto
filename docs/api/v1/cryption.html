@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Protocol Documentation</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>
+    <style>
+      body {
+        width: 60em;
+        margin: 1em auto;
+        color: #222;
+        font-family: "Ubuntu", sans-serif;
+        padding-bottom: 4em;
+      }
+
+      h1 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      h2 {
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+        margin: 1.5em 0;
+      }
+
+      h3 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      a {
+        text-decoration: none;
+        color: #567e25;
+      }
+
+      table {
+        width: 100%;
+        font-size: 80%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        font-weight: 700;
+        background-color: #dcdcdc;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #fbfbfb;
+      }
+
+      td {
+        border: 1px solid #ccc;
+        padding: 0.5ex 2ex;
+      }
+
+      td p {
+        text-indent: 1em;
+        margin: 0;
+      }
+
+      td p:nth-child(1) {
+        text-indent: 0; /* No indent on first p in td */
+      }
+
+      /* Table of fields */
+      .field-table td:nth-child(1) { /* Field */
+        width: 10em;
+      }
+      .field-table td:nth-child(2) { /* Type */
+        width: 10em;
+      }
+      .field-table td:nth-child(3) { /* Label */
+        width: 6em;
+      }
+      .field-table td:nth-child(4) { /* Description */
+        width: auto;
+      }
+
+      /* Table of extensions */
+      .extension-table td:nth-child(1) { /* Extension */
+        width: 10em;
+      }
+      .extension-table td:nth-child(2) { /* Type */
+        width: 10em;
+      }
+      .extension-table td:nth-child(3) { /* Base */
+        width: 10em;
+      }
+      .extension-table td:nth-child(4) { /* Number */
+        width: 5em;
+      }
+      .extension-table td:nth-child(5) { /* Description */
+        width: auto;
+      }
+
+      /* Table of enum values. */
+      .enum-table td:nth-child(1) { /* Name */
+        width: 10em;
+      }
+      .enum-table td:nth-child(2) { /* Number */
+        width: 10em;
+      }
+      .enum-table td:nth-child(3) { /* Description */
+        width: auto;
+      }
+
+      /* Table of scalar value types. */
+      .scalar-value-types-table tr {
+        height: 3em;
+      }
+
+      /* Table of contents. */
+      #toc-container ul {
+        list-style-type: none;
+        padding-left: 1em;
+        line-height: 180%;
+        margin: 0;
+      }
+      #toc > li > a {
+        font-weight: bold;
+      }
+
+      /* File heading div */
+      .file-heading {
+        width: 100%;
+        display: table;
+        border-bottom: 1px solid #aaa;
+        margin: 4em 0 1.5em 0;
+      }
+      .file-heading h2 {
+        border: none;
+        display: table-cell;
+      }
+      .file-heading a {
+        text-align: right;
+        display: table-cell;
+      }
+
+      /* The 'M', 'E' and 'X' badges in the ToC */
+      .badge {
+        width: 1.6em;
+        height: 1.6em;
+        display: inline-block;
+
+        line-height: 1.6em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 60%;
+
+        color: #89ba48;
+        background-color: #dff0c8;
+
+        margin: 0.5ex 1em 0.5ex -1em;
+        border: 1px solid #fbfbfb;
+        border-radius: 1ex;
+      }
+    </style>
+
+    <!-- User custom CSS -->
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  </head>
+
+  <body>
+
+    <h1 id="title">Protocol Documentation</h1>
+
+    <h2>Table of Contents</h2>
+
+    <div id="toc-container">
+      <ul id="toc">
+        
+          
+          <li>
+            <a href="#cryption.proto">cryption.proto</a>
+            <ul>
+            <!--
+              
+                <li>
+                  <a href="#spec.proto.extension.v1.cryption.DecryptRequest"><span class="badge">M</span>DecryptRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.extension.v1.cryption.DecryptResponse"><span class="badge">M</span>DecryptResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.extension.v1.cryption.EncryptRequest"><span class="badge">M</span>EncryptRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.extension.v1.cryption.EncryptResponse"><span class="badge">M</span>EncryptResponse</a>
+                </li>
+              
+              
+              
+              -->
+              
+                <li>
+                  <a href="#spec.proto.extension.v1.cryption.CryptionService"><span class="badge">S</span>CryptionService</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+        <!-- <li><a href="#scalar-value-types">Scalar Value Types</a></li> -->
+      </ul>
+    </div>
+
+    
+      
+      <div class="file-heading">
+        <h2 id="cryption.proto">cryption.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="spec.proto.extension.v1.cryption.CryptionService">[gRPC Service] CryptionService</h3>
+        <p>CryptionService is used to encrypt or decrypt data.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>Encrypt</td>
+                <td><a href="#spec.proto.extension.v1.cryption.EncryptRequest">EncryptRequest</a></td>
+                <td><a href="#spec.proto.extension.v1.cryption.EncryptResponse">EncryptResponse</a></td>
+                <td><p>Encrypt data</p></td>
+              </tr>
+            
+              <tr>
+                <td>Decrypt</td>
+                <td><a href="#spec.proto.extension.v1.cryption.DecryptRequest">DecryptRequest</a></td>
+                <td><a href="#spec.proto.extension.v1.cryption.DecryptResponse">DecryptResponse</a></td>
+                <td><p>Decrypt data</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+
+      
+        <h3 id="spec.proto.extension.v1.cryption.DecryptRequest">DecryptRequest</h3>
+        <p>DecryptRequest is the request of the `Decrypt` method.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>component_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The cryption service name, e.g. 'aliyun.kms' </p></td>
+                </tr>
+              
+                <tr>
+                  <td>cipher_text</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Required. The encrypted text </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.extension.v1.cryption.DecryptResponse">DecryptResponse</h3>
+        <p>DecryptResponse is the response of the `Decrypt` method.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>plain_text</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Raw plaintext. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The id of the key used to decrypt this text. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key_version_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The version of the key </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.extension.v1.cryption.EncryptRequest">EncryptRequest</h3>
+        <p>EncryptRequest is the request to encrypt data.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>component_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The cryption service name, e.g. 'aliyun.kms' </p></td>
+                </tr>
+              
+                <tr>
+                  <td>plain_text</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Required. Raw plaintext. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.extension.v1.cryption.EncryptResponse">EncryptResponse</h3>
+        <p>EncryptResponse is the response of the `Encrypt` method.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>cipher_text</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>The encrypted text </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The id of the key used to decrypt this text. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key_version_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The version of the key </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+    
+
+  </body>
+</html>

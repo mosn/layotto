@@ -16,16 +16,10 @@
       "pattern": "^https://docs.buf.build/"
     },
     {
-      "pattern":"^https://techhenzy.com/"
-    },
-    {
-      "pattern":"^https://www.soft.tech/blog/"
+      "pattern":"^https://techhenzy.com/proxy-webassembly-architecture/"
     },
     {
       "pattern":"^https://www.sofastack.tech/blog/the-next-five-years-of-cloud-native-runtime/"
-    },
-    {
-      "pattern":"^https://github.com/mosn/layotto/blob/f70cdc6196963ad762cf809daf0579403c341def1/spec/proto/runtime/v1/runtime.proto"
     },
     {
       "pattern": "^#"
@@ -33,34 +27,24 @@
   ],
   "replacementPatterns": [
     {
-      "pattern": "^/docs",
-      "replacement": "/github/workspace/docs/docs"
+      "pattern": "^/",
+      "replacement": "http://localhost:3000/#/"
     },
     {
-      "pattern": "^/img",
-      "replacement": "/github/workspace/docs/static/img"
+      "pattern": "^zh/",
+      "replacement": "http://localhost:3000/#/zh/"
     },
     {
-      "pattern": "^start/",
-      "replacement": "/github/workspace/docs/i18n/en-US/docusaurus-plugin-content-docs/current/start/"
-    },
-    {
-      "pattern": "^community/",
-      "replacement": "/github/workspace/docs/i18n/en-US/docusaurus-plugin-content-docs/current/community/"
-    },
-    {
-      "pattern": "^component_specs/",
-      "replacement": "/github/workspace/docs/i18n/en-US/docusaurus-plugin-content-docs/current/component_specs/"
-    },
-
-
+      "pattern": "^en/",
+      "replacement": "http://localhost:3000/#/en/"
+    }
   ],
   "timeout": "10s",
   "retryOn429": true,
   "retryCount": 2,
   "fallbackRetryDelay": "10s",
   "aliveStatusCodes": [
-    200,
+    200,  
     401
   ]
 }

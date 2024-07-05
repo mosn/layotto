@@ -1,0 +1,4391 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Protocol Documentation</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>
+    <style>
+      body {
+        width: 60em;
+        margin: 1em auto;
+        color: #222;
+        font-family: "Ubuntu", sans-serif;
+        padding-bottom: 4em;
+      }
+
+      h1 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      h2 {
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+        margin: 1.5em 0;
+      }
+
+      h3 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      a {
+        text-decoration: none;
+        color: #567e25;
+      }
+
+      table {
+        width: 100%;
+        font-size: 80%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        font-weight: 700;
+        background-color: #dcdcdc;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #fbfbfb;
+      }
+
+      td {
+        border: 1px solid #ccc;
+        padding: 0.5ex 2ex;
+      }
+
+      td p {
+        text-indent: 1em;
+        margin: 0;
+      }
+
+      td p:nth-child(1) {
+        text-indent: 0; /* No indent on first p in td */
+      }
+
+      /* Table of fields */
+      .field-table td:nth-child(1) { /* Field */
+        width: 10em;
+      }
+      .field-table td:nth-child(2) { /* Type */
+        width: 10em;
+      }
+      .field-table td:nth-child(3) { /* Label */
+        width: 6em;
+      }
+      .field-table td:nth-child(4) { /* Description */
+        width: auto;
+      }
+
+      /* Table of extensions */
+      .extension-table td:nth-child(1) { /* Extension */
+        width: 10em;
+      }
+      .extension-table td:nth-child(2) { /* Type */
+        width: 10em;
+      }
+      .extension-table td:nth-child(3) { /* Base */
+        width: 10em;
+      }
+      .extension-table td:nth-child(4) { /* Number */
+        width: 5em;
+      }
+      .extension-table td:nth-child(5) { /* Description */
+        width: auto;
+      }
+
+      /* Table of enum values. */
+      .enum-table td:nth-child(1) { /* Name */
+        width: 10em;
+      }
+      .enum-table td:nth-child(2) { /* Number */
+        width: 10em;
+      }
+      .enum-table td:nth-child(3) { /* Description */
+        width: auto;
+      }
+
+      /* Table of scalar value types. */
+      .scalar-value-types-table tr {
+        height: 3em;
+      }
+
+      /* Table of contents. */
+      #toc-container ul {
+        list-style-type: none;
+        padding-left: 1em;
+        line-height: 180%;
+        margin: 0;
+      }
+      #toc > li > a {
+        font-weight: bold;
+      }
+
+      /* File heading div */
+      .file-heading {
+        width: 100%;
+        display: table;
+        border-bottom: 1px solid #aaa;
+        margin: 4em 0 1.5em 0;
+      }
+      .file-heading h2 {
+        border: none;
+        display: table-cell;
+      }
+      .file-heading a {
+        text-align: right;
+        display: table-cell;
+      }
+
+      /* The 'M', 'E' and 'X' badges in the ToC */
+      .badge {
+        width: 1.6em;
+        height: 1.6em;
+        display: inline-block;
+
+        line-height: 1.6em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 60%;
+
+        color: #89ba48;
+        background-color: #dff0c8;
+
+        margin: 0.5ex 1em 0.5ex -1em;
+        border: 1px solid #fbfbfb;
+        border-radius: 1ex;
+      }
+    </style>
+
+    <!-- User custom CSS -->
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  </head>
+
+  <body>
+
+    <h1 id="title">Protocol Documentation</h1>
+
+    <h2>Table of Contents</h2>
+
+    <div id="toc-container">
+      <ul id="toc">
+        
+          
+          <li>
+            <a href="#appcallback.proto">appcallback.proto</a>
+            <ul>
+            <!--
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ListTopicSubscriptionsResponse"><span class="badge">M</span>ListTopicSubscriptionsResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.TopicEventRequest"><span class="badge">M</span>TopicEventRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.TopicEventRequest.MetadataEntry"><span class="badge">M</span>TopicEventRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.TopicEventResponse"><span class="badge">M</span>TopicEventResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.TopicSubscription"><span class="badge">M</span>TopicSubscription</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.TopicSubscription.MetadataEntry"><span class="badge">M</span>TopicSubscription.MetadataEntry</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.TopicEventResponse.TopicEventResponseStatus"><span class="badge">E</span>TopicEventResponse.TopicEventResponseStatus</a>
+                </li>
+              
+              
+              -->
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.AppCallback"><span class="badge">S</span>AppCallback</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#lifecycle.proto">lifecycle.proto</a>
+            <ul>
+            <!--
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ApplyConfigurationResponse"><span class="badge">M</span>ApplyConfigurationResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ComponentConfig"><span class="badge">M</span>ComponentConfig</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ComponentConfig.MetadataEntry"><span class="badge">M</span>ComponentConfig.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.DynamicConfiguration"><span class="badge">M</span>DynamicConfiguration</a>
+                </li>
+              
+              
+              
+              -->
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.Lifecycle"><span class="badge">S</span>Lifecycle</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#runtime.proto">runtime.proto</a>
+            <ul>
+            <!--
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.BulkStateItem"><span class="badge">M</span>BulkStateItem</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.BulkStateItem.MetadataEntry"><span class="badge">M</span>BulkStateItem.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.CommonInvokeRequest"><span class="badge">M</span>CommonInvokeRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ConfigurationItem"><span class="badge">M</span>ConfigurationItem</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ConfigurationItem.MetadataEntry"><span class="badge">M</span>ConfigurationItem.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ConfigurationItem.TagsEntry"><span class="badge">M</span>ConfigurationItem.TagsEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.DelFileRequest"><span class="badge">M</span>DelFileRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.DeleteBulkStateRequest"><span class="badge">M</span>DeleteBulkStateRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.DeleteConfigurationRequest"><span class="badge">M</span>DeleteConfigurationRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.DeleteConfigurationRequest.MetadataEntry"><span class="badge">M</span>DeleteConfigurationRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.DeleteStateRequest"><span class="badge">M</span>DeleteStateRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.DeleteStateRequest.MetadataEntry"><span class="badge">M</span>DeleteStateRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.Etag"><span class="badge">M</span>Etag</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ExecuteStateTransactionRequest"><span class="badge">M</span>ExecuteStateTransactionRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ExecuteStateTransactionRequest.MetadataEntry"><span class="badge">M</span>ExecuteStateTransactionRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.FileInfo"><span class="badge">M</span>FileInfo</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.FileInfo.MetadataEntry"><span class="badge">M</span>FileInfo.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.FileMeta"><span class="badge">M</span>FileMeta</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.FileMeta.MetadataEntry"><span class="badge">M</span>FileMeta.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.FileMetaValue"><span class="badge">M</span>FileMetaValue</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.FileRequest"><span class="badge">M</span>FileRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.FileRequest.MetadataEntry"><span class="badge">M</span>FileRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetBulkSecretRequest"><span class="badge">M</span>GetBulkSecretRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetBulkSecretRequest.MetadataEntry"><span class="badge">M</span>GetBulkSecretRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetBulkSecretResponse"><span class="badge">M</span>GetBulkSecretResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetBulkSecretResponse.DataEntry"><span class="badge">M</span>GetBulkSecretResponse.DataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetBulkStateRequest"><span class="badge">M</span>GetBulkStateRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetBulkStateRequest.MetadataEntry"><span class="badge">M</span>GetBulkStateRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetBulkStateResponse"><span class="badge">M</span>GetBulkStateResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetConfigurationRequest"><span class="badge">M</span>GetConfigurationRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetConfigurationRequest.MetadataEntry"><span class="badge">M</span>GetConfigurationRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetConfigurationResponse"><span class="badge">M</span>GetConfigurationResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetFileMetaRequest"><span class="badge">M</span>GetFileMetaRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetFileMetaResponse"><span class="badge">M</span>GetFileMetaResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetFileRequest"><span class="badge">M</span>GetFileRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetFileRequest.MetadataEntry"><span class="badge">M</span>GetFileRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetFileResponse"><span class="badge">M</span>GetFileResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetNextIdRequest"><span class="badge">M</span>GetNextIdRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetNextIdRequest.MetadataEntry"><span class="badge">M</span>GetNextIdRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetNextIdResponse"><span class="badge">M</span>GetNextIdResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetSecretRequest"><span class="badge">M</span>GetSecretRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetSecretRequest.MetadataEntry"><span class="badge">M</span>GetSecretRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetSecretResponse"><span class="badge">M</span>GetSecretResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetSecretResponse.DataEntry"><span class="badge">M</span>GetSecretResponse.DataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetStateRequest"><span class="badge">M</span>GetStateRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetStateRequest.MetadataEntry"><span class="badge">M</span>GetStateRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetStateResponse"><span class="badge">M</span>GetStateResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.GetStateResponse.MetadataEntry"><span class="badge">M</span>GetStateResponse.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.HTTPExtension"><span class="badge">M</span>HTTPExtension</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.InvokeBindingRequest"><span class="badge">M</span>InvokeBindingRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.InvokeBindingRequest.MetadataEntry"><span class="badge">M</span>InvokeBindingRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.InvokeBindingResponse"><span class="badge">M</span>InvokeBindingResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.InvokeBindingResponse.MetadataEntry"><span class="badge">M</span>InvokeBindingResponse.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.InvokeResponse"><span class="badge">M</span>InvokeResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.InvokeServiceRequest"><span class="badge">M</span>InvokeServiceRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ListFileRequest"><span class="badge">M</span>ListFileRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.ListFileResp"><span class="badge">M</span>ListFileResp</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.LockKeepAliveRequest"><span class="badge">M</span>LockKeepAliveRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.LockKeepAliveResponse"><span class="badge">M</span>LockKeepAliveResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.PublishEventRequest"><span class="badge">M</span>PublishEventRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.PublishEventRequest.MetadataEntry"><span class="badge">M</span>PublishEventRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.PutFileRequest"><span class="badge">M</span>PutFileRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.PutFileRequest.MetadataEntry"><span class="badge">M</span>PutFileRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SaveConfigurationRequest"><span class="badge">M</span>SaveConfigurationRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SaveConfigurationRequest.MetadataEntry"><span class="badge">M</span>SaveConfigurationRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SaveStateRequest"><span class="badge">M</span>SaveStateRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SayHelloRequest"><span class="badge">M</span>SayHelloRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SayHelloResponse"><span class="badge">M</span>SayHelloResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SecretResponse"><span class="badge">M</span>SecretResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SecretResponse.SecretsEntry"><span class="badge">M</span>SecretResponse.SecretsEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SequencerOptions"><span class="badge">M</span>SequencerOptions</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.StateItem"><span class="badge">M</span>StateItem</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.StateItem.MetadataEntry"><span class="badge">M</span>StateItem.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.StateOptions"><span class="badge">M</span>StateOptions</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SubscribeConfigurationRequest"><span class="badge">M</span>SubscribeConfigurationRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SubscribeConfigurationRequest.MetadataEntry"><span class="badge">M</span>SubscribeConfigurationRequest.MetadataEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SubscribeConfigurationResponse"><span class="badge">M</span>SubscribeConfigurationResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.TransactionalStateOperation"><span class="badge">M</span>TransactionalStateOperation</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.TryLockRequest"><span class="badge">M</span>TryLockRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.TryLockResponse"><span class="badge">M</span>TryLockResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.UnlockRequest"><span class="badge">M</span>UnlockRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.UnlockResponse"><span class="badge">M</span>UnlockResponse</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.HTTPExtension.Verb"><span class="badge">E</span>HTTPExtension.Verb</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.LockKeepAliveResponse.Status"><span class="badge">E</span>LockKeepAliveResponse.Status</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.SequencerOptions.AutoIncrement"><span class="badge">E</span>SequencerOptions.AutoIncrement</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.StateOptions.StateConcurrency"><span class="badge">E</span>StateOptions.StateConcurrency</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.StateOptions.StateConsistency"><span class="badge">E</span>StateOptions.StateConsistency</a>
+                </li>
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.UnlockResponse.Status"><span class="badge">E</span>UnlockResponse.Status</a>
+                </li>
+              
+              
+              -->
+              
+                <li>
+                  <a href="#spec.proto.runtime.v1.Runtime"><span class="badge">S</span>Runtime</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+        <!-- <li><a href="#scalar-value-types">Scalar Value Types</a></li> -->
+      </ul>
+    </div>
+
+    
+      
+      <div class="file-heading">
+        <h2 id="appcallback.proto">appcallback.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="spec.proto.runtime.v1.AppCallback">[gRPC Service] AppCallback</h3>
+        <p>AppCallback V1 allows user application to interact with runtime.</p><p>User application needs to implement AppCallback service if it needs to</p><p>receive message from runtime.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ListTopicSubscriptions</td>
+                <td><a href="#google.protobuf.Empty">.google.protobuf.Empty</a></td>
+                <td><a href="#spec.proto.runtime.v1.ListTopicSubscriptionsResponse">ListTopicSubscriptionsResponse</a></td>
+                <td><p>Lists all topics subscribed by this app.</p></td>
+              </tr>
+            
+              <tr>
+                <td>OnTopicEvent</td>
+                <td><a href="#spec.proto.runtime.v1.TopicEventRequest">TopicEventRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.TopicEventResponse">TopicEventResponse</a></td>
+                <td><p>Subscribes events from Pubsub</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+
+      
+        <h3 id="spec.proto.runtime.v1.ListTopicSubscriptionsResponse">ListTopicSubscriptionsResponse</h3>
+        <p>ListTopicSubscriptionsResponse is the message including the list of the subscribing topics.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>subscriptions</td>
+                  <td><a href="#spec.proto.runtime.v1.TopicSubscription">TopicSubscription</a></td>
+                  <td>repeated</td>
+                  <td><p>The list of topics. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.TopicEventRequest">TopicEventRequest</h3>
+        <p>TopicEventRequest message is compatible with CloudEvent spec v1.0</p><p>https://github.com/cloudevents/spec/blob/v1.0/spec.md</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>id identifies the event. Producers MUST ensure that source + id 
+is unique for each distinct event. If a duplicate event is re-sent
+(e.g. due to a network error) it MAY have the same id. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>source</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>source identifies the context in which an event happened.
+Often this will include information such as the type of the
+event source, the organization publishing the event or the process
+that produced the event. The exact syntax and semantics behind
+the data encoded in the URI is defined by the event producer. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The type of event related to the originating occurrence. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>spec_version</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The version of the CloudEvents specification. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data_content_type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The content type of data value. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>The content of the event. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>topic</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The pubsub topic which publisher sent to. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>pubsub_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of the pubsub the publisher sent to. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.TopicEventRequest.MetadataEntry">TopicEventRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>add a map to pass some extra properties. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.TopicEventRequest.MetadataEntry">TopicEventRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.TopicEventResponse">TopicEventResponse</h3>
+        <p>TopicEventResponse is response from app on published message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#spec.proto.runtime.v1.TopicEventResponse.TopicEventResponseStatus">TopicEventResponse.TopicEventResponseStatus</a></td>
+                  <td></td>
+                  <td><p>The list of output bindings. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.TopicSubscription">TopicSubscription</h3>
+        <p>TopicSubscription represents topic and metadata.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pubsub_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The name of the pubsub containing the topic below to subscribe to. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>topic</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The name of topic which will be subscribed </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.TopicSubscription.MetadataEntry">TopicSubscription.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The optional properties used for this topic's subscription e.g. session id </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.TopicSubscription.MetadataEntry">TopicSubscription.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="spec.proto.runtime.v1.TopicEventResponse.TopicEventResponseStatus">TopicEventResponse.TopicEventResponseStatus</h3>
+        <p>TopicEventResponseStatus allows apps to have finer control over handling of the message.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>SUCCESS</td>
+                <td>0</td>
+                <td><p>SUCCESS is the default behavior: message is acknowledged and not retried or logged.</p></td>
+              </tr>
+            
+              <tr>
+                <td>RETRY</td>
+                <td>1</td>
+                <td><p>RETRY status signals runtime to retry the message as part of an expected scenario (no warning is logged).</p></td>
+              </tr>
+            
+              <tr>
+                <td>DROP</td>
+                <td>2</td>
+                <td><p>DROP status signals runtime to drop the message as part of an unexpected scenario (warning is logged).</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+    
+      
+      <div class="file-heading">
+        <h2 id="lifecycle.proto">lifecycle.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="spec.proto.runtime.v1.Lifecycle">[gRPC Service] Lifecycle</h3>
+        <p>Lifecycle API is used to manage the sidecar lifecycle.</p><p>For example, by invoking the lifecycle API, you can modify the components' configuration during runtime</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ApplyConfiguration</td>
+                <td><a href="#spec.proto.runtime.v1.DynamicConfiguration">DynamicConfiguration</a></td>
+                <td><a href="#spec.proto.runtime.v1.ApplyConfigurationResponse">ApplyConfigurationResponse</a></td>
+                <td><p>Apply the dynamic configuration.
+The DynamicConfiguration here should be full configuration, not incremental configuration</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+
+      
+        <h3 id="spec.proto.runtime.v1.ApplyConfigurationResponse">ApplyConfigurationResponse</h3>
+        <p>The response of the `ApplyConfiguration` method.</p>
+
+        
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.ComponentConfig">ComponentConfig</h3>
+        <p>The dynamic configuration of a component</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>kind</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. Which kind of API you are using, e.g. `lock`, `state` </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The component name, e.g. `state_demo` </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.ComponentConfig.MetadataEntry">ComponentConfig.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>Required. The dynamic configuration of this component </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.ComponentConfig.MetadataEntry">ComponentConfig.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.DynamicConfiguration">DynamicConfiguration</h3>
+        <p>The dynamic configuration of the sidecar</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>component_config</td>
+                  <td><a href="#spec.proto.runtime.v1.ComponentConfig">ComponentConfig</a></td>
+                  <td></td>
+                  <td><p>Required. The dynamic configuration of a component </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+    
+      
+      <div class="file-heading">
+        <h2 id="runtime.proto">runtime.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="spec.proto.runtime.v1.Runtime">[gRPC Service] Runtime</h3>
+        <p>Runtime encapsulates variours Runtime APIs(such as Configuration API, Pub/Sub API, etc)</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>SayHello</td>
+                <td><a href="#spec.proto.runtime.v1.SayHelloRequest">SayHelloRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.SayHelloResponse">SayHelloResponse</a></td>
+                <td><p>SayHello used for test</p></td>
+              </tr>
+            
+              <tr>
+                <td>InvokeService</td>
+                <td><a href="#spec.proto.runtime.v1.InvokeServiceRequest">InvokeServiceRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.InvokeResponse">InvokeResponse</a></td>
+                <td><p>InvokeService do rpc calls</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetConfiguration</td>
+                <td><a href="#spec.proto.runtime.v1.GetConfigurationRequest">GetConfigurationRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.GetConfigurationResponse">GetConfigurationResponse</a></td>
+                <td><p>GetConfiguration gets configuration from configuration store.</p></td>
+              </tr>
+            
+              <tr>
+                <td>SaveConfiguration</td>
+                <td><a href="#spec.proto.runtime.v1.SaveConfigurationRequest">SaveConfigurationRequest</a></td>
+                <td><a href="#google.protobuf.Empty">.google.protobuf.Empty</a></td>
+                <td><p>SaveConfiguration saves configuration into configuration store.</p></td>
+              </tr>
+            
+              <tr>
+                <td>DeleteConfiguration</td>
+                <td><a href="#spec.proto.runtime.v1.DeleteConfigurationRequest">DeleteConfigurationRequest</a></td>
+                <td><a href="#google.protobuf.Empty">.google.protobuf.Empty</a></td>
+                <td><p>DeleteConfiguration deletes configuration from configuration store.</p></td>
+              </tr>
+            
+              <tr>
+                <td>SubscribeConfiguration</td>
+                <td><a href="#spec.proto.runtime.v1.SubscribeConfigurationRequest">SubscribeConfigurationRequest</a> stream</td>
+                <td><a href="#spec.proto.runtime.v1.SubscribeConfigurationResponse">SubscribeConfigurationResponse</a> stream</td>
+                <td><p>SubscribeConfiguration gets configuration from configuration store and subscribe the updates.</p></td>
+              </tr>
+            
+              <tr>
+                <td>TryLock</td>
+                <td><a href="#spec.proto.runtime.v1.TryLockRequest">TryLockRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.TryLockResponse">TryLockResponse</a></td>
+                <td><p>Distributed Lock API
+A non-blocking method trying to get a lock with ttl.</p></td>
+              </tr>
+            
+              <tr>
+                <td>Unlock</td>
+                <td><a href="#spec.proto.runtime.v1.UnlockRequest">UnlockRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.UnlockResponse">UnlockResponse</a></td>
+                <td><p>A method trying to unlock.</p></td>
+              </tr>
+            
+              <tr>
+                <td>LockKeepAlive</td>
+                <td><a href="#spec.proto.runtime.v1.LockKeepAliveRequest">LockKeepAliveRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.LockKeepAliveResponse">LockKeepAliveResponse</a></td>
+                <td><p>A method used to support lease renewal for distributed lock.</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetNextId</td>
+                <td><a href="#spec.proto.runtime.v1.GetNextIdRequest">GetNextIdRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.GetNextIdResponse">GetNextIdResponse</a></td>
+                <td><p>Sequencer API
+Get next unique id with some auto-increment guarantee</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetState</td>
+                <td><a href="#spec.proto.runtime.v1.GetStateRequest">GetStateRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.GetStateResponse">GetStateResponse</a></td>
+                <td><p>Gets the state for a specific key.</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetBulkState</td>
+                <td><a href="#spec.proto.runtime.v1.GetBulkStateRequest">GetBulkStateRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.GetBulkStateResponse">GetBulkStateResponse</a></td>
+                <td><p>Gets a bulk of state items for a list of keys</p></td>
+              </tr>
+            
+              <tr>
+                <td>SaveState</td>
+                <td><a href="#spec.proto.runtime.v1.SaveStateRequest">SaveStateRequest</a></td>
+                <td><a href="#google.protobuf.Empty">.google.protobuf.Empty</a></td>
+                <td><p>Saves an array of state objects</p></td>
+              </tr>
+            
+              <tr>
+                <td>DeleteState</td>
+                <td><a href="#spec.proto.runtime.v1.DeleteStateRequest">DeleteStateRequest</a></td>
+                <td><a href="#google.protobuf.Empty">.google.protobuf.Empty</a></td>
+                <td><p>Deletes the state for a specific key.</p></td>
+              </tr>
+            
+              <tr>
+                <td>DeleteBulkState</td>
+                <td><a href="#spec.proto.runtime.v1.DeleteBulkStateRequest">DeleteBulkStateRequest</a></td>
+                <td><a href="#google.protobuf.Empty">.google.protobuf.Empty</a></td>
+                <td><p>Deletes a bulk of state items for a list of keys</p></td>
+              </tr>
+            
+              <tr>
+                <td>ExecuteStateTransaction</td>
+                <td><a href="#spec.proto.runtime.v1.ExecuteStateTransactionRequest">ExecuteStateTransactionRequest</a></td>
+                <td><a href="#google.protobuf.Empty">.google.protobuf.Empty</a></td>
+                <td><p>Executes transactions for a specified store</p></td>
+              </tr>
+            
+              <tr>
+                <td>PublishEvent</td>
+                <td><a href="#spec.proto.runtime.v1.PublishEventRequest">PublishEventRequest</a></td>
+                <td><a href="#google.protobuf.Empty">.google.protobuf.Empty</a></td>
+                <td><p>Publishes events to the specific topic</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetFile</td>
+                <td><a href="#spec.proto.runtime.v1.GetFileRequest">GetFileRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.GetFileResponse">GetFileResponse</a> stream</td>
+                <td><p>Get file with stream</p></td>
+              </tr>
+            
+              <tr>
+                <td>PutFile</td>
+                <td><a href="#spec.proto.runtime.v1.PutFileRequest">PutFileRequest</a> stream</td>
+                <td><a href="#google.protobuf.Empty">.google.protobuf.Empty</a></td>
+                <td><p>Put file with stream</p></td>
+              </tr>
+            
+              <tr>
+                <td>ListFile</td>
+                <td><a href="#spec.proto.runtime.v1.ListFileRequest">ListFileRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.ListFileResp">ListFileResp</a></td>
+                <td><p>List all files</p></td>
+              </tr>
+            
+              <tr>
+                <td>DelFile</td>
+                <td><a href="#spec.proto.runtime.v1.DelFileRequest">DelFileRequest</a></td>
+                <td><a href="#google.protobuf.Empty">.google.protobuf.Empty</a></td>
+                <td><p>Delete specific file</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetFileMeta</td>
+                <td><a href="#spec.proto.runtime.v1.GetFileMetaRequest">GetFileMetaRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.GetFileMetaResponse">GetFileMetaResponse</a></td>
+                <td><p>Get file meta data, if file not exist,return code.NotFound error</p></td>
+              </tr>
+            
+              <tr>
+                <td>InvokeBinding</td>
+                <td><a href="#spec.proto.runtime.v1.InvokeBindingRequest">InvokeBindingRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.InvokeBindingResponse">InvokeBindingResponse</a></td>
+                <td><p>Invokes binding data to specific output bindings</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetSecret</td>
+                <td><a href="#spec.proto.runtime.v1.GetSecretRequest">GetSecretRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.GetSecretResponse">GetSecretResponse</a></td>
+                <td><p>Gets secrets from secret stores.</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetBulkSecret</td>
+                <td><a href="#spec.proto.runtime.v1.GetBulkSecretRequest">GetBulkSecretRequest</a></td>
+                <td><a href="#spec.proto.runtime.v1.GetBulkSecretResponse">GetBulkSecretResponse</a></td>
+                <td><p>Gets a bulk of secrets</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+
+      
+        <h3 id="spec.proto.runtime.v1.BulkStateItem">BulkStateItem</h3>
+        <p>BulkStateItem is the response item for a bulk get operation.</p><p>Return values include the item key, data and etag.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>state item key </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>The byte array data </p></td>
+                </tr>
+              
+                <tr>
+                  <td>etag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The entity tag which represents the specific version of data.
+ETag format is defined by the corresponding data store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>error</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The error that was returned from the state store in case of a failed get operation. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.BulkStateItem.MetadataEntry">BulkStateItem.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata which will be sent to app. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.BulkStateItem.MetadataEntry">BulkStateItem.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.CommonInvokeRequest">CommonInvokeRequest</h3>
+        <p>Common invoke request message which includes invoke method and data</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>method</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The method of requset </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#google.protobuf.Any">google.protobuf.Any</a></td>
+                  <td></td>
+                  <td><p>The request data </p></td>
+                </tr>
+              
+                <tr>
+                  <td>content_type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The content type of request data </p></td>
+                </tr>
+              
+                <tr>
+                  <td>http_extension</td>
+                  <td><a href="#spec.proto.runtime.v1.HTTPExtension">HTTPExtension</a></td>
+                  <td></td>
+                  <td><p>The extra information of http </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.ConfigurationItem">ConfigurationItem</h3>
+        <p>ConfigurationItem represents a configuration item with key, content and other information.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The key of configuration item </p></td>
+                </tr>
+              
+                <tr>
+                  <td>content</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The content of configuration item
+Empty if the configuration is not set, including the case that the configuration is changed from value-set to value-not-set. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>group</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The group of configuration item. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>label</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The label of configuration item. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tags</td>
+                  <td><a href="#spec.proto.runtime.v1.ConfigurationItem.TagsEntry">ConfigurationItem.TagsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The tag list of configuration item. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.ConfigurationItem.MetadataEntry">ConfigurationItem.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata which will be passed to configuration store component. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.ConfigurationItem.MetadataEntry">ConfigurationItem.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.ConfigurationItem.TagsEntry">ConfigurationItem.TagsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.DelFileRequest">DelFileRequest</h3>
+        <p>Delete file request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>request</td>
+                  <td><a href="#spec.proto.runtime.v1.FileRequest">FileRequest</a></td>
+                  <td></td>
+                  <td><p>File request </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.DeleteBulkStateRequest">DeleteBulkStateRequest</h3>
+        <p>DeleteBulkStateRequest is the message to delete a list of key-value states from specific state store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The name of state store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>states</td>
+                  <td><a href="#spec.proto.runtime.v1.StateItem">StateItem</a></td>
+                  <td>repeated</td>
+                  <td><p>Required. The array of the state key values. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.DeleteConfigurationRequest">DeleteConfigurationRequest</h3>
+        <p>DeleteConfigurationRequest is the message to delete a list of key-value configuration from specified configuration store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of configuration store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>app_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The application id which
+Only used for admin, Ignored and reset for normal client </p></td>
+                </tr>
+              
+                <tr>
+                  <td>group</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The group of keys. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>label</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The label for keys. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>keys</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>The keys to get. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.DeleteConfigurationRequest.MetadataEntry">DeleteConfigurationRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata which will be sent to configuration store components. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.DeleteConfigurationRequest.MetadataEntry">DeleteConfigurationRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.DeleteStateRequest">DeleteStateRequest</h3>
+        <p>DeleteStateRequest is the message to delete key-value states in the specific state store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The name of state store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The key of the desired state </p></td>
+                </tr>
+              
+                <tr>
+                  <td>etag</td>
+                  <td><a href="#spec.proto.runtime.v1.Etag">Etag</a></td>
+                  <td></td>
+                  <td><p>(optional) The entity tag which represents the specific version of data.
+The exact ETag format is defined by the corresponding data store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>options</td>
+                  <td><a href="#spec.proto.runtime.v1.StateOptions">StateOptions</a></td>
+                  <td></td>
+                  <td><p>(optional) State operation options which includes concurrency/
+consistency/retry_policy. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.DeleteStateRequest.MetadataEntry">DeleteStateRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>(optional) The metadata which will be sent to state store components. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.DeleteStateRequest.MetadataEntry">DeleteStateRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.Etag">Etag</h3>
+        <p>Etag represents a state item version</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>value sets the etag value </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.ExecuteStateTransactionRequest">ExecuteStateTransactionRequest</h3>
+        <p>ExecuteStateTransactionRequest is the message to execute multiple operations on a specified store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>storeName</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. name of state store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>operations</td>
+                  <td><a href="#spec.proto.runtime.v1.TransactionalStateOperation">TransactionalStateOperation</a></td>
+                  <td>repeated</td>
+                  <td><p>Required. transactional operation list. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.ExecuteStateTransactionRequest.MetadataEntry">ExecuteStateTransactionRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>(optional) The metadata used for transactional operations. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.ExecuteStateTransactionRequest.MetadataEntry">ExecuteStateTransactionRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.FileInfo">FileInfo</h3>
+        <p>File info message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>file_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of file </p></td>
+                </tr>
+              
+                <tr>
+                  <td>size</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>The size of file </p></td>
+                </tr>
+              
+                <tr>
+                  <td>last_modified</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The modified time of file </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.FileInfo.MetadataEntry">FileInfo.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata for user extension. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.FileInfo.MetadataEntry">FileInfo.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.FileMeta">FileMeta</h3>
+        <p>A map that store FileMetaValue</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.FileMeta.MetadataEntry">FileMeta.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>A data structure to store metadata </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.FileMeta.MetadataEntry">FileMeta.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#spec.proto.runtime.v1.FileMetaValue">FileMetaValue</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.FileMetaValue">FileMetaValue</h3>
+        <p>FileMeta value</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>File meta value </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.FileRequest">FileRequest</h3>
+        <p>File request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of store </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of the directory </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.FileRequest.MetadataEntry">FileRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata for user extension. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.FileRequest.MetadataEntry">FileRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetBulkSecretRequest">GetBulkSecretRequest</h3>
+        <p>GetBulkSecretRequest is the message to get the secrets from secret store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of secret store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.GetBulkSecretRequest.MetadataEntry">GetBulkSecretRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata which will be sent to secret store components. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetBulkSecretRequest.MetadataEntry">GetBulkSecretRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetBulkSecretResponse">GetBulkSecretResponse</h3>
+        <p>GetBulkSecretResponse is the response message to convey the requested secrets.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#spec.proto.runtime.v1.GetBulkSecretResponse.DataEntry">GetBulkSecretResponse.DataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>data hold the secret values. Some secret store, such as kubernetes secret
+store, can save multiple secrets for single secret key. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetBulkSecretResponse.DataEntry">GetBulkSecretResponse.DataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#spec.proto.runtime.v1.SecretResponse">SecretResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetBulkStateRequest">GetBulkStateRequest</h3>
+        <p>GetBulkStateRequest is the message to get a list of key-value states from specific state store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The name of state store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>keys</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>Required. The keys to get. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>parallelism</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>(optional) The number of parallel operations executed on the state store for a get operation. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.GetBulkStateRequest.MetadataEntry">GetBulkStateRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>(optional) The metadata which will be sent to state store components. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetBulkStateRequest.MetadataEntry">GetBulkStateRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetBulkStateResponse">GetBulkStateResponse</h3>
+        <p>GetBulkStateResponse is the response conveying the list of state values.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>items</td>
+                  <td><a href="#spec.proto.runtime.v1.BulkStateItem">BulkStateItem</a></td>
+                  <td>repeated</td>
+                  <td><p>The list of items containing the keys to get values for. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetConfigurationRequest">GetConfigurationRequest</h3>
+        <p>GetConfigurationRequest is the message to get a list of key-value configuration from specified configuration store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of configuration store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>app_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The application id which
+Only used for admin, Ignored and reset for normal client </p></td>
+                </tr>
+              
+                <tr>
+                  <td>group</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The group of keys. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>label</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The label for keys. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>keys</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>The keys to get. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.GetConfigurationRequest.MetadataEntry">GetConfigurationRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata which will be sent to configuration store components. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>subscribe_update</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Subscribes update event for given keys.
+If true, when any configuration item in this request is updated, app will receive event by OnConfigurationEvent() of app callback </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetConfigurationRequest.MetadataEntry">GetConfigurationRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetConfigurationResponse">GetConfigurationResponse</h3>
+        <p>GetConfigurationResponse is the response conveying the list of configuration values.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>items</td>
+                  <td><a href="#spec.proto.runtime.v1.ConfigurationItem">ConfigurationItem</a></td>
+                  <td>repeated</td>
+                  <td><p>The list of items containing configuration values. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetFileMetaRequest">GetFileMetaRequest</h3>
+        <p>Get fileMeta request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>request</td>
+                  <td><a href="#spec.proto.runtime.v1.FileRequest">FileRequest</a></td>
+                  <td></td>
+                  <td><p>File meta request </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetFileMetaResponse">GetFileMetaResponse</h3>
+        <p>Get fileMeta response message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>size</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>The size of file </p></td>
+                </tr>
+              
+                <tr>
+                  <td>last_modified</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The modified time of file </p></td>
+                </tr>
+              
+                <tr>
+                  <td>response</td>
+                  <td><a href="#spec.proto.runtime.v1.FileMeta">FileMeta</a></td>
+                  <td></td>
+                  <td><p>File meta response </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetFileRequest">GetFileRequest</h3>
+        <p>Get file request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of store </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of the file or object want to get. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.GetFileRequest.MetadataEntry">GetFileRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata for user extension. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetFileRequest.MetadataEntry">GetFileRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetFileResponse">GetFileResponse</h3>
+        <p>Get file response message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>The data of file </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetNextIdRequest">GetNextIdRequest</h3>
+        <p>Get next id request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. Name of sequencer storage </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. key is the identifier of a sequencer namespace,e.g. "order_table". </p></td>
+                </tr>
+              
+                <tr>
+                  <td>options</td>
+                  <td><a href="#spec.proto.runtime.v1.SequencerOptions">SequencerOptions</a></td>
+                  <td></td>
+                  <td><p>(optional) SequencerOptions configures requirements for auto-increment guarantee </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.GetNextIdRequest.MetadataEntry">GetNextIdRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>(optional) The metadata which will be sent to the component. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetNextIdRequest.MetadataEntry">GetNextIdRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetNextIdResponse">GetNextIdResponse</h3>
+        <p>Get next id response message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>next_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>The next unique id
+Fixed int64 overflow problems on JavaScript https://github.com/improbable-eng/ts-protoc-gen#gotchas </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetSecretRequest">GetSecretRequest</h3>
+        <p>GetSecretRequest is the message to get secret from secret store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of secret store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of secret key. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.GetSecretRequest.MetadataEntry">GetSecretRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata which will be sent to secret store components.
+Contains version, status, and so on... </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetSecretRequest.MetadataEntry">GetSecretRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetSecretResponse">GetSecretResponse</h3>
+        <p>GetSecretResponse is the response message to convey the requested secret.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#spec.proto.runtime.v1.GetSecretResponse.DataEntry">GetSecretResponse.DataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>data is the secret value. Some secret store, such as kubernetes secret
+store, can save multiple secrets for single secret key. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetSecretResponse.DataEntry">GetSecretResponse.DataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetStateRequest">GetStateRequest</h3>
+        <p>GetStateRequest is the message to get key-value states from specific state store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The name of state store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The key of the desired state </p></td>
+                </tr>
+              
+                <tr>
+                  <td>consistency</td>
+                  <td><a href="#spec.proto.runtime.v1.StateOptions.StateConsistency">StateOptions.StateConsistency</a></td>
+                  <td></td>
+                  <td><p>(optional) read consistency mode </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.GetStateRequest.MetadataEntry">GetStateRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>(optional) The metadata which will be sent to state store components. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetStateRequest.MetadataEntry">GetStateRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetStateResponse">GetStateResponse</h3>
+        <p>GetStateResponse is the response conveying the state value and etag.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>The byte array data </p></td>
+                </tr>
+              
+                <tr>
+                  <td>etag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The entity tag which represents the specific version of data.
+ETag format is defined by the corresponding data store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.GetStateResponse.MetadataEntry">GetStateResponse.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata which will be sent to app. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.GetStateResponse.MetadataEntry">GetStateResponse.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.HTTPExtension">HTTPExtension</h3>
+        <p>Http extension message is about invoke http information</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>verb</td>
+                  <td><a href="#spec.proto.runtime.v1.HTTPExtension.Verb">HTTPExtension.Verb</a></td>
+                  <td></td>
+                  <td><p>The method of http reuest </p></td>
+                </tr>
+              
+                <tr>
+                  <td>querystring</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The query information of http </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.InvokeBindingRequest">InvokeBindingRequest</h3>
+        <p>InvokeBindingRequest is the message to send data to output bindings</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of the output binding to invoke. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>The data which will be sent to output binding. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.InvokeBindingRequest.MetadataEntry">InvokeBindingRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata passing to output binding components
+Common metadata property:
+- ttlInSeconds : the time to live in seconds for the message.
+If set in the binding definition will cause all messages to
+have a default time to live. The message ttl overrides any value
+in the binding definition. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>operation</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of the operation type for the binding to invoke </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.InvokeBindingRequest.MetadataEntry">InvokeBindingRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.InvokeBindingResponse">InvokeBindingResponse</h3>
+        <p>InvokeBindingResponse is the message returned from an output binding invocation</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>The data which will be sent to output binding. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.InvokeBindingResponse.MetadataEntry">InvokeBindingResponse.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata returned from an external system </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.InvokeBindingResponse.MetadataEntry">InvokeBindingResponse.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.InvokeResponse">InvokeResponse</h3>
+        <p>Invoke service response message is result of invoke service queset</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#google.protobuf.Any">google.protobuf.Any</a></td>
+                  <td></td>
+                  <td><p>The response data </p></td>
+                </tr>
+              
+                <tr>
+                  <td>content_type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The content type of response data </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.InvokeServiceRequest">InvokeServiceRequest</h3>
+        <p>Invoke service request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The identify of InvokeServiceRequest </p></td>
+                </tr>
+              
+                <tr>
+                  <td>message</td>
+                  <td><a href="#spec.proto.runtime.v1.CommonInvokeRequest">CommonInvokeRequest</a></td>
+                  <td></td>
+                  <td><p>InvokeServiceRequest message </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.ListFileRequest">ListFileRequest</h3>
+        <p>List file request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>request</td>
+                  <td><a href="#spec.proto.runtime.v1.FileRequest">FileRequest</a></td>
+                  <td></td>
+                  <td><p>File request </p></td>
+                </tr>
+              
+                <tr>
+                  <td>page_size</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>Page size </p></td>
+                </tr>
+              
+                <tr>
+                  <td>marker</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Marker </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.ListFileResp">ListFileResp</h3>
+        <p>List file response message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>files</td>
+                  <td><a href="#spec.proto.runtime.v1.FileInfo">FileInfo</a></td>
+                  <td>repeated</td>
+                  <td><p>File info </p></td>
+                </tr>
+              
+                <tr>
+                  <td>marker</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Marker </p></td>
+                </tr>
+              
+                <tr>
+                  <td>is_truncated</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Is truncated </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.LockKeepAliveRequest">LockKeepAliveRequest</h3>
+        <p>LockKeepAlive request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The lock store name,e.g. `redis`. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>resource_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. resource_id is the lock key. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>lock_owner</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The owner of the lock. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>expire</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>Required. expire is the time before expire.The time unit is second. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.LockKeepAliveResponse">LockKeepAliveResponse</h3>
+        <p>LockKeepAlive response message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#spec.proto.runtime.v1.LockKeepAliveResponse.Status">LockKeepAliveResponse.Status</a></td>
+                  <td></td>
+                  <td><p>The status of LockKeepAlive </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.PublishEventRequest">PublishEventRequest</h3>
+        <p>PublishEventRequest is the message to publish event data to pubsub topic</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pubsub_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of the pubsub component </p></td>
+                </tr>
+              
+                <tr>
+                  <td>topic</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The pubsub topic </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>The data which will be published to topic. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data_content_type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The content type for the data (optional). </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.PublishEventRequest.MetadataEntry">PublishEventRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata passing to pub components
+
+metadata property:
+- key : the key of the message. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.PublishEventRequest.MetadataEntry">PublishEventRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.PutFileRequest">PutFileRequest</h3>
+        <p>Put file request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of store </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of the file or object want to put. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>The data will be store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.PutFileRequest.MetadataEntry">PutFileRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata for user extension. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.PutFileRequest.MetadataEntry">PutFileRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.SaveConfigurationRequest">SaveConfigurationRequest</h3>
+        <p>SaveConfigurationRequest is the message to save a list of key-value configuration into specified configuration store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of configuration store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>app_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The application id which
+Only used for admin, ignored and reset for normal client </p></td>
+                </tr>
+              
+                <tr>
+                  <td>items</td>
+                  <td><a href="#spec.proto.runtime.v1.ConfigurationItem">ConfigurationItem</a></td>
+                  <td>repeated</td>
+                  <td><p>The list of configuration items to save.
+To delete a exist item, set the key (also label) and let content to be empty </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.SaveConfigurationRequest.MetadataEntry">SaveConfigurationRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata which will be sent to configuration store components. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.SaveConfigurationRequest.MetadataEntry">SaveConfigurationRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.SaveStateRequest">SaveStateRequest</h3>
+        <p>SaveStateRequest is the message to save multiple states into state store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The name of state store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>states</td>
+                  <td><a href="#spec.proto.runtime.v1.StateItem">StateItem</a></td>
+                  <td>repeated</td>
+                  <td><p>Required. The array of the state key values. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.SayHelloRequest">SayHelloRequest</h3>
+        <p>Hello request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>service_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of service </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Reuqest name </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#google.protobuf.Any">google.protobuf.Any</a></td>
+                  <td></td>
+                  <td><p>Optional. This field is used to control the packet size during load tests. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.SayHelloResponse">SayHelloResponse</h3>
+        <p>Hello response message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>hello</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Hello </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#google.protobuf.Any">google.protobuf.Any</a></td>
+                  <td></td>
+                  <td><p>Hello message of data </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.SecretResponse">SecretResponse</h3>
+        <p>SecretResponse is a map of decrypted string/string values</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>secrets</td>
+                  <td><a href="#spec.proto.runtime.v1.SecretResponse.SecretsEntry">SecretResponse.SecretsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The data struct of secrets </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.SecretResponse.SecretsEntry">SecretResponse.SecretsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.SequencerOptions">SequencerOptions</h3>
+        <p>SequencerOptions configures requirements for auto-increment guarantee</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>increment</td>
+                  <td><a href="#spec.proto.runtime.v1.SequencerOptions.AutoIncrement">SequencerOptions.AutoIncrement</a></td>
+                  <td></td>
+                  <td><p>Default STRONG auto-increment </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.StateItem">StateItem</h3>
+        <p>StateItem represents state key, value, and additional options to save state.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The state key </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Required. The state data for key </p></td>
+                </tr>
+              
+                <tr>
+                  <td>etag</td>
+                  <td><a href="#spec.proto.runtime.v1.Etag">Etag</a></td>
+                  <td></td>
+                  <td><p>(optional) The entity tag which represents the specific version of data.
+The exact ETag format is defined by the corresponding data store. Layotto runtime only treats ETags as opaque strings. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.StateItem.MetadataEntry">StateItem.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>(optional) additional key-value pairs to be passed to the state store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>options</td>
+                  <td><a href="#spec.proto.runtime.v1.StateOptions">StateOptions</a></td>
+                  <td></td>
+                  <td><p>(optional) Options for concurrency and consistency to save the state. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.StateItem.MetadataEntry">StateItem.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.StateOptions">StateOptions</h3>
+        <p>StateOptions configures concurrency and consistency for state operations</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>concurrency</td>
+                  <td><a href="#spec.proto.runtime.v1.StateOptions.StateConcurrency">StateOptions.StateConcurrency</a></td>
+                  <td></td>
+                  <td><p>The state operation of concurrency </p></td>
+                </tr>
+              
+                <tr>
+                  <td>consistency</td>
+                  <td><a href="#spec.proto.runtime.v1.StateOptions.StateConsistency">StateOptions.StateConsistency</a></td>
+                  <td></td>
+                  <td><p>The state operation of consistency </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.SubscribeConfigurationRequest">SubscribeConfigurationRequest</h3>
+        <p>SubscribeConfigurationRequest is the message to get a list of key-value configuration from specified configuration store.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of configuration store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>app_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The application id which
+Only used for admin, ignored and reset for normal client </p></td>
+                </tr>
+              
+                <tr>
+                  <td>group</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The group of keys. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>label</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The label for keys. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>keys</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>The keys to get. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#spec.proto.runtime.v1.SubscribeConfigurationRequest.MetadataEntry">SubscribeConfigurationRequest.MetadataEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>The metadata which will be sent to configuration store components. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.SubscribeConfigurationRequest.MetadataEntry">SubscribeConfigurationRequest.MetadataEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.SubscribeConfigurationResponse">SubscribeConfigurationResponse</h3>
+        <p>SubscribeConfigurationResponse is the response conveying the list of configuration values.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of configuration store. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>app_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The application id.
+Only used for admin client. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>items</td>
+                  <td><a href="#spec.proto.runtime.v1.ConfigurationItem">ConfigurationItem</a></td>
+                  <td>repeated</td>
+                  <td><p>The list of items containing configuration values. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.TransactionalStateOperation">TransactionalStateOperation</h3>
+        <p>TransactionalStateOperation is the message to execute a specified operation with a key-value pair.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>operationType</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The type of operation to be executed.
+Legal values include:
+"upsert" represents an update or create operation
+"delete" represents a delete operation </p></td>
+                </tr>
+              
+                <tr>
+                  <td>request</td>
+                  <td><a href="#spec.proto.runtime.v1.StateItem">StateItem</a></td>
+                  <td></td>
+                  <td><p>Required. State values to be operated on </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.TryLockRequest">TryLockRequest</h3>
+        <p>Lock request message is distributed lock API which is not blocking method tring to get a lock with ttl</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. The lock store name,e.g. `redis`. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>resource_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. resource_id is the lock key. e.g. `order_id_111`
+It stands for "which resource I want to protect" </p></td>
+                </tr>
+              
+                <tr>
+                  <td>lock_owner</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required. lock_owner indicate the identifier of lock owner.
+You can generate a uuid as lock_owner.For example,in golang:
+req.LockOwner = uuid.New().String()
+This field is per request,not per process,so it is different for each request,
+which aims to prevent multi-thread in the same process trying the same lock concurrently.
+The reason why we don't make it automatically generated is:
+1. If it is automatically generated,there must be a 'my_lock_owner_id' field in the response.
+This name is so weird that we think it is inappropriate to put it into the api spec
+2. If we change the field 'my_lock_owner_id' in the response to 'lock_owner',which means the current lock owner of this lock,
+we find that in some lock services users can't get the current lock owner.Actually users don't need it at all.
+3. When reentrant lock is needed,the existing lock_owner is required to identify client and check "whether this client can reenter this lock".
+So this field in the request shouldn't be removed. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>expire</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>Required. expire is the time before expire.The time unit is second. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.TryLockResponse">TryLockResponse</h3>
+        <p>Lock response message returns is the lock obtained.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>success</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Is lock success </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.UnlockRequest">UnlockRequest</h3>
+        <p>UnLock request message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>store_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The name of store </p></td>
+                </tr>
+              
+                <tr>
+                  <td>resource_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>resource_id is the lock key. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>lock_owner</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The owner of the lock </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="spec.proto.runtime.v1.UnlockResponse">UnlockResponse</h3>
+        <p>UnLock response message</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#spec.proto.runtime.v1.UnlockResponse.Status">UnlockResponse.Status</a></td>
+                  <td></td>
+                  <td><p>The status of unlock </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="spec.proto.runtime.v1.HTTPExtension.Verb">HTTPExtension.Verb</h3>
+        <p>The enum of http reuest method</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>NONE</td>
+                <td>0</td>
+                <td><p>NONE</p></td>
+              </tr>
+            
+              <tr>
+                <td>GET</td>
+                <td>1</td>
+                <td><p>GET method</p></td>
+              </tr>
+            
+              <tr>
+                <td>HEAD</td>
+                <td>2</td>
+                <td><p>HEAD method</p></td>
+              </tr>
+            
+              <tr>
+                <td>POST</td>
+                <td>3</td>
+                <td><p>POST method</p></td>
+              </tr>
+            
+              <tr>
+                <td>PUT</td>
+                <td>4</td>
+                <td><p>PUT method</p></td>
+              </tr>
+            
+              <tr>
+                <td>DELETE</td>
+                <td>5</td>
+                <td><p>DELETE method</p></td>
+              </tr>
+            
+              <tr>
+                <td>CONNECT</td>
+                <td>6</td>
+                <td><p>CONNECT method</p></td>
+              </tr>
+            
+              <tr>
+                <td>OPTIONS</td>
+                <td>7</td>
+                <td><p>CONNECT method</p></td>
+              </tr>
+            
+              <tr>
+                <td>TRACE</td>
+                <td>8</td>
+                <td><p>CONNECT method</p></td>
+              </tr>
+            
+              <tr>
+                <td>PATCH</td>
+                <td>9</td>
+                <td><p>PATCH method</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="spec.proto.runtime.v1.LockKeepAliveResponse.Status">LockKeepAliveResponse.Status</h3>
+        <p>The enum of LockKeepAlive status</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>SUCCESS</td>
+                <td>0</td>
+                <td><p>Lease renewal success</p></td>
+              </tr>
+            
+              <tr>
+                <td>LOCK_UNEXIST</td>
+                <td>1</td>
+                <td><p>The lock is not exist</p></td>
+              </tr>
+            
+              <tr>
+                <td>LOCK_BELONG_TO_OTHERS</td>
+                <td>2</td>
+                <td><p>The lock is belong to others</p></td>
+              </tr>
+            
+              <tr>
+                <td>INTERNAL_ERROR</td>
+                <td>3</td>
+                <td><p>Internal error</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="spec.proto.runtime.v1.SequencerOptions.AutoIncrement">SequencerOptions.AutoIncrement</h3>
+        <p>requirements for auto-increment guarantee</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>WEAK</td>
+                <td>0</td>
+                <td><p>(default) WEAK means a "best effort" incrementing service.But there is no strict guarantee of global monotonically increasing.
+The next id is "probably" greater than current id.</p></td>
+              </tr>
+            
+              <tr>
+                <td>STRONG</td>
+                <td>1</td>
+                <td><p>STRONG means a strict guarantee of global monotonically increasing.
+The next id "must" be greater than current id.</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="spec.proto.runtime.v1.StateOptions.StateConcurrency">StateOptions.StateConcurrency</h3>
+        <p>Enum describing the supported concurrency for state.</p><p>The API server uses Optimized Concurrency Control (OCC) with ETags.</p><p>When an ETag is associated with an save or delete request, the store shall allow the update only if the attached ETag matches with the latest ETag in the database.</p><p>But when ETag is missing in the write requests, the state store shall handle the requests in the specified strategy(e.g. a last-write-wins fashion).</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>CONCURRENCY_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p>Concurrency state is unspecified</p></td>
+              </tr>
+            
+              <tr>
+                <td>CONCURRENCY_FIRST_WRITE</td>
+                <td>1</td>
+                <td><p>First write wins</p></td>
+              </tr>
+            
+              <tr>
+                <td>CONCURRENCY_LAST_WRITE</td>
+                <td>2</td>
+                <td><p>Last write wins</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="spec.proto.runtime.v1.StateOptions.StateConsistency">StateOptions.StateConsistency</h3>
+        <p>Enum describing the supported consistency for state.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>CONSISTENCY_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p>Consistency state is unspecified</p></td>
+              </tr>
+            
+              <tr>
+                <td>CONSISTENCY_EVENTUAL</td>
+                <td>1</td>
+                <td><p>The API server assumes data stores are eventually consistent by default.A state store should:
+- For read requests, the state store can return data from any of the replicas
+- For write request, the state store should asynchronously replicate updates to configured quorum after acknowledging the update request.</p></td>
+              </tr>
+            
+              <tr>
+                <td>CONSISTENCY_STRONG</td>
+                <td>2</td>
+                <td><p>When a strong consistency hint is attached, a state store should:
+- For read requests, the state store should return the most up-to-date data consistently across replicas.
+- For write/delete requests, the state store should synchronisely replicate updated data to configured quorum before completing the write request.</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="spec.proto.runtime.v1.UnlockResponse.Status">UnlockResponse.Status</h3>
+        <p>The enum of unlock status</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>SUCCESS</td>
+                <td>0</td>
+                <td><p>Unlock is success</p></td>
+              </tr>
+            
+              <tr>
+                <td>LOCK_UNEXIST</td>
+                <td>1</td>
+                <td><p>The lock is not exist</p></td>
+              </tr>
+            
+              <tr>
+                <td>LOCK_BELONG_TO_OTHERS</td>
+                <td>2</td>
+                <td><p>The lock is belong to others</p></td>
+              </tr>
+            
+              <tr>
+                <td>INTERNAL_ERROR</td>
+                <td>3</td>
+                <td><p>Internal error</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+    
+
+  </body>
+</html>
