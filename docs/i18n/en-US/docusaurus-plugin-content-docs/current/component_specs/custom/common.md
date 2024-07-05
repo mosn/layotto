@@ -10,7 +10,7 @@ Like the `PubSub` component, eg. `state.Store`
 
 - Custom Component
 
-Allows you to expand your own components, such as the `HelloWorld` component in[使用指南](docs/design/api_plugin/design?id=_24-Use Guide).
+Allows you to expand your own components, such as the `HelloWorld` component in[使用指南](/docs/design/api_plugin/design?id=_24-Use Guide).
 
 ## Profile Structure
 
@@ -54,4 +54,4 @@ For example, in `configs/config_standalone.json`, the keyd is configured as `cus
 
 ## How to use "Custom components"?
 
-See [使用指南](docs/design/api_plugin/design?id=_24 - Use Guide)
+See [使用指南](/docs/design/api_plugin/design?id=_24 - Use Guide)

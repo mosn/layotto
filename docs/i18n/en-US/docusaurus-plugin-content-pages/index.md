@@ -27,7 +27,7 @@ In addition, we were surprised to find that a sidecar can do much more than that
 
 - Service Communication
 - Service Governance.Such as traffic hijacking and observation, service rate limiting, etc
-- [As the data plane of istio](docs/tart/istio/)
+- [As the data plane of istio](/docs/tart/istio/)
 - Configuration management
 - State management
 - Event publish and subscribe
@@ -134,15 +134,15 @@ Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD N
 As a programming enthusiast , have you ever felt that you want to participate in the development of an open source project, but don't know where to start?
 In order to help everyone better participate in open source projects, our community will regularly publish community tasks to help everyone learn by doing!
 
-[Document Contribution Guide](docs/development/contributing-doc)
+[Document Contribution Guide](/docs/development/contributing-doc)
 
-[Component Development Guide](docs/development/developing-component)
+[Component Development Guide](/docs/development/developing-component)
 
-[Layotto Github Workflows](docs/development/github-workflows)
+[Layotto Github Workflows](/docs/development/github-workflows)
 
-[Layotto Commands Guide](docs/development/commands)
+[Layotto Commands Guide](/docs/development/commands)
 
-[Layotto contributor guide](docs/development/CONTRIBUTING)
+[Layotto contributor guide](/docs/development/CONTRIBUTING)
 
 ## Contributors
 
@@ -154,17 +154,17 @@ Thank y'all!
 
 ## Design Documents
 
-[Actuator Design Doc](docs/design/actuator/actuator-design-doc)
+[Actuator Design Doc](/docs/design/actuator/actuator-design-doc)
 
-[Configuration API with Apollo](docs/design/configuration/configuration-api-with-apollo)
+[Configuration API with Apollo](/docs/design/configuration/configuration-api-with-apollo)
 
-[Pubsub API and Compability with Dapr Component](docs/design/pubsub/pubsub-api-and-compability-with-dapr-component)
+[Pubsub API and Compability with Dapr Component](/docs/design/pubsub/pubsub-api-and-compability-with-dapr-component)
 
-[RPC Design Doc](docs/design/rpc/rpc_design_document)
+[RPC Design Doc](/docs/design/rpc/rpc_design_document)
 
-[Distributed Lock API Design](docs/design/lock/lock-api-design)
+[Distributed Lock API Design](/docs/design/lock/lock-api-design)
 
-[FaaS Design](docs/design/faas/faas-poc-design)
+[FaaS Design](/docs/design/faas/faas-poc-design)
 
 ## FAQ
 

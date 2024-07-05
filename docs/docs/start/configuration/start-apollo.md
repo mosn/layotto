@@ -49,7 +49,7 @@ go build -o layotto
 > [!TIP|label: 使用默认配置时，demo启动报错？]
 > 默认配置会连接 apollo 的演示服务器，但是演示服务器的配置可能被其他人随意修改。报错可能是因为某些配置被修改了。
 > 
-> 遇到这种情况，您可以先尝试其他 demo，例如 [etcd demo](docs/start/configuration/start.md)
+> 遇到这种情况，您可以先尝试其他 demo，例如 [etcd demo](/docs/start/configuration/start.md)
 
 ## 第三步：启动客户端Demo，调用Layotto增删改查
 

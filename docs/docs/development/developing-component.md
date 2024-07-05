@@ -123,7 +123,7 @@
 ```
 
 ### 4.3. 参照quickstart文档，启动Layotto和demo看看有没有报错
-比如参考[分布式锁API的quickstart文档](docs/start/lock/start.md) ，启动你依赖的环境（比如zookeeper）、启动Layotto（记得用你刚才新增的配置文件！），看看有没有报错。
+比如参考[分布式锁API的quickstart文档](/docs/start/lock/start.md) ，启动你依赖的环境（比如zookeeper）、启动Layotto（记得用你刚才新增的配置文件！），看看有没有报错。
 
 注：下面这个Error没事，无视就好
 
@@ -138,7 +138,7 @@
 ## 五、新增组件说明文档
 以上就算完成了代码工作，最好能新增组件的配置说明文档，说明一下这个组件支持哪些配置项、怎么启动该组件依赖的环境（比如用docker怎么启动zookeeper)
 
-可以参考 [lock API的redis组件说明(中文)](docs/component_specs/lock/redis.md)
+可以参考 [lock API的redis组件说明(中文)](/docs/component_specs/lock/redis.md)
 和
 [lock API的redis组件说明(英文)](component_specs/lock/redis.md),同样可以复制粘贴改一改。
 

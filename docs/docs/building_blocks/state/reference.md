@@ -20,10 +20,10 @@ API支持批量CRUD操作，支持声明对并发安全和数据一致性的要�
 ## 如何使用State API
 您可以通过grpc调用State API，接口定义在[runtime.proto](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) 中。
 
-使用前需要先对组件进行配置，详细的配置说明见[状态管理组件文档](docs/component_specs/state/common.md)
+使用前需要先对组件进行配置，详细的配置说明见[状态管理组件文档](/docs/component_specs/state/common.md)
 
 ### 使用示例
-Layotto client sdk封装了grpc调用的逻辑，使用sdk调用State API的示例可以参考[快速开始：使用State API](docs/start/state/start.md)
+Layotto client sdk封装了grpc调用的逻辑，使用sdk调用State API的示例可以参考[快速开始：使用State API](/docs/start/state/start.md)
 
 
 ### Save state

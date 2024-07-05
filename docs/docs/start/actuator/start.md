@@ -157,4 +157,4 @@ Layotto内置提供了/actuator/health/readiness和/actuator/health/liveness 两
 
 ### 了解Actuator实现原理
 
-如果您对实现原理感兴趣，或者想在Actuator扩展一些功能，可以阅读[Actuator的设计文档](docs/design/actuator/actuator-design-doc.md)
+如果您对实现原理感兴趣，或者想在Actuator扩展一些功能，可以阅读[Actuator的设计文档](/docs/design/actuator/actuator-design-doc.md)

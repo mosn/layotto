@@ -2,7 +2,7 @@
 
 The first half of this paper discusses what the API plugin solves and why it is designed, and the second half describes how the API plugin works.
 
-If you use only API plugins, you can jump directly to [2.4.Use Guide](docs/design/api_plugin/design?id=_24 - Use Guide)
+If you use only API plugins, you can jump directly to [2.4.Use Guide](/docs/design/api_plugin/design?id=_24 - Use Guide)
 
 ## Needs analysis
 
@@ -226,7 +226,7 @@ Allows you to expand your own components, such as the `HelloWorld` component in 
 
 ##### How does：configure a custom component?
 
-See[自定义组件的配置文档](docs/component_species/custom/common)
+See[自定义组件的配置文档](/docs/component_species/custom/common)
 
 ##### View Example
 

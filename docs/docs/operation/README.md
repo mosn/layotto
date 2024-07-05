@@ -7,7 +7,7 @@
 - 通过 Kubernetes 部署
 
 ### 直接部署
-您可以直接运行 Layotto 二进制文件、启动 Layotto。参考[快速开始](docs/start/)
+您可以直接运行 Layotto 二进制文件、启动 Layotto。参考[快速开始](/docs/start/)
 
 ### 使用 Docker 部署
 Layotto 提供了官方 Docker 镜像，包括：
@@ -20,7 +20,7 @@ Layotto 提供了官方 Docker 镜像，包括：
 docker run -v "$(pwd)/configs/config.json:/runtime/configs/config.json" -d  -p 34904:34904 --name layotto layotto/layotto start
 ```
 
-您也可以通过 docker-compose 同时启动 Layotto 和 其他系统（比如 Redis)，参考[快速开始](docs/start/state/start?id=step-1-%e5%90%af%e5%8a%a8-redis-%e5%92%8c-layotto)
+您也可以通过 docker-compose 同时启动 Layotto 和 其他系统（比如 Redis)，参考[快速开始](/docs/start/state/start?id=step-1-%e5%90%af%e5%8a%a8-redis-%e5%92%8c-layotto)
 
 ### 在 Kubernetes 集群中部署
 #### 方案1. 通过 Istio 部署

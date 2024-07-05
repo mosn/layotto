@@ -5,10 +5,10 @@
 ## 如何使用分布式锁 API
 您可以通过grpc调用分布式锁 API，接口定义在[runtime.proto](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) 中。
 
-使用前需要先对组件进行配置，详细的配置说明见[分布式锁组件文档](docs/component_specs/lock/common.md)
+使用前需要先对组件进行配置，详细的配置说明见[分布式锁组件文档](/docs/component_specs/lock/common.md)
 
 ### 使用示例
-Layotto client sdk封装了grpc调用的逻辑，使用sdk调用分布式锁 API的示例可以参考[快速开始：使用分布式锁API](docs/start/lock/start.md)
+Layotto client sdk封装了grpc调用的逻辑，使用sdk调用分布式锁 API的示例可以参考[快速开始：使用分布式锁API](/docs/start/lock/start.md)
 
 ### TryLock
 
@@ -77,4 +77,4 @@ req.LockOwner = uuid.New().String()
 为避免文档和代码不一致，详细入参和返回值请参考[proto文件](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto)
 
 ## 为什么分布式锁 API被设计成这样
-如果您对实现原理、设计逻辑感兴趣，可以查阅[分布式锁API设计文档](docs/design/lock/lock-api-design)
+如果您对实现原理、设计逻辑感兴趣，可以查阅[分布式锁API设计文档](/docs/design/lock/lock-api-design)

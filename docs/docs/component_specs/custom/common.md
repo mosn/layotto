@@ -8,7 +8,7 @@ Layotto 中的组件分为两种：
 
 - 自定义组件
 
-允许您自己扩展自己的组件，比如[使用指南](docs/design/api_plugin/design?id=_24-使用指南) 中的 `HelloWorld` 组件。
+允许您自己扩展自己的组件，比如[使用指南](/docs/design/api_plugin/design?id=_24-使用指南) 中的 `HelloWorld` 组件。
 
 ## 配置文件结构
 
@@ -51,4 +51,4 @@ Layotto 中的组件分为两种：
 
 
 ## 如何使用"自定义组件"?
-详见 [使用指南](docs/design/api_plugin/design?id=_24-使用指南) 
+详见 [使用指南](/docs/design/api_plugin/design?id=_24-使用指南) 

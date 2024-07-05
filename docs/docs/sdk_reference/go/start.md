@@ -65,7 +65,7 @@ func main() {
 
 可以通过使用一个最简单配置文件来启动 Layotto,测试上面的 HelloWorld 程序. 内容如下：
 
-> 有关配置文件更详细的介绍可以参考 [Layotto 配置文件介绍](docs/configuration/overview.md).
+> 有关配置文件更详细的介绍可以参考 [Layotto 配置文件介绍](/docs/configuration/overview.md).
 
 ```json
 {
@@ -115,7 +115,7 @@ func main() {
 instance 属性里还有 `type` 和 `hello` 两个子属性：
 
 - `type` 属性是每个 instance 都有的，表明使用什么类型来实现了该接口，这里是 `helloworld` 类型. 这个 `type` 目前要求是已经注册到 Layotto 中组件类型，可以通过 [cmd/layotto/main.go](https://github.com/mosn/layotto/blob/6f6508b11783f1e4fa947ff47632e74064333384/cmd/layotto/main.go#LL275C1-L275C1) 中查看注册的组件类型.
-也可以查看各种类型组件配置文件的[文档](docs/configuration/overview.md). 
+也可以查看各种类型组件配置文件的[文档](/docs/configuration/overview.md). 
 
 - `hello` 属性用于初始化组件，不同类型的接口有不同的属性字段. 不同 `type` 的 instance 也有不同的属性字段来初始化. 可以通过[代码](https://github.com/mosn/layotto/blob/6f6508b11783f1e4fa947ff47632e74064333384/components/hello/hello.go#L32-L36)查看相关配置属性的用法.
 
@@ -140,7 +140,7 @@ NewClientWithConnection(conn *grpc.ClientConn) Client
 
 ## 体验其他接口函数
 
-以分布式id `sequencer` 为例，使用 `redis` 类型，相关参数请参考这篇[文档](docs/component_specs/sequencer/redis.md).
+以分布式id `sequencer` 为例，使用 `redis` 类型，相关参数请参考这篇[文档](/docs/component_specs/sequencer/redis.md).
 
 具体代码配置参考 `demo/sequencer/common/client.go`，内容如下.
 
@@ -259,7 +259,7 @@ localhost:6379> get "sequencer|||app1||key666"
 
 这里以 `file` 接口中的 `local` 组件类型为例。
 
-通过可以查看 [`spec/proto/runtime`](https://github.com/mosn/layotto/tree/main/spec/proto/runtime/v1) 中的 proto 文件或[GRPC API文档](docs/api_reference/README.md)
+通过可以查看 [`spec/proto/runtime`](https://github.com/mosn/layotto/tree/main/spec/proto/runtime/v1) 中的 proto 文件或[GRPC API文档](/docs/api_reference/README.md)
 
 完整代码参考 `demo/file/local/client.go`，内容如下：
 
@@ -344,7 +344,7 @@ func main() {
 
 ## 更多示例
 
-sdk 其他接口使用可以参考 [demo目录下的代码示例](https://github.com/mosn/layotto/tree/main/demo) 及 [quick-start 启动文档](docs/start/README.md)
+sdk 其他接口使用可以参考 [demo目录下的代码示例](https://github.com/mosn/layotto/tree/main/demo) 及 [quick-start 启动文档](/docs/start/README.md)
 
-查看相关配置文件编写可以参考 [configs示例](https://github.com/mosn/layotto/tree/main/configs) 及 [组件配置文档](docs/configuration/overview.md) 
+查看相关配置文件编写可以参考 [configs示例](https://github.com/mosn/layotto/tree/main/configs) 及 [组件配置文档](/docs/configuration/overview.md) 
 

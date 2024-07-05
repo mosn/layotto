@@ -19,7 +19,7 @@ Using Pub/Sub API can help you avoid the trouble of maintaining multilingual SDK
 ## How to use Pub/Sub API
 You can call Pub/Sub API through grpc. The API is defined in [runtime.proto](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto).
 
-The component needs to be configured before use. For detailed configuration instructions, see [publish/subscribe component documentation](docs/component_specs/pubsub/common.md)
+The component needs to be configured before use. For detailed configuration instructions, see [publish/subscribe component documentation](/docs/component_specs/pubsub/common.md)
 
 ### Example
 Layotto client sdk encapsulates the logic of grpc call. For examples of using sdk to call Pub/Sub API, please refer to [Quick Start: Use Pub/Sub API](start/pubsub/start.md)

@@ -10,7 +10,7 @@ Writing the API plugin yourself is boring. You can use Layotto's code generator 
 >
 > The code of in-tree plugins is located in the layotto repo, while the code of out-of-tree plugins can be placed in your own repo outside the layotto repo.
 >
-> **This guide will show you how to generate out-of-tree plugins**. If you want to generate in-tree plugins, see [the other doc](docs/api_reference/how_to_generate_api_doc) for help.
+> **This guide will show you how to generate out-of-tree plugins**. If you want to generate in-tree plugins, see [the other doc](/docs/api_reference/how_to_generate_api_doc) for help.
 
 
 Let's say you want to add a `PublishTransactionalMessage` method to the existing pubsub API. You write a new proto file `cmd/layotto_multiple_api/advanced_queue/advanced_queue.proto`:
@@ -56,6 +56,6 @@ Fix the path error and then you can register this API plugin in your `main`.
 
 ## Reference
 
-[How to generate code and documentation from the .proto files](docs/api_reference/how_to_generate_api_doc)
+[How to generate code and documentation from the .proto files](/docs/api_reference/how_to_generate_api_doc)
 
 [protoc-gen-p6](https://github.com/layotto/protoc-gen-p6)

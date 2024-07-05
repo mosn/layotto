@@ -58,4 +58,4 @@ This message is the response of the helloworld API you just registered in step 1
 ## Next
 You can refer to the demo code to implement your own API. Have a try !
 
-For more details,you can refer to the [design doc](docs/design/api_plugin/design.md)
+For more details,you can refer to the [design doc](/docs/design/api_plugin/design.md)

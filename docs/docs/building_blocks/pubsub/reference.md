@@ -20,10 +20,10 @@ Pub/Sub API 提供至少一次（at-least-once）的保证，并与各种消息�
 ## 如何使用Pub/Sub API
 您可以通过grpc调用Pub/Sub API，接口定义在[runtime.proto](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) 中。
 
-使用前需要先对组件进行配置，详细的配置说明见[发布/订阅组件文档](docs/component_specs/pubsub/common.md)
+使用前需要先对组件进行配置，详细的配置说明见[发布/订阅组件文档](/docs/component_specs/pubsub/common.md)
 
 ### 使用示例
-Layotto client sdk封装了grpc调用的逻辑，使用sdk调用Pub/Sub API的示例可以参考[快速开始：使用Pub/Sub API](docs/start/pubsub/start.md)
+Layotto client sdk封装了grpc调用的逻辑，使用sdk调用Pub/Sub API的示例可以参考[快速开始：使用Pub/Sub API](/docs/start/pubsub/start.md)
 
 ### PublishEvent
 用于发布事件到指定topic

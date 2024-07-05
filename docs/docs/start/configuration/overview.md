@@ -19,6 +19,6 @@ A: Configuration会有一些特殊的能力，比如sidecar做配置缓存，比
 这就像配置中心和数据库的区别，都是存储，但是前者领域特定，有特殊功能
 
 ## 快速入门
-- [使用Apollo配置中心](docs/start/configuration/start-apollo.md)
-- [使用Etcd配置中心](docs/start/configuration/start.md)
-- [使用nacos配置中心](docs/start/confguration/start-nacos.md)
+- [使用Apollo配置中心](/docs/start/configuration/start-apollo.md)
+- [使用Etcd配置中心](/docs/start/configuration/start.md)
+- [使用nacos配置中心](/docs/start/confguration/start-nacos.md)

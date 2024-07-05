@@ -50,7 +50,7 @@ var (
 )
 ```
 
-注：默认情况下，接口只会返回Layotto的健康状态，如果希望接口也返回App的健康状态，需要开发一个回调App的插件。您可以参考[Actuator的设计文档](docs/design/actuator/actuator-design-doc.md) ，或者直接联系我们，为您提供详细的解释。
+注：默认情况下，接口只会返回Layotto的健康状态，如果希望接口也返回App的健康状态，需要开发一个回调App的插件。您可以参考[Actuator的设计文档](/docs/design/actuator/actuator-design-doc.md) ，或者直接联系我们，为您提供详细的解释。
 
 ### /actuator/health/readiness
 
@@ -77,7 +77,7 @@ GET,不需要传参
 }
 ```
 
-注：默认情况下，接口只会返回Layotto的健康状态，如果希望接口也返回App的健康状态，需要开发一个回调App的插件。您可以参考[Actuator的设计文档](docs/design/actuator/actuator-design-doc.md) ，或者直接联系我们，为您提供详细的解释。
+注：默认情况下，接口只会返回Layotto的健康状态，如果希望接口也返回App的健康状态，需要开发一个回调App的插件。您可以参考[Actuator的设计文档](/docs/design/actuator/actuator-design-doc.md) ，或者直接联系我们，为您提供详细的解释。
 
 ## 2. 查询运行时元数据API
 
@@ -109,7 +109,7 @@ GET
 
 Actuator采用插件化架构，您也可以按需添加自己的插件，让API返回您关注的运行时元数据
 
-注：默认情况下，接口只会返回Layotto的运行时元数据，如果希望接口也返回App的运行时元数据，需要开发一个回调App的插件。您可以参考[Actuator的设计文档](docs/design/actuator/actuator-design-doc.md) ，或者直接联系我们，为您提供详细的解释。
+注：默认情况下，接口只会返回Layotto的运行时元数据，如果希望接口也返回App的运行时元数据，需要开发一个回调App的插件。您可以参考[Actuator的设计文档](/docs/design/actuator/actuator-design-doc.md) ，或者直接联系我们，为您提供详细的解释。
 
 ## 3. API路径解释
 
@@ -139,4 +139,4 @@ Actuator API的路径采用restful风格，不同的Endpoint注册进Actuator后
 ```
 
 ## 4. API使用示例
-您可以查看[Quick start文档](docs/start/actuator/start.md)
+您可以查看[Quick start文档](/docs/start/actuator/start.md)

@@ -9,4 +9,4 @@ Before you start, you need to prepare the following environment： on your compu
 
 If you are ready, you can tap various Demo in the navigation bar on the left to start our travel!
 
-Note：if you do not support Docker, you can experience [使用Apollo配置中心](configuration/start-apollo.md) this Demo, this does not require Docker; or experience [线上实验室](docs/start/lab.md)
+Note：if you do not support Docker, you can experience [使用Apollo配置中心](configuration/start-apollo.md) this Demo, this does not require Docker; or experience [线上实验室](/docs/start/lab.md)

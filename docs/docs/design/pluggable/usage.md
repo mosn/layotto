@@ -51,4 +51,4 @@ hello
 
 ## 了解 Layotto 可插拔组件的实现原理
 
-如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[可插拔组件的设计文档](docs/design/pluggable/design.md)
+如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[可插拔组件的设计文档](/docs/design/pluggable/design.md)

@@ -218,4 +218,4 @@ sdk位于`sdk`目录下，用户可以通过sdk调用Layotto提供的API。
 
 #### 了解Pub/Sub API实现原理
 
-如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Pub/Sub API的设计文档](docs/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)
+如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Pub/Sub API的设计文档](/docs/design/pubsub/pubsub-api-and-compability-with-dapr-component.md)

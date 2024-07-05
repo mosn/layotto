@@ -30,4 +30,4 @@ https://github.com/mosn/layotto/discussions/categories/announcements
 </a>
 
 ## 晋升规则
-见[Layotto社区晋升规则](docs/community/promote.md)
+见[Layotto社区晋升规则](/docs/community/promote.md)

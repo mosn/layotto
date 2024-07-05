@@ -2,7 +2,7 @@
 
 本文前半部分讨论 API 插件解决什么问题、为什么这样设计，后半部分介绍 API 插件怎么用。
 
-如果您只关心 API 插件的用法，可以直接跳到 [2.4. 使用指南](docs/design/api_plugin/design?id=_24-使用指南)
+如果您只关心 API 插件的用法，可以直接跳到 [2.4. 使用指南](/docs/design/api_plugin/design?id=_24-使用指南)
 
 ## 1. 需求分析
 
@@ -223,7 +223,7 @@ Layotto 中的组件分为两种：
 允许您自己扩展自己的组件，比如下面示例中的 `HelloWorld` 组件。
 
 ##### 解释：如何配置自定义组件?
-详见[自定义组件的配置文档](docs/component_specs/custom/common)
+详见[自定义组件的配置文档](/docs/component_specs/custom/common)
 
 ##### 看个例子
 看个具体的例子，在[helloworld 示例中](https://github.com/mosn/layotto/blob/main/cmd/layotto_multiple_api/helloworld/grpc_api.go), `*server` 实现了 `Init`

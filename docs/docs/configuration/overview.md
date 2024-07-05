@@ -36,4 +36,4 @@ Layotto 启动时需要读取一个 json 格式的配置文件。示例配置文
 }
 ```
 
-至于每个API NAME填啥、每个组件名是啥、组件能配哪些Key/Value配置项，您可以查阅[组件配置说明](docs/component_specs/overview)
+至于每个API NAME填啥、每个组件名是啥、组件能配哪些Key/Value配置项，您可以查阅[组件配置说明](/docs/component_specs/overview)

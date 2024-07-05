@@ -36,9 +36,9 @@ select * from message order by message-id limit 100
 ## 如何使用Sequencer API
 您可以通过grpc调用Sequencer API，接口定义在[runtime.proto](https://github.com/mosn/layotto/blob/main/spec/proto/runtime/v1/runtime.proto) 中。
 
-Layotto client sdk封装了grpc调用的逻辑，使用sdk调用Sequencer API的示例可以参考[快速开始：使用Sequencer API](docs/start/sequencer/start.md)
+Layotto client sdk封装了grpc调用的逻辑，使用sdk调用Sequencer API的示例可以参考[快速开始：使用Sequencer API](/docs/start/sequencer/start.md)
 
-使用前需要先对组件进行配置，详细的配置说明见[Sequencer组件文档](docs/component_specs/sequencer/common.md)
+使用前需要先对组件进行配置，详细的配置说明见[Sequencer组件文档](/docs/component_specs/sequencer/common.md)
 
 ### Get next unique id
 

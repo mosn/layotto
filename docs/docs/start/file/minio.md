@@ -118,4 +118,4 @@ docker rm -f minio
 
 #### 了解File API的实现原理
 
-如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[File API的设计文档](docs/design/file/file-design.md)
+如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[File API的设计文档](/docs/design/file/file-design.md)

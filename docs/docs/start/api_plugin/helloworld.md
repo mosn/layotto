@@ -59,6 +59,6 @@ Greeting: Hello world
 
 您可以参考演示的代码来实现你自己的API。快来试试吧！
 
-想要了解更多的详情，您可以参考[设计文档](docs/design/api_plugin/design.md)
+想要了解更多的详情，您可以参考[设计文档](/docs/design/api_plugin/design.md)
 
-为了简化 API 插件的开发，Layotto 社区提供了一套代码生成器，可以基于 proto 文件生成 API 插件相关代码，见 [文档](docs/start/api_plugin/generate.md)
+为了简化 API 插件的开发，Layotto 社区提供了一套代码生成器，可以基于 proto 文件生成 API 插件相关代码，见 [文档](/docs/start/api_plugin/generate.md)

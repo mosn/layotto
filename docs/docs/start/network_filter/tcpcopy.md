@@ -2,7 +2,7 @@
 
 ## 介绍
 
-当您按照quick start文档[通过Layotto调用apollo配置中心](docs/start/configuration/start-apollo.md)运行demo时，可能会注意到配置文件config_apollo.json中有这么一段配置：
+当您按照quick start文档[通过Layotto调用apollo配置中心](/docs/start/configuration/start-apollo.md)运行demo时，可能会注意到配置文件config_apollo.json中有这么一段配置：
 
 ```
                 {

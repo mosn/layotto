@@ -181,7 +181,7 @@ go sdk位于`sdk`目录下，java sdk 在 https://github.com/layotto/java-sdk
 #### 想要详细了解Sequencer API?
 Sequencer API是干嘛的，解决什么问题，我应该在什么场景使用它？
 
-如果您产生了这样的困惑，想要了解Sequencer API的更多使用细节，可以进一步阅读[Sequencer API使用文档](docs/api_reference/sequencer/reference)
+如果您产生了这样的困惑，想要了解Sequencer API的更多使用细节，可以进一步阅读[Sequencer API使用文档](/docs/api_reference/sequencer/reference)
 
 #### 细节以后再说，继续体验其他API
 通过左侧的导航栏，继续体验别的API吧！
@@ -189,4 +189,4 @@ Sequencer API是干嘛的，解决什么问题，我应该在什么场景使用�
 
 #### 了解Sequencer API的实现原理
 
-如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Sequencer API的设计文档](docs/design/sequencer/design.md)
+如果您对实现原理感兴趣，或者想扩展一些功能，可以阅读[Sequencer API的设计文档](/docs/design/sequencer/design.md)
