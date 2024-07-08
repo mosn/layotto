@@ -56,11 +56,9 @@ step 3. 打开 http://localhost:3000/  查看文档站点。
 中文侧边栏在 docs/sidebars.js
 
 英文侧边栏在需要执行下：
-
 ```shell
 npm run write-translations -- --locale en-US
 ```
-
 然后在docs/i18n/en-US/docusaurus-plugin-content-docs/current.json里面修改对应的sidebar的内容
 
 ![img_10.png](/img/development/doc/img_10.png)

@@ -104,7 +104,7 @@ a. Use absolute path relative to the docs/ directory.For example:
 
 Write in this way, warning in local compilers will be alerted, not ignored, and automatically processed into available hyperlinks when compiled.
 
-b. Use completed Url。For example:
+b. 用完整的Url。For example:
 
 ```markdown
 see [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json):
