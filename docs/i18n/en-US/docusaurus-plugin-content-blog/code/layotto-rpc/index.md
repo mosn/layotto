@@ -149,7 +149,7 @@ func (stm *StageManager) runStartStage() {
 
 ### 0x01 Dubbo-go-sample client request
 
-Follow the example of [Dubbo Json Rpc Example](https://mosn.io/layotto/#/en/start/rpc/dub_json_rpc)
+Follow the example of [Dubbo Json Rpc Example](https://mosn.io/layotto/en-US/docs/start/rpc/dub_json_rpc)
 
 ```shell
 go un demo/rpc/dubbo_json_rpc/dub_json_client/client.go -d '{"jsonrpc": "2.0", "method":"GetUser", "params":["A003"],"id":9527}'

@@ -14,7 +14,7 @@
 ## General description
 
 WebAssemly Abbreviations WASM, a portable, small and loaded binary format operating in sandboxing implementation environment, was originally designed to achieve high-performance applications in web browsers, benefiting from its good segregation and security, multilingual support, cool-start fast flexibility and agility and application to embed other applications for better expansion, and obviously we can embed it into Layotto.Layotto supports loading compiled WASM files and interacting with the Target WASM API via proxy_abi_version_0_2_0;
-other Layotto also supports loading and running WASM carrier functions and supports interfaces between Function and access to infrastructure; and Layotto communities are also exploring the compilation of components into WASM modules to increase segregation between modules.This article uses the Layotto official [quickstart](https://mosn.io/layotto/#/zh/start/wasm/start) example of accessing redis as an example to analyze WebAssemly in Layotto Related implementation and application.
+other Layotto also supports loading and running WASM carrier functions and supports interfaces between Function and access to infrastructure; and Layotto communities are also exploring the compilation of components into WASM modules to increase segregation between modules.This article uses the Layotto official [quickstart](https://mosn.io/layotto/docs/start/wasm/start) example of accessing redis as an example to analyze WebAssemly in Layotto Related implementation and application.
 
 ## Source analysis
 

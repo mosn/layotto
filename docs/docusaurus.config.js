@@ -7,8 +7,8 @@ const config = {
   tagline: 'Layotto (L8): To be the next layer of OSI layer 7',
   favicon: 'https://gw.alipayobjects.com/zos/bmw-prod/65518bfc-8ba5-4234-a5c5-2bc065e3a5f0.svg',
 
-  url: 'https://mosn.io',
-  baseUrl: '/',
+  url: 'https://layotto.github.io',
+  baseUrl: '/layotto/',
 
   organizationName: 'mosn',
   projectName: 'layotto',
@@ -39,11 +39,11 @@ const config = {
             if (locale !== 'en-US') {
               const pathSegments = docPath.split('/');
               newDocPath = ['docs', ...pathSegments].join('/');
-              return `https://github.com/mosn/layotto/edit/main/`+docPath;
+              return `https://github.com/mosn/layotto/edit/main/docs/`+newDocPath;
             }else{
               const pathSegments = docPath.split('/');
               newDocPath = ['i18n/en-US/docusaurus-plugin-content-docs/current', ...pathSegments].join('/');
-              return `https://github.com/mosn/layotto/edit/main/`+docPath;
+              return `https://github.com/mosn/layotto/edit/main/docs/`+newDocPath;
             }
 
           },
@@ -54,14 +54,7 @@ const config = {
           showReadingTime: true,
 
           editUrl:({  locale,blogDirPath, blogPath }) => {
-            //把docPath 拆分，中间加上对应的路径。
-            let newDocPath;
-            if (locale !== 'en-US') {
-              return `https://github.com/mosn/layotto/edit/main//${blogDirPath}/${blogPath}`;
-            }else{
-              return `https://github.com/mosn/layotto/edit/main//${blogDirPath}/${blogPath}`;
-            }
-
+            return `https://github.com/mosn/layotto/edit/main/docs/${blogDirPath}/${blogPath}`;
           }
         },
         theme: {

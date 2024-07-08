@@ -48,9 +48,9 @@ API quickstart doc:
 
 API definition(the `.proto` file):
 
-Component development guide: https://mosn.io/layotto/#/en/development/developing-component
+Component development guide: https://mosn.io/layotto/en-US/docs/development/developing-component
 
-Component development guide(in chinese): https://mosn.io/layotto/#/zh/development/developing-component
+Component development guide(in chinese): https://mosn.io/layotto/docs/development/developing-component
 
 An example pull request to develop a new component: 
 
