@@ -7,7 +7,7 @@ const config = {
   tagline: 'Layotto (L8): To be the next layer of OSI layer 7',
   favicon: 'https://gw.alipayobjects.com/zos/bmw-prod/65518bfc-8ba5-4234-a5c5-2bc065e3a5f0.svg',
 
-  url: 'https://mosn.io',
+  url: 'https://layotto.github.io',
   baseUrl: '/layotto/',
 
   organizationName: 'mosn',
