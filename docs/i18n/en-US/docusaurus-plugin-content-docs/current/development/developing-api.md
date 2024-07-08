@@ -83,7 +83,7 @@ Before the operation, explain what effect this demo want to achieve with illustr
 Counter-example: The document only writes operation steps 1234, and users do not understand what they want to do.
 
 #### 2.3.2. Using document
-The documentation path is under "Reference - API reference", for example, see [State API](https://mosn.io/layotto/#/en/api_reference/state/reference)
+The documentation path is under "Reference - API reference", for example, see [State API](https://mosn.io/layotto/en-US/docs/api_reference/state/reference)
 
 >The study found that Dapr has a lot of documentation, such as the State API:
 >
@@ -169,13 +169,13 @@ Clear comment should to be written ：
 Post a document link if there is a design document or a proposal issue link if there is no document
 
 #### 2.3.3. This document describes the general CONFIGURATION of the API
-For example: https://mosn.io/layotto/#/zh/component_specs/state/common
+For example: https://mosn.io/layotto/docs/component_specs/state/common
 
 - Configuration file structure
 - Explain the general configuration of the API, such as keyPrefix
 
 #### 2.3.4. Documents that describe component configuration
-For example: https://mosn.io/layotto/#/zh/component_specs/state/redis
+For example: https://mosn.io/layotto/docs/component_specs/state/redis
 
 - Configuration item description for this component
 - If you want to start this component and run the demo, how to start it

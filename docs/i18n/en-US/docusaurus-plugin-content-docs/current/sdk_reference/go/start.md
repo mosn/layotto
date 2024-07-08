@@ -193,7 +193,7 @@ returns:
 - next_id: The distributed id.
 
 
-> For detailed useage of interface, you can refer to the [API design docs](https://mosn.io/layotto/#/en/design/sequencer/design)
+> For detailed useage of interface, you can refer to the [API design docs](https://mosn.io/layotto/en-US/docs/design/sequencer/design)
 > Perhaps the document has not been supplemented yet, you can still view the [relecant code comments](https://github.com/mosn/layotto/blob/6f6508b11783f1e4fa947ff47632e74064333384/spec/proto/runtime/v1/runtime.pb.go#L1118-L1131)
 
 The relevant parameter configuration parameters are as follows:

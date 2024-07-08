@@ -24,19 +24,20 @@ jobs:
           file: 'algolia-config.json'
       - name: creates output
         run:  npm install && npm run build --config docs
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          external_repository: layotto/layotto.github.io
-          publish_dir: docs/build
-          publish_branch: main
-#      - name: Pushes to another repository
-#        uses: cpina/github-action-push-to-another-repository@main
-#        env:
-#          SSH_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+#      - name: Deploy
+#        uses: peaceiris/actions-gh-pages@v3
 #        with:
-#          source-directory: 'docs/build'
-#          destination-github-username: 'layotto'
-#          destination-repository-name: 'layotto.github.io'
-#          target-branch: main
+#          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+#          external_repository: layotto/layotto.github.io
+#          publish_dir: docs/build
+#          publish_branch: main
+      - name: Pushes to another repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        with:
+          source-directory: 'docs/build'
+          target-directory: 'layotto'
+          destination-github-username: 'layotto'
+          destination-repository-name: 'layotto.github.io'
+          target-branch: main

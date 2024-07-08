@@ -13,7 +13,7 @@
 
 ## 概述
 WebAssemly 简称 WASM，是一种运行在沙箱化的执行环境中的可移植、体积小、加载快的二进制格式，WASM最初设计是为了在网络浏览器中实现高性能应用，得益于它良好的隔离性和安全性、多语言支持、冷启动快等灵活性和敏捷性等特性，又被应用于嵌入其它应用程序中以获得较好的扩展能力，显然我们可以将它嵌入到 Layotto 中。Layotto 支持加载编译好的 WASM 文件，并通过 proxy_abi_version_0_2_0 的 API 与目标 WASM 进行交互;
-另外 Layotto 也支持加载并运行以 WASM 为载体的 Function，并支持 Function 之间互相调用以及访问基础设施；同时 Layotto 社区也正在探索把 component 编译成 WASM 模块以此来增强模块间的隔离性。本文以 Layotto 官方 [quickstart](https://mosn.io/layotto/#/zh/start/wasm/start) 即访问redis相关示例为例来分析 Layotto 中 WebAssemly 相关的实现和应用。
+另外 Layotto 也支持加载并运行以 WASM 为载体的 Function，并支持 Function 之间互相调用以及访问基础设施；同时 Layotto 社区也正在探索把 component 编译成 WASM 模块以此来增强模块间的隔离性。本文以 Layotto 官方 [quickstart](https://mosn.io/layotto/docs/start/wasm/start) 即访问redis相关示例为例来分析 Layotto 中 WebAssemly 相关的实现和应用。
 
 ## 源码分析
 备注：本文基于 commit hash：f1cf350a52b5a1a0b3788a31681007a056e332ef
@@ -32,7 +32,7 @@ WebAssemly 简称 WASM，是一种运行在沙箱化的执行环境中的可移�
 [proxy-wasm-go-host](https://github.com/mosn/proxy-wasm-go-host) WebAssembly for Proxies (GoLang host implementation)：Proxy-Wasm 的 golang 实现，用以在 Layotto 中实现 Runtime ABI 的具体逻辑。\
 VM：Virtual Machine 虚拟机，Runtime类型有：wasmtime、Wasmer、V8、 Lucet、WAMR、wasm3，本文例子中使用 wasmer
 
-1、首先看 [quickstart例子](https://mosn.io/layotto/#/zh/start/wasm/start) 中 stream filter 的配置，如下可以看到配置中有两个 WASM 插件，使用 wasmer VM 分别启动一个实例，详见如下配置：
+1、首先看 [quickstart例子](https://mosn.io/layotto/docs/start/wasm/start) 中 stream filter 的配置，如下可以看到配置中有两个 WASM 插件，使用 wasmer VM 分别启动一个实例，详见如下配置：
 
 ```json
  "stream_filters": [
@@ -579,7 +579,7 @@ func ProxyGetState(instance common.WasmInstance, storeNamePtr int32, storeNameSi
 }
 ```
 
-以上 Layotto rpc 流程简要说是通过两个虚拟连接借助 Dapr API 和 底层 Mosn 实现 [5],具体可参见前序文章[Layotto源码解析——处理RPC请求](https://mosn.io/layotto/#/zh/blog/code/layotto-rpc/index)，从 Redis 中获取数据可直接阅读 Dapr State 相关代码，在此不一一展开了。
+以上 Layotto rpc 流程简要说是通过两个虚拟连接借助 Dapr API 和 底层 Mosn 实现 [5],具体可参见前序文章[Layotto源码解析——处理RPC请求](https://mosn.io/layotto/docs/blog/code/layotto-rpc/index)，从 Redis 中获取数据可直接阅读 Dapr State 相关代码，在此不一一展开了。
 
 ### FaaS模式
 
@@ -621,5 +621,5 @@ Layotto WebAssemly 虽然涉及较多 WASM 相关的基础知识，但通过示�
 - [2] [feature: WASM plugin framework](https://github.com/mosn/mosn/pull/1589)
 - [3] [WebAssembly for Proxies (ABI Spec)](https://github.com/proxy-wasm/spec)
 - [4] [Proxy WebAssembly Architecture](https://techhenzy.com/proxy-webassembly-architecture/)
-- [5] [Layotto源码解析——处理RPC请求](https://mosn.io/layotto/#/zh/blog/code/layotto-rpc/index)
+- [5] [Layotto源码解析——处理RPC请求](https://mosn.io/layotto/docs/blog/code/layotto-rpc/index)
 - [6] [云原生运行时的下一个五年](https://www.sofastack.tech/blog/the-next-five-years-of-cloud-native-runtime/)
