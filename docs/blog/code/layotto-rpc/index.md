@@ -148,7 +148,7 @@ func (stm *StageManager) runStartStage() {
 
 ### 0x01 Dubbo-go-sample client 发起请求
 
-根据 [Dubbo Json Rpc Example](https://mosn.io/layotto/#/zh/start/rpc/dubbo_json_rpc) 例子运行如下命令
+根据 [Dubbo Json Rpc Example](https://mosn.io/layotto/docs/start/rpc/dubbo_json_rpc) 例子运行如下命令
 
 ```shell
 go run demo/rpc/dubbo_json_rpc/dubbo_json_client/client.go -d '{"jsonrpc":"2.0","method":"GetUser","params":["A003"],"id":9527}'

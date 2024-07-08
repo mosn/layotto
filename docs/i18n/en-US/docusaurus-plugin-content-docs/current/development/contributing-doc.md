@@ -1,78 +1,127 @@
-# Document Contribution Guide
+# Docs contributing guide
 
-Thank you for your support in Layotto!
+Thank you for your support of Layotto!
 
-This document describes how to modify/add documents. Documentation for this repository is written in Markdown.
+This document describes how to modify/add documents.The documents in this repository are written using Markdown syntax.
 
-## 1. Document Path description
+## 1. Document Path Description
 
-Documents are stored in the 'docs/' directory, where 'docs/en' stores English documents and 'docs/zh' stores Chinese documents.
+Documents are uniformly placed in the docs/ directory, with docs/docs storing documents, docs/blog storing blogs, and docs/i18n storing translated multilingual documents.
 
-![img_2.png](/img/development/doc/img_2.png)
+![img\_14.png](/img/development/doc/img_14.png)
 
 ## 2. Documentation Site Description
-Files under docs/ directory will be automatically deployed to github pages and rendered through [docsify](https://docsify.js.org/#/).
 
-Generally speaking, after the .md file is merged into the main branch, you can see the new page on Layotto's documentation site, and all deployment and rendering processes are done automatically.
+Files under the docs/ directory will be automatically deployed to github pages and rendered through [docusaurus](https://docusaurus.io/).
 
-## 3. How to Add a New Document
-### step 1. Write a new markdown file
-To add a document, create a folder and a .md file based on the directory structure. For example, if you want to write a design document for the distributed lock API, just create a new directory:
+Generally speaking, after the .md file is merged into the main branch, you will be able to see the new page on the Layotto documentation site, and the deployment and rendering processes are automatic.
 
-![img_1.png](/img/development/doc/img_1.png)
+### Local startup documentation site
 
-### step 2. Update the sidebar
-Remember to update the sidebar after adding new documents or revising existing documents.
+After writing the document locally, in order to quickly preview the effect, you can also refer to [docusaurus_installation](https://docusaurus.io/docs/installation) to start the documentation site locally.
 
-Chinese sidebar: 'docs/zh/_sidebar.md'
+Here is a summary of the steps:
 
-English sidebar: 'docs/_sidebar.md'
+step 1. Install Docusaurus, make sure the Node.js version is 18.0 or above
 
-### step 3. Submit a Pull request
-After writing the above Markdown files, submitting pr, and merging it into the main branch, new documents are now available on the official website.
+```shell
+npm install
+```
 
-## 4. Tips on Hyperlinks
+step 2. Compile, compile the documents under 'docs' into static HTML files, and place the compiled files under 'docs/build'
 
-One annoying problem with Docsify is that the use of hyperlinks is confusing.
+```shell
+npm run build --config docs
+```
 
-The hyperlink mentioned here is the kind of links that will jump to other documents once clicked, such as the following:
+Step 3. Start the documentation site
 
-![image](https://user-images.githubusercontent.com/26001097/132220354-db2b6ad0-58e4-46ed-b005-71d8134f725b.png)
+```shell
+# Run npm run serve --config docs in the layotto project root directory
+npm run serve --config docs
+```
 
-### Incorrect Syntax
-If you try to create a hyperlink with a relative path, then a 404 page will appear once you clicked it:
+step 3. Open http://localhost:3000/ to view the documentation site.
 
-![img_6.png](/img/development/doc/img_6.png)
+## 3. What needs to be done to add a document
 
-![img_7.png](/img/development/doc/img_7.png)
+### step 1. Create a markdown document
 
-### Correct Syntax
+When you need to add a new document, you can create a new folder according to the directory structure, and create a .md file.For example, if you want to write the design document for distributed lock API, create directories under both Chinese and English directories:
 
-There are two suggested ways to write hyperlinks:
+![img\_8.png](/img/development/doc/img_8.png)
+![img\_9.png](/img/development/doc/img_9.png)
 
-a. Use a path relative to the 'docs/' directory. Such as:
+You can use Crowdin for auxiliary translation. After writing the Chinese documentation, use npm run crowdin:upload to upload the Chinese documentation to the Crowdin platform. Find the Layotto project on the platform, translate it, and download it to the local response directory.[crowdin reference documentation](https://docusaurus.io/docs/i18n/crowdin)
 
-![img_5.png](/img/development/doc/img_5.png)
+### step 2. Add the document to the sidebar
 
-b. Use the full Url. Such as:
+After adding new documents and finishing the content, remember to update the sidebar.
+
+The Chinese sidebar is in docs/sidebars.js
+
+The English sidebar needs to perform the following:
+
+```shell
+npm run write-translations -- --locale en-US
+```
+
+Then modify the corresponding sidebar content in docs/i18n/en-US/docusaurus-plugin-content-docs/current.json
+
+![img\_10.png](/img/development/doc/img_10.png)
+
+### step 3. (optional) Start the local documentation site, validate
+
+You can use docusaurus to start a local documentation server and view the editing effects
+
+### Step 4. Submit PR, merge into the code repository
+
+After finishing the above markdown file, submitting a PR, merging into the master branch, opening the official website will show the new document.
+
+## 4. Common pitfall: hyperlinks in documents
+
+There is an annoying issue with using Docusaurus to build a website: hyperlinks look very strange.
+
+The hyperlinks mentioned here are links that, when clicked, will redirect to other documents, such as the following:
+
+![img\_4.png](/img/development/doc/img_4.png)
+
+### 4.1. Incorrect Writing
+
+If you try to use a relative path to write a hyperlink URL, you will find that clicking on it in the website will lead to a 404 error:
+
+![img\_6.png](/img/development/doc/img_6.png)
+
+![img\_7.png](/img/development/doc/img_7.png)
+
+### 4.2. Correct Writing
+
+There are two correct ways to use hyperlinks:
+
+a. Use absolute path relative to the docs/ directory.For example:
+
+![img\_11.png](/img/development/doc/img_11.png)
+
+Write in this way, warning in local compilers will be alerted, not ignored, and automatically processed into available hyperlinks when compiled.
+
+b. 用完整的Url。For example:
 
 ```markdown
 see [runtime_config.json](https://github.com/mosn/layotto/blob/main/configs/runtime_config.json):
 ```
 
-## 5. Tips on image links
-Images are stored under docs/img/ directory for the purpose that the Docsify site can access it
+## 5. Image directory to image link
 
-![img.png](/img/development/doc/img.png)
+Image is placed in the docs/static/img/ directory.This is in order to allow the docusaurus site to reach and docusaurus compiles the folders below static's top：
 
-It is recommended to use the full path when referencing images in documents, to avoid a bunch of messy path problems.
+![img12.png](/img/development/doc/img_12.png)
 
-For example, when referencing the images under the main branch, the prefix of the image url is `raw.githubusercontent.com/mosn/layotto/main/docs/img/xxx`
+Local images with statics in the document recommend an absolute path /img if they are a network image, and a full image URL is sufficient.
 
-and the Markdown phrase referring to an image will be ：
+For example, in the case of images with the mains branch, the prefix for the image Url is `raw.githubusercontent.com/mosn/layotto/main/docs/img/xxx`
+
+The Markdown syntax is as follows:
 
 ```markdown
 ![Architecture](https://raw.githubusercontent.com/mosn/layotto/main/docs/img/runtime-architecture.png)
 ```
-
-Note: Relative paths can also be used, but you may encounter many problems. For example, the relative path logic of the `<img>` tag and `![xxx](url)` tag are different; for example, users may access the README through different paths, so it's hard for you to define the relative path. To avoid these problems, it's recommended to use a full url.

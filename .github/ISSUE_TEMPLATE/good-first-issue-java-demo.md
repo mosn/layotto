@@ -13,7 +13,7 @@ Develop a java demo for **(FIXME) XXX** API.
 
 Now we already have quickstart docs for this API, and we need a demo to show users how to invoke this API.  
 
-You can take the [lock api quickstart](https://mosn.io/layotto/#/en/start/lock/start) as an example:
+You can take the [lock api quickstart](https://mosn.io/layotto/en-US/docs/start/lock/start) as an example:
 
 ![image](https://user-images.githubusercontent.com/26001097/199906799-ac30da05-c983-408b-b0e9-2fd712ec492f.png)
 
