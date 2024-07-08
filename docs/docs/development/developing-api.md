@@ -84,7 +84,7 @@ A: **本规范只限制“新增Layotto API的pr需要有哪些东西”（比�
 反例：文档只写了操作步骤1234，用户看不懂操作这些想干啥
 
 #### 2.3.2. 使用文档
-文档路径在"用户手册--接口文档"下，例如 State API的见 https://mosn.io/layotto/#/zh/api_reference/state/reference
+文档路径在"用户手册--接口文档"下，例如 State API的见 https://mosn.io/layotto/docs/api_reference/state/reference
 
 >调研发现Dapr的使用文档较多，比如光State API就有:
 >
@@ -170,13 +170,13 @@ message StateOptions {
 有设计文档的话贴个文档链接，没文档的话贴个proposal issue链接
 
 #### 2.3.3. 介绍API通用配置的文档
-例如https://mosn.io/layotto/#/zh/component_specs/state/common
+例如https://mosn.io/layotto/docs/component_specs/state/common
 
 - 配置文件结构
 - 解释这个API的通用配置，比如keyPrefix
 
 #### 2.3.4. 介绍组件配置的文档
-例如https://mosn.io/layotto/#/zh/component_specs/state/redis
+例如https://mosn.io/layotto/docs/component_specs/state/redis
 
 - 这个组件的配置项说明
 - 想启动这个组件跑demo的话，怎么启动
