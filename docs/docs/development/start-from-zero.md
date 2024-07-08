@@ -3,15 +3,15 @@
 
 ## Step 1. Hello world,了解 Layotto 是干嘛的
 先了解项目是干啥的，参照quickstart demo把hello world跑起来，比如：
-   - [使用Configuration API](https://mosn.io/layotto/#/zh/start/configuration/start-apollo) 
-   - [使用State API进行状态管理](https://mosn.io/layotto/#/zh/start/state/start) 
-   - [使用分布式锁 API](https://mosn.io/layotto/#/zh/start/lock/start) 
+   - [使用Configuration API](https://mosn.io/layotto/docs/start/configuration/start-apollo) 
+   - [使用State API进行状态管理](https://mosn.io/layotto/docs/start/state/start) 
+   - [使用分布式锁 API](https://mosn.io/layotto/docs/start/lock/start) 
 
 Tips: 如果过程中遇到了报错没法启动，可以在github发issue提问。
 
 Tips: 如果觉得某篇文档写的不够详细想要补充，或者文档写错了，可以提PR修复。这可能是成为contributor的最快路线 :)
 
-（可选）扩展阅读：有一些介绍项目的演讲视频，比如[《MOSN 子项目 Layotto：开启服务网格+应用运行时新篇章》](https://mosn.io/layotto/#/zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index) ， 
+（可选）扩展阅读：有一些介绍项目的演讲视频，比如[《MOSN 子项目 Layotto：开启服务网格+应用运行时新篇章》](https://mosn.io/layotto/docs/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index) ， 
 比如 [《Service Mesh落地之后：为 sidecar 注入灵魂》](https://www.bilibili.com/video/BV1RL4y1b7U9?from=search&seid=1492521025214444985&spm_id_from=333.337.0.0)
 。不过看视频比较花时间，懒得看的话可以多跑几个demo体验下，quickstart demo蛮多的
 

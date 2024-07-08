@@ -12,7 +12,7 @@
 
 </div>
 
-[查看中文版本](https://mosn.io/layotto/#/zh/README)
+[查看中文版本](https://mosn.io/layotto/docs/README)
 
 Layotto(/leɪˈɒtəʊ/) is an application runtime developed using Golang, which provides various distributed capabilities for applications, such as state management, configuration management, and event pub/sub capabilities to simplify application development.
 
@@ -22,7 +22,7 @@ Layotto is built on the open source data plane [MOSN](https://github.com/mosn/mo
 
 Layotto aims to combine [Multi-Runtime](https://www.infoq.com/articles/multi-runtime-microservice-architecture/) with Service Mesh into one sidecar. No matter which product you are using as the Service Mesh data plane (e.g. MOSN,Envoy or any other product), you can always attach Layotto to it and add Multi-Runtime capabilities without adding new sidecars.
 
-For example, by adding Runtime capabilities to MOSN, a Layotto process can both [serve as the data plane of istio](https://mosn.io/layotto/#/en/start/istio/) and provide various Runtime APIs (such as Configuration API, Pub/Sub API, etc.)
+For example, by adding Runtime capabilities to MOSN, a Layotto process can both [serve as the data plane of istio](https://mosn.io/layotto/en-US/docs/start/istio/) and provide various Runtime APIs (such as Configuration API, Pub/Sub API, etc.)
 
 In addition, we were surprised to find that a sidecar can do much more than that. We are trying to make Layotto even the runtime container of FaaS (Function as a service) with the magic power of [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) .
 
@@ -30,12 +30,12 @@ In addition, we were surprised to find that a sidecar can do much more than that
 
 - Service Communication
 - Service Governance.Such as traffic hijacking and observation, service rate limiting, etc
-- [As the data plane of istio](https://mosn.io/layotto/#/en/start/istio/)
+- [As the data plane of istio](https://mosn.io/layotto/en-US/docs/start/istio/)
 - Configuration management
 - State management
 - Event publish and subscribe
 - Health check, query runtime metadata
-- [FaaS model based on WASM and Runtime](https://mosn.io/layotto/#/en/start/faas/start.md)
+- [FaaS model based on WASM and Runtime](https://mosn.io/layotto/en-US/docs/start/faas/start.md)
 
 ## Project Architecture
 
@@ -49,63 +49,63 @@ Layotto provides SDKs in various languages. The sdk interacts with Layotto throu
 
 ### Get started with Layotto
 
-You can try the quickstart demos below to get started with Layotto. In addition, you can experience the [online laboratory](https://mosn.io/layotto/#/en/start/lab)
+You can try the quickstart demos below to get started with Layotto. In addition, you can experience the [online laboratory](https://mosn.io/layotto/en-US/docs/start/lab)
 
 ### API
 
-| API            | status |                              quick start                              |                          desc                                                           |
-| -------------- | :----: | :-------------------------------------------------------------------: | -------------------------------------------------------------- |
-| State          |   ✅   |        [demo](https://mosn.io/layotto/#/en/start/state/start)         |     Write/Query the data of the Key/Value model                    |
-| Pub/Sub        |   ✅   |        [demo](https://mosn.io/layotto/#/en/start/pubsub/start)        |     Publish/Subscribe message through various Message Queue        |
-| Service Invoke |   ✅   |       [demo](https://mosn.io/layotto/#/en/start/rpc/helloworld)       |         Call Service through MOSN (another istio data plane)           |
-| Config         |   ✅   | [demo](https://mosn.io/layotto/#/en/start/configuration/start-apollo) | Write/Query/Subscribe the config through various Config Center |
-| Lock           |   ✅   |         [demo](https://mosn.io/layotto/#/en/start/lock/start)         |     Distributed lock API                                 |
-| Sequencer      |   ✅   |      [demo](https://mosn.io/layotto/#/en/start/sequencer/start)       |   Generate distributed unique and incremental ID               |
-| File           |   ✅   |                                 TODO                                  |      File API implementation                                        |
-| Binding        |   ✅   |                                 TODO                                  |      Transparent data transmission API                              |
+| API            | status |                                 quick start                                 |                          desc                                                           |
+| -------------- | :----: |:---------------------------------------------------------------------------:| -------------------------------------------------------------- |
+| State          |   ✅   |        [demo](https://mosn.io/layotto/en-US/docs/start/state/start)         |     Write/Query the data of the Key/Value model                    |
+| Pub/Sub        |   ✅   |        [demo](https://mosn.io/layotto/en-US/docs/start/pubsub/start)        |     Publish/Subscribe message through various Message Queue        |
+| Service Invoke |   ✅   |       [demo](https://mosn.io/layotto/en-US/docs/start/rpc/helloworld)       |         Call Service through MOSN (another istio data plane)           |
+| Config         |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/configuration/start-apollo) | Write/Query/Subscribe the config through various Config Center |
+| Lock           |   ✅   |         [demo](https://mosn.io/layotto/en-US/docs/start/lock/start)         |     Distributed lock API                                 |
+| Sequencer      |   ✅   |      [demo](https://mosn.io/layotto/en-US/docs/start/sequencer/start)       |   Generate distributed unique and incremental ID               |
+| File           |   ✅   |                                    TODO                                     |      File API implementation                                        |
+| Binding        |   ✅   |                                    TODO                                     |      Transparent data transmission API                              |
 
 
 ### Service Mesh
 
 | feature | status |                      quick start                       | desc                       |
 | ------- | :----: | :----------------------------------------------------: | -------------------------- |
-| istio   |   ✅   | [demo](https://mosn.io/layotto/#/en/start/istio/) | As the data plane of istio |
+| istio   |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/istio/) | As the data plane of istio |
 
 ### Extendability
 
 | feature    | status |                           quick start                            | desc                       |
 | ---------- | :----: | :--------------------------------------------------------------: | -------------------------- |
-| API plugin |   ✅   | [demo](https://mosn.io/layotto/#/en/start/api_plugin/helloworld) | You can add your own API ! |
+| API plugin |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/api_plugin/helloworld) | You can add your own API ! |
 
 ### Actuator
 
 | feature        | status |                        quick start                        | desc                                                |
 | -------------- | :----: | :-------------------------------------------------------: | --------------------------------------------------- |
-| Health Check   |   ✅   | [demo](https://mosn.io/layotto/#/en/start/actuator/start) | Query health state of app and components in Layotto |
-| Metadata Query |   ✅   | [demo](https://mosn.io/layotto/#/en/start/actuator/start) | Query metadata in Layotto/app                       |
+| Health Check   |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/actuator/start) | Query health state of app and components in Layotto |
+| Metadata Query |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/actuator/start) | Query metadata in Layotto/app                       |
 
 ### Traffic Control
 
 | feature      | status |                              quick start                              | desc                                                            |
 | ------------ | :----: | :-------------------------------------------------------------------: | --------------------------------------------------------------- |
-| TCP Copy     |   ✅   |   [demo](https://mosn.io/layotto/#/en/start/network_filter/tcpcopy)   | Dump the tcp traffic received by Layotto into local file system |
-| Flow Control |   ✅   | [demo](https://mosn.io/layotto/#/en/start/stream_filter/flow_control) | limit access to the APIs provided by Layotto                    |
+| TCP Copy     |   ✅   |   [demo](https://mosn.io/layotto/en-US/docs/start/network_filter/tcpcopy)   | Dump the tcp traffic received by Layotto into local file system |
+| Flow Control |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/stream_filter/flow_control) | limit access to the APIs provided by Layotto                    |
 
 ### Write your bussiness logic using WASM
 
 | feature        | status |                      quick start                      | desc                                                                 |
 | -------------- | :----: | :---------------------------------------------------: | -------------------------------------------------------------------- |
-| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/en/start/wasm/start) | Compile Code written by TinyGo to \*.wasm and run in Layotto         |
-| Rust           |   ✅   | [demo](https://mosn.io/layotto/#/en/start/wasm/start) | Compile Code written by Rust to \*.wasm and run in Layotto           |
-| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/#/en/start/wasm/start) | Compile Code written by AssemblyScript to \*.wasm and run in Layotto |
+| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/wasm/start) | Compile Code written by TinyGo to \*.wasm and run in Layotto         |
+| Rust           |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/wasm/start) | Compile Code written by Rust to \*.wasm and run in Layotto           |
+| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/wasm/start) | Compile Code written by AssemblyScript to \*.wasm and run in Layotto |
 
 ### As a FaaS(Serverless) runtime (Layotto + WebAssembly + k8s)
 
 | feature        | status |                      quick start                      | desc                                                                                       |
 | -------------- | :----: | :---------------------------------------------------: | ------------------------------------------------------------------------------------------ |
-| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/en/start/faas/start) | Compile Code written by TinyGo to \*.wasm and run in Layotto And Scheduled by k8s.         |
-| Rust           |   ✅   | [demo](https://mosn.io/layotto/#/en/start/faas/start) | Compile Code written by Rust to \*.wasm and run in Layotto And Scheduled by k8s.           |
-| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/#/en/start/faas/start) | Compile Code written by AssemblyScript to \*.wasm and run in Layotto And Scheduled by k8s. |
+| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/faas/start) | Compile Code written by TinyGo to \*.wasm and run in Layotto And Scheduled by k8s.         |
+| Rust           |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/faas/start) | Compile Code written by Rust to \*.wasm and run in Layotto And Scheduled by k8s.           |
+| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/en-US/docs/start/faas/start) | Compile Code written by AssemblyScript to \*.wasm and run in Layotto And Scheduled by k8s. |
 
 ## Presentations
 

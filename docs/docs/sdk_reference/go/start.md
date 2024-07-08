@@ -191,7 +191,7 @@ func main() {
 - next_id： 分布式id.
 
 
-> 关于接口的详细使用方式，可以通过查看[API设计文档](https://mosn.io/layotto/#/zh/design/sequencer/design). 可能文档还未即使补充，也可以查看[相关代码注释](https://github.com/mosn/layotto/blob/6f6508b11783f1e4fa947ff47632e74064333384/spec/proto/runtime/v1/runtime.pb.go#L1118-L1131)，及[组件内部实现](https://github.com/mosn/layotto/blob/6f6508b11783f1e4fa947ff47632e74064333384/pkg/grpc/default_api/api_sequencer.go#L99-L119)获悉.
+> 关于接口的详细使用方式，可以通过查看[API设计文档](https://mosn.io/layotto/docs/design/sequencer/design). 可能文档还未即使补充，也可以查看[相关代码注释](https://github.com/mosn/layotto/blob/6f6508b11783f1e4fa947ff47632e74064333384/spec/proto/runtime/v1/runtime.pb.go#L1118-L1131)，及[组件内部实现](https://github.com/mosn/layotto/blob/6f6508b11783f1e4fa947ff47632e74064333384/pkg/grpc/default_api/api_sequencer.go#L99-L119)获悉.
 
 
 

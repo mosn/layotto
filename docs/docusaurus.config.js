@@ -39,11 +39,11 @@ const config = {
             if (locale !== 'en-US') {
               const pathSegments = docPath.split('/');
               newDocPath = ['docs', ...pathSegments].join('/');
-              return `https://github.com/mosn/layotto/edit/main/`+docPath;
+              return `https://github.com/mosn/layotto/edit/main/docs/`+newDocPath;
             }else{
               const pathSegments = docPath.split('/');
               newDocPath = ['i18n/en-US/docusaurus-plugin-content-docs/current', ...pathSegments].join('/');
-              return `https://github.com/mosn/layotto/edit/main/`+docPath;
+              return `https://github.com/mosn/layotto/edit/main/docs/`+newDocPath;
             }
 
           },
@@ -54,14 +54,7 @@ const config = {
           showReadingTime: true,
 
           editUrl:({  locale,blogDirPath, blogPath }) => {
-            //把docPath 拆分，中间加上对应的路径。
-            let newDocPath;
-            if (locale !== 'en-US') {
-              return `https://github.com/mosn/layotto/edit/main//${blogDirPath}/${blogPath}`;
-            }else{
-              return `https://github.com/mosn/layotto/edit/main//${blogDirPath}/${blogPath}`;
-            }
-
+            return `https://github.com/mosn/layotto/edit/main/docs/${blogDirPath}/${blogPath}`;
           }
         },
         theme: {

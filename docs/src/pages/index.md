@@ -24,7 +24,7 @@ Mesh 两者的能力结合起来，无论你是使用 MOSN 还是 Envoy 或者�
 
 此外，随着探索实践，我们发现 sidecar 能做的事情远不止于此。 通过引入[WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) ,我们正在尝试将 Layotto 做成 FaaS (Function as a service) 的运行时容器 。
 
-如果您对诞生背景感兴趣，可以看下[这篇演讲](https://mosn.io/layotto/#/zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index)
+如果您对诞生背景感兴趣，可以看下[这篇演讲](https://mosn.io/layotto/docs/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index)
 。
 
 ## 功能
@@ -59,64 +59,64 @@ Layotto 提供了多种语言版本的 SDK，SDK 通过 gRPC 与 Layotto 进行�
 
 | API            | status |                              quick start                              |                               desc                             |
 | -------------- | :----: | :-------------------------------------------------------------------: | -------------------------------- |
-| State          |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/state/start)         |     提供读写 KV 模型存储的数据的能力 |
-| Pub/Sub        |   ✅    |        [demo](https://mosn.io/layotto/#/zh/start/pubsub/start)        |     提供消息的发布/订阅能力          |
-| Service Invoke |   ✅    |       [demo](https://mosn.io/layotto/#/zh/start/rpc/helloworld)       |      通过 MOSN 进行服务调用           |
-| Config         |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/configuration/start-apollo) |   提供配置增删改查及订阅的能力     |
-| Lock           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/lock/start)         |    提供 lock/unlock 分布式锁的实现  |
-| Sequencer      |   ✅    |      [demo](https://mosn.io/layotto/#/zh/start/sequencer/start)       |  提供获取分布式自增 ID 的能力     |
-| File           |   ✅    |         [demo](https://mosn.io/layotto/#/zh/start/file/start)         |   提供访问文件的能力               |
+| State          |   ✅    |        [demo](https://mosn.io/layotto/docs/start/state/start)         |     提供读写 KV 模型存储的数据的能力 |
+| Pub/Sub        |   ✅    |        [demo](https://mosn.io/layotto/docs/start/pubsub/start)        |     提供消息的发布/订阅能力          |
+| Service Invoke |   ✅    |       [demo](https://mosn.io/layotto/docs/start/rpc/helloworld)       |      通过 MOSN 进行服务调用           |
+| Config         |   ✅    | [demo](https://mosn.io/layotto/docs/start/configuration/start-apollo) |   提供配置增删改查及订阅的能力     |
+| Lock           |   ✅    |         [demo](https://mosn.io/layotto/docs/start/lock/start)         |    提供 lock/unlock 分布式锁的实现  |
+| Sequencer      |   ✅    |      [demo](https://mosn.io/layotto/docs/start/sequencer/start)       |  提供获取分布式自增 ID 的能力     |
+| File           |   ✅    |         [demo](https://mosn.io/layotto/docs/start/file/start)         |   提供访问文件的能力               |
 | Binding        |   ✅    |                                 TODO                                  |  提供透传数据的能力               |
 
 ### Service Mesh
 
 | feature | status |                      quick start                       | desc                          |
 | ------- | :----: | :----------------------------------------------------: | ----------------------------- |
-| Istio   |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/istio/) | 跟 Istio 集成，作为 Istio 的数据面 |
+| Istio   |   ✅    | [demo](https://mosn.io/layotto/docs/start/istio/) | 跟 Istio 集成，作为 Istio 的数据面 |
 
 ### 可扩展性
 
 | feature  | status |                           quick start                            | desc                        |
 | -------- | :----: | :--------------------------------------------------------------: | --------------------------- |
-| API 插件 |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/api_plugin/helloworld) | 为 Layotto 添加您自己的 API |
+| API 插件 |   ✅    | [demo](https://mosn.io/layotto/docs/start/api_plugin/helloworld) | 为 Layotto 添加您自己的 API |
 
 ### 可观测性
 
 
 | feature    | status |                         quick start                         | desc                    |
 | ---------- | :----: | :---------------------------------------------------------: | ----------------------- |
-| Skywalking |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/trace/skywalking) | Layotto 接入 Skywalking |
+| Skywalking |   ✅    | [demo](https://mosn.io/layotto/docs/start/trace/skywalking) | Layotto 接入 Skywalking |
 
 
 ### Actuator
 
 | feature        | status |                        quick start                        | desc                                  |
 | -------------- | :----: | :-------------------------------------------------------: | ------------------------------------- |
-| Health Check   |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/actuator/start) | 查询 Layotto 依赖的各种组件的健康状态 |
-| Metadata Query |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/actuator/start) | 查询 Layotto 或应用对外暴露的元信息   |
+| Health Check   |   ✅    | [demo](https://mosn.io/layotto/docs/start/actuator/start) | 查询 Layotto 依赖的各种组件的健康状态 |
+| Metadata Query |   ✅    | [demo](https://mosn.io/layotto/docs/start/actuator/start) | 查询 Layotto 或应用对外暴露的元信息   |
 
 ### 流量控制
 
 | feature      | status |                              quick start                              | desc                                       |
 | ------------ | :----: | :-------------------------------------------------------------------: | ------------------------------------------ |
-| TCP Copy     |   ✅    |   [demo](https://mosn.io/layotto/#/zh/start/network_filter/tcpcopy)   | 把 Layotto 收到的 TCP 数据 dump 到本地文件 |
-| Flow Control |   ✅    | [demo](https://mosn.io/layotto/#/zh/start/stream_filter/flow_control) | 限制访问 Layotto 对外提供的 API            |
+| TCP Copy     |   ✅    |   [demo](https://mosn.io/layotto/docs/start/network_filter/tcpcopy)   | 把 Layotto 收到的 TCP 数据 dump 到本地文件 |
+| Flow Control |   ✅    | [demo](https://mosn.io/layotto/docs/start/stream_filter/flow_control) | 限制访问 Layotto 对外提供的 API            |
 
 ### 在 Sidecar 中用 WebAssembly (WASM) 写业务逻辑
 
 | feature        | status |                      quick start                      | desc                                                             |
 | -------------- | :----: | :---------------------------------------------------: | ---------------------------------------------------------------- |
-| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/wasm/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上         |
-| Rust           |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/wasm/start) | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上           |
-| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/wasm/start) | 把用  AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上 |
+| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/docs/start/wasm/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上         |
+| Rust           |   ✅   | [demo](https://mosn.io/layotto/docs/start/wasm/start) | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上           |
+| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/docs/start/wasm/start) | 把用  AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上 |
 
 ### 作为 Serverless 的运行时，通过 WebAssembly (WASM) 写 FaaS
 
 | feature        | status |                      quick start                      | desc                                                                                      |
 | -------------- | :----: | :---------------------------------------------------: | ----------------------------------------------------------------------------------------- |
-| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。         |
-| Rust           |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。           |
-| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/#/zh/start/faas/start) | 把用 AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。 |
+| Go (TinyGo)    |   ✅   | [demo](https://mosn.io/layotto/docs/start/faas/start) | 把用 TinyGo 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。         |
+| Rust           |   ✅   | [demo](https://mosn.io/layotto/docs/start/faas/start) | 把用 Rust 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。           |
+| AssemblyScript |   ✅   | [demo](https://mosn.io/layotto/docs/start/faas/start) | 把用 AssemblyScript 开发的代码编译成 \*.wasm 文件跑在 Layotto 上，并且使用 k8s 进行调度。 |
 
 ## Landscapes
 

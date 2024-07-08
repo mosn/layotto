@@ -6,7 +6,7 @@ This paper is a new hand-walker for the purpose of attempting to participate in 
 
 Learn what the project was. Use quickstart to run hello around the world by reference to quickstart demo like：
 
-- [Use configuration API](https://mosn.io/layotto/#/en/start/configuration/start-apollo)
+- [Use configuration API](https://mosn.io/layotto/en-US/docs/start/configuration/start-apollo)
 - [State API for status management](https://mosn.io/layotto/#/start/state/start)
 - [Use distributed lock API](https://mosn.io/layotto/#/start/lock/start)
 
@@ -14,7 +14,7 @@ Tips: Ask issues in github, if a bug is started during the process.
 
 Tips: If you feel that a document is not written in sufficient detail to add it, or the document is written incorrectly, you can make a PR.This is probably the fastest route to contribor :)
 
-（可选）扩展阅读：有一些介绍项目的演讲视频，比如[《MOSN 子项目 Layotto：开启服务网格+应用运行时新篇章》](https://mosn.io/layotto/#/zh/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index) ，
+（可选）扩展阅读：有一些介绍项目的演讲视频，比如[《MOSN 子项目 Layotto：开启服务网格+应用运行时新篇章》](https://mosn.io/layotto/docs/blog/mosn-subproject-layotto-opening-a-new-chapter-in-service-grid-application-runtime/index) ，
 比如 [《Service Mesh落地之后：为 sidecar 注入灵魂》](https://www.bilibili.com/video/BV1RL4y1b7U9?from=search\&seid=1492521025214444985\&spm_id_from=333.337.0.0)
 。But looking at videos takes time, lazy to run more than a few demo experiments, quickstart more brutally
 
