@@ -117,7 +117,7 @@ You can try the quickstart demos below to get started with Layotto. In addition,
 <p align="center">
 <img src="https://landscape.cncf.io/images/left-logo.svg" width="150"/>&nbsp;&nbsp;<img src="https://landscape.cncf.io/images/right-logo.svg" width="200"/>
 <br/><br/>
-Layotto enriches the <a href="https://landscape.cncf.io/serverless">CNCF CLOUD NATIVE Landscape.</a>
+Layotto enriches the <a href="https://landscape.cncf.io/?group=serverless">CNCF CLOUD NATIVE Landscape.</a>
 </p>
 
 ## Community
