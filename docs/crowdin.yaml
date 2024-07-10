@@ -1,0 +1,11 @@
+project_id: 688617
+api_token: 7305dcca805d8750a5d0983438bdc4bca9adff6bf35eff5a86dfdca9d85a1c273dd55e8b5362fe8d
+#api_token_env: CROWDIN_VERDACCIO_API_KEY
+
+preserve_hierarchy: true
+
+files:
+#  - source: docs/blog/**/*
+#    translation: '/i18n/%locale%/docusaurus-plugin-content-blog/current/**/%original_file_name%'
+  - source: /docs/docs/**/*
+    translation: '/docs/i18n/%locale%/docusaurus-plugin-content-docs/current/**/%original_file_name%'
