@@ -23,7 +23,7 @@ jobs:
           algolia_api_key: '478d2fe7bdad5ff46b87f1e8e4662e81'
           file: 'algolia-config.json'
       - name: creates output
-        run:  npm install && npm run build --config docs
+        run:  cd docs/ && npm install && npm run build
 #      - name: Deploy
 #        uses: peaceiris/actions-gh-pages@v3
 #        with:

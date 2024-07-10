@@ -8,4 +8,4 @@ files:
 #  - source: docs/blog/**/*
 #    translation: '/i18n/%locale%/docusaurus-plugin-content-blog/current/**/%original_file_name%'
   - source: /docs/docs/**/*
-    translation: '/i18n/%locale%/docusaurus-plugin-content-docs/current/**/%original_file_name%'
+    translation: '/docs/i18n/%locale%/docusaurus-plugin-content-docs/current/**/%original_file_name%'
