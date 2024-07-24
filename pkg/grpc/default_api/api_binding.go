@@ -19,22 +19,35 @@ package default_api
 import (
 	"context"
 
-	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
+	"github.com/dapr/components-contrib/bindings"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
+	"mosn.io/layotto/pkg/messages"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
+	"mosn.io/pkg/log"
 )
 
 func (a *api) InvokeBinding(ctx context.Context, in *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error) {
-	daprResp, err := a.daprAPI.InvokeBinding(ctx, &dapr_v1pb.InvokeBindingRequest{
-		Name:      in.Name,
-		Data:      in.Data,
+	req := &bindings.InvokeRequest{
 		Metadata:  in.Metadata,
-		Operation: in.Operation,
-	})
-	if err != nil {
-		return &runtimev1pb.InvokeBindingResponse{}, err
+		Operation: bindings.OperationKind(in.Operation),
 	}
-	return &runtimev1pb.InvokeBindingResponse{
-		Data:     daprResp.Data,
-		Metadata: daprResp.Metadata,
-	}, nil
+	if in.Data != nil {
+		req.Data = in.Data
+	}
+
+	r := &runtimev1pb.InvokeBindingResponse{}
+	resp, err := a.sendToOutputBindingFn(in.Name, req)
+	if err != nil {
+		err = status.Errorf(codes.Internal, messages.ErrInvokeOutputBinding, in.Name, err.Error())
+		log.DefaultLogger.Errorf("call out binding fail, err:%+v", err)
+		return r, err
+	}
+	if resp != nil {
+		r.Data = resp.Data
+		r.Metadata = resp.Metadata
+	}
+
+	return r, nil
 }
