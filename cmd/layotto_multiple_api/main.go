@@ -81,7 +81,7 @@ import (
 	"mosn.io/layotto/components/file/qiniu"
 	"mosn.io/layotto/components/file/tencentcloud"
 	"mosn.io/layotto/components/sequencer"
-
+	"mosn.io/layotto/pkg/grpc/dapr"
 	"mosn.io/layotto/pkg/runtime/bindings"
 	runtime_sequencer "mosn.io/layotto/pkg/runtime/sequencer"
 
@@ -281,6 +281,11 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 
 			// a demo to show how to register your own gRPC API
 			helloworld_api.NewHelloWorldAPI,
+
+			// support Dapr API
+			// Currently it only support Dapr's InvokeService,secret API,state API and InvokeBinding API.
+			// Note: this feature is still in Alpha state and we don't recommend that you use it in your production environment.
+			dapr.NewDaprAPI_Alpha,
 		),
 		runtime.WithExtensionGrpcAPI(),
 		// Hello
