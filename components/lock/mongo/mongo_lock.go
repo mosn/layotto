@@ -22,7 +22,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readconcern"
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
-	"go.mongodb.org/mongo-driver/x/bsonx"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
@@ -92,7 +94,8 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 
 	// create exprie time index
 	indexModel := mongo.IndexModel{
-		Keys:    bsonx.Doc{{Key: "Expire", Value: bsonx.Int64(1)}},
+		// Keys:    bsonx.Doc{{Key: "Expire", Value: bsonx.Int64(1)}},
+		Keys:    primitive.D{{Key: "Expire", Value: bsoncore.Value{Type: bson.TypeInt64, Data: []byte{1}}}},
 		Options: options.Index().SetExpireAfterSeconds(0),
 	}
 	e.collection.Indexes().CreateOne(e.ctx, indexModel)

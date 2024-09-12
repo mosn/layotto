@@ -23,9 +23,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/pkg/messages"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"mosn.io/pkg/log"
 )
 
 func (a *api) InvokeBinding(ctx context.Context, in *runtimev1pb.InvokeBindingRequest) (*runtimev1pb.InvokeBindingResponse, error) {
@@ -38,7 +39,7 @@ func (a *api) InvokeBinding(ctx context.Context, in *runtimev1pb.InvokeBindingRe
 	}
 
 	r := &runtimev1pb.InvokeBindingResponse{}
-	resp, err := a.sendToOutputBindingFn(in.Name, req)
+	resp, err := a.sendToOutputBindingFn(ctx, in.Name, req)
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrInvokeOutputBinding, in.Name, err.Error())
 		log.DefaultLogger.Errorf("call out binding fail, err:%+v", err)

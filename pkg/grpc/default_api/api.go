@@ -33,6 +33,7 @@ import (
 	"mosn.io/pkg/log"
 
 	"google.golang.org/grpc/metadata"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/hello"
@@ -82,7 +83,7 @@ type api struct {
 	fileOps                  map[string]file.File
 	lockStores               map[string]lock.LockStore
 	sequencers               map[string]sequencer.Store
-	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
+	sendToOutputBindingFn    func(ctx context.Context, name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 	secretStores             map[string]secretstores.SecretStore
 	// app callback
 	AppCallbackConn   *grpc.ClientConn
@@ -94,7 +95,7 @@ type api struct {
 func (a *api) Init(conn *grpc.ClientConn) error {
 	// 1. set connection
 	a.AppCallbackConn = conn
-	return a.startSubscribing()
+	return a.startSubscribing(context.Background())
 }
 
 func (a *api) Register(rawGrpcServer *grpc.Server) error {
@@ -119,7 +120,7 @@ func NewAPI(
 	files map[string]file.File,
 	lockStores map[string]lock.LockStore,
 	sequencers map[string]sequencer.Store,
-	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
+	sendToOutputBindingFn func(ctx context.Context, name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
 	secretStores map[string]secretstores.SecretStore,
 ) API {
 	// filter out transactionalStateStores
@@ -192,7 +193,7 @@ func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRe
 		}
 		if in.Message.HttpExtension != nil {
 			msg.HttpExtension = &runtimev1pb.HTTPExtension{
-				Verb:        runtimev1pb.HTTPExtension_Verb(in.Message.HttpExtension.Verb),
+				Verb:        in.Message.HttpExtension.Verb,
 				Querystring: in.Message.HttpExtension.Querystring,
 			}
 		}

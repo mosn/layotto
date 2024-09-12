@@ -25,7 +25,6 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"github.com/gammazero/workerpool"
 	"mosn.io/layotto/pkg/common"
 	"mosn.io/layotto/pkg/messages"
 	state2 "mosn.io/layotto/pkg/runtime/state"
@@ -61,7 +60,7 @@ func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*r
 	}
 
 	// query
-	compResp, err := store.Get(req)
+	compResp, err := store.Get(ctx, req)
 
 	// check result
 	if err != nil {
@@ -97,7 +96,7 @@ func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (
 	}
 
 	// query
-	err = store.BulkSet(reqs)
+	err = store.BulkSet(ctx, reqs, state.BulkStoreOpts{})
 
 	// check result
 	if err != nil {
@@ -156,7 +155,7 @@ func (a *api) DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateReques
 	}
 
 	// convert and send request
-	err = store.Delete(DeleteStateRequest2DeleteRequest(in, key))
+	err = store.Delete(ctx, DeleteStateRequest2DeleteRequest(in, key))
 
 	// 4. check result
 	if err != nil {
@@ -192,7 +191,7 @@ func (a *api) DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkSta
 	}
 
 	// send request
-	err = store.BulkDelete(reqs)
+	err = store.BulkDelete(ctx, reqs, state.BulkStoreOpts{})
 
 	// check result
 	if err != nil {
@@ -247,16 +246,10 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 		}
 		// 3.2. prepare TransactionalStateOperation struct according to the operation type
 		switch state.OperationType(op.OperationType) {
-		case state.Upsert:
-			operation = state.TransactionalStateOperation{
-				Operation: state.Upsert,
-				Request:   *StateItem2SetRequest(req, key),
-			}
-		case state.Delete:
-			operation = state.TransactionalStateOperation{
-				Operation: state.Delete,
-				Request:   *StateItem2DeleteRequest(req, key),
-			}
+		case state.OperationUpsert:
+			operation = *StateItem2SetRequest(req, key)
+		case state.OperationDelete:
+			operation = *StateItem2DeleteRequest(req, key)
 		default:
 			err := status.Errorf(codes.Unimplemented, messages.ErrNotSupportedStateOperation, op.OperationType)
 			log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
@@ -266,7 +259,7 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 	}
 
 	// submit transactional request
-	err := store.Multi(&state.TransactionalStateRequest{
+	err := store.Multi(ctx, &state.TransactionalStateRequest{
 		Operations: operations,
 		Metadata:   in.GetMetadata(),
 	})
@@ -311,37 +304,16 @@ func (a *api) getBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequ
 	}
 
 	// query
-	support, responses, err := store.BulkGet(reqs)
+	responses, err := store.BulkGet(ctx, reqs, state.BulkGetOpts{})
 	if err != nil {
 		return bulkResp, err
 	}
-	// parse and return result if store supports this method
-	if support {
-		for i := 0; i < len(responses); i++ {
-			bulkResp.Items = append(bulkResp.Items, BulkGetResponse2BulkStateItem(&responses[i]))
-		}
-		return bulkResp, nil
+
+	for i := 0; i < len(responses); i++ {
+		bulkResp.Items = append(bulkResp.Items, BulkGetResponse2BulkStateItem(&responses[i]))
 	}
 
-	// Simulate the method if the store doesn't support it
-	n := len(reqs)
-	pool := workerpool.New(int(in.GetParallelism()))
-	resultCh := make(chan *runtimev1pb.BulkStateItem, n)
-	for i := 0; i < n; i++ {
-		pool.Submit(generateGetStateTask(store, &reqs[i], resultCh))
-	}
-	pool.StopWait()
-	for {
-		select {
-		case item, ok := <-resultCh:
-			if !ok {
-				return bulkResp, nil
-			}
-			bulkResp.Items = append(bulkResp.Items, item)
-		default:
-			return bulkResp, nil
-		}
-	}
+	return bulkResp, nil
 }
 
 func (a *api) getStateStore(name string) (state.Store, error) {
@@ -445,30 +417,6 @@ func BulkGetResponse2BulkStateItem(compResp *state.BulkGetResponse) *runtimev1pb
 		Etag:     common.PointerToString(compResp.ETag),
 		Metadata: compResp.Metadata,
 		Error:    compResp.Error,
-	}
-}
-
-func generateGetStateTask(store state.Store, req *state.GetRequest, resultCh chan *runtimev1pb.BulkStateItem) func() {
-	return func() {
-		// get
-		r, err := store.Get(req)
-		// convert
-		var item *runtimev1pb.BulkStateItem
-		if err != nil {
-			item = &runtimev1pb.BulkStateItem{
-				Key:   state2.GetOriginalStateKey(req.Key),
-				Error: err.Error(),
-			}
-		} else {
-			item = GetResponse2BulkStateItem(r, state2.GetOriginalStateKey(req.Key))
-		}
-		// collect result
-		select {
-		case resultCh <- item:
-		default:
-			//never happen
-			log.DefaultLogger.Errorf("[api.generateGetStateTask] can not push result to the resultCh. item: %+v", item)
-		}
 	}
 }
 

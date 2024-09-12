@@ -16,6 +16,7 @@
 package grpc
 
 import (
+	"context"
 	"encoding/json"
 
 	bindings "github.com/dapr/components-contrib/bindings"
@@ -52,7 +53,7 @@ type ApplicationContext struct {
 	Oss                   map[string]oss.Oss
 	LockStores            map[string]lock.LockStore
 	Sequencers            map[string]sequencer.Store
-	SendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
+	SendToOutputBindingFn func(ctx context.Context, name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 	SecretStores          map[string]secretstores.SecretStore
 	DynamicComponents     map[lifecycle.ComponentKey]common.DynamicComponent
 	CustomComponent       map[string]map[string]custom.Component

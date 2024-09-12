@@ -17,7 +17,7 @@ import (
 	"net/http"
 	"time"
 
-	azservicebus "github.com/dapr/components-contrib/pubsub/azure/servicebus"
+	azservicebus "github.com/dapr/components-contrib/pubsub/azure/servicebus/queues"
 
 	delay_queue "mosn.io/layotto/components/delay_queue"
 
@@ -32,7 +32,7 @@ type azureServiceBus struct {
 // NewAzureServiceBus returns a new Azure ServiceBus pub-sub implementation.
 func NewAzureServiceBus(logger logger.Logger) pubsub.PubSub {
 	return &azureServiceBus{
-		PubSub: azservicebus.NewAzureServiceBus(logger),
+		PubSub: azservicebus.NewAzureServiceBusQueues(logger),
 	}
 }
 
@@ -48,6 +48,6 @@ func (a *azureServiceBus) PublishDelayMessage(ctx context.Context, request *dela
 		Topic:      request.Topic,
 		Metadata:   request.Metadata,
 	}
-	err := a.Publish(req)
+	err := a.Publish(ctx, req)
 	return nil, err
 }

@@ -23,9 +23,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/pkg/messages"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"mosn.io/pkg/log"
 )
 
 func (a *api) GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest) (*runtimev1pb.GetSecretResponse, error) {
@@ -55,7 +56,7 @@ func (a *api) GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest) (
 	}
 
 	// parse result
-	getResponse, err := a.secretStores[secretStoreName].GetSecret(req)
+	getResponse, err := a.secretStores[secretStoreName].GetSecret(ctx, req)
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrSecretGet, req.Name, secretStoreName, err.Error())
 		log.DefaultLogger.Errorf("GetSecret fail,get secret err:%+v", err)
@@ -87,7 +88,7 @@ func (a *api) GetBulkSecret(ctx context.Context, in *runtimev1pb.GetBulkSecretRe
 	req := secretstores.BulkGetSecretRequest{
 		Metadata: in.Metadata,
 	}
-	getResponse, err := a.secretStores[secretStoreName].BulkGetSecret(req)
+	getResponse, err := a.secretStores[secretStoreName].BulkGetSecret(ctx, req)
 
 	// parse result
 	if err != nil {

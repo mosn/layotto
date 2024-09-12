@@ -99,11 +99,11 @@ import (
 	pubsub_snssqs "github.com/dapr/components-contrib/pubsub/aws/snssqs"
 	pubsub_eventhubs "github.com/dapr/components-contrib/pubsub/azure/eventhubs"
 	pubsub_gcp "github.com/dapr/components-contrib/pubsub/gcp/pubsub"
-	pubsub_hazelcast "github.com/dapr/components-contrib/pubsub/hazelcast"
+
 	pubsub_inmemory "github.com/dapr/components-contrib/pubsub/in-memory"
 	pubsub_kafka "github.com/dapr/components-contrib/pubsub/kafka"
-	pubsub_mqtt "github.com/dapr/components-contrib/pubsub/mqtt"
-	"github.com/dapr/components-contrib/pubsub/natsstreaming"
+
+	pubsub_mqtt3 "github.com/dapr/components-contrib/pubsub/mqtt3"
 	pubsub_pulsar "github.com/dapr/components-contrib/pubsub/pulsar"
 	"github.com/dapr/components-contrib/pubsub/rabbitmq"
 	pubsub_redis "github.com/dapr/components-contrib/pubsub/redis"
@@ -121,11 +121,12 @@ import (
 	"github.com/dapr/components-contrib/state"
 	"github.com/dapr/components-contrib/state/aerospike"
 	state_dynamodb "github.com/dapr/components-contrib/state/aws/dynamodb"
-	state_azure_blobstorage "github.com/dapr/components-contrib/state/azure/blobstorage"
+
+	state_azure_blobstorage "github.com/dapr/components-contrib/state/azure/blobstorage/v1"
 	state_cosmosdb "github.com/dapr/components-contrib/state/azure/cosmosdb"
 	state_azure_tablestorage "github.com/dapr/components-contrib/state/azure/tablestorage"
 	"github.com/dapr/components-contrib/state/cassandra"
-	"github.com/dapr/components-contrib/state/cloudstate"
+
 	"github.com/dapr/components-contrib/state/couchbase"
 	"github.com/dapr/components-contrib/state/gcp/firestore"
 	"github.com/dapr/components-contrib/state/hashicorp/consul"
@@ -133,7 +134,8 @@ import (
 	"github.com/dapr/components-contrib/state/memcached"
 	"github.com/dapr/components-contrib/state/mongodb"
 	state_mysql "github.com/dapr/components-contrib/state/mysql"
-	"github.com/dapr/components-contrib/state/postgresql"
+
+	state_postgresql "github.com/dapr/components-contrib/state/postgresql/v1"
 	state_redis "github.com/dapr/components-contrib/state/redis"
 	"github.com/dapr/components-contrib/state/rethinkdb"
 	"github.com/dapr/components-contrib/state/sqlserver"
@@ -322,9 +324,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			pubsub.NewFactory("redis", func() dapr_comp_pubsub.PubSub {
 				return pubsub_redis.NewRedisStreams(loggerForDaprComp)
 			}),
-			pubsub.NewFactory("natsstreaming", func() dapr_comp_pubsub.PubSub {
-				return natsstreaming.NewNATSStreamingPubSub(loggerForDaprComp)
-			}),
 			pubsub.NewFactory("azure.eventhubs", func() dapr_comp_pubsub.PubSub {
 				return pubsub_eventhubs.NewAzureEventHubs(loggerForDaprComp)
 			}),
@@ -333,9 +332,6 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			}),
 			pubsub.NewFactory("rabbitmq", func() dapr_comp_pubsub.PubSub {
 				return rabbitmq.NewRabbitMQ(loggerForDaprComp)
-			}),
-			pubsub.NewFactory("hazelcast", func() dapr_comp_pubsub.PubSub {
-				return pubsub_hazelcast.NewHazelcastPubSub(loggerForDaprComp)
 			}),
 			pubsub.NewFactory("gcp.pubsub", func() dapr_comp_pubsub.PubSub {
 				return pubsub_gcp.NewGCPPubSub(loggerForDaprComp)
@@ -347,7 +343,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return pubsub_snssqs.NewSnsSqs(loggerForDaprComp)
 			}),
 			pubsub.NewFactory("mqtt", func() dapr_comp_pubsub.PubSub {
-				return pubsub_mqtt.NewMQTTPubSub(loggerForDaprComp)
+				return pubsub_mqtt3.NewMQTTPubSub(loggerForDaprComp)
 			}),
 			pubsub.NewFactory("pulsar", func() dapr_comp_pubsub.PubSub {
 				return pubsub_pulsar.NewPulsar(loggerForDaprComp)
@@ -392,16 +388,13 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 				return firestore.NewFirestoreStateStore(loggerForDaprComp)
 			}),
 			runtime_state.NewFactory("postgresql", func() state.Store {
-				return postgresql.NewPostgreSQLStateStore(loggerForDaprComp)
+				return state_postgresql.NewPostgreSQLStateStore(loggerForDaprComp)
 			}),
 			runtime_state.NewFactory("sqlserver", func() state.Store {
-				return sqlserver.NewSQLServerStateStore(loggerForDaprComp)
+				return sqlserver.New(loggerForDaprComp)
 			}),
 			runtime_state.NewFactory("hazelcast", func() state.Store {
 				return hazelcast.NewHazelcastStore(loggerForDaprComp)
-			}),
-			runtime_state.NewFactory("cloudstate.crdt", func() state.Store {
-				return cloudstate.NewCRDT(loggerForDaprComp)
 			}),
 			runtime_state.NewFactory("couchbase", func() state.Store {
 				return couchbase.NewCouchbaseStateStore(loggerForDaprComp)
@@ -412,7 +405,9 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			runtime_state.NewFactory("rethinkdb", func() state.Store {
 				return rethinkdb.NewRethinkDBStateStore(loggerForDaprComp)
 			}),
-			runtime_state.NewFactory("aws.dynamodb", state_dynamodb.NewDynamoDBStateStore),
+			runtime_state.NewFactory("aws.dynamodb", func() state.Store {
+				return state_dynamodb.NewDynamoDBStateStore(loggerForDaprComp)
+			}),
 			runtime_state.NewFactory("mysql", func() state.Store {
 				return state_mysql.NewMySQLStateStore(loggerForDaprComp)
 			}),

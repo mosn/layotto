@@ -71,7 +71,7 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 	var envelope map[string]interface{}
 	var err error
 	if contenttype.IsCloudEventContentType(contentType) {
-		envelope, err = pubsub.FromCloudEvent(data, topic, pubsubName, "")
+		envelope, err = pubsub.FromCloudEvent(data, topic, pubsubName, "", "")
 		if err != nil {
 			err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
 			log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
@@ -79,7 +79,7 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 		}
 	} else {
 		envelope = pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", topic, pubsubName,
-			contentType, data, "")
+			contentType, data, "", "")
 	}
 
 	features := component.Features()
@@ -100,7 +100,7 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 	}
 
 	// TODO limit topic scope
-	err = component.Publish(&req)
+	err = component.Publish(ctx, &req)
 	if err != nil {
 		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, topic, pubsubName, err.Error())
 		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", nerr)
@@ -110,7 +110,7 @@ func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic strin
 	return &emptypb.Empty{}, nil
 }
 
-func (a *api) startSubscribing() error {
+func (a *api) startSubscribing(ctx context.Context) error {
 	// 1. check if there is no need to do it
 	if len(a.pubSubs) == 0 {
 		return nil
@@ -126,14 +126,14 @@ func (a *api) startSubscribing() error {
 	}
 	// 3. loop subscribe
 	for name, pubsub := range a.pubSubs {
-		if err := a.beginPubSub(name, pubsub, topicRoutes); err != nil {
+		if err := a.beginPubSub(ctx, name, pubsub, topicRoutes); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (a *api) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[string]TopicSubscriptions) error {
+func (a *api) beginPubSub(ctx context.Context, pubsubName string, ps pubsub.PubSub, topicRoutes map[string]TopicSubscriptions) error {
 	// 1. call app to find topic topic2Details.
 	v, ok := topicRoutes[pubsubName]
 	if !ok {
@@ -144,7 +144,7 @@ func (a *api) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[s
 		// TODO limit topic scope
 		log.DefaultLogger.Debugf("[runtime][beginPubSub]subscribing to topic=%s on pubsub=%s", topic, pubsubName)
 		// ask component to subscribe
-		if err := ps.Subscribe(pubsub.SubscribeRequest{
+		if err := ps.Subscribe(ctx, pubsub.SubscribeRequest{
 			Topic:    topic,
 			Metadata: route.metadata,
 		}, func(ctx context.Context, msg *pubsub.NewMessage) error {
