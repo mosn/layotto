@@ -52,6 +52,7 @@ import (
 	"mosn.io/pkg/log"
 
 	metadata "github.com/dapr/components-contrib/metadata"
+
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
@@ -404,7 +405,7 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 		metadata := metadata.Base{
 			Properties: config.Metadata,
 		}
-		if err := comp.Init(ctx, pubsub.Metadata{metadata}); err != nil {
+		if err := comp.Init(ctx, pubsub.Metadata{Base: metadata}); err != nil {
 			m.errInt(err, "init pubsub component %s failed", name)
 			return err
 		}
@@ -440,7 +441,7 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 		metadata := metadata.Base{
 			Properties: config.Metadata,
 		}
-		if err := comp.Init(ctx, state.Metadata{metadata}); err != nil {
+		if err := comp.Init(ctx, state.Metadata{Base: metadata}); err != nil {
 			m.errInt(err, "init state component %s failed", name)
 			return err
 		}
@@ -643,7 +644,7 @@ func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFact
 			Name:       name,
 			Properties: config.Metadata,
 		}
-		if err := comp.Init(ctx, bindings.Metadata{metadata}); err != nil {
+		if err := comp.Init(ctx, bindings.Metadata{Base: metadata}); err != nil {
 			m.errInt(err, "init outbinding component %s failed", name)
 			return err
 		}
@@ -680,7 +681,7 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.Factory) error
 		metadata := metadata.Base{
 			Properties: config.Metadata,
 		}
-		if err := comp.Init(ctx, secretstores.Metadata{metadata}); err != nil {
+		if err := comp.Init(ctx, secretstores.Metadata{Base: metadata}); err != nil {
 			m.errInt(err, "init secretStore component %s failed", name)
 			return err
 		}

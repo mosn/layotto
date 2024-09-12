@@ -25,11 +25,12 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 
+	"mosn.io/pkg/log"
+
 	"mosn.io/layotto/pkg/common"
 	"mosn.io/layotto/pkg/messages"
 	state2 "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
-	"mosn.io/pkg/log"
 )
 
 // GetState obtains the state for a specific key.
