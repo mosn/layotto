@@ -94,7 +94,6 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 
 	// create exprie time index
 	indexModel := mongo.IndexModel{
-		// Keys:    bsonx.Doc{{Key: "Expire", Value: bsonx.Int64(1)}},
 		Keys:    primitive.D{{Key: "Expire", Value: bsoncore.Value{Type: bson.TypeInt64, Data: []byte{1}}}},
 		Options: options.Index().SetExpireAfterSeconds(0),
 	}
