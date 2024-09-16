@@ -2,8 +2,6 @@ module mosn.io/layotto/components
 
 go 1.21
 
-toolchain go1.21.0
-
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.4

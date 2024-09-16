@@ -2,8 +2,6 @@ module mosn.io/layotto
 
 go 1.21
 
-toolchain go1.21.0
-
 require (
 	github.com/SkyAPM/go2sky v0.5.0
 	github.com/agrea/ptr v0.0.0-20180711073057-77a518d99b7b
