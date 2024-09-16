@@ -43,7 +43,6 @@ import (
 	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
 	"mosn.io/layotto/components/sequencer"
 	grpc_api "mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/spec/proto/runtime/v1"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
@@ -66,7 +65,7 @@ var (
 
 type API interface {
 	//Layotto Service methods
-	runtime.RuntimeServer
+	runtimev1pb.RuntimeServer
 	// GrpcAPI related
 	grpc_api.GrpcAPI
 }

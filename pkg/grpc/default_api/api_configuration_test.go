@@ -34,15 +34,16 @@ import (
 func TestGetConfiguration(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockConfigStore := mock.NewMockStore(ctrl)
-	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
+	a := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
 	mockConfigStore.EXPECT().Get(gomock.Any(), gomock.Any()).Return([]*configstores.ConfigurationItem{
 		{Key: "sofa", Content: "sofa1"},
 	}, nil).Times(1)
-	res, err := api.GetConfiguration(context.Background(), &runtimev1pb.GetConfigurationRequest{StoreName: "mock", AppId: "mosn", Keys: []string{"sofa"}})
+	var apiForTest = a.(*api)
+	res, err := apiForTest.GetConfiguration(context.Background(), &runtimev1pb.GetConfigurationRequest{StoreName: "mock", AppId: "mosn", Keys: []string{"sofa"}})
 	assert.Nil(t, err)
 	assert.Equal(t, res.Items[0].Key, "sofa")
 	assert.Equal(t, res.Items[0].Content, "sofa1")
-	_, err = api.GetConfiguration(context.Background(), &runtimev1pb.GetConfigurationRequest{StoreName: "etcd", AppId: "mosn", Keys: []string{"sofa"}})
+	_, err = apiForTest.GetConfiguration(context.Background(), &runtimev1pb.GetConfigurationRequest{StoreName: "etcd", AppId: "mosn", Keys: []string{"sofa"}})
 	assert.Equal(t, err.Error(), "configure store [etcd] don't support now")
 
 }
@@ -72,16 +73,18 @@ func TestSaveConfiguration(t *testing.T) {
 			},
 			Metadata: nil,
 		}
-		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
-		_, err := api.SaveConfiguration(context.Background(), req)
+		a := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
+		var apiForTest = a.(*api)
+		_, err := apiForTest.SaveConfiguration(context.Background(), req)
 		assert.Nil(t, err)
 	})
 
 	t.Run("unsupport configstore", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockConfigStore := mock.NewMockStore(ctrl)
-		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
-		_, err := api.SaveConfiguration(context.Background(), &runtimev1pb.SaveConfigurationRequest{StoreName: "etcd"})
+		a := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
+		var apiForTest = a.(*api)
+		_, err := apiForTest.SaveConfiguration(context.Background(), &runtimev1pb.SaveConfigurationRequest{StoreName: "etcd"})
 		assert.Equal(t, err.Error(), "configure store [etcd] don't support now")
 	})
 
@@ -103,16 +106,18 @@ func TestDeleteConfiguration(t *testing.T) {
 			Keys:      []string{"key"},
 			Metadata:  nil,
 		}
-		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
-		_, err := api.DeleteConfiguration(context.Background(), req)
+		a := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
+		var apiForTest = a.(*api)
+		_, err := apiForTest.DeleteConfiguration(context.Background(), req)
 		assert.Nil(t, err)
 	})
 
 	t.Run("unsupport configstore", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockConfigStore := mock.NewMockStore(ctrl)
-		api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
-		_, err := api.DeleteConfiguration(context.Background(), &runtimev1pb.DeleteConfigurationRequest{StoreName: "etcd"})
+		a := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
+		var apiForTest = a.(*api)
+		_, err := apiForTest.DeleteConfiguration(context.Background(), &runtimev1pb.DeleteConfigurationRequest{StoreName: "etcd"})
 		assert.Equal(t, err.Error(), "configure store [etcd] don't support now")
 	})
 
@@ -123,17 +128,18 @@ func TestSubscribeConfiguration(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockConfigStore := mock.NewMockStore(ctrl)
-	api := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
+	a := NewAPI("", nil, map[string]configstores.Store{"mock": mockConfigStore}, nil, nil, nil, nil, nil, nil, nil, nil)
+	var apiForTest = a.(*api)
 
 	//test not support store type
 	grpcServer := &MockGrpcServer{req: &runtimev1pb.SubscribeConfigurationRequest{}, err: nil}
-	err := api.SubscribeConfiguration(grpcServer)
+	err := apiForTest.SubscribeConfiguration(grpcServer)
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "configure store [] don't support now")
 
 	//test
 	grpcServer2 := &MockGrpcServer{req: &runtimev1pb.SubscribeConfigurationRequest{}, err: errors.New("exit")}
-	err = api.SubscribeConfiguration(grpcServer2)
+	err = apiForTest.SubscribeConfiguration(grpcServer2)
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "exit")
 }
