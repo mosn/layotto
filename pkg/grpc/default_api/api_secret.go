@@ -31,7 +31,7 @@ import (
 
 func (a *api) GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest) (*runtimev1pb.GetSecretResponse, error) {
 	// check parameters
-	if a.secretStores == nil || len(a.secretStores) == 0 {
+	if len(a.secretStores) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrSecretStoreNotConfigured)
 		log.DefaultLogger.Errorf("GetSecret fail,not configured err:%+v", err)
 		return &runtimev1pb.GetSecretResponse{}, err
@@ -72,7 +72,7 @@ func (a *api) GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest) (
 
 func (a *api) GetBulkSecret(ctx context.Context, in *runtimev1pb.GetBulkSecretRequest) (*runtimev1pb.GetBulkSecretResponse, error) {
 	// check parameters
-	if a.secretStores == nil || len(a.secretStores) == 0 {
+	if len(a.secretStores) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrSecretStoreNotConfigured)
 		log.DefaultLogger.Errorf("GetBulkSecret fail,not configured err:%+v", err)
 		return &runtimev1pb.GetBulkSecretResponse{}, err

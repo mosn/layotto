@@ -158,7 +158,7 @@ func (a *api) DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateReques
 	// convert and send request
 	err = store.Delete(ctx, DeleteStateRequest2DeleteRequest(in, key))
 
-	// 4. check result
+	// check result
 	if err != nil {
 		err = a.wrapDaprComponentError(err, messages.ErrStateDelete, in.GetKey(), err.Error())
 		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteState] error: %v", err)
@@ -209,8 +209,8 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "ExecuteStateTransactionRequest is nil")
 	}
 
-	// 1. check params
-	if a.stateStores == nil || len(a.stateStores) == 0 {
+	// check params
+	if len(a.stateStores) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
 		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
 		return &emptypb.Empty{}, err
@@ -245,7 +245,7 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 		if err != nil {
 			return &emptypb.Empty{}, err
 		}
-		// 3.2. prepare TransactionalStateOperation struct according to the operation type
+		// prepare TransactionalStateOperation struct according to the operation type
 		switch state.OperationType(op.OperationType) {
 		case state.OperationUpsert:
 			operation = *StateItem2SetRequest(req, key)
@@ -319,7 +319,7 @@ func (a *api) getBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequ
 
 func (a *api) getStateStore(name string) (state.Store, error) {
 	// check if the stateStores exists
-	if a.stateStores == nil || len(a.stateStores) == 0 {
+	if len(a.stateStores) == 0 {
 		return nil, status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
 	}
 	// check name

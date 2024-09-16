@@ -51,3 +51,8 @@ func (a *azureServiceBus) PublishDelayMessage(ctx context.Context, request *dela
 	err := a.Publish(ctx, req)
 	return nil, err
 }
+
+// TODO
+func (a *azureServiceBus) Publish(ctx context.Context, req *pubsub.PublishRequest) error {
+	return nil
+}
