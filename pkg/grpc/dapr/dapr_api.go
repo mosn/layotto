@@ -64,7 +64,7 @@ type daprGrpcAPI struct {
 	lockStores               map[string]lock.LockStore
 	sequencers               map[string]sequencer.Store
 	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
-	secretStores             map[string]secretstores.SecretStore
+	GetSecretsecretStores    map[string]secretstores.SecretStore
 	// app callback
 	AppCallbackConn   *grpc.ClientConn
 	topicPerComponent map[string]TopicSubscriptions
