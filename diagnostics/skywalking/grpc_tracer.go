@@ -52,7 +52,7 @@ func (tracer *grpcSkyTracer) Start(ctx context.Context, request interface{}, _ t
 	}
 
 	// create entry span (downstream)
-	entry, nCtx, err := tracer.CreateEntrySpan(ctx, info.FullMethod, func() (sw8 string, err error) {
+	entry, nCtx, err := tracer.Tracer.CreateEntrySpan(ctx, info.FullMethod, func() (sw8 string, err error) {
 		return
 	})
 

@@ -37,7 +37,7 @@ func (a *api) GetSecret(ctx context.Context, in *runtimev1pb.GetSecretRequest) (
 		return &runtimev1pb.GetSecretResponse{}, err
 	}
 	secretStoreName := in.StoreName
-	if a.secretStores[secretStoreName] == nil {
+	if _, b := a.secretStores[secretStoreName]; !b {
 		err := status.Errorf(codes.InvalidArgument, messages.ErrSecretStoreNotFound, secretStoreName)
 		log.DefaultLogger.Errorf("GetSecret fail,not find err:%+v", err)
 		return &runtimev1pb.GetSecretResponse{}, err
@@ -78,7 +78,7 @@ func (a *api) GetBulkSecret(ctx context.Context, in *runtimev1pb.GetBulkSecretRe
 		return &runtimev1pb.GetBulkSecretResponse{}, err
 	}
 	secretStoreName := in.StoreName
-	if a.secretStores[secretStoreName] == nil {
+	if _, b := a.secretStores[secretStoreName]; !b {
 		err := status.Errorf(codes.InvalidArgument, messages.ErrSecretStoreNotFound, secretStoreName)
 		log.DefaultLogger.Errorf("GetBulkSecret fail,not find err:%+v", err)
 		return &runtimev1pb.GetBulkSecretResponse{}, err

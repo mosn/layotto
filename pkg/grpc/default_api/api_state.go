@@ -216,7 +216,7 @@ func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.Execu
 		return &emptypb.Empty{}, err
 	}
 	storeName := in.GetStoreName()
-	if a.stateStores[storeName] == nil {
+	if _, b := a.stateStores[storeName]; !b {
 		err := status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, storeName)
 		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
 		return &emptypb.Empty{}, err
@@ -323,7 +323,7 @@ func (a *api) getStateStore(name string) (state.Store, error) {
 		return nil, status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
 	}
 	// check name
-	if a.stateStores[name] == nil {
+	if _, b := a.stateStores[name]; !b {
 		return nil, status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, name)
 	}
 	return a.stateStores[name], nil
