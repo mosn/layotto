@@ -44,15 +44,17 @@ jobs:
   golangci-lint:
     name: "Go CI Linter"
     needs: [style-check,resolve-modules]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.resolve-modules.outputs.matrix) }}
     steps:
     - uses: actions/checkout@v3
     - name: Set up Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v4
       with:
-        go-version: 1.21
+        go-version: '1.21'
+      env:
+        GO111MODULE: off
     - name: Go Lint Test
       uses: golangci/golangci-lint-action@v3
       with:
