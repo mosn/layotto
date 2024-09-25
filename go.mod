@@ -157,6 +157,7 @@ require (
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
 	github.com/go-chi/chi v4.1.0+incompatible // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
+	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.20.0 // indirect
@@ -337,6 +338,7 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/jcmturner/aescts.v1 v1.0.1 // indirect
 	gopkg.in/jcmturner/dnsutils.v1 v1.0.1 // indirect
+	gopkg.in/jcmturner/goidentity.v3 v3.0.0 // indirect
 	gopkg.in/jcmturner/gokrb5.v7 v7.3.0 // indirect
 	gopkg.in/jcmturner/rpc.v1 v1.1.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
@@ -355,18 +357,6 @@ require (
 )
 
 replace (
-	github.com/Shopify/sarama => github.com/Shopify/sarama v1.24.0
-	github.com/apache/pulsar-client-go => github.com/apache/pulsar-client-go v0.11.0
-	github.com/dubbogo/go-zookeeper => github.com/dubbogo/go-zookeeper v1.0.3
-	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
-	github.com/klauspost/compress => github.com/klauspost/compress v1.13.0
-
-	go.mongodb.org/mongo-driver => go.mongodb.org/mongo-driver v1.12.1
-	go.opentelemetry.io/otel => go.opentelemetry.io/otel v0.20.0
-	go.opentelemetry.io/otel/metric => go.opentelemetry.io/otel/metric v0.20.0
-	go.opentelemetry.io/otel/sdk => go.opentelemetry.io/otel/sdk v0.20.0
-	go.opentelemetry.io/otel/trace => go.opentelemetry.io/otel/trace v0.20.0
-
 	mosn.io/layotto/components => ./components
 	mosn.io/layotto/spec => ./spec
 	mosn.io/proxy-wasm-go-host => github.com/layotto/proxy-wasm-go-host v0.1.1-0.20221229094558-d39f73d2858d
