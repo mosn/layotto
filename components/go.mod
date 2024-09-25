@@ -47,10 +47,10 @@ require (
 	go.uber.org/atomic v1.10.0
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.33.0
-	mosn.io/api v1.3.0
+	mosn.io/api v1.6.0
 	mosn.io/layotto/spec v0.0.0-20231023045845-48ec2bc7eab8
-	mosn.io/mosn v1.3.0
-	mosn.io/pkg v1.3.0
+	mosn.io/mosn v1.6.1
+	mosn.io/pkg v1.6.0
 )
 
 require (
@@ -153,7 +153,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
-	github.com/miekg/dns v1.1.43 // indirect
+	github.com/miekg/dns v1.1.50 // indirect
 	github.com/minio/md5-simd v1.1.0 // indirect
 	github.com/minio/sha256-simd v0.1.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
@@ -229,7 +229,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/apimachinery v0.26.10 // indirect
-	mosn.io/proxy-wasm-go-host v0.2.1-0.20221123073237-4f948bf02510 // indirect
+	mosn.io/proxy-wasm-go-host v0.2.1-0.20230626122511-25a9e133320e // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
