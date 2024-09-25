@@ -132,7 +132,7 @@ func (c *ClusterRedisLock) TryLock(ctx context.Context, req *lock.TryLockRequest
 	}
 	var err error
 	if len(errorStrs) > 0 {
-		err = fmt.Errorf(strings.Join(errorStrs, "\n"))
+		err = fmt.Errorf("%s", strings.Join(errorStrs, "\n"))
 	}
 	//getting lock on majority of redis cluster will be regarded as locking success
 	if successCount*2 > len(c.clients) {
