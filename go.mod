@@ -35,12 +35,12 @@ require (
 	google.golang.org/protobuf v1.33.0
 	k8s.io/api v0.26.9
 	k8s.io/apimachinery v0.26.10
-	mosn.io/api v1.5.0
+	mosn.io/api v1.6.0
 	mosn.io/layotto/components v0.0.0-20230712052228-c940b7f1367d
 	mosn.io/layotto/spec v0.0.0-20231023045845-48ec2bc7eab8
-	mosn.io/mosn v1.5.1-0.20230529091910-7d48a20e544b
+	mosn.io/mosn v1.6.1
 	mosn.io/pkg v1.6.0
-	mosn.io/proxy-wasm-go-host v0.2.1-0.20230303015731-d5007ceaba4f
+	mosn.io/proxy-wasm-go-host v0.2.1-0.20230626122511-25a9e133320e
 )
 
 require (

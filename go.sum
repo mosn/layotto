@@ -121,6 +121,8 @@ github.com/SkyAPM/go2sky v0.5.0/go.mod h1:TANzYw5EvIlTidGWvQxtvO87rM6C746HkM0xkW
 github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d/go.mod h1:3eOhrUMpNV+6aFIbp5/iudMxNCF27Vw2OZgy4xEx0Fg=
 github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46 h1:5sXbqlSomvdjlRbWyNqkPsJ3Fg+tQZCbgeX1VGljbQY=
 github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46/go.mod h1:3eOhrUMpNV+6aFIbp5/iudMxNCF27Vw2OZgy4xEx0Fg=
+github.com/TarsCloud/TarsGo v1.1.4 h1:h8Hch0oWX4hahh/ZWD2gVdKq5KbkbaE5PO2nQtq/hGI=
+github.com/TarsCloud/TarsGo v1.1.4/go.mod h1:jkslu43B0kZitq9ztCH6ZM6l4rCKGkMjdqEPjHoOdjc=
 github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/4+TcAqDqk/vUH7g=
 github.com/aerospike/aerospike-client-go/v6 v6.12.0 h1:4RKpcUlfINyIsjyOK8DBKn6NaBUl5UaHrWVY07/R99Q=
 github.com/aerospike/aerospike-client-go/v6 v6.12.0/go.mod h1:sBqeA3mli2vT5JInbp+XGFbajxEFg4kANUHsOl3meUk=
@@ -1967,10 +1969,10 @@ k8s.io/kube-openapi v0.0.0-20221012153701-172d655c2280 h1:+70TFaan3hfJzs+7VK2o+O
 k8s.io/kube-openapi v0.0.0-20221012153701-172d655c2280/go.mod h1:+Axhij7bCpeqhklhUTe3xmOn6bWxolyZEeyaFpjGtl4=
 k8s.io/utils v0.0.0-20230726121419-3b25d923346b h1:sgn3ZU783SCgtaSJjpcVVlRqd6GSnlTLKgpAAttJvpI=
 k8s.io/utils v0.0.0-20230726121419-3b25d923346b/go.mod h1:OLgZIPagt7ERELqWJFomSt595RzquPNLL48iOWgYOg0=
-mosn.io/api v1.5.0 h1:Y9s6NHJx0etcqIDDP7XeoTfgceDFMBnrZphxqDsxWOE=
-mosn.io/api v1.5.0/go.mod h1:mJX2oRJkrXjLN6hY1Wwrlxj0F+RqEPOMhbf2WhZO+VY=
-mosn.io/mosn v1.5.1-0.20230529091910-7d48a20e544b h1:ceGtIyU+IFwcB+Vj3bHMTl+8HDcP8slhy7h5oHYpSVg=
-mosn.io/mosn v1.5.1-0.20230529091910-7d48a20e544b/go.mod h1:+4vh9qHhB+hjUgy/ES13DJ85xtHQWaYAmbHB558Yzvw=
+mosn.io/api v1.6.0 h1:V1nY3vHrI2pGXBF8dJi1ER+uHb1UxMFx/Z8E4tOvrbU=
+mosn.io/api v1.6.0/go.mod h1:mJX2oRJkrXjLN6hY1Wwrlxj0F+RqEPOMhbf2WhZO+VY=
+mosn.io/mosn v1.6.1 h1:HCMro9ouzcSoaBcE4SjR2xj1C2OK6XT6a7hsal4EO28=
+mosn.io/mosn v1.6.1/go.mod h1:enVPlc08lhoM1FsMQ6UWLJ4eo5njRuCRI8tJu9X1geY=
 mosn.io/pkg v1.6.0 h1:R+T344PEp7CauQvXEitDJTXQ0bIeOhLwnaey9qwN4Fs=
 mosn.io/pkg v1.6.0/go.mod h1:/EptiefKMKBRvrveNPYEAAgthCTSme52sLMlBXBIBm8=
 nhooyr.io/websocket v1.8.7 h1:usjR2uOr/zjjkVMy0lW+PPohFok7PCow5sDjLgX4P4g=
