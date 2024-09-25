@@ -147,7 +147,7 @@ func (c *ClusterRedisLock) TryLock(ctx context.Context, req *lock.TryLockRequest
 	}, &wg)
 	if unlockErr != nil {
 		errorStrs = append(errorStrs, unlockErr.Error())
-		err = fmt.Errorf(strings.Join(errorStrs, "\n"))
+		err = fmt.Errorf("%s", strings.Join(errorStrs, "\n"))
 	}
 	return &lock.TryLockResponse{
 		Success: false,
@@ -193,7 +193,7 @@ func (c *ClusterRedisLock) UnlockAllRedis(req *lock.UnlockRequest, wg *sync.Wait
 		}
 	}
 	if len(errorStrs) > 0 {
-		return status, fmt.Errorf(strings.Join(errorStrs, "\n"))
+		return status, fmt.Errorf("%s", strings.Join(errorStrs, "\n"))
 	}
 	return status, nil
 }
