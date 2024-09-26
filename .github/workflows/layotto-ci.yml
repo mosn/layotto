@@ -58,7 +58,7 @@ jobs:
       with:
         version: v1.61.0
         working-directory: ${{ matrix.workdir }}
-        args: "-timeout 10m --out-${NO_FUTURE}format colored-line-number"
+        args: "--timeout 10m --out-${NO_FUTURE}format colored-line-number"
 
   go-unit-test:
     name: "Go Unit Test"
