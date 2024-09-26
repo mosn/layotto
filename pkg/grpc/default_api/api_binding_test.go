@@ -33,7 +33,7 @@ import (
 func TestInvokeBinding(t *testing.T) {
 	port, _ := freeport.GetFreePort()
 	srv := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil,
-		func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
+		func(ctx context.Context, name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
 			if name == "error-binding" {
 				return nil, errors.New("error when invoke binding")
 			}

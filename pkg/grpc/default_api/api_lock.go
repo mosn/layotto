@@ -31,7 +31,7 @@ import (
 
 func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*runtimev1pb.TryLockResponse, error) {
 	// 1. validate
-	if a.lockStores == nil || len(a.lockStores) == 0 {
+	if len(a.lockStores) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrLockStoresNotConfigured)
 		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
 		return &runtimev1pb.TryLockResponse{}, err
@@ -75,7 +75,7 @@ func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*ru
 
 func (a *api) Unlock(ctx context.Context, req *runtimev1pb.UnlockRequest) (*runtimev1pb.UnlockResponse, error) {
 	// 1. validate
-	if a.lockStores == nil || len(a.lockStores) == 0 {
+	if len(a.lockStores) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrLockStoresNotConfigured)
 		log.DefaultLogger.Errorf("[runtime] [grpc.Unlock] error: %v", err)
 		return newInternalErrorUnlockResponse(), err

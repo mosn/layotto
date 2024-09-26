@@ -5,8 +5,10 @@
 package mock
 
 import (
+	context "context"
 	reflect "reflect"
 
+	metadata "github.com/dapr/components-contrib/metadata"
 	pubsub "github.com/dapr/components-contrib/pubsub"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -62,44 +64,58 @@ func (mr *MockPubSubMockRecorder) Features() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Features", reflect.TypeOf((*MockPubSub)(nil).Features))
 }
 
-// Init mocks base method.
-func (m *MockPubSub) Init(arg0 pubsub.Metadata) error {
+// GetComponentMetadata mocks base method.
+func (m *MockPubSub) GetComponentMetadata() metadata.MetadataMap {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Init", arg0)
+	ret := m.ctrl.Call(m, "GetComponentMetadata")
+	ret0, _ := ret[0].(metadata.MetadataMap)
+	return ret0
+}
+
+// GetComponentMetadata indicates an expected call of GetComponentMetadata.
+func (mr *MockPubSubMockRecorder) GetComponentMetadata() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetComponentMetadata", reflect.TypeOf((*MockPubSub)(nil).GetComponentMetadata))
+}
+
+// Init mocks base method.
+func (m *MockPubSub) Init(ctx context.Context, metadata pubsub.Metadata) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Init", ctx, metadata)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Init indicates an expected call of Init.
-func (mr *MockPubSubMockRecorder) Init(arg0 interface{}) *gomock.Call {
+func (mr *MockPubSubMockRecorder) Init(ctx, metadata interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Init", reflect.TypeOf((*MockPubSub)(nil).Init), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Init", reflect.TypeOf((*MockPubSub)(nil).Init), ctx, metadata)
 }
 
 // Publish mocks base method.
-func (m *MockPubSub) Publish(arg0 *pubsub.PublishRequest) error {
+func (m *MockPubSub) Publish(ctx context.Context, req *pubsub.PublishRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Publish", arg0)
+	ret := m.ctrl.Call(m, "Publish", ctx, req)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Publish indicates an expected call of Publish.
-func (mr *MockPubSubMockRecorder) Publish(arg0 interface{}) *gomock.Call {
+func (mr *MockPubSubMockRecorder) Publish(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockPubSub)(nil).Publish), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockPubSub)(nil).Publish), ctx, req)
 }
 
 // Subscribe mocks base method.
-func (m *MockPubSub) Subscribe(arg0 pubsub.SubscribeRequest, arg1 pubsub.Handler) error {
+func (m *MockPubSub) Subscribe(ctx context.Context, req pubsub.SubscribeRequest, handler pubsub.Handler) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Subscribe", arg0, arg1)
+	ret := m.ctrl.Call(m, "Subscribe", ctx, req, handler)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Subscribe indicates an expected call of Subscribe.
-func (mr *MockPubSubMockRecorder) Subscribe(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockPubSubMockRecorder) Subscribe(ctx, req, handler interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Subscribe", reflect.TypeOf((*MockPubSub)(nil).Subscribe), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Subscribe", reflect.TypeOf((*MockPubSub)(nil).Subscribe), ctx, req, handler)
 }

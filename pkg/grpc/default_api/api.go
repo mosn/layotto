@@ -19,6 +19,7 @@ package default_api
 import (
 	"context"
 	"errors"
+	"strings"
 	"sync"
 
 	"github.com/dapr/components-contrib/secretstores"
@@ -28,19 +29,20 @@ import (
 	"github.com/dapr/components-contrib/state"
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/anypb"
 	"mosn.io/pkg/log"
+
+	"google.golang.org/grpc/metadata"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/file"
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/lock"
+	runtime_common "mosn.io/layotto/components/pkg/common"
 	"mosn.io/layotto/components/rpc"
+	mosninvoker "mosn.io/layotto/components/rpc/invoker/mosn"
 	"mosn.io/layotto/components/sequencer"
 	grpc_api "mosn.io/layotto/pkg/grpc"
-	"mosn.io/layotto/pkg/grpc/dapr"
-	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
-	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
-	"mosn.io/layotto/spec/proto/runtime/v1"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
@@ -63,14 +65,13 @@ var (
 
 type API interface {
 	//Layotto Service methods
-	runtime.RuntimeServer
+	runtimev1pb.RuntimeServer
 	// GrpcAPI related
 	grpc_api.GrpcAPI
 }
 
 // api is a default implementation for MosnRuntimeServer.
 type api struct {
-	daprAPI                  dapr.DaprGrpcAPI
 	appId                    string
 	hellos                   map[string]hello.HelloService
 	configStores             map[string]configstores.Store
@@ -81,7 +82,7 @@ type api struct {
 	fileOps                  map[string]file.File
 	lockStores               map[string]lock.LockStore
 	sequencers               map[string]sequencer.Store
-	sendToOutputBindingFn    func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
+	sendToOutputBindingFn    func(ctx context.Context, name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error)
 	secretStores             map[string]secretstores.SecretStore
 	// app callback
 	AppCallbackConn   *grpc.ClientConn
@@ -93,7 +94,7 @@ type api struct {
 func (a *api) Init(conn *grpc.ClientConn) error {
 	// 1. set connection
 	a.AppCallbackConn = conn
-	return a.startSubscribing()
+	return a.startSubscribing(context.Background())
 }
 
 func (a *api) Register(rawGrpcServer *grpc.Server) error {
@@ -118,7 +119,7 @@ func NewAPI(
 	files map[string]file.File,
 	lockStores map[string]lock.LockStore,
 	sequencers map[string]sequencer.Store,
-	sendToOutputBindingFn func(name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
+	sendToOutputBindingFn func(ctx context.Context, name string, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error),
 	secretStores map[string]secretstores.SecretStore,
 ) API {
 	// filter out transactionalStateStores
@@ -128,12 +129,8 @@ func NewAPI(
 			transactionalStateStores[key] = store.(state.TransactionalStore)
 		}
 	}
-	dAPI := dapr.NewDaprServer(appId, hellos, configStores, rpcs, pubSubs,
-		stateStores, transactionalStateStores,
-		files, lockStores, sequencers, sendToOutputBindingFn, secretStores)
 	// construct
 	return &api{
-		daprAPI:                  dAPI,
 		appId:                    appId,
 		hellos:                   hellos,
 		configStores:             configStores,
@@ -186,33 +183,71 @@ func (a *api) getHello(name string) (hello.HelloService, error) {
 
 func (a *api) InvokeService(ctx context.Context, in *runtimev1pb.InvokeServiceRequest) (*runtimev1pb.InvokeResponse, error) {
 	// convert request
-	var msg *dapr_common_v1pb.InvokeRequest
+	var msg *runtimev1pb.CommonInvokeRequest
 	if in != nil && in.Message != nil {
-		msg = &dapr_common_v1pb.InvokeRequest{
+		msg = &runtimev1pb.CommonInvokeRequest{
 			Method:      in.Message.Method,
 			Data:        in.Message.Data,
 			ContentType: in.Message.ContentType,
 		}
 		if in.Message.HttpExtension != nil {
-			msg.HttpExtension = &dapr_common_v1pb.HTTPExtension{
-				Verb:        dapr_common_v1pb.HTTPExtension_Verb(in.Message.HttpExtension.Verb),
+			msg.HttpExtension = &runtimev1pb.HTTPExtension{
+				Verb:        in.Message.HttpExtension.Verb,
 				Querystring: in.Message.HttpExtension.Querystring,
 			}
 		}
 	}
-	// delegate to dapr api implementation
-	daprResp, err := a.daprAPI.InvokeService(ctx, &dapr_v1pb.InvokeServiceRequest{
-		Id:      in.Id,
-		Message: msg,
-	})
-	// handle error
+
+	// convert request to RPCRequest,which is the parameter for RPC components
+	req := &rpc.RPCRequest{
+		Ctx:         ctx,
+		Id:          in.Id,
+		Method:      msg.GetMethod(),
+		ContentType: msg.GetContentType(),
+		Data:        msg.GetData().GetValue(),
+	}
+	if md, ok := metadata.FromIncomingContext(ctx); ok {
+		req.Header = rpc.RPCHeader(md)
+	} else {
+		req.Header = rpc.RPCHeader(map[string][]string{})
+	}
+	if ext := msg.GetHttpExtension(); ext != nil {
+		req.Header["verb"] = []string{ext.Verb.String()}
+		req.Header["query_string"] = []string{ext.GetQuerystring()}
+	}
+
+	// route to the specific rpc.Invoker component.
+	// Only support mosn component now.
+	invoker, ok := a.rpcs[mosninvoker.Name]
+	if !ok {
+		return nil, errors.New("invoker not init")
+	}
+
+	// delegate to the rpc.Invoker component
+	resp, err := invoker.Invoke(ctx, req)
+
+	// check result
 	if err != nil {
-		return nil, err
+		return nil, runtime_common.ToGrpcError(err)
+	}
+	if !resp.Success && resp.Error != nil {
+		return nil, runtime_common.ToGrpcError(resp.Error)
+	}
+	if resp.Header != nil {
+		header := metadata.Pairs()
+		for k, values := range resp.Header {
+			// fix https://github.com/mosn/layotto/issues/285
+			if strings.EqualFold("content-length", k) {
+				continue
+			}
+			header.Set(k, values...)
+		}
+		grpc.SetHeader(ctx, header)
 	}
 
 	// convert resp
 	return &runtimev1pb.InvokeResponse{
-		Data:        daprResp.Data,
-		ContentType: daprResp.ContentType,
+		ContentType: resp.ContentType,
+		Data:        &anypb.Any{Value: resp.Data},
 	}, nil
 }

@@ -17,6 +17,7 @@
 package ref
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/dapr/components-contrib/secretstores"
@@ -53,7 +54,7 @@ func (i *DefaultInjector) InjectSecretRef(items []*ref.SecretRefConfig, metaData
 	meta := make(map[string]string)
 	for _, item := range items {
 		store := i.Container.getSecretStore(item.StoreName)
-		secret, err := store.GetSecret(secretstores.GetSecretRequest{
+		secret, err := store.GetSecret(context.Background(), secretstores.GetSecretRequest{
 			Name: item.Key,
 		})
 		if err != nil {

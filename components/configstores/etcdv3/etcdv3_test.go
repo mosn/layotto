@@ -115,8 +115,8 @@ func (suite *ClientTestSuite) SetupSuite() {
 	lpurl, _ := url.Parse(DefaultListenPeerURLs)
 	lcurl, _ := url.Parse(DefaultListenClientURLs)
 	cfg := embed.NewConfig()
-	cfg.LPUrls = []url.URL{*lpurl}
-	cfg.LCUrls = []url.URL{*lcurl}
+	cfg.ListenPeerUrls = []url.URL{*lpurl}
+	cfg.ListenPeerUrls = []url.URL{*lcurl}
 	cfg.Dir = defaultEtcdV3WorkDir
 	e, err := embed.StartEtcd(cfg)
 	if err != nil {

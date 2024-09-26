@@ -31,32 +31,35 @@ import (
 
 func TestGetNextId(t *testing.T) {
 	t.Run("sequencers not configured", func(t *testing.T) {
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		var apiForTest = a.(*api)
 		req := &runtimev1pb.GetNextIdRequest{
 			StoreName: "abc",
 		}
-		_, err := api.GetNextId(context.Background(), req)
+		_, err := apiForTest.GetNextId(context.Background(), req)
 		assert.Equal(t, "rpc error: code = FailedPrecondition desc = Sequencer store is not configured", err.Error())
 	})
 
 	t.Run("seq key empty", func(t *testing.T) {
 		mockSequencerStore := mock_sequencer.NewMockStore(gomock.NewController(t))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
+		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
+		var apiForTest = a.(*api)
 		req := &runtimev1pb.GetNextIdRequest{
 			StoreName: "abc",
 		}
-		_, err := api.GetNextId(context.Background(), req)
+		_, err := apiForTest.GetNextId(context.Background(), req)
 		assert.Equal(t, "rpc error: code = InvalidArgument desc = Key is empty in sequencer store abc", err.Error())
 	})
 
 	t.Run("sequencer store not found", func(t *testing.T) {
 		mockSequencerStore := mock_sequencer.NewMockStore(gomock.NewController(t))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
+		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
+		var apiForTest = a.(*api)
 		req := &runtimev1pb.GetNextIdRequest{
 			StoreName: "abc",
 			Key:       "next key",
 		}
-		_, err := api.GetNextId(context.Background(), req)
+		_, err := apiForTest.GetNextId(context.Background(), req)
 		assert.Equal(t, "rpc error: code = InvalidArgument desc = Sequencer store abc not found", err.Error())
 	})
 
@@ -70,7 +73,8 @@ func TestGetNextId(t *testing.T) {
 					NextId: 10,
 				}, nil
 			})
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
+		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
+		var apiForTest = a.(*api)
 		req := &runtimev1pb.GetNextIdRequest{
 			StoreName: "mock",
 			Key:       "next key",
@@ -78,7 +82,7 @@ func TestGetNextId(t *testing.T) {
 				Increment: runtimev1pb.SequencerOptions_STRONG,
 			},
 		}
-		rsp, err := api.GetNextId(context.Background(), req)
+		rsp, err := apiForTest.GetNextId(context.Background(), req)
 		assert.Nil(t, err)
 		assert.Equal(t, int64(10), rsp.NextId)
 	})
@@ -86,7 +90,8 @@ func TestGetNextId(t *testing.T) {
 	t.Run("net error", func(t *testing.T) {
 		mockSequencerStore := mock_sequencer.NewMockStore(gomock.NewController(t))
 		mockSequencerStore.EXPECT().GetNextId(gomock.Any()).Return(nil, fmt.Errorf("net error"))
-		api := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
+		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, map[string]sequencer.Store{"mock": mockSequencerStore}, nil, nil)
+		var apiForTest = a.(*api)
 		req := &runtimev1pb.GetNextIdRequest{
 			StoreName: "mock",
 			Key:       "next key",
@@ -94,7 +99,7 @@ func TestGetNextId(t *testing.T) {
 				Increment: runtimev1pb.SequencerOptions_STRONG,
 			},
 		}
-		_, err := api.GetNextId(context.Background(), req)
+		_, err := apiForTest.GetNextId(context.Background(), req)
 		assert.NotNil(t, err)
 		assert.Equal(t, "net error", err.Error())
 	})

@@ -21,34 +21,96 @@ import (
 	"fmt"
 
 	"github.com/dapr/components-contrib/pubsub"
+	"github.com/google/uuid"
+	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
-
-	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 
 	"encoding/base64"
 
 	"github.com/dapr/components-contrib/contenttype"
 	"mosn.io/pkg/log"
 
+	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
+	"mosn.io/layotto/pkg/messages"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 // Publishes events to the specific topic.
 func (a *api) PublishEvent(ctx context.Context, in *runtimev1pb.PublishEventRequest) (*emptypb.Empty, error) {
-	p := &dapr_v1pb.PublishEventRequest{
-		Topic:           in.GetTopic(),
-		PubsubName:      in.GetPubsubName(),
-		Data:            in.GetData(),
-		DataContentType: in.GetDataContentType(),
-		Metadata:        in.GetMetadata(),
-	}
-
-	return a.daprAPI.PublishEvent(ctx, p)
+	return a.doPublishEvent(ctx, in.GetPubsubName(), in.GetTopic(),
+		in.GetData(), in.GetDataContentType(), in.GetMetadata())
 }
 
-func (a *api) startSubscribing() error {
+func (a *api) doPublishEvent(ctx context.Context, pubsubName string, topic string, data []byte, contentType string, metadata map[string]string) (*emptypb.Empty, error) {
+	// validate
+	if pubsubName == "" {
+		err := status.Error(codes.InvalidArgument, messages.ErrPubsubEmpty)
+		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
+		return &emptypb.Empty{}, err
+	}
+	if topic == "" {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrTopicEmpty, pubsubName)
+		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
+		return &emptypb.Empty{}, err
+	}
+
+	// get component
+	component, ok := a.pubSubs[pubsubName]
+	if !ok {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrPubsubNotFound, pubsubName)
+		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
+		return &emptypb.Empty{}, err
+	}
+
+	// new cloudevent request
+	if data == nil {
+		data = []byte{}
+	}
+	var envelope map[string]interface{}
+	var err error
+	if contenttype.IsCloudEventContentType(contentType) {
+		envelope, err = pubsub.FromCloudEvent(data, topic, pubsubName, "", "")
+		if err != nil {
+			err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventCreation, err.Error())
+			log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
+			return &emptypb.Empty{}, err
+		}
+	} else {
+		envelope = pubsub.NewCloudEventsEnvelope(uuid.New().String(), l8_comp_pubsub.DefaultCloudEventSource, l8_comp_pubsub.DefaultCloudEventType, "", topic, pubsubName,
+			contentType, data, "", "")
+	}
+
+	features := component.Features()
+	pubsub.ApplyMetadata(envelope, features, metadata)
+	b, err := jsoniter.ConfigFastest.Marshal(envelope)
+	if err != nil {
+		err = status.Errorf(codes.InvalidArgument, messages.ErrPubsubCloudEventsSer, topic, pubsubName, err.Error())
+		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
+		return &emptypb.Empty{}, err
+	}
+
+	// publish
+	req := pubsub.PublishRequest{
+		PubsubName: pubsubName,
+		Topic:      topic,
+		Data:       b,
+		Metadata:   metadata,
+	}
+
+	// TODO limit topic scope
+	err = component.Publish(ctx, &req)
+	if err != nil {
+		nerr := status.Errorf(codes.Internal, messages.ErrPubsubPublishMessage, topic, pubsubName, err.Error())
+		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", nerr)
+		return &emptypb.Empty{}, nerr
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+func (a *api) startSubscribing(ctx context.Context) error {
 	// 1. check if there is no need to do it
 	if len(a.pubSubs) == 0 {
 		return nil
@@ -64,14 +126,14 @@ func (a *api) startSubscribing() error {
 	}
 	// 3. loop subscribe
 	for name, pubsub := range a.pubSubs {
-		if err := a.beginPubSub(name, pubsub, topicRoutes); err != nil {
+		if err := a.beginPubSub(ctx, name, pubsub, topicRoutes); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (a *api) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[string]TopicSubscriptions) error {
+func (a *api) beginPubSub(ctx context.Context, pubsubName string, ps pubsub.PubSub, topicRoutes map[string]TopicSubscriptions) error {
 	// 1. call app to find topic topic2Details.
 	v, ok := topicRoutes[pubsubName]
 	if !ok {
@@ -82,7 +144,7 @@ func (a *api) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[s
 		// TODO limit topic scope
 		log.DefaultLogger.Debugf("[runtime][beginPubSub]subscribing to topic=%s on pubsub=%s", topic, pubsubName)
 		// ask component to subscribe
-		if err := ps.Subscribe(pubsub.SubscribeRequest{
+		if err := ps.Subscribe(ctx, pubsub.SubscribeRequest{
 			Topic:    topic,
 			Metadata: route.metadata,
 		}, func(ctx context.Context, msg *pubsub.NewMessage) error {

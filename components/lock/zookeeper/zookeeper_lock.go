@@ -147,9 +147,8 @@ func (p *ZookeeperLock) Unlock(ctx context.Context, req *lock.UnlockRequest) (*l
 		} else if err == zk.ErrBadVersion {
 			return &lock.UnlockResponse{Status: lock.LOCK_BELONG_TO_OTHERS}, nil
 			//other error
-		} else {
-			return nil, err
 		}
+		return nil, err
 	}
 	//delete success, unlock success
 	return &lock.UnlockResponse{Status: lock.SUCCESS}, nil

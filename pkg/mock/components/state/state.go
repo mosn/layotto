@@ -5,8 +5,10 @@
 package mock_state
 
 import (
+	context "context"
 	reflect "reflect"
 
+	metadata "github.com/dapr/components-contrib/metadata"
 	state "github.com/dapr/components-contrib/state"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -35,69 +37,60 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 }
 
 // BulkDelete mocks base method.
-func (m *MockStore) BulkDelete(arg0 []state.DeleteRequest) error {
+func (m *MockStore) BulkDelete(ctx context.Context, req []state.DeleteRequest, opts state.BulkStoreOpts) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "BulkDelete", arg0)
+	ret := m.ctrl.Call(m, "BulkDelete", ctx, req, opts)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // BulkDelete indicates an expected call of BulkDelete.
-func (mr *MockStoreMockRecorder) BulkDelete(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) BulkDelete(ctx, req, opts interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkDelete", reflect.TypeOf((*MockStore)(nil).BulkDelete), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkDelete", reflect.TypeOf((*MockStore)(nil).BulkDelete), ctx, req, opts)
 }
 
 // BulkGet mocks base method.
-func (m *MockStore) BulkGet(arg0 []state.GetRequest) (bool, []state.BulkGetResponse, error) {
+func (m *MockStore) BulkGet(ctx context.Context, req []state.GetRequest, opts state.BulkGetOpts) ([]state.BulkGetResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "BulkGet", arg0)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].([]state.BulkGetResponse)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret := m.ctrl.Call(m, "BulkGet", ctx, req, opts)
+	ret0, _ := ret[0].([]state.BulkGetResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // BulkGet indicates an expected call of BulkGet.
-func (mr *MockStoreMockRecorder) BulkGet(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) BulkGet(ctx, req, opts interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkGet", reflect.TypeOf((*MockStore)(nil).BulkGet), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkGet", reflect.TypeOf((*MockStore)(nil).BulkGet), ctx, req, opts)
 }
 
 // BulkSet mocks base method.
-func (m *MockStore) BulkSet(arg0 []state.SetRequest) error {
+func (m *MockStore) BulkSet(ctx context.Context, req []state.SetRequest, opts state.BulkStoreOpts) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "BulkSet", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// BulkSet mocks base method.
-func (m *MockStore) Ping() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Ping")
+	ret := m.ctrl.Call(m, "BulkSet", ctx, req, opts)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // BulkSet indicates an expected call of BulkSet.
-func (mr *MockStoreMockRecorder) BulkSet(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) BulkSet(ctx, req, opts interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkSet", reflect.TypeOf((*MockStore)(nil).BulkSet), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkSet", reflect.TypeOf((*MockStore)(nil).BulkSet), ctx, req, opts)
 }
 
 // Delete mocks base method.
-func (m *MockStore) Delete(arg0 *state.DeleteRequest) error {
+func (m *MockStore) Delete(ctx context.Context, req *state.DeleteRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", arg0)
+	ret := m.ctrl.Call(m, "Delete", ctx, req)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockStoreMockRecorder) Delete(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) Delete(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockStore)(nil).Delete), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockStore)(nil).Delete), ctx, req)
 }
 
 // Features mocks base method.
@@ -115,46 +108,60 @@ func (mr *MockStoreMockRecorder) Features() *gomock.Call {
 }
 
 // Get mocks base method.
-func (m *MockStore) Get(arg0 *state.GetRequest) (*state.GetResponse, error) {
+func (m *MockStore) Get(ctx context.Context, req *state.GetRequest) (*state.GetResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", arg0)
+	ret := m.ctrl.Call(m, "Get", ctx, req)
 	ret0, _ := ret[0].(*state.GetResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockStoreMockRecorder) Get(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) Get(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockStore)(nil).Get), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockStore)(nil).Get), ctx, req)
+}
+
+// GetComponentMetadata mocks base method.
+func (m *MockStore) GetComponentMetadata() metadata.MetadataMap {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetComponentMetadata")
+	ret0, _ := ret[0].(metadata.MetadataMap)
+	return ret0
+}
+
+// GetComponentMetadata indicates an expected call of GetComponentMetadata.
+func (mr *MockStoreMockRecorder) GetComponentMetadata() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetComponentMetadata", reflect.TypeOf((*MockStore)(nil).GetComponentMetadata))
 }
 
 // Init mocks base method.
-func (m *MockStore) Init(arg0 state.Metadata) error {
+func (m *MockStore) Init(ctx context.Context, metadata state.Metadata) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Init", arg0)
+	ret := m.ctrl.Call(m, "Init", ctx, metadata)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Init indicates an expected call of Init.
-func (mr *MockStoreMockRecorder) Init(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) Init(ctx, metadata interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Init", reflect.TypeOf((*MockStore)(nil).Init), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Init", reflect.TypeOf((*MockStore)(nil).Init), ctx, metadata)
 }
 
 // Set mocks base method.
-func (m *MockStore) Set(arg0 *state.SetRequest) error {
+func (m *MockStore) Set(ctx context.Context, req *state.SetRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Set", arg0)
+	ret := m.ctrl.Call(m, "Set", ctx, req)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Set indicates an expected call of Set.
-func (mr *MockStoreMockRecorder) Set(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) Set(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockStore)(nil).Set), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockStore)(nil).Set), ctx, req)
 }
 
 // MockTransactionalStore is a mock of TransactionalStore interface.
@@ -180,30 +187,16 @@ func (m *MockTransactionalStore) EXPECT() *MockTransactionalStoreMockRecorder {
 	return m.recorder
 }
 
-// Init mocks base method.
-func (m *MockTransactionalStore) Init(arg0 state.Metadata) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Init", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Init indicates an expected call of Init.
-func (mr *MockTransactionalStoreMockRecorder) Init(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Init", reflect.TypeOf((*MockTransactionalStore)(nil).Init), arg0)
-}
-
 // Multi mocks base method.
-func (m *MockTransactionalStore) Multi(arg0 *state.TransactionalStateRequest) error {
+func (m *MockTransactionalStore) Multi(ctx context.Context, request *state.TransactionalStateRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Multi", arg0)
+	ret := m.ctrl.Call(m, "Multi", ctx, request)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Multi indicates an expected call of Multi.
-func (mr *MockTransactionalStoreMockRecorder) Multi(arg0 interface{}) *gomock.Call {
+func (mr *MockTransactionalStoreMockRecorder) Multi(ctx, request interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Multi", reflect.TypeOf((*MockTransactionalStore)(nil).Multi), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Multi", reflect.TypeOf((*MockTransactionalStore)(nil).Multi), ctx, request)
 }

@@ -22,7 +22,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"mosn.io/layotto/components/pkg/common"
+	common "mosn.io/layotto/components/pkg/common"
 
 	"mosn.io/layotto/components/hello"
 )

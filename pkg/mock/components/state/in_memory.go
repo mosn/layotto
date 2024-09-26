@@ -17,6 +17,7 @@
 package mock_state
 
 import (
+	"context"
 	"fmt"
 	"sync"
 
@@ -51,7 +52,7 @@ func (store *inMemoryStore) newItem(data []byte, etagString *string) *inMemState
 	}
 }
 
-func (store *inMemoryStore) Init(metadata state.Metadata) error {
+func (store *inMemoryStore) Init(ctx context.Context, metadata state.Metadata) error {
 	return nil
 }
 
@@ -63,7 +64,7 @@ func (store *inMemoryStore) Features() []state.Feature {
 	return []state.Feature{state.FeatureETag, state.FeatureTransactional}
 }
 
-func (store *inMemoryStore) Delete(req *state.DeleteRequest) error {
+func (store *inMemoryStore) Delete(ctx context.Context, req *state.DeleteRequest) error {
 	store.lock.Lock()
 	defer store.lock.Unlock()
 	delete(store.items, req.Key)
@@ -71,12 +72,12 @@ func (store *inMemoryStore) Delete(req *state.DeleteRequest) error {
 	return nil
 }
 
-func (store *inMemoryStore) BulkDelete(req []state.DeleteRequest) error {
+func (store *inMemoryStore) BulkDelete(ctx context.Context, req []state.DeleteRequest, opts state.BulkStoreOpts) error {
 	if len(req) == 0 {
 		return nil
 	}
 	for _, dr := range req {
-		err := store.Delete(&dr)
+		err := store.Delete(ctx, &dr)
 		if err != nil {
 			store.log.Error(err)
 			return err
@@ -85,7 +86,7 @@ func (store *inMemoryStore) BulkDelete(req []state.DeleteRequest) error {
 	return nil
 }
 
-func (store *inMemoryStore) Get(req *state.GetRequest) (*state.GetResponse, error) {
+func (store *inMemoryStore) Get(ctx context.Context, req *state.GetRequest) (*state.GetResponse, error) {
 	store.lock.RLock()
 	defer store.lock.RUnlock()
 	item := store.items[req.Key]
@@ -100,17 +101,17 @@ func (store *inMemoryStore) Get(req *state.GetRequest) (*state.GetResponse, erro
 	}
 }
 
-func (store *inMemoryStore) BulkGet(req []state.GetRequest) (bool, []state.BulkGetResponse, error) {
+func (store *inMemoryStore) BulkGet(ctx context.Context, req []state.GetRequest, opts state.BulkGetOpts) ([]state.BulkGetResponse, error) {
 	res := []state.BulkGetResponse{}
 	for _, oneRequest := range req {
-		oneResponse, err := store.Get(&state.GetRequest{
+		oneResponse, err := store.Get(ctx, &state.GetRequest{
 			Key:      oneRequest.Key,
 			Metadata: oneRequest.Metadata,
 			Options:  oneRequest.Options,
 		})
 		if err != nil {
 			store.log.Error(err)
-			return false, nil, err
+			return nil, err
 		}
 
 		res = append(res, state.BulkGetResponse{
@@ -120,10 +121,10 @@ func (store *inMemoryStore) BulkGet(req []state.GetRequest) (bool, []state.BulkG
 		})
 	}
 
-	return true, res, nil
+	return res, nil
 }
 
-func (store *inMemoryStore) Set(req *state.SetRequest) error {
+func (store *inMemoryStore) Set(ctx context.Context, req *state.SetRequest) error {
 	b, _ := marshal(req.Value)
 	store.lock.Lock()
 	defer store.lock.Unlock()
@@ -132,9 +133,9 @@ func (store *inMemoryStore) Set(req *state.SetRequest) error {
 	return nil
 }
 
-func (store *inMemoryStore) BulkSet(req []state.SetRequest) error {
+func (store *inMemoryStore) BulkSet(ctx context.Context, req []state.SetRequest, opts state.BulkStoreOpts) error {
 	for _, r := range req {
-		err := store.Set(&r)
+		err := store.Set(ctx, &r)
 		if err != nil {
 			store.log.Error(err)
 			return err
@@ -143,19 +144,19 @@ func (store *inMemoryStore) BulkSet(req []state.SetRequest) error {
 	return nil
 }
 
-func (store *inMemoryStore) Multi(request *state.TransactionalStateRequest) error {
+func (store *inMemoryStore) Multi(ctx context.Context, request *state.TransactionalStateRequest) error {
 	store.lock.Lock()
 	defer store.lock.Unlock()
 	// First we check all eTags
 	for _, o := range request.Operations {
 		var eTag *string
 		key := ""
-		if o.Operation == state.Upsert {
-			key = o.Request.(state.SetRequest).Key
-			eTag = o.Request.(state.SetRequest).ETag
-		} else if o.Operation == state.Delete {
-			key = o.Request.(state.DeleteRequest).Key
-			eTag = o.Request.(state.DeleteRequest).ETag
+		if o.Operation() == state.OperationUpsert {
+			key = o.(state.SetRequest).Key
+			eTag = o.(state.SetRequest).ETag
+		} else if o.Operation() == state.OperationDelete {
+			key = o.(state.SetRequest).Key
+			eTag = o.(state.SetRequest).ETag
 		}
 		item := store.items[key]
 		if eTag != nil && item != nil {
@@ -170,12 +171,12 @@ func (store *inMemoryStore) Multi(request *state.TransactionalStateRequest) erro
 
 	// Now we can perform the operation.
 	for _, o := range request.Operations {
-		if o.Operation == state.Upsert {
-			req := o.Request.(state.SetRequest)
+		if o.Operation() == state.OperationUpsert {
+			req := o.(state.SetRequest)
 			b, _ := marshal(req.Value)
 			store.items[req.Key] = store.newItem(b, req.ETag)
-		} else if o.Operation == state.Delete {
-			req := o.Request.(state.DeleteRequest)
+		} else if o.Operation() == state.OperationDelete {
+			req := o.(state.DeleteRequest)
 			delete(store.items, req.Key)
 		}
 	}
