@@ -354,6 +354,7 @@ func TestListObjects(t *testing.T) {
 			MaxKeys:             1,
 			Prefix:              "Prefix",
 			RequestPayer:        "RequestPayer",
+			FetchOwner:          true,
 		},
 	).Return(output, nil)
 	req.StoreName = MOCKSERVER
