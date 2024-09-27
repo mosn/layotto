@@ -547,6 +547,8 @@ message ListObjectsInput{
     string prefix = 8;
     // Confirms that the requester knows that they will be charged for the request.
     string request_payer = 9;
+    // Decide whether fetch owner info from server,which is required for aliyun oss.
+    bool fetch_owner = 10;
 }
 
 // ListObjectsOutput
@@ -606,6 +608,8 @@ message Object{
     int64 size = 5;
     // The class of storage used to store the object.
     string storage_class = 6;
+    // The type of object which is required for aliyun oss.
+    string type = 7;
 }
 
 // GetObjectCannedAclInput

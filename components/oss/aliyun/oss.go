@@ -274,6 +274,7 @@ func (a *AliyunOSS) ListObjects(ctx context.Context, req *l8oss.ListObjectsInput
 		object := &l8oss.Object{
 			ETag:         v.ETag,
 			Key:          v.Key,
+			Type:         v.Type,
 			LastModified: v.LastModified.Unix(),
 			Owner:        &l8oss.Owner{ID: v.Owner.ID, DisplayName: v.Owner.DisplayName},
 			Size:         v.Size,

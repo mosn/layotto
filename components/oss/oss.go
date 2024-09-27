@@ -233,6 +233,7 @@ type ListObjectsInput struct {
 	MaxKeys             int32  `json:"maxKeys,omitempty"`
 	Prefix              string `json:"prefix,omitempty"`
 	RequestPayer        string `json:"request_payer,omitempty"`
+	FetchOwner          bool   `json:"fetch_owner,omitempty"`
 }
 type ListObjectsOutput struct {
 	CommonPrefixes []string          `json:"common_prefixes,omitempty"`
@@ -254,6 +255,7 @@ type Object struct {
 	Owner        *Owner `json:"owner,omitempty"`
 	Size         int64  `json:"size,omitempty"`
 	StorageClass string `json:"storage_class,omitempty"`
+	Type         string `json:"type,omitempty"`
 }
 type Owner struct {
 	DisplayName string `json:"display_name,omitempty"`
