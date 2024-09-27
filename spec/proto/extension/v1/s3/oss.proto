@@ -548,7 +548,7 @@ message ListObjectsInput{
     // Confirms that the requester knows that they will be charged for the request.
     string request_payer = 9;
     // Decide whether fetch owner info from server,which is required for aliyun oss.
-    string fetch_owner = 10;
+    bool fetch_owner = 10;
 }
 
 // ListObjectsOutput

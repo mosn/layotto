@@ -340,6 +340,7 @@ func TestListObjects(t *testing.T) {
 		MaxKeys:             1,
 		Prefix:              "Prefix",
 		RequestPayer:        "RequestPayer",
+		FetchOwner:          true,
 	}
 	_, err := s3Server.ListObjects(ctx, req)
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
@@ -359,6 +360,40 @@ func TestListObjects(t *testing.T) {
 	).Return(output, nil)
 	req.StoreName = MOCKSERVER
 	resp, err := s3Server.ListObjects(ctx, req)
+	assert.Nil(t, err)
+	assert.Equal(t, true, resp.IsTruncated)
+	assert.Equal(t, "delimiter", resp.Delimiter)
+
+	ctx = context.TODO()
+	req = &s3.ListObjectsInput{
+		StoreName:           "NoStore",
+		Bucket:              "layotto",
+		Delimiter:           "delimiter",
+		EncodingType:        "EncodingType",
+		ExpectedBucketOwner: "ExpectedBucketOwner",
+		Marker:              "Marker",
+		MaxKeys:             1,
+		Prefix:              "Prefix",
+		RequestPayer:        "RequestPayer",
+	}
+	_, err = s3Server.ListObjects(ctx, req)
+	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
+	output = &l8s3.ListObjectsOutput{Delimiter: "delimiter", IsTruncated: true}
+	mockossServer.EXPECT().ListObjects(ctx,
+		&l8s3.ListObjectsInput{
+			Bucket:              "layotto",
+			Delimiter:           "delimiter",
+			EncodingType:        "EncodingType",
+			ExpectedBucketOwner: "ExpectedBucketOwner",
+			Marker:              "Marker",
+			MaxKeys:             1,
+			Prefix:              "Prefix",
+			RequestPayer:        "RequestPayer",
+			FetchOwner:          false,
+		},
+	).Return(output, nil)
+	req.StoreName = MOCKSERVER
+	resp, err = s3Server.ListObjects(ctx, req)
 	assert.Nil(t, err)
 	assert.Equal(t, true, resp.IsTruncated)
 	assert.Equal(t, "delimiter", resp.Delimiter)
