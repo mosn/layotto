@@ -357,6 +357,7 @@ require (
 )
 
 replace (
+	github.com/dubbogo/go-zookeeper => github.com/dubbogo/go-zookeeper v1.0.3
 	mosn.io/layotto/components => ./components
 	mosn.io/layotto/spec => ./spec
 	mosn.io/proxy-wasm-go-host => github.com/layotto/proxy-wasm-go-host v0.1.1-0.20221229094558-d39f73d2858d
