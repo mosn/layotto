@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+git config --global --add safe.directory /go/src/mosn.io/layotto
 go build -tags wasmcomm,wasmtime ./cmd/layotto
 nohup ./layotto start -c ./demo/faas/config.json &
 nohup redis-server &
