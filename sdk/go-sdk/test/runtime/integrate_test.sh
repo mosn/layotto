@@ -26,6 +26,9 @@ nohup etcd &
 
 # build and run Layotto
 cd layotto
+echo "add debug......"
+git status
+git --version
 go build ./cmd/layotto
 nohup ./layotto start -c ./configs/config_integrate_test.json &
 
