@@ -78,7 +78,7 @@ func TestPutFile(t *testing.T) {
 	mockFile.EXPECT().Put(context.Background(), &file.PutFileStu{DataStream: stream, FileName: "", Metadata: Metadata}).Return(errors.New("err occur")).Times(1)
 	err = apiForTest.PutFile(mockStream)
 	s, _ := status.FromError(err)
-	assert.Equal(t, s.Message(), "err occur")
+	assert.Equal(t, "error occurred: err occur", s.Message())
 }
 
 func TestListFile(t *testing.T) {
