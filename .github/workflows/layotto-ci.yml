@@ -128,7 +128,7 @@ jobs:
         run: |
           make go.build.darwin_amd64.layotto
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4
         with:
           name: layotto.darwin_amd64
           path: _output/darwin/amd64/layotto
@@ -150,7 +150,7 @@ jobs:
         run: |
           make go.build.darwin_arm64.layotto
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4
         with:
           name: layotto.darwin_arm64
           path: _output/darwin/arm64/layotto
@@ -172,7 +172,7 @@ jobs:
         run: |
           make go.build.linux_amd64.layotto
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4
         with:
           name: layotto.linux_amd64
           path: _output/linux/amd64/layotto
@@ -194,7 +194,7 @@ jobs:
         run: |
           make go.build.linux_arm64.layotto
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4
         with:
           name: layotto.linux_arm64
           path: _output/linux/arm64/layotto
@@ -217,7 +217,7 @@ jobs:
       #   run: |
       #     make wasm
       # - name: Publish Artifact
-      #   uses: actions/upload-artifact@v2.2.4
+      #   uses: actions/upload-artifact@v4
       #   with:
       #     name: layotto.wasm.linux_amd64
       #     path: _output/linux/amd64/layotto
