@@ -24,6 +24,8 @@ nohup bash /usr/share/zookeeper/bin/zkCli.sh < ./sdk/go-sdk/test/runtime/zkCreat
 cd ..
 nohup etcd &
 
+git config --global --add safe.directory /go/src/mosn.io/layotto
+
 # build and run Layotto
 cd layotto
 go build ./cmd/layotto

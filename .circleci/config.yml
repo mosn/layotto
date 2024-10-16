@@ -32,7 +32,7 @@ jobs:
 
       # 测试步骤
       - run:
-          name: Test quickstart in Golang 1.18.5
+          name: Test quickstart in Golang 1.21
           command: make quickstart
 
 workflows:

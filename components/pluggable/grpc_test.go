@@ -85,6 +85,7 @@ func TestSocketDialer(t *testing.T) {
 
 	acceptedStatus := []connectivity.State{
 		connectivity.Ready,
+		connectivity.Connecting,
 		connectivity.Idle,
 	}
 

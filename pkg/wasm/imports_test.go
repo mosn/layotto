@@ -55,7 +55,7 @@ func TestGetState(t *testing.T) {
 			Data:     []byte("mock data"),
 			Metadata: nil,
 		}
-		mockStore.EXPECT().Get(gomock.Any()).Return(compResp, nil)
+		mockStore.EXPECT().Get(gomock.Any(), gomock.Any()).Return(compResp, nil)
 		default_api.LayottoAPISingleton = default_api.NewAPI("", nil, nil, nil, nil, map[string]state.Store{"mock": mockStore}, nil, nil, nil, nil, nil)
 		value, ok := d.GetState("mock", "mykey")
 		assert.Equal(t, proxywasm.WasmResultOk, ok)

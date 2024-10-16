@@ -239,8 +239,8 @@ func startEtcdServer(dir string, port int) (*embed.Etcd, error) {
 	cfg := embed.NewConfig()
 	cfg.Dir = dir
 	cfg.LogLevel = "error"
-	cfg.LCUrls = []url.URL{*lc}
-	cfg.LPUrls = []url.URL{*lp}
+	cfg.ListenPeerUrls = []url.URL{*lp}
+	cfg.ListenClientUrls = []url.URL{*lc}
 	e, err := embed.StartEtcd(cfg)
 	if err != nil {
 		return nil, err

@@ -229,7 +229,7 @@ func (s *S3Server) PutObject(stream s3.ObjectStorageService_PutObjectServer) err
 	st.DataStream = fileReader
 	var resp *l8s3.PutObjectOutput
 	if resp, err = s.ossInstance[req.StoreName].PutObject(stream.Context(), st); err != nil {
-		return status.Errorf(codes.Internal, err.Error())
+		return status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.PutObjectOutput{}
 	err = transferData(resp, output)
@@ -255,7 +255,7 @@ func (s *S3Server) DeleteObject(ctx context.Context, req *s3.DeleteObjectInput) 
 	}
 	var resp *l8s3.DeleteObjectOutput
 	if resp, err = s.ossInstance[req.StoreName].DeleteObject(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.DeleteObjectOutput{}
 	err = transferData(resp, output)
@@ -281,7 +281,7 @@ func (s *S3Server) PutObjectTagging(ctx context.Context, req *s3.PutObjectTaggin
 	}
 	var resp *l8s3.PutObjectTaggingOutput
 	if resp, err = s.ossInstance[req.StoreName].PutObjectTagging(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.PutObjectTaggingOutput{}
 	err = transferData(resp, output)
@@ -306,7 +306,7 @@ func (s *S3Server) DeleteObjectTagging(ctx context.Context, req *s3.DeleteObject
 	}
 	var resp *l8s3.DeleteObjectTaggingOutput
 	if resp, err = s.ossInstance[req.StoreName].DeleteObjectTagging(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.DeleteObjectTaggingOutput{}
 	err = transferData(resp, output)
@@ -331,7 +331,7 @@ func (s *S3Server) GetObjectTagging(ctx context.Context, req *s3.GetObjectTaggin
 	}
 	var resp *l8s3.GetObjectTaggingOutput
 	if resp, err = s.ossInstance[req.StoreName].GetObjectTagging(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.GetObjectTaggingOutput{}
 	err = transferData(resp, output)
@@ -356,7 +356,7 @@ func (s *S3Server) CopyObject(ctx context.Context, req *s3.CopyObjectInput) (*s3
 	}
 	var resp *l8s3.CopyObjectOutput
 	if resp, err = s.ossInstance[req.StoreName].CopyObject(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.CopyObjectOutput{}
 	err = transferData(resp, output)
@@ -382,7 +382,7 @@ func (s *S3Server) DeleteObjects(ctx context.Context, req *s3.DeleteObjectsInput
 	}
 	var resp *l8s3.DeleteObjectsOutput
 	if resp, err = s.ossInstance[req.StoreName].DeleteObjects(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.DeleteObjectsOutput{}
 	err = transferData(resp, output)
@@ -408,7 +408,7 @@ func (s *S3Server) ListObjects(ctx context.Context, req *s3.ListObjectsInput) (*
 	}
 	var resp *l8s3.ListObjectsOutput
 	if resp, err = s.ossInstance[req.StoreName].ListObjects(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.ListObjectsOutput{}
 	err = transferData(resp, output)
@@ -434,7 +434,7 @@ func (s *S3Server) GetObjectCannedAcl(ctx context.Context, req *s3.GetObjectCann
 	}
 	var resp *l8s3.GetObjectCannedAclOutput
 	if resp, err = s.ossInstance[req.StoreName].GetObjectCannedAcl(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.GetObjectCannedAclOutput{}
 	err = transferData(resp, output)
@@ -460,7 +460,7 @@ func (s *S3Server) PutObjectCannedAcl(ctx context.Context, req *s3.PutObjectCann
 	}
 	var resp *l8s3.PutObjectCannedAclOutput
 	if resp, err = s.ossInstance[req.StoreName].PutObjectCannedAcl(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.PutObjectCannedAclOutput{}
 	err = transferData(resp, output)
@@ -486,7 +486,7 @@ func (s *S3Server) RestoreObject(ctx context.Context, req *s3.RestoreObjectInput
 	}
 	var resp *l8s3.RestoreObjectOutput
 	if resp, err = s.ossInstance[req.StoreName].RestoreObject(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.RestoreObjectOutput{}
 	err = transferData(resp, output)
@@ -512,7 +512,7 @@ func (s *S3Server) CreateMultipartUpload(ctx context.Context, req *s3.CreateMult
 	}
 	var resp *l8s3.CreateMultipartUploadOutput
 	if resp, err = s.ossInstance[req.StoreName].CreateMultipartUpload(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.CreateMultipartUploadOutput{}
 	err = transferData(resp, output)
@@ -583,7 +583,7 @@ func (s *S3Server) UploadPart(stream s3.ObjectStorageService_UploadPartServer) e
 	st.DataStream = fileReader
 	var resp *l8s3.UploadPartOutput
 	if resp, err = s.ossInstance[req.StoreName].UploadPart(stream.Context(), st); err != nil {
-		return status.Errorf(codes.Internal, err.Error())
+		return status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.UploadPartOutput{}
 	err = transferData(resp, output)
@@ -609,7 +609,7 @@ func (s *S3Server) UploadPartCopy(ctx context.Context, req *s3.UploadPartCopyInp
 	}
 	var resp *l8s3.UploadPartCopyOutput
 	if resp, err = s.ossInstance[req.StoreName].UploadPartCopy(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.UploadPartCopyOutput{}
 	err = transferData(resp, output)
@@ -635,7 +635,7 @@ func (s *S3Server) CompleteMultipartUpload(ctx context.Context, req *s3.Complete
 	}
 	var resp *l8s3.CompleteMultipartUploadOutput
 	if resp, err = s.ossInstance[req.StoreName].CompleteMultipartUpload(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.CompleteMultipartUploadOutput{}
 	err = transferData(resp, output)
@@ -661,7 +661,7 @@ func (s *S3Server) AbortMultipartUpload(ctx context.Context, req *s3.AbortMultip
 	}
 	var resp *l8s3.AbortMultipartUploadOutput
 	if resp, err = s.ossInstance[req.StoreName].AbortMultipartUpload(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.AbortMultipartUploadOutput{}
 	err = transferData(resp, output)
@@ -687,7 +687,7 @@ func (s *S3Server) ListMultipartUploads(ctx context.Context, req *s3.ListMultipa
 	}
 	var resp *l8s3.ListMultipartUploadsOutput
 	if resp, err = s.ossInstance[req.StoreName].ListMultipartUploads(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.ListMultipartUploadsOutput{}
 	err = transferData(resp, output)
@@ -712,7 +712,7 @@ func (s *S3Server) ListObjectVersions(ctx context.Context, req *s3.ListObjectVer
 	}
 	var resp *l8s3.ListObjectVersionsOutput
 	if resp, err = s.ossInstance[req.StoreName].ListObjectVersions(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.ListObjectVersionsOutput{}
 	err = transferData(resp, output)
@@ -739,7 +739,7 @@ func (s *S3Server) HeadObject(ctx context.Context, req *s3.HeadObjectInput) (*s3
 	}
 	var resp *l8s3.HeadObjectOutput
 	if resp, err = s.ossInstance[req.StoreName].HeadObject(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.HeadObjectOutput{}
 	err = transferData(resp, output)
@@ -766,7 +766,7 @@ func (s *S3Server) IsObjectExist(ctx context.Context, req *s3.IsObjectExistInput
 	}
 	var resp *l8s3.IsObjectExistOutput
 	if resp, err = s.ossInstance[req.StoreName].IsObjectExist(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.IsObjectExistOutput{}
 	output.FileExist = resp.FileExist
@@ -789,7 +789,7 @@ func (s *S3Server) SignURL(ctx context.Context, req *s3.SignURLInput) (*s3.SignU
 	}
 	var resp *l8s3.SignURLOutput
 	if resp, err = s.ossInstance[req.StoreName].SignURL(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.SignURLOutput{}
 	output.SignedUrl = resp.SignedUrl
@@ -811,7 +811,7 @@ func (s *S3Server) UpdateDownloadBandwidthRateLimit(ctx context.Context, req *s3
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for UpdateDownloadBandwidthRateLimit,err: %+v", err)
 	}
 	if err := s.ossInstance[req.StoreName].UpdateDownloadBandwidthRateLimit(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -831,7 +831,7 @@ func (s *S3Server) UpdateUploadBandwidthRateLimit(ctx context.Context, req *s3.U
 		return nil, status.Errorf(codes.InvalidArgument, "transfer request data fail for UpdateUploadBandwidthRateLimit,err: %+v", err)
 	}
 	if err := s.ossInstance[req.StoreName].UpdateUploadBandwidthRateLimit(ctx, st); err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -896,7 +896,7 @@ func (s *S3Server) AppendObject(stream s3.ObjectStorageService_AppendObjectServe
 	st.DataStream = fileReader
 	var resp *l8s3.AppendObjectOutput
 	if resp, err = s.ossInstance[req.StoreName].AppendObject(stream.Context(), st); err != nil {
-		return status.Errorf(codes.Internal, err.Error())
+		return status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	output := &s3.AppendObjectOutput{}
 	output.AppendPosition = resp.AppendPosition
@@ -920,7 +920,7 @@ func (s *S3Server) ListParts(ctx context.Context, req *s3.ListPartsInput) (*s3.L
 	}
 	resp, err := s.ossInstance[req.StoreName].ListParts(ctx, st)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	out := &s3.ListPartsOutput{}
 	err = transferData(resp, out)

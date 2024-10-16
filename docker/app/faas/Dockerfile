@@ -1,4 +1,4 @@
-FROM golang:1.18
+FROM golang:1.21
 
 RUN apt-get update && apt-get install -y redis-server
 RUN curl -L -O https://github.com/wasmerio/wasmer/releases/download/2.2.1/wasmer-linux-amd64.tar.gz

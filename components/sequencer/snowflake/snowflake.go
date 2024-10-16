@@ -1,4 +1,3 @@
-//
 // Copyright 2021 Layotto Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -242,9 +241,9 @@ func NewMysqlClient(meta *SnowflakeMysqlMetadata) (int64, error) {
 	return workId, err
 }
 
-//get id from mysql
-//host_name = "ip"
-//port = "timestamp-random number"
+// get id from mysql
+// host_name = "ip"
+// port = "timestamp-random number"
 func NewWorkId(meta SnowflakeMysqlMetadata) (int64, error) {
 	var workId int64
 	ip, err := getIP()

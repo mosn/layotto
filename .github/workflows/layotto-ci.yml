@@ -27,7 +27,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.18.1
+          go-version: 1.21
       - name: Format Go
         run: |
            make workspace
@@ -44,7 +44,7 @@ jobs:
   golangci-lint:
     name: "Go CI Linter"
     needs: [style-check,resolve-modules]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.resolve-modules.outputs.matrix) }}
     steps:
@@ -52,13 +52,13 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.18.5
+        go-version: 1.21
     - name: Go Lint Test
       uses: golangci/golangci-lint-action@v3
       with:
-        version: v1.46.2
+        version: v1.61.0
         working-directory: ${{ matrix.workdir }}
-        args: "--out-${NO_FUTURE}format colored-line-number"
+        args: "--timeout 10m --out-${NO_FUTURE}format colored-line-number"
 
   go-unit-test:
     name: "Go Unit Test"
@@ -69,7 +69,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.18.1
+        go-version: 1.21
     - name: Go Unit Test
       run: make test
 
@@ -93,7 +93,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.18.1
+          go-version: 1.21
       - name: Check out code
         uses: actions/checkout@v2
       - name: Run Integrate tests
@@ -107,7 +107,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.18.1
+          go-version: 1.21
       - name: Check out code
         uses: actions/checkout@v2
       - name: Run Integrate tests
@@ -121,14 +121,14 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.18.1
+          go-version: 1.21
       - name: Check out code
         uses: actions/checkout@v2
       - name: Build Artifact
         run: |
           make go.build.darwin_amd64.layotto
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4
         with:
           name: layotto.darwin_amd64
           path: _output/darwin/amd64/layotto
@@ -143,14 +143,14 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.18.1
+          go-version: 1.21
       - name: Check out code
         uses: actions/checkout@v2
       - name: Build Artifact
         run: |
           make go.build.darwin_arm64.layotto
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4
         with:
           name: layotto.darwin_arm64
           path: _output/darwin/arm64/layotto
@@ -165,14 +165,14 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.18.1
+          go-version: 1.21
       - name: Check out code
         uses: actions/checkout@v2
       - name: Build Artifact
         run: |
           make go.build.linux_amd64.layotto
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4
         with:
           name: layotto.linux_amd64
           path: _output/linux/amd64/layotto
@@ -187,14 +187,14 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.18.1
+          go-version: 1.21
       - name: Check out code
         uses: actions/checkout@v2
       - name: Build Artifact
         run: |
           make go.build.linux_arm64.layotto
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4
         with:
           name: layotto.linux_arm64
           path: _output/linux/arm64/layotto
@@ -209,7 +209,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.18.1
+          go-version: 1.21
       - name: Check out code
         uses: actions/checkout@v2
       # TODO(@Xunzhuo): open it after stabilizing wasm cmds
@@ -217,7 +217,7 @@ jobs:
       #   run: |
       #     make wasm
       # - name: Publish Artifact
-      #   uses: actions/upload-artifact@v2.2.4
+      #   uses: actions/upload-artifact@v4
       #   with:
       #     name: layotto.wasm.linux_amd64
       #     path: _output/linux/amd64/layotto

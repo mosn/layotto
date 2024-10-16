@@ -1,6 +1,6 @@
 module mosn.io/layotto/spec
 
-go 1.18
+go 1.21
 
 require (
 	google.golang.org/grpc v1.37.0

@@ -125,7 +125,7 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 	}
 	st := &file.PutFileStu{DataStream: fileReader, FileName: req.Name, Metadata: req.Metadata}
 	if err = a.fileOps[req.StoreName].Put(stream.Context(), st); err != nil {
-		return status.Errorf(codes.Internal, err.Error())
+		return status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	stream.SendAndClose(&empty.Empty{})
 	return nil
@@ -145,7 +145,7 @@ func (a *api) ListFile(ctx context.Context, in *runtimev1pb.ListFileRequest) (*r
 	}
 	resp, err := a.fileOps[in.Request.StoreName].List(ctx, &file.ListRequest{DirectoryName: in.Request.Name, PageSize: in.PageSize, Marker: in.Marker, Metadata: in.Request.Metadata})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "error occurred: %v", err.Error())
 	}
 	files := make([]*runtimev1pb.FileInfo, 0)
 	for _, v := range resp.Files {
@@ -176,7 +176,7 @@ func (a *api) DelFile(ctx context.Context, in *runtimev1pb.DelFileRequest) (*emp
 		if code, ok := FileErrMap2GrpcErr[err]; ok {
 			errCode = code
 		}
-		return nil, status.Errorf(errCode, err.Error())
+		return nil, status.Errorf(errCode, "error occurred: %v", err.Error())
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -198,7 +198,7 @@ func (a *api) GetFileMeta(ctx context.Context, in *runtimev1pb.GetFileMetaReques
 		if code, ok := FileErrMap2GrpcErr[err]; ok {
 			errCode = code
 		}
-		return nil, status.Errorf(errCode, err.Error())
+		return nil, status.Errorf(errCode, "error occurred: %v", err.Error())
 	}
 	meta := &runtimev1pb.FileMeta{}
 	meta.Metadata = make(map[string]*runtimev1pb.FileMetaValue)

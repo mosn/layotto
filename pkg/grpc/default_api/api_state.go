@@ -19,39 +19,58 @@ package default_api
 import (
 	"context"
 
+	"github.com/dapr/components-contrib/state"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
-	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
+	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/pkg/common"
+	"mosn.io/layotto/pkg/messages"
+	state2 "mosn.io/layotto/pkg/runtime/state"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
 // GetState obtains the state for a specific key.
 func (a *api) GetState(ctx context.Context, in *runtimev1pb.GetStateRequest) (*runtimev1pb.GetStateResponse, error) {
-	// Check if the StateRequest is exists
+	// check if the StateRequest is exists
 	if in == nil {
 		return &runtimev1pb.GetStateResponse{}, status.Error(codes.InvalidArgument, "GetStateRequest is nil")
 	}
-	// convert request
-	daprReq := &dapr_v1pb.GetStateRequest{
-		StoreName:   in.GetStoreName(),
-		Key:         in.GetKey(),
-		Consistency: dapr_common_v1pb.StateOptions_StateConsistency(in.GetConsistency()),
-		Metadata:    in.GetMetadata(),
+
+	// get store
+	store, err := a.getStateStore(in.GetStoreName())
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetState] error: %v", err)
+		return nil, err
 	}
-	// Generate response by request
-	resp, err := a.daprAPI.GetState(ctx, daprReq)
+
+	// generate the actual key
+	key, err := state2.GetModifiedStateKey(in.GetKey(), in.GetStoreName(), a.appId)
 	if err != nil {
 		return &runtimev1pb.GetStateResponse{}, err
 	}
-	return &runtimev1pb.GetStateResponse{
-		Data:     resp.GetData(),
-		Etag:     resp.GetEtag(),
-		Metadata: resp.GetMetadata(),
-	}, nil
+	req := &state.GetRequest{
+		Key:      key,
+		Metadata: in.GetMetadata(),
+		Options: state.GetStateOption{
+			Consistency: StateConsistencyToString(in.GetConsistency()),
+		},
+	}
+
+	// query
+	compResp, err := store.Get(ctx, req)
+
+	// check result
+	if err != nil {
+		err = status.Errorf(codes.Internal, messages.ErrStateGet, in.GetKey(), in.GetStoreName(), err.Error())
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetState] %v", err)
+		return &runtimev1pb.GetStateResponse{}, err
+	}
+
+	return GetResponse2GetStateResponse(compResp), nil
 }
 
 func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (*emptypb.Empty, error) {
@@ -59,32 +78,50 @@ func (a *api) SaveState(ctx context.Context, in *runtimev1pb.SaveStateRequest) (
 	if in == nil {
 		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "SaveStateRequest is nil")
 	}
-	// convert request
-	daprReq := &dapr_v1pb.SaveStateRequest{
-		StoreName: in.StoreName,
-		States:    convertStatesToDaprPB(in.States),
+
+	// get store
+	store, err := a.getStateStore(in.StoreName)
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
+		return &emptypb.Empty{}, err
 	}
-	// delegate to dapr api implementation
-	return a.daprAPI.SaveState(ctx, daprReq)
+
+	// convert requests
+	reqs := []state.SetRequest{}
+	for _, s := range in.States {
+		key, err := state2.GetModifiedStateKey(s.Key, in.StoreName, a.appId)
+		if err != nil {
+			return &emptypb.Empty{}, err
+		}
+		reqs = append(reqs, *StateItem2SetRequest(s, key))
+	}
+
+	// query
+	err = store.BulkSet(ctx, reqs, state.BulkStoreOpts{})
+
+	// check result
+	if err != nil {
+		err = a.wrapDaprComponentError(err, messages.ErrStateSave, in.StoreName, err.Error())
+		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 // GetBulkState gets a batch of state data
 func (a *api) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequest) (*runtimev1pb.GetBulkStateResponse, error) {
+	// Check if the request is nil
 	if in == nil {
 		return &runtimev1pb.GetBulkStateResponse{}, status.Error(codes.InvalidArgument, "GetBulkStateRequest is nil")
 	}
-	// convert request
-	daprReq := &dapr_v1pb.GetBulkStateRequest{
-		StoreName:   in.GetStoreName(),
-		Keys:        in.GetKeys(),
-		Parallelism: in.GetParallelism(),
-		Metadata:    in.GetMetadata(),
-	}
+
 	// Generate response by request
-	resp, err := a.daprAPI.GetBulkState(ctx, daprReq)
+	resp, err := a.getBulkState(ctx, in)
 	if err != nil {
 		return &runtimev1pb.GetBulkStateResponse{}, err
 	}
+
 	ret := &runtimev1pb.GetBulkStateResponse{Items: make([]*runtimev1pb.BulkStateItem, 0)}
 	for _, item := range resp.Items {
 		ret.Items = append(ret.Items, &runtimev1pb.BulkStateItem{
@@ -95,107 +132,348 @@ func (a *api) GetBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequ
 			Metadata: item.GetMetadata(),
 		})
 	}
+
 	return ret, nil
 }
 
 func (a *api) DeleteState(ctx context.Context, in *runtimev1pb.DeleteStateRequest) (*emptypb.Empty, error) {
+	// Check if the request is nil
 	if in == nil {
 		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "DeleteStateRequest is nil")
 	}
-	// convert request
-	daprReq := &dapr_v1pb.DeleteStateRequest{
-		StoreName: in.GetStoreName(),
-		Key:       in.GetKey(),
-		Etag:      convertEtagToDaprPB(in.Etag),
-		Options:   convertOptionsToDaprPB(in.Options),
-		Metadata:  in.GetMetadata(),
+
+	// get store
+	store, err := a.getStateStore(in.GetStoreName())
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteState] error: %v", err)
+		return &emptypb.Empty{}, err
 	}
-	return a.daprAPI.DeleteState(ctx, daprReq)
+
+	// generate the actual key
+	key, err := state2.GetModifiedStateKey(in.GetKey(), in.GetStoreName(), a.appId)
+	if err != nil {
+		return &empty.Empty{}, err
+	}
+
+	// convert and send request
+	err = store.Delete(ctx, DeleteStateRequest2DeleteRequest(in, key))
+
+	// check result
+	if err != nil {
+		err = a.wrapDaprComponentError(err, messages.ErrStateDelete, in.GetKey(), err.Error())
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteState] error: %v", err)
+		return &empty.Empty{}, err
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func (a *api) DeleteBulkState(ctx context.Context, in *runtimev1pb.DeleteBulkStateRequest) (*empty.Empty, error) {
+	// Check if the request is nil
 	if in == nil {
 		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "DeleteBulkStateRequest is nil")
 	}
-	// convert request
-	daprReq := &dapr_v1pb.DeleteBulkStateRequest{
-		StoreName: in.GetStoreName(),
-		States:    convertStatesToDaprPB(in.States),
+
+	// get store
+	store, err := a.getStateStore(in.GetStoreName())
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteBulkState] error: %v", err)
+		return &empty.Empty{}, err
 	}
-	return a.daprAPI.DeleteBulkState(ctx, daprReq)
+
+	// convert request
+	reqs := make([]state.DeleteRequest, 0, len(in.GetStates()))
+	for _, item := range in.States {
+		key, err := state2.GetModifiedStateKey(item.Key, in.GetStoreName(), a.appId)
+		if err != nil {
+			return &empty.Empty{}, err
+		}
+		reqs = append(reqs, *StateItem2DeleteRequest(item, key))
+	}
+
+	// send request
+	err = store.BulkDelete(ctx, reqs, state.BulkStoreOpts{})
+
+	// check result
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteBulkState] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func (a *api) ExecuteStateTransaction(ctx context.Context, in *runtimev1pb.ExecuteStateTransactionRequest) (*emptypb.Empty, error) {
+	// Check if the request is nil
 	if in == nil {
 		return &emptypb.Empty{}, status.Error(codes.InvalidArgument, "ExecuteStateTransactionRequest is nil")
 	}
+
+	// check params
+	if len(a.stateStores) == 0 {
+		err := status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+	storeName := in.GetStoreName()
+	if _, b := a.stateStores[storeName]; !b {
+		err := status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, storeName)
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+
+	// find store
+	store, ok := a.transactionalStateStores[storeName]
+	if !ok {
+		err := status.Errorf(codes.Unimplemented, messages.ErrStateStoreNotSupported, storeName)
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		return &emptypb.Empty{}, err
+	}
+
 	// convert request
-	daprReq := &dapr_v1pb.ExecuteStateTransactionRequest{
-		StoreName:  in.GetStoreName(),
-		Operations: convertTransactionalStateOperationToDaprPB(in.Operations),
+	operations := []state.TransactionalStateOperation{}
+	for _, op := range in.Operations {
+		// extract and validate fields
+		var operation state.TransactionalStateOperation
+		var req = op.Request
+		// tolerant npe
+		if req == nil {
+			log.DefaultLogger.Warnf("[runtime] [grpc.ExecuteStateTransaction] one of TransactionalStateOperation.Request is nil")
+			continue
+		}
+		key, err := state2.GetModifiedStateKey(req.Key, in.GetStoreName(), a.appId)
+		if err != nil {
+			return &emptypb.Empty{}, err
+		}
+		// prepare TransactionalStateOperation struct according to the operation type
+		switch state.OperationType(op.OperationType) {
+		case state.OperationUpsert:
+			operation = *StateItem2SetRequest(req, key)
+		case state.OperationDelete:
+			operation = *StateItem2DeleteRequest(req, key)
+		default:
+			err := status.Errorf(codes.Unimplemented, messages.ErrNotSupportedStateOperation, op.OperationType)
+			log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+			return &emptypb.Empty{}, err
+		}
+		operations = append(operations, operation)
+	}
+
+	// submit transactional request
+	err := store.Multi(ctx, &state.TransactionalStateRequest{
+		Operations: operations,
 		Metadata:   in.GetMetadata(),
+	})
+
+	// check result
+	if err != nil {
+		err = status.Errorf(codes.Internal, messages.ErrStateTransaction, err.Error())
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		return &emptypb.Empty{}, err
 	}
-	return a.daprAPI.ExecuteStateTransaction(ctx, daprReq)
+
+	return &emptypb.Empty{}, nil
 }
 
-// some code for converting from runtimev1pb to dapr_common_v1pb
+// the specific processing logic of GetBulkState
+func (a *api) getBulkState(ctx context.Context, in *runtimev1pb.GetBulkStateRequest) (*runtimev1pb.GetBulkStateResponse, error) {
+	// get store
+	store, err := a.getStateStore(in.GetStoreName())
+	if err != nil {
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetBulkState] error: %v", err)
+		return &runtimev1pb.GetBulkStateResponse{}, err
+	}
 
-func convertEtagToDaprPB(etag *runtimev1pb.Etag) *dapr_common_v1pb.Etag {
-	if etag == nil {
-		return &dapr_common_v1pb.Etag{}
+	bulkResp := &runtimev1pb.GetBulkStateResponse{}
+	if len(in.GetKeys()) == 0 {
+		return bulkResp, nil
 	}
-	return &dapr_common_v1pb.Etag{Value: etag.GetValue()}
+
+	// store.BulkGet
+	// convert reqs
+	reqs := make([]state.GetRequest, len(in.GetKeys()))
+	for i, k := range in.GetKeys() {
+		key, err := state2.GetModifiedStateKey(k, in.GetStoreName(), a.appId)
+		if err != nil {
+			return &runtimev1pb.GetBulkStateResponse{}, err
+		}
+		r := state.GetRequest{
+			Key:      key,
+			Metadata: in.GetMetadata(),
+		}
+		reqs[i] = r
+	}
+
+	// query
+	responses, err := store.BulkGet(ctx, reqs, state.BulkGetOpts{})
+	if err != nil {
+		return bulkResp, err
+	}
+
+	for i := 0; i < len(responses); i++ {
+		bulkResp.Items = append(bulkResp.Items, BulkGetResponse2BulkStateItem(&responses[i]))
+	}
+
+	return bulkResp, nil
 }
-func convertOptionsToDaprPB(op *runtimev1pb.StateOptions) *dapr_common_v1pb.StateOptions {
-	if op == nil {
-		return &dapr_common_v1pb.StateOptions{}
+
+func (a *api) getStateStore(name string) (state.Store, error) {
+	// check if the stateStores exists
+	if len(a.stateStores) == 0 {
+		return nil, status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
 	}
-	return &dapr_common_v1pb.StateOptions{
-		Concurrency: dapr_common_v1pb.StateOptions_StateConcurrency(op.Concurrency),
-		Consistency: dapr_common_v1pb.StateOptions_StateConsistency(op.Consistency),
+	// check name
+	if _, b := a.stateStores[name]; !b {
+		return nil, status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, name)
+	}
+	return a.stateStores[name], nil
+}
+
+func StateConsistencyToString(c runtimev1pb.StateOptions_StateConsistency) string {
+	// check
+	switch c {
+	case runtimev1pb.StateOptions_CONSISTENCY_EVENTUAL:
+		return "eventual"
+	case runtimev1pb.StateOptions_CONSISTENCY_STRONG:
+		return "strong"
+	}
+	return ""
+}
+
+func StateConcurrencyToString(c runtimev1pb.StateOptions_StateConcurrency) string {
+	// check the StateOptions of StateOptions_StateConcurrency
+	switch c {
+	case runtimev1pb.StateOptions_CONCURRENCY_FIRST_WRITE:
+		return "first-write"
+	case runtimev1pb.StateOptions_CONCURRENCY_LAST_WRITE:
+		return "last-write"
+	}
+
+	return ""
+}
+
+func GetResponse2GetStateResponse(compResp *state.GetResponse) *runtimev1pb.GetStateResponse {
+	// Initialize an element of type GetStateResponse
+	resp := &runtimev1pb.GetStateResponse{}
+	// check if the compResp exists
+	if compResp != nil {
+		resp.Etag = common.PointerToString(compResp.ETag)
+		resp.Data = compResp.Data
+		resp.Metadata = compResp.Metadata
+	}
+	return resp
+}
+
+func StateItem2SetRequest(grpcReq *runtimev1pb.StateItem, key string) *state.SetRequest {
+	// Set the key for the request
+	req := &state.SetRequest{
+		Key: key,
+	}
+	// check if the grpcReq exists
+	if grpcReq == nil {
+		return req
+	}
+	// Assign the value of grpcReq property to req
+	req.Metadata = grpcReq.Metadata
+	req.Value = grpcReq.Value
+	// Check grpcReq.Etag
+	if grpcReq.Etag != nil {
+		req.ETag = &grpcReq.Etag.Value
+	}
+	// Check grpcReq.Options
+	if grpcReq.Options != nil {
+		req.Options = state.SetStateOption{
+			Consistency: StateConsistencyToString(grpcReq.Options.Consistency),
+			Concurrency: StateConcurrencyToString(grpcReq.Options.Concurrency),
+		}
+	}
+	return req
+}
+
+// wrapDaprComponentError parse and wrap error from dapr component
+func (a *api) wrapDaprComponentError(err error, format string, args ...interface{}) error {
+	e, ok := err.(*state.ETagError)
+	if !ok {
+		return status.Errorf(codes.Internal, format, args...)
+	}
+	// check the Kind of error
+	switch e.Kind() {
+	case state.ETagMismatch:
+		return status.Errorf(codes.Aborted, format, args...)
+	case state.ETagInvalid:
+		return status.Errorf(codes.InvalidArgument, format, args...)
+	}
+
+	return status.Errorf(codes.Internal, format, args...)
+}
+
+// converting from BulkGetResponse to BulkStateItem
+func BulkGetResponse2BulkStateItem(compResp *state.BulkGetResponse) *runtimev1pb.BulkStateItem {
+	if compResp == nil {
+		return &runtimev1pb.BulkStateItem{}
+	}
+	return &runtimev1pb.BulkStateItem{
+		Key:      state2.GetOriginalStateKey(compResp.Key),
+		Data:     compResp.Data,
+		Etag:     common.PointerToString(compResp.ETag),
+		Metadata: compResp.Metadata,
+		Error:    compResp.Error,
 	}
 }
 
-func convertStatesToDaprPB(states []*runtimev1pb.StateItem) []*dapr_common_v1pb.StateItem {
-	dStates := make([]*dapr_common_v1pb.StateItem, 0, len(states))
-	if states == nil {
-		return dStates
+// converting from GetResponse to BulkStateItem
+func GetResponse2BulkStateItem(compResp *state.GetResponse, key string) *runtimev1pb.BulkStateItem {
+	// convert
+	resp := &runtimev1pb.BulkStateItem{}
+	resp.Key = key
+	if compResp != nil {
+		resp.Data = compResp.Data
+		resp.Etag = common.PointerToString(compResp.ETag)
+		resp.Metadata = compResp.Metadata
 	}
-	for _, s := range states {
-		ds := &dapr_common_v1pb.StateItem{
-			Key:      s.Key,
-			Value:    s.Value,
-			Metadata: s.Metadata,
-		}
-		if s.Etag != nil {
-			ds.Etag = convertEtagToDaprPB(s.Etag)
-		}
-		if s.Options != nil {
-			ds.Options = convertOptionsToDaprPB(s.Options)
-		}
-		dStates = append(dStates, ds)
-	}
-	return dStates
+	return resp
 }
 
-func convertTransactionalStateOperationToDaprPB(ops []*runtimev1pb.TransactionalStateOperation) []*dapr_v1pb.TransactionalStateOperation {
-	ret := make([]*dapr_v1pb.TransactionalStateOperation, 0, len(ops))
-	for i := 0; i < len(ops); i++ {
-		op := ops[i]
-		var req *dapr_common_v1pb.StateItem
-		if op.Request != nil {
-			req = &dapr_common_v1pb.StateItem{
-				Key:      op.GetRequest().GetKey(),
-				Value:    op.GetRequest().GetValue(),
-				Etag:     convertEtagToDaprPB(op.GetRequest().GetEtag()),
-				Metadata: op.GetRequest().GetMetadata(),
-				Options:  convertOptionsToDaprPB(op.GetRequest().GetOptions()),
-			}
-		}
-		ret = append(ret, &dapr_v1pb.TransactionalStateOperation{
-			OperationType: op.OperationType,
-			Request:       req,
-		})
+// converting from DeleteStateRequest to DeleteRequest
+func DeleteStateRequest2DeleteRequest(grpcReq *runtimev1pb.DeleteStateRequest, key string) *state.DeleteRequest {
+	// convert
+	req := &state.DeleteRequest{
+		Key: key,
 	}
-	return ret
+	if grpcReq == nil {
+		return req
+	}
+	req.Metadata = grpcReq.Metadata
+	if grpcReq.Etag != nil {
+		req.ETag = &grpcReq.Etag.Value
+	}
+	if grpcReq.Options != nil {
+		req.Options = state.DeleteStateOption{
+			Concurrency: StateConcurrencyToString(grpcReq.Options.Concurrency),
+			Consistency: StateConsistencyToString(grpcReq.Options.Consistency),
+		}
+	}
+	return req
+}
+
+// converting from StateItem to DeleteRequest
+func StateItem2DeleteRequest(grpcReq *runtimev1pb.StateItem, key string) *state.DeleteRequest {
+	//convert
+	req := &state.DeleteRequest{
+		Key: key,
+	}
+	if grpcReq == nil {
+		return req
+	}
+	req.Metadata = grpcReq.Metadata
+	if grpcReq.Etag != nil {
+		req.ETag = &grpcReq.Etag.Value
+	}
+	if grpcReq.Options != nil {
+		req.Options = state.DeleteStateOption{
+			Concurrency: StateConcurrencyToString(grpcReq.Options.Concurrency),
+			Consistency: StateConsistencyToString(grpcReq.Options.Consistency),
+		}
+	}
+	return req
 }

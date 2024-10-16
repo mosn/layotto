@@ -221,7 +221,7 @@ func TestMosnRuntime_Run(t *testing.T) {
 		// mock pubsub component
 		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
 		errExpected := errors.New("init error")
-		mockPubSub.EXPECT().Init(gomock.Any()).Return(errExpected)
+		mockPubSub.EXPECT().Init(gomock.Any(), gomock.Any()).Return(errExpected)
 		//mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).Return(nil)
 		f := func() pubsub.PubSub {
 			return mockPubSub
@@ -357,7 +357,7 @@ func TestMosnRuntime_initPubSubs(t *testing.T) {
 	t.Run("normal", func(t *testing.T) {
 		// mock pubsub component
 		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
-		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Init(gomock.Any(), gomock.Any()).Return(nil)
 		f := func() pubsub.PubSub {
 			return mockPubSub
 		}
@@ -388,7 +388,7 @@ func TestMosnRuntime_initPubSubsNotExistMetadata(t *testing.T) {
 	t.Run("normal", func(t *testing.T) {
 		// mock pubsub component
 		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
-		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Init(gomock.Any(), gomock.Any()).Return(nil)
 		f := func() pubsub.PubSub {
 			return mockPubSub
 		}
@@ -419,7 +419,7 @@ func TestMosnRuntime_initStates(t *testing.T) {
 	t.Run("init success", func(t *testing.T) {
 		// prepare mock
 		mockStateStore := mock_state.NewMockStore(gomock.NewController(t))
-		mockStateStore.EXPECT().Init(gomock.Any()).Return(nil)
+		mockStateStore.EXPECT().Init(gomock.Any(), gomock.Any()).Return(nil)
 		f := func() state.Store {
 			return mockStateStore
 		}
@@ -571,12 +571,12 @@ func TestMosnRuntime_initLocks(t *testing.T) {
 type MockBindings struct {
 }
 
-func (m *MockBindings) Init(metadata bindings.Metadata) error {
+func (m *MockBindings) Init(ctx context.Context, metadata bindings.Metadata) error {
 	//do nothing
 	return nil
 }
 
-func (m *MockBindings) Invoke(req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
+func (m *MockBindings) Invoke(ctx context.Context, req *bindings.InvokeRequest) (*bindings.InvokeResponse, error) {
 	return nil, nil
 }
 
@@ -673,8 +673,8 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 	t.Run("normal", func(t *testing.T) {
 		// mock pubsub component
 		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
-		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
-		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Init(gomock.Any(), gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 		f := func() pubsub.PubSub {
 			return mockPubSub
 		}
@@ -726,8 +726,8 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 		assert.Nil(t, err)
 		// mock pubsub component
 		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
-		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
-		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).DoAndReturn(func(req pubsub.SubscribeRequest, handler pubsub.Handler) error {
+		mockPubSub.EXPECT().Init(gomock.Any(), gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(func(ctx context.Context, req pubsub.SubscribeRequest, handler pubsub.Handler) error {
 			if req.Topic == "layotto" {
 				return handler(context.Background(), &pubsub.NewMessage{
 					Data:     data,
@@ -771,8 +771,8 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 		assert.Nil(t, err)
 		// mock pubsub component
 		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
-		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
-		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).DoAndReturn(func(req pubsub.SubscribeRequest, handler pubsub.Handler) error {
+		mockPubSub.EXPECT().Init(gomock.Any(), gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(func(ctx context.Context, req pubsub.SubscribeRequest, handler pubsub.Handler) error {
 			if req.Topic == "layotto" {
 				err := handler(context.Background(), &pubsub.NewMessage{
 					Data:     data,
@@ -818,8 +818,8 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 		assert.Nil(t, err)
 		// mock pubsub component
 		mockPubSub := mock_pubsub.NewMockPubSub(gomock.NewController(t))
-		mockPubSub.EXPECT().Init(gomock.Any()).Return(nil)
-		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any()).DoAndReturn(func(req pubsub.SubscribeRequest, handler pubsub.Handler) error {
+		mockPubSub.EXPECT().Init(gomock.Any(), gomock.Any()).Return(nil)
+		mockPubSub.EXPECT().Subscribe(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(func(ctx context.Context, req pubsub.SubscribeRequest, handler pubsub.Handler) error {
 			if req.Topic == "layotto" {
 				err := handler(context.Background(), &pubsub.NewMessage{
 					Data:     data,

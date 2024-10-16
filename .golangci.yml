@@ -2,13 +2,12 @@ run :
   deadline : 10m
   tests : true
   modules-download-mode : readonly
-  skip-dirs :
+  skip-dirs:
     - spec/proto
     - pkg/mock
-  skip-files :
+  skip-files:
     - .pb.go
     - rpc/invoker/mosn/transport_protocol/bolt.go
-
 
 linters :
   disable-all : true
