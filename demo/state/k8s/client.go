@@ -25,7 +25,7 @@ import (
 
 	"github.com/avast/retry-go"
 
-	client "mosn.io/layotto/sdk/go-sdk/client"
+	client "github.com/layotto/go-sdk/client"
 )
 
 const (

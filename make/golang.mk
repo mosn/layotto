@@ -140,8 +140,6 @@ go.lint: go.lint.verify
 go.unittest:
 	@echo "===========> Run unit test in diagnostics" > $(UNITTEST_OUT) && \
 	$(GO) test -count=1 -timeout=10m -short -v `go list ./diagnostics/...` >> $(UNITTEST_OUT) && \
-	echo "===========> Run unit test in sdk/go-sdk" >> $(UNITTEST_OUT) && \
-	cd sdk/go-sdk && $(GO) test -count=1 -timeout=10m -short -v `go list ./... | grep -v runtime` >> $(UNITTEST_OUT) && \
 	echo "===========> Run unit test in components" >> $(UNITTEST_OUT) && \
 	cd ../../components && $(GO) test -count=1 -timeout=10m -short -v `go list ./...` >> $(UNITTEST_OUT) && \
 	echo "===========> Run unit test in pkg" >> $(UNITTEST_OUT) && \
@@ -199,5 +197,4 @@ go.format: go.format.verify
 	$(GO) mod tidy
 	cd components && $(GO) mod tidy
 	cd demo && $(GO) mod tidy
-	cd sdk/go-sdk && $(GO) mod tidy
 	cd spec && $(GO) mod tidy

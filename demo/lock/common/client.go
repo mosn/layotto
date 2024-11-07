@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 
-	client "mosn.io/layotto/sdk/go-sdk/client"
+	client "github.com/layotto/go-sdk/client"
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
 
