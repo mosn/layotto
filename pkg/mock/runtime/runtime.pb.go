@@ -1612,3 +1612,308 @@ func (mr *MockRuntime_PutFileServerMockRecorder) SetTrailer(arg0 interface{}) *g
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetTrailer", reflect.TypeOf((*MockRuntime_PutFileServer)(nil).SetTrailer), arg0)
 }
+
+// SubscribeTopicEvents mocks base method.
+func (m *MockRuntimeClient) SubscribeTopicEvents(ctx context.Context, opts ...grpc.CallOption) (runtime.Runtime_SubscribeTopicEventsClient, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SubscribeTopicEvents", varargs...)
+	ret0, _ := ret[0].(runtime.Runtime_SubscribeTopicEventsClient)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SubscribeTopicEvents indicates an expected call of SubscribeTopicEvents.
+func (mr *MockRuntimeClientMockRecorder) SubscribeTopicEvents(ctx interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SubscribeTopicEvents", reflect.TypeOf((*MockRuntimeClient)(nil).SubscribeTopicEvents), varargs...)
+}
+
+// MockRuntime_SubscribeTopicEventsClient is a mock of Runtime_SubscribeTopicEventsClient interface.
+type MockRuntime_SubscribeTopicEventsClient struct {
+	ctrl     *gomock.Controller
+	recorder *MockRuntime_SubscribeTopicEventsClientMockRecorder
+}
+
+// MockRuntime_SubscribeTopicEventsClientMockRecorder is the mock recorder for MockRuntime_SubscribeTopicEventsClient.
+type MockRuntime_SubscribeTopicEventsClientMockRecorder struct {
+	mock *MockRuntime_SubscribeTopicEventsClient
+}
+
+// NewMockRuntime_SubscribeTopicEventsClient creates a new mock instance.
+func NewMockRuntime_SubscribeTopicEventsClient(ctrl *gomock.Controller) *MockRuntime_SubscribeTopicEventsClient {
+	mock := &MockRuntime_SubscribeTopicEventsClient{ctrl: ctrl}
+	mock.recorder = &MockRuntime_SubscribeTopicEventsClientMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockRuntime_SubscribeTopicEventsClient) EXPECT() *MockRuntime_SubscribeTopicEventsClientMockRecorder {
+	return m.recorder
+}
+
+// CloseSend mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsClient) CloseSend() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CloseSend")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CloseSend indicates an expected call of CloseSend.
+func (mr *MockRuntime_SubscribeTopicEventsClientMockRecorder) CloseSend() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseSend", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsClient)(nil).CloseSend))
+}
+
+// Context mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsClient) Context() context.Context {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Context")
+	ret0, _ := ret[0].(context.Context)
+	return ret0
+}
+
+// Context indicates an expected call of Context.
+func (mr *MockRuntime_SubscribeTopicEventsClientMockRecorder) Context() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Context", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsClient)(nil).Context))
+}
+
+// Header mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsClient) Header() (metadata.MD, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Header")
+	ret0, _ := ret[0].(metadata.MD)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Header indicates an expected call of Header.
+func (mr *MockRuntime_SubscribeTopicEventsClientMockRecorder) Header() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Header", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsClient)(nil).Header))
+}
+
+// Recv mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsClient) Recv() (*runtime.SubscribeTopicEventsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Recv")
+	ret0, _ := ret[0].(*runtime.SubscribeTopicEventsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Recv indicates an expected call of Recv.
+func (mr *MockRuntime_SubscribeTopicEventsClientMockRecorder) Recv() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Recv", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsClient)(nil).Recv))
+}
+
+// RecvMsg mocks base method.
+func (m_2 *MockRuntime_SubscribeTopicEventsClient) RecvMsg(m interface{}) error {
+	m_2.ctrl.T.Helper()
+	ret := m_2.ctrl.Call(m_2, "RecvMsg", m)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RecvMsg indicates an expected call of RecvMsg.
+func (mr *MockRuntime_SubscribeTopicEventsClientMockRecorder) RecvMsg(m interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecvMsg", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsClient)(nil).RecvMsg), m)
+}
+
+// Send mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsClient) Send(arg0 *runtime.SubscribeTopicEventsRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Send", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Send indicates an expected call of Send.
+func (mr *MockRuntime_SubscribeTopicEventsClientMockRecorder) Send(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsClient)(nil).Send), arg0)
+}
+
+// SendMsg mocks base method.
+func (m_2 *MockRuntime_SubscribeTopicEventsClient) SendMsg(m interface{}) error {
+	m_2.ctrl.T.Helper()
+	ret := m_2.ctrl.Call(m_2, "SendMsg", m)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendMsg indicates an expected call of SendMsg.
+func (mr *MockRuntime_SubscribeTopicEventsClientMockRecorder) SendMsg(m interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMsg", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsClient)(nil).SendMsg), m)
+}
+
+// Trailer mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsClient) Trailer() metadata.MD {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Trailer")
+	ret0, _ := ret[0].(metadata.MD)
+	return ret0
+}
+
+// Trailer indicates an expected call of Trailer.
+func (mr *MockRuntime_SubscribeTopicEventsClientMockRecorder) Trailer() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Trailer", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsClient)(nil).Trailer))
+}
+
+// SubscribeTopicEvents mocks base method.
+func (m *MockRuntimeServer) SubscribeTopicEvents(arg0 runtime.Runtime_SubscribeTopicEventsServer) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SubscribeTopicEvents", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SubscribeTopicEvents indicates an expected call of SubscribeTopicEvents.
+func (mr *MockRuntimeServerMockRecorder) SubscribeTopicEvents(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SubscribeTopicEvents", reflect.TypeOf((*MockRuntimeServer)(nil).SubscribeTopicEvents), arg0)
+}
+
+// MockRuntime_SubscribeTopicEventsServer is a mock of Runtime_SubscribeTopicEventsServer interface.
+type MockRuntime_SubscribeTopicEventsServer struct {
+	ctrl     *gomock.Controller
+	recorder *MockRuntime_SubscribeTopicEventsServerMockRecorder
+}
+
+// MockRuntime_SubscribeTopicEventsServerMockRecorder is the mock recorder for MockRuntime_SubscribeTopicEventsServer.
+type MockRuntime_SubscribeTopicEventsServerMockRecorder struct {
+	mock *MockRuntime_SubscribeTopicEventsServer
+}
+
+// NewMockRuntime_SubscribeTopicEventsServer creates a new mock instance.
+func NewMockRuntime_SubscribeTopicEventsServer(ctrl *gomock.Controller) *MockRuntime_SubscribeTopicEventsServer {
+	mock := &MockRuntime_SubscribeTopicEventsServer{ctrl: ctrl}
+	mock.recorder = &MockRuntime_SubscribeTopicEventsServerMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockRuntime_SubscribeTopicEventsServer) EXPECT() *MockRuntime_SubscribeTopicEventsServerMockRecorder {
+	return m.recorder
+}
+
+// Context mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsServer) Context() context.Context {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Context")
+	ret0, _ := ret[0].(context.Context)
+	return ret0
+}
+
+// Context indicates an expected call of Context.
+func (mr *MockRuntime_SubscribeTopicEventsServerMockRecorder) Context() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Context", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsServer)(nil).Context))
+}
+
+// Recv mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsServer) Recv() (*runtime.SubscribeTopicEventsRequest, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Recv")
+	ret0, _ := ret[0].(*runtime.SubscribeTopicEventsRequest)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Recv indicates an expected call of Recv.
+func (mr *MockRuntime_SubscribeTopicEventsServerMockRecorder) Recv() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Recv", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsServer)(nil).Recv))
+}
+
+// RecvMsg mocks base method.
+func (m_2 *MockRuntime_SubscribeTopicEventsServer) RecvMsg(m interface{}) error {
+	m_2.ctrl.T.Helper()
+	ret := m_2.ctrl.Call(m_2, "RecvMsg", m)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RecvMsg indicates an expected call of RecvMsg.
+func (mr *MockRuntime_SubscribeTopicEventsServerMockRecorder) RecvMsg(m interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecvMsg", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsServer)(nil).RecvMsg), m)
+}
+
+// Send mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsServer) Send(arg0 *runtime.SubscribeTopicEventsResponse) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Send", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Send indicates an expected call of Send.
+func (mr *MockRuntime_SubscribeTopicEventsServerMockRecorder) Send(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsServer)(nil).Send), arg0)
+}
+
+// SendHeader mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsServer) SendHeader(arg0 metadata.MD) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendHeader", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendHeader indicates an expected call of SendHeader.
+func (mr *MockRuntime_SubscribeTopicEventsServerMockRecorder) SendHeader(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendHeader", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsServer)(nil).SendHeader), arg0)
+}
+
+// SendMsg mocks base method.
+func (m_2 *MockRuntime_SubscribeTopicEventsServer) SendMsg(m interface{}) error {
+	m_2.ctrl.T.Helper()
+	ret := m_2.ctrl.Call(m_2, "Send", m)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendMsg indicates an expected call of SendMsg.
+func (mr *MockRuntime_SubscribeTopicEventsServerMockRecorder) SendMsg(m interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMsg", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsServer)(nil).SendMsg), m)
+}
+
+// SetHeader mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsServer) SetHeader(arg0 metadata.MD) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetHeader", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetHeader indicates an expected call of SetHeader.
+func (mr *MockRuntime_SubscribeTopicEventsServerMockRecorder) SetHeader(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetHeader", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsServer)(nil).SetHeader), arg0)
+}
+
+// SetTrailer mocks base method.
+func (m *MockRuntime_SubscribeTopicEventsServer) SetTrailer(arg0 metadata.MD) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetTrailer", arg0)
+}
+
+// SetTrailer indicates an expected call of SetTrailer.
+func (mr *MockRuntime_SubscribeTopicEventsServerMockRecorder) SetTrailer(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetTrailer", reflect.TypeOf((*MockRuntime_SubscribeTopicEventsServer)(nil).SetTrailer), arg0)
+}

@@ -58,6 +58,14 @@ type runtimeAPI interface {
 	// PublishEvent publishes data onto topic in specific pubsub component.
 	PublishEvent(ctx context.Context, pubsubName, topicName string, data []byte) error
 
+	// Subscribe subscribes to a pubsub topic and streams messages to the returned Subscription.
+	// Subscription must be closed after finishing with subscribing.
+	Subscribe(ctx context.Context, request SubscriptionRequest) (*Subscription, error)
+
+	// SubscribeWithHandler subscribes to a pubsub topic and calls the given handler on topic events.
+	// The returned cancel function must be called after finishing with subscribing.
+	SubscribeWithHandler(ctx context.Context, request SubscriptionRequest, handler SubscriptionHandleFunction) (func() error, error)
+
 	// PublishEventfromCustomContent serializes an struct and publishes its contents as data (JSON) onto topic in specific pubsub component.
 	PublishEventfromCustomContent(ctx context.Context, pubsubName, topicName string, data interface{}) error
 
