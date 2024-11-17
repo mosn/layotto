@@ -21,7 +21,8 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	msync "mosn.io/mosn/pkg/sync"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/utils"
@@ -35,20 +36,25 @@ type ClusterRedisLock struct {
 	workpool msync.WorkerPool
 
 	features []lock.Feature
-	logger   log.ErrorLogger
+	logger   logger.Logger
 
 	ctx    context.Context
 	cancel context.CancelFunc
 }
 
 // NewClusterRedisLock returns a new redis lock store
-func NewClusterRedisLock(logger log.ErrorLogger) *ClusterRedisLock {
+func NewClusterRedisLock() *ClusterRedisLock {
 	s := &ClusterRedisLock{
 		features: make([]lock.Feature, 0),
-		logger:   logger,
+		logger:   logger.NewLayottoLogger("lock/redis"),
 	}
 
+	logger.RegisterComponentLoggerListener("lock/redis", s)
 	return s
+}
+
+func (c *ClusterRedisLock) OnLogLevelChanged(outputLevel logger.LogLevel) {
+	c.logger.SetLogLevel(outputLevel)
 }
 
 type resultMsg struct {

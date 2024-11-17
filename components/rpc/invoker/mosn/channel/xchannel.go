@@ -27,7 +27,8 @@ import (
 	"time"
 
 	"mosn.io/pkg/buffer"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/api"
 
@@ -52,7 +53,11 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 	if err := proto.Init(config.Ext); err != nil {
 		return nil, err
 	}
-	m := &xChannel{proto: proto}
+	m := &xChannel{
+		proto:  proto,
+		logger: logger.NewLayottoLogger("xChannel/" + config.Protocol),
+	}
+	logger.RegisterComponentLoggerListener("xChannel/"+config.Protocol, m)
 	m.pool = newConnPool(
 		config.Size,
 		// dialFunc
@@ -82,8 +87,13 @@ func newXChannel(config ChannelConfig) (rpc.Channel, error) {
 		},
 		m.onData,
 		m.cleanup,
+		m.logger,
 	)
 	return m, nil
+}
+
+func (m *xChannel) OnLogLevelChanged(level logger.LogLevel) {
+	m.logger.SetLogLevel(level)
 }
 
 // xstate is record state
@@ -100,8 +110,9 @@ type call struct {
 
 // xChannel is Channel implement
 type xChannel struct {
-	proto transport_protocol.TransportProtocol
-	pool  *connPool
+	proto  transport_protocol.TransportProtocol
+	pool   *connPool
+	logger logger.Logger
 }
 
 // InvokeWithTargetAddress send request to specific provider address
@@ -149,9 +160,9 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 			if readErr != nil {
 				err = readErr
 				if readErr == io.EOF {
-					log.DefaultLogger.Debugf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
+					m.logger.Debugf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
 				} else {
-					log.DefaultLogger.Errorf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
+					m.logger.Errorf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
 				}
 			}
 
@@ -159,7 +170,7 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 				iframe, decodeErr := m.proto.Decode(context.TODO(), wc.buf)
 				if decodeErr != nil {
 					err = decodeErr
-					log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
+					m.logger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
 					break
 				}
 				frame, ok := iframe.(api.XRespFrame)
@@ -168,7 +179,7 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 				}
 				if !ok {
 					err = errors.New("[runtime][rpc]xchannel type not XRespFrame")
-					log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
+					m.logger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
 					break
 				}
 				callChan <- call{resp: frame}

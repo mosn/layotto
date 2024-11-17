@@ -32,7 +32,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/jinzhu/copier"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/oss"
 	"mosn.io/layotto/components/pkg/utils"
@@ -41,10 +42,19 @@ import (
 type CephOSS struct {
 	client    *s3.Client
 	basicConf json.RawMessage
+	logger    logger.Logger
 }
 
 func NewCephOss() oss.Oss {
-	return &CephOSS{}
+	coss := &CephOSS{
+		logger: logger.NewLayottoLogger("oss/ceph"),
+	}
+	logger.RegisterComponentLoggerListener("oss/ceph", coss)
+	return coss
+}
+
+func (c *CephOSS) OnLogLevelChanged(level logger.LogLevel) {
+	c.logger.SetLogLevel(level)
 }
 
 func (c *CephOSS) Init(ctx context.Context, config *oss.Config) error {
@@ -315,7 +325,7 @@ func (c *CephOSS) CreateMultipartUpload(ctx context.Context, req *oss.CreateMult
 	input := &s3.CreateMultipartUploadInput{}
 	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.Int64ToTime}})
 	if err != nil {
-		log.DefaultLogger.Errorf("copy CreateMultipartUploadInput fail, err: %+v", err)
+		c.logger.Errorf("copy CreateMultipartUploadInput fail, err: %+v", err)
 		return nil, err
 	}
 	resp, err := client.CreateMultipartUpload(ctx, input)

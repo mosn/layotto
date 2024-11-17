@@ -22,7 +22,6 @@ import (
 	"github.com/dapr/components-contrib/secretstores"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
 	"mosn.io/layotto/pkg/messages"
@@ -32,14 +31,14 @@ func (d *daprGrpcAPI) GetSecret(ctx context.Context, request *runtime.GetSecretR
 	// 1. check parameters
 	if d.secretStores == nil || len(d.secretStores) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrSecretStoreNotConfigured)
-		log.DefaultLogger.Errorf("GetSecret fail,not configured err:%+v", err)
+		d.logger.Errorf("GetSecret fail,not configured err:%+v", err)
 		return &runtime.GetSecretResponse{}, err
 	}
 	secretStoreName := request.StoreName
 
 	if d.secretStores[secretStoreName] == nil {
 		err := status.Errorf(codes.InvalidArgument, messages.ErrSecretStoreNotFound, secretStoreName)
-		log.DefaultLogger.Errorf("GetSecret fail,not find err:%+v", err)
+		d.logger.Errorf("GetSecret fail,not find err:%+v", err)
 		return &runtime.GetSecretResponse{}, err
 	}
 
@@ -58,7 +57,7 @@ func (d *daprGrpcAPI) GetSecret(ctx context.Context, request *runtime.GetSecretR
 	// 4. parse result
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrSecretGet, req.Name, secretStoreName, err.Error())
-		log.DefaultLogger.Errorf("GetSecret fail,get secret err:%+v", err)
+		d.logger.Errorf("GetSecret fail,get secret err:%+v", err)
 		return &runtime.GetSecretResponse{}, err
 	}
 
@@ -73,14 +72,14 @@ func (d *daprGrpcAPI) GetBulkSecret(ctx context.Context, in *runtime.GetBulkSecr
 	// 1. check parameters
 	if d.secretStores == nil || len(d.secretStores) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrSecretStoreNotConfigured)
-		log.DefaultLogger.Errorf("GetBulkSecret fail,not configured err:%+v", err)
+		d.logger.Errorf("GetBulkSecret fail,not configured err:%+v", err)
 		return &runtime.GetBulkSecretResponse{}, err
 	}
 	secretStoreName := in.StoreName
 
 	if d.secretStores[secretStoreName] == nil {
 		err := status.Errorf(codes.InvalidArgument, messages.ErrSecretStoreNotFound, secretStoreName)
-		log.DefaultLogger.Errorf("GetBulkSecret fail,not find err:%+v", err)
+		d.logger.Errorf("GetBulkSecret fail,not find err:%+v", err)
 		return &runtime.GetBulkSecretResponse{}, err
 	}
 	// 2. delegate to components
@@ -91,7 +90,7 @@ func (d *daprGrpcAPI) GetBulkSecret(ctx context.Context, in *runtime.GetBulkSecr
 	// 3. parse result
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrBulkSecretGet, secretStoreName, err.Error())
-		log.DefaultLogger.Errorf("GetBulkSecret fail,bulk secret err:%+v", err)
+		d.logger.Errorf("GetBulkSecret fail,bulk secret err:%+v", err)
 		return &runtime.GetBulkSecretResponse{}, err
 	}
 
@@ -102,7 +101,7 @@ func (d *daprGrpcAPI) GetBulkSecret(ctx context.Context, in *runtime.GetBulkSecr
 		if d.isSecretAllowed(secretStoreName, key) {
 			filteredSecrets[key] = v
 		} else {
-			log.DefaultLogger.Debugf(messages.ErrPermissionDenied, key, in.StoreName)
+			d.logger.Debugf(messages.ErrPermissionDenied, key, in.StoreName)
 		}
 	}
 	response := &runtime.GetBulkSecretResponse{}

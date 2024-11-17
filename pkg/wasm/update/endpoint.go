@@ -25,43 +25,47 @@ import (
 
 	wasm2 "mosn.io/mosn/pkg/wasm"
 
-	"mosn.io/pkg/log"
+	"mosn.io/layotto/kit/logger"
 )
 
 func init() {
-	wasm.GetDefault().AddEndpoint("update", NewEndpoint())
+	w := wasm.GetDefault()
+	w.AddEndpoint("update", NewEndpoint(w.Logger))
 }
 
 type Endpoint struct {
+	logger logger.Logger
 }
 
-func NewEndpoint() *Endpoint {
-	return &Endpoint{}
+func NewEndpoint(logger logger.Logger) *Endpoint {
+	return &Endpoint{
+		logger: logger,
+	}
 }
 
 func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[string]interface{}, error) {
 	conf, err := http.GetRequestData(ctx)
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasm][update] invalid request body for request /wasm/update, err:%v", err)
+		e.logger.Errorf("[wasm][update] invalid request body for request /wasm/update, err:%v", err)
 		return map[string]interface{}{"error": err.Error()}, err
 	}
 
 	if conf["name"] == nil {
 		errorMessage := "can't get name property"
-		log.DefaultLogger.Errorf("[wasm][update] %v", errorMessage)
+		e.logger.Errorf("[wasm][update] %v", errorMessage)
 		return map[string]interface{}{"error": errorMessage}, errors.New(errorMessage)
 	}
 
 	if conf["instance_num"] == nil {
 		errorMessage := "can't get instance_num property"
-		log.DefaultLogger.Errorf("[wasm][update] %v", errorMessage)
+		e.logger.Errorf("[wasm][update] %v", errorMessage)
 		return map[string]interface{}{"error": errorMessage}, errors.New(errorMessage)
 	}
 
 	instanceNum := int(conf["instance_num"].(float64))
 	if instanceNum <= 0 {
 		errorMessage := "instance_num should be greater than 0"
-		log.DefaultLogger.Errorf("[wasm][update] %v", errorMessage)
+		e.logger.Errorf("[wasm][update] %v", errorMessage)
 		return map[string]interface{}{"error": errorMessage}, errors.New(errorMessage)
 	}
 
@@ -69,9 +73,9 @@ func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[s
 	factory := wasm.GetFactory()
 	err = factory.UpdateInstanceNum(id, instanceNum, wasm2.GetWasmManager())
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasm][update] %v", err)
+		e.logger.Errorf("[wasm][update] %v", err)
 		return map[string]interface{}{"error": err.Error()}, err
 	}
-	log.DefaultLogger.Infof("[wasm] [update] wasm instance number updated success, id: %v, num: %v", id, instanceNum)
+	e.logger.Infof("[wasm] [update] wasm instance number updated success, id: %v, num: %v", id, instanceNum)
 	return nil, nil
 }

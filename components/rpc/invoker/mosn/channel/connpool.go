@@ -26,8 +26,9 @@ import (
 	"sync/atomic"
 
 	"mosn.io/pkg/buffer"
-	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
+
+	"mosn.io/layotto/kit/logger"
 
 	common "mosn.io/layotto/components/pkg/common"
 )
@@ -75,7 +76,8 @@ func newConnPool(
 	// handle data
 	onDataFunc func(*wrapConn) error,
 	// clean connected
-	cleanupFunc func(*wrapConn, error)) *connPool {
+	cleanupFunc func(*wrapConn, error),
+	logger logger.Logger) *connPool {
 
 	p := &connPool{
 		maxActive:   maxActive,
@@ -85,6 +87,7 @@ func newConnPool(
 		cleanupFunc: cleanupFunc,
 		sema:        make(chan struct{}, maxActive),
 		free:        list.New(),
+		logger:      logger,
 	}
 	return p
 }
@@ -97,9 +100,10 @@ type connPool struct {
 	onDataFunc  func(*wrapConn) error
 	cleanupFunc func(*wrapConn, error)
 
-	sema chan struct{}
-	mu   sync.Mutex
-	free *list.List
+	sema   chan struct{}
+	mu     sync.Mutex
+	free   *list.List
+	logger logger.Logger
 }
 
 // Get is get wrapConn by context.Context
@@ -177,9 +181,9 @@ func (p *connPool) readloop(c *wrapConn) {
 		if readErr != nil {
 			err = readErr
 			if readErr == io.EOF {
-				log.DefaultLogger.Debugf("[runtime][rpc]connpool readloop err: %s", readErr.Error())
+				p.logger.Debugf("[runtime][rpc]connpool readloop err: %s", readErr.Error())
 			} else {
-				log.DefaultLogger.Errorf("[runtime][rpc]connpool readloop err: %s", readErr.Error())
+				p.logger.Errorf("[runtime][rpc]connpool readloop err: %s", readErr.Error())
 			}
 		}
 
@@ -188,7 +192,7 @@ func (p *connPool) readloop(c *wrapConn) {
 			// it will delegate to hstate if it's constructed by httpchannel
 			if onDataErr := p.onDataFunc(c); onDataErr != nil {
 				err = onDataErr
-				log.DefaultLogger.Errorf("[runtime][rpc]connpool onData err: %s", onDataErr.Error())
+				p.logger.Errorf("[runtime][rpc]connpool onData err: %s", onDataErr.Error())
 			}
 		}
 

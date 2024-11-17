@@ -19,20 +19,14 @@ package nacos
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
-	"mosn.io/pkg/log"
+	"mosn.io/layotto/kit/logger"
 )
 
 func TestNewDefaultLogger(t *testing.T) {
-	mosnLogger, err := log.GetOrCreateLogger("stdout", nil)
-	assert.Nil(t, err)
-	errorLog := &log.SimpleErrorLog{
-		Logger: mosnLogger,
-		Level:  log.DEBUG,
-	}
+	log := logger.NewLayottoLogger("test")
+	log.SetLogLevel(logger.DebugLevel)
 
-	logger := NewDefaultLogger(errorLog)
+	logger := NewDefaultLogger(log)
 	logger.Debugf("test Debugf %d", 100)
 	logger.Debugf("test Debugf", 100)
 	logger.Infof("test Infof")

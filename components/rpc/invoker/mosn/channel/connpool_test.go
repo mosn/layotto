@@ -23,6 +23,8 @@ import (
 	"testing"
 	"time"
 
+	"mosn.io/layotto/kit/logger"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,6 +42,7 @@ func TestGetPut(t *testing.T) {
 			return nil
 		},
 		nil,
+		logger.NewLayottoLogger("test"),
 	)
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
@@ -99,6 +102,7 @@ func TestDeadconnRenew(t *testing.T) {
 		}, func(conn *wrapConn) error {
 			return nil
 		}, nil,
+		logger.NewLayottoLogger("test"),
 	)
 
 	c1, err := p.Get(context.TODO())
@@ -131,6 +135,7 @@ func TestPoolConcurrent(t *testing.T) {
 		}, func(conn *wrapConn) error {
 			return <-ch
 		}, nil,
+		logger.NewLayottoLogger("test"),
 	)
 
 	actions := []string{

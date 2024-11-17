@@ -23,6 +23,9 @@ import (
 	"strconv"
 	"time"
 
+	layottoLogger "mosn.io/layotto/kit/logger"
+	actuatorLogger "mosn.io/layotto/pkg/actuator/logger"
+
 	"mosn.io/layotto/components/sms"
 
 	"mosn.io/layotto/components/cryption"
@@ -70,7 +73,6 @@ import (
 
 	dbindings "github.com/dapr/components-contrib/bindings"
 	"github.com/dapr/components-contrib/bindings/http"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/cmd/layotto_multiple_api/helloworld/component"
 	"mosn.io/layotto/components/configstores/etcdv3"
@@ -230,6 +232,9 @@ import (
 // loggerForDaprComp is constructed for reusing dapr's components.
 var loggerForDaprComp = logger.NewLogger("reuse.dapr.component")
 
+// loggerForLayotto is constructed for layotto.
+var loggerForLayotto = layottoLogger.NewLayottoLogger("layotto")
+
 // GitVersion mosn version is specified by latest tag
 var GitVersion = ""
 var IstioVersion = "1.10.6"
@@ -238,6 +243,7 @@ func init() {
 	mgrpc.RegisterServerHandler("runtime", NewRuntimeGrpcServer)
 	// Register default actuator implementations
 	actuatorInfo.AddInfoContributor("app", actuator.GetAppContributor())
+	actuatorLogger.NewEndpoint()
 	health.AddReadinessIndicator("runtime_startup", actuator.GetRuntimeReadinessIndicator())
 	health.AddLivenessIndicator("runtime_startup", actuator.GetRuntimeLivenessIndicator())
 }
@@ -249,7 +255,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			// fail fast if error occurs during startup.
 			// The reason we panic in a new goroutine is to prevent mosn from recovering.
 			go func() {
-				log.DefaultLogger.Errorf("An error occurred during startup : %v", err)
+				loggerForLayotto.Errorf("An error occurred during startup : %v", err)
 				panic(err)
 			}()
 		}
@@ -434,22 +440,22 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// Lock
 		runtime.WithLockFactory(
 			runtime_lock.NewFactory("redis_cluster", func() lock.LockStore {
-				return lock_redis.NewClusterRedisLock(log.DefaultLogger)
+				return lock_redis.NewClusterRedisLock()
 			}),
 			runtime_lock.NewFactory("redis", func() lock.LockStore {
-				return lock_redis.NewStandaloneRedisLock(log.DefaultLogger)
+				return lock_redis.NewStandaloneRedisLock()
 			}),
 			runtime_lock.NewFactory("zookeeper", func() lock.LockStore {
-				return lock_zookeeper.NewZookeeperLock(log.DefaultLogger)
+				return lock_zookeeper.NewZookeeperLock()
 			}),
 			runtime_lock.NewFactory("etcd", func() lock.LockStore {
-				return lock_etcd.NewEtcdLock(log.DefaultLogger)
+				return lock_etcd.NewEtcdLock()
 			}),
 			runtime_lock.NewFactory("consul", func() lock.LockStore {
-				return lock_consul.NewConsulLock(log.DefaultLogger)
+				return lock_consul.NewConsulLock()
 			}),
 			runtime_lock.NewFactory("mongo", func() lock.LockStore {
-				return lock_mongo.NewMongoLock(log.DefaultLogger)
+				return lock_mongo.NewMongoLock()
 			}),
 			runtime_lock.NewFactory("in-memory", func() lock.LockStore {
 				return lock_inmemory.NewInMemoryLock()
@@ -466,25 +472,25 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 		// Sequencer
 		runtime.WithSequencerFactory(
 			runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
-				return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
+				return sequencer_etcd.NewEtcdSequencer()
 			}),
 			runtime_sequencer.NewFactory("redis", func() sequencer.Store {
-				return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
+				return sequencer_redis.NewStandaloneRedisSequencer()
 			}),
 			runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
-				return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+				return sequencer_zookeeper.NewZookeeperSequencer()
 			}),
 			runtime_sequencer.NewFactory("mongo", func() sequencer.Store {
-				return sequencer_mongo.NewMongoSequencer(log.DefaultLogger)
+				return sequencer_mongo.NewMongoSequencer()
 			}),
 			runtime_sequencer.NewFactory("in-memory", func() sequencer.Store {
 				return sequencer_inmemory.NewInMemorySequencer()
 			}),
 			runtime_sequencer.NewFactory("mysql", func() sequencer.Store {
-				return sequencer_mysql.NewMySQLSequencer(log.DefaultLogger)
+				return sequencer_mysql.NewMySQLSequencer()
 			}),
 			runtime_sequencer.NewFactory("snowflake", func() sequencer.Store {
-				return sequencer_snowflake.NewSnowFlakeSequencer(log.DefaultLogger)
+				return sequencer_snowflake.NewSnowFlakeSequencer()
 			}),
 		),
 		// secretstores

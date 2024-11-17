@@ -21,8 +21,6 @@ import (
 	"testing"
 	"time"
 
-	"mosn.io/pkg/log"
-
 	"mosn.io/layotto/components/sequencer"
 
 	"github.com/stretchr/testify/assert"
@@ -59,7 +57,7 @@ func TestEtcd_Init(t *testing.T) {
 		etcdServer.Server.Stop()
 		os.RemoveAll(etcdTestDir)
 	}()
-	comp := NewEtcdSequencer(log.DefaultLogger)
+	comp := NewEtcdSequencer()
 
 	cfg := sequencer.Configuration{
 		BiggerThan: nil,
@@ -94,7 +92,7 @@ func TestEtcd_Init(t *testing.T) {
 func TestEtcd_CreateConnTimeout(t *testing.T) {
 	var err error
 
-	comp := NewEtcdSequencer(log.DefaultLogger)
+	comp := NewEtcdSequencer()
 
 	cfg := sequencer.Configuration{
 		BiggerThan: nil,
@@ -126,7 +124,7 @@ func TestEtcd_GetNextId(t *testing.T) {
 		os.RemoveAll(etcdTestDir)
 	}()
 
-	comp := NewEtcdSequencer(log.DefaultLogger)
+	comp := NewEtcdSequencer()
 
 	cfg := sequencer.Configuration{
 		BiggerThan: nil,

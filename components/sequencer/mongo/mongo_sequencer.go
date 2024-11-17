@@ -21,7 +21,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readconcern"
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
@@ -37,7 +38,7 @@ type MongoSequencer struct {
 	metadata   utils.MongoMetadata
 	biggerThan map[string]int64
 
-	logger log.ErrorLogger
+	logger logger.Logger
 
 	ctx    context.Context
 	cancel context.CancelFunc
@@ -49,12 +50,17 @@ type SequencerDocument struct {
 }
 
 // MongoSequencer returns a new mongo sequencer
-func NewMongoSequencer(logger log.ErrorLogger) *MongoSequencer {
+func NewMongoSequencer() *MongoSequencer {
 	m := &MongoSequencer{
-		logger: logger,
+		logger: logger.NewLayottoLogger("sequencer/mongo"),
 	}
 
+	logger.RegisterComponentLoggerListener("sequencer/mongo", m)
 	return m
+}
+
+func (e *MongoSequencer) OnLogLevelChanged(level logger.LogLevel) {
+	e.logger.SetLogLevel(level)
 }
 
 func (e *MongoSequencer) Init(config sequencer.Configuration) error {

@@ -25,7 +25,6 @@ import (
 	"github.com/go-zookeeper/zk"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/mock"
@@ -54,7 +53,7 @@ func TestMain(m *testing.M) {
 // A lock ,A unlock
 func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
 
-	comp := NewZookeeperLock(log.DefaultLogger)
+	comp := NewZookeeperLock()
 	comp.Init(cfg)
 
 	//mock
@@ -89,7 +88,7 @@ func TestZookeeperLock_ALock_AUnlock(t *testing.T) {
 // A lock ,B unlock
 func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
 
-	comp := NewZookeeperLock(log.DefaultLogger)
+	comp := NewZookeeperLock()
 	comp.Init(cfg)
 
 	//mock
@@ -123,7 +122,7 @@ func TestZookeeperLock_ALock_BUnlock(t *testing.T) {
 // A lock , B lock ,A unlock ,B lock,B unlock
 func TestZookeeperLock_ALock_BLock_AUnlock_BLock_BUnlock(t *testing.T) {
 
-	comp := NewZookeeperLock(log.DefaultLogger)
+	comp := NewZookeeperLock()
 	comp.Init(cfg)
 
 	//mock

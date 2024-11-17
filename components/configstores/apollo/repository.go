@@ -21,7 +21,8 @@ import (
 
 	"github.com/apolloconfig/agollo/v4"
 	agolloConfig "github.com/apolloconfig/agollo/v4/env/config"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 )
 
 // An interface to abstract different apollo sdks,also making it easier to write unit tests.
@@ -46,10 +47,7 @@ type repoConfig struct {
 	// whether backup config after fetch config from apollo
 	isBackupConfig bool
 	secret         string
-}
-
-func init() {
-	agollo.SetLogger(NewDefaultLogger(log.DefaultLogger))
+	logger         logger.Logger
 }
 
 // Implement Repository interface
@@ -68,6 +66,7 @@ func (a *AgolloRepository) Connect() error {
 
 func (a *AgolloRepository) SetConfig(r *repoConfig) {
 	a.cfg = r
+	agollo.SetLogger(r.logger)
 }
 
 func repoConfig2AgolloConfig(r *repoConfig) *agolloConfig.AppConfig {

@@ -19,8 +19,9 @@ import (
 	"time"
 
 	"github.com/go-zookeeper/zk"
-	"mosn.io/pkg/log"
 	util "mosn.io/pkg/utils"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/utils"
@@ -41,15 +42,21 @@ type ZookeeperLock struct {
 	//unlock reuse this conneciton
 	unlockConn utils.ZKConnection
 	metadata   utils.ZookeeperMetadata
-	logger     log.ErrorLogger
+	logger     logger.Logger
 }
 
 // NewZookeeperLock Create ZookeeperLock
-func NewZookeeperLock(logger log.ErrorLogger) *ZookeeperLock {
+func NewZookeeperLock() *ZookeeperLock {
 	lock := &ZookeeperLock{
-		logger: logger,
+		logger: logger.NewLayottoLogger("lock/zookeeper"),
 	}
+	logger.RegisterComponentLoggerListener("lock/zookeeper", lock)
 	return lock
+}
+
+// OnLogLevelChanged change log level
+func (p *ZookeeperLock) OnLogLevelChanged(level logger.LogLevel) {
+	p.logger.SetLogLevel(level)
 }
 
 // Init ZookeeperLock

@@ -18,7 +18,6 @@ import (
 
 	"github.com/alicebob/miniredis/v2"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/sequencer"
 )
@@ -30,7 +29,7 @@ func TestStandaloneRedisSequencer(t *testing.T) {
 	assert.NoError(t, err)
 	defer s.Close()
 	// construct component
-	comp := NewStandaloneRedisSequencer(log.DefaultLogger)
+	comp := NewStandaloneRedisSequencer()
 	cfg := sequencer.Configuration{
 		Properties: make(map[string]string),
 	}
@@ -59,7 +58,7 @@ func TestStandaloneRedisSequencer_biggerThan_success(t *testing.T) {
 	assert.NoError(t, err)
 	defer s.Close()
 	// construct component
-	comp := NewStandaloneRedisSequencer(log.DefaultLogger)
+	comp := NewStandaloneRedisSequencer()
 	cfg := sequencer.Configuration{
 		Properties: make(map[string]string),
 	}
@@ -95,7 +94,7 @@ func TestStandaloneRedisSequencer_biggerThan_fail_reset(t *testing.T) {
 	assert.NoError(t, err)
 	defer s.Close()
 	// construct component
-	comp := NewStandaloneRedisSequencer(log.DefaultLogger)
+	comp := NewStandaloneRedisSequencer()
 	cfg := sequencer.Configuration{
 		Properties: make(map[string]string),
 	}
@@ -125,7 +124,7 @@ func TestStandaloneRedisSequencer_segment(t *testing.T) {
 	assert.NoError(t, err)
 	defer s.Close()
 	// construct component
-	comp := NewStandaloneRedisSequencer(log.DefaultLogger)
+	comp := NewStandaloneRedisSequencer()
 	cfg := sequencer.Configuration{
 		Properties: make(map[string]string),
 	}

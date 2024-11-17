@@ -23,7 +23,6 @@ import (
 	"sync"
 
 	"google.golang.org/protobuf/types/known/emptypb"
-	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
 
 	"mosn.io/layotto/components/configstores"
@@ -111,7 +110,7 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 			req, err := sub.Recv()
 			// 1.2. if an error happens,stop all the subscribers
 			if err != nil {
-				log.DefaultLogger.Errorf("occur error in subscribe, err: %+v", err)
+				a.logger.Errorf("occur error in subscribe, err: %+v", err)
 				// stop all the subscribers
 				for _, store := range subscribedStore {
 					// TODO this method will stop subscribers created by other connections.Should be refactored
@@ -126,7 +125,7 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 			store, ok := a.configStores[req.StoreName]
 			// 1.3.1. stop if StoreName is not supported
 			if !ok {
-				log.DefaultLogger.Errorf("configure store [%+v] don't support now", req.StoreName)
+				a.logger.Errorf("configure store [%+v] don't support now", req.StoreName)
 				// stop all the subscribers
 				for _, store := range subscribedStore {
 					store.StopSubscribe()
@@ -171,6 +170,6 @@ func (a *api) SubscribeConfiguration(sub runtimev1pb.Runtime_SubscribeConfigurat
 		}
 	}, nil)
 	wg.Wait()
-	log.DefaultLogger.Warnf("subscribe gorountine exit")
+	a.logger.Warnf("subscribe gorountine exit")
 	return subErr
 }
