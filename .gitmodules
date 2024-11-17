@@ -1,3 +1,0 @@
-[submodule "sdk/go-sdk"]
-	path = sdk/go-sdk
-	url = git@github.com:layotto/go-sdk.git
