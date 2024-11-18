@@ -57,9 +57,6 @@ endif
 ifeq ($(origin TEST_WASM_DIR),undefined)
 TEST_WASM_DIR := $(ROOT_DIR)/test
 endif
-ifeq ($(origin TEST_RUNTIME_DIR),undefined)
-TEST_RUNTIME_DIR := $(ROOT_DIR)/sdk/go-sdk/test
-endif
 ifeq ($(origin DEMO_DIR),undefined)
 DEMO_DIR := $(ROOT_DIR)/demo
 endif

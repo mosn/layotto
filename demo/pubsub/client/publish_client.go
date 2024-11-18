@@ -21,7 +21,7 @@ import (
 	"flag"
 	"fmt"
 
-	client "mosn.io/layotto/sdk/go-sdk/client"
+	client "github.com/layotto/go-sdk/client"
 )
 
 var storeName string
