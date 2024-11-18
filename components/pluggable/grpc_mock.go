@@ -76,7 +76,6 @@ func TestServerFor[TServer any, TClient any](registersvc func(grpc.ServiceRegist
 //	 	client, cleanup, err := serverFactory(&your_service{})
 //		require.NoError(t, err)
 //		defer cleanup()
-//
 func TestSocketServerFor[TServer any, TClient any](registersvc func(grpc.ServiceRegistrar, TServer), clientFactory func(GRPCConnectionDialer) TClient) func(svc TServer) (client TClient, cleanup func(), err error) {
 	return func(srv TServer) (client TClient, cleanup func(), err error) {
 		const fakeSocketFolder = "/tmp"

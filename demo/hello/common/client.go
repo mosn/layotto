@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"log"
 
-	"mosn.io/layotto/sdk/go-sdk/client"
+	"github.com/layotto/go-sdk/client"
 )
 
 var storeName string

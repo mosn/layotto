@@ -32,6 +32,8 @@ github.com/google/go-cmp v0.5.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/layotto/go-sdk v0.0.0-20241113124402-e55ee5816d2f h1:xm1tsLV09M6if6AzHIb7PVMpGwNB9iEDwujcSNvxMtY=
+github.com/layotto/go-sdk v0.0.0-20241113124402-e55ee5816d2f/go.mod h1:wsC0WVxh+E/n7WpsBL7KnHCfwWjcWLee9j73M4vtQ2c=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
@@ -95,8 +97,7 @@ gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c h1:dUUwHk2QECo/6vqA44rthZ8ie
 gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
-mosn.io/layotto/sdk/go-sdk v0.0.0-20230920030758-dbf443e27376 h1:PXv6Ru2HC4Mqlj+KY5R1xqHPk8nwgJwiMxuHg1jMhZg=
-mosn.io/layotto/sdk/go-sdk v0.0.0-20230920030758-dbf443e27376/go.mod h1:vfiOK6P29QD8Ti5NTeTfWamLN3EzrcCQD1tpldX4K3Y=
+mosn.io/layotto/sdk/go-sdk v0.0.0-20240927030843-b4fed4d06be4/go.mod h1:vfiOK6P29QD8Ti5NTeTfWamLN3EzrcCQD1tpldX4K3Y=
 mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3/go.mod h1:ex31WL9Vx1PadpZmN4CZpw/57xzBeKIwqMI5fYXi7RY=
-mosn.io/layotto/spec v0.0.0-20230920030758-dbf443e27376 h1:Hku8GOHjTzjjqnG+5ka6ZnDoKXXN+smWpyi1iU87x+U=
-mosn.io/layotto/spec v0.0.0-20230920030758-dbf443e27376/go.mod h1:3ri6wotzCp2LTjrCZ3Pfre+u1tw2b4Sc+qZERM7apwU=
+mosn.io/layotto/spec v0.0.0-20240927030843-b4fed4d06be4 h1:4ThNPnPfpPzk32hUIm/mRm4+Ch4MmFNFbnFhbuZ4Qms=
+mosn.io/layotto/spec v0.0.0-20240927030843-b4fed4d06be4/go.mod h1:3ri6wotzCp2LTjrCZ3Pfre+u1tw2b4Sc+qZERM7apwU=
