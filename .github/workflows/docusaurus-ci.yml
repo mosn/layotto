@@ -10,7 +10,7 @@ jobs:
 #    container: pandoc/latex  jj
     steps:
       - name: Use Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: 18.20.3
       - name: Checkout
