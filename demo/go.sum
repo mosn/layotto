@@ -73,6 +73,8 @@ github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
+github.com/layotto/go-sdk v0.0.0-20241113124402-e55ee5816d2f h1:xm1tsLV09M6if6AzHIb7PVMpGwNB9iEDwujcSNvxMtY=
+github.com/layotto/go-sdk v0.0.0-20241113124402-e55ee5816d2f/go.mod h1:wsC0WVxh+E/n7WpsBL7KnHCfwWjcWLee9j73M4vtQ2c=
 github.com/minio/md5-simd v1.1.0 h1:QPfiOqlZH+Cj9teu0t9b1nTBfPbyTl16Of5MeuShdK4=
 github.com/minio/md5-simd v1.1.0/go.mod h1:XpBqgZULrMYD3R+M28PcmP0CkI7PEMzB3U77ZrKZ0Gw=
 github.com/minio/minio-go/v7 v7.0.15 h1:r9/NhjJ+nXYrIYvbObhvc1wPj3YH1iDpJzz61uRKLyY=
@@ -231,3 +233,6 @@ gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b h1:h8qDotaEPuJATrMmW04NCwg7v
 gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
+mosn.io/layotto/sdk/go-sdk v0.0.0-20211020084508-6f5ee3cfeba0 h1:7VrXO1rhre6jEi/AefiSAJKcBN2S1A4xyftGwQtplxo=
+mosn.io/layotto/sdk/go-sdk v0.0.0-20211020084508-6f5ee3cfeba0/go.mod h1:8mz11AqaMK42eseRmD4LvCXM3THklAuuKklkQ3FYPpw=
+mosn.io/layotto/sdk/go-sdk v0.0.0-20240927030843-b4fed4d06be4/go.mod h1:vfiOK6P29QD8Ti5NTeTfWamLN3EzrcCQD1tpldX4K3Y=
