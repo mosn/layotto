@@ -4,7 +4,7 @@ package spec.proto.runtime.v1;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/any.proto";
-import "appcallback.proto";
+import "spec/proto/runtime/v1/appcallback.proto";
 
 option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 option java_outer_classname = "RuntimeProto";
@@ -766,8 +766,11 @@ message PublishEventRequest {
 // The first message must always be the initial request. All subsequent
 // messages must be event processed responses.
 message SubscribeTopicEventsRequest {
+  // The unique identifier for the subscription request.
   oneof subscribe_topic_events_request_type {
+    // The initial message containing the details for subscribing to a topic.
     SubscribeTopicEventsRequestInitial initial_request = 1;
+    // The message containing the subscription to a topic.
     SubscribeTopicEventsRequestProcessed event_processed = 2;
   }
 }
@@ -805,8 +808,11 @@ message SubscribeTopicEventsRequestProcessed {
 // SubscribeTopicEventsResponse is a message returned from layotto
 // when subscribing to a topic via streaming.
 message SubscribeTopicEventsResponse {
+  // The unique identifier for the subscription request.
   oneof subscribe_topic_events_response_type {
+    // The initial response from layotto when subscribing to a topic.
     SubscribeTopicEventsResponseInitial initial_response = 1;
+    // The event message from the topic.
     TopicEventRequest event_message = 2;
   }
 }
