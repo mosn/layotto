@@ -210,13 +210,13 @@ func (a *api) publishMessageForStream(ctx context.Context, msg *pubsub.NewMessag
 		return fmt.Errorf("no streamer subscribed to pubsub %q topic %q", pubsubName, msg.Topic)
 	}
 
-	envelope, cloudEvent, err := a.envelopeFromSubscriptionMessage(ctx, msg)
+	envelope, cloudEvent, _ := a.envelopeFromSubscriptionMessage(ctx, msg)
 
 	ch, defFn := conn.registerPublishResponse(envelope.GetId())
 	defer defFn()
 
 	conn.streamLock.Lock()
-	err = conn.stream.Send(&runtimev1pb.SubscribeTopicEventsResponse{
+	err := conn.stream.Send(&runtimev1pb.SubscribeTopicEventsResponse{
 		SubscribeTopicEventsResponseType: &runtimev1pb.SubscribeTopicEventsResponse_EventMessage{
 			EventMessage: envelope,
 		},

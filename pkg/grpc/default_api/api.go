@@ -20,7 +20,6 @@ import (
 	"context"
 	"errors"
 	"sync"
-	"sync/atomic"
 
 	"github.com/dapr/components-contrib/secretstores"
 
@@ -90,7 +89,6 @@ type api struct {
 	streamer          *streamer
 	// json
 	json    jsoniter.API
-	closed  atomic.Bool
 	closeCh chan struct{}
 	wg      sync.WaitGroup
 }

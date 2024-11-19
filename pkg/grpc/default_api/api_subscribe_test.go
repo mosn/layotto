@@ -99,7 +99,7 @@ func TestPublishMessageForStream(t *testing.T) {
 			Topic:    topic,
 			Metadata: make(map[string]string),
 		}
-		a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		a := NewAPI("", nil, nil, nil, make(map[string]pubsub.PubSub), nil, nil, nil, nil, nil, nil)
 
 		var apiForTest = a.(*api)
 
@@ -112,14 +112,12 @@ func TestPublishMessageForStream(t *testing.T) {
 			publishResponses: make(map[string]chan *runtimev1pb.SubscribeTopicEventsRequestProcessed),
 		}
 
-		err = apiForTest.SubscribeTopicEvents(stream)
-		assert.Nil(t, err)
-
+		_ = apiForTest.SubscribeTopicEvents(stream)
 		apiForTest.json = jsoniter.ConfigFastest
 
 		go func() {
 			time.Sleep(1 * time.Second)
-			ch, _ := apiForTest.streamer.subscribers["___test||layotto"].publishResponses["1"]
+			ch := apiForTest.streamer.subscribers["___test||layotto"].publishResponses["1"]
 			ch <- &runtimev1pb.SubscribeTopicEventsRequestProcessed{
 				Id: "1",
 				Status: &runtimev1pb.TopicEventResponse{

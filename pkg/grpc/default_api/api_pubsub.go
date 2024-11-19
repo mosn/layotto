@@ -154,6 +154,15 @@ func (a *api) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMessage) er
 
 	// TODO tracing
 	envelope, cloudEvent, err := a.envelopeFromSubscriptionMessage(ctx, msg)
+
+	if err != nil {
+		return err
+	}
+
+	if envelope == nil {
+		return nil
+	}
+
 	// Call appcallback
 	clientV1 := runtimev1pb.NewAppCallbackClient(a.AppCallbackConn)
 	res, err := clientV1.OnTopicEvent(ctx, envelope)
