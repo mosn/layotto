@@ -86,8 +86,11 @@ type api struct {
 	// app callback
 	AppCallbackConn   *grpc.ClientConn
 	topicPerComponent map[string]TopicSubscriptions
+	streamer          *streamer
 	// json
-	json jsoniter.API
+	json    jsoniter.API
+	closeCh chan struct{}
+	wg      sync.WaitGroup
 }
 
 func (a *api) Init(conn *grpc.ClientConn) error {
@@ -147,7 +150,9 @@ func NewAPI(
 		sendToOutputBindingFn:    sendToOutputBindingFn,
 		secretStores:             secretStores,
 		json:                     jsoniter.ConfigFastest,
+		//closeCh:                  make(chan struct{}),
 	}
+
 }
 
 func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error) {

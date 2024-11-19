@@ -4,6 +4,7 @@ package spec.proto.runtime.v1;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/any.proto";
+import "spec/proto/runtime/v1/appcallback.proto";
 
 option go_package = "mosn.io/layotto/spec/proto/runtime/v1;runtime";
 option java_outer_classname = "RuntimeProto";
@@ -68,6 +69,10 @@ service Runtime {
 
   // Publishes events to the specific topic
   rpc PublishEvent(PublishEventRequest) returns (google.protobuf.Empty) {}
+
+  // SubscribeTopicEvents subscribes to a PubSub topic and receives topic
+  // events from it.
+  rpc SubscribeTopicEvents(stream SubscribeTopicEventsRequest) returns (stream SubscribeTopicEventsResponse) {}
 
   // Get file with stream
   rpc GetFile(GetFileRequest) returns (stream GetFileResponse) {}
@@ -755,6 +760,66 @@ message PublishEventRequest {
   // - key : the key of the message.
   map<string, string> metadata = 5;
 }
+
+// SubscribeTopicEventsRequest is a message containing the details for
+// subscribing to a topic via streaming.
+// The first message must always be the initial request. All subsequent
+// messages must be event processed responses.
+message SubscribeTopicEventsRequest {
+  // The unique identifier for the subscription request.
+  oneof subscribe_topic_events_request_type {
+    // The initial message containing the details for subscribing to a topic.
+    SubscribeTopicEventsRequestInitial initial_request = 1;
+    // The message containing the subscription to a topic.
+    SubscribeTopicEventsRequestProcessed event_processed = 2;
+  }
+}
+
+// SubscribeTopicEventsRequestInitial is the initial message containing
+// the details for subscribing to a topic via streaming.
+message SubscribeTopicEventsRequestInitial {
+  // The name of the pubsub component
+  string pubsub_name = 1;
+
+  // The pubsub topic
+  string topic = 2;
+
+  // The metadata passing to pub components
+  //
+  // metadata property:
+  // - key : the key of the message.
+  map<string, string> metadata = 3;
+
+  // dead_letter_topic is the topic to which messages that fail to be processed
+  // are sent.
+  optional string dead_letter_topic = 4;
+}
+
+// SubscribeTopicEventsRequestProcessed is the message containing the
+// subscription to a topic.
+message SubscribeTopicEventsRequestProcessed {
+  // id is the unique identifier for the subscription request.
+  string id = 1;
+
+  // status is the result of the subscription request.
+  TopicEventResponse status = 2;
+}
+
+// SubscribeTopicEventsResponse is a message returned from layotto
+// when subscribing to a topic via streaming.
+message SubscribeTopicEventsResponse {
+  // The unique identifier for the subscription request.
+  oneof subscribe_topic_events_response_type {
+    // The initial response from layotto when subscribing to a topic.
+    SubscribeTopicEventsResponseInitial initial_response = 1;
+    // The event message from the topic.
+    TopicEventRequest event_message = 2;
+  }
+}
+
+// SubscribeTopicEventsResponseInitialAlpha1 is the initial response from layotto
+// when subscribing to a topic.
+message SubscribeTopicEventsResponseInitial {}
 
 // InvokeBindingRequest is the message to send data to output bindings
 message InvokeBindingRequest {
