@@ -18,7 +18,6 @@ import (
 
 	"github.com/alicebob/miniredis/v2"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/components/sequencer/redis"
@@ -32,7 +31,7 @@ func TestGetNextIdFromCache(t *testing.T) {
 	assert.NoError(t, err)
 	defer s.Close()
 	// construct componen
-	comp := redis.NewStandaloneRedisSequencer(log.DefaultLogger)
+	comp := redis.NewStandaloneRedisSequencer()
 	cfg := sequencer.Configuration{
 		Properties: make(map[string]string),
 	}

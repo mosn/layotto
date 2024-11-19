@@ -20,7 +20,6 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/sequencer"
 )
@@ -44,7 +43,7 @@ func TestMySQLSequencer_Init(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	comp := NewMySQLSequencer(log.DefaultLogger)
+	comp := NewMySQLSequencer()
 	comp.db = db
 
 	cfg := sequencer.Configuration{
@@ -67,7 +66,7 @@ func TestMySQLSequencer_Init(t *testing.T) {
 
 func TestMySQLSequencer_GetNextId(t *testing.T) {
 
-	comp := NewMySQLSequencer(log.DefaultLogger)
+	comp := NewMySQLSequencer()
 
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -103,7 +102,7 @@ func TestMySQLSequencer_GetNextId(t *testing.T) {
 
 func TestMySQLSequencer_GetSegment(t *testing.T) {
 
-	comp := NewMySQLSequencer(log.DefaultLogger)
+	comp := NewMySQLSequencer()
 
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -147,7 +146,7 @@ func TestMySQLSequencer_Close(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	comp := NewMySQLSequencer(log.DefaultLogger)
+	comp := NewMySQLSequencer()
 
 	cfg := sequencer.Configuration{
 		BiggerThan: nil,
@@ -163,7 +162,7 @@ func TestMySQLSequencer_Close(t *testing.T) {
 }
 
 func TestMySQLSequencer_Segment_Insert(t *testing.T) {
-	comp := NewMySQLSequencer(log.DefaultLogger)
+	comp := NewMySQLSequencer()
 
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -195,7 +194,7 @@ func TestMySQLSequencer_Segment_Insert(t *testing.T) {
 }
 
 func TestMySQLSequencer_GetNextId_Insert(t *testing.T) {
-	comp := NewMySQLSequencer(log.DefaultLogger)
+	comp := NewMySQLSequencer()
 
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -227,7 +226,7 @@ func TestMySQLSequencer_GetNextId_Insert(t *testing.T) {
 }
 
 func TestMySQLSequencer_GetNextId_InsertError(t *testing.T) {
-	comp := NewMySQLSequencer(log.DefaultLogger)
+	comp := NewMySQLSequencer()
 
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -253,7 +252,7 @@ func TestMySQLSequencer_GetNextId_InsertError(t *testing.T) {
 }
 
 func TestMySQLSequencer_Segment_InsertError(t *testing.T) {
-	comp := NewMySQLSequencer(log.DefaultLogger)
+	comp := NewMySQLSequencer()
 
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -282,7 +281,7 @@ func TestMySQLSequencer_Segment_InsertError(t *testing.T) {
 }
 
 func TestMySQLSequencer_GetNextId_UpdateError(t *testing.T) {
-	comp := NewMySQLSequencer(log.DefaultLogger)
+	comp := NewMySQLSequencer()
 
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -313,7 +312,7 @@ func TestMySQLSequencer_GetNextId_UpdateError(t *testing.T) {
 }
 
 func TestMySQLSequencer_Segment_UpdateError(t *testing.T) {
-	comp := NewMySQLSequencer(log.DefaultLogger)
+	comp := NewMySQLSequencer()
 
 	db, mock, err := sqlmock.New()
 	if err != nil {

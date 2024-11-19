@@ -18,7 +18,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/pkg/mock"
 	"mosn.io/layotto/components/sequencer"
@@ -28,7 +27,7 @@ const key = "resource_xxx"
 
 func TestMongoSequencer_Init(t *testing.T) {
 	var mongoUrl = "localhost:xxxxx"
-	comp := NewMongoSequencer(log.DefaultLogger)
+	comp := NewMongoSequencer()
 
 	cfg := sequencer.Configuration{
 		BiggerThan: nil,
@@ -44,7 +43,7 @@ func TestMongoSequencer_Init(t *testing.T) {
 func TestMongoSequencer_GetNextId(t *testing.T) {
 	var mongoUrl = "localhost:27017"
 
-	comp := NewMongoSequencer(log.DefaultLogger)
+	comp := NewMongoSequencer()
 
 	cfg := sequencer.Configuration{
 		BiggerThan: nil,
@@ -87,7 +86,7 @@ func TestMongoSequencer_GetNextId(t *testing.T) {
 func TestMongoSequencer_Close(t *testing.T) {
 	var mongoUrl = "localhost:xxxxx"
 
-	comp := NewMongoSequencer(log.DefaultLogger)
+	comp := NewMongoSequencer()
 
 	cfg := sequencer.Configuration{
 		BiggerThan: nil,
@@ -120,7 +119,7 @@ func TestMongoSequencer_Close(t *testing.T) {
 func TestMongoSequencer_GetSegment(t *testing.T) {
 	var mongoUrl = "localhost:xxxxx"
 
-	comp := NewMongoSequencer(log.DefaultLogger)
+	comp := NewMongoSequencer()
 
 	cfg := sequencer.Configuration{
 		BiggerThan: nil,

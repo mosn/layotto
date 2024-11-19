@@ -20,7 +20,8 @@ import (
 	"time"
 
 	"github.com/apolloconfig/agollo/v4/storage"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/configstores"
 )
@@ -29,6 +30,7 @@ type changeListener struct {
 	subscribers *subscriberHolder
 	timeout     time.Duration
 	store       RepoForListener
+	logger      logger.Logger
 }
 
 type RepoForListener interface {
@@ -38,11 +40,12 @@ type RepoForListener interface {
 	GetStoreName() string
 }
 
-func newChangeListener(c RepoForListener) *changeListener {
+func newChangeListener(c RepoForListener, log logger.Logger) *changeListener {
 	return &changeListener{
 		subscribers: newSubscriberHolder(),
 		timeout:     time.Duration(defaultTimeoutWhenResponse) * time.Millisecond,
 		store:       c,
+		logger:      log,
 	}
 }
 
@@ -72,7 +75,7 @@ func (lis *changeListener) notify(s *subscriber, keyWithLabel string, change *st
 	// 1 recover panic caused when interacting with the chan
 	defer func() {
 		if r := recover(); r != nil {
-			log.DefaultLogger.Errorf("panic when notify subscriber. %v", r)
+			lis.logger.Errorf("panic when notify subscriber. %v", r)
 			// make sure unused chan are all deleted
 			if lis != nil && lis.subscribers != nil {
 				lis.subscribers.remove(s)
@@ -90,7 +93,7 @@ func (lis *changeListener) notify(s *subscriber, keyWithLabel string, change *st
 		tags, err := lis.store.getAllTags(s.group, keyWithLabel)
 		if err != nil {
 			//	log and ignore
-			log.DefaultLogger.Errorf("Error when querying tags in change_listener: %v", err)
+			lis.logger.Errorf("Error when querying tags in change_listener: %v", err)
 		} else {
 			item.Tags = tags
 		}

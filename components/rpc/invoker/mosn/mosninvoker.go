@@ -25,7 +25,8 @@ import (
 
 	// bridge to mosn
 	_ "mosn.io/mosn/pkg/filter/network/proxy"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/components/rpc/callback"
@@ -40,6 +41,7 @@ const (
 type mosnInvoker struct {
 	channel rpc.Channel
 	cb      rpc.Callback
+	logger  logger.Logger
 }
 
 // mosnConfig is mosn config
@@ -51,8 +53,16 @@ type mosnConfig struct {
 
 // NewMosnInvoker is init mosnInvoker
 func NewMosnInvoker() rpc.Invoker {
-	invoker := &mosnInvoker{cb: callback.NewCallback()}
+	invoker := &mosnInvoker{
+		cb:     callback.NewCallback(),
+		logger: logger.NewLayottoLogger("mosnInvoker"),
+	}
+	logger.RegisterComponentLoggerListener("mosnInvoker", invoker)
 	return invoker
+}
+
+func (m *mosnInvoker) OnLogLevelChanged(level logger.LogLevel) {
+	m.logger.SetLogLevel(level)
 }
 
 // Init is init mosn RpcConfig
@@ -88,7 +98,7 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("[runtime][rpc]mosn invoker panic: %v", r)
-			log.DefaultLogger.Errorf("%v", err)
+			m.logger.Errorf("%v", err)
 		}
 	}()
 
@@ -103,24 +113,24 @@ func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rp
 		}
 	}
 	req.Ctx = ctx
-	log.DefaultLogger.Debugf("[runtime][rpc]request %+v", req)
+	m.logger.Debugf("[runtime][rpc]request %+v", req)
 	// 2. beforeInvoke callback
 	req, err = m.cb.BeforeInvoke(req)
 	if err != nil {
-		log.DefaultLogger.Errorf("[runtime][rpc]before filter error %s", err.Error())
+		m.logger.Errorf("[runtime][rpc]before filter error %s", err.Error())
 		return nil, err
 	}
 	// 3. do invocation
 	resp, err = m.channel.Do(req)
 	if err != nil {
-		log.DefaultLogger.Errorf("[runtime][rpc]error %s", err.Error())
+		m.logger.Errorf("[runtime][rpc]error %s", err.Error())
 		return nil, err
 	}
 	resp.Ctx = req.Ctx
 	// 4. afterInvoke callback
 	resp, err = m.cb.AfterInvoke(resp)
 	if err != nil {
-		log.DefaultLogger.Errorf("[runtime][rpc]after filter error %s", err.Error())
+		m.logger.Errorf("[runtime][rpc]after filter error %s", err.Error())
 		return nil, err
 	}
 	return resp, nil

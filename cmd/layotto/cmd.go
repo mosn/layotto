@@ -28,6 +28,8 @@ import (
 	mosn_zipkin "mosn.io/mosn/pkg/trace/zipkin"
 	"mosn.io/pkg/buffer"
 
+	"mosn.io/layotto/kit/logger"
+
 	component_actuators "mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/diagnostics"
 	"mosn.io/layotto/diagnostics/jaeger"
@@ -113,6 +115,14 @@ var (
 			}, cli.StringSliceFlag{
 				Name:  "component-log-level, lc",
 				Usage: "mosn component format, currently useless",
+			}, cli.StringFlag{
+				Name:   "logging-level, ll",
+				Usage:  "layotto log level, trace|debug|info|warn|error|fatal",
+				EnvVar: "LOGGING_LEVEL",
+			}, cli.StringFlag{
+				Name:   "logging-path, lp",
+				Usage:  "layotto log file path, default ./",
+				EnvVar: "LOGGING_PATH",
 			}, cli.StringFlag{
 				Name:  "local-address-ip-version",
 				Usage: "ip version, v4 or v6, currently useless",
@@ -248,6 +258,13 @@ func SetActuatorAfterStart(_ stagemanager.Application) {
 
 func DefaultParamsParsed(c *cli.Context) {
 	// log level control
+	flagLoggingLevel := c.String("logging-level")
+	logger.SetDefaultLoggerLevel(flagLoggingLevel)
+
+	flagLoggingPath := c.String("logging-path")
+	logger.SetDefaultLoggerFilePath(flagLoggingPath)
+
+	// log level control
 	flagLogLevel := c.String("log-level")
 	if mosnLogLevel, ok := flagToMosnLogLevel[flagLogLevel]; ok {
 		if mosnLogLevel == "OFF" {
@@ -295,8 +312,9 @@ func ExtensionsRegister(_ *cli.Context) {
 	trace.RegisterTracerBuilder(mosn_jaeger.DriverName, lprotocol.Layotto, jaeger.NewGrpcJaegerTracer)
 	trace.RegisterTracerBuilder(mosn_zipkin.DriverName, lprotocol.Layotto, zipkin.NewGrpcZipTracer)
 
+	log := logger.NewLayottoLogger("iobuffer")
 	// register buffer logger
 	buffer.SetLogFunc(func(msg string) {
-		log.DefaultLogger.Errorf("[iobuffer] iobuffer error log info: %s", msg)
+		log.Errorf("[iobuffer] iobuffer error log info: %s", msg)
 	})
 }

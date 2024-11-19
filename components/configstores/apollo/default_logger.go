@@ -17,15 +17,15 @@
 package apollo
 
 import (
-	"mosn.io/pkg/log"
+	"mosn.io/layotto/kit/logger"
 )
 
 // An adapter to implement log.LoggerInterface in agollo package.
 type DefaultLogger struct {
-	logger log.ErrorLogger
+	logger logger.Logger
 }
 
-func NewDefaultLogger(logger log.ErrorLogger) *DefaultLogger {
+func NewDefaultLogger(logger logger.Logger) *DefaultLogger {
 	return &DefaultLogger{
 		logger: logger,
 	}

@@ -19,7 +19,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/hashicorp/consul/api"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/mock"
@@ -33,7 +32,7 @@ const expireTime = 5
 // Init with wrong config
 func TestConsulLock_InitWithWrongConfig(t *testing.T) {
 	t.Run("when no address then error", func(t *testing.T) {
-		comp := NewConsulLock(log.DefaultLogger)
+		comp := NewConsulLock()
 		cfg := lock.Metadata{
 			Properties: make(map[string]string),
 		}
@@ -45,7 +44,7 @@ func TestConsulLock_InitWithWrongConfig(t *testing.T) {
 
 // Test features
 func TestConsulLock_Features(t *testing.T) {
-	comp := NewConsulLock(log.DefaultLogger)
+	comp := NewConsulLock()
 	assert.True(t, len(comp.Features()) == 0)
 }
 
@@ -57,7 +56,7 @@ func TestConsulLock_TryLock(t *testing.T) {
 	factory := mock.NewMockSessionFactory(ctrl)
 	kv := mock.NewMockConsulKV(ctrl)
 
-	comp := NewConsulLock(log.DefaultLogger)
+	comp := NewConsulLock()
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),
 	}
@@ -103,7 +102,7 @@ func TestConsulLock_ALock_BLock(t *testing.T) {
 	factory := mock.NewMockSessionFactory(ctrl)
 	kv := mock.NewMockConsulKV(ctrl)
 
-	comp := NewConsulLock(log.DefaultLogger)
+	comp := NewConsulLock()
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),
 	}
@@ -149,7 +148,7 @@ func TestConsulLock_ALock_BUnlock(t *testing.T) {
 	factory := mock.NewMockSessionFactory(ctrl)
 	kv := mock.NewMockConsulKV(ctrl)
 
-	comp := NewConsulLock(log.DefaultLogger)
+	comp := NewConsulLock()
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),
 	}

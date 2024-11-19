@@ -21,8 +21,6 @@ import (
 	"testing"
 	"time"
 
-	"mosn.io/pkg/log"
-
 	"mosn.io/layotto/components/lock"
 
 	"github.com/google/uuid"
@@ -48,7 +46,7 @@ func TestEtcdLock_Init(t *testing.T) {
 		etcdServer.Server.Stop()
 		os.RemoveAll(etcdTestDir)
 	}()
-	comp := NewEtcdLock(log.DefaultLogger)
+	comp := NewEtcdLock()
 
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),
@@ -82,7 +80,7 @@ func TestEtcdLock_Init(t *testing.T) {
 func TestEtcdLock_CreateConnTimeout(t *testing.T) {
 	var err error
 
-	comp := NewEtcdLock(log.DefaultLogger)
+	comp := NewEtcdLock()
 
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),
@@ -112,7 +110,7 @@ func TestEtcdLock_TryLock(t *testing.T) {
 		os.RemoveAll(etcdTestDir)
 	}()
 
-	comp := NewEtcdLock(log.DefaultLogger)
+	comp := NewEtcdLock()
 
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),
@@ -183,7 +181,7 @@ func TestEtcdLock_UnLock(t *testing.T) {
 		os.RemoveAll(etcdTestDir)
 	}()
 
-	comp := NewEtcdLock(log.DefaultLogger)
+	comp := NewEtcdLock()
 
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),

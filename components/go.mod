@@ -48,6 +48,7 @@ require (
 	google.golang.org/grpc v1.48.0
 	google.golang.org/protobuf v1.27.1
 	mosn.io/api v1.3.0
+	mosn.io/layotto/kit v0.0.0-00010101000000-000000000000
 	mosn.io/layotto/spec v0.0.0-20231023045845-48ec2bc7eab8
 	mosn.io/mosn v1.3.0
 	mosn.io/pkg v1.3.0
@@ -164,7 +165,7 @@ require (
 	github.com/rs/xid v1.2.1 // indirect
 	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
-	github.com/sirupsen/logrus v1.8.1 // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/soheilhy/cmux v0.1.5 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
@@ -224,3 +225,5 @@ require (
 replace github.com/klauspost/compress => github.com/klauspost/compress v1.13.1
 
 replace mosn.io/layotto/spec => ../spec
+
+replace mosn.io/layotto/kit => ../kit

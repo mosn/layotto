@@ -5,6 +5,8 @@ import (
 	"runtime"
 	"time"
 
+	"mosn.io/layotto/kit/logger"
+
 	"mosn.io/api"
 	"mosn.io/mosn/istio/istio1106"
 	v2 "mosn.io/mosn/pkg/config/v2"
@@ -295,8 +297,9 @@ func ExtensionsRegister(_ *cli.Context) {
 	trace.RegisterTracerBuilder(mosn_jaeger.DriverName, lprotocol.Layotto, jaeger.NewGrpcJaegerTracer)
 	trace.RegisterTracerBuilder(mosn_zipkin.DriverName, lprotocol.Layotto, zipkin.NewGrpcZipTracer)
 
+	log := logger.NewLayottoLogger("iobuffer")
 	// register buffer logger
 	buffer.SetLogFunc(func(msg string) {
-		log.DefaultLogger.Errorf("[iobuffer] iobuffer error log info: %s", msg)
+		log.Errorf("[iobuffer] iobuffer error log info: %s", msg)
 	})
 }

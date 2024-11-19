@@ -58,7 +58,7 @@ func setupChangeListener() *changeListener {
 	mockRepo := &MockRepo{
 		c: NewStore().(*ConfigStore),
 	}
-	return newChangeListener(mockRepo)
+	return newChangeListener(mockRepo, mockRepo.c.log)
 }
 
 // Test modified

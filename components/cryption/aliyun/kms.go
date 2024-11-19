@@ -22,7 +22,8 @@ import (
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	kms20160120 "github.com/alibabacloud-go/kms-20160120/v3/client"
 	"github.com/alibabacloud-go/tea/tea"
-	"mosn.io/pkg/log"
+
+	log "mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/cryption"
 )
@@ -30,13 +31,22 @@ import (
 type cy struct {
 	client *kms20160120.Client
 	keyID  string
+	log    log.Logger
 }
 
 /*
 refer: https://help.aliyun.com/document_detail/611325.html
 */
 func NewCryption() cryption.CryptionService {
-	return &cy{}
+	cryption := &cy{
+		log: log.NewLayottoLogger("cryption/aliyun"),
+	}
+	log.RegisterComponentLoggerListener("cryption/aliyun", cryption)
+	return cryption
+}
+
+func (k *cy) OnLogLevelChanged(outputLevel log.LogLevel) {
+	k.log.SetLogLevel(outputLevel)
 }
 
 func (k *cy) Init(ctx context.Context, conf *cryption.Config) error {
@@ -67,7 +77,7 @@ func (k *cy) Decrypt(ctx context.Context, request *cryption.DecryptRequest) (*cr
 	}
 	decryptResp, err := k.client.Decrypt(decryptRequest)
 	if err != nil {
-		log.DefaultLogger.Errorf("fail decrypt data, err: %+v", err)
+		k.log.Errorf("fail decrypt data, err: %+v", err)
 		return nil, fmt.Errorf("fail decrypt data with error: %+v", err)
 	}
 	resp := &cryption.DecryptResponse{KeyId: *decryptResp.Body.KeyId, KeyVersionId: *decryptResp.Body.KeyVersionId,
@@ -89,7 +99,7 @@ func (k *cy) Encrypt(ctx context.Context, request *cryption.EncryptRequest) (*cr
 
 	encryptResp, err := k.client.Encrypt(encryptRequest)
 	if err != nil {
-		log.DefaultLogger.Errorf("fail encrypt data, err: %+v", err)
+		k.log.Errorf("fail encrypt data, err: %+v", err)
 		return nil, fmt.Errorf("fail encrypt data with error: %+v", err)
 	}
 	resp := &cryption.EncryptResponse{KeyId: *encryptResp.Body.KeyId, KeyVersionId: *encryptResp.Body.KeyVersionId,

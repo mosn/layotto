@@ -25,37 +25,41 @@ import (
 
 	wasm2 "mosn.io/mosn/pkg/wasm"
 
-	"mosn.io/pkg/log"
+	"mosn.io/layotto/kit/logger"
 )
 
 func init() {
-	wasm.GetDefault().AddEndpoint("uninstall", NewEndpoint())
+	w := wasm.GetDefault()
+	w.AddEndpoint("uninstall", NewEndpoint(w.Logger))
 }
 
 type Endpoint struct {
+	logger logger.Logger
 }
 
-func NewEndpoint() *Endpoint {
-	return &Endpoint{}
+func NewEndpoint(logger logger.Logger) *Endpoint {
+	return &Endpoint{
+		logger: logger,
+	}
 }
 
 func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[string]interface{}, error) {
 	conf, err := http.GetRequestData(ctx)
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasm][uninstall] invalid request body for request /wasm/uninstall, err:%v", err)
+		e.logger.Errorf("[wasm][uninstall] invalid request body for request /wasm/uninstall, err:%v", err)
 		return map[string]interface{}{"error": err.Error()}, err
 	}
 
 	if conf["name"] == nil {
 		errorMessage := "can't get name property"
-		log.DefaultLogger.Errorf("[wasm][uninstall] %v", errorMessage)
+		e.logger.Errorf("[wasm][uninstall] %v", errorMessage)
 		return map[string]interface{}{"error": errorMessage}, errors.New(errorMessage)
 	}
 
 	factory := wasm.GetFactory()
 	err = factory.UnInstall(conf["name"].(string), wasm2.GetWasmManager())
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasm][uninstall] %v", err)
+		e.logger.Errorf("[wasm][uninstall] %v", err)
 		return map[string]interface{}{"error": err.Error()}, err
 	}
 	return nil, nil

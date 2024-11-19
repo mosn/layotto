@@ -27,7 +27,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"mosn.io/mosn/pkg/log"
 
 	"mosn.io/layotto/components/configstores"
 )
@@ -207,7 +206,6 @@ func TestConfigStore_Init(t *testing.T) {
 
 		// 2. test the ConfigStore,which has a MockRepository in it
 		// init
-		log.DefaultLogger.SetLogLevel(log.DEBUG)
 		err := store.Init(cfg)
 		assert.NotNil(t, err)
 	})
@@ -224,7 +222,6 @@ func TestConfigStore_Init(t *testing.T) {
 
 		// 2. test the ConfigStore,which has a MockRepository in it
 		// init
-		log.DefaultLogger.SetLogLevel(log.DEBUG)
 		err := store.Init(cfg)
 		assert.Error(t, err)
 	})
@@ -241,7 +238,6 @@ func TestConfigStore_Init(t *testing.T) {
 
 		// 2. test the ConfigStore,which has a MockRepository in it
 		// init
-		log.DefaultLogger.SetLogLevel(log.DEBUG)
 		err := store.Init(cfg)
 		assert.Nil(t, err)
 	})

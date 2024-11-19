@@ -18,7 +18,6 @@ import (
 	"github.com/go-zookeeper/zk"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/pkg/mock"
 	"mosn.io/layotto/components/sequencer"
@@ -34,7 +33,7 @@ func TestZookeeperSequencer_GetNextId(t *testing.T) {
 		},
 	}
 
-	comp := NewZookeeperSequencer(log.DefaultLogger)
+	comp := NewZookeeperSequencer()
 	comp.Init(cfg)
 
 	//mock

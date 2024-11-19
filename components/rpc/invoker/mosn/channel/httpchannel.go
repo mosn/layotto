@@ -23,6 +23,8 @@ import (
 	"net/http"
 	"time"
 
+	"mosn.io/layotto/kit/logger"
+
 	"mosn.io/pkg/buffer"
 
 	"github.com/valyala/fasthttp"
@@ -62,12 +64,16 @@ func (h *hstate) close() {
 
 // httpChannel is Channel implement
 type httpChannel struct {
-	pool *connPool
+	pool   *connPool
+	logger logger.Logger
 }
 
 // newHttpChannel is used to create rpc.Channel according to ChannelConfig
 func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
-	hc := &httpChannel{}
+	hc := &httpChannel{
+		logger: logger.NewLayottoLogger("httpChannel/" + config.Protocol),
+	}
+	logger.RegisterComponentLoggerListener("httpChannel/"+config.Protocol, hc)
 	hc.pool = newConnPool(
 		config.Size,
 		// dialFunc
@@ -99,8 +105,13 @@ func newHttpChannel(config ChannelConfig) (rpc.Channel, error) {
 		},
 		hc.onData,
 		hc.cleanup,
+		hc.logger,
 	)
 	return hc, nil
+}
+
+func (h *httpChannel) OnLogLevelChanged(level logger.LogLevel) {
+	h.logger.SetLogLevel(level)
 }
 
 // Do is used to handle RPCRequest and return RPCResponse

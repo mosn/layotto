@@ -19,7 +19,7 @@ package callback
 import (
 	"encoding/json"
 
-	"mosn.io/pkg/log"
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/rpc"
 )
@@ -63,23 +63,32 @@ var (
 
 // NewCallback is created Callback
 func NewCallback() rpc.Callback {
-	return &callback{}
+	cb := &callback{
+		logger: logger.NewLayottoLogger("rpc-callback"),
+	}
+	logger.NewLayottoLogger("rpc-callback")
+	return cb
+}
+
+func (c *callback) OnLogLevelChanged(level logger.LogLevel) {
+	c.logger.SetLogLevel(level)
 }
 
 type callback struct {
 	beforeInvoke []func(*rpc.RPCRequest) (*rpc.RPCRequest, error)
 	afterInvoke  []func(*rpc.RPCResponse) (*rpc.RPCResponse, error)
+	logger       logger.Logger
 }
 
 // AddBeforeInvoke is add beforeInvoke into callback.beforeInvoke
 func (c *callback) AddBeforeInvoke(conf rpc.CallbackFunc) {
 	f, ok := beforeInvokeRegistry[conf.Name]
 	if !ok {
-		log.DefaultLogger.Errorf("[runtime][rpc]can't find before filter %s", conf.Name)
+		c.logger.Errorf("[runtime][rpc]can't find before filter %s", conf.Name)
 		return
 	}
 	if err := f.Init(conf.Config); err != nil {
-		log.DefaultLogger.Errorf("[runtime][rpc]init before filter err %s", err.Error())
+		c.logger.Errorf("[runtime][rpc]init before filter err %s", err.Error())
 		return
 	}
 	c.beforeInvoke = append(c.beforeInvoke, f.Create())
@@ -89,11 +98,11 @@ func (c *callback) AddBeforeInvoke(conf rpc.CallbackFunc) {
 func (c *callback) AddAfterInvoke(conf rpc.CallbackFunc) {
 	f, ok := afterInvokeRegistry[conf.Name]
 	if !ok {
-		log.DefaultLogger.Errorf("[runtime][rpc]can't find after filter %s", conf.Name)
+		c.logger.Errorf("[runtime][rpc]can't find after filter %s", conf.Name)
 		return
 	}
 	if err := f.Init(conf.Config); err != nil {
-		log.DefaultLogger.Errorf("[runtime][rpc]init after filter err %s", err.Error())
+		c.logger.Errorf("[runtime][rpc]init after filter err %s", err.Error())
 		return
 	}
 	c.afterInvoke = append(c.afterInvoke, f.Create())

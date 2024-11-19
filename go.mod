@@ -25,7 +25,7 @@ require (
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
-	github.com/sirupsen/logrus v1.8.1
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.0
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/urfave/cli v1.22.1
@@ -315,6 +315,7 @@ require (
 	k8s.io/client-go v0.20.0 // indirect
 	k8s.io/klog/v2 v2.4.0 // indirect
 	k8s.io/utils v0.0.0-20201110183641-67b214c5f920 // indirect
+	mosn.io/layotto/kit v0.0.0-00010101000000-000000000000 // indirect
 	nhooyr.io/websocket v1.8.7 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.0.2 // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
@@ -327,6 +328,7 @@ replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/klauspost/compress => github.com/klauspost/compress v1.13.0
 	mosn.io/layotto/components => ./components
+	mosn.io/layotto/kit => ./kit
 	mosn.io/layotto/spec => ./spec
 	mosn.io/proxy-wasm-go-host => github.com/layotto/proxy-wasm-go-host v0.1.1-0.20221229094558-d39f73d2858d
 )

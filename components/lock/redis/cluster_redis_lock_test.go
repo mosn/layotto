@@ -21,7 +21,6 @@ import (
 	miniredis "github.com/alicebob/miniredis/v2"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
 )
@@ -34,7 +33,7 @@ const (
 func TestClusterRedisLock_InitError(t *testing.T) {
 	t.Run("error when connection fail", func(t *testing.T) {
 		// construct component
-		comp := NewClusterRedisLock(log.DefaultLogger)
+		comp := NewClusterRedisLock()
 
 		cfg := lock.Metadata{
 			Properties: make(map[string]string),
@@ -49,7 +48,7 @@ func TestClusterRedisLock_InitError(t *testing.T) {
 
 	t.Run("error when no host", func(t *testing.T) {
 		// construct component
-		comp := NewClusterRedisLock(log.DefaultLogger)
+		comp := NewClusterRedisLock()
 
 		cfg := lock.Metadata{
 			Properties: make(map[string]string),
@@ -64,7 +63,7 @@ func TestClusterRedisLock_InitError(t *testing.T) {
 
 	t.Run("error when wrong MaxRetries", func(t *testing.T) {
 		// construct component
-		comp := NewClusterRedisLock(log.DefaultLogger)
+		comp := NewClusterRedisLock()
 
 		cfg := lock.Metadata{
 			Properties: make(map[string]string),
@@ -90,7 +89,7 @@ func TestClusterRedisLock_TryLock(t *testing.T) {
 		redisAddrs = append(redisAddrs, redis.Addr())
 	}
 	// construct component
-	comp := NewClusterRedisLock(log.DefaultLogger)
+	comp := NewClusterRedisLock()
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),
 	}
