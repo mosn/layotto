@@ -176,7 +176,7 @@ func ToLogPriority(level LogLevel) int {
 }
 
 // NewLayottoLogger creates new Logger instance.
-func NewLayottoLogger(name string) *layottoLogger {
+func NewLayottoLogger(name string) Logger {
 	ll := &layottoLogger{
 		name:     name,
 		logLevel: defaultLoggerLevel,

@@ -70,10 +70,8 @@ func TestPutFile(t *testing.T) {
 	assert.Equal(t, err, status.Errorf(codes.InvalidArgument, "not support store type: mock1"))
 
 	mockStream.EXPECT().Recv().Return(&runtimev1pb.PutFileRequest{StoreName: "mock"}, nil).Times(1)
-	stream := newPutObjectStreamReader(nil, mockStream)
-	Metadata := make(map[string]string)
 	mockStream.EXPECT().Context().Return(context.Background())
-	mockFile.EXPECT().Put(context.Background(), &file.PutFileStu{DataStream: stream, FileName: "", Metadata: Metadata}).Return(errors.New("err occur")).Times(1)
+	mockFile.EXPECT().Put(context.Background(), gomock.Any()).Return(errors.New("err occur")).Times(1)
 	err = api.PutFile(mockStream)
 	s, _ := status.FromError(err)
 	assert.Equal(t, s.Message(), "err occur")

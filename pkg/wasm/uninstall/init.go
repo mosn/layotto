@@ -24,5 +24,6 @@ import (
 )
 
 func init() {
-	wasm.GetDefault().AddEndpoint("uninstall", NewEndpoint())
+	w := wasm.GetDefault()
+	w.AddEndpoint("uninstall", NewEndpoint(w.Logger))
 }
