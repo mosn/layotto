@@ -49,19 +49,12 @@ type conn struct {
 func (a *api) SubscribeTopicEvents(stream runtimev1pb.Runtime_SubscribeTopicEventsServer) error {
 	errCh := make(chan error, 2)
 	subDone := make(chan struct{})
-	a.wg.Add(2)
 
 	go func() {
-		defer a.wg.Done()
-		select {
-		case <-a.closeCh:
-			errCh <- errors.New("api server closed")
-		case <-subDone:
-		}
+		<-subDone
 	}()
 
 	go func() {
-		defer a.wg.Done()
 		errCh <- a.streamSubscribe(stream, subDone)
 	}()
 
@@ -170,8 +163,6 @@ func (s *streamer) Subscribe(stream runtimev1pb.Runtime_SubscribeTopicEventsServ
 		s.lock.Unlock()
 	}()
 
-	var wg sync.WaitGroup
-	defer wg.Wait()
 	for {
 		resp, err := stream.Recv()
 
@@ -193,9 +184,7 @@ func (s *streamer) Subscribe(stream runtimev1pb.Runtime_SubscribeTopicEventsServ
 		if eventResp == nil {
 			return errors.New("duplicate initial request received")
 		}
-		wg.Add(1)
 		go func() {
-			defer wg.Done()
 			conn.notifyPublishResponse(stream.Context(), eventResp)
 		}()
 	}
@@ -221,6 +210,10 @@ func (a *api) publishMessageForStream(ctx context.Context, msg *pubsub.NewMessag
 			EventMessage: envelope,
 		},
 	})
+	if err != nil {
+		log.DefaultLogger.Errorf("error sending message to client stream: %s", err)
+		return err
+	}
 	conn.streamLock.Unlock()
 
 	var resp *runtimev1pb.SubscribeTopicEventsRequestProcessed

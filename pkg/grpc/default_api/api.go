@@ -88,9 +88,7 @@ type api struct {
 	topicPerComponent map[string]TopicSubscriptions
 	streamer          *streamer
 	// json
-	json    jsoniter.API
-	closeCh chan struct{}
-	wg      sync.WaitGroup
+	json jsoniter.API
 }
 
 func (a *api) Init(conn *grpc.ClientConn) error {
@@ -150,7 +148,6 @@ func NewAPI(
 		sendToOutputBindingFn:    sendToOutputBindingFn,
 		secretStores:             secretStores,
 		json:                     jsoniter.ConfigFastest,
-		//closeCh:                  make(chan struct{}),
 	}
 
 }
