@@ -22,6 +22,9 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"sync"
+
+	"mosn.io/layotto/components/pkg/actuators"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 
@@ -32,7 +35,19 @@ import (
 
 const (
 	storageTypeKey = "storageType"
+	componentName  = "file-aliyun"
 )
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 // AliyunFile is a binding for an AliCloud OSS storage bucketKey
 type AliyunFile struct {
@@ -40,6 +55,10 @@ type AliyunFile struct {
 }
 
 func NewAliyunFile() file.File {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	oss := &AliyunFile{}
 	return oss
 }
@@ -49,6 +68,8 @@ func (s *AliyunFile) Init(ctx context.Context, metadata *file.FileConfig) error 
 	m := make([]*utils.OssMetadata, 0)
 	err := json.Unmarshal(metadata.Metadata, &m)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return file.ErrInvalid
 	}
 
@@ -58,10 +79,14 @@ func (s *AliyunFile) Init(ctx context.Context, metadata *file.FileConfig) error 
 		}
 		client, err := oss.New(v.Endpoint, v.AccessKeyID, v.AccessKeySecret)
 		if err != nil {
+			readinessIndicator.ReportError(err.Error())
+			livenessIndicator.ReportError(err.Error())
 			return err
 		}
 		s.client = client
 	}
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

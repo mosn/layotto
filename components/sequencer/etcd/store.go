@@ -10,18 +10,36 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package etcd
 
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"mosn.io/pkg/log"
 
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
 )
+
+const (
+	componentName = "sequencer-etcd"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type EtcdSequencer struct {
 	client     *clientv3.Client
@@ -36,6 +54,10 @@ type EtcdSequencer struct {
 
 // EtcdSequencer returns a new etcd sequencer
 func NewEtcdSequencer(logger log.ErrorLogger) *EtcdSequencer {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	s := &EtcdSequencer{
 		logger: logger,
 	}
@@ -54,6 +76,8 @@ func (e *EtcdSequencer) Init(config sequencer.Configuration) error {
 
 	// 2. construct client
 	if e.client, err = utils.NewEtcdClient(m); err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	e.ctx, e.cancel = context.WithCancel(context.Background())
@@ -68,6 +92,8 @@ func (e *EtcdSequencer) Init(config sequencer.Configuration) error {
 			actualKey := e.getKeyInEtcd(k)
 			get, err := kv.Get(e.ctx, actualKey)
 			if err != nil {
+				readinessIndicator.ReportError(err.Error())
+				livenessIndicator.ReportError(err.Error())
 				return err
 			}
 			var cur int64 = 0
@@ -80,6 +106,8 @@ func (e *EtcdSequencer) Init(config sequencer.Configuration) error {
 		}
 	}
 	// TODO close component?
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

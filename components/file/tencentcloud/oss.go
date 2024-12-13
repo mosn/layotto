@@ -25,24 +25,35 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/pkg/errors"
 	"github.com/tencentyun/cos-go-sdk-v5"
 
 	"mosn.io/layotto/components/file"
+	"mosn.io/layotto/components/pkg/actuators"
 )
 
 const (
 	endpointKey    = "endpoint"
 	aclKey         = "ACL"
 	contentTypeKey = "content-type"
+	componentName  = "file-tencentcloud"
 )
 
 var (
 	ErrClientNotExist     = errors.New("specific client not exist")
 	ErrNotSpecifyEndPoint = errors.New("not specify endpoint in metadata")
+	once                  sync.Once
+	readinessIndicator    *actuators.HealthIndicator
+	livenessIndicator     *actuators.HealthIndicator
 )
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type TencentCloudOSS struct {
 	metadata map[string]*OssMetadata
@@ -58,6 +69,10 @@ type OssMetadata struct {
 }
 
 func NewTencentCloudOSS() file.File {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	oss := &TencentCloudOSS{metadata: make(map[string]*OssMetadata), client: make(map[string]*cos.Client)}
 	return oss
 }
@@ -67,6 +82,8 @@ func (t *TencentCloudOSS) Init(ctx context.Context, metadata *file.FileConfig) e
 	m := make([]*OssMetadata, 0)
 	err := json.Unmarshal(metadata.Metadata, &m)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return file.ErrInvalid
 	}
 
@@ -76,11 +93,15 @@ func (t *TencentCloudOSS) Init(ctx context.Context, metadata *file.FileConfig) e
 		}
 		client, err := t.getClient(v)
 		if err != nil {
+			readinessIndicator.ReportError(err.Error())
+			livenessIndicator.ReportError(err.Error())
 			return err
 		}
 		t.metadata[v.Endpoint] = v
 		t.client[v.Endpoint] = client
 	}
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

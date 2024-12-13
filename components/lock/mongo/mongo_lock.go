@@ -10,11 +10,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package mongo
 
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -26,6 +28,7 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 )
 
@@ -36,7 +39,19 @@ const (
 	UNLOCK_UNEXIST          = 4
 	UNLOCK_BELONG_TO_OTHERS = 5
 	UNLOCK_FAIL             = 6
+	componentName           = "lock-mongo"
 )
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 // mongo lock store
 type MongoLock struct {
@@ -56,6 +71,10 @@ type MongoLock struct {
 
 // NewMongoLock returns a new mongo lock
 func NewMongoLock(logger log.ErrorLogger) *MongoLock {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	s := &MongoLock{
 		features: make([]lock.Feature, 0),
 		logger:   logger,
@@ -68,6 +87,8 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 	// 1.parse config
 	m, err := utils.ParseMongoMetadata(metadata.Properties)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	e.metadata = m
@@ -76,17 +97,23 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 
 	// 2. construct client
 	if client, err = e.factory.NewMongoClient(m); err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 
 	e.ctx, e.cancel = context.WithCancel(context.Background())
 
 	if err := client.Ping(e.ctx, nil); err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	// Connections Collection
 	e.collection, err = utils.SetCollection(client, e.factory, e.metadata)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 
@@ -99,6 +126,8 @@ func (e *MongoLock) Init(metadata lock.Metadata) error {
 
 	e.client = client
 
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return err
 }
 

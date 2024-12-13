@@ -23,12 +23,14 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	aws_config "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 
 	"mosn.io/layotto/components/oss"
@@ -41,12 +43,31 @@ import (
 	"mosn.io/pkg/log"
 )
 
+const (
+	componentName = "oss-aws"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
+
 type AwsOss struct {
 	client    *s3.Client
 	basicConf json.RawMessage
 }
 
 func NewAwsOss() oss.Oss {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	return &AwsOss{}
 }
 
@@ -55,6 +76,8 @@ func (a *AwsOss) Init(ctx context.Context, config *oss.Config) error {
 	m := &utils.OssMetadata{}
 	err := json.Unmarshal(a.basicConf, &m)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return oss.ErrInvalid
 	}
 	optFunc := []func(options *aws_config.LoadOptions) error{
@@ -68,10 +91,14 @@ func (a *AwsOss) Init(ctx context.Context, config *oss.Config) error {
 	}
 	cfg, err := aws_config.LoadDefaultConfig(context.TODO(), optFunc...)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	client := s3.NewFromConfig(cfg)
 	a.client = client
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

@@ -23,8 +23,10 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"sync"
 
 	"mosn.io/layotto/components/file/util"
+	"mosn.io/layotto/components/pkg/actuators"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
@@ -34,8 +36,9 @@ import (
 )
 
 const (
-	endpointKey = "endpoint"
-	fileSize    = "fileSize"
+	endpointKey   = "endpoint"
+	fileSize      = "fileSize"
+	componentName = "file-monio"
 )
 
 var (
@@ -43,7 +46,15 @@ var (
 	ErrClientNotExist     error = errors.New("specific client not exist")
 	ErrInvalidConfig      error = errors.New("invalid minio oss config")
 	ErrNotSpecifyEndPoint error = errors.New("not specify endpoint in metadata")
+	once                  sync.Once
+	readinessIndicator    *actuators.HealthIndicator
+	livenessIndicator     *actuators.HealthIndicator
 )
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type MinioOss struct {
 	client map[string]*minio.Core
@@ -59,6 +70,10 @@ type MinioMetaData struct {
 }
 
 func NewMinioOss() file.File {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	return &MinioOss{
 		client: make(map[string]*minio.Core),
 		meta:   make(map[string]*MinioMetaData),
@@ -69,6 +84,8 @@ func (m *MinioOss) Init(ctx context.Context, config *file.FileConfig) error {
 	md := make([]*MinioMetaData, 0)
 	err := json.Unmarshal(config.Metadata, &md)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return ErrInvalidConfig
 	}
 	for _, data := range md {
@@ -78,6 +95,10 @@ func (m *MinioOss) Init(ctx context.Context, config *file.FileConfig) error {
 		client, err := m.createOssClient(data)
 		if err != nil {
 			continue
+		}
+		if client != nil {
+			readinessIndicator.SetStarted()
+			livenessIndicator.SetStarted()
 		}
 		m.client[data.EndPoint] = client
 		m.meta[data.EndPoint] = data
