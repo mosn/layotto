@@ -17,11 +17,11 @@
 package logger
 
 import (
-	"os"
+	"fmt"
 	"strings"
 	"sync"
 
-	"github.com/sirupsen/logrus"
+	"mosn.io/pkg/log"
 )
 
 const (
@@ -40,8 +40,6 @@ const (
 
 	// UndefinedLevel is for undefined log level.
 	UndefinedLevel LogLevel = "undefined"
-
-	logFieldComponent = "component"
 
 	logKeyDebug    = "debug"
 	logKeyAccess   = "access"
@@ -75,18 +73,22 @@ func SetComponentLoggerLevel(componentName string, level string) {
 	logLevel := toLogLevel(level)
 	logger, ok := loggerListeners.Load(componentName)
 	if !ok {
-		logrus.Warnf("component logger for %s not found", componentName)
+		log.DefaultLogger.Warnf("component logger for %s not found", componentName)
+	} else {
+		componentLoggerListener, ok := logger.(ComponentLoggerListener)
+		if !ok {
+			log.DefaultLogger.Warnf("component logger for %s is not ComponentLoggerListener", componentName)
+		} else {
+			componentLoggerListener.OnLogLevelChanged(logLevel)
+		}
 	}
-	componentLoggerListener, ok := logger.(ComponentLoggerListener)
-	if !ok {
-		logrus.Warnf("component logger for %s is not ComponentLoggerListener", componentName)
-	}
-	componentLoggerListener.OnLogLevelChanged(logLevel)
 }
 
 // SetDefaultLoggerLevel sets the default log output level.
 func SetDefaultLoggerLevel(level string) {
-	defaultLoggerLevel = toLogLevel(level)
+	if level != "" {
+		defaultLoggerLevel = toLogLevel(level)
+	}
 }
 
 // SetDefaultLoggerFilePath sets the default log file path.
@@ -101,7 +103,7 @@ type layottoLogger struct {
 
 	logLevel LogLevel
 
-	loggers map[string]*logrus.Entry
+	loggers map[string]log.ErrorLogger
 }
 
 // Logger api for logging.
@@ -180,97 +182,111 @@ func NewLayottoLogger(name string) Logger {
 	ll := &layottoLogger{
 		name:     name,
 		logLevel: defaultLoggerLevel,
-		loggers:  make(map[string]*logrus.Entry),
+		loggers:  make(map[string]log.ErrorLogger),
 	}
 
-	dLogger := logrus.New()
-	dFile, err := os.OpenFile(defaultLogFilePath+fileNameDebug, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	dMosnLogger, err := log.GetOrCreateLogger(defaultLogFilePath+fileNameDebug, nil)
+
+	dLogger := &log.SimpleErrorLog{
+		Logger: dMosnLogger,
+		Level:  log.DEBUG,
+	}
 	if err != nil {
-		logrus.Fatalf("Failed to open log file: %v", err)
+		ll.loggers[logKeyDebug] = log.DefaultLogger
+		log.DefaultLogger.Fatalf("Failed to create mosn logger: %v", err)
+	} else {
+		dLogger.SetLogLevel(toMosnLoggerLevel(defaultLoggerLevel))
+		ll.loggers[logKeyDebug] = dLogger
 	}
-	dLogger.SetLevel(toLogrusLevel(defaultLoggerLevel))
-	dLogger.SetOutput(dFile)
-	ll.loggers[logKeyDebug] = dLogger.WithField(logFieldComponent, name)
 
-	aLogger := logrus.New()
-	aFile, err := os.OpenFile(defaultLogFilePath+fileNameAccess, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	aMosnLogger, err := log.GetOrCreateLogger(defaultLogFilePath+fileNameAccess, nil)
+
+	aLogger := &log.SimpleErrorLog{
+		Logger: aMosnLogger,
+		Level:  log.INFO,
+	}
 	if err != nil {
-		logrus.Fatalf("Failed to open log file: %v", err)
+		ll.loggers[logKeyAccess] = log.DefaultLogger
+		log.DefaultLogger.Fatalf("Failed to create mosn logger: %v", err)
+	} else {
+		aLogger.SetLogLevel(toMosnLoggerLevel(defaultLoggerLevel))
+		ll.loggers[logKeyAccess] = aLogger
 	}
-	aLogger.SetLevel(toLogrusLevel(defaultLoggerLevel))
-	aLogger.SetOutput(aFile)
-	ll.loggers[logKeyAccess] = aLogger.WithField(logFieldComponent, name)
 
-	eLogger := logrus.New()
-	eFile, err := os.OpenFile(defaultLogFilePath+fileNameError, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	eMosnLogger, err := log.GetOrCreateLogger(defaultLogFilePath+fileNameError, nil)
+
+	eLogger := &log.SimpleErrorLog{
+		Logger: eMosnLogger,
+		Level:  log.ERROR,
+	}
 	if err != nil {
-		logrus.Fatalf("Failed to open log file: %v", err)
+		ll.loggers[logKeyError] = log.DefaultLogger
+		log.DefaultLogger.Fatalf("Failed to create mosn logger: %v", err)
+	} else {
+		eLogger.SetLogLevel(toMosnLoggerLevel(defaultLoggerLevel))
+		ll.loggers[logKeyError] = eLogger
 	}
-	eLogger.SetLevel(toLogrusLevel(defaultLoggerLevel))
-	eLogger.SetOutput(eFile)
-	ll.loggers[logKeyError] = eLogger.WithField(logFieldComponent, name)
-
 	return ll
 }
 
 // Tracef logs a message at level Trace.
 func (l *layottoLogger) Tracef(format string, args ...interface{}) {
-	l.loggers[logKeyDebug].Tracef(format, args...)
+	l.loggers[logKeyDebug].Tracef("[%s] %s", l.name, fmt.Sprintf(format, args...))
 }
 
 // Trace logs a message at level Trace.
 func (l *layottoLogger) Trace(args ...interface{}) {
-	l.loggers[logKeyDebug].Trace(args...)
+	l.loggers[logKeyDebug].Tracef("%s", args...)
 }
 
 // Debugf logs a message at level Debug.
 func (l *layottoLogger) Debugf(format string, args ...interface{}) {
-	l.loggers[logKeyDebug].Debugf(format, args...)
+	l.loggers[logKeyDebug].Debugf("[%s] %s", l.name, fmt.Sprintf(format, args...))
 }
 
 // Debug logs a message at level Debug.
 func (l *layottoLogger) Debug(args ...interface{}) {
-	l.loggers[logKeyDebug].Debug(args...)
+	l.loggers[logKeyDebug].Debugf("%s", args...)
 }
 
 // Infof logs a message at level Info.
 func (l *layottoLogger) Infof(format string, args ...interface{}) {
-	l.loggers[logKeyAccess].Infof(format, args...)
+	l.loggers[logKeyAccess].Infof("[%s] %s", l.name, fmt.Sprintf(format, args...))
 }
 
 // Info logs a message at level Info.
 func (l *layottoLogger) Info(args ...interface{}) {
-	l.loggers[logKeyAccess].Info(args...)
+	l.loggers[logKeyAccess].Infof("%s", args...)
 }
 
 // Warnf logs a message at level Warn.
 func (l *layottoLogger) Warnf(format string, args ...interface{}) {
-	l.loggers[logKeyAccess].Warnf(format, args...)
+	l.loggers[logKeyAccess].Warnf("[%s] %s", l.name, fmt.Sprintf(format, args...))
 }
 
 // Warn logs a message at level Warn.
 func (l *layottoLogger) Warn(args ...interface{}) {
-	l.loggers[logKeyAccess].Warn(args...)
+	l.loggers[logKeyAccess].Warnf("%s", args...)
 }
 
 // Errorf logs a message at level Error.
 func (l *layottoLogger) Errorf(format string, args ...interface{}) {
-	l.loggers[logKeyError].Errorf(format, args...)
+	l.loggers[logKeyError].Errorf("[%s] %s", l.name, fmt.Sprintf(format, args...))
 }
 
 // Error logs a message at level Error.
 func (l *layottoLogger) Error(args ...interface{}) {
-	l.loggers[logKeyError].Error(args...)
+	l.loggers[logKeyError].Errorf("%s", args...)
 }
 
 // Fatalf logs a message at level Fatal.
 func (l *layottoLogger) Fatalf(format string, args ...interface{}) {
-	l.loggers[logKeyError].Fatalf(format, args...)
+	l.loggers[logKeyError].Fatalf("[%s] %s", l.name, fmt.Sprintf(format, args...))
 }
 
 // Fatal logs a message at level Fatal.
 func (l *layottoLogger) Fatal(args ...interface{}) {
-	l.loggers[logKeyError].Fatal(args...)
+	l.loggers[logKeyError].Fatalf("%s", args...)
 }
 
 // GetLogLevel gets the log output level.
@@ -278,17 +294,38 @@ func (l *layottoLogger) GetLogLevel() LogLevel {
 	return l.logLevel
 }
 
-// toLogrusLevel converts to logrus.Level.
-func toLogrusLevel(lvl LogLevel) logrus.Level {
+// toMosnLoggerLevel converts to logrus.Level.
+func toMosnLoggerLevel(lvl LogLevel) log.Level {
 	// ignore error because it will never happen
-	l, _ := logrus.ParseLevel(string(lvl))
+	l, _ := parseLevel(string(lvl))
 	return l
+}
+
+// parseLevel takes a string level and returns the Mosn logger level constant.
+func parseLevel(lvl string) (log.Level, error) {
+	switch strings.ToLower(lvl) {
+	case "fatal":
+		return log.FATAL, nil
+	case "error":
+		return log.ERROR, nil
+	case "warn", "warning":
+		return log.WARN, nil
+	case "info":
+		return log.INFO, nil
+	case "debug":
+		return log.DEBUG, nil
+	case "trace":
+		return log.TRACE, nil
+	}
+
+	var l log.Level
+	return l, fmt.Errorf("not a valid mosn Level: %q", lvl)
 }
 
 // SetLogLevel sets log output level.
 func (l *layottoLogger) SetLogLevel(outputLevel LogLevel) {
 	l.logLevel = outputLevel
-	l.loggers[logKeyDebug].Logger.SetLevel(toLogrusLevel(outputLevel))
-	l.loggers[logKeyAccess].Logger.SetLevel(toLogrusLevel(outputLevel))
-	l.loggers[logKeyError].Logger.SetLevel(toLogrusLevel(outputLevel))
+	l.loggers[logKeyDebug].SetLogLevel(toMosnLoggerLevel(outputLevel))
+	l.loggers[logKeyAccess].SetLogLevel(toMosnLoggerLevel(outputLevel))
+	l.loggers[logKeyError].SetLogLevel(toMosnLoggerLevel(outputLevel))
 }
