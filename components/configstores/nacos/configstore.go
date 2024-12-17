@@ -30,7 +30,23 @@ import (
 	log "mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/configstores"
+	"mosn.io/layotto/components/pkg/actuators"
 )
+
+const (
+	componentName = "configstore-nacos"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type ConfigStore struct {
 	client      config_client.IConfigClient
@@ -42,6 +58,10 @@ type ConfigStore struct {
 }
 
 func NewStore() configstores.Store {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	cs := &ConfigStore{
 		log: log.NewLayottoLogger("configstore/nacos"),
 	}
@@ -100,10 +120,14 @@ func (n *ConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	} else {
 		client, err = n.init(config.Address, timeoutMs, metadata)
 	}
+
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
-
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	n.client = client
 	// replace nacos sdk log
 	return n.setupLogger(metadata)

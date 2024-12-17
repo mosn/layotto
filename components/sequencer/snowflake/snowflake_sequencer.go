@@ -10,6 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package snowflake
 
 import (
@@ -21,8 +22,24 @@ import (
 
 	"mosn.io/layotto/kit/logger"
 
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/sequencer"
 )
+
+const (
+	componentName = "sequencer-snowflake"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type SnowFlakeSequencer struct {
 	metadata   SnowflakeMetadata
@@ -37,6 +54,10 @@ type SnowFlakeSequencer struct {
 }
 
 func NewSnowFlakeSequencer() *SnowFlakeSequencer {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	sf := &SnowFlakeSequencer{
 		logger: logger.NewLayottoLogger("sequencer/snowflake"),
 		smap:   make(map[string]chan int64),
@@ -53,6 +74,8 @@ func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 	var err error
 	s.metadata, err = ParseSnowflakeMetadata(config.Properties)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	//for unit test
@@ -62,8 +85,12 @@ func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
 	if s.workerId, err = NewMysqlClient(&s.metadata.MysqlMetadata); err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return err
 }
 

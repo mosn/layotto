@@ -24,24 +24,44 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
 	"mosn.io/layotto/components/file"
+	"mosn.io/layotto/components/pkg/actuators"
 )
 
 const (
-	FileMode  = "FileMode"
-	FileFlag  = "FileFlag"
-	FileIsDir = "IsDir"
+	FileMode      = "FileMode"
+	FileFlag      = "FileFlag"
+	FileIsDir     = "IsDir"
+	componentName = "file-local"
 )
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type LocalStore struct {
 }
 
 func NewLocalStore() file.File {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	return &LocalStore{}
 }
 
 func (lf *LocalStore) Init(ctx context.Context, f *file.FileConfig) error {
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 func (lf *LocalStore) Put(ctx context.Context, f *file.PutFileStu) error {

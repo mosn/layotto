@@ -22,7 +22,23 @@ import (
 	"time"
 
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/actuators"
 )
+
+const (
+	componentName = "lock-memory"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type InMemoryLock struct {
 	features []lock.Feature
@@ -43,6 +59,10 @@ type lockMap struct {
 }
 
 func NewInMemoryLock() *InMemoryLock {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	return &InMemoryLock{
 		features: make([]lock.Feature, 0),
 		data: &lockMap{
@@ -52,6 +72,8 @@ func NewInMemoryLock() *InMemoryLock {
 }
 
 func (s *InMemoryLock) Init(_ lock.Metadata) error {
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

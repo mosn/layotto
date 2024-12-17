@@ -10,6 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package etcdv3
 
 import (
@@ -22,6 +23,8 @@ import (
 
 	"mosn.io/pkg/utils"
 
+	"mosn.io/layotto/components/pkg/actuators"
+
 	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"
 
@@ -32,9 +35,21 @@ import (
 )
 
 const (
-	defaultGroup = "default"
-	defaultLabel = "default"
+	defaultGroup  = "default"
+	defaultLabel  = "default"
+	componentName = "configstore-etcdv3"
 )
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type EtcdV3ConfigStore struct {
 	client *clientv3.Client
@@ -62,6 +77,10 @@ func (c *EtcdV3ConfigStore) OnLogLevelChanged(outputLevel log.LogLevel) {
 }
 
 func NewStore() configstores.Store {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	cs := &EtcdV3ConfigStore{
 		subscribeKey: make(map[string]string),
 		watchRespCh:  make(chan *configstores.SubscribeResp),
@@ -83,6 +102,12 @@ func (c *EtcdV3ConfigStore) Init(config *configstores.StoreConfig) error {
 		DialTimeout: time.Duration(t) * time.Second,
 	})
 	c.storeName = config.StoreName
+	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
+	}
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return err
 }
 

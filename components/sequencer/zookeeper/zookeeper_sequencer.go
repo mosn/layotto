@@ -10,21 +10,38 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package zookeeper
 
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/go-zookeeper/zk"
 
 	"mosn.io/layotto/kit/logger"
 
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
 )
 
-const maxInt32 = 2147483647
+const (
+	componentName = "sequencer-zookeeper"
+	maxInt32      = 2147483647
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type ZookeeperSequencer struct {
 	client     utils.ZKConnection
@@ -38,6 +55,10 @@ type ZookeeperSequencer struct {
 
 // NewZookeeperSequencer returns a new zookeeper sequencer
 func NewZookeeperSequencer() *ZookeeperSequencer {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	s := &ZookeeperSequencer{
 		logger: logger.NewLayottoLogger("sequencer/zookeeper"),
 	}
@@ -53,6 +74,8 @@ func (s *ZookeeperSequencer) OnLogLevelChanged(level logger.LogLevel) {
 func (s *ZookeeperSequencer) Init(config sequencer.Configuration) error {
 	m, err := utils.ParseZookeeperMetadata(config.Properties)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	//init
@@ -61,6 +84,8 @@ func (s *ZookeeperSequencer) Init(config sequencer.Configuration) error {
 	s.factory = &utils.ConnectionFactoryImpl{}
 	connection, err := s.factory.NewConnection(0, s.metadata)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	s.client = connection
@@ -81,6 +106,8 @@ func (s *ZookeeperSequencer) Init(config sequencer.Configuration) error {
 			if err == zk.ErrNoNode {
 				return fmt.Errorf("zookeeper sequencer error: can not satisfy biggerThan guarantee.key: %s, current key does not exist", k)
 			}
+			readinessIndicator.ReportError(err.Error())
+			livenessIndicator.ReportError(err.Error())
 			//other error
 			return err
 		}
@@ -91,6 +118,8 @@ func (s *ZookeeperSequencer) Init(config sequencer.Configuration) error {
 		}
 
 	}
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return err
 
 }

@@ -16,6 +16,7 @@ package zookeeper
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	"github.com/go-zookeeper/zk"
@@ -24,15 +25,30 @@ import (
 	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 )
 
-var closeConn = func(conn utils.ZKConnection, expireInSecond int32) {
-	//can also
-	//time.Sleep(time.Second * time.Duration(expireInSecond))
-	<-time.After(time.Second * time.Duration(expireInSecond))
-	// make sure close connecion
-	conn.Close()
+var (
+	closeConn = func(conn utils.ZKConnection, expireInSecond int32) {
+		//can also
+		//time.Sleep(time.Second * time.Duration(expireInSecond))
+		<-time.After(time.Second * time.Duration(expireInSecond))
+		// make sure close connecion
+		conn.Close()
+	}
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+const (
+	componentName = "lock-zookeeper"
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
 }
 
 // ZookeeperLock lock store
@@ -47,6 +63,10 @@ type ZookeeperLock struct {
 
 // NewZookeeperLock Create ZookeeperLock
 func NewZookeeperLock() *ZookeeperLock {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	lock := &ZookeeperLock{
 		logger: logger.NewLayottoLogger("lock/zookeeper"),
 	}
@@ -64,6 +84,8 @@ func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
 
 	m, err := utils.ParseZookeeperMetadata(metadata.Properties)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 
@@ -73,9 +95,13 @@ func (p *ZookeeperLock) Init(metadata lock.Metadata) error {
 	//init unlock connection
 	zkConn, err := p.factory.NewConnection(p.metadata.SessionTimeout, p.metadata)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	p.unlockConn = zkConn
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

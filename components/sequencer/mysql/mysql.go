@@ -15,12 +15,29 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"sync"
 
 	"mosn.io/layotto/kit/logger"
 
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
 )
+
+const (
+	componentName = "sequencer-mysql"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type MySQLSequencer struct {
 	metadata   utils.MySQLMetadata
@@ -30,6 +47,10 @@ type MySQLSequencer struct {
 }
 
 func NewMySQLSequencer() *MySQLSequencer {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	s := &MySQLSequencer{
 		logger: logger.NewLayottoLogger("sequencer/mysql"),
 	}
@@ -47,6 +68,8 @@ func (e *MySQLSequencer) Init(config sequencer.Configuration) error {
 	m, err := utils.ParseMySQLMetadata(config.Properties)
 
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	e.metadata = m
@@ -54,6 +77,8 @@ func (e *MySQLSequencer) Init(config sequencer.Configuration) error {
 	e.biggerThan = config.BiggerThan
 
 	if err = utils.NewMySQLClient(e.metadata); err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 
@@ -69,6 +94,8 @@ func (e *MySQLSequencer) Init(config sequencer.Configuration) error {
 			}
 		}
 	}
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

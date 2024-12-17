@@ -87,6 +87,7 @@ type api struct {
 	// app callback
 	AppCallbackConn   *grpc.ClientConn
 	topicPerComponent map[string]TopicSubscriptions
+	streamer          *streamer
 	// json
 	json   jsoniter.API
 	logger logger.Logger

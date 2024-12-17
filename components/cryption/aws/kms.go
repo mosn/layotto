@@ -18,6 +18,9 @@ package aws
 import (
 	"context"
 	"fmt"
+	"sync"
+
+	"mosn.io/layotto/components/pkg/actuators"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -29,6 +32,21 @@ import (
 	"mosn.io/layotto/components/cryption"
 )
 
+const (
+	componentName = "kms-aws"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
+
 type cy struct {
 	client *kms.KMS
 	keyID  string
@@ -36,6 +54,10 @@ type cy struct {
 }
 
 func NewCryption() cryption.CryptionService {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	c := &cy{
 		log: log.NewLayottoLogger("cryption/aws"),
 	}
@@ -59,6 +81,12 @@ func (k *cy) Init(ctx context.Context, conf *cryption.Config) error {
 		Credentials: staticCredentials,
 	}
 	client := kms.New(session.New(), awsConf)
+	if client == nil {
+		readinessIndicator.ReportError("fail to create aws kms client")
+		livenessIndicator.ReportError("fail to create aws kms client")
+	}
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	k.client = client
 	k.keyID = keyID
 	return nil

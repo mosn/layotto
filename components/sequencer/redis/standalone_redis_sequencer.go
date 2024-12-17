@@ -14,14 +14,31 @@ package redis
 
 import (
 	"context"
+	"sync"
 
 	"github.com/go-redis/redis/v8"
 
 	"mosn.io/layotto/kit/logger"
 
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
 )
+
+const (
+	componentName = "sequencer-redis-standalone"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type StandaloneRedisSequencer struct {
 	client     *redis.Client
@@ -36,6 +53,10 @@ type StandaloneRedisSequencer struct {
 
 // NewStandaloneRedisSequencer returns a new redis sequencer
 func NewStandaloneRedisSequencer() *StandaloneRedisSequencer {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	s := &StandaloneRedisSequencer{
 		logger: logger.NewLayottoLogger("sequencer/redis"),
 	}
@@ -64,6 +85,8 @@ end
 func (s *StandaloneRedisSequencer) Init(config sequencer.Configuration) error {
 	m, err := utils.ParseRedisMetadata(config.Properties)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	//init
@@ -84,11 +107,15 @@ func (s *StandaloneRedisSequencer) Init(config sequencer.Configuration) error {
 		err = eval.Err()
 		//occur error,  such as value is string type
 		if err != nil {
+			readinessIndicator.ReportError(err.Error())
+			livenessIndicator.ReportError(err.Error())
 			return err
 		}
 		//As long as there is no error, the initialization is successful
 		//It may be a reset value or it may be satisfied before
 	}
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

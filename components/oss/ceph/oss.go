@@ -22,6 +22,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -36,8 +37,24 @@ import (
 	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/oss"
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 )
+
+const (
+	componentName = "oss-ceph"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type CephOSS struct {
 	client    *s3.Client
@@ -46,6 +63,10 @@ type CephOSS struct {
 }
 
 func NewCephOss() oss.Oss {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	coss := &CephOSS{
 		logger: logger.NewLayottoLogger("oss/ceph"),
 	}
@@ -62,6 +83,8 @@ func (c *CephOSS) Init(ctx context.Context, config *oss.Config) error {
 	m := &utils.OssMetadata{}
 	err := json.Unmarshal(c.basicConf, &m)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return oss.ErrInvalid
 	}
 
@@ -82,12 +105,16 @@ func (c *CephOSS) Init(ctx context.Context, config *oss.Config) error {
 	}
 	cfg, err := aws_config.LoadDefaultConfig(context.TODO(), optFunc...)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	client := s3.NewFromConfig(cfg, func(options *s3.Options) {
 		options.UsePathStyle = true
 	})
 	c.client = client
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

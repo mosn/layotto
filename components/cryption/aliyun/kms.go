@@ -18,6 +18,9 @@ package aliyun
 import (
 	"context"
 	"fmt"
+	"sync"
+
+	"mosn.io/layotto/components/pkg/actuators"
 
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	kms20160120 "github.com/alibabacloud-go/kms-20160120/v3/client"
@@ -27,6 +30,21 @@ import (
 
 	"mosn.io/layotto/components/cryption"
 )
+
+const (
+	componentName = "kms-aliyun"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type cy struct {
 	client *kms20160120.Client
@@ -38,6 +56,10 @@ type cy struct {
 refer: https://help.aliyun.com/document_detail/611325.html
 */
 func NewCryption() cryption.CryptionService {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	cryption := &cy{
 		log: log.NewLayottoLogger("cryption/aliyun"),
 	}
@@ -64,8 +86,12 @@ func (k *cy) Init(ctx context.Context, conf *cryption.Config) error {
 
 	client, err := kms20160120.NewClient(config)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	k.client = client
 	k.keyID = conf.Metadata[cryption.KeyID]
 	return nil
