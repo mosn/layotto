@@ -2,7 +2,8 @@ You can run server/client demo with different component names.
 It is worth noting that both server and client demo should set the same store name by param `-s`.  
 For example:   
 ```shell
-cd ${project_path}/demo/pubsub/server/
+#################### Run pubsub demo with appcallback ####################
+cd ${project_path}/demo/pubsub/appcallback/
 # 1. start subscriber
 go build -o subscriber
 /.subscriber -s pub_subs_demo
