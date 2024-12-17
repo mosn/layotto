@@ -10,6 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package redis
 
 import (
@@ -24,8 +25,24 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 )
+
+const (
+	componentName = "lock-redis-cluster"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 // RedLock
 // it will be best to use at least 5 hosts
@@ -43,6 +60,10 @@ type ClusterRedisLock struct {
 
 // NewClusterRedisLock returns a new redis lock store
 func NewClusterRedisLock(logger log.ErrorLogger) *ClusterRedisLock {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	s := &ClusterRedisLock{
 		features: make([]lock.Feature, 0),
 		logger:   logger,
@@ -62,6 +83,8 @@ func (c *ClusterRedisLock) Init(metadata lock.Metadata) error {
 
 	m, err := utils.ParseRedisClusterMetadata(metadata.Properties)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	c.metadata = m
@@ -70,9 +93,13 @@ func (c *ClusterRedisLock) Init(metadata lock.Metadata) error {
 	c.workpool = msync.NewWorkerPool(m.Concurrency)
 	for i, client := range c.clients {
 		if _, err = client.Ping(c.ctx).Result(); err != nil {
+			readinessIndicator.ReportError(err.Error())
+			livenessIndicator.ReportError(err.Error())
 			return fmt.Errorf("[ClusterRedisLock]: error connecting to redis at %s: %s", c.metadata.Hosts[i], err)
 		}
 	}
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return err
 }
 

@@ -60,6 +60,9 @@ type RuntimeClient interface {
 	ExecuteStateTransaction(ctx context.Context, in *ExecuteStateTransactionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Publishes events to the specific topic
 	PublishEvent(ctx context.Context, in *PublishEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// SubscribeTopicEvents subscribes to a PubSub topic and receives topic
+	// events from it.
+	SubscribeTopicEvents(ctx context.Context, opts ...grpc.CallOption) (Runtime_SubscribeTopicEventsClient, error)
 	// Get file with stream
 	GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (Runtime_GetFileClient, error)
 	// Put file with stream
@@ -261,8 +264,39 @@ func (c *runtimeClient) PublishEvent(ctx context.Context, in *PublishEventReques
 	return out, nil
 }
 
+func (c *runtimeClient) SubscribeTopicEvents(ctx context.Context, opts ...grpc.CallOption) (Runtime_SubscribeTopicEventsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Runtime_ServiceDesc.Streams[1], "/spec.proto.runtime.v1.Runtime/SubscribeTopicEvents", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &runtimeSubscribeTopicEventsClient{stream}
+	return x, nil
+}
+
+type Runtime_SubscribeTopicEventsClient interface {
+	Send(*SubscribeTopicEventsRequest) error
+	Recv() (*SubscribeTopicEventsResponse, error)
+	grpc.ClientStream
+}
+
+type runtimeSubscribeTopicEventsClient struct {
+	grpc.ClientStream
+}
+
+func (x *runtimeSubscribeTopicEventsClient) Send(m *SubscribeTopicEventsRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *runtimeSubscribeTopicEventsClient) Recv() (*SubscribeTopicEventsResponse, error) {
+	m := new(SubscribeTopicEventsResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *runtimeClient) GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (Runtime_GetFileClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Runtime_ServiceDesc.Streams[1], "/spec.proto.runtime.v1.Runtime/GetFile", opts...)
+	stream, err := c.cc.NewStream(ctx, &Runtime_ServiceDesc.Streams[2], "/spec.proto.runtime.v1.Runtime/GetFile", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -294,7 +328,7 @@ func (x *runtimeGetFileClient) Recv() (*GetFileResponse, error) {
 }
 
 func (c *runtimeClient) PutFile(ctx context.Context, opts ...grpc.CallOption) (Runtime_PutFileClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Runtime_ServiceDesc.Streams[2], "/spec.proto.runtime.v1.Runtime/PutFile", opts...)
+	stream, err := c.cc.NewStream(ctx, &Runtime_ServiceDesc.Streams[3], "/spec.proto.runtime.v1.Runtime/PutFile", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -421,6 +455,9 @@ type RuntimeServer interface {
 	ExecuteStateTransaction(context.Context, *ExecuteStateTransactionRequest) (*emptypb.Empty, error)
 	// Publishes events to the specific topic
 	PublishEvent(context.Context, *PublishEventRequest) (*emptypb.Empty, error)
+	// SubscribeTopicEvents subscribes to a PubSub topic and receives topic
+	// events from it.
+	SubscribeTopicEvents(Runtime_SubscribeTopicEventsServer) error
 	// Get file with stream
 	GetFile(*GetFileRequest, Runtime_GetFileServer) error
 	// Put file with stream
@@ -493,6 +530,9 @@ func (UnimplementedRuntimeServer) ExecuteStateTransaction(context.Context, *Exec
 }
 func (UnimplementedRuntimeServer) PublishEvent(context.Context, *PublishEventRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PublishEvent not implemented")
+}
+func (UnimplementedRuntimeServer) SubscribeTopicEvents(Runtime_SubscribeTopicEventsServer) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribeTopicEvents not implemented")
 }
 func (UnimplementedRuntimeServer) GetFile(*GetFileRequest, Runtime_GetFileServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetFile not implemented")
@@ -844,6 +884,32 @@ func _Runtime_PublishEvent_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Runtime_SubscribeTopicEvents_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(RuntimeServer).SubscribeTopicEvents(&runtimeSubscribeTopicEventsServer{stream})
+}
+
+type Runtime_SubscribeTopicEventsServer interface {
+	Send(*SubscribeTopicEventsResponse) error
+	Recv() (*SubscribeTopicEventsRequest, error)
+	grpc.ServerStream
+}
+
+type runtimeSubscribeTopicEventsServer struct {
+	grpc.ServerStream
+}
+
+func (x *runtimeSubscribeTopicEventsServer) Send(m *SubscribeTopicEventsResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *runtimeSubscribeTopicEventsServer) Recv() (*SubscribeTopicEventsRequest, error) {
+	m := new(SubscribeTopicEventsRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func _Runtime_GetFile_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(GetFileRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -1099,6 +1165,12 @@ var Runtime_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "SubscribeConfiguration",
 			Handler:       _Runtime_SubscribeConfiguration_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "SubscribeTopicEvents",
+			Handler:       _Runtime_SubscribeTopicEvents_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

@@ -15,6 +15,7 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -23,9 +24,25 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 	"mosn.io/pkg/log"
 
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 	"mosn.io/layotto/components/sequencer"
 )
+
+const (
+	componentName = "sequencer-mongo"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type MongoSequencer struct {
 	factory utils.MongoFactory
@@ -50,6 +67,10 @@ type SequencerDocument struct {
 
 // MongoSequencer returns a new mongo sequencer
 func NewMongoSequencer(logger log.ErrorLogger) *MongoSequencer {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	m := &MongoSequencer{
 		logger: logger,
 	}
@@ -62,6 +83,8 @@ func (e *MongoSequencer) Init(config sequencer.Configuration) error {
 	// 1.parse config
 	m, err := utils.ParseMongoMetadata(config.Properties)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	e.metadata = m
@@ -73,16 +96,22 @@ func (e *MongoSequencer) Init(config sequencer.Configuration) error {
 	e.ctx, e.cancel = context.WithCancel(context.Background())
 
 	if e.client, err = e.factory.NewMongoClient(m); err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 
 	if err := e.client.Ping(e.ctx, nil); err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 
 	// Connections Collection
 	e.collection, err = utils.SetCollection(e.client, e.factory, e.metadata)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 
@@ -94,6 +123,8 @@ func (e *MongoSequencer) Init(config sequencer.Configuration) error {
 			// find key of biggerThan
 			cursor, err := e.collection.Find(e.ctx, bson.M{"_id": k})
 			if err != nil {
+				readinessIndicator.ReportError(err.Error())
+				livenessIndicator.ReportError(err.Error())
 				return err
 			}
 			if cursor != nil && cursor.RemainingBatchLength() > 0 {
@@ -105,7 +136,8 @@ func (e *MongoSequencer) Init(config sequencer.Configuration) error {
 			}
 		}
 	}
-
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return err
 }
 

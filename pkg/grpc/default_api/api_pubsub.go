@@ -151,56 +151,23 @@ func (a *api) getInterestedTopics() (map[string]TopicSubscriptions, error) {
 }
 
 func (a *api) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMessage) error {
-	// 1. Unmarshal to cloudEvent model
-	var cloudEvent map[string]interface{}
-	err := a.json.Unmarshal(msg.Data, &cloudEvent)
+
+	// TODO tracing
+	envelope, cloudEvent, err := a.envelopeFromSubscriptionMessage(ctx, msg)
+
 	if err != nil {
-		log.DefaultLogger.Debugf("[runtime]error deserializing cloud events proto: %s", err)
 		return err
 	}
 
-	// 2. Drop msg if the current cloud event has expired
-	if pubsub.HasExpired(cloudEvent) {
-		log.DefaultLogger.Warnf("[runtime]dropping expired pub/sub event %v as of %v", cloudEvent[pubsub.IDField].(string), cloudEvent[pubsub.ExpirationField].(string))
+	if envelope == nil {
 		return nil
 	}
 
-	// 3. Convert to proto domain struct
-	envelope := &runtimev1pb.TopicEventRequest{
-		Id:              cloudEvent[pubsub.IDField].(string),
-		Source:          cloudEvent[pubsub.SourceField].(string),
-		DataContentType: cloudEvent[pubsub.DataContentTypeField].(string),
-		Type:            cloudEvent[pubsub.TypeField].(string),
-		SpecVersion:     cloudEvent[pubsub.SpecVersionField].(string),
-		Topic:           msg.Topic,
-		PubsubName:      msg.Metadata[Metadata_key_pubsubName],
-	}
-
-	// set data field
-	if data, ok := cloudEvent[pubsub.DataBase64Field]; ok && data != nil {
-		decoded, decodeErr := base64.StdEncoding.DecodeString(data.(string))
-		if decodeErr != nil {
-			log.DefaultLogger.Debugf("unable to base64 decode cloudEvent field data_base64: %s", decodeErr)
-			return err
-		}
-
-		envelope.Data = decoded
-	} else if data, ok := cloudEvent[pubsub.DataField]; ok && data != nil {
-		envelope.Data = nil
-
-		if contenttype.IsStringContentType(envelope.DataContentType) {
-			envelope.Data = []byte(data.(string))
-		} else if contenttype.IsJSONContentType(envelope.DataContentType) {
-			envelope.Data, _ = a.json.Marshal(data)
-		}
-	}
-	// TODO tracing
-
-	// 4. Call appcallback
+	// Call appcallback
 	clientV1 := runtimev1pb.NewAppCallbackClient(a.AppCallbackConn)
 	res, err := clientV1.OnTopicEvent(ctx, envelope)
 
-	// 5. Check result
+	// Check result
 	return retryStrategy(err, res, cloudEvent)
 }
 
@@ -245,4 +212,51 @@ func listTopicSubscriptions(client runtimev1pb.AppCallbackClient, log log.ErrorL
 		return resp.Subscriptions
 	}
 	return make([]*runtimev1pb.TopicSubscription, 0)
+}
+
+func (a *api) envelopeFromSubscriptionMessage(ctx context.Context, msg *pubsub.NewMessage) (*runtimev1pb.TopicEventRequest, map[string]interface{}, error) {
+	// 1. Unmarshal to cloudEvent model
+	var cloudEvent map[string]interface{}
+	err := a.json.Unmarshal(msg.Data, &cloudEvent)
+	if err != nil {
+		log.DefaultLogger.Debugf("[runtime]error deserializing cloud events proto: %s", err)
+		return nil, cloudEvent, err
+	}
+
+	// 2. Drop msg if the current cloud event has expired
+	if pubsub.HasExpired(cloudEvent) {
+		log.DefaultLogger.Warnf("[runtime]dropping expired pub/sub event %v as of %v", cloudEvent[pubsub.IDField].(string), cloudEvent[pubsub.ExpirationField].(string))
+		return nil, cloudEvent, nil
+	}
+
+	// 3. Convert to proto domain struct
+	envelope := &runtimev1pb.TopicEventRequest{
+		Id:              cloudEvent[pubsub.IDField].(string),
+		Source:          cloudEvent[pubsub.SourceField].(string),
+		DataContentType: cloudEvent[pubsub.DataContentTypeField].(string),
+		Type:            cloudEvent[pubsub.TypeField].(string),
+		SpecVersion:     cloudEvent[pubsub.SpecVersionField].(string),
+		Topic:           msg.Topic,
+		PubsubName:      msg.Metadata[Metadata_key_pubsubName],
+	}
+
+	// set data field
+	if data, ok := cloudEvent[pubsub.DataBase64Field]; ok && data != nil {
+		decoded, decodeErr := base64.StdEncoding.DecodeString(data.(string))
+		if decodeErr != nil {
+			log.DefaultLogger.Debugf("unable to base64 decode cloudEvent field data_base64: %s", decodeErr)
+			return nil, cloudEvent, err
+		}
+
+		envelope.Data = decoded
+	} else if data, ok := cloudEvent[pubsub.DataField]; ok && data != nil {
+		envelope.Data = nil
+
+		if contenttype.IsStringContentType(envelope.DataContentType) {
+			envelope.Data = []byte(data.(string))
+		} else if contenttype.IsJSONContentType(envelope.DataContentType) {
+			envelope.Data, _ = a.json.Marshal(data)
+		}
+	}
+	return envelope, cloudEvent, nil
 }

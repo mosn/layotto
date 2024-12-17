@@ -10,6 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package redis
 
 import (
@@ -21,8 +22,14 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 )
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 // Standalone Redis lock store.Any fail-over related features are not supported,such as Sentinel and Redis Cluster.
 type StandaloneRedisLock struct {
@@ -38,6 +45,10 @@ type StandaloneRedisLock struct {
 
 // NewStandaloneRedisLock returns a new redis lock store
 func NewStandaloneRedisLock(logger log.ErrorLogger) *StandaloneRedisLock {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator("lock-redis-standalone", indicators)
+	})
 	s := &StandaloneRedisLock{
 		features: make([]lock.Feature, 0),
 		logger:   logger,
@@ -51,6 +62,8 @@ func (p *StandaloneRedisLock) Init(metadata lock.Metadata) error {
 	// 1. parse config
 	m, err := utils.ParseRedisMetadata(metadata.Properties)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	p.metadata = m
@@ -59,8 +72,12 @@ func (p *StandaloneRedisLock) Init(metadata lock.Metadata) error {
 	p.ctx, p.cancel = context.WithCancel(context.Background())
 	// 3. connect to redis
 	if _, err = p.client.Ping(p.ctx).Result(); err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return fmt.Errorf("[standaloneRedisLock]: error connecting to redis at %s: %s", m.Host, err)
 	}
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return err
 }
 

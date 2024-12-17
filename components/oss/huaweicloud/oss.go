@@ -13,21 +13,38 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
  */
+
 package huaweicloud
 
 import (
 	"context"
 	"encoding/json"
 	"strconv"
+	"sync"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-obs/obs"
 	"github.com/jinzhu/copier"
 
 	"mosn.io/layotto/components/oss"
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 )
 
-const connectTimeoutSec = "connectTimeoutSec"
+const (
+	componentName     = "oss-huaweicloud"
+	connectTimeoutSec = "connectTimeoutSec"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type HuaweicloudOSS struct {
 	client   *obs.ObsClient
@@ -35,6 +52,10 @@ type HuaweicloudOSS struct {
 }
 
 func NewHuaweicloudOSS() oss.Oss {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	return &HuaweicloudOSS{}
 }
 
@@ -43,6 +64,8 @@ func (h *HuaweicloudOSS) Init(ctx context.Context, config *oss.Config) error {
 	jsonRawMessage := config.Metadata[oss.BasicConfiguration]
 	err := json.Unmarshal(jsonRawMessage, &h.metadata)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return oss.ErrInvalid
 	}
 	if t, ok := config.Metadata[connectTimeoutSec]; ok {
@@ -53,9 +76,13 @@ func (h *HuaweicloudOSS) Init(ctx context.Context, config *oss.Config) error {
 
 	client, err := obs.New(h.metadata.AccessKeyID, h.metadata.AccessKeySecret, h.metadata.Endpoint, obs.WithConnectTimeout(connectTimeout))
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	h.client = client
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

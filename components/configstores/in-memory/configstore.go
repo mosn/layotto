@@ -93,10 +93,7 @@ func (m *InMemoryConfigStore) Set(ctx context.Context, req *configstores.SetRequ
 	}
 	for _, item := range req.Items {
 		m.data.Store(item.Key, item.Content)
-		err := m.notifyChanged(item)
-		if err != nil {
-			return err
-		}
+		m.notifyChanged(item)
 	}
 	return nil
 }
@@ -134,21 +131,17 @@ func (m *InMemoryConfigStore) Subscribe(request *configstores.SubscribeReq, ch c
 	}
 
 	for _, item := range items {
-		err := m.notifyChanged(item)
-		if err != nil {
-			return err
-		}
+		m.notifyChanged(item)
 	}
 
 	return nil
 }
 
-func (m *InMemoryConfigStore) notifyChanged(item *configstores.ConfigurationItem) error {
+func (m *InMemoryConfigStore) notifyChanged(item *configstores.ConfigurationItem) {
 	f, ok := m.listener.Load(item.Key)
 	if ok {
 		f.(OnChangeFunc)(item.Group, item.Key, item.Content)
 	}
-	return nil
 }
 
 type OnChangeFunc func(group, dataId, data string)

@@ -86,6 +86,7 @@ type api struct {
 	// app callback
 	AppCallbackConn   *grpc.ClientConn
 	topicPerComponent map[string]TopicSubscriptions
+	streamer          *streamer
 	// json
 	json jsoniter.API
 }
@@ -148,6 +149,7 @@ func NewAPI(
 		secretStores:             secretStores,
 		json:                     jsoniter.ConfigFastest,
 	}
+
 }
 
 func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error) {
