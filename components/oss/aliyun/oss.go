@@ -21,7 +21,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"sync"
 
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 
 	l8oss "mosn.io/layotto/components/oss"
@@ -32,7 +34,19 @@ import (
 const (
 	connectTimeoutSec   = "connectTimeoutSec"
 	readWriteTimeoutSec = "readWriteTimeout"
+	componentName       = "oss-aliyun"
 )
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type AliyunOSS struct {
 	client    *oss.Client
@@ -40,6 +54,10 @@ type AliyunOSS struct {
 }
 
 func NewAliyunOss() l8oss.Oss {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	return &AliyunOSS{}
 }
 
@@ -48,6 +66,8 @@ func (a *AliyunOSS) Init(ctx context.Context, config *l8oss.Config) error {
 	a.basicConf = config.Metadata[l8oss.BasicConfiguration]
 	m := utils.OssMetadata{}
 	if err := json.Unmarshal(a.basicConf, &m); err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return l8oss.ErrInvalid
 	}
 	if t, ok := config.Metadata[connectTimeoutSec]; ok {
@@ -63,9 +83,13 @@ func (a *AliyunOSS) Init(ctx context.Context, config *l8oss.Config) error {
 
 	client, err := oss.New(m.Endpoint, m.AccessKeyID, m.AccessKeySecret, oss.Timeout(int64(connectTimeout), int64(readWriteTimeout)))
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	a.client = client
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 

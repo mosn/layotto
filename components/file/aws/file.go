@@ -23,7 +23,9 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"sync"
 
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -38,7 +40,19 @@ import (
 
 const (
 	defaultCredentialsSource = "provider"
+	componentName            = "file-aws"
 )
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 // AwsOss is a binding for aws oss storage.
 type AwsOss struct {
@@ -46,6 +60,10 @@ type AwsOss struct {
 }
 
 func NewAwsFile() file.File {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	return &AwsOss{}
 }
 
@@ -54,6 +72,8 @@ func (a *AwsOss) Init(ctx context.Context, config *file.FileConfig) error {
 	m := make([]*utils.OssMetadata, 0)
 	err := json.Unmarshal(config.Metadata, &m)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return errors.New("invalid config for aws oss")
 	}
 	for _, data := range m {
@@ -63,6 +83,10 @@ func (a *AwsOss) Init(ctx context.Context, config *file.FileConfig) error {
 		client, err := a.createOssClient(data)
 		if err != nil {
 			continue
+		}
+		if client != nil {
+			readinessIndicator.SetStarted()
+			livenessIndicator.SetStarted()
 		}
 		a.client = client
 	}

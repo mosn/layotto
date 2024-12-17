@@ -22,19 +22,30 @@ import (
 	"errors"
 	"io"
 	"strconv"
+	"sync"
 
 	"mosn.io/layotto/components/file"
+	"mosn.io/layotto/components/pkg/actuators"
 )
 
 const (
-	endpointKey = "endpoint"
-	fileSizeKey = "filesize"
+	endpointKey   = "endpoint"
+	fileSizeKey   = "filesize"
+	componentName = "file-qiniu"
 )
 
 var (
 	ErrClientNotExist     = errors.New("specific client not exist")
 	ErrNotSpecifyEndPoint = errors.New("not specify endpoint in metadata")
+	once                  sync.Once
+	readinessIndicator    *actuators.HealthIndicator
+	livenessIndicator     *actuators.HealthIndicator
 )
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type QiniuOSS struct {
 	metadata map[string]*OssMetadata
@@ -52,6 +63,10 @@ type OssMetadata struct {
 }
 
 func NewQiniuOSS() file.File {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	return &QiniuOSS{
 		metadata: make(map[string]*OssMetadata),
 		client:   make(map[string]*QiniuOSSClient),
@@ -62,6 +77,8 @@ func (q *QiniuOSS) Init(ctx context.Context, metadata *file.FileConfig) error {
 	m := make([]*OssMetadata, 0)
 	err := json.Unmarshal(metadata.Metadata, &m)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return file.ErrInvalid
 	}
 
@@ -85,6 +102,15 @@ func (q *QiniuOSS) Init(ctx context.Context, metadata *file.FileConfig) error {
 			v.UseHTTPS,
 			v.UseCdnDomains,
 		)
+
+		if client != nil {
+			readinessIndicator.SetStarted()
+			livenessIndicator.SetStarted()
+		} else {
+			readinessIndicator.ReportError("failed to create qiniu oss client")
+			livenessIndicator.ReportError("failed to create qiniu oss client")
+		}
+
 		q.metadata[v.Endpoint] = v
 		q.client[v.Endpoint] = client
 	}

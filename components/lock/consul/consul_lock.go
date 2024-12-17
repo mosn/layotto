@@ -10,6 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package consul
 
 import (
@@ -23,8 +24,24 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
 )
+
+const (
+	componentName = "lock-consul"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type ConsulLock struct {
 	metadata       utils.ConsulMetadata
@@ -37,6 +54,10 @@ type ConsulLock struct {
 }
 
 func NewConsulLock(logger log.ErrorLogger) *ConsulLock {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	consulLock := &ConsulLock{logger: logger}
 	return consulLock
 }
@@ -44,6 +65,8 @@ func NewConsulLock(logger log.ErrorLogger) *ConsulLock {
 func (c *ConsulLock) Init(metadata lock.Metadata) error {
 	consulMetadata, err := utils.ParseConsulMetadata(metadata)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	c.metadata = consulMetadata
@@ -52,12 +75,16 @@ func (c *ConsulLock) Init(metadata lock.Metadata) error {
 		Scheme:  consulMetadata.Scheme,
 	})
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	c.client = client
 	c.sessionFactory = client.Session()
 	c.kv = client.KV()
 	c.workPool = msync.NewWorkerPool(runtime.NumCPU())
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 	return nil
 }
 func (c *ConsulLock) Features() []lock.Feature {

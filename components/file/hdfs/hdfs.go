@@ -25,8 +25,10 @@ import (
 	"io"
 	"io/ioutil"
 	"strconv"
+	"sync"
 
 	"mosn.io/layotto/components/file"
+	"mosn.io/layotto/components/pkg/actuators"
 
 	store "go.beyondstorage.io/services/hdfs"
 	"go.beyondstorage.io/v5/pairs"
@@ -34,8 +36,9 @@ import (
 )
 
 const (
-	endpointKey = "endpoint"
-	fileSize    = "filesize"
+	endpointKey   = "endpoint"
+	fileSize      = "filesize"
+	componentName = "file-hdfs"
 )
 
 var (
@@ -45,7 +48,15 @@ var (
 	ErrNotSpecifyEndpoint error = errors.New("other error happend in metadata")
 	ErrHdfsListFail       error = errors.New("hdfs list opt failed")
 	ErrInitFailed         error = errors.New("hdfs client init failed")
+	once                  sync.Once
+	readinessIndicator    *actuators.HealthIndicator
+	livenessIndicator     *actuators.HealthIndicator
 )
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 type hdfs struct {
 	client map[string]types.Storager
@@ -57,6 +68,10 @@ type HdfsMetaData struct {
 }
 
 func NewHdfs() file.File {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	return &hdfs{
 		client: make(map[string]types.Storager),
 		meta:   make(map[string]*HdfsMetaData),
@@ -77,12 +92,17 @@ func (h *hdfs) Init(ctx context.Context, config *file.FileConfig) error {
 		client, err := h.createHdfsClient(data)
 
 		if err != nil {
+			readinessIndicator.ReportError(err.Error())
+			livenessIndicator.ReportError(err.Error())
 			return ErrInitFailed
 		}
 
 		h.client[data.EndPoint] = client
 		h.meta[data.EndPoint] = data
 	}
+
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 
 	return nil
 }

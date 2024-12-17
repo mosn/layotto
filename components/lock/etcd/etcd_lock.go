@@ -10,11 +10,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package etcd
 
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	clientv3 "go.etcd.io/etcd/client/v3"
 
@@ -23,7 +25,23 @@ import (
 	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
+	"mosn.io/layotto/components/pkg/actuators"
 )
+
+const (
+	componentName = "lock-etcd"
+)
+
+var (
+	once               sync.Once
+	readinessIndicator *actuators.HealthIndicator
+	livenessIndicator  *actuators.HealthIndicator
+)
+
+func init() {
+	readinessIndicator = actuators.NewHealthIndicator()
+	livenessIndicator = actuators.NewHealthIndicator()
+}
 
 // Etcd lock store
 type EtcdLock struct {
@@ -39,6 +57,10 @@ type EtcdLock struct {
 
 // NewEtcdLock returns a new etcd lock
 func NewEtcdLock(logger log.ErrorLogger) *EtcdLock {
+	once.Do(func() {
+		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
+		actuators.SetComponentsIndicator(componentName, indicators)
+	})
 	s := &EtcdLock{
 		features: make([]lock.Feature, 0),
 		logger:   logger,
@@ -52,15 +74,21 @@ func (e *EtcdLock) Init(metadata lock.Metadata) error {
 	// 1. parse config
 	m, err := utils.ParseEtcdMetadata(metadata.Properties)
 	if err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 	e.metadata = m
 	// 2. construct client
 	if e.client, err = utils.NewEtcdClient(m); err != nil {
+		readinessIndicator.ReportError(err.Error())
+		livenessIndicator.ReportError(err.Error())
 		return err
 	}
 
 	e.ctx, e.cancel = context.WithCancel(context.Background())
+	readinessIndicator.SetStarted()
+	livenessIndicator.SetStarted()
 
 	return err
 }
