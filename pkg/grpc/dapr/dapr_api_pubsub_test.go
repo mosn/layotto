@@ -31,6 +31,7 @@ import (
 	"google.golang.org/grpc"
 	rawGRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
+	"mosn.io/pkg/log"
 
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
@@ -212,10 +213,6 @@ func (m *mockClient) OnTopicEvent(ctx context.Context, in *dapr_v1pb.TopicEventR
 }
 
 func Test_listTopicSubscriptions(t *testing.T) {
-	a := NewDaprServer("", nil, nil, nil, nil,
-		nil, nil, nil, nil, nil, nil, nil)
-
-	var apiForTest = a.(*daprGrpcAPI)
-	topics := apiForTest.listTopicSubscriptions(&mockClient{})
+	topics := listTopicSubscriptions(&mockClient{}, log.DefaultLogger)
 	assert.True(t, topics != nil && len(topics) == 0)
 }

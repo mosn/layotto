@@ -22,6 +22,7 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/sequencer"
 	"mosn.io/layotto/pkg/messages"
@@ -33,7 +34,7 @@ func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) 
 	// 1. validate
 	if len(a.sequencers) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrSequencerStoresNotConfigured)
-		a.logger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
 		return &runtimev1pb.GetNextIdResponse{}, err
 	}
 	if req.Key == "" {
@@ -48,7 +49,7 @@ func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) 
 	// modify key
 	compReq.Key, err = runtime_sequencer.GetModifiedSeqKey(compReq.Key, req.StoreName, a.appId)
 	if err != nil {
-		a.logger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
 		return &runtimev1pb.GetNextIdResponse{}, err
 	}
 	// 3. find store component
@@ -67,7 +68,7 @@ func (a *api) GetNextId(ctx context.Context, req *runtimev1pb.GetNextIdRequest) 
 	}
 	// 5. convert response
 	if err != nil {
-		a.logger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetNextId] error: %v", err)
 		return &runtimev1pb.GetNextIdResponse{}, err
 	}
 	return &runtimev1pb.GetNextIdResponse{

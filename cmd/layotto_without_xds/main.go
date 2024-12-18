@@ -85,6 +85,7 @@ import (
 	// Configuration
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/configstores/apollo"
+	store_inmemory "mosn.io/layotto/components/configstores/in-memory"
 
 	// Pub/Sub
 	dapr_comp_pubsub "github.com/dapr/components-contrib/pubsub"
@@ -276,6 +277,7 @@ func NewRuntimeGrpcServer(data json.RawMessage, opts ...grpc.ServerOption) (mgrp
 			configstores.NewStoreFactory("apollo", apollo.NewStore),
 			configstores.NewStoreFactory("etcd", etcdv3.NewStore),
 			configstores.NewStoreFactory("nacos", nacos.NewStore),
+			configstores.NewStoreFactory("in-memory", store_inmemory.NewStore),
 		),
 
 		// RPC

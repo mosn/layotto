@@ -18,9 +18,8 @@ import (
 	"sync"
 	"time"
 
+	"mosn.io/pkg/log"
 	"mosn.io/pkg/utils"
-
-	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/sequencer"
 )
@@ -41,7 +40,6 @@ type DoubleBuffer struct {
 	backUpBufferChan chan *Buffer
 	lock             sync.Mutex
 	Store            sequencer.Store
-	logger           logger.Logger
 }
 
 type Buffer struct {
@@ -56,16 +54,9 @@ func NewDoubleBuffer(key string, store sequencer.Store) *DoubleBuffer {
 		size:             defaultSize,
 		Store:            store,
 		backUpBufferChan: make(chan *Buffer, 1),
-		logger:           logger.NewLayottoLogger("sequencer/doubleBuffer"),
 	}
 
-	logger.RegisterComponentLoggerListener("sequencer/doubleBuffer", d)
-
 	return d
-}
-
-func (d *DoubleBuffer) OnLogLevelChanged(outputLevel logger.LogLevel) {
-	d.logger.SetLogLevel(outputLevel)
 }
 
 // init double buffer
@@ -108,7 +99,7 @@ func (d *DoubleBuffer) getId() (int64, error) {
 			for i := 0; i < defaultRetry; i++ {
 				buffer, err := d.getNewBuffer()
 				if err != nil {
-					d.logger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
+					log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
 					continue
 				}
 				d.backUpBufferChan <- buffer
@@ -118,7 +109,7 @@ func (d *DoubleBuffer) getId() (int64, error) {
 			for {
 				buffer, err := d.getNewBuffer()
 				if err != nil {
-					d.logger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
+					log.DefaultLogger.Errorf("[DoubleBuffer] [getNewBuffer] error: %v", err)
 					time.Sleep(waitTime)
 					continue
 				}

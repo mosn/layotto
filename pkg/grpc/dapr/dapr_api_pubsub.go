@@ -28,6 +28,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"mosn.io/pkg/log"
 
 	l8_comp_pubsub "mosn.io/layotto/components/pubsub"
 	dapr_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/runtime/v1"
@@ -50,7 +51,7 @@ func (d *daprGrpcAPI) PublishEvent(ctx context.Context, in *dapr_v1pb.PublishEve
 	// 1. validate
 	result, err := d.doPublishEvent(ctx, in.PubsubName, in.Topic, in.Data, in.DataContentType, in.Metadata)
 	if err != nil {
-		d.logger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.PublishEvent] %v", err)
 	}
 	return result, err
 }
@@ -151,7 +152,7 @@ func (d *daprGrpcAPI) getInterestedTopics() (map[string]TopicSubscriptions, erro
 
 	// 2. handle app subscriptions
 	client := dapr_v1pb.NewAppCallbackClient(d.AppCallbackConn)
-	subscriptions = d.listTopicSubscriptions(client)
+	subscriptions = listTopicSubscriptions(client, log.DefaultLogger)
 	// TODO handle declarative subscriptions
 
 	// 3. prepare result
@@ -172,7 +173,7 @@ func (d *daprGrpcAPI) getInterestedTopics() (map[string]TopicSubscriptions, erro
 			for topic := range v.topic2Details {
 				topics = append(topics, topic)
 			}
-			d.logger.Infof("[runtime][getInterestedTopics]app is subscribed to the following topics: %v through pubsub=%s", topics, pubsubName)
+			log.DefaultLogger.Infof("[runtime][getInterestedTopics]app is subscribed to the following topics: %v through pubsub=%s", topics, pubsubName)
 		}
 	}
 
@@ -191,7 +192,7 @@ func (d *daprGrpcAPI) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRout
 	// 2. loop subscribing every <topic, route>
 	for topic, route := range v.topic2Details {
 		// TODO limit topic scope
-		d.logger.Debugf("[runtime][beginPubSub]subscribing to topic=%s on pubsub=%s", topic, pubsubName)
+		log.DefaultLogger.Debugf("[runtime][beginPubSub]subscribing to topic=%s on pubsub=%s", topic, pubsubName)
 		// ask component to subscribe
 		if err := ps.Subscribe(pubsub.SubscribeRequest{
 			Topic:    topic,
@@ -203,7 +204,7 @@ func (d *daprGrpcAPI) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRout
 			msg.Metadata[Metadata_key_pubsubName] = pubsubName
 			return d.publishMessageGRPC(ctx, msg)
 		}); err != nil {
-			d.logger.Warnf("[runtime][beginPubSub]failed to subscribe to topic %s: %s", topic, err)
+			log.DefaultLogger.Warnf("[runtime][beginPubSub]failed to subscribe to topic %s: %s", topic, err)
 			return err
 		}
 	}
@@ -215,13 +216,13 @@ func (d *daprGrpcAPI) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMes
 	var cloudEvent map[string]interface{}
 	err := d.json.Unmarshal(msg.Data, &cloudEvent)
 	if err != nil {
-		d.logger.Debugf("[runtime]error deserializing cloud events proto: %s", err)
+		log.DefaultLogger.Debugf("[runtime]error deserializing cloud events proto: %s", err)
 		return err
 	}
 
 	// 2. drop msg if the current cloud event has expired
 	if pubsub.HasExpired(cloudEvent) {
-		d.logger.Warnf("[runtime]dropping expired pub/sub event %v as of %v", cloudEvent[pubsub.IDField].(string), cloudEvent[pubsub.ExpirationField].(string))
+		log.DefaultLogger.Warnf("[runtime]dropping expired pub/sub event %v as of %v", cloudEvent[pubsub.IDField].(string), cloudEvent[pubsub.ExpirationField].(string))
 		return nil
 	}
 
@@ -240,7 +241,7 @@ func (d *daprGrpcAPI) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMes
 	if data, ok := cloudEvent[pubsub.DataBase64Field]; ok && data != nil {
 		decoded, decodeErr := base64.StdEncoding.DecodeString(data.(string))
 		if decodeErr != nil {
-			d.logger.Debugf("unable to base64 decode cloudEvent field data_base64: %s", decodeErr)
+			log.DefaultLogger.Debugf("unable to base64 decode cloudEvent field data_base64: %s", decodeErr)
 			return err
 		}
 
@@ -260,20 +261,20 @@ func (d *daprGrpcAPI) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMes
 	res, err := clientV1.OnTopicEvent(ctx, envelope)
 
 	// 5. check result
-	return d.retryStrategy(err, res, cloudEvent)
+	return retryStrategy(err, res, cloudEvent)
 }
 
-func (d *daprGrpcAPI) retryStrategy(err error, res *dapr_v1pb.TopicEventResponse, cloudEvent map[string]interface{}) error {
+func retryStrategy(err error, res *dapr_v1pb.TopicEventResponse, cloudEvent map[string]interface{}) error {
 	if err != nil {
 		errStatus, hasErrStatus := status.FromError(err)
 		if hasErrStatus && (errStatus.Code() == codes.Unimplemented) {
 			// DROP
-			d.logger.Warnf("[runtime]non-retriable error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err)
+			log.DefaultLogger.Warnf("[runtime]non-retriable error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err)
 			return nil
 		}
 
 		err = fmt.Errorf("error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err)
-		d.logger.Debugf("%s", err)
+		log.DefaultLogger.Debugf("%s", err)
 		// on error from application, return error for redelivery of event
 		return err
 	}
@@ -286,17 +287,17 @@ func (d *daprGrpcAPI) retryStrategy(err error, res *dapr_v1pb.TopicEventResponse
 	case dapr_v1pb.TopicEventResponse_RETRY:
 		return fmt.Errorf("RETRY status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
 	case dapr_v1pb.TopicEventResponse_DROP:
-		d.logger.Warnf("[runtime]DROP status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
+		log.DefaultLogger.Warnf("[runtime]DROP status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
 		return nil
 	}
 	// Consider unknown status field as error and retry
 	return fmt.Errorf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus())
 }
 
-func (d *daprGrpcAPI) listTopicSubscriptions(client dapr_v1pb.AppCallbackClient) []*dapr_v1pb.TopicSubscription {
+func listTopicSubscriptions(client dapr_v1pb.AppCallbackClient, log log.ErrorLogger) []*dapr_v1pb.TopicSubscription {
 	resp, err := client.ListTopicSubscriptions(context.Background(), &emptypb.Empty{})
 	if err != nil {
-		d.logger.Errorf("[runtime][listTopicSubscriptions]error after callback: %s", err)
+		log.Errorf("[runtime][listTopicSubscriptions]error after callback: %s", err)
 		return make([]*dapr_v1pb.TopicSubscription, 0)
 	}
 

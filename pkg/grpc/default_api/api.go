@@ -28,8 +28,7 @@ import (
 	"github.com/dapr/components-contrib/state"
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc"
-
-	"mosn.io/layotto/kit/logger"
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/file"
@@ -89,8 +88,7 @@ type api struct {
 	topicPerComponent map[string]TopicSubscriptions
 	streamer          *streamer
 	// json
-	json   jsoniter.API
-	logger logger.Logger
+	json jsoniter.API
 }
 
 func (a *api) Init(conn *grpc.ClientConn) error {
@@ -135,8 +133,7 @@ func NewAPI(
 		stateStores, transactionalStateStores,
 		files, lockStores, sequencers, sendToOutputBindingFn, secretStores)
 	// construct
-
-	a := &api{
+	return &api{
 		daprAPI:                  dAPI,
 		appId:                    appId,
 		hellos:                   hellos,
@@ -151,20 +148,14 @@ func NewAPI(
 		sendToOutputBindingFn:    sendToOutputBindingFn,
 		secretStores:             secretStores,
 		json:                     jsoniter.ConfigFastest,
-		logger:                   logger.NewLayottoLogger("runtime"),
 	}
-	logger.RegisterComponentLoggerListener("grpc", a)
-	return a
-}
 
-func (a *api) OnLogLevelChanged(outputLevel logger.LogLevel) {
-	a.logger.SetLogLevel(outputLevel)
 }
 
 func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*runtimev1pb.SayHelloResponse, error) {
 	h, err := a.getHello(in.ServiceName)
 	if err != nil {
-		a.logger.Errorf("[runtime] [grpc.say_hello] get hello error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.say_hello] get hello error: %v", err)
 		return nil, err
 	}
 	// create hello request based on pb.go struct
@@ -173,7 +164,7 @@ func (a *api) SayHello(ctx context.Context, in *runtimev1pb.SayHelloRequest) (*r
 	}
 	resp, err := h.Hello(ctx, req)
 	if err != nil {
-		a.logger.Errorf("[runtime] [grpc.say_hello] request hello error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.say_hello] request hello error: %v", err)
 		return nil, err
 	}
 	// create response base on hello.Response

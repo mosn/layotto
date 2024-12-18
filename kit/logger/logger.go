@@ -193,7 +193,7 @@ func NewLayottoLogger(name string) Logger {
 	}
 	if err != nil {
 		ll.loggers[logKeyDebug] = log.DefaultLogger
-		log.DefaultLogger.Fatalf("Failed to create mosn logger: %v", err)
+		log.DefaultLogger.Errorf("Failed to create mosn logger: %v", err)
 	} else {
 		dLogger.SetLogLevel(toMosnLoggerLevel(defaultLoggerLevel))
 		ll.loggers[logKeyDebug] = dLogger
@@ -207,7 +207,7 @@ func NewLayottoLogger(name string) Logger {
 	}
 	if err != nil {
 		ll.loggers[logKeyAccess] = log.DefaultLogger
-		log.DefaultLogger.Fatalf("Failed to create mosn logger: %v", err)
+		log.DefaultLogger.Errorf("Failed to create mosn logger: %v", err)
 	} else {
 		aLogger.SetLogLevel(toMosnLoggerLevel(defaultLoggerLevel))
 		ll.loggers[logKeyAccess] = aLogger
@@ -221,7 +221,7 @@ func NewLayottoLogger(name string) Logger {
 	}
 	if err != nil {
 		ll.loggers[logKeyError] = log.DefaultLogger
-		log.DefaultLogger.Fatalf("Failed to create mosn logger: %v", err)
+		log.DefaultLogger.Errorf("Failed to create mosn logger: %v", err)
 	} else {
 		eLogger.SetLogLevel(toMosnLoggerLevel(defaultLoggerLevel))
 		ll.loggers[logKeyError] = eLogger

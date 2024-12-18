@@ -17,27 +17,20 @@
 package actuator
 
 import (
-	"mosn.io/layotto/kit/logger"
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/pkg/filter/stream/common/http"
 )
 
 type Actuator struct {
 	endpointRegistry map[string]http.Endpoint
-	Logger           logger.Logger
 }
 
 // New init an Actuator.
 func New() *Actuator {
-	a := &Actuator{
+	return &Actuator{
 		endpointRegistry: make(map[string]http.Endpoint),
-		Logger:           logger.NewLayottoLogger("actuator"),
 	}
-	return a
-}
-
-func (act *Actuator) OnLogLevelChanged(level logger.LogLevel) {
-	act.Logger.SetLogLevel(level)
 }
 
 // GetEndpoint get an Endpoint from Actuator with name.
@@ -49,7 +42,7 @@ func (act *Actuator) GetEndpoint(name string) (endpoint http.Endpoint, ok bool) 
 // AddEndpoint add an Endpoint to Actuator。
 func (act *Actuator) AddEndpoint(name string, ep http.Endpoint) {
 	if _, ok := act.endpointRegistry[name]; ok {
-		act.Logger.Warnf("Duplicate Endpoint name: %v !", name)
+		log.DefaultLogger.Warnf("Duplicate Endpoint name: %v !", name)
 	}
 	act.endpointRegistry[name] = ep
 }

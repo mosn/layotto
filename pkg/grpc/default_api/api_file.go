@@ -20,14 +20,14 @@ import (
 	"context"
 	"io"
 
-	"mosn.io/layotto/kit/logger"
-
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"mosn.io/layotto/components/file"
+
+	"mosn.io/pkg/log"
 
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
@@ -59,7 +59,7 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 	for {
 		length, err := data.Read(buf)
 		if err != nil && err != io.EOF {
-			a.logger.Warnf("get file fail, err: %+v", err)
+			log.DefaultLogger.Warnf("get file fail, err: %+v", err)
 			return status.Errorf(codes.Internal, "get file fail,err: %+v", err)
 		}
 		if err == nil || (err == io.EOF && length != 0) {
@@ -77,7 +77,6 @@ func (a *api) GetFile(req *runtimev1pb.GetFileRequest, stream runtimev1pb.Runtim
 type putObjectStreamReader struct {
 	data   []byte
 	server runtimev1pb.Runtime_PutFileServer
-	logger logger.Logger
 }
 
 func newPutObjectStreamReader(data []byte, server runtimev1pb.Runtime_PutFileServer) *putObjectStreamReader {
@@ -99,7 +98,7 @@ func (r *putObjectStreamReader) Read(p []byte) (int, error) {
 		req, err := r.server.Recv()
 		if err != nil {
 			if err != io.EOF {
-				r.logger.Errorf("recv data from grpc stream fail, err:%+v", err)
+				log.DefaultLogger.Errorf("recv data from grpc stream fail, err:%+v", err)
 			}
 			return count, err
 		}
@@ -121,7 +120,6 @@ func (a *api) PutFile(stream runtimev1pb.Runtime_PutFileServer) error {
 		return status.Errorf(codes.InvalidArgument, "not support store type: %+v", req.StoreName)
 	}
 	fileReader := newPutObjectStreamReader(req.Data, stream)
-	fileReader.logger = a.logger
 	if req.Metadata == nil {
 		req.Metadata = make(map[string]string)
 	}

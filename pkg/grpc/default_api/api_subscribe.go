@@ -224,7 +224,7 @@ func (a *api) publishMessageForStream(ctx context.Context, msg *pubsub.NewMessag
 	}
 
 	// 5. Check result
-	return a.retryStrategy(err, resp.Status, cloudEvent)
+	return retryStrategy(err, resp.Status, cloudEvent)
 }
 
 func (c *conn) notifyPublishResponse(ctx context.Context, resp *runtimev1pb.SubscribeTopicEventsRequestProcessed) {

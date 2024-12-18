@@ -31,8 +31,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
-
-	"mosn.io/layotto/kit/logger"
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/file"
@@ -70,8 +69,7 @@ type daprGrpcAPI struct {
 	AppCallbackConn   *grpc.ClientConn
 	topicPerComponent map[string]TopicSubscriptions
 	// json
-	json   jsoniter.API
-	logger logger.Logger
+	json jsoniter.API
 }
 
 func (d *daprGrpcAPI) Init(conn *grpc.ClientConn) error {
@@ -154,7 +152,7 @@ func (d *daprGrpcAPI) InvokeBinding(ctx context.Context, in *dapr_v1pb.InvokeBin
 	resp, err := d.sendToOutputBindingFn(in.Name, req)
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrInvokeOutputBinding, in.Name, err.Error())
-		d.logger.Errorf("call out binding fail, err:%+v", err)
+		log.DefaultLogger.Errorf("call out binding fail, err:%+v", err)
 		return r, err
 	}
 
@@ -168,10 +166,6 @@ func (d *daprGrpcAPI) InvokeBinding(ctx context.Context, in *dapr_v1pb.InvokeBin
 func (d *daprGrpcAPI) isSecretAllowed(storeName string, key string) bool {
 	// TODO: add permission control
 	return true
-}
-
-func (d *daprGrpcAPI) OnLogLevelChanged(level logger.LogLevel) {
-	d.logger.SetLogLevel(level)
 }
 
 // NewDaprAPI_Alpha construct a grpc_api.GrpcAPI which implements DaprServer.
@@ -206,7 +200,7 @@ func NewDaprServer(
 	secretStores map[string]secretstores.SecretStore,
 ) DaprGrpcAPI {
 	// construct
-	dAPI := &daprGrpcAPI{
+	return &daprGrpcAPI{
 		appId:                    appId,
 		hellos:                   hellos,
 		configStores:             configStores,
@@ -220,8 +214,5 @@ func NewDaprServer(
 		sendToOutputBindingFn:    sendToOutputBindingFn,
 		json:                     jsoniter.ConfigFastest,
 		secretStores:             secretStores,
-		logger:                   logger.NewLayottoLogger("dapr"),
 	}
-	logger.RegisterComponentLoggerListener("dapr", dAPI)
-	return dAPI
 }

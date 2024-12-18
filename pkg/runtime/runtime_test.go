@@ -62,6 +62,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	rawGRPC "google.golang.org/grpc"
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
@@ -374,7 +375,7 @@ func TestMosnRuntime_initPubSubs(t *testing.T) {
 		// construct MosnRuntime
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
-			m.logger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		// test initPubSubs
 		err := m.initPubSubs(mpubsub.NewFactory("mock", f))
@@ -405,7 +406,7 @@ func TestMosnRuntime_initPubSubsNotExistMetadata(t *testing.T) {
 		// construct MosnRuntime
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
-			m.logger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		// test initPubSubs
 		err := m.initPubSubs(mpubsub.NewFactory("mock", f))
@@ -436,7 +437,7 @@ func TestMosnRuntime_initStates(t *testing.T) {
 		// construct MosnRuntime
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
-			m.logger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		// test initStates
 		err := m.initStates(mstate.NewFactory("status", f))
@@ -462,7 +463,7 @@ func TestMosnRuntime_initRpc(t *testing.T) {
 		// construct MosnRuntime
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
-			m.logger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		// test initRpcs method
 		err := m.initRpcs(rpc.NewRpcFactory("rpc", f))
@@ -488,7 +489,7 @@ func TestMosnRuntime_initConfigStores(t *testing.T) {
 		}
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
-			m.logger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		err := m.initConfigStores(configstores.NewStoreFactory("store_config", f))
 		assert.Nil(t, err)
@@ -512,7 +513,7 @@ func TestMosnRuntime_initHellos(t *testing.T) {
 		}
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
-			m.logger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		err := m.initHellos(hello.NewHelloFactory("hello", f))
 		assert.Nil(t, err)
@@ -536,7 +537,7 @@ func TestMosnRuntime_initSequencers(t *testing.T) {
 		}
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
-			m.logger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		err := m.initSequencers(runtime_sequencer.NewFactory("sequencers", f))
 		assert.Nil(t, err)
@@ -560,7 +561,7 @@ func TestMosnRuntime_initLocks(t *testing.T) {
 		}
 		m := NewMosnRuntime(cfg)
 		m.errInt = func(err error, format string, args ...interface{}) {
-			m.logger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 		err := m.initLocks(mlock.NewFactory("lock", f))
 		assert.Nil(t, err)

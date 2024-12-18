@@ -30,6 +30,7 @@ import (
 	"encoding/base64"
 
 	"github.com/dapr/components-contrib/contenttype"
+	"mosn.io/pkg/log"
 
 	runtimev1pb "mosn.io/layotto/spec/proto/runtime/v1"
 )
@@ -79,7 +80,7 @@ func (a *api) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[s
 	// 2. loop subscribing every <topic, route>
 	for topic, route := range v.topic2Details {
 		// TODO limit topic scope
-		a.logger.Debugf("[runtime][beginPubSub]subscribing to topic=%s on pubsub=%s", topic, pubsubName)
+		log.DefaultLogger.Debugf("[runtime][beginPubSub]subscribing to topic=%s on pubsub=%s", topic, pubsubName)
 		// ask component to subscribe
 		if err := ps.Subscribe(pubsub.SubscribeRequest{
 			Topic:    topic,
@@ -91,7 +92,7 @@ func (a *api) beginPubSub(pubsubName string, ps pubsub.PubSub, topicRoutes map[s
 			msg.Metadata[Metadata_key_pubsubName] = pubsubName
 			return a.publishMessageGRPC(ctx, msg)
 		}); err != nil {
-			a.logger.Warnf("[runtime][beginPubSub]failed to subscribe to topic %s: %s", topic, err)
+			log.DefaultLogger.Warnf("[runtime][beginPubSub]failed to subscribe to topic %s: %s", topic, err)
 			return err
 		}
 	}
@@ -120,7 +121,7 @@ func (a *api) getInterestedTopics() (map[string]TopicSubscriptions, error) {
 
 	// 2. handle app subscriptions
 	client := runtimev1pb.NewAppCallbackClient(a.AppCallbackConn)
-	subscriptions = a.listTopicSubscriptions(client)
+	subscriptions = listTopicSubscriptions(client, log.DefaultLogger)
 	// TODO handle declarative subscriptions
 
 	// 3. prepare result
@@ -141,7 +142,7 @@ func (a *api) getInterestedTopics() (map[string]TopicSubscriptions, error) {
 			for topic := range v.topic2Details {
 				topics = append(topics, topic)
 			}
-			a.logger.Infof("[runtime][getInterestedTopics]app is subscribed to the following topics: %v through pubsub=%s", topics, pubsubName)
+			log.DefaultLogger.Infof("[runtime][getInterestedTopics]app is subscribed to the following topics: %v through pubsub=%s", topics, pubsubName)
 		}
 	}
 	// 5. cache the result
@@ -167,21 +168,21 @@ func (a *api) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMessage) er
 	res, err := clientV1.OnTopicEvent(ctx, envelope)
 
 	// Check result
-	return a.retryStrategy(err, res, cloudEvent)
+	return retryStrategy(err, res, cloudEvent)
 }
 
 // retryStrategy returns error when the message should be redelivered
-func (a *api) retryStrategy(err error, res *runtimev1pb.TopicEventResponse, cloudEvent map[string]interface{}) error {
+func retryStrategy(err error, res *runtimev1pb.TopicEventResponse, cloudEvent map[string]interface{}) error {
 	if err != nil {
 		errStatus, hasErrStatus := status.FromError(err)
 		if hasErrStatus && (errStatus.Code() == codes.Unimplemented) {
 			// DROP
-			a.logger.Warnf("[runtime]non-retriable error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err)
+			log.DefaultLogger.Warnf("[runtime]non-retriable error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err)
 			return nil
 		}
 
 		err = fmt.Errorf("error returned from app while processing pub/sub event %v: %s", cloudEvent[pubsub.IDField].(string), err)
-		a.logger.Debugf("%s", err)
+		log.DefaultLogger.Debugf("%s", err)
 		// on error from application, return error for redelivery of event
 		return err
 	}
@@ -194,17 +195,17 @@ func (a *api) retryStrategy(err error, res *runtimev1pb.TopicEventResponse, clou
 	case runtimev1pb.TopicEventResponse_RETRY:
 		return fmt.Errorf("RETRY status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
 	case runtimev1pb.TopicEventResponse_DROP:
-		a.logger.Warnf("[runtime]DROP status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
+		log.DefaultLogger.Warnf("[runtime]DROP status returned from app while processing pub/sub event %v", cloudEvent[pubsub.IDField].(string))
 		return nil
 	}
 	// Consider unknown status field as error and retry
 	return fmt.Errorf("unknown status returned from app while processing pub/sub event %v: %v", cloudEvent[pubsub.IDField].(string), res.GetStatus())
 }
 
-func (a *api) listTopicSubscriptions(client runtimev1pb.AppCallbackClient) []*runtimev1pb.TopicSubscription {
+func listTopicSubscriptions(client runtimev1pb.AppCallbackClient, log log.ErrorLogger) []*runtimev1pb.TopicSubscription {
 	resp, err := client.ListTopicSubscriptions(context.Background(), &emptypb.Empty{})
 	if err != nil {
-		a.logger.Errorf("[runtime][listTopicSubscriptions]error after callback: %s", err)
+		log.Errorf("[runtime][listTopicSubscriptions]error after callback: %s", err)
 		return make([]*runtimev1pb.TopicSubscription, 0)
 	}
 	if resp != nil && len(resp.Subscriptions) > 0 {
@@ -218,13 +219,13 @@ func (a *api) envelopeFromSubscriptionMessage(ctx context.Context, msg *pubsub.N
 	var cloudEvent map[string]interface{}
 	err := a.json.Unmarshal(msg.Data, &cloudEvent)
 	if err != nil {
-		a.logger.Debugf("[runtime]error deserializing cloud events proto: %s", err)
+		log.DefaultLogger.Debugf("[runtime]error deserializing cloud events proto: %s", err)
 		return nil, cloudEvent, err
 	}
 
 	// 2. Drop msg if the current cloud event has expired
 	if pubsub.HasExpired(cloudEvent) {
-		a.logger.Warnf("[runtime]dropping expired pub/sub event %v as of %v", cloudEvent[pubsub.IDField].(string), cloudEvent[pubsub.ExpirationField].(string))
+		log.DefaultLogger.Warnf("[runtime]dropping expired pub/sub event %v as of %v", cloudEvent[pubsub.IDField].(string), cloudEvent[pubsub.ExpirationField].(string))
 		return nil, cloudEvent, nil
 	}
 
@@ -243,7 +244,7 @@ func (a *api) envelopeFromSubscriptionMessage(ctx context.Context, msg *pubsub.N
 	if data, ok := cloudEvent[pubsub.DataBase64Field]; ok && data != nil {
 		decoded, decodeErr := base64.StdEncoding.DecodeString(data.(string))
 		if decodeErr != nil {
-			a.logger.Debugf("unable to base64 decode cloudEvent field data_base64: %s", decodeErr)
+			log.DefaultLogger.Debugf("unable to base64 decode cloudEvent field data_base64: %s", decodeErr)
 			return nil, cloudEvent, err
 		}
 

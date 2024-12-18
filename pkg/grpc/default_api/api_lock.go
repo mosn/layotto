@@ -21,6 +21,7 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/pkg/messages"
@@ -32,7 +33,7 @@ func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*ru
 	// 1. validate
 	if a.lockStores == nil || len(a.lockStores) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrLockStoresNotConfigured)
-		a.logger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
 		return &runtimev1pb.TryLockResponse{}, err
 	}
 	if req.ResourceId == "" {
@@ -58,13 +59,13 @@ func (a *api) TryLock(ctx context.Context, req *runtimev1pb.TryLockRequest) (*ru
 	var err error
 	compReq.ResourceId, err = runtime_lock.GetModifiedLockKey(compReq.ResourceId, req.StoreName, a.appId)
 	if err != nil {
-		a.logger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
 		return &runtimev1pb.TryLockResponse{}, err
 	}
 	// 4. delegate to the component
 	compResp, err := store.TryLock(ctx, compReq)
 	if err != nil {
-		a.logger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
 		return &runtimev1pb.TryLockResponse{}, err
 	}
 	// 5. convert response
@@ -76,7 +77,7 @@ func (a *api) Unlock(ctx context.Context, req *runtimev1pb.UnlockRequest) (*runt
 	// 1. validate
 	if a.lockStores == nil || len(a.lockStores) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrLockStoresNotConfigured)
-		a.logger.Errorf("[runtime] [grpc.Unlock] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.Unlock] error: %v", err)
 		return newInternalErrorUnlockResponse(), err
 	}
 	if req.ResourceId == "" {
@@ -98,13 +99,13 @@ func (a *api) Unlock(ctx context.Context, req *runtimev1pb.UnlockRequest) (*runt
 	var err error
 	compReq.ResourceId, err = runtime_lock.GetModifiedLockKey(compReq.ResourceId, req.StoreName, a.appId)
 	if err != nil {
-		a.logger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.TryLock] error: %v", err)
 		return newInternalErrorUnlockResponse(), err
 	}
 	// 4. delegate to the component
 	compResp, err := store.Unlock(ctx, compReq)
 	if err != nil {
-		a.logger.Errorf("[runtime] [grpc.Unlock] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.Unlock] error: %v", err)
 		return newInternalErrorUnlockResponse(), err
 	}
 	// 5. convert response

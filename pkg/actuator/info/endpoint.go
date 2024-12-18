@@ -19,7 +19,7 @@ package info
 import (
 	"context"
 
-	"mosn.io/layotto/kit/logger"
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/pkg/actuator"
 	"mosn.io/layotto/pkg/filter/stream/common/http"
@@ -27,20 +27,16 @@ import (
 
 // init info Endpoint.
 func init() {
-	a := actuator.GetDefault()
-	a.AddEndpoint("info", NewEndpoint(a.Logger))
+	actuator.GetDefault().AddEndpoint("info", NewEndpoint())
 }
 
 var infoContributors = make(map[string]Contributor)
 
 type Endpoint struct {
-	logger logger.Logger
 }
 
-func NewEndpoint(logger logger.Logger) *Endpoint {
-	return &Endpoint{
-		logger: logger,
-	}
+func NewEndpoint() *Endpoint {
+	return &Endpoint{}
 }
 
 func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[string]interface{}, error) {
@@ -50,7 +46,7 @@ func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[s
 	for k, c := range infoContributors {
 		cinfo, err := c.GetInfo()
 		if err != nil {
-			e.logger.Errorf("[actuator][info] Error when GetInfo.Contributor:%v,error:%v", k, err)
+			log.DefaultLogger.Errorf("[actuator][info] Error when GetInfo.Contributor:%v,error:%v", k, err)
 			result[k] = err.Error()
 			resultErr = err
 		} else {

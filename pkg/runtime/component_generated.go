@@ -18,6 +18,8 @@ package runtime
 import (
 	"context"
 
+	"mosn.io/pkg/log"
+
 	cryption "mosn.io/layotto/components/cryption"
 	email "mosn.io/layotto/components/email"
 	phone "mosn.io/layotto/components/phone"
@@ -47,7 +49,7 @@ func newExtensionComponents() *extensionComponents {
 }
 
 func (m *MosnRuntime) initCryptionService(factorys ...*cryption.Factory) error {
-	m.logger.Infof("[runtime] init CryptionService")
+	log.DefaultLogger.Infof("[runtime] init CryptionService")
 
 	// 1. register all implementation
 	reg := cryption.NewRegistry(m.info)
@@ -75,7 +77,7 @@ func (m *MosnRuntime) initCryptionService(factorys ...*cryption.Factory) error {
 }
 
 func (m *MosnRuntime) initEmailService(factorys ...*email.Factory) error {
-	m.logger.Infof("[runtime] init EmailService")
+	log.DefaultLogger.Infof("[runtime] init EmailService")
 
 	// 1. register all implementation
 	reg := email.NewRegistry(m.info)
@@ -103,7 +105,7 @@ func (m *MosnRuntime) initEmailService(factorys ...*email.Factory) error {
 }
 
 func (m *MosnRuntime) initPhoneCallService(factorys ...*phone.Factory) error {
-	m.logger.Infof("[runtime] init PhoneCallService")
+	log.DefaultLogger.Infof("[runtime] init PhoneCallService")
 
 	// 1. register all implementation
 	reg := phone.NewRegistry(m.info)
@@ -131,7 +133,7 @@ func (m *MosnRuntime) initPhoneCallService(factorys ...*phone.Factory) error {
 }
 
 func (m *MosnRuntime) initSmsService(factorys ...*sms.Factory) error {
-	m.logger.Infof("[runtime] init SmsService")
+	log.DefaultLogger.Infof("[runtime] init SmsService")
 
 	// 1. register all implementation
 	reg := sms.NewRegistry(m.info)

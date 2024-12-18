@@ -26,6 +26,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/pkg/common"
 	dapr_common_v1pb "mosn.io/layotto/pkg/grpc/dapr/proto/common/v1"
@@ -38,7 +39,7 @@ func (d *daprGrpcAPI) SaveState(ctx context.Context, in *dapr_v1pb.SaveStateRequ
 	// 1. get store
 	store, err := d.getStateStore(in.StoreName)
 	if err != nil {
-		d.logger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
 		return &emptypb.Empty{}, err
 	}
 	// 2. convert requests
@@ -55,7 +56,7 @@ func (d *daprGrpcAPI) SaveState(ctx context.Context, in *dapr_v1pb.SaveStateRequ
 	// 4. check result
 	if err != nil {
 		err = d.wrapDaprComponentError(err, messages.ErrStateSave, in.StoreName, err.Error())
-		d.logger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.SaveState] error: %v", err)
 		return &emptypb.Empty{}, err
 	}
 	return &emptypb.Empty{}, nil
@@ -66,7 +67,7 @@ func (d *daprGrpcAPI) GetState(ctx context.Context, request *dapr_v1pb.GetStateR
 	// 1. get store
 	store, err := d.getStateStore(request.StoreName)
 	if err != nil {
-		d.logger.Errorf("[runtime] [grpc.GetState] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetState] error: %v", err)
 		return nil, err
 	}
 	// 2. generate the actual key
@@ -86,7 +87,7 @@ func (d *daprGrpcAPI) GetState(ctx context.Context, request *dapr_v1pb.GetStateR
 	// 4. check result
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrStateGet, request.Key, request.StoreName, err.Error())
-		d.logger.Errorf("[runtime] [grpc.GetState] %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetState] %v", err)
 		return &dapr_v1pb.GetStateResponse{}, err
 	}
 	return GetResponse2GetStateResponse(compResp), nil
@@ -96,7 +97,7 @@ func (d *daprGrpcAPI) GetBulkState(ctx context.Context, request *dapr_v1pb.GetBu
 	// 1. get store
 	store, err := d.getStateStore(request.StoreName)
 	if err != nil {
-		d.logger.Errorf("[runtime] [grpc.GetBulkState] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.GetBulkState] error: %v", err)
 		return &dapr_v1pb.GetBulkStateResponse{}, err
 	}
 
@@ -137,7 +138,7 @@ func (d *daprGrpcAPI) GetBulkState(ctx context.Context, request *dapr_v1pb.GetBu
 	pool := workerpool.New(int(request.Parallelism))
 	resultCh := make(chan *dapr_v1pb.BulkStateItem, n)
 	for i := 0; i < n; i++ {
-		pool.Submit(d.generateGetStateTask(store, &reqs[i], resultCh))
+		pool.Submit(generateGetStateTask(store, &reqs[i], resultCh))
 	}
 	pool.StopWait()
 	for {
@@ -159,7 +160,7 @@ func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *dapr_v1pb.Q
 	// 1. get state store component
 	store, err := d.getStateStore(request.StoreName)
 	if err != nil {
-		d.logger.Errorf("[runtime] [grpc.QueryStateAlpha1] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.QueryStateAlpha1] error: %v", err)
 		return ret, err
 	}
 
@@ -167,7 +168,7 @@ func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *dapr_v1pb.Q
 	querier, ok := store.(state.Querier)
 	if !ok {
 		err = status.Errorf(codes.Unimplemented, messages.ErrNotFound, "Query")
-		d.logger.Errorf("[runtime] [grpc.QueryStateAlpha1] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.QueryStateAlpha1] error: %v", err)
 		return ret, err
 	}
 
@@ -175,7 +176,7 @@ func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *dapr_v1pb.Q
 	var req state.QueryRequest
 	if err = jsoniter.Unmarshal([]byte(request.GetQuery()), &req.Query); err != nil {
 		err = status.Errorf(codes.InvalidArgument, messages.ErrMalformedRequest, err.Error())
-		d.logger.Errorf("[runtime] [grpc.QueryStateAlpha1] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.QueryStateAlpha1] error: %v", err)
 		return ret, err
 	}
 	req.Metadata = request.GetMetadata()
@@ -185,7 +186,7 @@ func (d *daprGrpcAPI) QueryStateAlpha1(ctx context.Context, request *dapr_v1pb.Q
 	// 5. convert response
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrStateQuery, request.GetStoreName(), err.Error())
-		d.logger.Errorf("[runtime] [grpc.QueryStateAlpha1] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.QueryStateAlpha1] error: %v", err)
 		return ret, err
 	}
 	if resp == nil || len(resp.Results) == 0 {
@@ -209,7 +210,7 @@ func (d *daprGrpcAPI) DeleteState(ctx context.Context, request *dapr_v1pb.Delete
 	// 1. get store
 	store, err := d.getStateStore(request.StoreName)
 	if err != nil {
-		d.logger.Errorf("[runtime] [grpc.DeleteState] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteState] error: %v", err)
 		return &emptypb.Empty{}, err
 	}
 	// 2. generate the actual key
@@ -222,7 +223,7 @@ func (d *daprGrpcAPI) DeleteState(ctx context.Context, request *dapr_v1pb.Delete
 	// 4. check result
 	if err != nil {
 		err = d.wrapDaprComponentError(err, messages.ErrStateDelete, request.Key, err.Error())
-		d.logger.Errorf("[runtime] [grpc.DeleteState] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteState] error: %v", err)
 		return &empty.Empty{}, err
 	}
 	return &empty.Empty{}, nil
@@ -232,7 +233,7 @@ func (d *daprGrpcAPI) DeleteBulkState(ctx context.Context, request *dapr_v1pb.De
 	// 1. get store
 	store, err := d.getStateStore(request.StoreName)
 	if err != nil {
-		d.logger.Errorf("[runtime] [grpc.DeleteBulkState] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteBulkState] error: %v", err)
 		return &empty.Empty{}, err
 	}
 	// 2. convert request
@@ -248,7 +249,7 @@ func (d *daprGrpcAPI) DeleteBulkState(ctx context.Context, request *dapr_v1pb.De
 	err = store.BulkDelete(reqs)
 	// 4. check result
 	if err != nil {
-		d.logger.Errorf("[runtime] [grpc.DeleteBulkState] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.DeleteBulkState] error: %v", err)
 		return &emptypb.Empty{}, err
 	}
 	return &emptypb.Empty{}, nil
@@ -258,20 +259,20 @@ func (d *daprGrpcAPI) ExecuteStateTransaction(ctx context.Context, request *dapr
 	// 1. check params
 	if d.stateStores == nil || len(d.stateStores) == 0 {
 		err := status.Error(codes.FailedPrecondition, messages.ErrStateStoresNotConfigured)
-		d.logger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
 		return &emptypb.Empty{}, err
 	}
 	storeName := request.StoreName
 	if d.stateStores[storeName] == nil {
 		err := status.Errorf(codes.InvalidArgument, messages.ErrStateStoreNotFound, storeName)
-		d.logger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
 		return &emptypb.Empty{}, err
 	}
 	// 2. find store
 	store, ok := d.transactionalStateStores[storeName]
 	if !ok {
 		err := status.Errorf(codes.Unimplemented, messages.ErrStateStoreNotSupported, storeName)
-		d.logger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
 		return &emptypb.Empty{}, err
 	}
 	// 3. convert request
@@ -282,7 +283,7 @@ func (d *daprGrpcAPI) ExecuteStateTransaction(ctx context.Context, request *dapr
 		var req = op.Request
 		// tolerant npe
 		if req == nil {
-			d.logger.Warnf("[runtime] [grpc.ExecuteStateTransaction] one of TransactionalStateOperation.Request is nil")
+			log.DefaultLogger.Warnf("[runtime] [grpc.ExecuteStateTransaction] one of TransactionalStateOperation.Request is nil")
 			continue
 		}
 		key, err := state2.GetModifiedStateKey(req.Key, request.StoreName, d.appId)
@@ -303,7 +304,7 @@ func (d *daprGrpcAPI) ExecuteStateTransaction(ctx context.Context, request *dapr
 			}
 		default:
 			err := status.Errorf(codes.Unimplemented, messages.ErrNotSupportedStateOperation, op.OperationType)
-			d.logger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+			log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
 			return &emptypb.Empty{}, err
 		}
 		operations = append(operations, operation)
@@ -316,7 +317,7 @@ func (d *daprGrpcAPI) ExecuteStateTransaction(ctx context.Context, request *dapr
 	// 5. check result
 	if err != nil {
 		err = status.Errorf(codes.Internal, messages.ErrStateTransaction, err.Error())
-		d.logger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
+		log.DefaultLogger.Errorf("[runtime] [grpc.ExecuteStateTransaction] error: %v", err)
 		return &emptypb.Empty{}, err
 	}
 	return &emptypb.Empty{}, nil
@@ -412,7 +413,7 @@ func (d *daprGrpcAPI) wrapDaprComponentError(err error, format string, args ...i
 	return status.Errorf(codes.Internal, format, args...)
 }
 
-func (d *daprGrpcAPI) generateGetStateTask(store state.Store, req *state.GetRequest, resultCh chan *dapr_v1pb.BulkStateItem) func() {
+func generateGetStateTask(store state.Store, req *state.GetRequest, resultCh chan *dapr_v1pb.BulkStateItem) func() {
 	return func() {
 		// get
 		r, err := store.Get(req)
@@ -431,7 +432,7 @@ func (d *daprGrpcAPI) generateGetStateTask(store state.Store, req *state.GetRequ
 		case resultCh <- item:
 		default:
 			//never happen
-			d.logger.Errorf("[api.generateGetStateTask] can not push result to the resultCh. item: %+v", item)
+			log.DefaultLogger.Errorf("[api.generateGetStateTask] can not push result to the resultCh. item: %+v", item)
 		}
 	}
 }

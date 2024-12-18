@@ -27,8 +27,6 @@ import (
 
 	l8grpc "mosn.io/layotto/pkg/grpc"
 
-	"mosn.io/layotto/kit/logger"
-
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/rpc"
 	"mosn.io/layotto/pkg/mock"
@@ -87,11 +85,9 @@ func TestSayHello(t *testing.T) {
 	t.Run("no hello stored", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		mockHello := mock.NewMockHelloService(ctrl)
-		api := &api{
-			hellos: map[string]hello.HelloService{
-				"mock": mockHello},
-			logger: logger.NewLayottoLogger("test"),
-		}
+		api := &api{hellos: map[string]hello.HelloService{
+			"mock": mockHello,
+		}}
 		_, err := api.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
 			ServiceName: "no register",
 		})
@@ -101,10 +97,7 @@ func TestSayHello(t *testing.T) {
 	})
 
 	t.Run("empty say hello", func(t *testing.T) {
-		api := &api{
-			hellos: map[string]hello.HelloService{},
-			logger: logger.NewLayottoLogger("test"),
-		}
+		api := &api{hellos: map[string]hello.HelloService{}}
 		_, err := api.SayHello(context.Background(), &runtimev1pb.SayHelloRequest{
 			ServiceName: "mock",
 		})

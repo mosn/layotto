@@ -31,6 +31,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"mosn.io/pkg/log"
 
 	mock_pubsub "mosn.io/layotto/pkg/mock/components/pubsub"
 	mock_appcallback "mosn.io/layotto/pkg/mock/runtime/appcallback"
@@ -191,8 +192,6 @@ func (m *mockClient) OnTopicEvent(ctx context.Context, in *runtimev1pb.TopicEven
 }
 
 func Test_listTopicSubscriptions(t *testing.T) {
-	a := NewAPI("", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	var apiForTest = a.(*api)
-	topics := apiForTest.listTopicSubscriptions(&mockClient{})
+	topics := listTopicSubscriptions(&mockClient{}, log.DefaultLogger)
 	assert.True(t, topics != nil && len(topics) == 0)
 }

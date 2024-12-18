@@ -49,8 +49,7 @@ import (
 	"github.com/dapr/components-contrib/state"
 	rawGRPC "google.golang.org/grpc"
 	mgrpc "mosn.io/mosn/pkg/filter/network/grpc"
-
-	"mosn.io/layotto/kit/logger"
+	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/hello"
@@ -113,11 +112,6 @@ type MosnRuntime struct {
 	errInt            ErrInterceptor
 	started           bool
 	initRuntimeStages []initRuntimeStage
-	logger            logger.Logger
-}
-
-func (m *MosnRuntime) OnLogLevelChanged(level logger.LogLevel) {
-	m.logger.SetLogLevel(level)
 }
 
 func (m *MosnRuntime) RuntimeConfig() *MosnRuntimeConfig {
@@ -128,7 +122,7 @@ type initRuntimeStage func(o *runtimeOptions, m *MosnRuntime) error
 
 func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 	info := info.NewRuntimeInfo()
-	mr := &MosnRuntime{
+	return &MosnRuntime{
 		runtimeConfig:           runtimeConfig,
 		info:                    info,
 		helloRegistry:           hello.NewRegistry(info),
@@ -158,10 +152,7 @@ func NewMosnRuntime(runtimeConfig *MosnRuntimeConfig) *MosnRuntime {
 		dynamicComponents:       make(map[lifecycle.ComponentKey]common.DynamicComponent),
 		extensionComponents:     *newExtensionComponents(),
 		started:                 false,
-		logger:                  logger.NewLayottoLogger("mosn"),
 	}
-	logger.RegisterComponentLoggerListener("mosn", mr)
-	return mr
 }
 
 func (m *MosnRuntime) GetInfo() *info.RuntimeInfo {
@@ -203,7 +194,7 @@ func (m *MosnRuntime) Run(opts ...Option) (mgrpc.RegisteredServer, error) {
 		m.errInt = o.errInt
 	} else {
 		m.errInt = func(err error, format string, args ...interface{}) {
-			m.logger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
+			log.DefaultLogger.Errorf("[runtime] occurs an error: "+err.Error()+", "+format, args...)
 		}
 	}
 	// init runtime with runtimeOptions
@@ -311,7 +302,7 @@ func DefaultInitRuntimeStage(o *runtimeOptions, m *MosnRuntime) error {
 }
 
 func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
-	m.logger.Infof("[runtime] init hello service")
+	log.DefaultLogger.Infof("[runtime] init hello service")
 	// register all hello services implementation
 	m.helloRegistry.Register(hellos...)
 	for name, config := range m.runtimeConfig.HelloServiceManagement {
@@ -336,7 +327,7 @@ func (m *MosnRuntime) initHellos(hellos ...*hello.HelloFactory) error {
 }
 
 func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactory) error {
-	m.logger.Infof("[runtime] init config service")
+	log.DefaultLogger.Infof("[runtime] init config service")
 	// register all config store services implementation
 	m.configStoreRegistry.Register(configStores...)
 	for name, config := range m.runtimeConfig.ConfigStoreManagement {
@@ -359,7 +350,7 @@ func (m *MosnRuntime) initConfigStores(configStores ...*configstores.StoreFactor
 }
 
 func (m *MosnRuntime) initRpcs(rpcs ...*rpc.Factory) error {
-	m.logger.Infof("[runtime] init rpc service")
+	log.DefaultLogger.Infof("[runtime] init rpc service")
 	// register all rpc components
 	m.rpcRegistry.Register(rpcs...)
 	for name, config := range m.runtimeConfig.RpcManagement {
@@ -381,7 +372,7 @@ func (m *MosnRuntime) initRpcs(rpcs ...*rpc.Factory) error {
 
 func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 	// 1. init components
-	m.logger.Infof("[runtime] start initializing pubsub components")
+	log.DefaultLogger.Infof("[runtime] start initializing pubsub components")
 	// register all components implementation
 	m.pubSubRegistry.Register(factorys...)
 	for name, config := range m.runtimeConfig.PubSubManagement {
@@ -420,7 +411,7 @@ func (m *MosnRuntime) initPubSubs(factorys ...*runtime_pubsub.Factory) error {
 }
 
 func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
-	m.logger.Infof("[runtime] start initializing state components")
+	log.DefaultLogger.Infof("[runtime] start initializing state components")
 	// 1. register all the implementation
 	m.stateRegistry.Register(factorys...)
 	// 2. loop initializing
@@ -449,7 +440,7 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 		// 2.2. save prefix strategy
 		err = runtime_state.SaveStateConfiguration(name, config.Metadata)
 		if err != nil {
-			m.logger.Errorf("error save state keyprefix: %s", err.Error())
+			log.DefaultLogger.Errorf("error save state keyprefix: %s", err.Error())
 			return err
 		}
 	}
@@ -457,7 +448,7 @@ func (m *MosnRuntime) initStates(factorys ...*runtime_state.Factory) error {
 }
 
 func (m *MosnRuntime) initOss(factorys ...*oss.Factory) error {
-	m.logger.Infof("[runtime] init oss service")
+	log.DefaultLogger.Infof("[runtime] init oss service")
 
 	// 1. register all oss store services implementation
 	m.ossRegistry.Register(factorys...)
@@ -486,7 +477,7 @@ func (m *MosnRuntime) initOss(factorys ...*oss.Factory) error {
 }
 
 func (m *MosnRuntime) initFiles(files ...*file.Factory) error {
-	m.logger.Infof("[runtime] init file service")
+	log.DefaultLogger.Infof("[runtime] init file service")
 
 	// register all files store services implementation
 	m.fileRegistry.Register(files...)
@@ -512,7 +503,7 @@ func (m *MosnRuntime) initFiles(files ...*file.Factory) error {
 }
 
 func (m *MosnRuntime) initLocks(factorys ...*runtime_lock.Factory) error {
-	m.logger.Infof("[runtime] start initializing lock components")
+	log.DefaultLogger.Infof("[runtime] start initializing lock components")
 	// 1. register all the implementation
 	m.lockRegistry.Register(factorys...)
 	// 2. loop initializing
@@ -549,7 +540,7 @@ func (m *MosnRuntime) initLocks(factorys ...*runtime_lock.Factory) error {
 }
 
 func (m *MosnRuntime) initSequencers(factorys ...*runtime_sequencer.Factory) error {
-	m.logger.Infof("[runtime] start initializing sequencer components")
+	log.DefaultLogger.Infof("[runtime] start initializing sequencer components")
 	// 1. register all the implementation
 	m.sequencerRegistry.Register(factorys...)
 	// 2. loop initializing
@@ -609,7 +600,7 @@ func (m *MosnRuntime) initAppCallbackConnection() error {
 	defer cancel()
 	conn, err := rawGRPC.DialContext(ctx, address, opts...)
 	if err != nil {
-		m.logger.Warnf("[runtime]failed to init callback client to address %v : %s", address, err)
+		log.DefaultLogger.Warnf("[runtime]failed to init callback client to address %v : %s", address, err)
 		return err
 	}
 	m.AppCallbackConn = conn
@@ -617,7 +608,7 @@ func (m *MosnRuntime) initAppCallbackConnection() error {
 }
 
 func (m *MosnRuntime) initOutputBinding(factorys ...*mbindings.OutputBindingFactory) error {
-	m.logger.Infof("[runtime] start initializing OutputBinding components")
+	log.DefaultLogger.Infof("[runtime] start initializing OutputBinding components")
 	// 1. register all factory methods.
 	m.bindingsRegistry.RegisterOutputBinding(factorys...)
 	// 2. loop initializing
@@ -654,7 +645,7 @@ func (m *MosnRuntime) initInputBinding(factorys ...*mbindings.InputBindingFactor
 }
 
 func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.Factory) error {
-	m.logger.Infof("[runtime] start initializing SecretStores components")
+	log.DefaultLogger.Infof("[runtime] start initializing SecretStores components")
 	// 1. register all factory methods.
 	m.secretStoresRegistry.Register(factorys...)
 	// 2. loop initializing
@@ -684,7 +675,7 @@ func (m *MosnRuntime) initSecretStores(factorys ...*msecretstores.Factory) error
 
 func (m *MosnRuntime) AppendInitRuntimeStage(f initRuntimeStage) {
 	if f == nil || m.started {
-		m.logger.Errorf("[runtime] invalid initRuntimeStage or already started")
+		log.DefaultLogger.Errorf("[runtime] invalid initRuntimeStage or already started")
 		return
 	}
 	m.initRuntimeStages = append(m.initRuntimeStages, f)
@@ -708,14 +699,14 @@ func (m *MosnRuntime) initRuntime(r *runtimeOptions) error {
 		}
 	}
 
-	m.logger.Infof("[runtime] initRuntime stages cost: %v", time.Since(st))
+	log.DefaultLogger.Infof("[runtime] initRuntime stages cost: %v", time.Since(st))
 	return nil
 }
 
 func (m *MosnRuntime) registerPluggableComponent() {
 	list, err := pluggable.Discover()
 	if err != nil {
-		m.logger.Errorf("[runtime] discover pluggable components failed: %v", err)
+		log.DefaultLogger.Errorf("[runtime] discover pluggable components failed: %v", err)
 		return
 	}
 
@@ -747,7 +738,7 @@ func (m *MosnRuntime) registerPluggableComponent() {
 			m.secretStoresRegistry.Register(v.(*csecretsotres.Factory))
 		// todo custom
 		default:
-			m.logger.Warnf("[runtime]unknown pluggable component factory type %v", t)
+			log.DefaultLogger.Warnf("[runtime]unknown pluggable component factory type %v", t)
 		}
 	}
 }
@@ -760,12 +751,12 @@ func (m *MosnRuntime) SetCustomComponent(kind string, name string, component cus
 }
 
 func (m *MosnRuntime) initCustomComponents(kind2factorys map[string][]*custom.Factory) error {
-	m.logger.Infof("[runtime] start initializing custom components")
+	log.DefaultLogger.Infof("[runtime] start initializing custom components")
 	// loop all configured custom components.
 	for kind, name2Config := range m.runtimeConfig.CustomComponent {
 		factorys, ok := kind2factorys[kind]
 		if !ok || len(factorys) == 0 {
-			m.logger.Errorf("[runtime] Your required component kind %s is not supported.", kind)
+			log.DefaultLogger.Errorf("[runtime] Your required component kind %s is not supported.", kind)
 			continue
 		}
 		// register all the factorys
