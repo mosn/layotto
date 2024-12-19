@@ -16,7 +16,6 @@ package nacos
 import (
 	"context"
 	"errors"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -27,7 +26,8 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	nacoslog "github.com/nacos-group/nacos-sdk-go/v2/common/logger"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
-	"mosn.io/pkg/log"
+
+	log "mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/pkg/actuators"
@@ -54,6 +54,7 @@ type ConfigStore struct {
 	appId       string
 	namespaceId string
 	listener    sync.Map
+	log         log.Logger
 }
 
 func NewStore() configstores.Store {
@@ -61,7 +62,15 @@ func NewStore() configstores.Store {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
-	return &ConfigStore{}
+	cs := &ConfigStore{
+		log: log.NewLayottoLogger("configstore/nacos"),
+	}
+	log.RegisterComponentLoggerListener("configstore/nacos", cs)
+	return cs
+}
+
+func (n *ConfigStore) OnLogLevelChanged(outputLevel log.LogLevel) {
+	n.log.SetLogLevel(outputLevel)
 }
 
 // Init SetConfig the configuration store.
@@ -98,7 +107,7 @@ func (n *ConfigStore) Init(config *configstores.StoreConfig) (err error) {
 	if config.TimeOut != "" {
 		timeout, err = strconv.Atoi(config.TimeOut)
 		if err != nil {
-			log.DefaultLogger.Errorf("wrong configuration for time out configuration: %+v, set default value(10s)", config.TimeOut)
+			n.log.Errorf("wrong configuration for time out configuration: %+v, set default value(10s)", config.TimeOut)
 			return err
 		}
 	}
@@ -198,31 +207,21 @@ func (n *ConfigStore) initWithACM(timeoutMs uint64, metadata *Metadata) (config_
 }
 
 func (n *ConfigStore) setupLogger(metadata *Metadata) error {
-	roller := log.DefaultRoller()
-	logFilePath := filepath.Join(metadata.LogDir, defaultLogFileName)
-	logger, err := log.GetOrCreateLogger(logFilePath, roller)
-	if err != nil {
-		return err
-	}
-
-	errLogger := &log.SimpleErrorLog{
-		Logger: logger,
-	}
 
 	switch metadata.LogLevel {
 	case DEBUG:
-		errLogger.Level = log.DEBUG
+		n.log.SetLogLevel(log.DebugLevel)
 	case INFO:
-		errLogger.Level = log.INFO
+		n.log.SetLogLevel(log.InfoLevel)
 	case WARN:
-		errLogger.Level = log.WARN
+		n.log.SetLogLevel(log.WarnLevel)
 	case ERROR:
-		errLogger.Level = log.ERROR
+		n.log.SetLogLevel(log.ErrorLevel)
 	default:
 		return errors.New("unknown log level")
 	}
 
-	nacoslog.SetLogger(NewDefaultLogger(errLogger))
+	nacoslog.SetLogger(NewDefaultLogger(n.log))
 	return nil
 }
 
@@ -289,7 +288,7 @@ func (n *ConfigStore) getAllWithAppId(ctx context.Context, pagination *Paginatio
 		PageSize: pagination.PageSize,
 	})
 	if err != nil {
-		log.DefaultLogger.Errorf("fail get all app_id key-value,err: %+v", err)
+		n.log.Errorf("fail get all app_id key-value,err: %+v", err)
 		return nil, err
 	}
 
@@ -315,7 +314,7 @@ func (n *ConfigStore) getAllWithGroup(ctx context.Context, group string, paginat
 		PageSize: pagination.PageSize,
 	})
 	if err != nil {
-		log.DefaultLogger.Errorf("fail get all group key-value,err: %+v", err)
+		n.log.Errorf("fail get all group key-value,err: %+v", err)
 		return nil, err
 	}
 
@@ -342,7 +341,7 @@ func (n *ConfigStore) getAllWithKeys(ctx context.Context, group string, keys []s
 			AppName: n.appId,
 		})
 		if err != nil {
-			log.DefaultLogger.Errorf("fail get key-value,err: %+v", err)
+			n.log.Errorf("fail get key-value,err: %+v", err)
 			return nil, err
 		}
 
@@ -386,7 +385,7 @@ func (n *ConfigStore) Set(ctx context.Context, request *configstores.SetRequest)
 
 		// If the config does not exist, deleting the config will not result in an error.
 		if err != nil {
-			log.DefaultLogger.Errorf("set key[%+v] failed with error: %+v", configItem.Key, err)
+			n.log.Errorf("set key[%+v] failed with error: %+v", configItem.Key, err)
 			return err
 		}
 		if !ok {
@@ -417,7 +416,7 @@ func (n *ConfigStore) Delete(ctx context.Context, request *configstores.DeleteRe
 			AppName: request.AppId,
 		})
 		if err != nil {
-			log.DefaultLogger.Errorf("delete key[%+v] failed with error: %+v", key, err)
+			n.log.Errorf("delete key[%+v] failed with error: %+v", key, err)
 			return err
 		}
 		if !ok {
@@ -514,7 +513,7 @@ func (n *ConfigStore) StopSubscribe() {
 			Group:   subscribe.group,
 			AppName: n.appId,
 		}); err != nil {
-			log.DefaultLogger.Errorf("nacos StopSubscribe key %s-%s-%s failed", n.appId, subscribe.group, subscribe.key)
+			n.log.Errorf("nacos StopSubscribe key %s-%s-%s failed", n.appId, subscribe.group, subscribe.key)
 			return false
 		}
 

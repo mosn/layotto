@@ -17,7 +17,7 @@ import (
 	"fmt"
 	"sync"
 
-	"mosn.io/pkg/log"
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
@@ -42,20 +42,25 @@ func init() {
 type MySQLSequencer struct {
 	metadata   utils.MySQLMetadata
 	biggerThan map[string]int64
-	logger     log.ErrorLogger
+	logger     logger.Logger
 	db         *sql.DB
 }
 
-func NewMySQLSequencer(logger log.ErrorLogger) *MySQLSequencer {
+func NewMySQLSequencer() *MySQLSequencer {
 	once.Do(func() {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
 	s := &MySQLSequencer{
-		logger: logger,
+		logger: logger.NewLayottoLogger("sequencer/mysql"),
 	}
 
+	logger.RegisterComponentLoggerListener("sequencer/mysql", s)
 	return s
+}
+
+func (e *MySQLSequencer) OnLogLevelChanged(level logger.LogLevel) {
+	e.logger.SetLogLevel(level)
 }
 
 func (e *MySQLSequencer) Init(config sequencer.Configuration) error {

@@ -20,7 +20,6 @@ import (
 	miniredis "github.com/alicebob/miniredis/v2"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
 )
@@ -30,7 +29,7 @@ const resourceId = "resource_xxx"
 func TestStandaloneRedisLock_InitError(t *testing.T) {
 	t.Run("error when connection fail", func(t *testing.T) {
 		// construct component
-		comp := NewStandaloneRedisLock(log.DefaultLogger)
+		comp := NewStandaloneRedisLock()
 		defer comp.Close()
 
 		cfg := lock.Metadata{
@@ -46,7 +45,7 @@ func TestStandaloneRedisLock_InitError(t *testing.T) {
 
 	t.Run("error when no host", func(t *testing.T) {
 		// construct component
-		comp := NewStandaloneRedisLock(log.DefaultLogger)
+		comp := NewStandaloneRedisLock()
 		defer comp.Close()
 
 		cfg := lock.Metadata{
@@ -62,7 +61,7 @@ func TestStandaloneRedisLock_InitError(t *testing.T) {
 
 	t.Run("error when wrong MaxRetries", func(t *testing.T) {
 		// construct component
-		comp := NewStandaloneRedisLock(log.DefaultLogger)
+		comp := NewStandaloneRedisLock()
 		defer comp.Close()
 
 		cfg := lock.Metadata{
@@ -86,7 +85,7 @@ func TestStandaloneRedisLock_TryLock(t *testing.T) {
 	assert.NoError(t, err)
 	defer s.Close()
 	// construct component
-	comp := NewStandaloneRedisLock(log.DefaultLogger)
+	comp := NewStandaloneRedisLock()
 	defer comp.Close()
 
 	cfg := lock.Metadata{

@@ -40,7 +40,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/jinzhu/copier"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 )
 
 const (
@@ -61,6 +62,7 @@ func init() {
 type AwsOss struct {
 	client    *s3.Client
 	basicConf json.RawMessage
+	logger    logger.Logger
 }
 
 func NewAwsOss() oss.Oss {
@@ -68,7 +70,15 @@ func NewAwsOss() oss.Oss {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
-	return &AwsOss{}
+	ao := &AwsOss{
+		logger: logger.NewLayottoLogger("oss/aws"),
+	}
+	logger.RegisterComponentLoggerListener("oss/aws", ao)
+	return ao
+}
+
+func (a *AwsOss) OnLogLevelChanged(level logger.LogLevel) {
+	a.logger.SetLogLevel(level)
 }
 
 func (a *AwsOss) Init(ctx context.Context, config *oss.Config) error {
@@ -314,7 +324,7 @@ func (a *AwsOss) CreateMultipartUpload(ctx context.Context, req *oss.CreateMulti
 	input := &s3.CreateMultipartUploadInput{}
 	err = copier.CopyWithOption(input, req, copier.Option{IgnoreEmpty: true, DeepCopy: true, Converters: []copier.TypeConverter{oss.Int64ToTime}})
 	if err != nil {
-		log.DefaultLogger.Errorf("copy CreateMultipartUploadInput fail, err: %+v", err)
+		a.logger.Errorf("copy CreateMultipartUploadInput fail, err: %+v", err)
 		return nil, err
 	}
 	resp, err := client.CreateMultipartUpload(ctx, input)

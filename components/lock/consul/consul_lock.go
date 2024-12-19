@@ -21,7 +21,8 @@ import (
 
 	"github.com/hashicorp/consul/api"
 	msync "mosn.io/mosn/pkg/sync"
-	"mosn.io/pkg/log"
+
+	log "mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/actuators"
@@ -45,7 +46,7 @@ func init() {
 
 type ConsulLock struct {
 	metadata       utils.ConsulMetadata
-	logger         log.ErrorLogger
+	log            log.Logger
 	client         utils.ConsulClient
 	sessionFactory utils.SessionFactory
 	kv             utils.ConsulKV
@@ -53,13 +54,20 @@ type ConsulLock struct {
 	workPool       msync.WorkerPool
 }
 
-func NewConsulLock(logger log.ErrorLogger) *ConsulLock {
+func NewConsulLock() *ConsulLock {
 	once.Do(func() {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
-	consulLock := &ConsulLock{logger: logger}
+	consulLock := &ConsulLock{
+		log: log.NewLayottoLogger("lock/consul"),
+	}
+	log.RegisterComponentLoggerListener("lock/consul", consulLock)
 	return consulLock
+}
+
+func (c *ConsulLock) OnLogLevelChanged(outputLevel log.LogLevel) {
+	c.log.SetLogLevel(outputLevel)
 }
 
 func (c *ConsulLock) Init(metadata lock.Metadata) error {
@@ -159,7 +167,7 @@ func (c *ConsulLock) Unlock(ctx context.Context, req *lock.UnlockRequest) (*lock
 		c.sMap.Delete(req.LockOwner + "-" + req.ResourceId)
 		_, err = c.sessionFactory.Destroy(session.(string), nil)
 		if err != nil {
-			c.logger.Errorf("consul lock session destroy error: %v", err)
+			c.log.Errorf("consul lock session destroy error: %v", err)
 		}
 		return &lock.UnlockResponse{Status: lock.
 			SUCCESS}, nil

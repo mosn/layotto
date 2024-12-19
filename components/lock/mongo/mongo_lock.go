@@ -25,7 +25,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readconcern"
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 	"go.mongodb.org/mongo-driver/x/bsonx"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/actuators"
@@ -63,23 +64,28 @@ type MongoLock struct {
 	metadata   utils.MongoMetadata
 
 	features []lock.Feature
-	logger   log.ErrorLogger
+	logger   logger.Logger
 
 	ctx    context.Context
 	cancel context.CancelFunc
 }
 
 // NewMongoLock returns a new mongo lock
-func NewMongoLock(logger log.ErrorLogger) *MongoLock {
+func NewMongoLock() *MongoLock {
 	once.Do(func() {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
 	s := &MongoLock{
 		features: make([]lock.Feature, 0),
-		logger:   logger,
+		logger:   logger.NewLayottoLogger("lock/mongo"),
 	}
+	logger.RegisterComponentLoggerListener("lock/mongo", s)
 	return s
+}
+
+func (e *MongoLock) OnLogLevelChanged(outputLevel logger.LogLevel) {
+	e.logger.SetLogLevel(outputLevel)
 }
 
 func (e *MongoLock) Init(metadata lock.Metadata) error {

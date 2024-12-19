@@ -257,13 +257,13 @@ func TestMosnRuntime_Run(t *testing.T) {
 			// Sequencer
 			WithSequencerFactory(
 				runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
-					return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
+					return sequencer_etcd.NewEtcdSequencer()
 				}),
 				runtime_sequencer.NewFactory("redis", func() sequencer.Store {
-					return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
+					return sequencer_redis.NewStandaloneRedisSequencer()
 				}),
 				runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
-					return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+					return sequencer_zookeeper.NewZookeeperSequencer()
 				}),
 			),
 		)
@@ -648,13 +648,13 @@ func TestMosnRuntime_runWithCustomComponentAndAPI(t *testing.T) {
 			// Sequencer
 			WithSequencerFactory(
 				runtime_sequencer.NewFactory(compType, func() sequencer.Store {
-					return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
+					return sequencer_etcd.NewEtcdSequencer()
 				}),
 				runtime_sequencer.NewFactory("redis", func() sequencer.Store {
-					return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
+					return sequencer_redis.NewStandaloneRedisSequencer()
 				}),
 				runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
-					return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+					return sequencer_zookeeper.NewZookeeperSequencer()
 				}),
 			),
 		)
@@ -702,13 +702,13 @@ func TestMosnRuntime_runWithPubsub(t *testing.T) {
 			// Sequencer
 			WithSequencerFactory(
 				runtime_sequencer.NewFactory("etcd", func() sequencer.Store {
-					return sequencer_etcd.NewEtcdSequencer(log.DefaultLogger)
+					return sequencer_etcd.NewEtcdSequencer()
 				}),
 				runtime_sequencer.NewFactory("redis", func() sequencer.Store {
-					return sequencer_redis.NewStandaloneRedisSequencer(log.DefaultLogger)
+					return sequencer_redis.NewStandaloneRedisSequencer()
 				}),
 				runtime_sequencer.NewFactory("zookeeper", func() sequencer.Store {
-					return sequencer_zookeeper.NewZookeeperSequencer(log.DefaultLogger)
+					return sequencer_zookeeper.NewZookeeperSequencer()
 				}),
 			),
 		)

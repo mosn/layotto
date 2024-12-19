@@ -17,7 +17,8 @@ import (
 	"sync"
 
 	"github.com/go-redis/redis/v8"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
@@ -44,22 +45,27 @@ type StandaloneRedisSequencer struct {
 	metadata   utils.RedisMetadata
 	biggerThan map[string]int64
 
-	logger log.ErrorLogger
+	logger logger.Logger
 
 	ctx    context.Context
 	cancel context.CancelFunc
 }
 
 // NewStandaloneRedisSequencer returns a new redis sequencer
-func NewStandaloneRedisSequencer(logger log.ErrorLogger) *StandaloneRedisSequencer {
+func NewStandaloneRedisSequencer() *StandaloneRedisSequencer {
 	once.Do(func() {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
 	s := &StandaloneRedisSequencer{
-		logger: logger,
+		logger: logger.NewLayottoLogger("sequencer/redis"),
 	}
+	logger.RegisterComponentLoggerListener("sequencer/redis", s)
 	return s
+}
+
+func (s *StandaloneRedisSequencer) OnLogLevelChanged(level logger.LogLevel) {
+	s.logger.SetLogLevel(level)
 }
 
 /*

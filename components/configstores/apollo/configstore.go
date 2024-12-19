@@ -29,9 +29,9 @@ import (
 
 	"mosn.io/layotto/components/pkg/actuators"
 
-	"mosn.io/pkg/log"
-
 	"mosn.io/layotto/components/configstores"
+
+	log "mosn.io/layotto/kit/logger"
 )
 
 var (
@@ -64,6 +64,7 @@ type ConfigStore struct {
 	kvConfig       *repoConfig
 	tagsConfig     *repoConfig
 	openAPIClient  httpClient
+	log            log.Logger
 }
 type httpClient interface {
 	Do(req *http.Request) (*http.Response, error)
@@ -87,14 +88,21 @@ func (c *ConfigStore) GetDefaultLabel() string {
 
 func NewStore() configstores.Store {
 	registerActuator()
-	return &ConfigStore{
+	cs := &ConfigStore{
 		tagsNamespace: defaultTagsNamespace,
 		delimiter:     defaultDelimiter,
 		env:           defaultEnv,
 		kvRepo:        newAgolloRepository(),
 		tagsRepo:      newAgolloRepository(),
 		openAPIClient: newHttpClient(),
+		log:           log.NewLayottoLogger("configstore/apollo"),
 	}
+	log.RegisterComponentLoggerListener("configstore/apollo", cs)
+	return cs
+}
+
+func (c *ConfigStore) OnLogLevelChanged(outputLevel log.LogLevel) {
+	c.log.SetLogLevel(outputLevel)
 }
 
 func registerActuator() {
@@ -180,6 +188,7 @@ func (c *ConfigStore) doInit(config *configstores.StoreConfig) error {
 		isBackupConfig: isBackupConfig,
 		// secret,not required
 		secret: metadata["secret"],
+		logger: c.log,
 	}
 	c.kvConfig = kvRepoConfig
 	c.kvRepo.SetConfig(kvRepoConfig)
@@ -197,7 +206,7 @@ func (c *ConfigStore) doInit(config *configstores.StoreConfig) error {
 		return err
 	}
 	// 4. SetConfig listener
-	listener := newChangeListener(c)
+	listener := newChangeListener(c, c.log)
 	c.listener = listener
 	c.kvRepo.AddChangeListener(listener)
 	return nil
@@ -381,7 +390,7 @@ func (c *ConfigStore) StopSubscribe() {
 }
 
 func (c *ConfigStore) getKeys(group string, keys []string, label string) ([]*configstores.ConfigurationItem, error) {
-	log.DefaultLogger.Debugf("getKeys start.namespace : %v, keys : %v, label : %v", group, keys, label)
+	c.log.Debugf("getKeys start.namespace : %v, keys : %v, label : %v", group, keys, label)
 	// 1. prepare suffix
 	suffix := ""
 	if label != "" {
@@ -395,7 +404,7 @@ func (c *ConfigStore) getKeys(group string, keys []string, label string) ([]*con
 		value, err := c.kvRepo.Get(group, keyWithLabel)
 		if err != nil {
 			//log error and ignore this key
-			log.DefaultLogger.Errorf("error when querying configuration :%v", err)
+			c.log.Errorf("error when querying configuration :%v", err)
 			continue
 		}
 		item := &configstores.ConfigurationItem{}
@@ -406,7 +415,7 @@ func (c *ConfigStore) getKeys(group string, keys []string, label string) ([]*con
 		// query tags
 		item.Tags, err = c.getAllTags(group, keyWithLabel)
 		if err != nil {
-			log.DefaultLogger.Errorf("error when querying tags :%v", err)
+			c.log.Errorf("error when querying tags :%v", err)
 		}
 		res = append(res, item)
 	}
@@ -415,7 +424,7 @@ func (c *ConfigStore) getKeys(group string, keys []string, label string) ([]*con
 }
 
 func (c *ConfigStore) getAllWithAppId() ([]*configstores.ConfigurationItem, error) {
-	log.DefaultLogger.Debugf("getAllWithAppId start.namespace:%v", c.kvConfig.namespaceName)
+	c.log.Debugf("getAllWithAppId start.namespace:%v", c.kvConfig.namespaceName)
 	split := strings.Split(c.kvConfig.namespaceName, ",")
 	res := make([]*configstores.ConfigurationItem, 0, 10)
 	// loop every namespace in config
@@ -430,7 +439,7 @@ func (c *ConfigStore) getAllWithAppId() ([]*configstores.ConfigurationItem, erro
 }
 
 func (c *ConfigStore) getAllWithNamespace(group string) ([]*configstores.ConfigurationItem, error) {
-	log.DefaultLogger.Debugf("getAllWithNamespace start.namespace:%v", group)
+	c.log.Debugf("getAllWithNamespace start.namespace:%v", group)
 	res := make([]*configstores.ConfigurationItem, 0, 10)
 	// 1. loop query
 	err := c.kvRepo.Range(group, func(key, value interface{}) bool {
@@ -440,7 +449,7 @@ func (c *ConfigStore) getAllWithNamespace(group string) ([]*configstores.Configu
 		k := key.(string)
 		if k == "" {
 			//	never happen
-			log.DefaultLogger.Errorf("find configuration item with blank key under namespace:%v", group)
+			c.log.Errorf("find configuration item with blank key under namespace:%v", group)
 		} else {
 			split := strings.Split(k, defaultDelimiter)
 			item.Key = split[0]
@@ -450,7 +459,7 @@ func (c *ConfigStore) getAllWithNamespace(group string) ([]*configstores.Configu
 			// 1.2. query tags
 			tags, err := c.getAllTags(group, k)
 			if err != nil {
-				log.DefaultLogger.Errorf("error when querying tags :%v", err)
+				c.log.Errorf("error when querying tags :%v", err)
 			} else {
 				item.Tags = tags
 			}
@@ -624,7 +633,7 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 	}
 	// add headers
 	c.addHeaderForOpenAPI(req)
-	log.DefaultLogger.Debugf("createNamespace url: %v, request body: %s, request: %+v", url, reqBodyJson, req)
+	c.log.Debugf("createNamespace url: %v, request body: %s, request: %+v", url, reqBodyJson, req)
 	// do request
 	resp, err := c.openAPIClient.Do(req)
 	// 2. parse
@@ -639,20 +648,20 @@ func (c *ConfigStore) createNamespace(env string, appId string, cluster string, 
 	// if the namespace already exists, the status code will be 400
 	if resp.StatusCode == http.StatusBadRequest {
 		// log debug information
-		if log.DefaultLogger.GetLogLevel() >= log.DEBUG {
+		if log.ToLogPriority(c.log.GetLogLevel()) <= log.ToLogPriority(log.DebugLevel) {
 			b, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				log.DefaultLogger.Errorf("An error occurred when parsing createNamespace response. statusCode: %v ,error: %v", resp.StatusCode, err)
+				c.log.Errorf("An error occurred when parsing createNamespace response. statusCode: %v ,error: %v", resp.StatusCode, err)
 				return err
 			}
-			log.DefaultLogger.Debugf("createNamespace not ok. StatusCode: %v, response body: %s", resp.StatusCode, b)
+			c.log.Debugf("createNamespace not ok. StatusCode: %v, response body: %s", resp.StatusCode, b)
 		}
 		return nil
 	}
 	// Fail fast and take it as an startup error if the status code is neither 200 nor 400
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.DefaultLogger.Errorf("An error occurred when parsing createNamespace response. statusCode: %v ,error: %v", resp.StatusCode, err)
+		c.log.Errorf("An error occurred when parsing createNamespace response. statusCode: %v ,error: %v", resp.StatusCode, err)
 		return err
 	}
 	return fmt.Errorf("createNamespace error. StatusCode: %v, response body: %s", resp.StatusCode, b)

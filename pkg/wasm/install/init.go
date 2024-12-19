@@ -24,5 +24,6 @@ import (
 )
 
 func init() {
-	wasm.GetDefault().AddEndpoint("install", NewEndpoint())
+	w := wasm.GetDefault()
+	w.AddEndpoint("install", NewEndpoint(w.Logger))
 }

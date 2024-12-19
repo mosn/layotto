@@ -19,18 +19,26 @@ package wasm
 import (
 	"mosn.io/layotto/pkg/filter/stream/common/http"
 
-	"mosn.io/pkg/log"
+	"mosn.io/layotto/kit/logger"
 )
 
 type Wasm struct {
 	endpointRegistry map[string]http.Endpoint
+	Logger           logger.Logger
 }
 
 // New init a Wasm.
 func New() *Wasm {
-	return &Wasm{
+	wasm := &Wasm{
 		endpointRegistry: make(map[string]http.Endpoint),
+		Logger:           logger.NewLayottoLogger("wasm"),
 	}
+	logger.RegisterComponentLoggerListener("wasm", wasm)
+	return wasm
+}
+
+func (wasm *Wasm) OnLogLevelChanged(outputLevel logger.LogLevel) {
+	wasm.Logger.SetLogLevel(outputLevel)
 }
 
 // GetEndpoint get an Endpoint from Wasm with name.
@@ -43,7 +51,7 @@ func (wasm *Wasm) GetEndpoint(name string) (endpoint http.Endpoint, ok bool) {
 func (wasm *Wasm) AddEndpoint(name string, ep http.Endpoint) {
 	_, ok := wasm.endpointRegistry[name]
 	if ok {
-		log.DefaultLogger.Warnf("Duplicate Endpoint name:  %v !", name)
+		wasm.Logger.Warnf("Duplicate Endpoint name:  %v !", name)
 	}
 	wasm.endpointRegistry[name] = ep
 }

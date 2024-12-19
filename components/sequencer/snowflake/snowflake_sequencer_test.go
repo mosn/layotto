@@ -22,7 +22,6 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/sequencer"
 )
@@ -41,7 +40,7 @@ func TestSnowflakeSequence_GetNextId(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	s := NewSnowFlakeSequencer(log.DefaultLogger)
+	s := NewSnowFlakeSequencer()
 	s.db = db
 
 	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
@@ -96,7 +95,7 @@ func TestSnowflakeSequence_ParallelGetNextId(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	s := NewSnowFlakeSequencer(log.DefaultLogger)
+	s := NewSnowFlakeSequencer()
 	s.db = db
 
 	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
@@ -135,7 +134,7 @@ func TestSnowflakeSequence_ParallelGetNextId(t *testing.T) {
 		go func(key string) {
 			defer func() {
 				if x := recover(); x != nil {
-					log.DefaultLogger.Errorf("panic when testing parallel generatoring uid with snowflake algorithm: %v", x)
+					s.logger.Errorf("panic when testing parallel generatoring uid with snowflake algorithm: %v", x)
 				}
 			}()
 			var preUid int64
@@ -162,7 +161,7 @@ func TestKeyTimeout(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	s := NewSnowFlakeSequencer(log.DefaultLogger)
+	s := NewSnowFlakeSequencer()
 	s.db = db
 
 	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))

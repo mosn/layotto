@@ -19,7 +19,8 @@ import (
 	"sync"
 
 	clientv3 "go.etcd.io/etcd/client/v3"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
@@ -46,23 +47,27 @@ type EtcdSequencer struct {
 	metadata   utils.EtcdMetadata
 	biggerThan map[string]int64
 
-	logger log.ErrorLogger
+	logger logger.Logger
 
 	ctx    context.Context
 	cancel context.CancelFunc
 }
 
 // EtcdSequencer returns a new etcd sequencer
-func NewEtcdSequencer(logger log.ErrorLogger) *EtcdSequencer {
+func NewEtcdSequencer() *EtcdSequencer {
 	once.Do(func() {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
 	s := &EtcdSequencer{
-		logger: logger,
+		logger: logger.NewLayottoLogger("sequencer/etcd"),
 	}
-
+	logger.RegisterComponentLoggerListener("sequencer/etcd", s)
 	return s
+}
+
+func (e *EtcdSequencer) OnLogLevelChanged(level logger.LogLevel) {
+	e.logger.SetLogLevel(level)
 }
 
 func (e *EtcdSequencer) Init(config sequencer.Configuration) error {

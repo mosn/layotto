@@ -17,7 +17,7 @@
 package nacos
 
 import (
-	"mosn.io/pkg/log"
+	log "mosn.io/layotto/kit/logger"
 )
 
 const (
@@ -29,10 +29,10 @@ const (
 
 // An adapter to implement log.LoggerInterface in agollo package.
 type DefaultLogger struct {
-	logger log.ErrorLogger
+	logger log.Logger
 }
 
-func NewDefaultLogger(logger log.ErrorLogger) *DefaultLogger {
+func NewDefaultLogger(logger log.Logger) *DefaultLogger {
 	return &DefaultLogger{
 		logger: logger,
 	}

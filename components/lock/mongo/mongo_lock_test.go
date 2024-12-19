@@ -21,7 +21,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"mosn.io/pkg/log"
 
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/mock"
@@ -37,7 +36,7 @@ const (
 func TestMongoLock_Init(t *testing.T) {
 	var err error
 	var mongoUrl = "localhost:27017"
-	comp := NewMongoLock(log.DefaultLogger)
+	comp := NewMongoLock()
 
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),
@@ -60,7 +59,7 @@ func TestMongoLock_TryLock(t *testing.T) {
 	var err error
 	var resp *lock.TryLockResponse
 	var mongoUrl = "localhost:xxxx"
-	comp := NewMongoLock(log.DefaultLogger)
+	comp := NewMongoLock()
 
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),
@@ -136,7 +135,7 @@ func TestMongoLock_Unlock(t *testing.T) {
 	var lockresp *lock.TryLockResponse
 	var mongoUrl = "localhost:xxxx"
 
-	comp := NewMongoLock(log.DefaultLogger)
+	comp := NewMongoLock()
 
 	cfg := lock.Metadata{
 		Properties: make(map[string]string),

@@ -26,7 +26,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kms"
-	"mosn.io/pkg/log"
+
+	log "mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/cryption"
 )
@@ -49,6 +50,7 @@ func init() {
 type cy struct {
 	client *kms.KMS
 	keyID  string
+	log    log.Logger
 }
 
 func NewCryption() cryption.CryptionService {
@@ -56,7 +58,15 @@ func NewCryption() cryption.CryptionService {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
-	return &cy{}
+	c := &cy{
+		log: log.NewLayottoLogger("cryption/aws"),
+	}
+	log.RegisterComponentLoggerListener("cryption/aws", c)
+	return c
+}
+
+func (k *cy) OnLogLevelChanged(outputLevel log.LogLevel) {
+	k.log.SetLogLevel(outputLevel)
 }
 
 func (k *cy) Init(ctx context.Context, conf *cryption.Config) error {
@@ -88,7 +98,7 @@ func (k *cy) Decrypt(ctx context.Context, request *cryption.DecryptRequest) (*cr
 	}
 	decryptResp, err := k.client.Decrypt(decryptRequest)
 	if err != nil {
-		log.DefaultLogger.Errorf("fail decrypt data, err: %+v", err)
+		k.log.Errorf("fail decrypt data, err: %+v", err)
 		return nil, fmt.Errorf("fail decrypt data with error: %+v", err)
 	}
 	resp := &cryption.DecryptResponse{KeyId: *decryptResp.KeyId, PlainText: decryptResp.Plaintext}
@@ -108,7 +118,7 @@ func (k *cy) Encrypt(ctx context.Context, request *cryption.EncryptRequest) (*cr
 
 	encryptResp, err := k.client.Encrypt(encryptRequest)
 	if err != nil {
-		log.DefaultLogger.Errorf("fail encrypt data, err: %+v", err)
+		k.log.Errorf("fail encrypt data, err: %+v", err)
 		return nil, fmt.Errorf("fail encrypt data with error: %+v", err)
 	}
 	resp := &cryption.EncryptResponse{KeyId: *encryptResp.KeyId, CipherText: encryptResp.CiphertextBlob}

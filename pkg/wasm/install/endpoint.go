@@ -22,33 +22,37 @@ import (
 
 	wasm2 "mosn.io/mosn/pkg/wasm"
 
-	"mosn.io/pkg/log"
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/pkg/filter/stream/common/http"
 	"mosn.io/layotto/pkg/wasm"
 )
 
 func init() {
-	wasm.GetDefault().AddEndpoint("install", NewEndpoint())
+	w := wasm.GetDefault()
+	w.AddEndpoint("install", NewEndpoint(w.Logger))
 }
 
 type Endpoint struct {
+	logger logger.Logger
 }
 
-func NewEndpoint() *Endpoint {
-	return &Endpoint{}
+func NewEndpoint(log logger.Logger) *Endpoint {
+	return &Endpoint{
+		logger: log,
+	}
 }
 
 func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[string]interface{}, error) {
 	conf, err := http.GetRequestData(ctx)
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasm][install] invalid request body for request /wasm/install, err:%v", err)
+		e.logger.Errorf("[wasm][install] invalid request body for request /wasm/install, err:%v", err)
 		return map[string]interface{}{"error": err.Error()}, err
 	}
 
 	if conf["name"] == nil {
 		errorMessage := "can't get name property"
-		log.DefaultLogger.Errorf("[wasm][install] %v", errorMessage)
+		e.logger.Errorf("[wasm][install] %v", errorMessage)
 		return map[string]interface{}{"error": errorMessage}, errors.New(errorMessage)
 	}
 
@@ -56,14 +60,14 @@ func (e *Endpoint) Handle(ctx context.Context, params http.ParamsScanner) (map[s
 	factory := wasm.GetFactory()
 	if factory.IsRegister(id) {
 		errorMessage := id + " is already registered"
-		log.DefaultLogger.Errorf("[wasm][install] %v", errorMessage)
+		e.logger.Errorf("[wasm][install] %v", errorMessage)
 		return map[string]interface{}{"error": errorMessage}, errors.New(errorMessage)
 	}
 
 	manager := wasm2.GetWasmManager()
 	err = factory.Install(conf, manager)
 	if err != nil {
-		log.DefaultLogger.Errorf("[wasm][install] %v", err)
+		e.logger.Errorf("[wasm][install] %v", err)
 		return map[string]interface{}{"error": err.Error()}, err
 	}
 

@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"mosn.io/pkg/log"
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/sequencer"
@@ -48,20 +48,26 @@ type SnowFlakeSequencer struct {
 	mu         sync.Mutex
 	smap       map[string]chan int64
 	biggerThan map[string]int64
-	logger     log.ErrorLogger
+	logger     logger.Logger
 	ctx        context.Context
 	cancel     context.CancelFunc
 }
 
-func NewSnowFlakeSequencer(logger log.ErrorLogger) *SnowFlakeSequencer {
+func NewSnowFlakeSequencer() *SnowFlakeSequencer {
 	once.Do(func() {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
-	return &SnowFlakeSequencer{
-		logger: logger,
+	sf := &SnowFlakeSequencer{
+		logger: logger.NewLayottoLogger("sequencer/snowflake"),
 		smap:   make(map[string]chan int64),
 	}
+	logger.RegisterComponentLoggerListener("sequencer/snowflake", sf)
+	return sf
+}
+
+func (s *SnowFlakeSequencer) OnLogLevelChanged(level logger.LogLevel) {
+	s.logger.SetLogLevel(level)
 }
 
 func (s *SnowFlakeSequencer) Init(config sequencer.Configuration) error {
@@ -139,7 +145,7 @@ func (s *SnowFlakeSequencer) GetSegment(req *sequencer.GetSegmentRequest) (suppo
 func (s *SnowFlakeSequencer) producer(id, currentTimeStamp int64, ch chan int64, key string) {
 	defer func() {
 		if x := recover(); x != nil {
-			log.DefaultLogger.Errorf("panic when producing id with snowflake algorithm: %v", x)
+			s.logger.Errorf("panic when producing id with snowflake algorithm: %v", x)
 		}
 	}()
 

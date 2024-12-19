@@ -19,7 +19,8 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/actuators"
@@ -37,24 +38,29 @@ type StandaloneRedisLock struct {
 	metadata utils.RedisMetadata
 
 	features []lock.Feature
-	logger   log.ErrorLogger
+	logger   logger.Logger
 
 	ctx    context.Context
 	cancel context.CancelFunc
 }
 
 // NewStandaloneRedisLock returns a new redis lock store
-func NewStandaloneRedisLock(logger log.ErrorLogger) *StandaloneRedisLock {
+func NewStandaloneRedisLock() *StandaloneRedisLock {
 	once.Do(func() {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator("lock-redis-standalone", indicators)
 	})
 	s := &StandaloneRedisLock{
 		features: make([]lock.Feature, 0),
-		logger:   logger,
+		logger:   logger.NewLayottoLogger("lock/standalone_redis"),
 	}
+	logger.RegisterComponentLoggerListener("lock/standalone_redis", s)
 
 	return s
+}
+
+func (p *StandaloneRedisLock) OnLogLevelChanged(outputLevel logger.LogLevel) {
+	p.logger.SetLogLevel(outputLevel)
 }
 
 // Init StandaloneRedisLock

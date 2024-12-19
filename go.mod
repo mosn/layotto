@@ -25,7 +25,7 @@ require (
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.3+incompatible
-	github.com/sirupsen/logrus v1.8.1
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.0
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/urfave/cli v1.22.1
@@ -38,6 +38,7 @@ require (
 	k8s.io/apimachinery v0.20.2
 	mosn.io/api v1.5.0
 	mosn.io/layotto/components v0.0.0-20230712052228-c940b7f1367d
+	mosn.io/layotto/kit v0.0.0-00010101000000-000000000000
 	mosn.io/layotto/spec v0.0.0-20231023045845-48ec2bc7eab8
 	mosn.io/mosn v1.5.1-0.20230529091910-7d48a20e544b
 	mosn.io/pkg v1.5.1-0.20230525074748-e3528eae50d9
@@ -327,6 +328,7 @@ replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/klauspost/compress => github.com/klauspost/compress v1.13.0
 	mosn.io/layotto/components => ./components
+	mosn.io/layotto/kit => ./kit
 	mosn.io/layotto/spec => ./spec
 	mosn.io/proxy-wasm-go-host => github.com/layotto/proxy-wasm-go-host v0.1.1-0.20221229094558-d39f73d2858d
 )

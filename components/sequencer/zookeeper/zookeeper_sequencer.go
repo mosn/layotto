@@ -19,7 +19,8 @@ import (
 	"sync"
 
 	"github.com/go-zookeeper/zk"
-	"mosn.io/pkg/log"
+
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/pkg/actuators"
 	"mosn.io/layotto/components/pkg/utils"
@@ -46,23 +47,28 @@ type ZookeeperSequencer struct {
 	client     utils.ZKConnection
 	metadata   utils.ZookeeperMetadata
 	BiggerThan map[string]int64
-	logger     log.ErrorLogger
+	logger     logger.Logger
 	factory    utils.ConnectionFactory
 	ctx        context.Context
 	cancel     context.CancelFunc
 }
 
 // NewZookeeperSequencer returns a new zookeeper sequencer
-func NewZookeeperSequencer(logger log.ErrorLogger) *ZookeeperSequencer {
+func NewZookeeperSequencer() *ZookeeperSequencer {
 	once.Do(func() {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
 	s := &ZookeeperSequencer{
-		logger: logger,
+		logger: logger.NewLayottoLogger("sequencer/zookeeper"),
 	}
 
+	logger.RegisterComponentLoggerListener("sequencer/zookeeper", s)
 	return s
+}
+
+func (s *ZookeeperSequencer) OnLogLevelChanged(level logger.LogLevel) {
+	s.logger.SetLogLevel(level)
 }
 
 func (s *ZookeeperSequencer) Init(config sequencer.Configuration) error {

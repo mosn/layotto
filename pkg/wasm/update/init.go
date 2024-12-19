@@ -24,5 +24,6 @@ import (
 )
 
 func init() {
-	wasm.GetDefault().AddEndpoint("update", NewEndpoint())
+	w := wasm.GetDefault()
+	w.AddEndpoint("update", NewEndpoint(w.Logger))
 }

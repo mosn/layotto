@@ -22,7 +22,7 @@ import (
 
 	"mosn.io/layotto/components/pkg/utils"
 
-	"mosn.io/pkg/log"
+	"mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/lock"
 	"mosn.io/layotto/components/pkg/actuators"
@@ -49,24 +49,28 @@ type EtcdLock struct {
 	metadata utils.EtcdMetadata
 
 	features []lock.Feature
-	logger   log.ErrorLogger
 
 	ctx    context.Context
 	cancel context.CancelFunc
+	logger logger.Logger
 }
 
 // NewEtcdLock returns a new etcd lock
-func NewEtcdLock(logger log.ErrorLogger) *EtcdLock {
+func NewEtcdLock() *EtcdLock {
 	once.Do(func() {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
 	s := &EtcdLock{
 		features: make([]lock.Feature, 0),
-		logger:   logger,
+		logger:   logger.NewLayottoLogger("lock/etcd"),
 	}
-
+	logger.RegisterComponentLoggerListener("lock/etcd", s)
 	return s
+}
+
+func (e *EtcdLock) OnLogLevelChanged(outputLevel logger.LogLevel) {
+	e.logger.SetLogLevel(outputLevel)
 }
 
 // Init EtcdLock

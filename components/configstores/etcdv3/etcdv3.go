@@ -27,7 +27,8 @@ import (
 
 	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"
-	"mosn.io/pkg/log"
+
+	log "mosn.io/layotto/kit/logger"
 
 	"mosn.io/layotto/components/configstores"
 	"mosn.io/layotto/components/trace"
@@ -60,6 +61,7 @@ type EtcdV3ConfigStore struct {
 	cancel       context.CancelFunc
 	watchStarted bool
 	watchRespCh  chan *configstores.SubscribeResp
+	log          log.Logger
 }
 
 func (c *EtcdV3ConfigStore) GetDefaultGroup() string {
@@ -70,19 +72,29 @@ func (c *EtcdV3ConfigStore) GetDefaultLabel() string {
 	return defaultLabel
 }
 
+func (c *EtcdV3ConfigStore) OnLogLevelChanged(outputLevel log.LogLevel) {
+	c.log.SetLogLevel(outputLevel)
+}
+
 func NewStore() configstores.Store {
 	once.Do(func() {
 		indicators := &actuators.ComponentsIndicator{ReadinessIndicator: readinessIndicator, LivenessIndicator: livenessIndicator}
 		actuators.SetComponentsIndicator(componentName, indicators)
 	})
-	return &EtcdV3ConfigStore{subscribeKey: make(map[string]string), watchRespCh: make(chan *configstores.SubscribeResp)}
+	cs := &EtcdV3ConfigStore{
+		subscribeKey: make(map[string]string),
+		watchRespCh:  make(chan *configstores.SubscribeResp),
+		log:          log.NewLayottoLogger("configstore/etcdv3"),
+	}
+	log.RegisterComponentLoggerListener("configstore/etcdv3", cs)
+	return cs
 }
 
 // Init init the configuration store.
 func (c *EtcdV3ConfigStore) Init(config *configstores.StoreConfig) error {
 	t, err := strconv.Atoi(config.TimeOut)
 	if err != nil {
-		log.DefaultLogger.Errorf("wrong configuration for time out configuration: %+v, set default value(10s)", config.TimeOut)
+		c.log.Errorf("wrong configuration for time out configuration: %+v, set default value(10s)", config.TimeOut)
 		t = 10
 	}
 	c.client, err = clientv3.New(clientv3.Config{
@@ -154,7 +166,7 @@ func (c *EtcdV3ConfigStore) Get(ctx context.Context, req *configstores.GetReques
 	keyValues, err := c.client.Get(ctx, "/"+req.AppId, clientv3.WithPrefix())
 	res := make([]*configstores.ConfigurationItem, 0)
 	if err != nil {
-		log.DefaultLogger.Errorf("fail get all group key-value,err: %+v", err)
+		c.log.Errorf("fail get all group key-value,err: %+v", err)
 		return nil, err
 	}
 	targetString[configstores.Group] = req.Group
@@ -176,7 +188,7 @@ func (c *EtcdV3ConfigStore) Set(ctx context.Context, req *configstores.SetReques
 		for _, key := range c.ParseKey(req.AppId, item) {
 			_, err := c.client.Put(ctx, key, item.Content)
 			if err != nil {
-				log.DefaultLogger.Errorf("set key[%+v] failed with error: %+v", key, err)
+				c.log.Errorf("set key[%+v] failed with error: %+v", key, err)
 				return err
 			}
 		}
@@ -190,7 +202,7 @@ func (c *EtcdV3ConfigStore) Delete(ctx context.Context, req *configstores.Delete
 		res := "/" + req.AppId + "/" + req.Group + "/" + req.Label + "/" + key
 		_, err := c.client.Delete(ctx, res, clientv3.WithPrefix())
 		if err != nil {
-			log.DefaultLogger.Errorf("delete key[%+v] failed with error: %+v", key, err)
+			c.log.Errorf("delete key[%+v] failed with error: %+v", key, err)
 			return err
 		}
 	}
