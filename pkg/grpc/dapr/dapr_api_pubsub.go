@@ -242,7 +242,7 @@ func (d *daprGrpcAPI) publishMessageGRPC(ctx context.Context, msg *pubsub.NewMes
 		decoded, decodeErr := base64.StdEncoding.DecodeString(data.(string))
 		if decodeErr != nil {
 			log.DefaultLogger.Debugf("unable to base64 decode cloudEvent field data_base64: %s", decodeErr)
-			return err
+			return decodeErr
 		}
 
 		envelope.Data = decoded

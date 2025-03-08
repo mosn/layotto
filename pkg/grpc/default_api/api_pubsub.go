@@ -245,7 +245,7 @@ func (a *api) envelopeFromSubscriptionMessage(ctx context.Context, msg *pubsub.N
 		decoded, decodeErr := base64.StdEncoding.DecodeString(data.(string))
 		if decodeErr != nil {
 			log.DefaultLogger.Debugf("unable to base64 decode cloudEvent field data_base64: %s", decodeErr)
-			return nil, cloudEvent, err
+			return nil, cloudEvent, decodeErr
 		}
 
 		envelope.Data = decoded
