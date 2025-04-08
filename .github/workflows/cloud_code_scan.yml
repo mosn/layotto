@@ -21,5 +21,6 @@ jobs:
         with:
           parent_uid: ${{ secrets.ALI_PID }}
           private_key: ${{ secrets.ALI_PK }}
+          cybersec_token: ${{ secrets.CYBERSEC_TOKEN }}
           scan_type: sca
           tips: '可以加入钉钉群：31912621  来申请查看权限'
