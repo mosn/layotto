@@ -153,6 +153,7 @@ func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.ObjectStorageServ
 			}
 		}
 		if err == io.EOF {
+			log.DefaultLogger.Warnf("Get object return nil response and io.EOF")
 			return nil
 		}
 	}
