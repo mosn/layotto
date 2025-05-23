@@ -127,7 +127,7 @@ func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.ObjectStorageServ
 			}
 		}
 
-		if err == nil || (err == io.EOF && totalBytesRead != 0) {
+		if err == nil || (err == io.EOF && result != nil) {
 			resp := &s3.GetObjectOutput{
 				CacheControl:       result.CacheControl,
 				ContentDisposition: result.ContentDisposition,
@@ -153,6 +153,7 @@ func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.ObjectStorageServ
 			}
 		}
 		if err == io.EOF {
+			log.DefaultLogger.Warnf("Get object return nil response and io.EOF")
 			return nil
 		}
 	}
