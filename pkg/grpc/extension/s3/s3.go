@@ -148,12 +148,11 @@ func (s *S3Server) GetObject(req *s3.GetObjectInput, stream s3.ObjectStorageServ
 				Metadata:           result.Metadata,
 			}
 			resp.Body = buf[:totalBytesRead]
-			if err = stream.Send(resp); err != nil {
-				return status.Errorf(codes.Internal, "GetObject send data fail,err: %+v", err)
+			if sendErr := stream.Send(resp); sendErr != nil {
+				return status.Errorf(codes.Internal, "GetObject send data fail,err: %+v", sendErr)
 			}
 		}
 		if err == io.EOF {
-			log.DefaultLogger.Warnf("Get object return nil response and io.EOF")
 			return nil
 		}
 	}
