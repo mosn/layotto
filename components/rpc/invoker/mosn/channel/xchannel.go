@@ -26,6 +26,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
+
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
 
@@ -208,7 +210,7 @@ func (m *xChannel) Invoke(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	defer cancel()
 
 	// 2. get fake connection with mosn
-	conn, err := m.pool.Get(ctx)
+	conn, isNewConn, err := m.pool.Get(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -243,8 +245,12 @@ func (m *xChannel) Invoke(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		m.pool.Put(conn, true)
 		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
-	m.pool.Put(conn, false)
+	// if is new conn, send heart
+	if isNewConn {
+		go m.sendHeartbeat(conn)
+	}
 
+	m.pool.Put(conn, false)
 	// read response and decode it
 	select {
 	case res := <-callChan:
@@ -317,4 +323,39 @@ func (m *xChannel) cleanup(c *wrapConn, err error) {
 		delete(xstate.calls, id)
 	}
 	xstate.mu.Unlock()
+}
+
+func (m *xChannel) sendHeartbeat(c *wrapConn) {
+	xstate := c.state.(*xstate)
+	request := &bolt.Request{
+		RequestHeader: bolt.RequestHeader{
+			Protocol: bolt.ProtocolCode,
+			CmdType:  bolt.CmdTypeRequest,
+			CmdCode:  bolt.CmdCodeHeartbeat,
+			Version:  1,
+			Codec:    bolt.Hessian2Serialize,
+			Timeout:  -1,
+		},
+	}
+	ticker := time.NewTicker(15 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			if c.isClose() {
+				return
+			}
+			requestId := atomic.AddUint32(&xstate.reqid, 1)
+			request.SetRequestId(uint64(requestId))
+			buf, encErr := m.proto.Encode(context.TODO(), request)
+			if encErr != nil {
+				return
+			}
+			if _, err := c.Write(buf.Bytes()); err != nil {
+				return
+			}
+		case <-c.cancelCtx.Done():
+			return
+		}
+	}
 }

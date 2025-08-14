@@ -283,7 +283,7 @@ func TestReadloopError(t *testing.T) {
 	assert.Nil(t, err)
 
 	xchannel := channel.(*xChannel)
-	conn, _ := xchannel.pool.Get(context.TODO())
+	conn, _, _ := xchannel.pool.Get(context.TODO())
 	xstate := conn.state.(*xstate)
 	xchannel.pool.Put(conn, false)
 

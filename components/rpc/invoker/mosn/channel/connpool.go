@@ -44,9 +44,11 @@ var (
 // wrapConn is wrap connect
 type wrapConn struct {
 	net.Conn
-	buf    buffer.IoBuffer
-	state  interface{}
-	closed int32
+	buf        buffer.IoBuffer
+	state      interface{}
+	closed     int32
+	cancelCtx  context.Context
+	cancelFunc context.CancelFunc
 }
 
 // isClose is checked wrapConn close or not
@@ -60,6 +62,7 @@ func (w *wrapConn) close() error {
 	if atomic.CompareAndSwapInt32(&w.closed, 0, 1) {
 		err = w.Conn.Close()
 	}
+	w.cancelFunc()
 	return err
 }
 
@@ -103,9 +106,9 @@ type connPool struct {
 }
 
 // Get is get wrapConn by context.Context
-func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
+func (p *connPool) Get(ctx context.Context) (*wrapConn, bool, error) {
 	if err := p.waitTurn(ctx); err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	p.mu.Lock()
@@ -115,7 +118,7 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 		p.mu.Unlock()
 		wc := ele.Value.(*wrapConn)
 		if !wc.isClose() {
-			return wc, nil
+			return wc, false, nil
 		}
 	} else {
 		p.mu.Unlock()
@@ -125,9 +128,10 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 	c, err := p.dialFunc()
 	if err != nil {
 		p.freeTurn()
-		return nil, err
+		return nil, false, err
 	}
-	wc := &wrapConn{Conn: c}
+	cancelCtx, cancel := context.WithCancel(context.Background())
+	wc := &wrapConn{Conn: c, cancelFunc: cancel, cancelCtx: cancelCtx}
 	if p.stateFunc != nil {
 		wc.state = p.stateFunc()
 	}
@@ -137,7 +141,7 @@ func (p *connPool) Get(ctx context.Context) (*wrapConn, error) {
 			p.readloop(wc)
 		}, nil)
 	}
-	return wc, nil
+	return wc, true, nil
 }
 
 // Put when connected less than maxActive
