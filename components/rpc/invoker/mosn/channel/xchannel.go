@@ -339,6 +339,10 @@ func (m *xChannel) sendHeartbeat(c *wrapConn) {
 	}
 	ticker := time.NewTicker(15 * time.Second)
 	defer ticker.Stop()
+
+	failCount := 0
+	const maxFailCount = 6
+
 	for {
 		select {
 		case <-ticker.C:
@@ -349,11 +353,20 @@ func (m *xChannel) sendHeartbeat(c *wrapConn) {
 			request.SetRequestId(uint64(requestId))
 			buf, encErr := m.proto.Encode(context.TODO(), request)
 			if encErr != nil {
+				log.DefaultLogger.Errorf("[runtime][rpc] Encode request error: %v", encErr)
 				return
 			}
 			if _, err := c.Write(buf.Bytes()); err != nil {
-				return
+				failCount++
+				if failCount >= maxFailCount {
+					log.DefaultLogger.Errorf("[RPC][Runtime] Heartbeat response failed due to error: %+v. The number of consecutive failures (%d) exceeds the maximum allowed (%d). Closing the connection.", err, failCount, maxFailCount)
+					c.close()
+					return
+				}
+				continue
 			}
+			log.DefaultLogger.Debugf("[runtime][rpc] pong request success")
+			failCount = 0
 		case <-c.cancelCtx.Done():
 			return
 		}
