@@ -25,8 +25,12 @@ import (
 const (
 	TargetAddress    = "rpc_target_address"
 	RequestTimeoutMs = "rpc_request_timeout"
+	RequestType      = "rpc_request_type"
 )
 
+const (
+	Oneway = "oneway"
+)
 const (
 	DefaultRequestTimeoutMs = 3000
 )

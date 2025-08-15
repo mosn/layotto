@@ -135,61 +135,67 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 	}
 
 	// 5. read package
-	go func() {
-		var err error
-		defer func() {
-			if err != nil {
-				callChan <- call{err: err}
+	if frame.GetStreamType() != api.RequestOneWay {
+		go func() {
+			var err error
+			defer func() {
+				if err != nil {
+					callChan <- call{err: err}
+				}
+				wc.Close()
+			}()
+
+			wc.buf = buffer.NewIoBuffer(defaultBufSize)
+			for {
+				// read data from connection
+				n, readErr := wc.buf.ReadOnce(conn)
+				if readErr != nil {
+					err = readErr
+					if readErr == io.EOF {
+						log.DefaultLogger.Debugf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
+					} else {
+						log.DefaultLogger.Errorf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
+					}
+				}
+
+				if n > 0 {
+					iframe, decodeErr := m.proto.Decode(context.TODO(), wc.buf)
+					if decodeErr != nil {
+						err = decodeErr
+						log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
+						break
+					}
+					frame, ok := iframe.(api.XRespFrame)
+					if frame == nil {
+						continue
+					}
+					if !ok {
+						err = errors.New("[runtime][rpc]xchannel type not XRespFrame")
+						log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
+						break
+					}
+					callChan <- call{resp: frame}
+					return
+
+				}
+				if err != nil {
+					break
+				}
+				if wc.buf != nil && wc.buf.Len() == 0 && wc.buf.Cap() > maxBufSize {
+					wc.buf.Free()
+					wc.buf.Alloc(defaultBufSize)
+				}
 			}
-			wc.Close()
 		}()
-
-		wc.buf = buffer.NewIoBuffer(defaultBufSize)
-		for {
-			// read data from connection
-			n, readErr := wc.buf.ReadOnce(conn)
-			if readErr != nil {
-				err = readErr
-				if readErr == io.EOF {
-					log.DefaultLogger.Debugf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
-				} else {
-					log.DefaultLogger.Errorf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
-				}
-			}
-
-			if n > 0 {
-				iframe, decodeErr := m.proto.Decode(context.TODO(), wc.buf)
-				if decodeErr != nil {
-					err = decodeErr
-					log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
-					break
-				}
-				frame, ok := iframe.(api.XRespFrame)
-				if frame == nil {
-					continue
-				}
-				if !ok {
-					err = errors.New("[runtime][rpc]xchannel type not XRespFrame")
-					log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
-					break
-				}
-				callChan <- call{resp: frame}
-				return
-
-			}
-			if err != nil {
-				break
-			}
-			if wc.buf != nil && wc.buf.Len() == 0 && wc.buf.Cap() > maxBufSize {
-				wc.buf.Free()
-				wc.buf.Alloc(defaultBufSize)
-			}
-		}
-	}()
+	}
 
 	// 6. write packet
 	if _, err := conn.Write(buf.Bytes()); err != nil {
 		return nil, common.Error(common.UnavailebleCode, err.Error())
+	}
+
+	if frame.GetStreamType() == api.RequestOneWay {
+		return &rpc.RPCResponse{Success: true}, nil
 	}
 
 	select {
@@ -235,9 +241,11 @@ func (m *xChannel) Invoke(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 	// register response channel
-	xstate.mu.Lock()
-	xstate.calls[id] = callChan
-	xstate.mu.Unlock()
+	if frame.GetStreamType() != api.RequestOneWay {
+		xstate.mu.Lock()
+		xstate.calls[id] = callChan
+		xstate.mu.Unlock()
+	}
 
 	// write packet
 	if _, err := conn.Write(buf.Bytes()); err != nil {
@@ -251,6 +259,10 @@ func (m *xChannel) Invoke(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	}
 
 	m.pool.Put(conn, false)
+	if frame.GetStreamType() == api.RequestOneWay {
+		return &rpc.RPCResponse{Success: true}, nil
+	}
+
 	// read response and decode it
 	select {
 	case res := <-callChan:
