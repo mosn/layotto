@@ -2,17 +2,17 @@ name: Alipay Cloud Devops Codescan
 on:
   pull_request_target:
 jobs:
-  stc:   #安全扫描
-    runs-on: ubuntu-latest
-    steps:
-      - name: codeScan
-        uses: layotto/alipay-cloud-devops-codescan@main
-        with:
-          parent_uid: ${{ secrets.ALI_PID }}
-          private_key: ${{ secrets.ALI_PK }}
-          cybersec_token: ${{ secrets.CYBERSEC_TOKEN }}
-          scan_type: stc
-          tips: '可以加入钉钉群：31912621 来申请查看权限'
+  #stc:   #安全扫描
+    #runs-on: ubuntu-latest
+    #steps:
+     # - name: codeScan
+       # uses: layotto/alipay-cloud-devops-codescan@main
+      #  with:
+      #    parent_uid: ${{ secrets.ALI_PID }}
+      #    private_key: ${{ secrets.ALI_PK }}
+      #    cybersec_token: ${{ secrets.CYBERSEC_TOKEN }}
+       #   scan_type: stc
+        #  tips: '可以加入钉钉群：31912621 来申请查看权限'
   sca:   # 开源合规
     runs-on: ubuntu-latest
     steps:
