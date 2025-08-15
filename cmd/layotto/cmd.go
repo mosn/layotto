@@ -56,6 +56,7 @@ var (
 		"off":      "OFF",
 	}
 
+	
 	cmdStart = cli.Command{
 		Name:  "start",
 		Usage: "start runtime. For example:  ./layotto start -c configs/config_standalone.json",
