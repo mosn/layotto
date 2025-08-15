@@ -99,7 +99,7 @@ func (b *boltProtocol) ToFrame(req *rpc.RPCRequest) api.XFrame {
 	buf := buffer.NewIoBufferBytes(req.Data)
 	headerrLen := len(req.Header)
 	boltreq := bolt.NewRpcRequest(0, nil, buf)
-	if v, ok := req.Header[rpc.RequestType]; ok && v[0] == rpc.Oneway {
+	if v, ok := req.Header[rpc.RequestType]; ok && len(v) > 0 && v[0] == rpc.Oneway {
 		boltreq.CmdType = bolt.CmdTypeRequestOneway
 	}
 	boltreq.Class = b.className
