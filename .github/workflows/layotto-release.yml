@@ -32,7 +32,7 @@ jobs:
   golangci-lint:
     name: "Go CI Linter"
     needs: [ style-check,resolve-modules ]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.resolve-modules.outputs.matrix) }}
     steps:
@@ -51,7 +51,7 @@ jobs:
   go-unit-test:
     name: "Go Unit Test"
     needs: [style-check]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Set up Go
