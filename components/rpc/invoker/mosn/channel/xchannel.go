@@ -26,6 +26,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"mosn.io/mosn/pkg/protocol/xprotocol/bolt"
+
 	"mosn.io/pkg/buffer"
 	"mosn.io/pkg/log"
 
@@ -133,61 +135,17 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 	}
 
 	// 5. read package
-	go func() {
-		var err error
-		defer func() {
-			if err != nil {
-				callChan <- call{err: err}
-			}
-			wc.Close()
-		}()
-
-		wc.buf = buffer.NewIoBuffer(defaultBufSize)
-		for {
-			// read data from connection
-			n, readErr := wc.buf.ReadOnce(conn)
-			if readErr != nil {
-				err = readErr
-				if readErr == io.EOF {
-					log.DefaultLogger.Debugf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
-				} else {
-					log.DefaultLogger.Errorf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
-				}
-			}
-
-			if n > 0 {
-				iframe, decodeErr := m.proto.Decode(context.TODO(), wc.buf)
-				if decodeErr != nil {
-					err = decodeErr
-					log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
-					break
-				}
-				frame, ok := iframe.(api.XRespFrame)
-				if frame == nil {
-					continue
-				}
-				if !ok {
-					err = errors.New("[runtime][rpc]xchannel type not XRespFrame")
-					log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
-					break
-				}
-				callChan <- call{resp: frame}
-				return
-
-			}
-			if err != nil {
-				break
-			}
-			if wc.buf != nil && wc.buf.Len() == 0 && wc.buf.Cap() > maxBufSize {
-				wc.buf.Free()
-				wc.buf.Alloc(defaultBufSize)
-			}
-		}
-	}()
+	if frame.GetStreamType() != api.RequestOneWay {
+		go m.readResponse(wc, callChan)
+	}
 
 	// 6. write packet
 	if _, err := conn.Write(buf.Bytes()); err != nil {
 		return nil, common.Error(common.UnavailebleCode, err.Error())
+	}
+
+	if frame.GetStreamType() == api.RequestOneWay {
+		return &rpc.RPCResponse{Success: true}, nil
 	}
 
 	select {
@@ -201,6 +159,58 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 	}
 }
 
+func (m *xChannel) readResponse(wc *wrapConn, callChan chan<- call) {
+	var err error
+	defer func() {
+		if err != nil {
+			callChan <- call{err: err}
+		}
+		wc.Close()
+	}()
+
+	wc.buf = buffer.NewIoBuffer(defaultBufSize)
+	for {
+		// read data from connection
+		n, readErr := wc.buf.ReadOnce(wc.Conn)
+		if readErr != nil {
+			err = readErr
+			if readErr == io.EOF {
+				log.DefaultLogger.Debugf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
+			} else {
+				log.DefaultLogger.Errorf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
+			}
+		}
+
+		if n > 0 {
+			iframe, decodeErr := m.proto.Decode(context.TODO(), wc.buf)
+			if decodeErr != nil {
+				err = decodeErr
+				log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
+				break
+			}
+			frame, ok := iframe.(api.XRespFrame)
+			if frame == nil {
+				continue
+			}
+			if !ok {
+				err = errors.New("[runtime][rpc]xchannel type not XRespFrame")
+				log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
+				break
+			}
+			callChan <- call{resp: frame}
+			return
+
+		}
+		if err != nil {
+			break
+		}
+		if wc.buf != nil && wc.buf.Len() == 0 && wc.buf.Cap() > maxBufSize {
+			wc.buf.Free()
+			wc.buf.Alloc(defaultBufSize)
+		}
+	}
+}
+
 func (m *xChannel) Invoke(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	// 1. context.WithTimeout
 	timeout := time.Duration(req.Timeout) * time.Millisecond
@@ -208,7 +218,7 @@ func (m *xChannel) Invoke(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	defer cancel()
 
 	// 2. get fake connection with mosn
-	conn, err := m.pool.Get(ctx)
+	conn, isNewConn, err := m.pool.Get(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -233,9 +243,11 @@ func (m *xChannel) Invoke(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
 	// register response channel
-	xstate.mu.Lock()
-	xstate.calls[id] = callChan
-	xstate.mu.Unlock()
+	if frame.GetStreamType() != api.RequestOneWay {
+		xstate.mu.Lock()
+		xstate.calls[id] = callChan
+		xstate.mu.Unlock()
+	}
 
 	// write packet
 	if _, err := conn.Write(buf.Bytes()); err != nil {
@@ -243,7 +255,15 @@ func (m *xChannel) Invoke(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 		m.pool.Put(conn, true)
 		return nil, common.Error(common.UnavailebleCode, err.Error())
 	}
+	// if is new conn, send heart
+	if isNewConn {
+		go m.sendHeartbeat(conn)
+	}
+
 	m.pool.Put(conn, false)
+	if frame.GetStreamType() == api.RequestOneWay {
+		return &rpc.RPCResponse{Success: true}, nil
+	}
 
 	// read response and decode it
 	select {
@@ -317,4 +337,52 @@ func (m *xChannel) cleanup(c *wrapConn, err error) {
 		delete(xstate.calls, id)
 	}
 	xstate.mu.Unlock()
+}
+
+func (m *xChannel) sendHeartbeat(c *wrapConn) {
+	xstate := c.state.(*xstate)
+	request := &bolt.Request{
+		RequestHeader: bolt.RequestHeader{
+			Protocol: bolt.ProtocolCode,
+			CmdType:  bolt.CmdTypeRequest,
+			CmdCode:  bolt.CmdCodeHeartbeat,
+			Version:  1,
+			Codec:    bolt.Hessian2Serialize,
+			Timeout:  -1,
+		},
+	}
+	ticker := time.NewTicker(15 * time.Second)
+	defer ticker.Stop()
+
+	failCount := 0
+	const maxFailCount = 6
+
+	for {
+		select {
+		case <-ticker.C:
+			if c.isClose() {
+				return
+			}
+			requestId := atomic.AddUint32(&xstate.reqid, 1)
+			request.SetRequestId(uint64(requestId))
+			buf, encErr := m.proto.Encode(context.TODO(), request)
+			if encErr != nil {
+				log.DefaultLogger.Errorf("[runtime][rpc] Encode request error: %v", encErr)
+				return
+			}
+			if _, err := c.Write(buf.Bytes()); err != nil {
+				failCount++
+				if failCount >= maxFailCount {
+					log.DefaultLogger.Errorf("[RPC][Runtime] Heartbeat response failed due to error: %+v. The number of consecutive failures (%d) exceeds the maximum allowed (%d). Closing the connection.", err, failCount, maxFailCount)
+					c.close()
+					return
+				}
+				continue
+			}
+			log.DefaultLogger.Debugf("[runtime][rpc] pong request success")
+			failCount = 0
+		case <-c.cancelCtx.Done():
+			return
+		}
+	}
 }

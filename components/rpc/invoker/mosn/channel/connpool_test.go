@@ -45,9 +45,9 @@ func TestGetPut(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
 	defer cancel()
 
-	c1, err := p.Get(ctx)
+	c1, _, err := p.Get(ctx)
 	assert.Nil(t, err)
-	c2, err := p.Get(ctx)
+	c2, _, err := p.Get(ctx)
 	assert.Nil(t, err)
 	assert.Equal(t, 0, p.free.Len())
 
@@ -55,7 +55,7 @@ func TestGetPut(t *testing.T) {
 	assert.NotNil(t, c2)
 	assert.Equal(t, 0, p.free.Len())
 
-	_, err = p.Get(ctx)
+	_, _, err = p.Get(ctx)
 	t.Log(err)
 	assert.Error(t, err)
 
@@ -101,7 +101,7 @@ func TestDeadconnRenew(t *testing.T) {
 		}, nil,
 	)
 
-	c1, err := p.Get(context.TODO())
+	c1, _, err := p.Get(context.TODO())
 	assert.Nil(t, err)
 
 	conns.close()
@@ -110,7 +110,7 @@ func TestDeadconnRenew(t *testing.T) {
 
 	assert.Equal(t, active, p.free.Len())
 
-	c2, err := p.Get(context.TODO())
+	c2, _, err := p.Get(context.TODO())
 	assert.Nil(t, err)
 	assert.False(t, c1 == c2)
 }
@@ -157,7 +157,7 @@ func TestPoolConcurrent(t *testing.T) {
 				switch act {
 				case "Get":
 					ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
-					c, err = p.Get(ctx)
+					c, _, err = p.Get(ctx)
 					cancel()
 					assert.Nil(t, err)
 				case "Put":

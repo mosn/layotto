@@ -113,7 +113,7 @@ func (h *httpChannel) Do(req *rpc.RPCRequest) (*rpc.RPCResponse, error) {
 	// 2. get a fake connection with mosn
 	// The pool will start a readloop gorountine,
 	// which aims to read data from mosn and then write data to the hstate.writer
-	conn, err := h.pool.Get(ctx)
+	conn, _, err := h.pool.Get(ctx)
 	if err != nil {
 		return nil, err
 	}
