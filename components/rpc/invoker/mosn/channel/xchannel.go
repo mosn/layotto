@@ -136,57 +136,7 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 
 	// 5. read package
 	if frame.GetStreamType() != api.RequestOneWay {
-		go func() {
-			var err error
-			defer func() {
-				if err != nil {
-					callChan <- call{err: err}
-				}
-				wc.Close()
-			}()
-
-			wc.buf = buffer.NewIoBuffer(defaultBufSize)
-			for {
-				// read data from connection
-				n, readErr := wc.buf.ReadOnce(conn)
-				if readErr != nil {
-					err = readErr
-					if readErr == io.EOF {
-						log.DefaultLogger.Debugf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
-					} else {
-						log.DefaultLogger.Errorf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
-					}
-				}
-
-				if n > 0 {
-					iframe, decodeErr := m.proto.Decode(context.TODO(), wc.buf)
-					if decodeErr != nil {
-						err = decodeErr
-						log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
-						break
-					}
-					frame, ok := iframe.(api.XRespFrame)
-					if frame == nil {
-						continue
-					}
-					if !ok {
-						err = errors.New("[runtime][rpc]xchannel type not XRespFrame")
-						log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
-						break
-					}
-					callChan <- call{resp: frame}
-					return
-
-				}
-				if err != nil {
-					break
-				}
-				if wc.buf != nil && wc.buf.Len() == 0 && wc.buf.Cap() > maxBufSize {
-					wc.buf.Free()
-					wc.buf.Alloc(defaultBufSize)
-				}
-			}
-		}()
+		go m.readResponse(wc, callChan)
 	}
 
 	// 6. write packet
@@ -206,6 +156,58 @@ func (m *xChannel) InvokeWithTargetAddress(req *rpc.RPCRequest) (*rpc.RPCRespons
 		return m.proto.FromFrame(res.resp)
 	case <-ctx.Done():
 		return nil, common.Error(common.TimeoutCode, ErrTimeout.Error())
+	}
+}
+
+func (m *xChannel) readResponse(wc *wrapConn, callChan chan<- call) {
+	var err error
+	defer func() {
+		if err != nil {
+			callChan <- call{err: err}
+		}
+		wc.Close()
+	}()
+
+	wc.buf = buffer.NewIoBuffer(defaultBufSize)
+	for {
+		// read data from connection
+		n, readErr := wc.buf.ReadOnce(wc.Conn)
+		if readErr != nil {
+			err = readErr
+			if readErr == io.EOF {
+				log.DefaultLogger.Debugf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
+			} else {
+				log.DefaultLogger.Errorf("[runtime][rpc]direct conn read-loop err: %s", readErr.Error())
+			}
+		}
+
+		if n > 0 {
+			iframe, decodeErr := m.proto.Decode(context.TODO(), wc.buf)
+			if decodeErr != nil {
+				err = decodeErr
+				log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
+				break
+			}
+			frame, ok := iframe.(api.XRespFrame)
+			if frame == nil {
+				continue
+			}
+			if !ok {
+				err = errors.New("[runtime][rpc]xchannel type not XRespFrame")
+				log.DefaultLogger.Errorf("[runtime][rpc]direct conn decode frame err: %s", err)
+				break
+			}
+			callChan <- call{resp: frame}
+			return
+
+		}
+		if err != nil {
+			break
+		}
+		if wc.buf != nil && wc.buf.Len() == 0 && wc.buf.Cap() > maxBufSize {
+			wc.buf.Free()
+			wc.buf.Alloc(defaultBufSize)
+		}
 	}
 }
 
