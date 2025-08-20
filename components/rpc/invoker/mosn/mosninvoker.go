@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"runtime/debug"
 	"strconv"
 
 	// bridge to mosn
@@ -87,7 +88,7 @@ func (m *mosnInvoker) Init(conf rpc.RpcConfig) error {
 func (m *mosnInvoker) Invoke(ctx context.Context, req *rpc.RPCRequest) (resp *rpc.RPCResponse, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("[runtime][rpc]mosn invoker panic: %v", r)
+			err = fmt.Errorf("[runtime][rpc]mosn invoker panic: %v, stack info: %+v", r, string(debug.Stack()))
 			log.DefaultLogger.Errorf("%v", err)
 		}
 	}()
