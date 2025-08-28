@@ -10,6 +10,7 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
+	github.com/layotto/go-sdk v0.0.0-20241113124402-e55ee5816d2f
 	github.com/minio/minio-go/v7 v7.0.15
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/smartystreets/assertions v1.1.0 // indirect
@@ -22,12 +23,8 @@ require (
 	google.golang.org/grpc v1.39.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	github.com/layotto/go-sdk v0.0.0-20241113124402-e55ee5816d2f // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	mosn.io/layotto/spec v0.0.0-20240927030843-b4fed4d06be4
 )
 
-replace (
-	mosn.io/layotto/spec => ../spec
-
-)
+replace mosn.io/layotto/spec => ../spec
