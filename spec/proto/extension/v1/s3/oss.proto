@@ -276,6 +276,13 @@ message PutObjectInput{
     // Size of the body in bytes. This parameter is useful when the size of the body
     // cannot be determined automatically
     int64 content_length = 16;
+    // The MIME type of the object.
+    string content_type = 17;
+    // The language of the object content. Not supported by the Huawei Cloud OBS component.
+    string content_language = 18;
+    // The Base64-encoded 128-bit MD5 digest of the object content.
+    // Ignored by AWS and Ceph when the SDK uses multipart upload.
+    string content_md5 = 19;
 }
 
 // PutObjectOutput
