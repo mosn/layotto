@@ -113,6 +113,9 @@ type PutObjectInput struct {
 	CacheControl         string            `json:"cache_control,omitempty"`
 	ContentDisposition   string            `json:"content_disposition,omitempty"`
 	ContentEncoding      string            `json:"content_encoding,omitempty"`
+	ContentType          string            `json:"content_type,omitempty"`
+	ContentLanguage      string            `json:"content_language,omitempty"`
+	ContentMD5           string            `json:"content_md5,omitempty"`
 	Expires              int64             `json:"expires,omitempty"`
 	ServerSideEncryption string            `json:"server_side_encryption,omitempty"`
 	SignedUrl            string            `json:"signed_url,omitempty"`

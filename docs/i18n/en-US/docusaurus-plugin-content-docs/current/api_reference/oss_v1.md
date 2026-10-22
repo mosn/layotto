@@ -1331,6 +1331,9 @@ PutObjectInput
 | signed_url | [string](#string) |  | Specify the signed url of object, user can put object with signed url without ak、sk |
 | meta | [PutObjectInput.MetaEntry](#spec.proto.extension.v1.PutObjectInput.MetaEntry) | repeated | A map of metadata to store with the object in S3. |
 | tagging | [PutObjectInput.TaggingEntry](#spec.proto.extension.v1.PutObjectInput.TaggingEntry) | repeated | The tag-set for the object. The tag-set must be encoded as URL Query parameters. |
+| content_type | [string](#string) |  | The MIME type of the object. |
+| content_language | [string](#string) |  | The language of the object content. Not supported by the Huawei Cloud OBS component. |
+| content_md5 | [string](#string) |  | The Base64-encoded 128-bit MD5 digest of the object content. Ignored by AWS and Ceph when the SDK uses multipart upload. |
 
 
 

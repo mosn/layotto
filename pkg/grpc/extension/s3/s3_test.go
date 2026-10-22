@@ -100,11 +100,21 @@ func TestPutObject(t *testing.T) {
 	assert.Equal(t, status.Errorf(codes.InvalidArgument, NotSupportStoreName, "NoStore"), err)
 
 	putObjectReq.StoreName = MOCKSERVER
+	putObjectReq.ContentType = "text/plain"
+	putObjectReq.ContentLanguage = "zh-CN"
+	putObjectReq.ContentMd5 = "jgfwbAKW8MpykThX2dATRg=="
 	output := &l8s3.PutObjectOutput{ETag: "tag"}
 	mockStream.EXPECT().Context().Return(ctx)
 	mockStream.EXPECT().Recv().Return(putObjectReq, nil)
 	mockStream.EXPECT().SendAndClose(&s3.PutObjectOutput{Etag: "tag"}).Times(1)
-	mockossServer.EXPECT().PutObject(ctx, &l8s3.PutObjectInput{DataStream: newPutObjectStreamReader(putObjectReq.Body, mockStream), Bucket: "layotto", Key: "object"}).Return(output, nil)
+	mockossServer.EXPECT().PutObject(ctx, &l8s3.PutObjectInput{
+		DataStream:      newPutObjectStreamReader(putObjectReq.Body, mockStream),
+		Bucket:          "layotto",
+		Key:             "object",
+		ContentType:     "text/plain",
+		ContentLanguage: "zh-CN",
+		ContentMD5:      "jgfwbAKW8MpykThX2dATRg==",
+	}).Return(output, nil)
 	err = s3Server.PutObject(mockStream)
 	assert.Nil(t, err)
 
