@@ -49,7 +49,7 @@ require (
 	google.golang.org/protobuf v1.27.1
 	mosn.io/api v1.3.0
 	mosn.io/layotto/kit v0.0.0-00010101000000-000000000000
-	mosn.io/layotto/spec v0.0.0-20231023045845-48ec2bc7eab8
+	mosn.io/layotto/spec v0.0.0-20261022035757-c82f510895f5
 	mosn.io/mosn v1.3.0
 	mosn.io/pkg v1.3.0
 )
