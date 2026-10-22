@@ -47,27 +47,44 @@ func TestPutObjectContentHeaders(t *testing.T) {
 	require.NoError(t, err)
 	instance := &AliyunOSS{client: client}
 	for _, tc := range []struct {
-		name      string
-		signedURL string
+		name               string
+		signedURL          string
+		withContentHeaders bool
+		wantContentType    string
 	}{
-		{name: "normal"},
-		{name: "signed URL", signedURL: server.URL + "/bucket/object"},
+		{name: "normal", withContentHeaders: true, wantContentType: "text/plain"},
+		{name: "signed URL", signedURL: server.URL + "/bucket/object", withContentHeaders: true, wantContentType: "text/plain"},
+		// Without ContentType, the SDK supplies a default only for normal uploads.
+		{name: "normal without content headers", wantContentType: "application/octet-stream"},
+		{name: "signed URL without content headers", signedURL: server.URL + "/bucket/object"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			_, putErr := instance.PutObject(context.Background(), &oss.PutObjectInput{
-				Bucket:          "bucket",
-				Key:             "object",
-				DataStream:      strings.NewReader("hello"),
-				ContentType:     "text/plain",
-				ContentLanguage: "zh-CN",
-				ContentMD5:      "XUFAKrxLKna5cZ2REBfFkg==",
-				SignedUrl:       tc.signedURL,
-			})
+			headers = nil
+			body = nil
+			req := &oss.PutObjectInput{
+				Bucket:     "bucket",
+				Key:        "object",
+				DataStream: strings.NewReader("hello"),
+				SignedUrl:  tc.signedURL,
+			}
+			if tc.withContentHeaders {
+				req.ContentType = "text/plain"
+				req.ContentLanguage = "zh-CN"
+				req.ContentMD5 = "XUFAKrxLKna5cZ2REBfFkg=="
+			}
+			_, putErr := instance.PutObject(context.Background(), req)
 			require.NoError(t, putErr)
 			assert.Equal(t, "hello", string(body))
-			assert.Equal(t, "text/plain", headers.Get("Content-Type"))
-			assert.Equal(t, "zh-CN", headers.Get("Content-Language"))
-			assert.Equal(t, "XUFAKrxLKna5cZ2REBfFkg==", headers.Get("Content-MD5"))
+			assert.Equal(t, tc.wantContentType, headers.Get("Content-Type"))
+			assert.Equal(t, req.ContentLanguage, headers.Get("Content-Language"))
+			assert.Equal(t, req.ContentMD5, headers.Get("Content-MD5"))
+			if !tc.withContentHeaders {
+				assert.NotContains(t, headers, "Content-Language")
+				assert.NotContains(t, headers, "Content-Md5")
+				if tc.signedURL != "" {
+					assert.NotContains(t, headers, "Content-Type")
+				}
+			}
 		})
 	}
 }
