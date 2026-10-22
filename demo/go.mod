@@ -24,7 +24,7 @@ require (
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	github.com/layotto/go-sdk v0.0.0-20241113124402-e55ee5816d2f // indirect
-	mosn.io/layotto/spec v0.0.0-20240927030843-b4fed4d06be4
+	mosn.io/layotto/spec v0.0.0-20261022035757-c82f510895f5
 )
 
 replace (
