@@ -31,6 +31,7 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+
 	"mosn.io/layotto/components/hello"
 	"mosn.io/layotto/components/hello/helloworld"
 	lgrpc "mosn.io/layotto/pkg/grpc"

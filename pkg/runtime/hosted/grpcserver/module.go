@@ -26,11 +26,14 @@ import (
 	"sync"
 
 	"google.golang.org/grpc"
+
 	"mosn.io/layotto/pkg/runtime/hosted"
 )
 
 type Config struct {
 	Address string
+	// Use ChainUnaryInterceptor / ChainStreamInterceptor for middleware.
+	// The single interceptor slots are reserved for lifecycle accounting.
 	Options []grpc.ServerOption
 	// Register prepares and registers APIs on this owned server. It must honor
 	// ctx. Release owns any API-specific resources (e.g. callback connections),
@@ -43,12 +46,15 @@ type Module struct {
 	config                    Config
 	mu                        sync.RWMutex
 	server                    *grpc.Server
-	listener                  net.Listener
+	listener                  *trackedListener
 	done                      chan struct{}
 	drainDone                 chan struct{}
 	running, draining, closed bool
 	serveErr                  error
 	closeErr                  error
+	stopDone                  chan struct{}
+	closeDone                 chan struct{}
+	calls                     calls
 }
 
 func New(config Config) *Module {
@@ -72,7 +78,11 @@ func (m *Module) Init(ctx context.Context) error {
 		m.mu.Unlock()
 		return errors.New("gRPC module already initialized")
 	}
-	s := grpc.NewServer(m.config.Options...)
+	s, err := newServer(m.config.Options, &m.calls)
+	if err != nil {
+		m.mu.Unlock()
+		return err
+	}
 	m.server = s
 	m.mu.Unlock()
 	if m.config.Register != nil {
@@ -104,10 +114,11 @@ func (m *Module) Start(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	m.listener, m.done, m.running = ln, make(chan struct{}), true
+	listener := newTrackedListener(ln)
+	m.listener, m.done, m.running = listener, make(chan struct{}), true
 	s, done := m.server, m.done
 	go func() {
-		err := s.Serve(ln)
+		err := s.Serve(listener)
 		m.mu.Lock()
 		m.running = false
 		if !m.draining && !m.closed {
@@ -162,50 +173,93 @@ func (m *Module) Drain(ctx context.Context) error {
 	case <-done:
 		return nil
 	case <-ctx.Done():
-		s.Stop()
+		m.forceStop()
+		return ctx.Err()
+	}
+}
+
+// forceStop owns the shutdown goroutine and all raw connections, including
+// connections which have not yet completed the HTTP/2 or TLS handshake.
+func (m *Module) forceStop() <-chan struct{} {
+	m.mu.Lock()
+	if m.stopDone != nil {
+		done := m.stopDone
+		m.mu.Unlock()
+		return done
+	}
+	done := make(chan struct{})
+	m.stopDone = done
+	s, ln := m.server, m.listener
+	m.calls.stop()
+	m.mu.Unlock()
+	if ln != nil {
+		ln.closeConnections()
+	}
+	go func() {
+		if s != nil {
+			s.Stop()
+		}
+		close(done)
+	}()
+	return done
+}
+
+func wait(ctx context.Context, done <-chan struct{}) error {
+	if done == nil {
+		return nil
+	}
+	// Prefer a completed operation even if the budget has just expired.
+	select {
+	case <-done:
+		return nil
+	default:
+	}
+	select {
+	case <-done:
+		return nil
+	case <-ctx.Done():
 		return ctx.Err()
 	}
 }
 
 func (m *Module) Close(ctx context.Context) error {
 	m.mu.Lock()
-	if m.closed {
-		err := m.closeErr
+	if m.closeDone != nil {
+		done := m.closeDone
 		m.mu.Unlock()
+		if err := wait(ctx, done); err != nil {
+			return hosted.Errors{hosted.ErrResourcesInUse, err}
+		}
+		m.mu.RLock()
+		err := m.closeErr
+		m.mu.RUnlock()
 		return err
 	}
+	m.closeDone = make(chan struct{})
 	m.closed, m.running = true, false
-	s, ln, done, drained := m.server, m.listener, m.done, m.drainDone
+	done, drained := m.done, m.drainDone
 	m.mu.Unlock()
-	if ln != nil {
-		_ = ln.Close()
-	}
-	if s != nil {
-		s.Stop()
-	}
-	var failures hosted.Errors
-	for _, ch := range []chan struct{}{done, drained} {
-		if ch != nil {
-			select {
-			case <-ch:
-			case <-ctx.Done():
-				failures = append(failures, ctx.Err())
-			}
+	err := m.close(ctx, done, drained)
+	m.mu.Lock()
+	m.closeErr = err
+	close(m.closeDone)
+	m.mu.Unlock()
+	return err
+}
+
+func (m *Module) close(ctx context.Context, done, drained <-chan struct{}) error {
+	stopped := m.forceStop()
+	for _, ch := range []<-chan struct{}{stopped, done, drained, m.calls.stop()} {
+		if err := wait(ctx, ch); err != nil {
+			// A cancelled RPC may still be rolling back a transaction. Keep Release
+			// and all borrowed dependencies alive if that work exceeds our budget.
+			return hosted.Errors{hosted.ErrResourcesInUse, err}
 		}
 	}
 	if m.config.Release != nil {
-		if err := m.config.Release(ctx); err != nil {
-			failures = append(failures, err)
-		}
+		return m.config.Release(ctx)
 	}
-	var err error
-	if len(failures) != 0 {
-		err = failures
-	}
-	m.mu.Lock()
-	m.closeErr = err
-	m.mu.Unlock()
-	return err
+	return nil
 }
 
 var _ hosted.Module = (*Module)(nil)

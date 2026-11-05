@@ -36,6 +36,7 @@ type entry struct {
 	err          error
 	started      bool // Start attempted; Drain may be needed even if it failed.
 	closed       bool
+	retainsDeps  bool
 }
 
 // Runtime is single-use. Start and Shutdown are idempotent; a failed startup
@@ -189,9 +190,9 @@ func (r *Runtime) Start(ctx context.Context) error {
 			if cleanupErr == nil {
 				continue
 			}
-			err = Errors{err, cleanupErr}
+			return r.failStart(Errors{err, cleanupErr}, cleanupErr)
 		}
-		return r.failStart(err)
+		return r.failStart(err, nil)
 	}
 	r.mu.Lock()
 	// Shutdown may have cancelled startup while the last module returned.
@@ -201,7 +202,7 @@ func (r *Runtime) Start(ctx context.Context) error {
 			err = context.Canceled
 		}
 		r.mu.Unlock()
-		return r.failStart(err)
+		return r.failStart(err, nil)
 	}
 	r.state = Running
 	r.mu.Unlock()
@@ -278,14 +279,23 @@ func (r *Runtime) startOne(ctx context.Context, e *entry) error {
 	return nil
 }
 
-func (r *Runtime) failStart(err error) error {
+func (r *Runtime) failStart(err, previousCleanup error) error {
 	ctx, cancel := context.WithTimeout(context.Background(), r.options.RollbackTimeout)
 	defer cancel()
-	if cleanupErr := r.cleanup(ctx, r.entries); cleanupErr != nil {
+	cleanupErr := r.cleanup(ctx, r.entries)
+	if cleanupErr != nil {
 		err = Errors{err, cleanupErr}
 	}
 	r.mu.Lock()
 	r.state, r.startErr = Failed, err
+	// Rollback has already attempted cleanup. Preserve its result across Shutdown.
+	r.stopped, r.stopErr = true, cleanupErr
+	if previousCleanup != nil {
+		r.stopErr = previousCleanup
+		if cleanupErr != nil {
+			r.stopErr = Errors{previousCleanup, cleanupErr}
+		}
+	}
 	r.mu.Unlock()
 	return err
 }
@@ -336,7 +346,8 @@ func (r *Runtime) Shutdown(ctx context.Context) error {
 }
 
 // cleanup uses one deadline, reserving time for Close. Even with an expired
-// context it invokes Close on every owned object to allow immediate force-stop.
+// context it invokes Close to allow immediate force-stop, except on dependencies
+// still borrowed by modules returning ErrResourcesInUse.
 func (r *Runtime) cleanup(ctx context.Context, entries []*entry) error {
 	deadline, _ := ctx.Deadline()
 	remaining := time.Until(deadline)
@@ -354,6 +365,12 @@ func (r *Runtime) cleanup(ctx context.Context, entries []*entry) error {
 	drainCtx, cancel := context.WithDeadline(ctx, drainDeadline)
 	defer cancel()
 	var failures Errors
+	retained := make(map[string]bool)
+	for _, e := range entries {
+		if e.retainsDeps {
+			r.retainDependencies(e, retained)
+		}
+	}
 	for i := len(entries) - 1; i >= 0; i-- {
 		e := entries[i]
 		if e.module == nil || e.closed || !e.started {
@@ -371,8 +388,20 @@ func (r *Runtime) cleanup(ctx context.Context, entries []*entry) error {
 		if e.module == nil || e.closed {
 			continue
 		}
+		if retained[e.registration.Name] {
+			err := &ModuleError{e.registration.Name, "close skipped", ErrResourcesInUse}
+			failures = append(failures, err)
+			r.set(e, Failed, err)
+			continue
+		}
 		r.set(e, Closing, nil)
 		err := e.module.Close(ctx)
+		if errors.Is(err, ErrResourcesInUse) {
+			r.mu.Lock()
+			e.retainsDeps = true
+			r.mu.Unlock()
+			r.retainDependencies(e, retained)
+		}
 		if err != nil {
 			err = &ModuleError{e.registration.Name, "close", err}
 			failures = append(failures, err)
@@ -393,6 +422,23 @@ func (r *Runtime) cleanup(ctx context.Context, entries []*entry) error {
 		return failures
 	}
 	return nil
+}
+
+// Dependencies of a module with surviving work must remain allocated. Other
+// independent branches still close, and retained modules report no Close attempt.
+func (r *Runtime) retainDependencies(e *entry, retained map[string]bool) {
+	for _, name := range e.registration.DependsOn {
+		if retained[name] {
+			continue
+		}
+		retained[name] = true
+		for _, dep := range r.entries {
+			if dep.registration.Name == name {
+				r.retainDependencies(dep, retained)
+				break
+			}
+		}
+	}
 }
 
 // Status queries live health in dependency order. An optional dependency that

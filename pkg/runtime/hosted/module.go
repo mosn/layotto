@@ -34,6 +34,8 @@ import (
 // owns and cancels background work when it closes.
 // Close must support partial initialization and forcibly release owned resources
 // after a failed Drain. Neither Drain nor Close may close borrowed dependencies.
+// Close must return ErrResourcesInUse if work still uses borrowed resources.
+// Runtime retains the module's transitive dependencies in that case.
 type Module interface {
 	Init(context.Context) error
 	Start(context.Context) error
@@ -41,6 +43,10 @@ type Module interface {
 	Drain(context.Context) error
 	Close(context.Context) error
 }
+
+// ErrResourcesInUse signals that Close could not join all users of its resources.
+// The runtime must retain dependencies rather than close underneath active work.
+var ErrResourcesInUse = errors.New("module resources are still in use")
 
 type Health struct {
 	Ready  bool

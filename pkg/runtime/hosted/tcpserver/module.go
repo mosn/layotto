@@ -195,7 +195,7 @@ func (m *Module) Close(ctx context.Context) error {
 	case <-done:
 		return nil
 	case <-ctx.Done():
-		return ctx.Err()
+		return hosted.Errors{hosted.ErrResourcesInUse, ctx.Err()}
 	}
 }
 

@@ -47,8 +47,9 @@ under a second name is rejected to prevent double ownership.
   readiness. Lifecycle errors and close attempts remain visible in snapshots.
   Call Status with a bounded context; module status methods must be concurrent-safe.
 - Shutdown withdraws readiness immediately and cancels pending startup.
-  Drain and Close execute in reverse dependency order. All close attempts run
-  even after an earlier error. Errors preserve module, operation and errors.Is.
+  Drain and Close execute in reverse dependency order. Close attempts continue
+  after errors, except for dependencies still borrowed by surviving work (see
+  below). Errors preserve module, operation and errors.Is.
 - Shutdown uses one overall deadline, with time reserved for Close; a shorter
   caller deadline wins. Rollback has its own bounded context because the startup
   context may already have been cancelled.
@@ -57,7 +58,15 @@ under a second name is rejected to prevent double ownership.
   its resources. A product adapter must supply its actual force-stop behavior.
 - Start/Shutdown are idempotent and serialized. Runtime is single-use; create a
   new instance after startup failure or shutdown. Final close calls are not
-  retried automatically; failures remain in the shutdown result.
+  retried automatically; rollback cleanup failures remain in the shutdown result
+  and the runtime stays Failed.
+- A module whose work still uses dependencies after Close must return an error
+  wrapping `ErrResourcesInUse`. Runtime skips Close for its transitive
+  dependencies, records the skipped cleanup, and still closes independent
+  branches. Drain must preserve borrowed resources for this reason. Retained
+  resources are not automatically released later; the process owner must handle
+  the failed shutdown. Modules must not report successful cleanup while work is
+  still using resources.
 
 ## Server adapters
 
@@ -65,12 +74,25 @@ under a second name is rejected to prevent double ownership.
 initialize and register existing Layotto API implementations. Its optional
 Release callback cleans up API-owned callback connections or other resources,
 including partial registration failures. Business components remain separate
-dependencies. GracefulStop falls back to Stop when the drain deadline expires.
+dependencies. When the drain deadline expires, the adapter closes all accepted
+connections, including incomplete TLS/HTTP2 handshakes, and starts a tracked Stop
+operation. Close waits within its context for server shutdown and active unary
+and streaming handlers, including middleware cleanup, before calling Release.
+If this wait expires, Release is skipped and `ErrResourcesInUse` protects borrowed
+dependencies. Cancellation alone does not imply that handler cleanup finished.
+
+Configure middleware with `grpc.ChainUnaryInterceptor` and
+`grpc.ChainStreamInterceptor` in `Config.Options`. The adapter reserves the single
+interceptor slots to track the entire middleware chain; using
+`grpc.UnaryInterceptor` or `grpc.StreamInterceptor` returns an Init error. This
+restriction applies only to the new hosted adapter, not the existing Layotto
+entry point.
 
 `tcpserver` owns a listener and accepted connections. It stops accepting during
 drain and waits for sessions; Close cancels handlers and closes remaining sockets.
 Handlers must return on cancellation or connection closure. Product adapters
 remain responsible for protocol-aware request rejection, transactions and ACKs.
+If TCP handlers outlive Close, the adapter also returns `ErrResourcesInUse`.
 An existing native Server can alternatively implement Module directly without
 using this helper or replacing its networking implementation.
 

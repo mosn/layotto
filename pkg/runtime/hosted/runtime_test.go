@@ -412,3 +412,85 @@ func TestUnreadyStartupAndCleanupErrorArePreserved(t *testing.T) {
 		t.Fatalf("snapshot=%+v", s)
 	}
 }
+
+func TestShutdownPreservesRollbackCleanupError(t *testing.T) {
+	for _, optional := range []bool{false, true} {
+		name := "required"
+		if optional {
+			name = "optional"
+		}
+		t.Run(name, func(t *testing.T) {
+			e := &events{}
+			failure := errors.New("rollback close failed")
+			f := &fake{name: "api", events: e, fail: "close", err: failure, start: func(context.Context) error { return errors.New("start failed") }}
+			registration := reg(f)
+			registration.Optional = optional
+			r := mustRuntime(t, []Registration{registration}, Options{})
+			ctx := bounded(t)
+			if err := r.Start(ctx); !errors.Is(err, failure) {
+				t.Fatalf("start=%v", err)
+			}
+			before := e.list()
+			for i := 0; i < 2; i++ {
+				if err := r.Shutdown(ctx); !errors.Is(err, failure) {
+					t.Fatalf("shutdown=%v", err)
+				}
+				if snapshot := r.Status(ctx); snapshot.State != Failed || snapshot.Ready {
+					t.Fatalf("snapshot=%+v", snapshot)
+				}
+			}
+			if !reflect.DeepEqual(before, e.list()) {
+				t.Fatal("repeated rollback cleanup")
+			}
+		})
+	}
+}
+
+func TestSurvivingWorkRetainsOnlyTransitiveDependencies(t *testing.T) {
+	e := &events{}
+	root := &fake{name: "root", events: e}
+	dep := &fake{name: "dep", events: e}
+	independent := &fake{name: "independent", events: e}
+	api := &fake{name: "api", events: e, fail: "close", err: ErrResourcesInUse}
+	r := mustRuntime(t, []Registration{reg(root), reg(dep, "root"), reg(api, "dep"), reg(independent)}, Options{})
+	ctx := bounded(t)
+	if err := r.Start(ctx); err != nil {
+		t.Fatal(err)
+	}
+	if err := r.Shutdown(ctx); !errors.Is(err, ErrResourcesInUse) {
+		t.Fatal(err)
+	}
+	got := strings.Join(e.list(), ",")
+	if strings.Contains(got, "root.close") || strings.Contains(got, "dep.close") || !strings.Contains(got, "independent.close") {
+		t.Fatal(got)
+	}
+	for _, m := range r.Status(ctx).Modules {
+		if (m.Name == "root" || m.Name == "dep") && (m.CloseAttempted || m.State != Failed) {
+			t.Fatalf("retained=%+v", m)
+		}
+	}
+}
+
+func TestOptionalRollbackRetainsDependenciesDuringFullRollback(t *testing.T) {
+	e := &events{}
+	dep := &fake{name: "dep", events: e}
+	api := &fake{name: "api", events: e, fail: "close", err: ErrResourcesInUse,
+		start: func(context.Context) error { return errors.New("start failed") }}
+	registration := reg(api, "dep")
+	registration.Optional = true
+	r := mustRuntime(t, []Registration{reg(dep), registration}, Options{})
+	ctx := bounded(t)
+	if err := r.Start(ctx); !errors.Is(err, ErrResourcesInUse) {
+		t.Fatal(err)
+	}
+	if err := r.Shutdown(ctx); !errors.Is(err, ErrResourcesInUse) {
+		t.Fatal(err)
+	}
+	got := strings.Join(e.list(), ",")
+	if strings.Contains(got, "dep.close") || strings.Count(got, "api.close") != 1 {
+		t.Fatal(got)
+	}
+	if snapshot := r.Status(ctx); snapshot.State != Failed || snapshot.Modules[0].CloseAttempted {
+		t.Fatalf("snapshot=%+v", snapshot)
+	}
+}
